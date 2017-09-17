@@ -1,0 +1,19 @@
+﻿<Window x:Class="EventDirector.NewTimingPointWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EventDirector"
+        mc:Ignorable="d"
+        Title="NewTimingPointWindow" Height="210" Width="250" ResizeMode="NoResize">
+    <Grid>
+        <Label Content="Name" HorizontalAlignment="Left" Margin="20,15,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="name" HorizontalAlignment="Left" Height="23" Margin="20,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
+        <Label Content="Distance" HorizontalAlignment="Left" Margin="20,65,20,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="distance" HorizontalAlignment="Left" Height="23" Margin="20,90,0,0" VerticalAlignment="Top" Width="150"/>
+        <Label Content="Unit" HorizontalAlignment="Left" Margin="175,65,20,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="unit" HorizontalAlignment="Left" Height="23" Margin="175,90,0,0" VerticalAlignment="Top" Width="45"/>
+        <Button Content="Submit" HorizontalAlignment="Left" Margin="20,0,0,25" VerticalAlignment="Bottom" Width="75" Click="submit_Click"/>
+        <Button Content="Cancel" HorizontalAlignment="Right" Margin="0,0,20,25" VerticalAlignment="Bottom" Width="75" Click="cancel_Click"/>
+    </Grid>
+</Window>
