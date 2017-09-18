@@ -8,10 +8,11 @@ namespace EventDirector
 {
     class TimeResult
     {
-        String eventParticipantId, timingPointId, time;
+        int eventIdentifier, eventParticipantId, timingPointId, time;
 
-        public string EventParticipantId { get => eventParticipantId; set => eventParticipantId = value; }
-        public string TimingPointId { get => timingPointId; set => timingPointId = value; }
-        public string Time { get => time; set => time = value; }
+        public int EventParticipantId { get => eventParticipantId; set => eventParticipantId = value; }
+        public int TimingPointId { get => timingPointId; set => timingPointId = value; }
+        public int Time { get => time; set => time = value; }
+        public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,22 +12,23 @@ namespace EventDirector
         void Initialize();
 
         void AddEvent(Event anEvent);
-        void RemoveEvent(String identifier);
+        void RemoveEvent(int identifier);
         void RemoveEvent(Event anEvent);
         void UpdateEvent(Event anEvent);
 
         void AddDivision(Division div);
-        void RemoveDivision(String identifier);
+        void RemoveDivision(int identifier);
         void RemoveDivision(Division div);
         void UpdateDivision(Division div);
 
         void AddTimingPoint(TimingPoint tp);
         void RemoveTimingPoint(TimingPoint tp);
-        void RemoveTimingPoint(String identifier);
+        void RemoveTimingPoint(int identifier);
         void UpdateTimingPoint(TimingPoint tp);
 
         void AddParticipant(Participant person);
-        void RemoveParticipant(String identifier);
+        void AddParticipants(ArrayList people);
+        void RemoveParticipant(int identifier);
         void RemoveParticipant(Participant person);
         void UpdateParticipant(Participant person);
 
@@ -34,6 +36,9 @@ namespace EventDirector
         void RemoveTimingResult(TimeResult tr);
         void UpdateTimingResult(TimeResult oldResult, TimeResult newResult);
 
-        void ConnectionInformation(String info);
+        void CheckInParticipant(int identifier);
+        void CheckInParticipant(Participant person);
+
+        void ResetDatabase();
     }
 }

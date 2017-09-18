@@ -73,7 +73,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Address.cs" />
     <Compile Include="IDBInterface.cs" />
     <Compile Include="Division.cs" />
     <Compile Include="EmergencyContact.cs" />

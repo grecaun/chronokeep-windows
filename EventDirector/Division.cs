@@ -8,10 +8,11 @@ namespace EventDirector
 {
     class Division
     {
-        String identifier, name, eventIdentifier;
+        private String name;
+        private int identifier, eventIdentifier;
 
-        public string Identifier { get => identifier; set => identifier = value; }
+        public int Identifier { get => identifier; set => identifier = value; }
         public string Name { get => name; set => name = value; }
-        public string EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
+        public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
     }
 }

@@ -8,10 +8,11 @@ namespace EventDirector
 {
     class Event
     {
-        String identifier, name, date;
+        private int identifier, date;
+        private string name;
 
-        public string Identifier { get => identifier; set => identifier = value; }
+        public int Identifier { get => identifier; set => identifier = value; }
         public string Name { get => name; set => name = value; }
-        public string Date { get => date; set => date = value; }
+        public int Date { get => date; set => date = value; }
     }
 }
