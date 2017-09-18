@@ -8,13 +8,14 @@ namespace EventDirector
 {
     class Participant
     {
-        private int identifier, birthdate;
+        private int identifier;
+        private long birthdate;
         private string firstName, lastName, street, city, state, zip, phone, email;
         private EmergencyContact emergencyContact;
         private EventParticipantInformation eventSpecific;
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public int Birthdate { get => birthdate; set => birthdate = value; }
+        public long Birthdate { get => birthdate; set => birthdate = value; }
         public string FirstName { get => firstName; set => firstName = value; }
         public string LastName { get => lastName; set => lastName = value; }
         public string Street { get => street; set => street = value; }

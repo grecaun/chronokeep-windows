@@ -36,9 +36,15 @@ namespace EventDirector
         void RemoveTimingResult(TimeResult tr);
         void UpdateTimingResult(TimeResult oldResult, TimeResult newResult);
 
-        void CheckInParticipant(int identifier);
+        void CheckInParticipant(int identifier, int checkedIn);
         void CheckInParticipant(Participant person);
 
         void ResetDatabase();
+
+        ArrayList GetEvents();
+        ArrayList GetDivisions();
+        ArrayList GetTimingPoints();
+        ArrayList GetParticipants();
+        ArrayList GetTimingResults();
     }
 }

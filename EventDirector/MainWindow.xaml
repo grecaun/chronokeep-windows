@@ -38,34 +38,37 @@
             <ListView x:Name="eventsListView" Height="200" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1">
                 <ListView.View>
                     <GridView>
+                        <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Identifier}" />
                         <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}" />
-                        <GridViewColumn Header="Date" Width="100" DisplayMemberBinding="{Binding Date}" />
+                        <GridViewColumn Header="Date" Width="100" DisplayMemberBinding="{Binding DateStr}" />
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Label x:Name="divisionsLabel" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" >
+            <Label x:Name="divisionsLabel" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Visibility="Hidden">
                 <Label Content="Divisions" FontSize="15"/>
             </Label>
-            <Button x:Name="divisionsAddButton" Content="Add" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="75" Grid.Row="0" Grid.Column="1" Click="AddButton_Click" />
-            <Button x:Name="divisionsRemoveButton" Content="Remove" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,85,0" Width="75" Grid.Row="0" Grid.Column="1" Click="RemoveButton_Click" />
-            <ListView x:Name="divisionsListView" Height="200" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
+            <Button Visibility="Hidden" x:Name="divisionsAddButton" Content="Add" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="75" Grid.Row="0" Grid.Column="1" Click="AddButton_Click" />
+            <Button Visibility="Hidden" x:Name="divisionsRemoveButton" Content="Remove" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,85,0" Width="75" Grid.Row="0" Grid.Column="1" Click="RemoveButton_Click" />
+            <ListView Visibility="Hidden" x:Name="divisionsListView" Height="200" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
                 <ListView.View>
                     <GridView>
+                        <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Identifier}" />
                         <GridViewColumn Header="Name" Width="300" DisplayMemberBinding="{Binding Name}" />
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Label x:Name="timingPointsLabel" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" >
+            <Label Visibility="Hidden" x:Name="timingPointsLabel" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" >
                 <Label Content="Timing Points" FontSize="15"/>
             </Label>
-            <Button x:Name="timingPointsAddButton" Content="Add" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="75" Grid.Row="0" Grid.Column="2" Click="AddButton_Click" />
-            <Button x:Name="timingPointsRemoveButton" Content="Remove" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,85,0" Width="75" Grid.Row="0" Grid.Column="2" Click="RemoveButton_Click" />
-            <ListView x:Name="timingPointsListView" Height="200" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1">
+            <Button Visibility="Hidden" x:Name="timingPointsAddButton" Content="Add" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="75" Grid.Row="0" Grid.Column="2" Click="AddButton_Click" />
+            <Button Visibility="Hidden" x:Name="timingPointsRemoveButton" Content="Remove" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,85,0" Width="75" Grid.Row="0" Grid.Column="2" Click="RemoveButton_Click" />
+            <ListView Visibility="Hidden" x:Name="timingPointsListView" Height="200" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1">
                 <ListView.View>
                     <GridView>
+                        <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Identifier}" />
                         <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}" />
                         <GridViewColumn Header="Distance" Width="60" DisplayMemberBinding="{Binding Distance}" />
-                        <GridViewColumn Header="Unit" Width="40" DisplayMemberBinding="{Binding DistanceLabel}" />
+                        <GridViewColumn Header="Unit" Width="40" DisplayMemberBinding="{Binding Unit}" />
                     </GridView>
                 </ListView.View>
             </ListView>

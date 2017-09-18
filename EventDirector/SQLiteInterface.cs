@@ -110,13 +110,25 @@ namespace EventDirector
 
         public void AddDivision(Division div)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("INSERT INTO divisions (name, event_id) values ({0},{1})", div.Name, div.EventIdentifier), connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "INSERT INTO divisions (name, event_id) values (@name,@event_id)";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@name", div.Name),
+                new SQLiteParameter("@event_id", div.EventIdentifier)});
+            Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
         }
 
         public void AddEvent(Event anEvent)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("INSERT INTO events (name, date) values ({0},{1})", anEvent.Name, anEvent.Name), connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "INSERT INTO events(name, date) values(@name,@date)";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@name", anEvent.Name),
+                new SQLiteParameter("@date", anEvent.Date) });
+            Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
         }
 
@@ -143,39 +155,87 @@ namespace EventDirector
 
         private void AddParticipantNoTransaction(Participant person)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("INSERT INTO emergencycontacts (name, phone, email) VALUES ({0},{1},{2}); SELECT emergencycontact_id FROM emergencycontacts WHERE name='{0}'", person.EmergencyContact.Name, person.EmergencyContact.Phone, person.EmergencyContact.Email), connection);
+
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "INSERT INTO emergencycontacts (name, phone, email) VALUES (@name,@phone,@email); SELECT emergencycontact_id FROM emergencycontacts WHERE name=@name";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@name", person.EmergencyContact.Name),
+                new SQLiteParameter("@phone", person.EmergencyContact.Phone),
+                new SQLiteParameter("@email", person.EmergencyContact.Email) });
+            Log.D("SQL query: '" + command.CommandText + "'");
             SQLiteDataReader reader = command.ExecuteReader();
             if (reader.Read())
             {
                 person.EmergencyContact.Identifier = Convert.ToInt32(reader["emergencycontact_id"]);
             }
-            command = new SQLiteCommand(String.Format("INSERT INTO participants (first, last, street, city, state, zip, birthday, emergencycontact_id, phone, email) VALUES ({0},{1},{2},{3},{4},{5},{6},{7},{8},{9}); SELECT participant_id FROM participants WHERE first='{0}' AND last='{1}' AND street='{2}' AND city='{3}'",
-                person.FirstName, person.LastName, person.Street, person.City, person.State, person.Zip, person.Birthdate, person.EmergencyContact.Identifier, person.Phone, person.Email), connection);
+            command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "INSERT INTO participants (first, last, street, city, state, zip, birthday, emergencycontact_id, phone, email) VALUES (@0,@1,@2,@3,@4,@5,@6,@7,@8,@9); SELECT participant_id FROM participants WHERE first=@0 AND last=@1 AND street=@2 AND city=@3";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", person.FirstName),
+                new SQLiteParameter("@1", person.LastName),
+                new SQLiteParameter("@2", person.Street),
+                new SQLiteParameter("@3", person.City),
+                new SQLiteParameter("@4", person.State),
+                new SQLiteParameter("@5", person.Zip),
+                new SQLiteParameter("@6", person.Birthdate),
+                new SQLiteParameter("@7", person.EmergencyContact.Identifier),
+                new SQLiteParameter("@8", person.Phone),
+                new SQLiteParameter("@9", person.Email) } );
             reader = command.ExecuteReader();
             if (reader.Read())
             {
                 person.Identifier = Convert.ToInt32(reader["participant_id"]);
             }
-            command = new SQLiteCommand(String.Format("INSERT INTO eventspecific (participant_id, event_id, division_id, bib, chip, checkedin, shirtpurchase, shirtsize) VALUES ({0},{1},{2},{3},{4},{5},{6},{7})",
-                person.Identifier, person.EventSpecific.EventIdentifier, person.EventSpecific.DivisionIdentifier, person.EventSpecific.Bib, person.EventSpecific.Chip, person.EventSpecific.CheckedIn, person.EventSpecific.ShirtPurchase, person.EventSpecific.ShirtSize), connection);
+            command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, division_id, bib, chip, checkedin, shirtpurchase, shirtsize) VALUES (@0,@1,@2,@3,@4,@5,@6,@7)";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", person.Identifier),
+                new SQLiteParameter("@1", person.EventSpecific.EventIdentifier),
+                new SQLiteParameter("@2", person.EventSpecific.DivisionIdentifier),
+                new SQLiteParameter("@3", person.EventSpecific.Bib),
+                new SQLiteParameter("@4", person.EventSpecific.Chip),
+                new SQLiteParameter("@5", person.EventSpecific.CheckedIn),
+                new SQLiteParameter("@6", person.EventSpecific.ShirtPurchase),
+                new SQLiteParameter("@7", person.EventSpecific.ShirtSize) } );
             command.ExecuteNonQuery();
         }
 
         public void AddTimingPoint(TimingPoint tp)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("INSERT INTO timingpoints (event_id, name, distance, unit) VALUES ({0},{1},{2},{3})",tp.EventIdentifier,tp.Name,tp.Distance,tp.Unit),connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "INSERT INTO timingpoints (event_id, name, distance, unit) VALUES (@0,@1,@2,@3)";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", tp.EventIdentifier),
+                new SQLiteParameter("@1", tp.Name),
+                new SQLiteParameter("@2", tp.Distance),
+                new SQLiteParameter("@3", tp.Unit) } );
             command.ExecuteNonQuery();
         }
 
         public void AddTimingResult(TimeResult tr)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("INSERT INTO timeresults (event_id, eventspecific_id, timingpoint_id, time) VALUES ({0},{1},{2},{3})",tr.EventIdentifier,tr.EventParticipantId,tr.TimingPointId,tr.Time),connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "INSERT INTO timeresults (event_id, eventspecific_id, timingpoint_id, time) VALUES (@0,@1,@2,@3)";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", tr.EventIdentifier),
+                new SQLiteParameter("@1", tr.EventSpecificId),
+                new SQLiteParameter("@2", tr.TimingPointId),
+                new SQLiteParameter("@3", tr.Time) } );
             command.ExecuteNonQuery();
         }
 
         public void RemoveDivision(int identifier)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("DELETE FROM divisions WHERE division_id='{0}'", identifier), connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "DELETE FROM divisions WHERE division_id='@0'";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", identifier) } );
             command.ExecuteNonQuery();
         }
 
@@ -188,7 +248,11 @@ namespace EventDirector
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = new SQLiteCommand(String.Format("DELETE FROM events WHERE event_id='{0}'; DELETE FROM divisions WHERE event_id='{0}'; DELETE FROM timingpoints WHERE event_id='{0}'; DELETE FROM timeresults WHERE event_id='{0}'; DELETE FROM eventspecific WHERE event_id='{0}'",identifier), connection);
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "DELETE FROM events WHERE event_id='@0'; DELETE FROM divisions WHERE event_id='@0'; DELETE FROM timingpoints WHERE event_id='@0'; DELETE FROM timeresults WHERE event_id='@0'; DELETE FROM eventspecific WHERE event_id='@0'";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@0", identifier) });
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
@@ -201,7 +265,11 @@ namespace EventDirector
 
         public void RemoveParticipant(int identifier)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("DELETE FROM eventspecific WHERE participant_id='{0}'; DELETE FROM participant WHERE participant_id='{0}'"), connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "DELETE FROM eventspecific WHERE participant_id='@0'; DELETE FROM participant WHERE participant_id='@0'";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@0", identifier) });
             command.ExecuteNonQuery();
         }
 
@@ -217,63 +285,132 @@ namespace EventDirector
 
         public void RemoveTimingPoint(int identifier)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("DELETE FROM timingpoints WHERE timingpoint_id='{0}'", identifier), connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "DELETE FROM timingpoints WHERE timingpoint_id='@0'";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@0", identifier) });
             command.ExecuteNonQuery();
         }
 
         public void RemoveTimingResult(TimeResult tr)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("DELETE FROM timeresults WHERE eventspecific_id='{0}' AND timingpoint_id='{1}'",tr.EventParticipantId,tr.TimingPointId), connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "DELETE FROM timeresults WHERE eventspecific_id='@0' AND timingpoint_id='@1'";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", tr.EventSpecificId),
+                new SQLiteParameter("@1", tr.TimingPointId) } );
             command.ExecuteNonQuery();
         }
 
         public void UpdateDivision(Division div)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("UPDATE divisions SET name='{0}', event_id='{1}' WHERE division_id='{2}'",div.Name,div.EventIdentifier,div.Identifier), connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "UPDATE divisions SET name='{0}', event_id='@1' WHERE division_id='@2'";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", div.Name),
+                new SQLiteParameter("@1", div.EventIdentifier),
+                new SQLiteParameter("@2", div.Identifier) } );
             command.ExecuteNonQuery();
         }
 
         public void UpdateEvent(Event anEvent)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("UPDATE events SET name='{0}', date='{1}' WHERE event_id='{2}'", anEvent.Name, anEvent.Date, anEvent.Identifier), connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "UPDATE events SET name='@0', date='@1' WHERE event_id='@2'";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", anEvent.Name),
+                new SQLiteParameter("@1", anEvent.Date),
+                new SQLiteParameter("@2", anEvent.Identifier) } );
             command.ExecuteNonQuery();
         }
 
         public void UpdateParticipant(Participant person)
         {
             using (var transaction = connection.BeginTransaction()) {
-                SQLiteCommand command = new SQLiteCommand(String.Format("INSERT INTO emergencycontacts (name, phone, email) VALUES ({0},{1},{2}); DELETE FROM emergencycontacts AS e LEFT OUTER JOIN participants AS p on e.emergencycontact_id=p.emergencycontact_id WHERE p.participant_id IS NULL AND e.emergencycontact_id != 0; SELECT emergencycontact_id FROM emergencycontacts WHERE name='{0}'", person.EmergencyContact.Name,person.EmergencyContact.Phone,person.EmergencyContact.Email),connection);
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "INSERT INTO emergencycontacts (name, phone, email) VALUES (@0,@1,@2); DELETE FROM emergencycontacts AS e LEFT OUTER JOIN participants AS p on e.emergencycontact_id=p.emergencycontact_id WHERE p.participant_id IS NULL AND e.emergencycontact_id != 0; SELECT emergencycontact_id FROM emergencycontacts WHERE name='@0'";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@0", person.EmergencyContact.Name),
+                    new SQLiteParameter("@1", person.EmergencyContact.Phone),
+                    new SQLiteParameter("@2", person.EmergencyContact.Email) } );
                 SQLiteDataReader reader = command.ExecuteReader();
                 person.EmergencyContact.Identifier = reader.Read() ? Convert.ToInt32(reader["emergencycontact_id"]) : 0;
-                command = new SQLiteCommand(String.Format("UPDATE participants SET first='{0}', last='{1}', street='{2}', city='{3}', state='{4}', zip='{5}', birthday='{6}', emergencycontact_id='{7}', phone='{8}', email='{9}' WHERE participant_id='{10}'",
-                    person.FirstName, person.LastName, person.Street, person.City, person.State, person.Zip, person.Birthdate, person.EmergencyContact.Identifier, person.Phone, person.Email, person.Identifier), connection);
+                command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "UPDATE participants SET first='@0', last='@1', street='@2', city='@3', state='@4', zip='@5', birthday='@6', emergencycontact_id='@7', phone='@8', email='@9' WHERE participant_id='@10'";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@0", person.FirstName),
+                    new SQLiteParameter("@1", person.LastName),
+                    new SQLiteParameter("@2", person.Street),
+                    new SQLiteParameter("@3", person.City),
+                    new SQLiteParameter("@4", person.State),
+                    new SQLiteParameter("@5", person.Zip),
+                    new SQLiteParameter("@6", person.Birthdate),
+                    new SQLiteParameter("@7", person.EmergencyContact.Identifier),
+                    new SQLiteParameter("@8", person.Phone),
+                    new SQLiteParameter("@9", person.Email),
+                    new SQLiteParameter("@10", person.Identifier) } );
                 command.ExecuteNonQuery();
-                command = new SQLiteCommand(String.Format("UPDATE eventspecific SET division_id='{0}', bib='{1}', chip='{2}', checkedin='{3}', shirtpurchase='{4}', shirtsize='{5}' WHERE eventspecific_id='{6}'",
-                    person.EventSpecific.DivisionIdentifier, person.EventSpecific.Bib, person.EventSpecific.Chip, person.EventSpecific.CheckedIn, person.EventSpecific.ShirtPurchase, person.EventSpecific.ShirtSize, person.EventSpecific.Identifier), connection);
+                command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "UPDATE eventspecific SET division_id='@0', bib='@1', chip='@2', checkedin='@3', shirtpurchase='@4', shirtsize='@5' WHERE eventspecific_id='@6'";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@0", person.EventSpecific.DivisionIdentifier),
+                    new SQLiteParameter("@1", person.EventSpecific.Bib),
+                    new SQLiteParameter("@2", person.EventSpecific.Chip),
+                    new SQLiteParameter("@3", person.EventSpecific.CheckedIn),
+                    new SQLiteParameter("@4", person.EventSpecific.ShirtPurchase),
+                    new SQLiteParameter("@5", person.EventSpecific.ShirtSize),
+                    new SQLiteParameter("@6", person.EventSpecific.Identifier) } );
                 command.ExecuteNonQuery();
             }
         }
 
         public void UpdateTimingPoint(TimingPoint tp)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("UPDATE timingpoints SET event_id='{0}', name='{1}', distance='{2}', unit='{3}' WHERE timingpoint_id='{4}'",tp.EventIdentifier,tp.Name,tp.Distance,tp.Unit,tp.Identifier), connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "UPDATE timingpoints SET event_id='@0', name='@1', distance='@2', unit='@3' WHERE timingpoint_id='@4'";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", tp.EventIdentifier),
+                new SQLiteParameter("@1", tp.Name),
+                new SQLiteParameter("@2", tp.Distance),
+                new SQLiteParameter("@3", tp.Unit),
+                new SQLiteParameter("@4", tp.Identifier) } );
             command.ExecuteNonQuery();
         }
 
         public void UpdateTimingResult(TimeResult oldResult, TimeResult newResult)
         {
-            SQLiteCommand command = new SQLiteCommand(String.Format("UPDATE timeresult SET time='{0}' WHERE eventspecific_id='{1}' AND timingpoint_id='{2}'", newResult.Time,oldResult.EventParticipantId,oldResult.TimingPointId), connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "UPDATE timeresult SET time='@0' WHERE eventspecific_id='@1' AND timingpoint_id='@2'";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", newResult.Time),
+                new SQLiteParameter("@1", oldResult.EventSpecificId),
+                new SQLiteParameter("@2", oldResult.TimingPointId) } );
             command.ExecuteNonQuery();
         }
 
-        public void CheckInParticipant(int identifier)
+        public void CheckInParticipant(int identifier, int checkedIn)
         {
-            throw new NotImplementedException();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "UPDATE participants SET checkedin='@0' WHERE participant_id='@1'";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@0", checkedIn),
+                new SQLiteParameter("@1", identifier) });
+            command.ExecuteNonQuery();
         }
 
         public void CheckInParticipant(Participant person)
         {
-            throw new NotImplementedException();
+            CheckInParticipant(person.Identifier, person.EventSpecific.CheckedIn);
         }
 
         public void ResetDatabase()
@@ -284,6 +421,38 @@ namespace EventDirector
                 transaction.Commit();
             }
             Initialize();
+        }
+
+        public ArrayList GetEvents()
+        {
+            ArrayList output = new ArrayList();
+            SQLiteCommand command = new SQLiteCommand("SELECT * FROM events", connection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new Event(Convert.ToInt32(reader["event_id"]), reader["name"].ToString(), Convert.ToInt64(reader["date"])));
+            }
+            return output;
+        }
+
+        public ArrayList GetDivisions()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ArrayList GetTimingPoints()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ArrayList GetParticipants()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ArrayList GetTimingResults()
+        {
+            throw new NotImplementedException();
         }
     }
 }

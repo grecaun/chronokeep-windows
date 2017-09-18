@@ -19,13 +19,26 @@ namespace EventDirector
     /// </summary>
     public partial class NewEventWindow : Window
     {
-        public NewEventWindow()
+        MainWindow mainWindow;
+
+        public NewEventWindow(MainWindow mainWindow)
         {
             InitializeComponent();
+            datePicker.SelectedDate = DateTime.Today;
+            this.mainWindow = mainWindow;
         }
 
         private void submit_Click(object sender, RoutedEventArgs e)
         {
+            String nameString = nameBox.Text.Trim();
+            long dateVal = datePicker.SelectedDate.Value.Date.Ticks;
+            Log.D("Name given for event: '" + nameString + "' Date Given: " + datePicker.SelectedDate.Value.Date.ToShortDateString() + " Date Value: " + dateVal);
+            if (nameString == "")
+            {
+                MessageBox.Show("Please input a value in the name box.");
+                return;
+            }
+            mainWindow.AddEvent(nameString, dateVal);
             this.Close();
         }
 

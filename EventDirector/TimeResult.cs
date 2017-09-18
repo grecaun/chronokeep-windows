@@ -10,7 +10,7 @@ namespace EventDirector
     {
         int eventIdentifier, eventParticipantId, timingPointId, time;
 
-        public int EventParticipantId { get => eventParticipantId; set => eventParticipantId = value; }
+        public int EventSpecificId { get => eventParticipantId; set => eventParticipantId = value; }
         public int TimingPointId { get => timingPointId; set => timingPointId = value; }
         public int Time { get => time; set => time = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }

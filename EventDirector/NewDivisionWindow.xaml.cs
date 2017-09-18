@@ -19,13 +19,24 @@ namespace EventDirector
     /// </summary>
     public partial class NewDivisionWindow : Window
     {
-        public NewDivisionWindow()
+        MainWindow mainWindow;
+
+        public NewDivisionWindow(MainWindow mWindow)
         {
             InitializeComponent();
+            this.mainWindow = mWindow;
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
+            String nameString = nameBox.Text.Trim();
+            Log.D("Name given for division: '" + nameString + "'");
+            if (nameString == "")
+            {
+                MessageBox.Show("Please input a value in the name box.");
+                return;
+            }
+            mainWindow.AddDivision(nameString);
             this.Close();
         }
 

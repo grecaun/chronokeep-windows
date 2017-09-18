@@ -11,6 +11,23 @@ namespace EventDirector
         private int identifier, eventIdentifier;
         private string name, distance, unit;
 
+        public TimingPoint(int eventIdentifier, string nameString, string distanceStr, string unitString)
+        {
+            this.eventIdentifier = eventIdentifier;
+            this.name = nameString;
+            this.distance = distanceStr;
+            this.unit = unitString;
+        }
+
+        public TimingPoint(int identifier, int eventIdentifier, string nameString, string distanceStr, string unitString)
+        {
+            this.identifier = identifier;
+            this.eventIdentifier = eventIdentifier;
+            this.name = nameString;
+            this.distance = distanceStr;
+            this.unit = unitString;
+        }
+
         public int Identifier { get => identifier; set => identifier = value; }
         public string Name { get => name; set => name = value; }
         public string Distance { get => distance; set => distance = value; }
