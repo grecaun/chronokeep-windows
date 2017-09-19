@@ -30,6 +30,11 @@ namespace EventDirector
 
         private void submit_Click(object sender, RoutedEventArgs e)
         {
+            submit();
+        }
+
+        private void submit()
+        {
             String nameString = nameBox.Text.Trim();
             long dateVal = datePicker.SelectedDate.Value.Date.Ticks;
             Log.D("Name given for event: '" + nameString + "' Date Given: " + datePicker.SelectedDate.Value.Date.ToShortDateString() + " Date Value: " + dateVal);
@@ -45,6 +50,14 @@ namespace EventDirector
         private void cancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void Keyboard_Up(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                submit();
+            }
         }
     }
 }

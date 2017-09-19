@@ -10,6 +10,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
+        private readonly int version = 1;
         SQLiteConnection connection;
 
         public SQLiteInterface(String info)
@@ -20,91 +21,108 @@ namespace EventDirector
 
         public void Initialize()
         {
-            string query = "PRAGMA foreign_keys = ON; PRAGMA foreign_keys"; // Ensure Foreign key constraints work.
             ArrayList queries = new ArrayList();
-            SQLiteCommand command = new SQLiteCommand(query, connection);
+            SQLiteCommand command = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'", connection);
             SQLiteDataReader reader = command.ExecuteReader();
-            if (reader.Read()) {
-                if (reader.GetInt32(0) == 1)
+            if (reader.Read())
+            {
+                Log.D("Tables do not need to be made.");
+                command = new SQLiteCommand("SELECT version FROM settings", connection);
+                reader = command.ExecuteReader();
+                reader.Read();
+                int oldVersion = Convert.ToInt32(reader["version"]);
+                if (oldVersion < version) UpdateDatabase(oldVersion,version);
+            }
+            else
+            {
+                Log.D("Tables havent been created. Doing so now.");
+                command = new SQLiteCommand("PRAGMA foreign_keys = ON; PRAGMA foreign_keys", connection); // Ensure Foreign key constraints work.
+                reader = command.ExecuteReader();
+                if (reader.Read())
                 {
-                    Log.D("Foreign keys work. Setting table creation queries.");
-                    queries.Add("CREATE TABLE IF NOT EXISTS events (event_id INTEGER PRIMARY KEY, name VARCHAR(100) NOT NULL, date INTEGER NOT NULL)");
-                    queries.Add("CREATE TABLE IF NOT EXISTS divisions (division_id INTEGER PRIMARY KEY, name VARCHAR(100) NOT NULL, event_id INTEGER NOT NULL REFERENCES events(event_id))");
-                    queries.Add("CREATE TABLE IF NOT EXISTS timingpoints (timingpoint_id INTEGER PRIMARY KEY, name VARCHAR(100) NOT NULL, distance VARCHAR(5), unit VARCHAR(2))");
-                    queries.Add("CREATE TABLE IF NOT EXISTS emergencycontacts (emergencycontact_id INTEGER PRIMARY KEY, name VARCHAR(150) UNIQUE NOT NULL, phone VARCHAR(20), email VARCHAR(150))");
-                    queries.Add("CREATE TABLE IF NOT EXISTS participants (participant_id INTEGER PRIMARY KEY, first VARCHAR(50) NOT NULL, last VARCHAR(75) NOT NULL, street VARCHAR(150), city VARCHAR(75), state VARCHAR(25), zip VARCHAR(10), birthday INTEGER NOT NULL, emergencycontact_id INTEGER REFERENCES emergencycontacts(emergencycontact_id), phone VARCHAR(20), email VARCHAR(150))");
-                    queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (eventspecific_id INTEGER PRIMARY KEY, participant_id INTEGER NOT NULL REFERENCES participants(participant_id), event_id INTEGER NOT NULL REFERENCES events(event_id), division_id INTEGER NOT NULL REFERENCES divisions(division_id), bib INTEGER, chip INTEGER, checkedin INTEGER DEFAULT 0, shirpurchase INTEGER DEFAULT 0, shirtsize VARCHAR(5))");
-                    queries.Add("CREATE TABLE IF NOT EXISTS timeresults (event_id INTEGER NOT NULL REFERENCES events(event_id), eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id), timingpoint_id INTEGER NOT NULL REFERENCES timingpoints(timingpoint_id), time INTEGER NOT NULL)");
+                    if (reader.GetInt32(0) == 1)
+                    {
+                        Log.D("Foreign keys work. Setting table creation queries.");
+                        queries.Add("CREATE TABLE IF NOT EXISTS events (event_id INTEGER PRIMARY KEY, name VARCHAR(100) NOT NULL, date INTEGER NOT NULL)");
+                        queries.Add("CREATE TABLE IF NOT EXISTS divisions (division_id INTEGER PRIMARY KEY, name VARCHAR(100) NOT NULL, event_id INTEGER NOT NULL REFERENCES events(event_id))");
+                        queries.Add("CREATE TABLE IF NOT EXISTS timingpoints (timingpoint_id INTEGER PRIMARY KEY, event_id INTEGER NOT NULL REFERENCES events(event_id), division_id INTEGER NOT NULL REFERENCES divisions(division_id), name VARCHAR(100) NOT NULL, distance VARCHAR(5), unit VARCHAR(2))");
+                        queries.Add("CREATE TABLE IF NOT EXISTS emergencycontacts (emergencycontact_id INTEGER PRIMARY KEY, name VARCHAR(150) UNIQUE NOT NULL, phone VARCHAR(20), email VARCHAR(150))");
+                        queries.Add("CREATE TABLE IF NOT EXISTS participants (participant_id INTEGER PRIMARY KEY, first VARCHAR(50) NOT NULL, last VARCHAR(75) NOT NULL, street VARCHAR(150), city VARCHAR(75), state VARCHAR(25), zip VARCHAR(10), birthday INTEGER NOT NULL, emergencycontact_id INTEGER REFERENCES emergencycontacts(emergencycontact_id), phone VARCHAR(20), email VARCHAR(150))");
+                        queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (eventspecific_id INTEGER PRIMARY KEY, participant_id INTEGER NOT NULL REFERENCES participants(participant_id), event_id INTEGER NOT NULL REFERENCES events(event_id), division_id INTEGER NOT NULL REFERENCES divisions(division_id), bib INTEGER, chip INTEGER, checkedin INTEGER DEFAULT 0, shirpurchase INTEGER DEFAULT 0, shirtsize VARCHAR(5))");
+                        queries.Add("CREATE TABLE IF NOT EXISTS timeresults (event_id INTEGER NOT NULL REFERENCES events(event_id), eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id), timingpoint_id INTEGER NOT NULL REFERENCES timingpoints(timingpoint_id), time INTEGER NOT NULL)");
+                    }
+                    else
+                    {
+                        Log.D("Foreign keys DO NOT work. Setting table creation queries.");
+                        queries.Add("CREATE TABLE IF NOT EXISTS events (event_id INTEGER PRIMARY KEY, name VARCHAR(100) NOT NULL, date INTEGER NOT NULL)");
+                        queries.Add("CREATE TABLE IF NOT EXISTS divisions (division_id INTEGER PRIMARY KEY, event_id INTEGER NOT NULL REFERENCES events(event_id), division_id INTEGER NOT NULL REFERENCES divisions(division_id), name VARCHAR(100) NOT NULL, event_id INTEGER NOT NULL)");
+                        queries.Add("CREATE TABLE IF NOT EXISTS timingpoints (timingpoint_id INTEGER PRIMARY KEY, event_id INTEGER NOT NULL, event_id INTEGER NOT NULL REFERENCES events(event_id), name VARCHAR(100) NOT NULL, distance VARCHAR(5), unit VARCHAR(2))");
+                        queries.Add("CREATE TABLE IF NOT EXISTS emergencycontacts (emergencycontact_id INTEGER PRIMARY KEY, name VARCHAR(150) NOT NULL, phone VARCHAR(20), email VARCHAR(150))");
+                        queries.Add("CREATE TABLE IF NOT EXISTS participants (participant_id INTEGER PRIMARY KEY, first VARCHAR(50) NOT NULL, last VARCHAR(75) NOT NULL, street VARCHAR(150), city VARCHAR(75), state VARCHAR(25), zip VARCHAR(10), birthday INTEGER NOT NULL, emergencycontact_id INTEGER NOT NULL, phone VARCHAR(20), email VARCHAR(150))");
+                        queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (eventspecific_id INTEGER PRIMARY KEY, participant_id INTEGER NOT NULL, event_id INTEGER NOT NULL, division_id INTEGER NOT NULL, bib INTEGER, chip INTEGER, checkedin INTEGER DEFAULT 0, shirpurchase INTEGER DEFAULT 0, shirtsize VARCHAR(5))");
+                        queries.Add("CREATE TABLE IF NOT EXISTS timeresults (event_id INTEGER NOT NULL, eventspecific_id INTEGER NOT NULL, timingpoint_id INTEGER NOT NULL, time INTEGER NOT NULL)");
+                    }
                 }
                 else
                 {
-                    Log.D("Foreign keys DO NOT work. Setting table creation queries.");
-                    queries.Add("CREATE TABLE IF NOT EXISTS events (event_id INTEGER PRIMARY KEY, name VARCHAR(100) NOT NULL, date INTEGER NOT NULL)");
-                    queries.Add("CREATE TABLE IF NOT EXISTS divisions (division_id INTEGER PRIMARY KEY, name VARCHAR(100) NOT NULL, event_id INTEGER NOT NULL)");
-                    queries.Add("CREATE TABLE IF NOT EXISTS timingpoints (timingpoint_id INTEGER PRIMARY KEY, event_id INTEGER NOT NULL, event_id INTEGER NOT NULL REFERENCES events(event_id), name VARCHAR(100) NOT NULL, distance VARCHAR(5), unit VARCHAR(2))");
-                    queries.Add("CREATE TABLE IF NOT EXISTS emergencycontacts (emergencycontact_id INTEGER PRIMARY KEY, name VARCHAR(150) NOT NULL, phone VARCHAR(20) NOT NULL, email VARCHAR(150))");
-                    queries.Add("CREATE TABLE IF NOT EXISTS participants (participant_id INTEGER PRIMARY KEY, first VARCHAR(50) NOT NULL, last VARCHAR(75) NOT NULL, street VARCHAR(150), city VARCHAR(75), state VARCHAR(25), zip VARCHAR(10), birthday INTEGER NOT NULL, emergencycontact_id INTEGER NOT NULL, phone VARCHAR(20), email VARCHAR(150))");
-                    queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (eventspecific_id INTEGER PRIMARY KEY, participant_id INTEGER NOT NULL, event_id INTEGER NOT NULL, division_id INTEGER NOT NULL, bib INTEGER, chip INTEGER, checkedin INTEGER DEFAULT 0, shirpurchase INTEGER DEFAULT 0, shirtsize VARCHAR(5))");
-                    queries.Add("CREATE TABLE IF NOT EXISTS timeresults (event_id INTEGER NOT NULL, eventspecific_id INTEGER NOT NULL, timingpoint_id INTEGER NOT NULL, time INTEGER NOT NULL)");
+                    return;
                 }
-            } else
-            {
-                return;
-            }
-            queries.Add("CREATE TABLE IF NOT EXISTS changes (change_id INTEGER PRIMARY KEY, " +
-                                                            "old_participant_id INTEGER NOT NULL," +
-                                                            "old_first VARCHAR(50) NOT NULL," +
-                                                            "old_last VARCHAR(75) NOT NULL," +
-                                                            "old_street VARCHAR(150)," +
-                                                            "old_city VARCHAR(75)," +
-                                                            "old_state VARCHAR(25)," +
-                                                            "old_zip VARCHAR(10)," +
-                                                            "old_birthday INTEGER NOT NULL," +
-                                                            "old_emergency_id INTEGER," +
-                                                            "old_emergency_name VARCHAR(150)," +
-                                                            "old_emergency_phone VARCHAR(20)," +
-                                                            "old_emergency_email VARCHAR(150)," +
-                                                            "old_event_spec_id INTEGER NOT NULL," +
-                                                            "old_event_spec_event_id INTEGER NOT NULL," +
-                                                            "old_event_spec_division_id INTEGER NOT NULL," +
-                                                            "old_event_spec_bib INTEGER," +
-                                                            "old_event_spec_chip INTEGER," +
-                                                            "old_event_spec_checkedin INTEGER NOT NULL," +
-                                                            "old_event_spec_shirtpurchase INTEGER NOT NULL," +
-                                                            "old_event_spec_shirtsize VARCHAR(5)," +
-                                                            "new_participant_id INTEGER NOT NULL," +
-                                                            "new_first VARCHAR(50) NOT NULL," +
-                                                            "new_last VARCHAR(75) NOT NULL," +
-                                                            "new_street VARCHAR(150)," +
-                                                            "new_city VARCHAR(75)," +
-                                                            "new_state VARCHAR(25)," +
-                                                            "new_zip VARCHAR(10)," +
-                                                            "new_birthday INTEGER NOT NULL," +
-                                                            "new_emergency_id INTEGER," +
-                                                            "new_emergency_name VARCHAR(150)," +
-                                                            "new_emergency_phone VARCHAR(20)," +
-                                                            "new_emergency_email VARCHAR(150)," +
-                                                            "new_event_spec_id INTEGER NOT NULL," +
-                                                            "new_event_spec_event_id INTEGER NOT NULL," +
-                                                            "new_event_spec_division_id INTEGER NOT NULL," +
-                                                            "new_event_spec_bib INTEGER," +
-                                                            "new_event_spec_chip INTEGER," +
-                                                            "new_event_spec_checkedin INTEGER NOT NULL," +
-                                                            "new_event_spec_shirtpurchase INTEGER NOT NULL," +
-                                                            "new_event_spec_shirtsize VARCHAR(5)" +
-                                                            ")");
-            queries.Add("INSERT OR IGNORE INTO emergencycontacts (emergencycontact_id, name) VALUES (0,'')");
+                queries.Add("CREATE TABLE IF NOT EXISTS settings (version INTEGER NOT NULL); INSERT INTO settings (version) VALUES (" + version + ")");
+                queries.Add("CREATE TABLE IF NOT EXISTS changes (change_id INTEGER PRIMARY KEY, " +
+                                                                "old_participant_id INTEGER NOT NULL," +
+                                                                "old_first VARCHAR(50) NOT NULL," +
+                                                                "old_last VARCHAR(75) NOT NULL," +
+                                                                "old_street VARCHAR(150)," +
+                                                                "old_city VARCHAR(75)," +
+                                                                "old_state VARCHAR(25)," +
+                                                                "old_zip VARCHAR(10)," +
+                                                                "old_birthday INTEGER NOT NULL," +
+                                                                "old_emergency_id INTEGER," +
+                                                                "old_emergency_name VARCHAR(150)," +
+                                                                "old_emergency_phone VARCHAR(20)," +
+                                                                "old_emergency_email VARCHAR(150)," +
+                                                                "old_event_spec_id INTEGER NOT NULL," +
+                                                                "old_event_spec_event_id INTEGER NOT NULL," +
+                                                                "old_event_spec_division_id INTEGER NOT NULL," +
+                                                                "old_event_spec_bib INTEGER," +
+                                                                "old_event_spec_chip INTEGER," +
+                                                                "old_event_spec_checkedin INTEGER NOT NULL," +
+                                                                "old_event_spec_shirtpurchase INTEGER NOT NULL," +
+                                                                "old_event_spec_shirtsize VARCHAR(5)," +
+                                                                "new_participant_id INTEGER NOT NULL," +
+                                                                "new_first VARCHAR(50) NOT NULL," +
+                                                                "new_last VARCHAR(75) NOT NULL," +
+                                                                "new_street VARCHAR(150)," +
+                                                                "new_city VARCHAR(75)," +
+                                                                "new_state VARCHAR(25)," +
+                                                                "new_zip VARCHAR(10)," +
+                                                                "new_birthday INTEGER NOT NULL," +
+                                                                "new_emergency_id INTEGER," +
+                                                                "new_emergency_name VARCHAR(150)," +
+                                                                "new_emergency_phone VARCHAR(20)," +
+                                                                "new_emergency_email VARCHAR(150)," +
+                                                                "new_event_spec_id INTEGER NOT NULL," +
+                                                                "new_event_spec_event_id INTEGER NOT NULL," +
+                                                                "new_event_spec_division_id INTEGER NOT NULL," +
+                                                                "new_event_spec_bib INTEGER," +
+                                                                "new_event_spec_chip INTEGER," +
+                                                                "new_event_spec_checkedin INTEGER NOT NULL," +
+                                                                "new_event_spec_shirtpurchase INTEGER NOT NULL," +
+                                                                "new_event_spec_shirtsize VARCHAR(5)" +
+                                                                ")");
+                queries.Add("INSERT INTO emergencycontacts (emergencycontact_id, name) VALUES (0,'')");
 
-            using (var transaction = connection.BeginTransaction())
-            {
-                int counter = 1;
-                foreach (String q in queries)
+                using (var transaction = connection.BeginTransaction())
                 {
-                    Log.D("Table query number " + counter++ + "Query string is: " + q);
-                    command = new SQLiteCommand(q, connection);
-                    command.ExecuteNonQuery();
+                    int counter = 1;
+                    foreach (String q in queries)
+                    {
+                        Log.D("Table query number " + counter++ + " Query string is: " + q);
+                        command = new SQLiteCommand(q, connection);
+                        command.ExecuteNonQuery();
+                    }
+                    transaction.Commit();
                 }
-                transaction.Commit();
             }
         }
 
@@ -207,12 +225,13 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO timingpoints (event_id, name, distance, unit) VALUES (@0,@1,@2,@3)";
+            command.CommandText = "INSERT INTO timingpoints (event_id, division_id, name, distance, unit) VALUES (@0,@1,@2,@3,@4)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", tp.EventIdentifier),
-                new SQLiteParameter("@1", tp.Name),
-                new SQLiteParameter("@2", tp.Distance),
-                new SQLiteParameter("@3", tp.Unit) } );
+                new SQLiteParameter("@1", tp.DivisionIdentifier),
+                new SQLiteParameter("@2", tp.Name),
+                new SQLiteParameter("@3", tp.Distance),
+                new SQLiteParameter("@4", tp.Unit) } );
             command.ExecuteNonQuery();
         }
 
@@ -233,7 +252,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "DELETE FROM divisions WHERE division_id='@0'";
+            command.CommandText = "DELETE FROM divisions WHERE division_id=@0";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", identifier) } );
             command.ExecuteNonQuery();
@@ -250,7 +269,7 @@ namespace EventDirector
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "DELETE FROM events WHERE event_id='@0'; DELETE FROM divisions WHERE event_id='@0'; DELETE FROM timingpoints WHERE event_id='@0'; DELETE FROM timeresults WHERE event_id='@0'; DELETE FROM eventspecific WHERE event_id='@0'";
+                command.CommandText = "DELETE FROM events WHERE event_id=@0; DELETE FROM divisions WHERE event_id=@0; DELETE FROM timingpoints WHERE event_id=@0; DELETE FROM timeresults WHERE event_id=@0; DELETE FROM eventspecific WHERE event_id=@0";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
                 command.ExecuteNonQuery();
@@ -267,7 +286,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "DELETE FROM eventspecific WHERE participant_id='@0'; DELETE FROM participant WHERE participant_id='@0'";
+            command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@0; DELETE FROM participant WHERE participant_id=@0";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
             command.ExecuteNonQuery();
@@ -287,7 +306,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "DELETE FROM timingpoints WHERE timingpoint_id='@0'";
+            command.CommandText = "DELETE FROM timingpoints WHERE timingpoint_id=@0";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
             command.ExecuteNonQuery();
@@ -297,7 +316,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "DELETE FROM timeresults WHERE eventspecific_id='@0' AND timingpoint_id='@1'";
+            command.CommandText = "DELETE FROM timeresults WHERE eventspecific_id=@0 AND timingpoint_id=@1";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", tr.EventSpecificId),
                 new SQLiteParameter("@1", tr.TimingPointId) } );
@@ -308,7 +327,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE divisions SET name='{0}', event_id='@1' WHERE division_id='@2'";
+            command.CommandText = "UPDATE divisions SET name=@0, event_id=@1 WHERE division_id=@2";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", div.Name),
                 new SQLiteParameter("@1", div.EventIdentifier),
@@ -320,7 +339,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE events SET name='@0', date='@1' WHERE event_id='@2'";
+            command.CommandText = "UPDATE events SET name=@0, date=@1 WHERE event_id=@2";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", anEvent.Name),
                 new SQLiteParameter("@1", anEvent.Date),
@@ -333,7 +352,7 @@ namespace EventDirector
             using (var transaction = connection.BeginTransaction()) {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "INSERT INTO emergencycontacts (name, phone, email) VALUES (@0,@1,@2); DELETE FROM emergencycontacts AS e LEFT OUTER JOIN participants AS p on e.emergencycontact_id=p.emergencycontact_id WHERE p.participant_id IS NULL AND e.emergencycontact_id != 0; SELECT emergencycontact_id FROM emergencycontacts WHERE name='@0'";
+                command.CommandText = "INSERT INTO emergencycontacts (name, phone, email) VALUES (@0,@1,@2); DELETE FROM emergencycontacts AS e LEFT OUTER JOIN participants AS p on e.emergencycontact_id=p.emergencycontact_id WHERE p.participant_id IS NULL AND e.emergencycontact_id != 0; SELECT emergencycontact_id FROM emergencycontacts WHERE name=@0";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", person.EmergencyContact.Name),
                     new SQLiteParameter("@1", person.EmergencyContact.Phone),
@@ -342,7 +361,7 @@ namespace EventDirector
                 person.EmergencyContact.Identifier = reader.Read() ? Convert.ToInt32(reader["emergencycontact_id"]) : 0;
                 command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "UPDATE participants SET first='@0', last='@1', street='@2', city='@3', state='@4', zip='@5', birthday='@6', emergencycontact_id='@7', phone='@8', email='@9' WHERE participant_id='@10'";
+                command.CommandText = "UPDATE participants SET first=@0, last=@1, street=@2, city=@3, state=@4, zip=@5, birthday=@6, emergencycontact_id=@7, phone=@8, email=@9 WHERE participant_id=@10";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", person.FirstName),
                     new SQLiteParameter("@1", person.LastName),
@@ -358,7 +377,7 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "UPDATE eventspecific SET division_id='@0', bib='@1', chip='@2', checkedin='@3', shirtpurchase='@4', shirtsize='@5' WHERE eventspecific_id='@6'";
+                command.CommandText = "UPDATE eventspecific SET division_id=@0, bib=@1, chip=@2, checkedin=@3, shirtpurchase=@4, shirtsize=@5 WHERE eventspecific_id=@6";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", person.EventSpecific.DivisionIdentifier),
                     new SQLiteParameter("@1", person.EventSpecific.Bib),
@@ -375,9 +394,10 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE timingpoints SET event_id='@0', name='@1', distance='@2', unit='@3' WHERE timingpoint_id='@4'";
+            command.CommandText = "UPDATE timingpoints SET event_id=@0, division_id=@divisionId name=@1, distance=@2, unit=@3 WHERE timingpoint_id=@4";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", tp.EventIdentifier),
+                new SQLiteParameter("@divisionId", tp.DivisionIdentifier),
                 new SQLiteParameter("@1", tp.Name),
                 new SQLiteParameter("@2", tp.Distance),
                 new SQLiteParameter("@3", tp.Unit),
@@ -389,7 +409,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE timeresult SET time='@0' WHERE eventspecific_id='@1' AND timingpoint_id='@2'";
+            command.CommandText = "UPDATE timeresult SET time=@0 WHERE eventspecific_id=@1 AND timingpoint_id=@2";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", newResult.Time),
                 new SQLiteParameter("@1", oldResult.EventSpecificId),
@@ -401,7 +421,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE participants SET checkedin='@0' WHERE participant_id='@1'";
+            command.CommandText = "UPDATE participants SET checkedin=@0 WHERE participant_id=@1";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", checkedIn),
                 new SQLiteParameter("@1", identifier) });
@@ -413,14 +433,25 @@ namespace EventDirector
             CheckInParticipant(person.Identifier, person.EventSpecific.CheckedIn);
         }
 
-        public void ResetDatabase()
+        public void HardResetDatabase()
         {
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = new SQLiteCommand("DROP TABLE events; DROP TABLE divisions; DROP TABLE timingpoints; DROP TABLE emergencycontacts; DROP TABLE participants; DROP TABLE eventspecific; DROP TABLE timeresults; DROP TABLE changes;", connection);
+                command.ExecuteNonQuery();
                 transaction.Commit();
             }
             Initialize();
+        }
+
+        public void ResetDatabase()
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = new SQLiteCommand("TRUNCATE TABLE events; TRUNCATE TABLE divisions; TRUNCATE TABLE timingpoints; TRUNCATE TABLE emergencycontacts; TRUNCATE TABLE participants; TRUNCATE TABLE eventspecific; TRUNCATE TABLE timeresults; TRUNCATE TABLE changes;", connection);
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
         }
 
         public ArrayList GetEvents()
@@ -435,14 +466,28 @@ namespace EventDirector
             return output;
         }
 
-        public ArrayList GetDivisions()
+        public ArrayList GetDivisions(int eventId)
         {
-            throw new NotImplementedException();
+            ArrayList output = new ArrayList();
+            SQLiteCommand command = new SQLiteCommand("SELECT * FROM divisions WHERE event_id="+eventId, connection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new Division(Convert.ToInt32(reader["division_id"]),reader["name"].ToString(),Convert.ToInt32(reader["event_id"])));
+            }
+            return output;
         }
 
-        public ArrayList GetTimingPoints()
+        public ArrayList GetTimingPoints(int eventId)
         {
-            throw new NotImplementedException();
+            ArrayList output = new ArrayList();
+            SQLiteCommand command = new SQLiteCommand("SELECT * FROM timingpoints WHERE event_id=" + eventId, connection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new TimingPoint(Convert.ToInt32(reader["timingpoint_id"]), Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_id"]), reader["name"].ToString(), reader["distance"].ToString(), reader["unit"].ToString()));
+            }
+            return output;
         }
 
         public ArrayList GetParticipants()
@@ -450,9 +495,19 @@ namespace EventDirector
             throw new NotImplementedException();
         }
 
-        public ArrayList GetTimingResults()
+        public ArrayList GetParticipants(int eventId)
         {
             throw new NotImplementedException();
+        }
+
+        public ArrayList GetTimingResults(int eventId)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void UpdateDatabase(int oldversion, int newversion)
+        {
+            Log.D("Database is version " + oldversion + " but it needs to be upgraded to version " + newversion);
         }
     }
 }

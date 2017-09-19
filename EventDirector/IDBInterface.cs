@@ -42,9 +42,10 @@ namespace EventDirector
         void ResetDatabase();
 
         ArrayList GetEvents();
-        ArrayList GetDivisions();
-        ArrayList GetTimingPoints();
+        ArrayList GetDivisions(int eventId);
+        ArrayList GetTimingPoints(int eventId);
         ArrayList GetParticipants();
-        ArrayList GetTimingResults();
+        ArrayList GetParticipants(int eventId);
+        ArrayList GetTimingResults(int eventId);
     }
 }

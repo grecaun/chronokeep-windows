@@ -29,6 +29,11 @@ namespace EventDirector
 
         private void submit_Click(object sender, RoutedEventArgs e)
         {
+            submit();
+        }
+
+        private void submit()
+        {
             String nameString = nameBox.Text.Trim();
             String distanceStr = distanceBox.Text.Trim();
             try
@@ -56,6 +61,14 @@ namespace EventDirector
         private void cancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void Keyboard_Up(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                submit();
+            }
         }
     }
 }

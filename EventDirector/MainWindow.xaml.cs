@@ -37,10 +37,10 @@ namespace EventDirector
             }
             database = new SQLiteInterface(dbName);
             database.Initialize();
-            UpdateAllBoxes();
+            UpdateEventBox();
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private async void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             int menuId = Convert.ToInt32(((MenuItem)sender).Uid);
             switch (menuId)
@@ -52,7 +52,13 @@ namespace EventDirector
                     Log.D("Race Director Settings");
                     break;
                 case 3:     // Clear Database
-                    Log.D("Clear Database");
+                    Log.D("Clear Database.");
+                    await Task.Run( () =>
+                    {
+                        database.ResetDatabase();
+                    });
+                    Log.D("Database Reset.");
+                    UpdateEventBox();
                     break;
                 case 4:     // Exit
                     Log.D("Goodbye");
@@ -73,10 +79,43 @@ namespace EventDirector
             String buttonName = ((Button)sender).Name;
             if (buttonName == "eventsRemoveButton")
             {
-            } else if (buttonName == "divisionsRemoveButton")
+                Log.D("Events - Remove Button Pressed.");
+                Event anEvent = (Event)eventsListView.SelectedItem;
+                if (anEvent != null) database.RemoveEvent(anEvent);
+                UpdateEventBox();
+            }
+            else if (buttonName == "divisionsRemoveButton")
             {
-            } else if (buttonName == "timingPointsRemoveButton")
+                Log.D("Divisions - Remove Button Pressed.");
+                Division division = (Division)divisionsListView.SelectedItem;
+                if (division != null) database.RemoveDivision(division);
+                Event anEvent = (Event)eventsListView.SelectedItem;
+                if (anEvent != null) UpdateDivisionsBox(anEvent.Identifier);
+            }
+            else if (buttonName == "timingPointsRemoveButton")
             {
+                Log.D("TimingPoints - Remove Button Pressed.");
+                TimingPoint timingPoint = (TimingPoint)timingPointsListView.SelectedItem;
+                if (timingPoint != null) database.RemoveTimingPoint(timingPoint);
+                Event anEvent = (Event)eventsListView.SelectedItem;
+                if (anEvent != null) UpdateTimingPointsBox(anEvent.Identifier);
+            }
+        }
+
+        private void ModifyButton_Click(object sender, RoutedEventArgs e)
+        {
+            String buttonName = ((Button)sender).Name;
+            if (buttonName == "eventsModifyButton")
+            {
+                Log.D("Events - Modify Button Pressed.");
+            }
+            else if (buttonName == "divisionsModifyButton")
+            {
+                Log.D("Divisions - Modify Button Pressed.");
+            }
+            else if (buttonName == "timingPointsModifyButton")
+            {
+                Log.D("TimingPoints - Modify Button Pressed.");
             }
         }
 
@@ -85,16 +124,19 @@ namespace EventDirector
             String buttonName = ((Button)sender).Name;
             if (buttonName == "eventsAddButton")
             {
+                Log.D("Events - Add Button Pressed.");
                 NewEventWindow eventWindow = new NewEventWindow(this);
                 eventWindow.Show();
             }
             else if (buttonName == "divisionsAddButton")
             {
+                Log.D("Divisions - Add Button Pressed.");
                 NewDivisionWindow divisionWindow = new NewDivisionWindow(this);
                 divisionWindow.Show();
             }
             else if (buttonName == "timingPointsAddButton")
             {
+                Log.D("TimingPoints - Add Button Pressed.");
                 NewTimingPointWindow timingPointWindow = new NewTimingPointWindow(this);
                 timingPointWindow.Show();
             }
@@ -112,11 +154,12 @@ namespace EventDirector
         internal async void AddTimingPoint(string nameString, string distanceStr, string unitString)
         {
             int eventId = ((Event)eventsListView.SelectedItem).Identifier;
+            int divisionId = 0;
             await Task.Run(() =>
             {
-                database.AddTimingPoint(new TimingPoint(eventId, nameString, distanceStr, unitString));
+                database.AddTimingPoint(new TimingPoint(eventId, divisionId, nameString, distanceStr, unitString));
             });
-            UpdateTimingPointBox();
+            UpdateTimingPointsBox(eventId);
         }
 
         internal async void AddDivision(string nameString)
@@ -126,7 +169,7 @@ namespace EventDirector
             {
                 database.AddDivision(new Division(nameString, eventId));
             });
-            UpdateDivisionBox();
+            UpdateDivisionsBox(eventId);
         }
 
         private async void UpdateEventBox()
@@ -136,33 +179,116 @@ namespace EventDirector
             {
                 events = database.GetEvents();
             });
+            eventsListView.Items.Clear();
             foreach (Event e in events)
             {
                 eventsListView.Items.Add(e);
             }
         }
 
-        private void UpdateTimingPointBox()
+        private void UpdateChangesBox(int eventId)
         {
+            Log.D("Updating changes box.");
 
         }
 
-        private void UpdateDivisionBox()
+        private async void UpdateTimingPointsBox(int eventId)
         {
-
+            Log.D("Updating timing points box.");
+            if (timingPointsListView.Visibility == Visibility.Hidden)
+            {
+                return;
+            }
+            ArrayList timingPoints = null;
+            await Task.Run(() =>
+            {
+                timingPoints = database.GetTimingPoints(eventId);
+            });
+            timingPointsListView.Items.Clear();
+            foreach (TimingPoint t in timingPoints)
+            {
+                timingPointsListView.Items.Add(t);
+            }
         }
 
-        private void UpdateChangesBox()
+        private async void UpdateDivisionsBox(int eventId)
         {
-
+            Log.D("Updating divisions box.");
+            if (divisionsListView.Visibility == Visibility.Hidden)
+            {
+                return;
+            }
+            ArrayList divisions = null;
+            await Task.Run(() =>
+            {
+                divisions = database.GetDivisions(eventId);
+            });
+            divisionsListView.Items.Clear();
+            foreach (Division d in divisions)
+            {
+                divisionsListView.Items.Add(d);
+            }
         }
 
-        private void UpdateAllBoxes()
+        private void EventsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateEventBox();
-            UpdateTimingPointBox();
-            UpdateDivisionBox();
-            UpdateChangesBox();
+            if (sender == null) { return; }
+            Event anEvent = (Event)eventsListView.SelectedItem;
+            Log.D("Sender is as follows: " + sender + " the event associated with it has an eventId of " + (anEvent == null ? "null" : anEvent.Identifier.ToString()));
+            if (anEvent != null)
+            {
+                eventsModifyButton.Visibility = Visibility.Visible;
+                eventsRemoveButton.Visibility = Visibility.Visible;
+                divisionsAddButton.Visibility = Visibility.Visible;
+                divisionsListView.Visibility = Visibility.Visible;
+                timingPointsAddButton.Visibility = Visibility.Visible;
+                timingPointsListView.Visibility = Visibility.Visible;
+                UpdateDivisionsBox(anEvent.Identifier);
+                UpdateTimingPointsBox(anEvent.Identifier);
+            }
+            else
+            {
+                eventsModifyButton.Visibility = Visibility.Hidden;
+                eventsRemoveButton.Visibility = Visibility.Hidden;
+                divisionsAddButton.Visibility = Visibility.Hidden;
+                divisionsListView.Visibility = Visibility.Hidden;
+                timingPointsAddButton.Visibility = Visibility.Hidden;
+                timingPointsListView.Visibility = Visibility.Hidden;
+                timingPointsModifyButton.Visibility = Visibility.Hidden;
+                timingPointsRemoveButton.Visibility = Visibility.Hidden;
+                divisionsModifyButton.Visibility = Visibility.Hidden;
+                divisionsRemoveButton.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void TimingPointsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender == null) { return; }
+            if (timingPointsListView.SelectedIndex < 0)
+            {
+                timingPointsModifyButton.Visibility = Visibility.Hidden;
+                timingPointsRemoveButton.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                timingPointsModifyButton.Visibility = Visibility.Visible;
+                timingPointsRemoveButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void DivisionsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender == null) { return; }
+            if (divisionsListView.SelectedIndex > 0)
+            {
+                divisionsModifyButton.Visibility = Visibility.Hidden;
+                divisionsRemoveButton.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                divisionsModifyButton.Visibility = Visibility.Visible;
+                divisionsRemoveButton.Visibility = Visibility.Visible;
+            }
         }
     }
 }

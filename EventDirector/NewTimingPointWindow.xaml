@@ -6,11 +6,11 @@
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
         Title="NewTimingPointWindow" Height="210" Width="250" ResizeMode="NoResize">
-    <Grid>
-        <Label Content="Name" HorizontalAlignment="Left" Margin="20,15,0,0" VerticalAlignment="Top"/>
+    <Grid FocusManager.FocusedElement="{Binding ElementName=nameBox}">
+        <Label Content="Name" HorizontalAlignment="Left" Margin="20,15,0,0" VerticalAlignment="Top" KeyUp="Keyboard_Up"/>
         <TextBox x:Name="nameBox" HorizontalAlignment="Left" Height="23" Margin="20,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
         <Label Content="Distance" HorizontalAlignment="Left" Margin="20,65,20,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="distanceBox" HorizontalAlignment="Left" Height="23" Margin="20,90,0,0" VerticalAlignment="Top" Width="150"/>
+        <TextBox x:Name="distanceBox" HorizontalAlignment="Left" Height="23" Margin="20,90,0,0" VerticalAlignment="Top" Width="150" KeyUp="Keyboard_Up"/>
         <Label Content="Unit" HorizontalAlignment="Left" Margin="175,65,20,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="unitBox" HorizontalAlignment="Left" Height="23" Margin="175,90,0,0" VerticalAlignment="Top" Width="45">
             <ComboBoxItem Content="" />

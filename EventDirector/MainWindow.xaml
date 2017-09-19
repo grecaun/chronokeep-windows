@@ -33,9 +33,16 @@
             <Label x:Name="eventsLabel" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" >
                 <Label Content="Events" FontSize="15"/>
             </Label>
-            <Button x:Name="eventsAddButton" Content="Add" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="75" Grid.Row="0" Grid.Column="0" Click="AddButton_Click" />
-            <Button x:Name="eventsRemoveButton" Content="Remove" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,85,0" Width="75" Grid.Row="0" Grid.Column="0" Click="RemoveButton_Click" />
-            <ListView x:Name="eventsListView" Height="200" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1">
+            <Button x:Name="eventsAddButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="AddButton_Click">
+                <Image Source="pack://application:,,,/Icons/Plus.png" Height="20"/>
+            </Button>
+            <Button x:Name="eventsModifyButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="ModifyButton_Click">
+                <Image Source="pack://application:,,,/Icons/Gear.png" Height="20"/>
+            </Button>
+            <Button x:Name="eventsRemoveButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,75,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="RemoveButton_Click">
+                <Image Source="pack://application:,,,/Icons/Rubbish.png" Height="20"/>
+            </Button>
+            <ListView x:Name="eventsListView" Height="200" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1" SelectionChanged="EventsListView_SelectionChanged">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Identifier}" />
@@ -47,26 +54,43 @@
             <Label x:Name="divisionsLabel" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Visibility="Hidden">
                 <Label Content="Divisions" FontSize="15"/>
             </Label>
-            <Button Visibility="Hidden" x:Name="divisionsAddButton" Content="Add" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="75" Grid.Row="0" Grid.Column="1" Click="AddButton_Click" />
-            <Button Visibility="Hidden" x:Name="divisionsRemoveButton" Content="Remove" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,85,0" Width="75" Grid.Row="0" Grid.Column="1" Click="RemoveButton_Click" />
-            <ListView Visibility="Hidden" x:Name="divisionsListView" Height="200" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1">
+            <Button Visibility="Hidden" x:Name="divisionsAddButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="30" Height="30" Grid.Row="0" Grid.Column="1" Click="AddButton_Click">
+                <Image Source="pack://application:,,,/Icons/Plus.png" Height="20"/>
+            </Button>
+            <Button Visibility="Hidden" x:Name="divisionsModifyButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0" Width="30" Height="30" Grid.Row="0" Grid.Column="1" Click="ModifyButton_Click">
+                <Image Source="pack://application:,,,/Icons/Gear.png" Height="20"/>
+            </Button>
+            <Button Visibility="Hidden" x:Name="divisionsRemoveButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,75,0" Width="30" Height="30" Grid.Row="0" Grid.Column="1" Click="RemoveButton_Click">
+                <Image Source="pack://application:,,,/Icons/Rubbish.png" Height="20"/>
+            </Button>
+            <ListView Visibility="Hidden" x:Name="divisionsListView" Height="200" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" SelectionChanged="DivisionsListView_SelectionChanged">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Identifier}" />
                         <GridViewColumn Header="Name" Width="300" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="EventID" Width="50" DisplayMemberBinding="{Binding EventIdentifier}" />
                     </GridView>
                 </ListView.View>
             </ListView>
             <Label Visibility="Hidden" x:Name="timingPointsLabel" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" >
                 <Label Content="Timing Points" FontSize="15"/>
             </Label>
-            <Button Visibility="Hidden" x:Name="timingPointsAddButton" Content="Add" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="75" Grid.Row="0" Grid.Column="2" Click="AddButton_Click" />
-            <Button Visibility="Hidden" x:Name="timingPointsRemoveButton" Content="Remove" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,85,0" Width="75" Grid.Row="0" Grid.Column="2" Click="RemoveButton_Click" />
-            <ListView Visibility="Hidden" x:Name="timingPointsListView" Height="200" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1">
+            <Button Visibility="Hidden" x:Name="timingPointsAddButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="30" Height="30" Grid.Row="0" Grid.Column="2" Click="AddButton_Click">
+                <Image Source="pack://application:,,,/Icons/Plus.png" Height="20"/>
+            </Button>
+            <Button Visibility="Hidden" x:Name="timingPointsModifyButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0" Width="30" Height="30" Grid.Row="0" Grid.Column="2" Click="ModifyButton_Click">
+                <Image Source="pack://application:,,,/Icons/Gear.png" Height="20"/>
+            </Button>
+            <Button Visibility="Hidden" x:Name="timingPointsRemoveButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,75,0" Width="30" Height="30" Grid.Row="0" Grid.Column="2" Click="RemoveButton_Click">
+                <Image Source="pack://application:,,,/Icons/Rubbish.png" Height="20"/>
+            </Button>
+            <ListView Visibility="Hidden" x:Name="timingPointsListView" Height="200" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1" SelectionChanged="TimingPointsListView_SelectionChanged">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Identifier}" />
-                        <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="ID" Width="30" DisplayMemberBinding="{Binding Identifier}" />
+                        <GridViewColumn Header="EventID" Width="50" DisplayMemberBinding="{Binding EventIdentifier}" />
+                        <GridViewColumn Header="DivID" Width="40" DisplayMemberBinding="{Binding DivisionIdentifier}" />
+                        <GridViewColumn Header="Name" Width="180" DisplayMemberBinding="{Binding Name}" />
                         <GridViewColumn Header="Distance" Width="60" DisplayMemberBinding="{Binding Distance}" />
                         <GridViewColumn Header="Unit" Width="40" DisplayMemberBinding="{Binding Unit}" />
                     </GridView>

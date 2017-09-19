@@ -29,6 +29,11 @@ namespace EventDirector
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
+            submit();
+        }
+
+        private void submit()
+        {
             String nameString = nameBox.Text.Trim();
             Log.D("Name given for division: '" + nameString + "'");
             if (nameString == "")
@@ -43,6 +48,14 @@ namespace EventDirector
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void Keyboard_Up(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                submit();
+            }
         }
     }
 }
