@@ -25,19 +25,6 @@ namespace EventDirector
             this.comments = comments;
         }
 
-        public EventSpecific(int id, int eid, int did, int bib, int chip, int ci, int sp, string size, string comments)
-        {
-            this.identifier = id;
-            this.eventIdentifier = eid;
-            this.divisionIdentifier = did;
-            this.bib = bib;
-            this.chip = chip;
-            this.checkedIn = ci;
-            this.shirtPurchase = sp;
-            this.shirtSize = size;
-            this.comments = comments;
-        }
-
         public int Identifier { get => identifier; set => identifier = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public int DivisionIdentifier { get => divisionIdentifier; set => divisionIdentifier = value; }

@@ -69,10 +69,7 @@ namespace EventDirector
                     break;
                 case 7:     // List Participants
                     Log.D("List Participants");
-                    if (partList == null)
-                    {
-                        partList = new ParticipantsList(database);
-                    }
+                    partList = new ParticipantsList(database, this);
                     partList.Show();
                     break;
                 default:
@@ -190,6 +187,10 @@ namespace EventDirector
             {
                 eventsListView.Items.Add(e);
             }
+            if (partList != null)
+            {
+                partList.UpdateEventsBox();
+            }
         }
 
         private void UpdateChangesBox(int eventId)
@@ -297,9 +298,10 @@ namespace EventDirector
             }
         }
 
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        public void PartListClosed()
         {
-
+            Log.D("Participants list has closed.");
+            partList = null;
         }
     }
 }

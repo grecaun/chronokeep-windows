@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="ParticipantsList" Height="800" Width="1200">
+        Title="ParticipantsList" Height="800" Width="1200" Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Content="Event" HorizontalAlignment="Left" Margin="10,0,0,0" FontSize="18" VerticalAlignment="Center" Padding="0"/>
-        <ComboBox x:Name="eventComboBox" Grid.Row="0" Height="25" Width="150" HorizontalAlignment="Left" Margin="65,0,0,0" SelectedIndex="0">
+        <ComboBox x:Name="eventComboBox" Grid.Row="0" Height="25" Width="150" HorizontalAlignment="Left" Margin="65,0,0,0" SelectedIndex="0" SelectionChanged="EventComboBox_SelectionChanged">
             <ComboBoxItem Content="All" />
         </ComboBox>
         <ListView x:Name="participantsListView" Grid.Row="1" Width="Auto" Height="Auto">

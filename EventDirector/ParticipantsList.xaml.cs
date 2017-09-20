@@ -21,10 +21,13 @@ namespace EventDirector
     public partial class ParticipantsList : Window
     {
         IDBInterface database;
-        public ParticipantsList(IDBInterface database)
+        MainWindow mainWindow;
+
+        public ParticipantsList(IDBInterface database, MainWindow mWin)
         {
-            InitializeComponent();
+            this.mainWindow = mWin;
             this.database = database;
+            InitializeComponent();
             UpdateEventsBox();
             UpdateParticipantsView();
         }
@@ -59,15 +62,39 @@ namespace EventDirector
                 return;
             }
             int eventIx = eventComboBox.SelectedIndex;
-            switch (eventIx)
+            ArrayList participants;
+            if (eventIx == 0)
             {
-                case 0:
-                    Log.D("Get everything.");
-                    break;
-                default:
-                    Log.D("Figure out what ID to use and get a specific event.");
-                    break;
+                Log.D("Get everything.");
+                participants = database.GetParticipants();
             }
+            else
+            {
+                Log.D("Figure out what ID to use and get a specific event.");
+                int eventIdentifier = Convert.ToInt32(((ComboBoxItem)eventComboBox.SelectedItem).Uid);
+                participants = database.GetParticipants(eventIdentifier);
+            }
+            if (participantsListView == null)
+            {
+                Log.D("Participants Listview isn't there.");
+                return;
+            }
+            Log.D("Participants listview found!");
+            participantsListView.Items.Clear();
+            foreach (Participant p in participants)
+            {
+                participantsListView.Items.Add(p);
+            }
+        }
+
+        private void EventComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateParticipantsView();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            mainWindow.PartListClosed();
         }
     }
 }
