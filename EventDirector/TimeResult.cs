@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    class TimeResult
+    public class TimeResult
     {
         int eventIdentifier, eventParticipantId, timingPointId, time;
 

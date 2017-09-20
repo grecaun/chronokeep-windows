@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    class Change
+    public class Change
     {
         int identifier;
         Participant newParticipant, oldParticipant;

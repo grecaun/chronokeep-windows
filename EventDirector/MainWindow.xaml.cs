@@ -25,6 +25,7 @@ namespace EventDirector
     {
         IDBInterface database;
         String dbName = "EventDirector.sqlite";
+        ParticipantsList partList = null;
 
         public MainWindow()
         {
@@ -46,10 +47,7 @@ namespace EventDirector
             switch (menuId)
             {
                 case 1:     // Connection Settings
-                    Log.D("Connection Settings");
-                    break;
-                case 2:     // Race Director Settings
-                    Log.D("Race Director Settings");
+                    Log.D("Settings");
                     break;
                 case 3:     // Clear Database
                     Log.D("Clear Database.");
@@ -64,10 +62,18 @@ namespace EventDirector
                     Log.D("Goodbye");
                     break;
                 case 5:     // Import participants
-                    Log.D("Import");
+                    Log.D("Import (CSV)");
                     break;
                 case 6:     // Assign bibs/chips
                     Log.D("Assign");
+                    break;
+                case 7:     // List Participants
+                    Log.D("List Participants");
+                    if (partList == null)
+                    {
+                        partList = new ParticipantsList(database);
+                    }
+                    partList.Show();
                     break;
                 default:
                     break;
@@ -289,6 +295,11 @@ namespace EventDirector
                 divisionsModifyButton.Visibility = Visibility.Visible;
                 divisionsRemoveButton.Visibility = Visibility.Visible;
             }
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

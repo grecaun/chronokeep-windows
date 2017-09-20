@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    interface IDBInterface
+    public interface IDBInterface
     {
         void Initialize();
 

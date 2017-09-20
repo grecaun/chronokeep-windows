@@ -78,13 +78,17 @@
     <Compile Include="Division.cs" />
     <Compile Include="EmergencyContact.cs" />
     <Compile Include="Event.cs" />
-    <Compile Include="EventParticipantInformation.cs" />
+    <Compile Include="EventSpecific.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="NewDivisionWindow.xaml.cs">
       <DependentUpon>NewDivisionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="NewEventWindow.xaml.cs">
       <DependentUpon>NewEventWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Change.cs" />
+    <Compile Include="ParticipantsList.xaml.cs">
+      <DependentUpon>ParticipantsList.xaml</DependentUpon>
     </Compile>
     <Compile Include="SQLiteInterface.cs" />
     <Compile Include="TimeResult.cs" />
@@ -110,6 +114,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="NewTimingPointWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ParticipantsList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

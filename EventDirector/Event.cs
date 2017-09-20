@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    class Event
+    public class Event
     {
         private int identifier;
         private long date;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    class EmergencyContact
+    public class EmergencyContact
     {
         private int identifier;
         private string name, phone, email;

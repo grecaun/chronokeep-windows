@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    class Participant
+    public class Participant
     {
         private int identifier;
         private long birthdate;
         private string firstName, lastName, street, city, state, zip, phone, email;
         private EmergencyContact emergencyContact;
-        private EventParticipantInformation eventSpecific;
+        private EventSpecific eventSpecific;
 
-        public Participant(int id, string first, string last, string street, string city, string state, string zip, long birthday, EmergencyContact ec, EventParticipantInformation epi, string phone, string email)
+        public Participant(int id, string first, string last, string street, string city, string state, string zip, long birthday, EmergencyContact ec, EventSpecific epi, string phone, string email)
         {
             this.identifier = id;
             this.birthdate = birthday;
@@ -41,6 +41,17 @@ namespace EventDirector
         public string Phone { get => phone; set => phone = value; }
         public string Email { get => email; set => email = value; }
         internal EmergencyContact EmergencyContact { get => emergencyContact; set => emergencyContact = value; }
-        internal EventParticipantInformation EventSpecific { get => eventSpecific; set => eventSpecific = value; }
+        internal EventSpecific EventSpecific { get => eventSpecific; set => eventSpecific = value; }
+        public int EventIdentifier { get => eventSpecific.EventIdentifier; }
+        public int Bib { get => eventSpecific.Bib; }
+        public int Chip { get => eventSpecific.Chip; }
+        public string Division { get => eventSpecific.DivisionName; }
+        public string CheckedIn { get => eventSpecific.CheckedIn == 0 ? "No" : "Yes"; }
+        public string ShirtPurchase { get => eventSpecific.ShirtPurchase == 0 ? "No" : "Yes"; }
+        public string ShirtSize { get => eventSpecific.ShirtSize; }
+        public int ECID { get => emergencyContact.Identifier; }
+        public string ECName { get => emergencyContact.Name; }
+        public string ECPhone { get => emergencyContact.Phone; }
+        public string ECEmail { get => emergencyContact.Email; }
     }
 }

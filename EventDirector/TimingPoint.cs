@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    class TimingPoint
+    public class TimingPoint
     {
         private int identifier, eventIdentifier, divisionIdentifier;
         private string name, distance, unit;

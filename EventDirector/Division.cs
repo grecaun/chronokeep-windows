@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    class Division
+    public class Division
     {
         private String name;
         private int identifier, eventIdentifier;

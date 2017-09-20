@@ -50,7 +50,8 @@ CREATE TABLE IF NOT EXISTS
         chip INTEGER,
         checkedin INTEGER DEFAULT 0,
         shirpurchase INTEGER DEFAULT 0,
-        shirtsize VARCHAR(5))
+        shirtsize VARCHAR(5),
+        comments VARCHAR) //
 
 CREATE TABLE IF NOT EXISTS
     timeresults (
@@ -70,6 +71,8 @@ CREATE TABLE IF NOT EXISTS
         old_state VARCHAR(25),
         old_zip VARCHAR(10),
         old_birthday INTEGER NOT NULL,
+        old_phone VARCHAR(20), //
+        old_email VARCHAR(150), //
         old_emergency_id INTEGER,
         old_emergency_name VARCHAR(150),
         old_emergency_phone VARCHAR(20),
@@ -82,6 +85,7 @@ CREATE TABLE IF NOT EXISTS
         old_event_spec_checkedin INTEGER NOT NULL,
         old_event_spec_shirtpurchase INTEGER NOT NULL,
         old_event_spec_shirtsize VARCHAR(5),
+        old_event_spec_comments VARHCAR, //
         new_participant_id INTEGER NOT NULL,
         new_first VARCHAR(50) NOT NULL,
         new_last VARCHAR(75) NOT NULL,
@@ -90,6 +94,8 @@ CREATE TABLE IF NOT EXISTS
         new_state VARCHAR(25),
         new_zip VARCHAR(10),
         new_birthday INTEGER NOT NULL,
+        new_phone VARCHAR(20), //
+        new_email VARCHAR(150), //
         new_emergency_id INTEGER,
         new_emergency_name VARCHAR(150),
         new_emergency_phone VARCHAR(20),
@@ -101,4 +107,5 @@ CREATE TABLE IF NOT EXISTS
         new_event_spec_chip INTEGER,
         new_event_spec_checkedin INTEGER NOT NULL,
         new_event_spec_shirtpurchase INTEGER NOT NULL,
-        new_event_spec_shirtsize VARCHAR(5))
+        new_event_spec_shirtsize VARCHAR(5),
+        new_event_spec_comments VARHCAR)//
