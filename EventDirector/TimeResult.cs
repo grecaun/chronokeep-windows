@@ -10,6 +10,14 @@ namespace EventDirector
     {
         int eventIdentifier, eventParticipantId, timingPointId, time;
 
+        public TimeResult(int ei, int epi, int tpi, int time)
+        {
+            this.eventIdentifier = ei;
+            this.eventParticipantId = epi;
+            this.timingPointId = tpi;
+            this.time = time;
+        }
+
         public int EventSpecificId { get => eventParticipantId; set => eventParticipantId = value; }
         public int TimingPointId { get => timingPointId; set => timingPointId = value; }
         public int Time { get => time; set => time = value; }

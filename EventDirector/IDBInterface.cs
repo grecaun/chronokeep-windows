@@ -39,6 +39,8 @@ namespace EventDirector
         void CheckInParticipant(int identifier, int checkedIn);
         void CheckInParticipant(Participant person);
 
+        void AddChange(Participant newParticipant, Participant oldParticipant);
+
         void ResetDatabase();
 
         ArrayList GetEvents();
@@ -47,5 +49,6 @@ namespace EventDirector
         ArrayList GetParticipants();
         ArrayList GetParticipants(int eventId);
         ArrayList GetTimingResults(int eventId);
+        ArrayList GetChanges(int eventId);
     }
 }

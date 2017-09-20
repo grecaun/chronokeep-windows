@@ -492,22 +492,180 @@ namespace EventDirector
 
         public ArrayList GetParticipants()
         {
-            throw new NotImplementedException();
+            Log.D("Getting all participants for all events.");
+            ArrayList output = new ArrayList();
+            SQLiteCommand command = new SQLiteCommand("SELECT * FROM participants AS p, emergencycontacts AS e, eventspecific as s WHERE p.emergency_id=e.emergency_id AND p.participant_id=s.participant_id", connection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new Participant(
+                    Convert.ToInt32(reader["p.participant_id"]),
+                    reader["p.first"].ToString(),
+                    reader["p.last"].ToString(),
+                    reader["p.street"].ToString(),
+                    reader["p.city"].ToString(),
+                    reader["p.state"].ToString(),
+                    reader["p.zip"].ToString(),
+                    Convert.ToInt64(reader["p.birthday"]),
+                    new EmergencyContact(Convert.ToInt32(reader["e.emergencycontact_id"]),
+                        reader["e.name"].ToString(),
+                        reader["e.phone"].ToString(),
+                        reader["e.email"].ToString()),
+                    new EventParticipantInformation(Convert.ToInt32(reader["s.eventspecific_id"]),
+                        Convert.ToInt32(reader["s.event_id"]),
+                        Convert.ToInt32(reader["s.division_id"]),
+                        Convert.ToInt32(reader["s.bib"]),
+                        Convert.ToInt32(reader["s.chip"]),
+                        Convert.ToInt32(reader["s.checkedin"]),
+                        Convert.ToInt32(reader["s.shirtpurchase"]),
+                        reader["s.shirtsize"].ToString()),
+                    reader["p.phone"].ToString(),
+                    reader["p.email"].ToString()
+                    ));
+            }
+            return output;
         }
 
         public ArrayList GetParticipants(int eventId)
         {
-            throw new NotImplementedException();
+            Log.D("Getting all participants for event with id of " + eventId);
+            ArrayList output = new ArrayList();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM participants AS p, emergencycontacts AS e, eventspecific as s WHERE p.emergency_id=e.emergency_id AND p.participant_id=s.participant_id AND s.event_id=@eventid";
+            command.Parameters.Add(new SQLiteParameter("@eventid",eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new Participant(
+                    Convert.ToInt32(reader["p.participant_id"]),
+                    reader["p.first"].ToString(),
+                    reader["p.last"].ToString(),
+                    reader["p.street"].ToString(),
+                    reader["p.city"].ToString(),
+                    reader["p.state"].ToString(),
+                    reader["p.zip"].ToString(),
+                    Convert.ToInt64(reader["p.birthday"]),
+                    new EmergencyContact(Convert.ToInt32(reader["e.emergencycontact_id"]),
+                        reader["e.name"].ToString(),
+                        reader["e.phone"].ToString(),
+                        reader["e.email"].ToString()),
+                    new EventParticipantInformation(Convert.ToInt32(reader["s.eventspecific_id"]),
+                        Convert.ToInt32(reader["s.event_id"]),
+                        Convert.ToInt32(reader["s.division_id"]),
+                        Convert.ToInt32(reader["s.bib"]),
+                        Convert.ToInt32(reader["s.chip"]),
+                        Convert.ToInt32(reader["s.checkedin"]),
+                        Convert.ToInt32(reader["s.shirtpurchase"]),
+                        reader["s.shirtsize"].ToString()),
+                    reader["p.phone"].ToString(),
+                    reader["p.email"].ToString()
+                    ));
+            }
+            return output;
         }
 
         public ArrayList GetTimingResults(int eventId)
         {
-            throw new NotImplementedException();
+            Log.D("Getting timing results for event id of " + eventId);
+            ArrayList output = new ArrayList();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM timeresults WHERE event_id=@eventid";
+            command.Parameters.Add(new SQLiteParameter("@eventid",eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new TimeResult(
+                    Convert.ToInt32(reader["event_id"]),
+                    Convert.ToInt32(reader["eventspecific_id"]),
+                    Convert.ToInt32(reader["timingpoint_id"]),
+                    Convert.ToInt32(reader["time"])
+                    ));
+            }
+            return output;
         }
 
         private void UpdateDatabase(int oldversion, int newversion)
         {
             Log.D("Database is version " + oldversion + " but it needs to be upgraded to version " + newversion);
+        }
+
+        public void AddChange(Participant newParticipant, Participant oldParticipant)
+        {
+            Log.D("Adding change - new participant id is " + newParticipant.Identifier + " old participant id is" + oldParticipant.Identifier);
+            if (newParticipant.Identifier == oldParticipant.Identifier && newParticipant.EventSpecific.EventIdentifier == oldParticipant.EventSpecific.EventIdentifier)
+            {
+                Log.D("Valid change found.");
+                UpdateParticipant(newParticipant);
+            }
+            else
+            {
+                Log.D("Invalid change attempt. Nothing will be done.");
+            }
+        }
+
+        public ArrayList GetChanges(int eventId)
+        {
+            Log.D("Getting changes.");
+            ArrayList output = new ArrayList();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM changes WHERE old_event_spec_event_id=@eventId";
+            command.Parameters.Add(new SQLiteParameter("@eventId", eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new Change(
+                    Convert.ToInt32(reader["change_id"]),
+                    new Participant(
+                        Convert.ToInt32(reader["old_participant_id"]),
+                        reader["old_first"].ToString(),
+                        reader["old_last"].ToString(),
+                        reader["old_street"].ToString(),
+                        reader["old_city"].ToString(),
+                        reader["old_state"].ToString(),
+                        reader["old_zip"].ToString(),
+                        Convert.ToInt64(reader["old_birthday"]),
+                        new EmergencyContact(Convert.ToInt32(reader["old_emergency_id"]),
+                            reader["old_emergency_name"].ToString(),
+                            reader["old_emergency_phone"].ToString(),
+                            reader["old_emergency_email"].ToString()),
+                        new EventParticipantInformation(Convert.ToInt32(reader["old_event_spec_id"]),
+                            Convert.ToInt32(reader["old_event_spec_event_id"]),
+                            Convert.ToInt32(reader["old_event_spec_division_id"]),
+                            Convert.ToInt32(reader["old_event_spec_bib"]),
+                            Convert.ToInt32(reader["old_event_spec_chip"]),
+                            Convert.ToInt32(reader["old_event_spec_checkedin"]),
+                            Convert.ToInt32(reader["old_event_spec_shirtpurchase"]),
+                            reader["old_event_spec_shirtsize"].ToString()),
+                        reader["old_phone"].ToString(),
+                        reader["old_email"].ToString()
+                    ),
+                    new Participant(
+                        Convert.ToInt32(reader["new_participant_id"]),
+                        reader["new_first"].ToString(),
+                        reader["new_last"].ToString(),
+                        reader["new_street"].ToString(),
+                        reader["new_city"].ToString(),
+                        reader["new_state"].ToString(),
+                        reader["new_zip"].ToString(),
+                        Convert.ToInt64(reader["new_birthday"]),
+                        new EmergencyContact(Convert.ToInt32(reader["new_emergency_id"]),
+                            reader["new_emergency_name"].ToString(),
+                            reader["new_emergency_phone"].ToString(),
+                            reader["new_emergency_email"].ToString()),
+                        new EventParticipantInformation(Convert.ToInt32(reader["new_event_spec_id"]),
+                            Convert.ToInt32(reader["new_event_spec_event_id"]),
+                            Convert.ToInt32(reader["new_event_spec_division_id"]),
+                            Convert.ToInt32(reader["new_event_spec_bib"]),
+                            Convert.ToInt32(reader["new_event_spec_chip"]),
+                            Convert.ToInt32(reader["new_event_spec_checkedin"]),
+                            Convert.ToInt32(reader["new_event_spec_shirtpurchase"]),
+                            reader["new_event_spec_shirtsize"].ToString()),
+                        reader["new_phone"].ToString(),
+                        reader["new_email"].ToString()
+                    )
+                ));
+            }
+            return output;
         }
     }
 }

@@ -14,6 +14,22 @@ namespace EventDirector
         private EmergencyContact emergencyContact;
         private EventParticipantInformation eventSpecific;
 
+        public Participant(int id, string first, string last, string street, string city, string state, string zip, long birthday, EmergencyContact ec, EventParticipantInformation epi, string phone, string email)
+        {
+            this.identifier = id;
+            this.birthdate = birthday;
+            this.firstName = first;
+            this.lastName = last;
+            this.street = street;
+            this.city = city;
+            this.state = state;
+            this.zip = zip;
+            this.emergencyContact = ec;
+            this.eventSpecific = epi;
+            this.phone = phone;
+            this.email = email;
+        }
+
         public int Identifier { get => identifier; set => identifier = value; }
         public long Birthdate { get => birthdate; set => birthdate = value; }
         public string FirstName { get => firstName; set => firstName = value; }

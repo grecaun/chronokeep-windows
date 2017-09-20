@@ -11,6 +11,18 @@ namespace EventDirector
         private int identifier, eventIdentifier, divisionIdentifier, bib, chip, checkedIn = 0, shirtPurchase = 0;
         private String shirtSize;
 
+        public EventParticipantInformation(int id, int eid, int did, int bib, int chip, int ci, int sp, string size)
+        {
+            this.identifier = id;
+            this.eventIdentifier = eid;
+            this.divisionIdentifier = did;
+            this.bib = bib;
+            this.chip = chip;
+            this.checkedIn = ci;
+            this.shirtPurchase = sp;
+            this.shirtSize = size;
+        }
+
         public int Identifier { get => identifier; set => identifier = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public int DivisionIdentifier { get => divisionIdentifier; set => divisionIdentifier = value; }
