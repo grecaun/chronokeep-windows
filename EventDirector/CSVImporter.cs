@@ -8,19 +8,21 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    class CSVImporter
+    public class CSVImporter
     {
-        private ImportData data;
+        public ImportData Data { get; private set; }
         StreamReader file;
+        string FilePath;
         Regex regex = new Regex("\".*\",|[^,]*,|[^,]*$");
 
         public CSVImporter(string filePath)
         {
             Log.D("Opening file.");
             file = new StreamReader(filePath);
+            FilePath = filePath;
         }
 
-        public void GetHeaders()
+        public void FetchHeaders()
         {
             Log.D("Getting headers from file.");
             string headerLine = file.ReadLine();
@@ -31,19 +33,19 @@ namespace EventDirector
             {
                 headers[counter++] = m.Value.Replace('"',' ').Trim();
             }
-            data = new ImportData(headers);
+            Data = new ImportData(headers, FilePath);
         }
 
-        public void GetData()
+        public void FetchData()
         {
             Log.D("Getting data from file.");
             string line;
             while ((line = file.ReadLine()) != null)
             {
                 MatchCollection matches = regex.Matches(line);
-                if (data.GetNumHeaders() != matches.Count)
+                if (Data.GetNumHeaders() != matches.Count)
                 {
-                    Log.E("Wrong count! It's burning! AHHHHHHH! " + data.GetNumHeaders() + " - " + matches.Count);
+                    Log.E("Wrong count! It's burning! AHHHHHHH! " + Data.GetNumHeaders() + " - " + matches.Count);
                 }
                 string[] dataLine = new string[matches.Count];
                 int counter = 0;
@@ -53,7 +55,7 @@ namespace EventDirector
                     match = m.Value.Replace('"', ' ').Trim().TrimEnd(',');
                     dataLine[counter++] = match;
                 }
-                data.AddData(dataLine);
+                Data.AddData(dataLine);
             }
         }
     }

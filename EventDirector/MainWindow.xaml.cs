@@ -79,8 +79,8 @@ namespace EventDirector
                         try
                         {
                             CSVImporter importer = new CSVImporter(dialog.FileName);
-                            importer.GetHeaders();
-                            importer.GetData();
+                            importer.FetchHeaders();
+                            importer.FetchData();
                         }
                         catch (Exception ex)
                         {
@@ -266,11 +266,7 @@ namespace EventDirector
             {
                 events = database.GetEvents();
             });
-            eventsListView.Items.Clear();
-            foreach (Event e in events)
-            {
-                eventsListView.Items.Add(e);
-            }
+            eventsListView.ItemsSource = events;
             if (partList != null)
             {
                 partList.UpdateEventsBox();
@@ -295,11 +291,7 @@ namespace EventDirector
             {
                 timingPoints = database.GetTimingPoints(eventId);
             });
-            timingPointsListView.Items.Clear();
-            foreach (TimingPoint t in timingPoints)
-            {
-                timingPointsListView.Items.Add(t);
-            }
+            timingPointsListView.ItemsSource = timingPoints;
         }
 
         private async void UpdateDivisionsBox(int eventId)
@@ -314,11 +306,7 @@ namespace EventDirector
             {
                 divisions = database.GetDivisions(eventId);
             });
-            divisionsListView.Items.Clear();
-            foreach (Division d in divisions)
-            {
-                divisionsListView.Items.Add(d);
-            }
+            divisionsListView.ItemsSource = divisions;
         }
 
         private void EventsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -370,7 +358,7 @@ namespace EventDirector
         private void DivisionsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender == null) { return; }
-            if (divisionsListView.SelectedIndex > 0)
+            if (divisionsListView.SelectedIndex < 0)
             {
                 divisionsModifyButton.Visibility = Visibility.Hidden;
                 divisionsRemoveButton.Visibility = Visibility.Hidden;

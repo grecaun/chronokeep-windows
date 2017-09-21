@@ -85,6 +85,9 @@
     <Compile Include="EventSpecific.cs" />
     <Compile Include="IEDConnection.cs" />
     <Compile Include="ImportData.cs" />
+    <Compile Include="ImportFileWindow.xaml.cs">
+      <DependentUpon>ImportFileWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Log.cs" />
     <Compile Include="NewDivisionWindow.xaml.cs">
       <DependentUpon>NewDivisionWindow.xaml</DependentUpon>
@@ -99,6 +102,10 @@
     <Compile Include="SQLiteInterface.cs" />
     <Compile Include="TimeResult.cs" />
     <Compile Include="TimingPoint.cs" />
+    <Page Include="ImportFileWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

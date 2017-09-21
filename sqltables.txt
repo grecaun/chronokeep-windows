@@ -74,36 +74,36 @@ CREATE TABLE IF NOT EXISTS
     changes (
         change_id INTEGER PRIMARY KEY,
         old_participant_id INTEGER NOT NULL,
-        old_first VARCHAR(50) NOT NULL,
-        old_last VARCHAR(75) NOT NULL,
-        old_street VARCHAR(150),
-        old_city VARCHAR(75),
-        old_state VARCHAR(25),
-        old_zip VARCHAR(10),
-        old_birthday INTEGER NOT NULL,
-        old_phone VARCHAR(20),
-        old_email VARCHAR(150),
+        old_first VARCHAR(50) NOT NULL,1
+        old_last VARCHAR(75) NOT NULL,2
+        old_street VARCHAR(150),3
+        old_city VARCHAR(75),4
+        old_state VARCHAR(25),5
+        old_zip VARCHAR(10),6
+        old_birthday INTEGER NOT NULL,7
+        old_phone VARCHAR(20),8
+        old_email VARCHAR(150),9
         old_emergency_id INTEGER,
-        old_emergency_name VARCHAR(150),
-        old_emergency_phone VARCHAR(20),
-        old_emergency_email VARCHAR(150),
+        old_emergency_name VARCHAR(150),10
+        old_emergency_phone VARCHAR(20),11
+        old_emergency_email VARCHAR(150),12
         old_event_spec_id INTEGER NOT NULL,
         old_event_spec_event_id INTEGER NOT NULL,
         old_event_spec_division_id INTEGER NOT NULL,
-        old_event_spec_bib INTEGER,
-        old_event_spec_chip INTEGER,
+        old_event_spec_bib INTEGER,13
+        old_event_spec_chip INTEGER,14
         old_event_spec_checkedin INTEGER NOT NULL,
         old_event_spec_shirtpurchase INTEGER NOT NULL,
-        old_event_spec_shirtsize VARCHAR(5),
-        old_event_spec_comments VARCHAR,
-        old_mobile VARCHAR(20),
-        old_parent VARCHAR(150),
-        old_country VARCHAR(50),
-        old_street2 VARCHAR(50),
-        old_secondshirt VARCHAR,
-        old_owes VARCHAR(50),
-        old_hat VARCHAR(20),
-        old_other VARCHAR,
+        old_event_spec_shirtsize VARCHAR(5),15
+        old_event_spec_comments VARCHAR,16
+        old_mobile VARCHAR(20),17
+        old_parent VARCHAR(150),18
+        old_country VARCHAR(50),19
+        old_street2 VARCHAR(50),20
+        old_secondshirt VARCHAR,21
+        old_owes VARCHAR(50),22
+        old_hat VARCHAR(20),23
+        old_other VARCHAR,24
 
         new_participant_id INTEGER NOT NULL,
         new_first VARCHAR(50) NOT NULL,
