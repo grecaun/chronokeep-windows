@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -49,6 +50,15 @@ namespace EventDirector
                 case 1:     // Connection Settings
                     Log.D("Settings");
                     break;
+                case 2:
+                    Log.D("Rebuild Database.");
+                    await Task.Run(() =>
+                    {
+                        ((SQLiteInterface)database).HardResetDatabase();
+                    });
+                    Log.D("Database Rebuilt.");
+                    UpdateEventBox();
+                    break;
                 case 3:     // Clear Database
                     Log.D("Clear Database.");
                     await Task.Run( () =>
@@ -63,6 +73,21 @@ namespace EventDirector
                     break;
                 case 5:     // Import participants
                     Log.D("Import (CSV)");
+                    OpenFileDialog dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv)|*.csv|All files|*" };
+                    if (dialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            CSVImporter importer = new CSVImporter(dialog.FileName);
+                            importer.GetHeaders();
+                            importer.GetData();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.E("Something went wrong when trying to read the CSV file.");
+                            Log.E(ex.StackTrace);
+                        }
+                    }
                     break;
                 case 6:     // Assign bibs/chips
                     Log.D("Assign");
@@ -75,6 +100,35 @@ namespace EventDirector
                 default:
                     break;
             }
+        }
+
+        internal async void UpdateTimingPoint(int timingPointIdentifier, string nameString, string distanceStr, string unitString, int divisionId)
+        {
+            int eventId = ((Event)eventsListView.SelectedItem).Identifier;
+            await Task.Run(() =>
+            {
+                database.UpdateTimingPoint(new TimingPoint(timingPointIdentifier, eventId, divisionId, nameString, distanceStr, unitString));
+            });
+            UpdateTimingPointsBox(eventId);
+        }
+
+        internal async void UpdateEvent(int eventIdentifier, string nameString, long dateVal)
+        {
+            await Task.Run(() =>
+            {
+                database.UpdateEvent(new Event(eventIdentifier, nameString, dateVal));
+            });
+            UpdateEventBox();
+        }
+
+        internal async void UpdateDivision(int divisionIdentifier, string nameString)
+        {
+            int eventId = ((Event)eventsListView.SelectedItem).Identifier;
+            await Task.Run(() =>
+            {
+                database.UpdateDivision(new Division(divisionIdentifier, nameString, eventId));
+            });
+            UpdateDivisionsBox(eventId);
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
@@ -111,14 +165,37 @@ namespace EventDirector
             if (buttonName == "eventsModifyButton")
             {
                 Log.D("Events - Modify Button Pressed.");
+                Event thisEvent = (Event)eventsListView.SelectedItem;
+                if (thisEvent != null)
+                {
+                    NewEventWindow win = new NewEventWindow(this, thisEvent.Identifier, thisEvent.Name, thisEvent.Date);
+                    win.Show();
+                }
             }
             else if (buttonName == "divisionsModifyButton")
             {
                 Log.D("Divisions - Modify Button Pressed.");
+                Division div = (Division)divisionsListView.SelectedItem;
+                if (div != null)
+                {
+                    NewDivisionWindow win = new NewDivisionWindow(this, div.Identifier, div.Name);
+                    win.Show();
+                }
             }
             else if (buttonName == "timingPointsModifyButton")
             {
                 Log.D("TimingPoints - Modify Button Pressed.");
+                TimingPoint tp = (TimingPoint)timingPointsListView.SelectedItem;
+                ArrayList divisions = database.GetDivisions(((Event)eventsListView.SelectedItem).Identifier);
+                if (divisions != null && divisions.Count > 0 && tp != null)
+                {
+                    NewTimingPointWindow win = new NewTimingPointWindow(this, divisions, tp.Identifier, tp.Name, tp.Distance, tp.Unit);
+                    win.Show();
+                }
+                else
+                {
+                    MessageBox.Show("No divisions found. Please add divisions before adding timing points.");
+                }
             }
         }
 
@@ -140,8 +217,16 @@ namespace EventDirector
             else if (buttonName == "timingPointsAddButton")
             {
                 Log.D("TimingPoints - Add Button Pressed.");
-                NewTimingPointWindow timingPointWindow = new NewTimingPointWindow(this);
-                timingPointWindow.Show();
+                ArrayList divisions = database.GetDivisions(((Event)eventsListView.SelectedItem).Identifier);
+                if (divisions != null && divisions.Count > 0)
+                {
+                    NewTimingPointWindow timingPointWindow = new NewTimingPointWindow(this, divisions);
+                    timingPointWindow.Show();
+                }
+                else
+                {
+                    MessageBox.Show("No divisions found. Please add divisions before adding timing points.");
+                }
             }
         }
 
@@ -154,10 +239,9 @@ namespace EventDirector
             UpdateEventBox();
         }
 
-        internal async void AddTimingPoint(string nameString, string distanceStr, string unitString)
+        internal async void AddTimingPoint(string nameString, string distanceStr, string unitString, int divisionId)
         {
             int eventId = ((Event)eventsListView.SelectedItem).Identifier;
-            int divisionId = 0;
             await Task.Run(() =>
             {
                 database.AddTimingPoint(new TimingPoint(eventId, divisionId, nameString, distanceStr, unitString));

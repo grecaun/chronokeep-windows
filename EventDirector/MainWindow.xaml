@@ -12,6 +12,7 @@
                 <MenuItem Header="_Settings" Click="MenuItem_Click" Uid="1" />
                 <Separator />
                 <MenuItem Header="_Clear Database" Click="MenuItem_Click" Uid="3" />
+                <MenuItem Header="_Rebuild Database" Click="MenuItem_Click" Uid="2" />
                 <Separator />
                 <MenuItem Header="_Exit" Click="MenuItem_Click" Uid="4" />
             </MenuItem>

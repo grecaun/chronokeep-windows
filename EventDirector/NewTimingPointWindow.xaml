@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="NewTimingPointWindow" Height="210" Width="250" ResizeMode="NoResize">
+        Title="NewTimingPointWindow" Height="260" Width="250" ResizeMode="NoResize">
     <Grid FocusManager.FocusedElement="{Binding ElementName=nameBox}">
         <Label Content="Name" HorizontalAlignment="Left" Margin="20,15,0,0" VerticalAlignment="Top" KeyUp="Keyboard_Up"/>
         <TextBox x:Name="nameBox" HorizontalAlignment="Left" Height="23" Margin="20,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200"/>
@@ -17,8 +17,9 @@
             <ComboBoxItem Content="MI" />
             <ComboBoxItem Content="KM" />
         </ComboBox>
+        <Label Content="Division" HorizontalAlignment="Left" Margin="20,115,0,0" VerticalAlignment="Top" />
+        <ComboBox x:Name="divBox" HorizontalAlignment="Left" Height="23" Margin="20,140,0,0" VerticalAlignment="Top" Width="200" />
         <Button Content="Submit" HorizontalAlignment="Left" Margin="20,0,0,25" VerticalAlignment="Bottom" Width="75" Click="submit_Click"/>
         <Button Content="Cancel" HorizontalAlignment="Right" Margin="0,0,20,25" VerticalAlignment="Bottom" Width="75" Click="cancel_Click"/>
-        
     </Grid>
 </Window>

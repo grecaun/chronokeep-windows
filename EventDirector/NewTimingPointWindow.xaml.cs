@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,11 +21,50 @@ namespace EventDirector
     public partial class NewTimingPointWindow : Window
     {
         MainWindow mainWindow;
+        int timingPointIdentifier = -1;
 
-        public NewTimingPointWindow(MainWindow mWindow)
+        public NewTimingPointWindow(MainWindow mWindow, ArrayList divisions)
         {
             InitializeComponent();
             this.mainWindow = mWindow;
+            foreach (Division d in divisions)
+            {
+                divBox.Items.Add(new ComboBoxItem {
+                    Uid = d.Identifier.ToString(),
+                    Content = d.Name
+                });
+            }
+            divBox.SelectedIndex = 0;
+        }
+
+        public NewTimingPointWindow(MainWindow mWindow, ArrayList divisions, int id, string name, string distance, string unit)
+        {
+            InitializeComponent();
+            this.mainWindow = mWindow;
+            foreach (Division d in divisions)
+            {
+                divBox.Items.Add(new ComboBoxItem
+                {
+                    Uid = d.Identifier.ToString(),
+                    Content = d.Name
+                });
+            }
+            divBox.SelectedIndex = 0;
+            this.timingPointIdentifier = id;
+            nameBox.Text = name;
+            distanceBox.Text = distance;
+            if (unit == "MI")
+            {
+                unitBox.SelectedIndex = 1;
+            }
+            else if (unit == "KM")
+            {
+                unitBox.SelectedIndex = 2;
+            }
+            else
+            {
+                unitBox.SelectedIndex = 0;
+            }
         }
 
         private void submit_Click(object sender, RoutedEventArgs e)
@@ -39,10 +79,8 @@ namespace EventDirector
             try
             {
                 Convert.ToInt32(distanceStr);
-#pragma warning disable CS0168 // Variable is declared but never used
             }
-            catch (Exception exception)
-#pragma warning restore CS0168 // Variable is declared but never used
+            catch
             {
                 Log.D("User is trying to fool me precious.");
                 distanceStr = "";
@@ -54,7 +92,15 @@ namespace EventDirector
                 MessageBox.Show("Please input a value in the name box.");
                 return;
             }
-            mainWindow.AddTimingPoint(nameString, distanceStr, unitString);
+            int divisionId = Convert.ToInt32(((ComboBoxItem)divBox.SelectedItem).Uid);
+            if (timingPointIdentifier == -1)
+            {
+                mainWindow.AddTimingPoint(nameString, distanceStr, unitString, divisionId);
+            }
+            else
+            {
+                mainWindow.UpdateTimingPoint(timingPointIdentifier, nameString, distanceStr, unitString, divisionId);
+            }
             this.Close();
         }
 

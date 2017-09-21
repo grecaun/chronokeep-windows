@@ -26,19 +26,28 @@
                     <GridViewColumn Header="First" DisplayMemberBinding="{Binding FirstName}" />
                     <GridViewColumn Header="Last" DisplayMemberBinding="{Binding LastName}" />
                     <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding Birthdate}" />
+                    <GridViewColumn Header="Parent" DisplayMemberBinding="{Binding Parent}" />
                     <GridViewColumn Header="Street" DisplayMemberBinding="{Binding Street}" />
+                    <GridViewColumn Header="Street 2" DisplayMemberBinding="{Binding Street2}" />
                     <GridViewColumn Header="City" DisplayMemberBinding="{Binding City}" />
                     <GridViewColumn Header="State" DisplayMemberBinding="{Binding State}" />
                     <GridViewColumn Header="Zip" DisplayMemberBinding="{Binding Zip}" />
+                    <GridViewColumn Header="Country" DisplayMemberBinding="{Binding Country}" />
                     <GridViewColumn Header="Phone" DisplayMemberBinding="{Binding Phone}" />
+                    <GridViewColumn Header="Mobile" DisplayMemberBinding="{Binding Mobile}" />
                     <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}" />
                     <GridViewColumn Header="Checked In" DisplayMemberBinding="{Binding CheckedIn}" />
                     <GridViewColumn Header="Shirt Purchase" DisplayMemberBinding="{Binding ShirtPurchase}" />
                     <GridViewColumn Header="Shirt Size" DisplayMemberBinding="{Binding ShirtSize}" />
+                    <GridViewColumn Header="Shirt 2" DisplayMemberBinding="{Binding SecondShirt}" />
+                    <GridViewColumn Header="Hat" DisplayMemberBinding="{Binding Hat}" />
+                    <GridViewColumn Header="Owes" DisplayMemberBinding="{Binding Owes}" />
                     <GridViewColumn Header="ECID" DisplayMemberBinding="{Binding ECID}" />
                     <GridViewColumn Header="EC Name" DisplayMemberBinding="{Binding ECName}" />
                     <GridViewColumn Header="EC Phone" DisplayMemberBinding="{Binding ECPhone}" />
                     <GridViewColumn Header="EC Email" DisplayMemberBinding="{Binding ECEmail}" />
+                    <GridViewColumn Header="Comments" DisplayMemberBinding="{Binding Comments}" />
+                    <GridViewColumn Header="Other" DisplayMemberBinding="{Binding Other}" />
                 </GridView>
             </ListView.View>
         </ListView>

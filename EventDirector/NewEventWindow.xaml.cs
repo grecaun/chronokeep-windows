@@ -20,12 +20,22 @@ namespace EventDirector
     public partial class NewEventWindow : Window
     {
         MainWindow mainWindow;
+        int eventIdentifier = -1;
 
         public NewEventWindow(MainWindow mainWindow)
         {
             InitializeComponent();
             datePicker.SelectedDate = DateTime.Today;
             this.mainWindow = mainWindow;
+        }
+
+        public NewEventWindow(MainWindow mW, int id, string name, long date)
+        {
+            InitializeComponent();
+            nameBox.Text = name;
+            datePicker.SelectedDate = new DateTime(date);
+            this.mainWindow = mW;
+            this.eventIdentifier = id;
         }
 
         private void submit_Click(object sender, RoutedEventArgs e)
@@ -43,7 +53,14 @@ namespace EventDirector
                 MessageBox.Show("Please input a value in the name box.");
                 return;
             }
-            mainWindow.AddEvent(nameString, dateVal);
+            if (eventIdentifier == -1)
+            {
+                mainWindow.AddEvent(nameString, dateVal);
+            }
+            else
+            {
+                mainWindow.UpdateEvent(eventIdentifier, nameString, dateVal);
+            }
             this.Close();
         }
 

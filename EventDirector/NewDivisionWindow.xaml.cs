@@ -20,11 +20,20 @@ namespace EventDirector
     public partial class NewDivisionWindow : Window
     {
         MainWindow mainWindow;
+        int divisionIdentifier = -1;
 
         public NewDivisionWindow(MainWindow mWindow)
         {
             InitializeComponent();
             this.mainWindow = mWindow;
+        }
+
+        public NewDivisionWindow(MainWindow mWindow, int divId, string name)
+        {
+            InitializeComponent();
+            this.mainWindow = mWindow;
+            this.divisionIdentifier = divId;
+            nameBox.Text = name;
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
@@ -41,7 +50,14 @@ namespace EventDirector
                 MessageBox.Show("Please input a value in the name box.");
                 return;
             }
-            mainWindow.AddDivision(nameString);
+            if (divisionIdentifier != -1)
+            {
+                mainWindow.UpdateDivision(divisionIdentifier, nameString);
+            }
+            else
+            {
+                mainWindow.AddDivision(nameString);
+            }
             this.Close();
         }
 
