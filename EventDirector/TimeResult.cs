@@ -18,9 +18,9 @@ namespace EventDirector
             this.time = time;
         }
 
-        public int EventSpecificId { get => eventParticipantId; set => eventParticipantId = value; }
-        public int TimingPointId { get => timingPointId; set => timingPointId = value; }
-        public int Time { get => time; set => time = value; }
-        public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
+        public int EventSpecificId { get => eventParticipantId; }
+        public int TimingPointId { get => timingPointId; }
+        public int Time { get => time;  }
+        public int EventIdentifier { get => eventIdentifier; }
     }
 }

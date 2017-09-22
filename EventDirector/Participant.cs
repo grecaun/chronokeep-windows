@@ -10,9 +10,46 @@ namespace EventDirector
     {
         private int identifier;
         private long birthdate;
-        private string firstName, lastName, street, city, state, zip, phone, email, mobile, parent, country, street2;
+        private string firstName, lastName, street, city, state, zip, phone, email, mobile, parent, country, street2, gender;
         private EmergencyContact emergencyContact;
         private EventSpecific eventSpecific;
+
+        public Participant(
+            string first,
+            string last,
+            string street,
+            string city,
+            string state,
+            string zip,
+            string birthday,
+            EmergencyContact ec,
+            EventSpecific epi,
+            string phone,
+            string email,
+            string mobile,
+            string parent,
+            string country,
+            string street2,
+            string gender
+            )
+        {
+            this.birthdate = DateTime.Parse(birthday).Ticks;
+            this.firstName = first ?? "Unknown";
+            this.lastName = last ?? "Unknown";
+            this.street = street;
+            this.city = city;
+            this.state = state;
+            this.zip = zip;
+            this.emergencyContact = ec ?? new EmergencyContact();
+            this.eventSpecific = epi;
+            this.phone = phone ?? "";
+            this.email = email ?? "";
+            this.mobile = mobile ?? "";
+            this.parent = parent ?? "";
+            this.country = country ?? "";
+            this.street2 = street2 ?? "";
+            this.gender = gender ?? "";
+        }
 
         public Participant(
             int id,
@@ -30,31 +67,33 @@ namespace EventDirector
             string mobile,
             string parent,
             string country,
-            string street2
+            string street2,
+            string gender
             )
         {
             this.identifier = id;
             this.birthdate = birthday;
-            this.firstName = first;
-            this.lastName = last;
+            this.firstName = first ?? "Unknown";
+            this.lastName = last ?? "Unknown";
             this.street = street;
             this.city = city;
             this.state = state;
             this.zip = zip;
-            this.emergencyContact = ec;
+            this.emergencyContact = ec ?? new EmergencyContact();
             this.eventSpecific = epi;
-            this.phone = phone;
-            this.email = email;
-            this.mobile = mobile;
-            this.parent = parent;
-            this.country = country;
-            this.street2 = street2;
+            this.phone = phone ?? "";
+            this.email = email ?? "";
+            this.mobile = mobile ?? "";
+            this.parent = parent ?? "";
+            this.country = country ?? "";
+            this.street2 = street2 ?? "";
+            this.gender = gender ?? "";
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public long Birthdate { get => birthdate; set => birthdate = value; }
-        internal EmergencyContact EmergencyContact { get => emergencyContact; set => emergencyContact = value; }
-        internal EventSpecific EventSpecific { get => eventSpecific; set => eventSpecific = value; }
+        public long Birthdate { get => birthdate; }
+        internal EmergencyContact EmergencyContact { get => emergencyContact; }
+        internal EventSpecific EventSpecific { get => eventSpecific; }
 
         // Event Specific binding stuffs
         public int EventIdentifier { get => eventSpecific.EventIdentifier; }
@@ -68,23 +107,33 @@ namespace EventDirector
         public string Owes { get => eventSpecific.Owes; }
         public string Hat { get => eventSpecific.Hat; }
         public string Other { get => eventSpecific.Other; }
+        public string Comments { get => eventSpecific.Comments; }
+        public string EarlyStart { get => eventSpecific.EarlyStart == 0 ? "No" : "Yes"; }
+        public string BirthdayStr
+        {
+            get
+            {
+                return new DateTime(birthdate).ToShortDateString();
+            }
+        }
         // Emergency Contact binding stuffs
         public int ECID { get => emergencyContact.Identifier; }
         public string ECName { get => emergencyContact.Name; }
         public string ECPhone { get => emergencyContact.Phone; }
         public string ECEmail { get => emergencyContact.Email; }
         
-        public string FirstName { get => firstName; set => firstName = value; }
-        public string LastName { get => lastName; set => lastName = value; }
-        public string Street { get => street; set => street = value; }
-        public string City { get => city; set => city = value; }
-        public string State { get => state; set => state = value; }
-        public string Zip { get => zip; set => zip = value; }
-        public string Phone { get => phone; set => phone = value; }
-        public string Email { get => email; set => email = value; }
-        public string Mobile { get => mobile; set => mobile = value; }
-        public string Parent { get => parent; set => parent = value; }
-        public string Country { get => country; set => country = value; }
-        public string Street2 { get => street2; set => street2 = value; }
+        public string FirstName { get => firstName; }
+        public string LastName { get => lastName; }
+        public string Street { get => street; }
+        public string City { get => city; }
+        public string State { get => state; }
+        public string Zip { get => zip; }
+        public string Phone { get => phone; }
+        public string Email { get => email; }
+        public string Mobile { get => mobile; }
+        public string Parent { get => parent; }
+        public string Country { get => country; }
+        public string Street2 { get => street2; }
+        public string Gender { get => gender; }
     }
 }

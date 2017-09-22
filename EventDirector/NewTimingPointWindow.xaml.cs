@@ -23,7 +23,7 @@ namespace EventDirector
         MainWindow mainWindow;
         int timingPointIdentifier = -1;
 
-        public NewTimingPointWindow(MainWindow mWindow, ArrayList divisions)
+        public NewTimingPointWindow(MainWindow mWindow, List<Division> divisions)
         {
             InitializeComponent();
             this.mainWindow = mWindow;
@@ -37,7 +37,7 @@ namespace EventDirector
             divBox.SelectedIndex = 0;
         }
 
-        public NewTimingPointWindow(MainWindow mWindow, ArrayList divisions, int id, string name, string distance, string unit)
+        public NewTimingPointWindow(MainWindow mWindow, List<Division> divisions, int id, string name, string distance, string unit)
         {
             InitializeComponent();
             this.mainWindow = mWindow;
@@ -67,12 +67,12 @@ namespace EventDirector
             }
         }
 
-        private void submit_Click(object sender, RoutedEventArgs e)
+        private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            submit();
+            Submit();
         }
 
-        private void submit()
+        private void Submit()
         {
             String nameString = nameBox.Text.Trim();
             String distanceStr = distanceBox.Text.Trim();
@@ -104,7 +104,7 @@ namespace EventDirector
             this.Close();
         }
 
-        private void cancel_Click(object sender, RoutedEventArgs e)
+        private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
@@ -113,7 +113,7 @@ namespace EventDirector
         {
             if (e.Key == Key.Enter)
             {
-                submit();
+                Submit();
             }
         }
     }

@@ -34,7 +34,7 @@ namespace EventDirector
 
         public void UpdateEventsBox()
         {
-            ArrayList events = database.GetEvents();
+            List<Event> events = database.GetEvents();
             eventComboBox.Items.Clear();
             ComboBoxItem boxItem = new ComboBoxItem
             {
@@ -62,7 +62,7 @@ namespace EventDirector
                 return;
             }
             int eventIx = eventComboBox.SelectedIndex;
-            ArrayList participants;
+            List<Participant> participants;
             if (eventIx == 0)
             {
                 Log.D("Get everything.");

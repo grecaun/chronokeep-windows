@@ -8,8 +8,43 @@ namespace EventDirector
 {
     public class EventSpecific
     {
-        private int identifier, eventIdentifier, divisionIdentifier, bib, chip, checkedIn = 0, shirtPurchase = 0;
+        private int identifier, eventIdentifier, divisionIdentifier, bib, chip, checkedIn = 0, shirtPurchase = 0, earlystart = 0;
         private String shirtSize, comments, divisionName, secondShirt, owes, hat, other;
+
+        public EventSpecific(
+            int eid,
+            int did,
+            string divName,
+            string bib,
+            string chip,
+            int ci,
+            int sp,
+            string size,
+            string comments,
+            string secondshirt,
+            string owes,
+            string hat,
+            string other,
+            int earlystart
+            )
+        {
+            int tempBib;
+            int tempChip;
+            this.eventIdentifier = eid;
+            this.divisionIdentifier = did;
+            this.divisionName = divName == null ? "" : divName;
+            this.bib = Int32.TryParse(bib, out tempBib) ? tempBib : -1;
+            this.chip = Int32.TryParse(chip, out tempChip) ? tempChip : -1;
+            this.checkedIn = ci != 0 ? 1 : 0;
+            this.shirtPurchase = sp != 0 ? 1 : 0;
+            this.shirtSize = size == null ? "" : size;
+            this.comments = comments == null ? "" : comments;
+            this.secondShirt = secondshirt == null ? "" : secondshirt;
+            this.owes = owes == null ? "" : owes;
+            this.hat = hat == null ? "" : hat;
+            this.other = other == null ? "" : other;
+            this.earlystart = earlystart != 0 ? 1 : 0;
+        }
 
         public EventSpecific(
             int id,
@@ -25,38 +60,41 @@ namespace EventDirector
             string secondshirt,
             string owes,
             string hat,
-            string other
+            string other,
+            int earlystart
             )
         {
             this.identifier = id;
             this.eventIdentifier = eid;
             this.divisionIdentifier = did;
-            this.divisionName = divName;
+            this.divisionName = divName == null ? "" : divName;
             this.bib = bib;
             this.chip = chip;
-            this.checkedIn = ci;
-            this.shirtPurchase = sp;
-            this.shirtSize = size;
-            this.comments = comments;
-            this.secondShirt = secondshirt;
-            this.owes = owes;
-            this.hat = hat;
-            this.other = other;
+            this.checkedIn = ci != 0 ? 1 : 0;
+            this.shirtPurchase = sp != 0 ? 1 : 0;
+            this.shirtSize = size == null ? "" : size;
+            this.comments = comments == null ? "" : comments;
+            this.secondShirt = secondshirt == null ? "" : secondshirt;
+            this.owes = owes == null ? "" : owes;
+            this.hat = hat == null ? "" : hat;
+            this.other = other == null ? "" : other;
+            this.earlystart = earlystart != 0 ? 1 : 0;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
-        public int DivisionIdentifier { get => divisionIdentifier; set => divisionIdentifier = value; }
-        public int Bib { get => bib; set => bib = value; }
-        public int Chip { get => chip; set => chip = value; }
-        public int CheckedIn { get => checkedIn; set => checkedIn = value; }
-        public int ShirtPurchase { get => shirtPurchase; set => shirtPurchase = value; }
-        public string ShirtSize { get => shirtSize; set => shirtSize = value; }
-        public string Comments { get => comments; set => comments = value; }
-        public string DivisionName { get => divisionName; set => divisionName = value; }
-        public string SecondShirt { get => secondShirt; set => secondShirt = value; }
-        public string Owes { get => owes; set => owes = value; }
-        public string Hat { get => hat; set => hat = value; }
-        public string Other { get => other; set => other = value; }
+        public int EventIdentifier { get => eventIdentifier; }
+        public int DivisionIdentifier { get => divisionIdentifier; }
+        public int Bib { get => bib; }
+        public int Chip { get => chip; }
+        public int CheckedIn { get => checkedIn; }
+        public int ShirtPurchase { get => shirtPurchase; }
+        public string ShirtSize { get => shirtSize; }
+        public string Comments { get => comments; }
+        public string DivisionName { get => divisionName; }
+        public string SecondShirt { get => secondShirt; }
+        public string Owes { get => owes; }
+        public string Hat { get => hat; }
+        public string Other { get => other; }
+        public int EarlyStart { get => earlystart; }
     }
 }

@@ -38,12 +38,12 @@ namespace EventDirector
             this.eventIdentifier = id;
         }
 
-        private void submit_Click(object sender, RoutedEventArgs e)
+        private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            submit();
+            Submit();
         }
 
-        private void submit()
+        private void Submit()
         {
             String nameString = nameBox.Text.Trim();
             long dateVal = datePicker.SelectedDate.Value.Date.Ticks;
@@ -64,7 +64,7 @@ namespace EventDirector
             this.Close();
         }
 
-        private void cancel_Click(object sender, RoutedEventArgs e)
+        private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
@@ -73,7 +73,7 @@ namespace EventDirector
         {
             if (e.Key == Key.Enter)
             {
-                submit();
+                Submit();
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,10 +11,11 @@ namespace EventDirector
 {
     public class CSVImporter
     {
-        public ImportData Data { get; private set; }
-        StreamReader file;
-        string FilePath;
         Regex regex = new Regex("\".*\",|[^,]*,|[^,]*$");
+
+        public ImportData Data { get; private set; }
+        string FilePath;
+        StreamReader file;
 
         public CSVImporter(string filePath)
         {
@@ -31,7 +33,7 @@ namespace EventDirector
             int counter = 0;
             foreach (Match m in matches)
             {
-                headers[counter++] = m.Value.Replace('"',' ').Trim();
+                headers[counter++] = m.Value.Replace('"',' ').TrimEnd(',').Trim();
             }
             Data = new ImportData(headers, FilePath);
         }
@@ -43,10 +45,6 @@ namespace EventDirector
             while ((line = file.ReadLine()) != null)
             {
                 MatchCollection matches = regex.Matches(line);
-                if (Data.GetNumHeaders() != matches.Count)
-                {
-                    Log.E("Wrong count! It's burning! AHHHHHHH! " + Data.GetNumHeaders() + " - " + matches.Count);
-                }
                 string[] dataLine = new string[matches.Count];
                 int counter = 0;
                 string match;

@@ -19,7 +19,7 @@
         </ComboBox>
         <Label Content="Division" HorizontalAlignment="Left" Margin="20,115,0,0" VerticalAlignment="Top" />
         <ComboBox x:Name="divBox" HorizontalAlignment="Left" Height="23" Margin="20,140,0,0" VerticalAlignment="Top" Width="200" />
-        <Button Content="Submit" HorizontalAlignment="Left" Margin="20,0,0,25" VerticalAlignment="Bottom" Width="75" Click="submit_Click"/>
-        <Button Content="Cancel" HorizontalAlignment="Right" Margin="0,0,20,25" VerticalAlignment="Bottom" Width="75" Click="cancel_Click"/>
+        <Button Content="Submit" HorizontalAlignment="Left" Margin="20,0,0,25" VerticalAlignment="Bottom" Width="75" Click="Submit_Click"/>
+        <Button Content="Cancel" HorizontalAlignment="Right" Margin="0,0,20,25" VerticalAlignment="Bottom" Width="75" Click="Cancel_Click"/>
     </Grid>
 </Window>

@@ -31,10 +31,10 @@ namespace EventDirector
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
-        public int DivisionIdentifier { get => divisionIdentifier; set => divisionIdentifier = value; }
-        public string Name { get => name; set => name = value; }
-        public string Distance { get => distance; set => distance = value; }
-        public string Unit { get => unit; set => unit = value; }
+        public int EventIdentifier { get => eventIdentifier; }
+        public int DivisionIdentifier { get => divisionIdentifier; }
+        public string Name { get => name; }
+        public string Distance { get => distance; }
+        public string Unit { get => unit; }
     }
 }

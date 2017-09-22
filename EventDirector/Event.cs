@@ -26,8 +26,8 @@ namespace EventDirector
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public string Name { get => name; set => name = value; }
-        public long Date { get => date; set => date = value; }
+        public string Name { get => name; }
+        public long Date { get => date; }
         public string DateStr
         {
             get

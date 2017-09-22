@@ -15,7 +15,7 @@
         <ComboBox x:Name="eventComboBox" Grid.Row="0" Height="25" Width="150" HorizontalAlignment="Left" Margin="65,0,0,0" SelectedIndex="0" SelectionChanged="EventComboBox_SelectionChanged">
             <ComboBoxItem Content="All" />
         </ComboBox>
-        <ListView x:Name="participantsListView" Grid.Row="1" Width="Auto" Height="Auto">
+        <ListView x:Name="participantsListView" Grid.Row="1" Width="Auto" Height="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Identifier}" />
@@ -25,7 +25,8 @@
                     <GridViewColumn Header="Division" DisplayMemberBinding="{Binding Division}" />
                     <GridViewColumn Header="First" DisplayMemberBinding="{Binding FirstName}" />
                     <GridViewColumn Header="Last" DisplayMemberBinding="{Binding LastName}" />
-                    <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding Birthdate}" />
+                    <GridViewColumn Header="Gender" DisplayMemberBinding="{Binding Gender}" />
+                    <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding BirthdayStr}" />
                     <GridViewColumn Header="Parent" DisplayMemberBinding="{Binding Parent}" />
                     <GridViewColumn Header="Street" DisplayMemberBinding="{Binding Street}" />
                     <GridViewColumn Header="Street 2" DisplayMemberBinding="{Binding Street2}" />
@@ -37,6 +38,7 @@
                     <GridViewColumn Header="Mobile" DisplayMemberBinding="{Binding Mobile}" />
                     <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}" />
                     <GridViewColumn Header="Checked In" DisplayMemberBinding="{Binding CheckedIn}" />
+                    <GridViewColumn Header="EarlyStart" DisplayMemberBinding="{Binding EarlyStart}" />
                     <GridViewColumn Header="Shirt Purchase" DisplayMemberBinding="{Binding ShirtPurchase}" />
                     <GridViewColumn Header="Shirt Size" DisplayMemberBinding="{Binding ShirtSize}" />
                     <GridViewColumn Header="Shirt 2" DisplayMemberBinding="{Binding SecondShirt}" />

@@ -5,24 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="ImportFileWindow" Height="600" Width="400">
+        Title="ImportFileWindow" Height="600" Width="500" MinWidth="300">
     <Grid>
-        <Label Content="Event:" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,7,165,10" />
-        <ComboBox x:Name="eventChooser" Width="150" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,10,10" />
-        <Button x:Name="Done" Height="25" Width="65" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Done" Margin="6,10,10,10" Click="Done_Click"/>
-        <Button x:Name="Cancel" Height="25" Width="65" VerticalAlignment="Top" HorizontalAlignment="Left" Content="Cancel" Margin="77,10,10,10" Click="Cancel_Click"/>
-        <ListBox Height="520" Width="380" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
+        <Label x:Name="eventLabel" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,7,10,10" />
+        <DatePicker x:Name="date" Height="25" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,148,10" />
+        <Button x:Name="Done" Height="25" Width="65" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Done" Margin="6,10,77,10" Click="Done_Click"/>
+        <Button x:Name="Cancel" Height="25" Width="65" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Cancel" Margin="77,10,6,10" Click="Cancel_Click"/>
+        <Grid VerticalAlignment="Bottom" Margin="0,40,0,0" >
+            <ListBox x:Name="headerListBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" >
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </Grid>
     </Grid>
-    <Window.Resources>
-        <DataTemplate x:Key="ListBoxItemTemplate">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                </Grid.ColumnDefinitions>
-                <Label x:Name="headerName" Grid.Column="0" HorizontalAlignment="Left" Height="25" Margin="5,5,5,5" />
-                <ComboBox x:Name="picker" Grid.Column="1" Width="170" Height="25" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,5,5,5" />
-            </Grid>
-        </DataTemplate>
-    </Window.Resources>
 </Window>

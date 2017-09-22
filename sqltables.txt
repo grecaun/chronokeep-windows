@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS
         mobile VARCHAR(20),
         parent VARCHAR(150),
         country VARCHAR(50),
-        street2 VARCHAR(50)
+        street2 VARCHAR(50),
+        gender VARCHAR(10)
         )
 
 CREATE TABLE IF NOT EXISTS
@@ -60,7 +61,8 @@ CREATE TABLE IF NOT EXISTS
         secondshirt VARCHAR,
         owes VARCHAR(50),
         hat VARCHAR(20),
-        other VARCHAR
+        other VARCHAR,
+        earlystart INTEGER DEFAULT 0
         )
 
 CREATE TABLE IF NOT EXISTS
@@ -104,6 +106,8 @@ CREATE TABLE IF NOT EXISTS
         old_owes VARCHAR(50),22
         old_hat VARCHAR(20),23
         old_other VARCHAR,24
+        old_gender VARCHAR(10),
+        old_earlystart INTEGER
 
         new_participant_id INTEGER NOT NULL,
         new_first VARCHAR(50) NOT NULL,
@@ -135,7 +139,9 @@ CREATE TABLE IF NOT EXISTS
         new_secondshirt VARCHAR,
         new_owes VARCHAR(50),
         new_hat VARCHAR(20),
-        new_other VARCHAR
+        new_other VARCHAR,
+        new_gender VARCHAR(10),
+        new_earlystart INTEGER
 
 CREATE TABLE IF NOT EXISTS
     ed_settings (

@@ -80,7 +80,8 @@ namespace EventDirector
                         {
                             CSVImporter importer = new CSVImporter(dialog.FileName);
                             importer.FetchHeaders();
-                            importer.FetchData();
+                            ImportFileWindow win = new ImportFileWindow(this, importer, database);
+                            win.Show();
                         }
                         catch (Exception ex)
                         {
@@ -186,7 +187,7 @@ namespace EventDirector
             {
                 Log.D("TimingPoints - Modify Button Pressed.");
                 TimingPoint tp = (TimingPoint)timingPointsListView.SelectedItem;
-                ArrayList divisions = database.GetDivisions(((Event)eventsListView.SelectedItem).Identifier);
+                List<Division> divisions = database.GetDivisions(((Event)eventsListView.SelectedItem).Identifier);
                 if (divisions != null && divisions.Count > 0 && tp != null)
                 {
                     NewTimingPointWindow win = new NewTimingPointWindow(this, divisions, tp.Identifier, tp.Name, tp.Distance, tp.Unit);
@@ -217,7 +218,7 @@ namespace EventDirector
             else if (buttonName == "timingPointsAddButton")
             {
                 Log.D("TimingPoints - Add Button Pressed.");
-                ArrayList divisions = database.GetDivisions(((Event)eventsListView.SelectedItem).Identifier);
+                List<Division> divisions = database.GetDivisions(((Event)eventsListView.SelectedItem).Identifier);
                 if (divisions != null && divisions.Count > 0)
                 {
                     NewTimingPointWindow timingPointWindow = new NewTimingPointWindow(this, divisions);
@@ -261,7 +262,7 @@ namespace EventDirector
 
         private async void UpdateEventBox()
         {
-            ArrayList events = null;
+            List<Event> events = null;
             await Task.Run(() =>
             {
                 events = database.GetEvents();
@@ -286,7 +287,7 @@ namespace EventDirector
             {
                 return;
             }
-            ArrayList timingPoints = null;
+            List<TimingPoint> timingPoints = null;
             await Task.Run(() =>
             {
                 timingPoints = database.GetTimingPoints(eventId);
@@ -301,7 +302,7 @@ namespace EventDirector
             {
                 return;
             }
-            ArrayList divisions = null;
+            List<Division> divisions = null;
             await Task.Run(() =>
             {
                 divisions = database.GetDivisions(eventId);

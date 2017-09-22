@@ -12,7 +12,7 @@ namespace EventDirector
     {
         public String FileName { get; private set; }
         public string[] Headers { get; private set; }
-        public ArrayList Data { get; private set; }
+        public List<String[]> Data { get; private set; }
         Regex regex = new Regex("[^\\\\]*\\.");
 
 
@@ -20,14 +20,16 @@ namespace EventDirector
         {
             FileName = regex.Match(filename).Value.TrimEnd('.');
             Log.D(FileName + " is the filename.");
+            string[] newheaders = new string[headers.Length + 1];
+            Array.Copy(headers, 0, newheaders, 1, headers.Length);
             StringBuilder sb = new StringBuilder("Headers are");
-            foreach (string s in headers)
+            foreach (string s in newheaders)
             {
                 sb.Append(" '" + s + "'");
             }
             Log.D(sb.ToString());
-            Data = new ArrayList();
-            Headers = headers;
+            Data = new List<String[]>();
+            Headers = newheaders;
         }
 
         public int GetNumHeaders()
@@ -37,13 +39,31 @@ namespace EventDirector
 
         public void AddData(string[] data)
         {
-            Data.Add(data);
+            string[] newdata = new string[data.Length + 1];
+            Array.Copy(data, 0, newdata, 1, data.Length);
+            if (Headers.Length != newdata.Length)
+            {
+                Log.E("Wrong count! It's burning! AHHHHHHH! " + Headers.Length + " - " + newdata.Length);
+            }
+            Data.Add(newdata);
             StringBuilder sb = new StringBuilder("Data input is");
-            foreach (string s in data)
+            foreach (string s in newdata)
             {
                 sb.Append(" '" + s + "'");
             }
             Log.D(sb.ToString());
+        }
+
+        public string[] GetDivisionNames(int index)
+        {
+            HashSet<String> values = new HashSet<string>();
+            foreach (string[] line in Data)
+            {
+                values.Add(line[index].ToLower());
+            }
+            string[] output = new string[values.Count];
+            values.CopyTo(output);
+            return output;
         }
     }
 }

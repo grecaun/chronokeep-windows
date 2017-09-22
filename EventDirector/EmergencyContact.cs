@@ -11,6 +11,21 @@ namespace EventDirector
         private int identifier;
         private string name, phone, email;
 
+        public EmergencyContact()
+        {
+            identifier = 0;
+            name = "";
+            phone = "";
+            email = "";
+        }
+
+        public EmergencyContact(string n, string p, string e)
+        {
+            this.name = n;
+            this.phone = p;
+            this.email = e;
+        }
+
         public EmergencyContact(int id, string n, string p, string e)
         {
             this.identifier = id;
@@ -19,9 +34,9 @@ namespace EventDirector
             this.email = e;
         }
 
-        public string Name { get => name; set => name = value; }
-        public string Phone { get => phone; set => phone = value; }
-        public string Email { get => email; set => email = value; }
+        public string Name { get => name; }
+        public string Phone { get => phone; }
+        public string Email { get => email; }
         public int Identifier { get => identifier; set => identifier = value; }
     }
 }
