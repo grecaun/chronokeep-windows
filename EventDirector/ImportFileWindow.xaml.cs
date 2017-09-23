@@ -193,16 +193,27 @@ namespace EventDirector
             else
             {
                 Log.D("No repeat headers found.");
+                ImportWork();
+                this.Close(); //*/
+            }
+        }
+
+        private async void ImportWork()
+        {
+            Log.D("Starting the import.");
+            int[] keys = new int[human_fields.Length + 1]; // Keys is an array of integers representing the 
+            foreach (AListBoxItem item in headerListBox.Items)
+            {
+                if (item.HeaderBox.SelectedIndex != 0)
+                {
+                    keys[item.HeaderBox.SelectedIndex] = item.Index;
+                }
+            }
+            Event anEvent = new Event(importer.Data.FileName, date.SelectedDate.Value.Ticks);
+            await Task.Run(() =>
+            {
                 importer.FetchData();
                 ImportData data = importer.Data;
-                int[] keys = new int[human_fields.Length+1];
-                foreach (AListBoxItem item in headerListBox.Items)
-                {
-                    if (item.HeaderBox.SelectedIndex != 0)
-                    {
-                        keys[item.HeaderBox.SelectedIndex] = item.Index;
-                    }
-                }
                 string[] divisions = data.GetDivisionNames(keys[23]);
                 StringBuilder sb = new StringBuilder("Division names are");
                 foreach (String s in divisions)
@@ -210,7 +221,6 @@ namespace EventDirector
                     sb.Append(" '" + s + "'");
                 }
                 Log.D(sb.ToString());
-                Event anEvent = new Event(data.FileName, date.SelectedDate.Value.Ticks);
                 database.AddEvent(anEvent);
                 anEvent.Identifier = database.GetEventID(anEvent);
                 Hashtable divHash = new Hashtable(500);
@@ -266,8 +276,8 @@ namespace EventDirector
                         ));
                 }
                 database.AddParticipants(participants);
-                this.Close(); //*/
-            }
+            });
+            Log.D("All done with the import.");
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

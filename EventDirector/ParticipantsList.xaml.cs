@@ -18,18 +18,20 @@ namespace EventDirector
     /// <summary>
     /// Interaction logic for ParticipantsList.xaml
     /// </summary>
-    public partial class ParticipantsList : Window
+    public partial class ParticipantsListWindow : Window
     {
         IDBInterface database;
         MainWindow mainWindow;
+        bool running = false, handleSelection = true, firsttime = true;
+        int oldEventIndex = 0;
 
-        public ParticipantsList(IDBInterface database, MainWindow mWin)
+        public ParticipantsListWindow(IDBInterface database, MainWindow mWin)
         {
             this.mainWindow = mWin;
             this.database = database;
             InitializeComponent();
             UpdateEventsBox();
-            UpdateParticipantsView();
+            firsttime = false;
         }
 
         public void UpdateEventsBox()
@@ -54,31 +56,39 @@ namespace EventDirector
             eventComboBox.SelectedIndex = 0;
         }
 
-        public void UpdateParticipantsView()
+        public async void UpdateParticipantsView()
         {
             if (eventComboBox.SelectedIndex < 0)
             {
                 Log.D("Ruh-roh, somehow nothing is selected.");
                 return;
             }
-            int eventIx = eventComboBox.SelectedIndex;
-            List<Participant> participants;
-            if (eventIx == 0)
+            int eventIx = eventComboBox.SelectedIndex, eventIdentifier = -1;
+            if (eventIx != 0)
             {
-                Log.D("Get everything.");
-                participants = database.GetParticipants();
+                eventIdentifier = Convert.ToInt32(((ComboBoxItem)eventComboBox.SelectedItem).Uid);
             }
-            else
+            List<Participant> participants = new List<Participant>();
+            running = true;
+            await Task.Run(() =>
             {
-                Log.D("Figure out what ID to use and get a specific event.");
-                int eventIdentifier = Convert.ToInt32(((ComboBoxItem)eventComboBox.SelectedItem).Uid);
-                participants = database.GetParticipants(eventIdentifier);
-            }
-            if (participantsListView == null)
-            {
-                Log.D("Participants Listview isn't there.");
-                return;
-            }
+                if (eventIx == 0)
+                {
+                    Log.D("Get everything.");
+                    participants = database.GetParticipants();
+                }
+                else
+                {
+                    Log.D("Figure out what ID to use and get a specific event.");
+                    participants = database.GetParticipants(eventIdentifier);
+                }
+                if (participantsListView == null)
+                {
+                    Log.D("Participants Listview isn't there.");
+                    return;
+                }
+            });
+            running = false;
             Log.D("Participants listview found!");
             participantsListView.Items.Clear();
             foreach (Participant p in participants)
@@ -89,7 +99,28 @@ namespace EventDirector
 
         private void EventComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateParticipantsView();
+            Log.D("Event selected.");
+            if (handleSelection == true)
+            {
+                if (running == false)
+                {
+                    Log.D("No update running currently.");
+                    oldEventIndex = eventComboBox.SelectedIndex;
+                    UpdateParticipantsView();
+                }
+                else if (firsttime != true)
+                {
+                    Log.D("Update running.");
+                    MessageBox.Show("Currently getting information. Please wait.");
+                    handleSelection = false;
+                    eventComboBox.SelectedIndex = oldEventIndex;
+                }
+            }
+            else
+            {
+                Log.D("We've changed the index ourself. Go figure.");
+                handleSelection = true;
+            }
         }
 
         private void Window_Closed(object sender, EventArgs e)

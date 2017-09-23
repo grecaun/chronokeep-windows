@@ -26,7 +26,7 @@ namespace EventDirector
     {
         IDBInterface database;
         String dbName = "EventDirector.sqlite";
-        ParticipantsList partList = null;
+        ParticipantsListWindow partList = null;
 
         public MainWindow()
         {
@@ -95,7 +95,7 @@ namespace EventDirector
                     break;
                 case 7:     // List Participants
                     Log.D("List Participants");
-                    partList = new ParticipantsList(database, this);
+                    partList = new ParticipantsListWindow(database, this);
                     partList.Show();
                     break;
                 default:

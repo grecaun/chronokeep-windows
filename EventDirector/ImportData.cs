@@ -22,12 +22,14 @@ namespace EventDirector
             Log.D(FileName + " is the filename.");
             string[] newheaders = new string[headers.Length + 1];
             Array.Copy(headers, 0, newheaders, 1, headers.Length);
+#if DEBUG
             StringBuilder sb = new StringBuilder("Headers are");
             foreach (string s in newheaders)
             {
                 sb.Append(" '" + s + "'");
             }
             Log.D(sb.ToString());
+#endif
             Data = new List<String[]>();
             Headers = newheaders;
         }
@@ -46,12 +48,14 @@ namespace EventDirector
                 Log.E("Wrong count! It's burning! AHHHHHHH! " + Headers.Length + " - " + newdata.Length);
             }
             Data.Add(newdata);
+#if DEBUG
             StringBuilder sb = new StringBuilder("Data input is");
             foreach (string s in newdata)
             {
                 sb.Append(" '" + s + "'");
             }
             Log.D(sb.ToString());
+#endif
         }
 
         public string[] GetDivisionNames(int index)

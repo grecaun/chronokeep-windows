@@ -673,12 +673,6 @@ namespace EventDirector
             {
                 SQLiteCommand command = new SQLiteCommand("SELECT name FROM sqlite_master", connection);
                 SQLiteDataReader reader = command.ExecuteReader();
-                StringBuilder sb = new StringBuilder("Table names are as follows:");
-                while (reader.Read())
-                {
-                    sb.Append(" " + reader["name"].ToString());
-                }
-                Log.D(sb.ToString());
                 command = new SQLiteCommand("DROP TABLE events; DROP TABLE divisions; DROP TABLE timingpoints; DROP TABLE emergencycontacts; DROP TABLE participants; DROP TABLE eventspecific; DROP TABLE timeresults; DROP TABLE changes; DROP TABLE settings", connection);
                 command.ExecuteNonQuery();
                 transaction.Commit();
@@ -692,12 +686,6 @@ namespace EventDirector
             {
                 SQLiteCommand command = new SQLiteCommand("SELECT name FROM sqlite_master", connection);
                 SQLiteDataReader reader = command.ExecuteReader();
-                StringBuilder sb = new StringBuilder("Table names are as follows:");
-                while (reader.Read())
-                {
-                    sb.Append(" "+reader["name"].ToString());
-                }
-                Log.D(sb.ToString());
                 command = new SQLiteCommand("DELETE FROM events; DELETE FROM divisions; DELETE FROM timingpoints; DELETE FROM emergencycontacts; DELETE FROM participants; DELETE FROM eventspecific; DELETE FROM timeresults; DELETE FROM changes; DELETE FROM settings", connection);
                 command.ExecuteNonQuery();
                 transaction.Commit();
@@ -748,12 +736,6 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                StringBuilder sb = new StringBuilder("There are " + reader.FieldCount + " fields which are:");
-                for (int i=0;i<reader.FieldCount;i++)
-                {
-                    sb.Append(" " + reader.GetName(i));
-                }
-                Log.D(sb.ToString());
                 output.Add(new Participant(
                     Convert.ToInt32(reader["participant_id"]),
                     reader["first"].ToString(),
