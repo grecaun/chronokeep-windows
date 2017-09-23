@@ -89,6 +89,7 @@
       <DependentUpon>ImportFileWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Log.cs" />
+    <Compile Include="NetCore.cs" />
     <Compile Include="NewDivisionWindow.xaml.cs">
       <DependentUpon>NewDivisionWindow.xaml</DependentUpon>
     </Compile>
@@ -100,8 +101,10 @@
       <DependentUpon>ParticipantsList.xaml</DependentUpon>
     </Compile>
     <Compile Include="SQLiteInterface.cs" />
+    <Compile Include="TempUdpThread.cs" />
     <Compile Include="TimeResult.cs" />
     <Compile Include="TimingPoint.cs" />
+    <Compile Include="ZeroConf.cs" />
     <Page Include="ImportFileWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

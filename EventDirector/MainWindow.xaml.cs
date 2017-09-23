@@ -6,6 +6,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +28,12 @@ namespace EventDirector
         IDBInterface database;
         String dbName = "EventDirector.sqlite";
         ParticipantsListWindow partList = null;
+        bool closing = false;
+
+        Thread zeroConfThread;
+        ZeroConf zeroConf = new ZeroConf();
+
+        List<Window> windows = new List<Window>();
 
         public MainWindow()
         {
@@ -40,6 +47,14 @@ namespace EventDirector
             database = new SQLiteInterface(dbName);
             database.Initialize();
             UpdateEventBox();
+            zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
+            zeroConfThread.Start();
+            for (int i=0; i<5; i++)
+            {
+                TempUdpThread tmp = new TempUdpThread(i);
+                Thread aThread = new Thread(new ThreadStart(tmp.Run));
+                aThread.Start();
+            }
         }
 
         private async void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -170,6 +185,7 @@ namespace EventDirector
                 if (thisEvent != null)
                 {
                     NewEventWindow win = new NewEventWindow(this, thisEvent.Identifier, thisEvent.Name, thisEvent.Date);
+                    windows.Add(win);
                     win.Show();
                 }
             }
@@ -180,6 +196,7 @@ namespace EventDirector
                 if (div != null)
                 {
                     NewDivisionWindow win = new NewDivisionWindow(this, div.Identifier, div.Name);
+                    windows.Add(win);
                     win.Show();
                 }
             }
@@ -191,6 +208,7 @@ namespace EventDirector
                 if (divisions != null && divisions.Count > 0 && tp != null)
                 {
                     NewTimingPointWindow win = new NewTimingPointWindow(this, divisions, tp.Identifier, tp.Name, tp.Distance, tp.Unit);
+                    windows.Add(win);
                     win.Show();
                 }
                 else
@@ -206,14 +224,16 @@ namespace EventDirector
             if (buttonName == "eventsAddButton")
             {
                 Log.D("Events - Add Button Pressed.");
-                NewEventWindow eventWindow = new NewEventWindow(this);
-                eventWindow.Show();
+                NewEventWindow win = new NewEventWindow(this);
+                windows.Add(win);
+                win.Show();
             }
             else if (buttonName == "divisionsAddButton")
             {
                 Log.D("Divisions - Add Button Pressed.");
-                NewDivisionWindow divisionWindow = new NewDivisionWindow(this);
-                divisionWindow.Show();
+                NewDivisionWindow win = new NewDivisionWindow(this);
+                windows.Add(win);
+                win.Show();
             }
             else if (buttonName == "timingPointsAddButton")
             {
@@ -221,8 +241,9 @@ namespace EventDirector
                 List<Division> divisions = database.GetDivisions(((Event)eventsListView.SelectedItem).Identifier);
                 if (divisions != null && divisions.Count > 0)
                 {
-                    NewTimingPointWindow timingPointWindow = new NewTimingPointWindow(this, divisions);
-                    timingPointWindow.Show();
+                    NewTimingPointWindow win = new NewTimingPointWindow(this, divisions);
+                    windows.Add(win);
+                    win.Show();
                 }
                 else
                 {
@@ -375,6 +396,26 @@ namespace EventDirector
         {
             Log.D("Participants list has closed.");
             partList = null;
+        }
+
+        public void WindowClosed(Window window)
+        {
+            if (closing == false)
+            {
+                windows.Remove(window);
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            closing = true;
+            if (partList != null) partList.Close();
+            foreach (Window w in windows)
+            {
+                w.Close();
+            }
+            zeroConf.Stop();
+            zeroConfThread.Abort();
         }
     }
 }

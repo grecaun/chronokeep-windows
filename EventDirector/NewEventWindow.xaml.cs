@@ -76,5 +76,10 @@ namespace EventDirector
                 Submit();
             }
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            mainWindow.WindowClosed(this);
+        }
     }
 }

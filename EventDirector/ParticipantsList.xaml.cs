@@ -97,6 +97,11 @@ namespace EventDirector
             }
         }
 
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+        }
+
         private void EventComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Log.D("Event selected.");

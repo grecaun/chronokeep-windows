@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1300">
+        Title="MainWindow" Height="900" Width="1300"
+        Closing="Window_Closing">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File" >
