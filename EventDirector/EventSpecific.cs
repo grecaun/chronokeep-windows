@@ -18,7 +18,6 @@ namespace EventDirector
             string bib,
             string chip,
             int ci,
-            int sp,
             string size,
             string comments,
             string secondshirt,
@@ -28,21 +27,18 @@ namespace EventDirector
             int earlystart
             )
         {
-            int tempBib;
-            int tempChip;
             this.eventIdentifier = eid;
             this.divisionIdentifier = did;
-            this.divisionName = divName == null ? "" : divName;
-            this.bib = Int32.TryParse(bib, out tempBib) ? tempBib : -1;
-            this.chip = Int32.TryParse(chip, out tempChip) ? tempChip : -1;
+            this.divisionName = divName ?? "";
+            this.bib = Int32.TryParse(bib, out int tempBib) ? tempBib : -1;
+            this.chip = Int32.TryParse(chip, out int tempChip) ? tempChip : -1;
             this.checkedIn = ci != 0 ? 1 : 0;
-            this.shirtPurchase = sp != 0 ? 1 : 0;
-            this.shirtSize = size == null ? "" : size;
-            this.comments = comments == null ? "" : comments;
-            this.secondShirt = secondshirt == null ? "" : secondshirt;
-            this.owes = owes == null ? "" : owes;
-            this.hat = hat == null ? "" : hat;
-            this.other = other == null ? "" : other;
+            this.shirtSize = size ?? "";
+            this.comments = comments ?? "";
+            this.secondShirt = secondshirt ?? "";
+            this.owes = owes ?? "";
+            this.hat = hat ?? "";
+            this.other = other ?? "";
             this.earlystart = earlystart != 0 ? 1 : 0;
         }
 
@@ -54,7 +50,6 @@ namespace EventDirector
             int bib,
             int chip,
             int ci,
-            int sp,
             string size,
             string comments,
             string secondshirt,
@@ -67,17 +62,16 @@ namespace EventDirector
             this.identifier = id;
             this.eventIdentifier = eid;
             this.divisionIdentifier = did;
-            this.divisionName = divName == null ? "" : divName;
+            this.divisionName = divName ?? "";
             this.bib = bib;
             this.chip = chip;
             this.checkedIn = ci != 0 ? 1 : 0;
-            this.shirtPurchase = sp != 0 ? 1 : 0;
-            this.shirtSize = size == null ? "" : size;
-            this.comments = comments == null ? "" : comments;
-            this.secondShirt = secondshirt == null ? "" : secondshirt;
-            this.owes = owes == null ? "" : owes;
-            this.hat = hat == null ? "" : hat;
-            this.other = other == null ? "" : other;
+            this.shirtSize = size ?? "";
+            this.comments = comments ?? "";
+            this.secondShirt = secondshirt ?? "";
+            this.owes = owes ?? "";
+            this.hat = hat ?? "";
+            this.other = other ?? "";
             this.earlystart = earlystart != 0 ? 1 : 0;
         }
 

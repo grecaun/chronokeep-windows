@@ -201,7 +201,10 @@ namespace EventDirector
         private async void ImportWork()
         {
             Log.D("Starting the import.");
-            int[] keys = new int[human_fields.Length + 1]; // Keys is an array of integers representing the 
+            // Keys is an array of integers representing which field in the row of incoming data
+            // represents a specific field in the database.  These fields are defined by the array
+            // from which the user can select.
+            int[] keys = new int[human_fields.Length + 1];
             foreach (AListBoxItem item in headerListBox.Items)
             {
                 if (item.HeaderBox.SelectedIndex != 0)
@@ -235,7 +238,6 @@ namespace EventDirector
                 List<Participant> participants = new List<Participant>();
                 for (int counter = 0; counter < numEntries; counter++)
                 {
-                    // Numbers indexing keys represent the index of the item 
                     Division thisDiv = (Division)divHash[data.Data[counter][keys[23]].ToLower()];
                     participants.Add(new Participant(
                         data.Data[counter][keys[1]], // First Name
@@ -257,22 +259,21 @@ namespace EventDirector
                             data.Data[counter][keys[15]], // Bib number
                             data.Data[counter][keys[16]], // chip
                             0,                            // checked in
-                            data.Data[counter][keys[17]] == "" ? 0 : 1, // shirt purchase boolean
                             data.Data[counter][keys[17]], // shirt size
-                            data.Data[counter][keys[19]], //
-                            data.Data[counter][keys[20]],
-                            data.Data[counter][keys[18]],
-                            data.Data[counter][keys[21]],
-                            data.Data[counter][keys[22]],
-                            0
+                            data.Data[counter][keys[19]], // comments
+                            data.Data[counter][keys[20]], // second shirt
+                            data.Data[counter][keys[18]], // owes
+                            data.Data[counter][keys[21]], // hat
+                            data.Data[counter][keys[22]], // other
+                            0                             // early start
                             ),
-                        data.Data[counter][keys[11]],
-                        data.Data[counter][keys[12]],
-                        data.Data[counter][keys[13]],
-                        data.Data[counter][keys[14]],
-                        data.Data[counter][keys[10]],
-                        data.Data[counter][keys[6]],
-                        data.Data[counter][keys[3]]
+                        data.Data[counter][keys[11]], // phone
+                        data.Data[counter][keys[12]], // email
+                        data.Data[counter][keys[13]], // mobile
+                        data.Data[counter][keys[14]], // parent
+                        data.Data[counter][keys[10]], // country
+                        data.Data[counter][keys[6]], // street2
+                        data.Data[counter][keys[3]] // gender
                         ));
                 }
                 database.AddParticipants(participants);

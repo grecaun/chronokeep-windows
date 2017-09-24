@@ -19,11 +19,13 @@ namespace EventDirector
 
         public void Run()
         {
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            socket.EnableBroadcast = true;
-            socket.DontFragment = true;
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
+            {
+                EnableBroadcast = true,
+                DontFragment = true
+            };
 
-            IPEndPoint groupEP = new IPEndPoint(IPAddress.Broadcast, NetCore.UDPPort);
+            IPEndPoint groupEP = new IPEndPoint(IPAddress.Broadcast, NetCore.GetUDPPort());
             byte[] sendBuffer = Encoding.ASCII.GetBytes("This is test number "+num);
             Log.D("Temp thread number " + num + " blasting off.");
             socket.SendTo(sendBuffer, groupEP);

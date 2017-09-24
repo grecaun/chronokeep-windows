@@ -16,7 +16,7 @@ namespace EventDirector
         public void Run()
         {
             udpClient = new UdpClient();
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, NetCore.UDPPort);
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, NetCore.GetUDPPort());
             udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             udpClient.Client.Bind(endPoint);
 

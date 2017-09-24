@@ -39,7 +39,6 @@
                     <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}" />
                     <GridViewColumn Header="Checked In" DisplayMemberBinding="{Binding CheckedIn}" />
                     <GridViewColumn Header="EarlyStart" DisplayMemberBinding="{Binding EarlyStart}" />
-                    <GridViewColumn Header="Shirt Purchase" DisplayMemberBinding="{Binding ShirtPurchase}" />
                     <GridViewColumn Header="Shirt Size" DisplayMemberBinding="{Binding ShirtSize}" />
                     <GridViewColumn Header="Shirt 2" DisplayMemberBinding="{Binding SecondShirt}" />
                     <GridViewColumn Header="Hat" DisplayMemberBinding="{Binding Hat}" />

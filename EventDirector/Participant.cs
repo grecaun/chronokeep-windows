@@ -101,7 +101,6 @@ namespace EventDirector
         public int Chip { get => eventSpecific.Chip; }
         public string Division { get => eventSpecific.DivisionName; }
         public string CheckedIn { get => eventSpecific.CheckedIn == 0 ? "No" : "Yes"; }
-        public string ShirtPurchase { get => eventSpecific.ShirtPurchase == 0 ? "No" : "Yes"; }
         public string ShirtSize { get => eventSpecific.ShirtSize; }
         public string SecondShirt { get => eventSpecific.SecondShirt; }
         public string Owes { get => eventSpecific.Owes; }
