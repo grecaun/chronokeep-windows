@@ -30,6 +30,9 @@ namespace EventDirector
         ParticipantsListWindow partList = null;
         bool closing = false;
 
+        Thread tcpServerThread;
+        TCPServer tcpServer = new TCPServer();
+
         Thread zeroConfThread;
         ZeroConf zeroConf = new ZeroConf();
 
@@ -47,6 +50,10 @@ namespace EventDirector
             database = new SQLiteInterface(dbName);
             database.Initialize();
             UpdateEventBox();
+            Log.D("Starting TCP server thread.");
+            tcpServerThread = new Thread(new ThreadStart(tcpServer.Run));
+            tcpServerThread.Start();
+            Log.D("Starting zero configuration thread.");
             zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
             zeroConfThread.Start();
             for (int i=0; i<5; i++)
@@ -414,6 +421,8 @@ namespace EventDirector
             {
                 w.Close();
             }
+            tcpServer.Stop();
+            tcpServerThread.Abort();
             zeroConf.Stop();
             zeroConfThread.Abort();
         }

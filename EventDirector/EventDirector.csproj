@@ -101,6 +101,7 @@
       <DependentUpon>ParticipantsList.xaml</DependentUpon>
     </Compile>
     <Compile Include="SQLiteInterface.cs" />
+    <Compile Include="TCPServer.cs" />
     <Compile Include="TempUdpThread.cs" />
     <Compile Include="TimeResult.cs" />
     <Compile Include="TimingPoint.cs" />

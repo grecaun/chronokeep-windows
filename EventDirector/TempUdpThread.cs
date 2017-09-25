@@ -30,9 +30,21 @@ namespace EventDirector
             Log.D("Temp thread number " + num + " blasting off.");
             socket.SendTo(sendBuffer, groupEP);
             byte[] recvBuffer = new byte[256];
-            int numbytes = socket.Receive(recvBuffer);
+            EndPoint server = new IPEndPoint(IPAddress.Any, 0);
+            int numbytes = socket.ReceiveFrom(recvBuffer, ref server);
             String received = Encoding.ASCII.GetString(recvBuffer, 0, numbytes);
-            Log.D("Received this from the server: '" + received + "'");
+
+            string[] msgs = received.Trim('[').Trim(']').Split('|');
+            Log.D("Server name is '" + msgs[0] + "' it's identifier is '" + msgs[1] + "' and port number is '" + msgs[2] + "'");
+            int.TryParse(msgs[2], out int tcpPort);
+            EndPoint serverCon = new IPEndPoint(((IPEndPoint)server).Address, tcpPort);
+            Log.D("This is the server we're trying to connect to: " + serverCon.ToString());
+            Socket tcp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            tcp.Connect(serverCon);
+            Thread.Sleep(5000);
+            tcp.Send(Encoding.ASCII.GetBytes("This is a tcp test from tester number " + num));
+            Thread.Sleep(5000);
+            tcp.Close();
         }
     }
 }
