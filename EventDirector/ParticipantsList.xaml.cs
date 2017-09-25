@@ -90,11 +90,8 @@ namespace EventDirector
             });
             running = false;
             Log.D("Participants listview found!");
-            participantsListView.Items.Clear();
-            foreach (Participant p in participants)
-            {
-                participantsListView.Items.Add(p);
-            }
+            participants.Sort();
+            participantsListView.ItemsSource = participants;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

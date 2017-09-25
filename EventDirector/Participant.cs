@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    public class Participant
+    public class Participant : IEquatable<Participant>, IComparable<Participant>
     {
         private int identifier;
         private long birthdate;
@@ -134,5 +134,21 @@ namespace EventDirector
         public string Country { get => country; }
         public string Street2 { get => street2; }
         public string Gender { get => gender; }
+
+        public int CompareTo(Participant other)
+        {
+            if (other == null) return 1;
+            else if (this.EventSpecific.DivisionIdentifier == other.EventSpecific.DivisionIdentifier)
+            {
+                return this.LastName.CompareTo(other.LastName);
+            }
+            return this.EventSpecific.DivisionIdentifier.CompareTo(other.EventSpecific.DivisionIdentifier);
+        }
+
+        public bool Equals(Participant other)
+        {
+            if (other == null) return false;
+            return this.Identifier == other.Identifier;
+        }
     }
 }

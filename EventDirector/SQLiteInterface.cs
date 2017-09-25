@@ -44,7 +44,7 @@ namespace EventDirector
                             "event_id INTEGER PRIMARY KEY," +
                             "event_name VARCHAR(100) NOT NULL," +
                             "event_date INTEGER NOT NULL," +
-                            "UNIQUE (event_name, event_date) ON CONFLICT REPLACE" +
+                            "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                             ")");
                     queries.Add("CREATE TABLE IF NOT EXISTS emergencycontacts (" +
                             "emergencycontact_id INTEGER PRIMARY KEY," +
@@ -59,7 +59,7 @@ namespace EventDirector
                             "division_id INTEGER PRIMARY KEY," +
                             "division_name VARCHAR(100) NOT NULL," +
                             "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                            "UNIQUE (division_name, event_id) ON CONFLICT REPLACE" +
+                            "UNIQUE (division_name, event_id) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS timingpoints (" +
                             "timingpoint_id INTEGER PRIMARY KEY," +
@@ -68,7 +68,7 @@ namespace EventDirector
                             "timingpoint_name VARCHAR(100) NOT NULL," +
                             "timingpoint_distance VARCHAR(5)," +
                             "timingpoint_unit VARCHAR(2)," +
-                            "UNIQUE (event_id, division_id, timingpoint_name) ON CONFLICT REPLACE" +
+                            "UNIQUE (event_id, division_id, timingpoint_name) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS participants (" +
                             "participant_id INTEGER PRIMARY KEY," +
@@ -87,7 +87,7 @@ namespace EventDirector
                             "participant_country VARCHAR(50)," +
                             "participant_street2 VARCHAR(50)," +
                             "participant_gender VARCHAR(10)," +
-                            "UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip) ON CONFLICT REPLACE" +
+                            "UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (" +
                             "eventspecific_id INTEGER PRIMARY KEY," +
@@ -97,7 +97,6 @@ namespace EventDirector
                             "eventspecific_bib INTEGER," +
                             "eventspecific_chip INTEGER," +
                             "eventspecific_checkedin INTEGER DEFAULT 0," +
-                            "eventspecific_shirtpurchase INTEGER DEFAULT 0," +
                             "eventspecific_shirtsize VARCHAR(5)," +
                             "eventspecific_comments VARCHAR," +
                             "eventspecific_secondshirt VARCHAR," +
@@ -105,14 +104,14 @@ namespace EventDirector
                             "eventspecific_hat VARCHAR(20)," +
                             "eventspecific_other VARCHAR," +
                             "eventspecific_earlystart INTEGER DEFAULT 0," +
-                            "UNIQUE (participant_id, event_id) ON CONFLICT REPLACE" +
+                            "UNIQUE (participant_id, event_id) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS timeresults (" +
                             "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                             "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
                             "timingpoint_id INTEGER NOT NULL REFERENCES timingpoints(timingpoint_id)," +
                             "timeresult_time INTEGER NOT NULL," +
-                            "UNIQUE (event_id, eventspecific_id, timingpoint_id) ON CONFLICT REPLACE" +
+                            "UNIQUE (event_id, eventspecific_id, timingpoint_id) ON CONFLICT IGNORE" +
                             ")");
                     }
                     else
@@ -122,7 +121,7 @@ namespace EventDirector
                             "division_id INTEGER PRIMARY KEY," +
                             "division_name VARCHAR(100) NOT NULL," +
                             "event_id INTEGER NOT NULL," +
-                            "UNIQUE (division_name, event_id) ON CONFLICT REPLACE" +
+                            "UNIQUE (division_name, event_id) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS timingpoints (" +
                             "timingpoint_id INTEGER PRIMARY KEY," +
@@ -131,7 +130,7 @@ namespace EventDirector
                             "timingpoint_name VARCHAR(100) NOT NULL," +
                             "timingpoint_distance VARCHAR(5)," +
                             "timingpoint_unit VARCHAR(2)," +
-                            "UNIQUE (event_id, division_id, timingpoint_name) ON CONFLICT REPLACE" +
+                            "UNIQUE (event_id, division_id, timingpoint_name) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS participants (" +
                             "participant_id INTEGER PRIMARY KEY," +
@@ -150,7 +149,7 @@ namespace EventDirector
                             "participant_country VARCHAR(50)," +
                             "participant_street2 VARCHAR(50)," +
                             "participant_gender VARCHAR(10)," +
-                            "UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip) ON CONFLICT REPLACE" +
+                            "UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (" +
                             "eventspecific_id INTEGER PRIMARY KEY," +
@@ -160,7 +159,6 @@ namespace EventDirector
                             "eventspecific_bib INTEGER," +
                             "eventspecific_chip INTEGER," +
                             "eventspecific_checkedin INTEGER DEFAULT 0," +
-                            "eventspecific_shirtpurchase INTEGER DEFAULT 0," +
                             "eventspecific_shirtsize VARCHAR(5)," +
                             "eventspecific_comments VARCHAR," +
                             "eventspecific_secondshirt VARCHAR," +
@@ -168,14 +166,14 @@ namespace EventDirector
                             "eventspecific_hat VARCHAR(20)," +
                             "eventspecific_other VARCHAR," +
                             "eventspecific_earlystart INTEGER DEFAULT 0," +
-                            "UNIQUE (participant_id, event_id) ON CONFLICT REPLACE" +
+                            "UNIQUE (participant_id, event_id) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS timeresults (" +
                             "event_id INTEGER NOT NULL," +
                             "eventspecific_id INTEGER NOT NULL," +
                             "timingpoint_id INTEGER NOT NULL," +
                             "timeresult_time INTEGER NOT NULL," +
-                            "UNIQUE (event_id, eventspecific_id, timingpoint_id) ON CONFLICT REPLACE" +
+                            "UNIQUE (event_id, eventspecific_id, timingpoint_id) ON CONFLICT IGNORE" +
                             ")");
                     }
                 }
@@ -206,7 +204,6 @@ namespace EventDirector
                     "old_event_spec_bib INTEGER," +
                     "old_event_spec_chip INTEGER," +
                     "old_event_spec_checkedin INTEGER NOT NULL," +
-                    "old_event_spec_shirtpurchase INTEGER NOT NULL," +
                     "old_event_spec_shirtsize VARCHAR(5)," +
                     "old_event_spec_comments VARCHAR," +
                     "old_mobile VARCHAR(20)," +
@@ -240,7 +237,6 @@ namespace EventDirector
                     "new_event_spec_bib INTEGER," +
                     "new_event_spec_chip INTEGER," +
                     "new_event_spec_checkedin INTEGER NOT NULL," +
-                    "new_event_spec_shirtpurchase INTEGER NOT NULL," +
                     "new_event_spec_shirtsize VARCHAR(5)," +
                     "new_event_spec_comments VARCHAR," +
                     "new_mobile VARCHAR(20)," +
@@ -253,7 +249,6 @@ namespace EventDirector
                     "new_other VARCHAR," +
                     "new_gender VARCHAR(10)," +
                     "new_earlystart INTEGER," +
-                    "UNIQUE (change_id, old_participant_id, old_first, old_last, old_street, old_city, old_state, old_zip, old_birthday, old_phone, old_email, old_emergency_id, old_emergency_name, old_emergency_phone, old_emergency_email, old_event_spec_id, old_event_spec_event_id, old_event_spec_division_id, old_event_spec_bib, old_event_spec_chip, old_event_spec_checkedin, old_event_spec_shirtpurchase, old_event_spec_shirtsize, old_event_spec_comments, old_mobile, old_parent, old_country, old_street2, old_secondshirt, old_owes, old_hat, old_other, old_gender, old_earlystart, new_participant_id, new_first, new_last, new_street, new_city, new_state, new_zip, new_birthday, new_phone, new_email, new_emergency_id, new_emergency_name, new_emergency_phone, new_emergency_email, new_event_spec_id, new_event_spec_event_id, new_event_spec_division_id, new_event_spec_bib, new_event_spec_chip, new_event_spec_checkedin, new_event_spec_shirtpurchase, new_event_spec_shirtsize, new_event_spec_comments, new_mobile, new_parent, new_country, new_street2, new_secondshirt, new_owes, new_hat, new_other, new_gender, new_earlystart) ON CONFLICT REPLACE" +
                     ")");
                 queries.Add("INSERT INTO emergencycontacts (emergencycontact_id, emergencycontact_name) VALUES (0,'')");
 
@@ -645,8 +640,17 @@ namespace EventDirector
 
         public List<Division> GetDivisions(int eventId)
         {
+            String commandTxt;
+            if (eventId != -1)
+            {
+                commandTxt = "SELECT * FROM divisions WHERE event_id = "+eventId;
+            }
+            else
+            {
+                commandTxt = "SELECT * FROM divisions";
+            }
             List<Division> output = new List<Division>();
-            SQLiteCommand command = new SQLiteCommand("SELECT * FROM divisions WHERE event_id="+eventId, connection);
+            SQLiteCommand command = new SQLiteCommand(commandTxt, connection);
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -671,7 +675,6 @@ namespace EventDirector
         {
             Log.D("Getting all participants for all events.");
             return GetParticipantsWorker("SELECT * FROM participants AS p, emergencycontacts AS e, eventspecific as s, divisions AS d WHERE p.emergencycontact_id=e.emergencycontact_id AND p.participant_id=s.participant_id AND d.division_id=s.division_id", -1);
-            
         }
 
         public List<Participant> GetParticipants(int eventId)
@@ -705,7 +708,8 @@ namespace EventDirector
                         Convert.ToInt32(reader["emergencycontact_id"]),
                         reader["emergencycontact_name"].ToString(),
                         reader["emergencycontact_phone"].ToString(),
-                        reader["emergencycontact_email"].ToString()),
+                        reader["emergencycontact_email"].ToString()
+                        ),
                     new EventSpecific(
                         Convert.ToInt32(reader["eventspecific_id"]),
                         Convert.ToInt32(reader["event_id"]),
@@ -772,87 +776,93 @@ namespace EventDirector
         {
             Log.D("Getting changes.");
             List<Change> output = new List<Change>();
+            Hashtable divisions = new Hashtable();
+            List<Division> divs = GetDivisions(-1);
+            foreach (Division d in divs)
+            {
+                divisions.Add(d.Identifier, d.Name);
+            }
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM changes AS c, divisions AS d1, divisions as d2 WHERE old_event_spec_event_id=@eventId AND c.old_event_spec_division_id=d1.division_id AND c.new_event_spec_division_id=d2.division_id ";
+            command.CommandText = "SELECT * FROM changes WHERE old_event_spec_event_id=@eventId";
             command.Parameters.Add(new SQLiteParameter("@eventId", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 output.Add(new Change(
-                    Convert.ToInt32(reader["c.change_id"]),
+                    Convert.ToInt32(reader["change_id"]),
                     new Participant(
-                        Convert.ToInt32(reader["c.old_participant_id"]),
-                        reader["c.old_first"].ToString(),
-                        reader["c.old_last"].ToString(),
-                        reader["c.old_street"].ToString(),
-                        reader["c.old_city"].ToString(),
-                        reader["c.old_state"].ToString(),
-                        reader["c.old_zip"].ToString(),
-                        Convert.ToInt64(reader["c.old_birthday"]),
+                        Convert.ToInt32(reader["old_participant_id"]),
+                        reader["old_first"].ToString(),
+                        reader["old_last"].ToString(),
+                        reader["old_street"].ToString(),
+                        reader["old_city"].ToString(),
+                        reader["old_state"].ToString(),
+                        reader["old_zip"].ToString(),
+                        Convert.ToInt64(reader["old_birthday"]),
                         new EmergencyContact(
-                            Convert.ToInt32(reader["c.old_emergency_id"]),
-                            reader["c.old_emergency_name"].ToString(),
-                            reader["c.old_emergency_phone"].ToString(),
-                            reader["c.old_emergency_email"].ToString()),
+                            Convert.ToInt32(reader["old_emergency_id"]),
+                            reader["old_emergency_name"].ToString(),
+                            reader["old_emergency_phone"].ToString(),
+                            reader["old_emergency_email"].ToString()),
                         new EventSpecific(
-                            Convert.ToInt32(reader["c.old_event_spec_id"]),
-                            Convert.ToInt32(reader["c.old_event_spec_event_id"]),
-                            Convert.ToInt32(reader["c.old_event_spec_division_id"]),
-                            reader["d1.name"].ToString(),
-                            Convert.ToInt32(reader["c.old_event_spec_bib"]),
-                            Convert.ToInt32(reader["c.old_event_spec_chip"]),
-                            Convert.ToInt32(reader["c.old_event_spec_checkedin"]),
-                            reader["c.old_event_spec_shirtsize"].ToString(),
-                            reader["c.old_event_spec_comments"].ToString(),
-                            reader["c.old_secondshirt"].ToString(),
-                            reader["c.old_owes"].ToString(),
-                            reader["c.old_hat"].ToString(),
-                            reader["c.old_other"].ToString(),
-                            Convert.ToInt32(reader["c.old_earlystart"])
+                            Convert.ToInt32(reader["old_event_spec_id"]),
+                            Convert.ToInt32(reader["old_event_spec_event_id"]),
+                            Convert.ToInt32(reader["old_event_spec_division_id"]),
+                            divisions[Convert.ToInt32(reader["old_event_spec_division_id"])].ToString(),
+                            Convert.ToInt32(reader["old_event_spec_bib"]),
+                            Convert.ToInt32(reader["old_event_spec_chip"]),
+                            Convert.ToInt32(reader["old_event_spec_checkedin"]),
+                            reader["old_event_spec_shirtsize"].ToString(),
+                            reader["old_event_spec_comments"].ToString(),
+                            reader["old_secondshirt"].ToString(),
+                            reader["old_owes"].ToString(),
+                            reader["old_hat"].ToString(),
+                            reader["old_other"].ToString(),
+                            Convert.ToInt32(reader["old_earlystart"])
                             ),
-                        reader["c.old_phone"].ToString(),
-                        reader["c.old_email"].ToString(),
-                        reader["c.old_mobile"].ToString(),
-                        reader["c.old_parent"].ToString(),
-                        reader["c.old_country"].ToString(),
-                        reader["c.old_street2"].ToString(),
-                        reader["c.old_gender"].ToString()
+                        reader["old_phone"].ToString(),
+                        reader["old_email"].ToString(),
+                        reader["old_mobile"].ToString(),
+                        reader["old_parent"].ToString(),
+                        reader["old_country"].ToString(),
+                        reader["old_street2"].ToString(),
+                        reader["old_gender"].ToString()
                     ),
                     new Participant(
-                        Convert.ToInt32(reader["c.new_participant_id"]),
-                        reader["c.new_first"].ToString(),
-                        reader["c.new_last"].ToString(),
-                        reader["c.new_street"].ToString(),
-                        reader["c.new_city"].ToString(),
-                        reader["c.new_state"].ToString(),
-                        reader["c.new_zip"].ToString(),
-                        Convert.ToInt64(reader["c.new_birthday"]),
-                        new EmergencyContact(Convert.ToInt32(reader["c.new_emergency_id"]),
-                            reader["c.new_emergency_name"].ToString(),
-                            reader["c.new_emergency_phone"].ToString(),
-                            reader["c.new_emergency_email"].ToString()),
-                        new EventSpecific(Convert.ToInt32(reader["c.new_event_spec_id"]),
-                            Convert.ToInt32(reader["c.new_event_spec_event_id"]),
-                            Convert.ToInt32(reader["c.new_event_spec_division_id"]),
-                            reader["d2.name"].ToString(),
-                            Convert.ToInt32(reader["c.new_event_spec_bib"]),
-                            Convert.ToInt32(reader["c.new_event_spec_chip"]),
-                            Convert.ToInt32(reader["c.new_event_spec_checkedin"]),
-                            reader["c.new_event_spec_shirtsize"].ToString(),
-                            reader["c.new_event_spec_comments"].ToString(),
-                            reader["c.new_secondshirt"].ToString(),
-                            reader["c.new_owes"].ToString(),
-                            reader["c.new_hat"].ToString(),
-                            reader["c.new_other"].ToString(),
-                            Convert.ToInt32(reader["c.new_earlystart"])
+                        Convert.ToInt32(reader["new_participant_id"]),
+                        reader["new_first"].ToString(),
+                        reader["new_last"].ToString(),
+                        reader["new_street"].ToString(),
+                        reader["new_city"].ToString(),
+                        reader["new_state"].ToString(),
+                        reader["new_zip"].ToString(),
+                        Convert.ToInt64(reader["new_birthday"]),
+                        new EmergencyContact(Convert.ToInt32(reader["new_emergency_id"]),
+                            reader["new_emergency_name"].ToString(),
+                            reader["new_emergency_phone"].ToString(),
+                            reader["new_emergency_email"].ToString()),
+                        new EventSpecific(Convert.ToInt32(reader["new_event_spec_id"]),
+                            Convert.ToInt32(reader["new_event_spec_event_id"]),
+                            Convert.ToInt32(reader["new_event_spec_division_id"]),
+                            divisions[Convert.ToInt32(reader["new_event_spec_division_id"])].ToString(),
+                            Convert.ToInt32(reader["new_event_spec_bib"]),
+                            Convert.ToInt32(reader["new_event_spec_chip"]),
+                            Convert.ToInt32(reader["new_event_spec_checkedin"]),
+                            reader["new_event_spec_shirtsize"].ToString(),
+                            reader["new_event_spec_comments"].ToString(),
+                            reader["new_secondshirt"].ToString(),
+                            reader["new_owes"].ToString(),
+                            reader["new_hat"].ToString(),
+                            reader["new_other"].ToString(),
+                            Convert.ToInt32(reader["new_earlystart"])
                             ),
-                        reader["c.new_phone"].ToString(),
-                        reader["c.new_email"].ToString(),
-                        reader["c.new_mobile"].ToString(),
-                        reader["c.new_parent"].ToString(),
-                        reader["c.new_country"].ToString(),
-                        reader["c.new_street2"].ToString(),
-                        reader["c.old_gender"].ToString()
+                        reader["new_phone"].ToString(),
+                        reader["new_email"].ToString(),
+                        reader["new_mobile"].ToString(),
+                        reader["new_parent"].ToString(),
+                        reader["new_country"].ToString(),
+                        reader["new_street2"].ToString(),
+                        reader["old_gender"].ToString()
                     )
                 ));
             }
@@ -916,17 +926,43 @@ namespace EventDirector
 
         public int GetParticipantID(Participant person)
         {
-            throw new NotImplementedException();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT participant_id FROM participants WHERE participant_first=@first AND participant_last=@last" +
+                " AND participant_street=@street AND participant_city=@city AND participant_state=@state AND participant_zip=@zip AND participant_birthday=@birthday";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@first", person.FirstName),
+                new SQLiteParameter("@last", person.LastName),
+                new SQLiteParameter("@street", person.Street),
+                new SQLiteParameter("@city", person.City),
+                new SQLiteParameter("@state", person.State),
+                new SQLiteParameter("@zip", person.Zip),
+                new SQLiteParameter("@birthday", person.Birthdate)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            int output = -1;
+            if (reader.Read())
+            {
+                output = Convert.ToInt32(reader["participant_id"]);
+            }
+            return output;
         }
 
         public void SetEarlyStartParticipant(int identifier, int earlystart)
         {
-            throw new NotImplementedException();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE eventspecific SET eventspecific_earlystart=@earlystart WHERE eventspecific_id=@id";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@earlystart", earlystart),
+                new SQLiteParameter("@id", identifier)
+            });
+            command.ExecuteNonQuery();
         }
 
         public void SetEarlyStartParticipant(Participant person)
         {
-            throw new NotImplementedException();
+            SetEarlyStartParticipant(person.EventSpecific.Identifier, person.EventSpecific.EarlyStart);
         }
     }
 }

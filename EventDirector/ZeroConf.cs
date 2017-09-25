@@ -12,11 +12,26 @@ namespace EventDirector
     {
         bool keepAlive = true;
         UdpClient udpClient;
+        String servername = "Northwest Endurance Events";
+        String serverid;
+
+        public ZeroConf()
+        {
+            Char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
+            Char[] serverid_chars = new Char[10];
+            Random rng = new Random();
+            for (int i=0; i<serverid_chars.Length; i++)
+            {
+                serverid_chars[i] = chars[rng.Next(0, chars.Length)];
+            }
+            serverid = new String(serverid_chars);
+            Log.D("Server name is " + servername + " and has an id of " + serverid + ".");
+        }
 
         public void Run()
         {
             udpClient = new UdpClient();
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, NetCore.GetUDPPort());
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, NetCore.UDPPort());
             udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             udpClient.Client.Bind(endPoint);
 
@@ -26,16 +41,18 @@ namespace EventDirector
             int counter = 0;
             while (keepAlive == true)
             {
-                Log.D("Loop number " + counter++ + ". WEEEEEEEEE.");
+                Log.D(counter++ + " clients have contacted me.");
                 try
                 {
                     receive_byte_array = udpClient.Receive(ref endPoint);
                     received_data = Encoding.ASCII.GetString(receive_byte_array, 0, receive_byte_array.Length);
                     Log.D(String.Format("Received broadcast from '{0}' with data '{1}'", endPoint.ToString(), received_data));
+                    byte[] out_data = Encoding.ASCII.GetBytes("["+servername+"|"+serverid+"|"+NetCore.TCPPort()+"]");
+                    udpClient.Send(out_data, out_data.Length, endPoint);
                 }
                 catch
                 {
-                    Log.E("Unable to read incoming.");
+                    Log.E("Shutting down.");
                 }
             }
         }

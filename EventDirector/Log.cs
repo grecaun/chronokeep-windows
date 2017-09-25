@@ -12,18 +12,18 @@ namespace EventDirector
         public static void D(String msg)
         {
 #if DEBUG
-            Debug.WriteLine("LOGOUTPUT - d - "+msg);
+            Console.WriteLine("LOGOUTPUT - d - "+msg);
 #endif
         }
 
         public static void F(String msg)
         {
-            Debug.WriteLine("LOGOUTPUT - f - "+msg);
+            Console.WriteLine("LOGOUTPUT - f - "+msg);
         }
 
         public static void E(String msg)
         {
-            Debug.WriteLine("LOGOUTPUT - e - "+msg);
+            Console.WriteLine("LOGOUTPUT - e - "+msg);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace EventDirector
 {
@@ -25,10 +25,14 @@ namespace EventDirector
                 DontFragment = true
             };
 
-            IPEndPoint groupEP = new IPEndPoint(IPAddress.Broadcast, NetCore.GetUDPPort());
+            IPEndPoint groupEP = new IPEndPoint(IPAddress.Broadcast, NetCore.UDPPort());
             byte[] sendBuffer = Encoding.ASCII.GetBytes("This is test number "+num);
             Log.D("Temp thread number " + num + " blasting off.");
             socket.SendTo(sendBuffer, groupEP);
+            byte[] recvBuffer = new byte[256];
+            int numbytes = socket.Receive(recvBuffer);
+            String received = Encoding.ASCII.GetString(recvBuffer, 0, numbytes);
+            Log.D("Received this from the server: '" + received + "'");
         }
     }
 }

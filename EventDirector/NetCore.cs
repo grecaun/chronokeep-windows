@@ -10,11 +10,16 @@ namespace EventDirector
     class NetCore
     {
         private static readonly int udpPort = 4488;
-        public static readonly int tcpPort = GetAvailableTCPPort(4488, 5588);
+        private static readonly int tcpPort = GetAvailableTCPPort(4488, 5588);
 
-        public static int GetUDPPort()
+        public static int UDPPort()
         {
             return udpPort;
+        }
+
+        public static int TCPPort()
+        {
+            return tcpPort;
         }
 
         public static int GetAvailableTCPPort(int start, int end)
