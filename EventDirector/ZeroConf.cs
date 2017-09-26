@@ -45,9 +45,9 @@ namespace EventDirector
                 try
                 {
                     receive_byte_array = udpClient.Receive(ref endPoint);
-                    received_data = Encoding.ASCII.GetString(receive_byte_array, 0, receive_byte_array.Length);
+                    received_data = Encoding.UTF8.GetString(receive_byte_array, 0, receive_byte_array.Length);
                     Log.D(String.Format("Received broadcast from '{0}' with data '{1}'", endPoint.ToString(), received_data));
-                    byte[] out_data = Encoding.ASCII.GetBytes("["+servername+"|"+serverid+"|"+NetCore.TCPPort()+"]");
+                    byte[] out_data = Encoding.UTF8.GetBytes("["+servername+"|"+serverid+"|"+NetCore.TCPPort()+"]");
                     udpClient.Send(out_data, out_data.Length, endPoint);
                 }
                 catch

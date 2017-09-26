@@ -38,11 +38,12 @@ namespace EventDirector
                     if (s == server)
                     {
                         Log.D("TCP Server - New incoming connection.");
-                        clients.Add(s.Accept());
+                        Socket newSock = s.Accept();
+                        clients.Add(newSock);
                     }
                     else
                     {
-                        byte[] recvd = new byte[512];
+                        byte[] recvd = new byte[2056];
                         try
                         {
                             int num_recvd = s.Receive(recvd);
@@ -53,17 +54,27 @@ namespace EventDirector
                             }
                             else
                             {
-                                Log.D("TCP Server - Client sent message '" + Encoding.ASCII.GetString(recvd, 0, num_recvd) + "'");
+                                String msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
+                                Log.D("TCP Server - Client sent message '" + msg + "'");
+                                try
+                                {
+                                    Log.D("Sending message to client.");
+                                    s.Send(Encoding.UTF8.GetBytes("[Hello friend, just letting you know that I received this '" + msg + "'.]"));
+                                }
+                                catch
+                                {
+                                    Log.D("Client disconnected.");
+                                    clients.Remove(s);
+                                }
                             }
                         }
-                        catch
+                        catch (SocketException se)
                         {
-                            Log.D("Error.");
+                            Log.D("Appears the client has disconnected.");
                             clients.Remove(s);
                         }
                     }
                 }
-                if (counter == 10) return;
             }
         }
 

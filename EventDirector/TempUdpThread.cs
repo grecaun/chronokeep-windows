@@ -26,13 +26,13 @@ namespace EventDirector
             };
 
             IPEndPoint groupEP = new IPEndPoint(IPAddress.Broadcast, NetCore.UDPPort());
-            byte[] sendBuffer = Encoding.ASCII.GetBytes("This is test number "+num);
+            byte[] sendBuffer = Encoding.UTF8.GetBytes("This is test number "+num);
             Log.D("Temp thread number " + num + " blasting off.");
             socket.SendTo(sendBuffer, groupEP);
             byte[] recvBuffer = new byte[256];
             EndPoint server = new IPEndPoint(IPAddress.Any, 0);
             int numbytes = socket.ReceiveFrom(recvBuffer, ref server);
-            String received = Encoding.ASCII.GetString(recvBuffer, 0, numbytes);
+            String received = Encoding.UTF8.GetString(recvBuffer, 0, numbytes);
 
             string[] msgs = received.Trim('[').Trim(']').Split('|');
             Log.D("Server name is '" + msgs[0] + "' it's identifier is '" + msgs[1] + "' and port number is '" + msgs[2] + "'");
@@ -41,9 +41,7 @@ namespace EventDirector
             Log.D("This is the server we're trying to connect to: " + serverCon.ToString());
             Socket tcp = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             tcp.Connect(serverCon);
-            Thread.Sleep(5000);
-            tcp.Send(Encoding.ASCII.GetBytes("This is a tcp test from tester number " + num));
-            Thread.Sleep(5000);
+            tcp.Send(Encoding.UTF8.GetBytes("This is a tcp test from tester number " + num));
             tcp.Close();
         }
     }
