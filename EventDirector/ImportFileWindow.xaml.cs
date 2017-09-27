@@ -279,6 +279,7 @@ namespace EventDirector
                 database.AddParticipants(participants);
             });
             Log.D("All done with the import.");
+            mainWindow.UpdateEventBox();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

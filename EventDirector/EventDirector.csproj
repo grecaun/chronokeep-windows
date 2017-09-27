@@ -52,6 +52,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -88,6 +91,9 @@
     <Compile Include="ImportFileWindow.xaml.cs">
       <DependentUpon>ImportFileWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="JsonHandler.cs" />
+    <Compile Include="JsonObjects.cs" />
+    <Compile Include="JsonOutputTester.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="NetCore.cs" />
     <Compile Include="NewDivisionWindow.xaml.cs">

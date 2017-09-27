@@ -29,11 +29,11 @@ namespace EventDirector
             this.mainWindow = mainWindow;
         }
 
-        public NewEventWindow(MainWindow mW, int id, string name, long date)
+        public NewEventWindow(MainWindow mW, int id, string name, string date)
         {
             InitializeComponent();
             nameBox.Text = name;
-            datePicker.SelectedDate = new DateTime(date);
+            datePicker.SelectedDate = DateTime.Parse(date);
             this.mainWindow = mW;
             this.eventIdentifier = id;
         }

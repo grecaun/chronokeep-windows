@@ -9,8 +9,7 @@ namespace EventDirector
     public class Participant : IEquatable<Participant>, IComparable<Participant>
     {
         private int identifier;
-        private long birthdate;
-        private string firstName, lastName, street, city, state, zip, phone, email, mobile, parent, country, street2, gender;
+        private string firstName, lastName, street, city, state, zip, phone, email, mobile, parent, country, street2, gender, birthdate;
         private EmergencyContact emergencyContact;
         private EventSpecific eventSpecific;
 
@@ -33,7 +32,7 @@ namespace EventDirector
             string gender
             )
         {
-            this.birthdate = DateTime.Parse(birthday).Ticks;
+            this.birthdate = birthday;
             this.firstName = first ?? "Unknown";
             this.lastName = last ?? "Unknown";
             this.street = street;
@@ -72,6 +71,45 @@ namespace EventDirector
             )
         {
             this.identifier = id;
+            this.birthdate = new DateTime(birthday).ToShortDateString();
+            this.firstName = first ?? "Unknown";
+            this.lastName = last ?? "Unknown";
+            this.street = street;
+            this.city = city;
+            this.state = state;
+            this.zip = zip;
+            this.emergencyContact = ec ?? new EmergencyContact();
+            this.eventSpecific = epi;
+            this.phone = phone ?? "";
+            this.email = email ?? "";
+            this.mobile = mobile ?? "";
+            this.parent = parent ?? "";
+            this.country = country ?? "";
+            this.street2 = street2 ?? "";
+            this.gender = gender ?? "";
+        }
+
+        public Participant(
+            int id,
+            string first,
+            string last,
+            string street,
+            string city,
+            string state,
+            string zip,
+            string birthday,
+            EmergencyContact ec,
+            EventSpecific epi,
+            string phone,
+            string email,
+            string mobile,
+            string parent,
+            string country,
+            string street2,
+            string gender
+            )
+        {
+            this.identifier = id;
             this.birthdate = birthday;
             this.firstName = first ?? "Unknown";
             this.lastName = last ?? "Unknown";
@@ -91,7 +129,7 @@ namespace EventDirector
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public long Birthdate { get => birthdate; }
+        public string Birthdate { get => birthdate; }
         internal EmergencyContact EmergencyContact { get => emergencyContact; }
         internal EventSpecific EventSpecific { get => eventSpecific; }
 
@@ -108,13 +146,7 @@ namespace EventDirector
         public string Other { get => eventSpecific.Other; }
         public string Comments { get => eventSpecific.Comments; }
         public string EarlyStart { get => eventSpecific.EarlyStart == 0 ? "No" : "Yes"; }
-        public string BirthdayStr
-        {
-            get
-            {
-                return new DateTime(birthdate).ToShortDateString();
-            }
-        }
+
         // Emergency Contact binding stuffs
         public int ECID { get => emergencyContact.Identifier; }
         public string ECName { get => emergencyContact.Name; }

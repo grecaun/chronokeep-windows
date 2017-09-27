@@ -9,16 +9,22 @@ namespace EventDirector
     public class Event
     {
         private int identifier;
-        private long date;
-        private string name;
+        private string name, date;
 
         public Event(string n, long d)
         {
-            this.date = d;
+            this.date = new DateTime(d).ToShortDateString();
             this.name = n;
         }
 
         public Event(int id, string n, long d)
+        {
+            this.identifier = id;
+            this.name = n;
+            this.date = new DateTime(d).ToShortDateString();
+        }
+
+        public Event(int id, string n, string d)
         {
             this.identifier = id;
             this.name = n;
@@ -27,13 +33,6 @@ namespace EventDirector
 
         public int Identifier { get => identifier; set => identifier = value; }
         public string Name { get => name; }
-        public long Date { get => date; }
-        public string DateStr
-        {
-            get
-            {
-                return new DateTime(date).ToShortDateString();
-            }
-        }
+        public string Date { get => date; }
     }
 }

@@ -81,7 +81,6 @@ namespace EventDirector
         public int Bib { get => bib; }
         public int Chip { get => chip; }
         public int CheckedIn { get => checkedIn; }
-        public int ShirtPurchase { get => shirtPurchase; }
         public string ShirtSize { get => shirtSize; }
         public string Comments { get => comments; }
         public string DivisionName { get => divisionName; }

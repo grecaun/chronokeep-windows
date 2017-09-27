@@ -29,9 +29,15 @@ namespace EventDirector
                 Log.D("Tables do not need to be made.");
                 command = new SQLiteCommand("SELECT version FROM settings", connection);
                 reader = command.ExecuteReader();
-                reader.Read();
-                int oldVersion = Convert.ToInt32(reader["version"]);
-                if (oldVersion < version) UpdateDatabase(oldVersion,version);
+                if (reader.Read())
+                {
+                    int oldVersion = Convert.ToInt32(reader["version"]);
+                    if (oldVersion < version) UpdateDatabase(oldVersion, version);
+                }
+                else
+                {
+                    Log.D("Something went wrong when checking the version...");
+                }
             }
             else
             {
@@ -43,7 +49,7 @@ namespace EventDirector
                     queries.Add("CREATE TABLE IF NOT EXISTS events (" +
                             "event_id INTEGER PRIMARY KEY," +
                             "event_name VARCHAR(100) NOT NULL," +
-                            "event_date INTEGER NOT NULL," +
+                            "event_date VARCHAR(15) NOT NULL," +
                             "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                             ")");
                     queries.Add("CREATE TABLE IF NOT EXISTS emergencycontacts (" +
@@ -78,7 +84,7 @@ namespace EventDirector
                             "participant_city VARCHAR(75)," +
                             "participant_state VARCHAR(25)," +
                             "participant_zip VARCHAR(10)," +
-                            "participant_birthday INTEGER NOT NULL," +
+                            "participant_birthday VARCHAR(15) NOT NULL," +
                             "emergencycontact_id INTEGER REFERENCES emergencycontacts(emergencycontact_id)," +
                             "participant_phone VARCHAR(20)," +
                             "participant_email VARCHAR(150)," +
@@ -140,7 +146,7 @@ namespace EventDirector
                             "participant_city VARCHAR(75)," +
                             "participant_state VARCHAR(25)," +
                             "participant_zip VARCHAR(10)," +
-                            "participant_birthday INTEGER NOT NULL," +
+                            "participant_birthday VARCHAR(15) NOT NULL," +
                             "participant_emergencycontact_id INTEGER NOT NULL," +
                             "participant_phone VARCHAR(20)," +
                             "participant_email VARCHAR(150)," +
@@ -191,7 +197,7 @@ namespace EventDirector
                     "old_city VARCHAR(75)," +
                     "old_state VARCHAR(25)," +
                     "old_zip VARCHAR(10)," +
-                    "old_birthday INTEGER NOT NULL," +
+                    "old_birthday VARCHAR(15) NOT NULL," +
                     "old_phone VARCHAR(20)," +
                     "old_email VARCHAR(150)," +
                     "old_emergency_id INTEGER," +
@@ -224,7 +230,7 @@ namespace EventDirector
                     "new_city VARCHAR(75)," +
                     "new_state VARCHAR(25)," +
                     "new_zip VARCHAR(10)," +
-                    "new_birthday INTEGER NOT NULL," +
+                    "new_birthday VARCHAR(15) NOT NULL," +
                     "new_phone VARCHAR(20)," +
                     "new_email VARCHAR(150)," +
                     "new_emergency_id INTEGER," +
@@ -248,7 +254,7 @@ namespace EventDirector
                     "new_hat VARCHAR(20)," +
                     "new_other VARCHAR," +
                     "new_gender VARCHAR(10)," +
-                    "new_earlystart INTEGER," +
+                    "new_earlystart INTEGER" +
                     ")");
                 queries.Add("INSERT INTO emergencycontacts (emergencycontact_id, emergencycontact_name) VALUES (0,'')");
 
@@ -633,7 +639,7 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), Convert.ToInt64(reader["event_date"])));
+                output.Add(new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString()));
             }
             return output;
         }
@@ -703,7 +709,7 @@ namespace EventDirector
                     reader["participant_city"].ToString(),
                     reader["participant_state"].ToString(),
                     reader["participant_zip"].ToString(),
-                    Convert.ToInt64(reader["participant_birthday"]),
+                    reader["participant_birthday"].ToString(),
                     new EmergencyContact(
                         Convert.ToInt32(reader["emergencycontact_id"]),
                         reader["emergencycontact_name"].ToString(),
@@ -798,7 +804,7 @@ namespace EventDirector
                         reader["old_city"].ToString(),
                         reader["old_state"].ToString(),
                         reader["old_zip"].ToString(),
-                        Convert.ToInt64(reader["old_birthday"]),
+                        reader["old_birthday"].ToString(),
                         new EmergencyContact(
                             Convert.ToInt32(reader["old_emergency_id"]),
                             reader["old_emergency_name"].ToString(),
@@ -836,7 +842,7 @@ namespace EventDirector
                         reader["new_city"].ToString(),
                         reader["new_state"].ToString(),
                         reader["new_zip"].ToString(),
-                        Convert.ToInt64(reader["new_birthday"]),
+                        reader["new_birthday"].ToString(),
                         new EmergencyContact(Convert.ToInt32(reader["new_emergency_id"]),
                             reader["new_emergency_name"].ToString(),
                             reader["new_emergency_phone"].ToString(),
@@ -963,6 +969,20 @@ namespace EventDirector
         public void SetEarlyStartParticipant(Participant person)
         {
             SetEarlyStartParticipant(person.EventSpecific.Identifier, person.EventSpecific.EarlyStart);
+        }
+
+        public Event GetEvent(int id)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM events WHERE event_id=@id";
+            command.Parameters.Add(new SQLiteParameter("@id",id));
+            SQLiteDataReader reader = command.ExecuteReader();
+            Event output = null;
+            if (reader.Read())
+            {
+                output = new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString());
+            }
+            return output;
         }
     }
 }

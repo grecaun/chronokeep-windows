@@ -31,7 +31,7 @@ namespace EventDirector
         bool closing = false;
 
         Thread tcpServerThread;
-        TCPServer tcpServer = new TCPServer();
+        TCPServer tcpServer;
 
         Thread zeroConfThread;
         ZeroConf zeroConf = new ZeroConf();
@@ -51,17 +51,12 @@ namespace EventDirector
             database.Initialize();
             UpdateEventBox();
             Log.D("Starting TCP server thread.");
+            tcpServer = new TCPServer(database);
             tcpServerThread = new Thread(new ThreadStart(tcpServer.Run));
             tcpServerThread.Start();
             Log.D("Starting zero configuration thread.");
             zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
             zeroConfThread.Start();
-            for (int i=0; i<5; i++)
-            {
-                TempUdpThread tmp = new TempUdpThread(i);
-                Thread aThread = new Thread(new ThreadStart(tmp.Run));
-                aThread.Start();
-            }
         }
 
         private async void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -288,7 +283,7 @@ namespace EventDirector
             UpdateDivisionsBox(eventId);
         }
 
-        private async void UpdateEventBox()
+        internal async void UpdateEventBox()
         {
             List<Event> events = null;
             await Task.Run(() =>

@@ -26,7 +26,7 @@
                     <GridViewColumn Header="First" DisplayMemberBinding="{Binding FirstName}" />
                     <GridViewColumn Header="Last" DisplayMemberBinding="{Binding LastName}" />
                     <GridViewColumn Header="Gender" DisplayMemberBinding="{Binding Gender}" />
-                    <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding BirthdayStr}" />
+                    <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding Birthdate}" />
                     <GridViewColumn Header="Parent" DisplayMemberBinding="{Binding Parent}" />
                     <GridViewColumn Header="Street" DisplayMemberBinding="{Binding Street}" />
                     <GridViewColumn Header="Street 2" DisplayMemberBinding="{Binding Street2}" />

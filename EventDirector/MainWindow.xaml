@@ -53,7 +53,7 @@
                     <GridView>
                         <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Identifier}" />
                         <GridViewColumn Header="Name" Width="200" DisplayMemberBinding="{Binding Name}" />
-                        <GridViewColumn Header="Date" Width="100" DisplayMemberBinding="{Binding DateStr}" />
+                        <GridViewColumn Header="Date" Width="100" DisplayMemberBinding="{Binding Date}" />
                     </GridView>
                 </ListView.View>
             </ListView>

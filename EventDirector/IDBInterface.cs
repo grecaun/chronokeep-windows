@@ -49,6 +49,7 @@ namespace EventDirector
 
         void ResetDatabase();
 
+        Event GetEvent(int id);
         List<Event> GetEvents();
         List<Division> GetDivisions(int eventId);
         List<TimingPoint> GetTimingPoints(int eventId);
