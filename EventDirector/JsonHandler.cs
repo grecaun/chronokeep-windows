@@ -70,24 +70,7 @@ namespace EventDirector
         {
             Log.D("Getting JsonServerEvent");
             Event oneEvent = database.GetEvent(eventId);
-            List<JsonOption> eventOptions = new List<JsonOption>
-            {
-                new JsonOption()
-                {
-                    Name = "registration_open",
-                    Value = "false"
-                },
-                new JsonOption()
-                {
-                    Name = "results_open",
-                    Value = "true"
-                },
-                new JsonOption()
-                {
-                    Name = "announce_available",
-                    Value = "false"
-                }
-            };
+            List<JsonOption> eventOptions = database.GetEventOptions(eventId);
             JsonServerEvent serverEvent = new JsonServerEvent()
             {
                 Event = oneEvent,

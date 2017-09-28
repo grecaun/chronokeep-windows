@@ -21,27 +21,30 @@ namespace EventDirector
     {
         MainWindow mainWindow;
         int divisionIdentifier = -1;
+        int eventId = -1;
 
-        public NewDivisionWindow(MainWindow mWindow)
+        public NewDivisionWindow(MainWindow mWindow, int eventId)
         {
             InitializeComponent();
             this.mainWindow = mWindow;
+            this.eventId = eventId;
         }
 
-        public NewDivisionWindow(MainWindow mWindow, int divId, string name)
+        public NewDivisionWindow(MainWindow mWindow, int eventId, int divId, string name)
         {
             InitializeComponent();
             this.mainWindow = mWindow;
             this.divisionIdentifier = divId;
+            this.eventId = eventId;
             nameBox.Text = name;
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            submit();
+            Submit();
         }
 
-        private void submit()
+        private void Submit()
         {
             String nameString = nameBox.Text.Trim();
             Log.D("Name given for division: '" + nameString + "'");
@@ -52,11 +55,11 @@ namespace EventDirector
             }
             if (divisionIdentifier != -1)
             {
-                mainWindow.UpdateDivision(divisionIdentifier, nameString);
+                mainWindow.UpdateDivision(eventId, divisionIdentifier, nameString);
             }
             else
             {
-                mainWindow.AddDivision(nameString);
+                mainWindow.AddDivision(eventId, nameString);
             }
             this.Close();
         }
@@ -70,7 +73,7 @@ namespace EventDirector
         {
             if (e.Key == Key.Enter)
             {
-                submit();
+                Submit();
             }
         }
 

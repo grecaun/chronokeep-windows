@@ -35,7 +35,7 @@ namespace EventDirector
                 Log.D("TCP Server is on loop " + counter++ + ".");
                 readList.Clear();
                 readList.AddRange(clients);
-                Socket.Select(readList, null, null, 10 * 1000 * 1000);
+                Socket.Select(readList, null, null, 60 * 1000 * 1000);
                 foreach (Socket sock in readList)
                 {
                     if (sock == server)
@@ -80,6 +80,9 @@ namespace EventDirector
             {
                 switch (jsonObject["Command"].ToString())
                 {
+                    case "client_authenticate":
+                        Log.D("Request to authenticate client.");
+                        break;
                     case "client_list":
                         Log.D("Request for event list.");
                         SendJson(jsonHandler.GetJsonServerEventList(), sock);
@@ -102,17 +105,20 @@ namespace EventDirector
                     case "client_participant_update":
                         Log.D("Client participant update received.");
                         JsonClientParticipantUpdate clientPartUpd = jsonObject.ToObject<JsonClientParticipantUpdate>();
-                        // UPDATE PARTICIPANT
+                        // UPDATE PARTICIPANT IN DATABASE
+                        // BROADCAST PARTICIPANT UPDATE
                         break;
                     case "client_participant_add":
                         Log.D("Client participant add received.");
                         JsonClientParticipantAdd clientPartAdd = jsonObject.ToObject<JsonClientParticipantAdd>();
                         // ADD NEW PARTICIPANT
+                        // BROADCAST NEW PARTICIPANT
                         break;
                     case "client_participant_set":
                         Log.D("Client participant set received.");
                         JsonClientParticipantSet clientPartSet = jsonObject.ToObject<JsonClientParticipantSet>();
                         // SET VALUES IN PARTICIPANT
+                        // BROADCAST PARTICIPANT SET
                         break;
                 }
             }
@@ -122,6 +128,18 @@ namespace EventDirector
         {
             Log.D("Sending '" + json + "' to client.");
             sock.Send(Encoding.UTF8.GetBytes(json));
+        }
+
+        private void BroadcastJson(String json)
+        {
+            Log.D("Broadcasting '" + json + "'");
+            foreach (Socket s in clients)
+            {
+                if (s != server)
+                {
+                    s.Send(Encoding.UTF8.GetBytes(json));
+                }
+            }
         }
 
         public void Stop()

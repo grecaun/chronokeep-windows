@@ -16,6 +16,7 @@ namespace EventDirector
         void RemoveEvent(Event anEvent);
         void UpdateEvent(Event anEvent);
         int GetEventID(Event anEvent);
+        void SetEventOptions(int eventId, List<JsonOption> options);
 
         void AddDivision(Division div);
         void RemoveDivision(int identifier);
@@ -51,6 +52,7 @@ namespace EventDirector
 
         Event GetEvent(int id);
         List<Event> GetEvents();
+        List<JsonOption> GetEventOptions(int eventId);
         List<Division> GetDivisions(int eventId);
         List<TimingPoint> GetTimingPoints(int eventId);
         List<Participant> GetParticipants();

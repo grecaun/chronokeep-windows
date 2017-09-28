@@ -11,6 +11,12 @@ namespace EventDirector
      * Classes for dealing with client queries.
      *
      */
+    public class JsonClientAuthenticate
+    {
+        public String Command { get; set; }
+        public String AuthToken { get; set; }
+    }
+
     public class JsonClientList
     {
         public String Command { get; set; }
@@ -61,6 +67,12 @@ namespace EventDirector
      * Classes for generating responses to client queries.
      *
      */
+    public class JsonServerAuthenticate
+    {
+        public String Command = "server_authenticate";
+        public bool Authenticate { get; set; }
+    }
+
     public class JsonServerEventList
     {
         public String Command = "server_eventlist";
@@ -101,6 +113,7 @@ namespace EventDirector
             Street = p.Street;
             Street2 = p.Street2;
             City = p.City;
+            State = p.State;
             Zip = p.Zip;
             Country = p.Country;
             Phone = p.Phone;
@@ -119,6 +132,7 @@ namespace EventDirector
         public String Street { get; set; }
         public String Street2 { get; set; }
         public String City { get; set; }
+        public String State { get;set; }
         public String Zip { get; set; }
         public String Country { get; set; }
         public String Phone { get; set; }
@@ -165,6 +179,7 @@ namespace EventDirector
         public Event Event { get; set; }
         public List<Division> Divisions { get; set; }
         public List<TimingPoint> TimingPoints { get; set; }
+        public List<JsonOption> EventOptions { get; set; }
     }
 
     public class JsonServerResultUpdate

@@ -50,6 +50,10 @@ namespace EventDirector
                             "event_id INTEGER PRIMARY KEY," +
                             "event_name VARCHAR(100) NOT NULL," +
                             "event_date VARCHAR(15) NOT NULL," +
+                            "event_registration_open INTEGER DEFAULT 0," +
+                            "event_results_open INTEGER DEFAULT 0," +
+                            "event_announce_available INTEGER DEFAULT 0," +
+                            "event_allow_early_start INTEGER DEFAULT 0," +
                             "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                             ")");
                     queries.Add("CREATE TABLE IF NOT EXISTS emergencycontacts (" +
@@ -983,6 +987,83 @@ namespace EventDirector
                 output = new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString());
             }
             return output;
+        }
+
+        public List<JsonOption> GetEventOptions(int eventId)
+        {
+            List<JsonOption> output = new List<JsonOption>();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM events WHERE event_id=@id";
+            command.Parameters.Add(new SQLiteParameter("@id", eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                Log.D("Event Registration Open is in the DB as " + reader["event_registration_open"].ToString());
+                int.TryParse(reader["event_registration_open"].ToString(), out int val);
+                output.Add(new JsonOption()
+                {
+                    Name = "registration_open",
+                    Value = val == 0 ? "false" : "true"
+                });
+                Log.D("Event Results Open is in the DB as " + reader["event_results_open"].ToString());
+                int.TryParse(reader["event_results_open"].ToString(), out val);
+                output.Add(new JsonOption()
+                {
+                    Name = "results_open",
+                    Value = val == 0 ? "false" : "true"
+                });
+                Log.D("Event Announce Available is in the DB as " + reader["event_announce_available"].ToString());
+                int.TryParse(reader["event_announce_available"].ToString(), out val);
+                output.Add(new JsonOption()
+                {
+                    Name = "announce_available",
+                    Value = val == 0 ? "false" : "true"
+                });
+                Log.D("Event Allow Early Start is in the DB as " + reader["event_allow_early_start"].ToString());
+                int.TryParse(reader["event_allow_early_start"].ToString(), out val);
+                output.Add(new JsonOption()
+                {
+                    Name = "allow_early_start",
+                    Value = val == 0 ? "false" : "true"
+                });
+            }
+            return output;
+        }
+
+        public void SetEventOptions(int eventId, List<JsonOption> options)
+        {
+            List<JsonOption> output = new List<JsonOption>();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE events SET event_allow_early_start=@es, event_announce_available=@announce, event_results_open=@results, event_registration_open=@registration WHERE event_id=@id";
+            int es = 0, results = 0, registration = 0, announce = 0;
+            foreach (JsonOption opt in options)
+            {
+                int val = opt.Value == "true" ? 1 : 0;
+                Log.D("Option name is " + opt.Name + " and Value is " + opt.Value + " integer we've got is " + val);
+                switch (opt.Name)
+                {
+                    case "announce_available":
+                        announce = val;
+                        break;
+                    case "registration_open":
+                        registration = val;
+                        break;
+                    case "results_open":
+                        results = val;
+                        break;
+                    case "allow_early_start":
+                        es = val;
+                        break;
+                }
+            }
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@es", es),
+                new SQLiteParameter("@announce", announce),
+                new SQLiteParameter("@results", results),
+                new SQLiteParameter("@registration", registration),
+                new SQLiteParameter("@id", eventId)
+            });
+            command.ExecuteNonQuery();
         }
     }
 }

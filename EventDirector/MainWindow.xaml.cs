@@ -139,9 +139,8 @@ namespace EventDirector
             UpdateEventBox();
         }
 
-        internal async void UpdateDivision(int divisionIdentifier, string nameString)
+        internal async void UpdateDivision(int eventId, int divisionIdentifier, string nameString)
         {
-            int eventId = ((Event)eventsListView.SelectedItem).Identifier;
             await Task.Run(() =>
             {
                 database.UpdateDivision(new Division(divisionIdentifier, nameString, eventId));
@@ -195,9 +194,10 @@ namespace EventDirector
             {
                 Log.D("Divisions - Modify Button Pressed.");
                 Division div = (Division)divisionsListView.SelectedItem;
+                Event thisEvent = (Event)eventsListView.SelectedItem;
                 if (div != null)
                 {
-                    NewDivisionWindow win = new NewDivisionWindow(this, div.Identifier, div.Name);
+                    NewDivisionWindow win = new NewDivisionWindow(this, thisEvent.Identifier, div.Identifier, div.Name);
                     windows.Add(win);
                     win.Show();
                 }
@@ -233,7 +233,7 @@ namespace EventDirector
             else if (buttonName == "divisionsAddButton")
             {
                 Log.D("Divisions - Add Button Pressed.");
-                NewDivisionWindow win = new NewDivisionWindow(this);
+                NewDivisionWindow win = new NewDivisionWindow(this, ((Event)eventsListView.SelectedItem).Identifier);
                 windows.Add(win);
                 win.Show();
             }
@@ -273,9 +273,8 @@ namespace EventDirector
             UpdateTimingPointsBox(eventId);
         }
 
-        internal async void AddDivision(string nameString)
+        internal async void AddDivision(int eventId, string nameString)
         {
-            int eventId = ((Event)eventsListView.SelectedItem).Identifier;
             await Task.Run(() =>
             {
                 database.AddDivision(new Division(nameString, eventId));
@@ -342,6 +341,9 @@ namespace EventDirector
             {
                 eventsModifyButton.Visibility = Visibility.Visible;
                 eventsRemoveButton.Visibility = Visibility.Visible;
+                eventsToggleEarlyStartButton.Visibility = Visibility.Visible;
+                eventsToggleRegistrationButton.Visibility = Visibility.Visible;
+                eventsToggleResultsButton.Visibility = Visibility.Visible;
                 divisionsAddButton.Visibility = Visibility.Visible;
                 divisionsListView.Visibility = Visibility.Visible;
                 timingPointsAddButton.Visibility = Visibility.Visible;
@@ -353,6 +355,9 @@ namespace EventDirector
             {
                 eventsModifyButton.Visibility = Visibility.Hidden;
                 eventsRemoveButton.Visibility = Visibility.Hidden;
+                eventsToggleEarlyStartButton.Visibility = Visibility.Hidden;
+                eventsToggleRegistrationButton.Visibility = Visibility.Hidden;
+                eventsToggleResultsButton.Visibility = Visibility.Hidden;
                 divisionsAddButton.Visibility = Visibility.Hidden;
                 divisionsListView.Visibility = Visibility.Hidden;
                 timingPointsAddButton.Visibility = Visibility.Hidden;
@@ -420,6 +425,81 @@ namespace EventDirector
             tcpServerThread.Abort();
             zeroConf.Stop();
             zeroConfThread.Abort();
+        }
+
+        private void EventsToggleRegistrationButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool value = false;
+            if (eventsToggleRegistrationButton.Opacity < 1)
+            {
+                value = true;
+                eventsToggleRegistrationButton.Opacity = 1;
+            }
+            else
+            {
+                eventsToggleRegistrationButton.Opacity = 0.5;
+            }
+            int eventId = ((Event)eventsListView.SelectedItem).Identifier;
+            List<JsonOption> list = database.GetEventOptions(eventId);
+            foreach (JsonOption opt in list)
+            {
+                if (opt.Name == "registration_open")
+                {
+                    opt.Value = value.ToString().ToLower();
+                }
+            }
+            database.SetEventOptions(eventId, list);
+            // send event update to clients
+        }
+
+        private void EventsToggleResultsButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool value = false;
+            if (eventsToggleResultsButton.Opacity < 1)
+            {
+                value = true;
+                eventsToggleResultsButton.Opacity = 1;
+            }
+            else
+            {
+                eventsToggleResultsButton.Opacity = 0.5;
+            }
+            int eventId = ((Event)eventsListView.SelectedItem).Identifier;
+            List<JsonOption> list = database.GetEventOptions(eventId);
+            foreach (JsonOption opt in list)
+            {
+                if (opt.Name == "results_open")
+                {
+                    opt.Value = value.ToString().ToLower();
+                }
+            }
+            database.SetEventOptions(eventId, list);
+            // send event update to clients
+        }
+
+        private void EventsToggleEarlyStartButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool value = false;
+            if (eventsToggleEarlyStartButton.Opacity < 1)
+            {
+                value = true;
+                eventsToggleEarlyStartButton.Opacity = 1;
+            }
+            else
+            {
+                eventsToggleEarlyStartButton.Opacity = 0.5;
+            }
+            int eventId = ((Event)eventsListView.SelectedItem).Identifier;
+            List<JsonOption> list = database.GetEventOptions(eventId);
+            foreach (JsonOption opt in list)
+            {
+                if (opt.Name == "allow_early_start")
+                {
+                    opt.Value = value.ToString().ToLower();
+                }
+            }
+            database.SetEventOptions(eventId, list);
+            // send event update to clients
         }
     }
 }

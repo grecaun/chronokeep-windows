@@ -39,14 +39,23 @@
             <Label x:Name="eventsLabel" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" >
                 <Label Content="Events" FontSize="15"/>
             </Label>
-            <Button x:Name="eventsAddButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="AddButton_Click">
+            <Button x:Name="eventsAddButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="AddButton_Click" AutomationProperties.HelpText="Add">
                 <Image Source="pack://application:,,,/Icons/Plus.png" Height="20"/>
             </Button>
-            <Button x:Name="eventsModifyButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="ModifyButton_Click">
+            <Button x:Name="eventsModifyButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="ModifyButton_Click" AutomationProperties.HelpText="Modify">
                 <Image Source="pack://application:,,,/Icons/Gear.png" Height="20"/>
             </Button>
-            <Button x:Name="eventsRemoveButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,75,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="RemoveButton_Click">
+            <Button x:Name="eventsRemoveButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,75,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="RemoveButton_Click" AutomationProperties.HelpText="Remove">
                 <Image Source="pack://application:,,,/Icons/Rubbish.png" Height="20"/>
+            </Button>
+            <Button x:Name="eventsToggleRegistrationButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,110,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="EventsToggleRegistrationButton_Click" AutomationProperties.HelpText="Registration" Opacity="0.5">
+                <Image Source="pack://application:,,,/Icons/Lock.png" Height="20"/>
+            </Button>
+            <Button x:Name="eventsToggleResultsButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,145,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="EventsToggleResultsButton_Click" AutomationProperties.HelpText="Results" Opacity="0.5">
+                <Image Source="pack://application:,,,/Icons/Broadcast.png" Height="20"/>
+            </Button>
+            <Button x:Name="eventsToggleEarlyStartButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,180,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="EventsToggleEarlyStartButton_Click" AutomationProperties.HelpText="Early Start"  Opacity="0.5">
+                <Image Source="pack://application:,,,/Icons/Bolt.png" Height="20"/>
             </Button>
             <ListView x:Name="eventsListView" Height="200" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1" SelectionChanged="EventsListView_SelectionChanged">
                 <ListView.View>
