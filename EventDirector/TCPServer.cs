@@ -126,7 +126,7 @@ namespace EventDirector
 
         private void SendJson(String json, Socket sock)
         {
-            Log.D("Sending '" + json + "' to client.");
+            Log.D("Message length is " + json.Length + " Content is '" + json + "'");
             sock.Send(Encoding.UTF8.GetBytes(json));
         }
 
