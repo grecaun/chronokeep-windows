@@ -32,14 +32,14 @@ namespace EventDirector
             this.divisionName = divName ?? "";
             this.bib = Int32.TryParse(bib, out int tempBib) ? tempBib : -1;
             this.chip = Int32.TryParse(chip, out int tempChip) ? tempChip : -1;
-            this.checkedIn = ci != 0 ? 1 : 0;
+            this.checkedIn = ci == 0 ? 0 : 1;
             this.shirtSize = size ?? "";
             this.comments = comments ?? "";
             this.secondShirt = secondshirt ?? "";
             this.owes = owes ?? "";
             this.hat = hat ?? "";
             this.other = other ?? "";
-            this.earlystart = earlystart != 0 ? 1 : 0;
+            this.earlystart = earlystart == 0 ? 0 : 1;
         }
 
         public EventSpecific(

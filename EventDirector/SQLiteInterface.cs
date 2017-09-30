@@ -552,7 +552,7 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "UPDATE eventspecific SET division_id=@0, eventspecific_bib=@1, eventspecific_chip=@2, eventspecific_checkedin=@3, eventspecific_shirtsize=@4, eventspecific_secondshirt=@secondshirt, eventspecific_owes=@owes, eventspecific_hat=@hat, eventspecific_other=@other WHERE eventspecific_id=@5";
+                command.CommandText = "UPDATE eventspecific SET division_id=@0, eventspecific_bib=@1, eventspecific_chip=@2, eventspecific_checkedin=@3, eventspecific_shirtsize=@4, eventspecific_secondshirt=@secondshirt, eventspecific_owes=@owes, eventspecific_hat=@hat, eventspecific_other=@other, eventspecific_earlystart=@earlystart WHERE eventspecific_id=@5";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", person.EventSpecific.DivisionIdentifier),
                     new SQLiteParameter("@1", person.EventSpecific.Bib),
@@ -563,7 +563,9 @@ namespace EventDirector
                     new SQLiteParameter("@secondshirt", person.EventSpecific.SecondShirt),
                     new SQLiteParameter("@owes", person.EventSpecific.Owes),
                     new SQLiteParameter("@hat", person.EventSpecific.Hat),
-                    new SQLiteParameter("@other", person.EventSpecific.Other) } );
+                    new SQLiteParameter("@other", person.EventSpecific.Other),
+                    new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart)
+                } );
                 command.ExecuteNonQuery();
             }
         }
@@ -595,20 +597,22 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
-        public void CheckInParticipant(int identifier, int checkedIn)
+        public void CheckInParticipant(int eventId, int identifier, int checkedIn)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE eventspecific SET eventspecific_checkedin=@0 WHERE eventspecific_id=@1";
+            command.CommandText = "UPDATE eventspecific SET eventspecific_checkedin=@0 WHERE participant_id=@id AND event_id=@eventId";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", checkedIn),
-                new SQLiteParameter("@1", identifier) });
+                new SQLiteParameter("@id", identifier),
+                new SQLiteParameter("@eventId", eventId)
+            });
             command.ExecuteNonQuery();
         }
 
         public void CheckInParticipant(Participant person)
         {
-            CheckInParticipant(person.EventSpecific.Identifier, person.EventSpecific.CheckedIn);
+            CheckInParticipant(person.EventSpecific.EventIdentifier, person.Identifier, person.EventSpecific.CheckedIn);
         }
 
         public void HardResetDatabase()
@@ -958,21 +962,22 @@ namespace EventDirector
             return output;
         }
 
-        public void SetEarlyStartParticipant(int identifier, int earlystart)
+        public void SetEarlyStartParticipant(int eventId, int identifier, int earlystart)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "UPDATE eventspecific SET eventspecific_earlystart=@earlystart WHERE eventspecific_id=@id";
+            command.CommandText = "UPDATE eventspecific SET eventspecific_earlystart=@earlystart WHERE event_id=@eventid AND participant_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@earlystart", earlystart),
-                new SQLiteParameter("@id", identifier)
+                new SQLiteParameter("@id", identifier),
+                new SQLiteParameter("@eventid", eventId)
             });
             command.ExecuteNonQuery();
         }
 
         public void SetEarlyStartParticipant(Participant person)
         {
-            SetEarlyStartParticipant(person.EventSpecific.Identifier, person.EventSpecific.EarlyStart);
+            SetEarlyStartParticipant(person.EventSpecific.EventIdentifier, person.Identifier, person.EventSpecific.EarlyStart);
         }
 
         public Event GetEvent(int id)

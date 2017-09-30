@@ -41,9 +41,9 @@ namespace EventDirector
         void RemoveTimingResult(TimeResult tr);
         void UpdateTimingResult(TimeResult oldResult, TimeResult newResult);
 
-        void CheckInParticipant(int identifier, int checkedIn);
+        void CheckInParticipant(int eventId, int identifier, int checkedIn);
         void CheckInParticipant(Participant person);
-        void SetEarlyStartParticipant(int identifier, int earlystart);
+        void SetEarlyStartParticipant(int eventId, int identifier, int earlystart);
         void SetEarlyStartParticipant(Participant person);
 
         void AddChange(Participant newParticipant, Participant oldParticipant);

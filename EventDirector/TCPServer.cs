@@ -117,7 +117,8 @@ namespace EventDirector
                     case "client_participant_set":
                         Log.D("Client participant set received.");
                         JsonClientParticipantSet clientPartSet = jsonObject.ToObject<JsonClientParticipantSet>();
-                        // SET VALUES IN PARTICIPANT
+                        jsonHandler.HandleJsonClientParticipantSet(clientPartSet);
+                        BroadcastJson(jsonHandler.GetJsonServerSetParticipant(clientPartSet.EventId, clientPartSet.ParticipantId, clientPartSet.Value));
                         // BROADCAST PARTICIPANT SET
                         break;
                 }
@@ -127,7 +128,7 @@ namespace EventDirector
         private void SendJson(String json, Socket sock)
         {
             Log.D("Message length is " + json.Length + " Content is '" + json + "'");
-            sock.Send(Encoding.UTF8.GetBytes(json));
+            sock.Send(Encoding.UTF8.GetBytes(json + "\n"));
         }
 
         private void BroadcastJson(String json)
@@ -137,7 +138,8 @@ namespace EventDirector
             {
                 if (s != server)
                 {
-                    s.Send(Encoding.UTF8.GetBytes(json));
+                    Log.D("Sending message.");
+                    s.Send(Encoding.UTF8.GetBytes(json + "\n"));
                 }
             }
         }

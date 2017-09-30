@@ -26,6 +26,20 @@ namespace EventDirector
             this.database = database;
         }
 
+        public void HandleJsonClientParticipantSet(JsonClientParticipantSet participantSet)
+        {
+            if (participantSet.Value.Name == "checked_in")
+            {
+                Log.D("Checked in set value found.");
+                database.CheckInParticipant(participantSet.EventId, participantSet.ParticipantId, Convert.ToInt32(participantSet.Value.Value));
+            }
+            else if (participantSet.Value.Name == "early_start")
+            {
+                Log.D("Early start set value found.");
+                database.SetEarlyStartParticipant(participantSet.EventId, participantSet.ParticipantId, Convert.ToInt32(participantSet.Value.Value));
+            }
+        }
+
         public List<JObject> ParseJsonMessage(String message)
         {
             List<JObject> output = new List<JObject>();
