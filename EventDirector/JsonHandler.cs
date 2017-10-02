@@ -156,6 +156,18 @@ namespace EventDirector
             return JsonConvert.SerializeObject(update);
         }
 
+        // JsonServerEventUpdate
+        public String GetJsonServerEventUpdate(int eventId)
+        {
+            JsonServerEventUpdate update = new JsonServerEventUpdate()
+            {
+                Event = database.GetEvent(eventId),
+                Divisions = database.GetDivisions(eventId),
+                TimingPoints = database.GetTimingPoints(eventId),
+                EventOptions = database.GetEventOptions(eventId)
+            };
+            return JsonConvert.SerializeObject(update);
+        }
 
         // JsonServerEventUpdate
         public String GetJsonServerEventUpdate(Event e)
@@ -164,7 +176,8 @@ namespace EventDirector
             {
                 Event = e,
                 Divisions = database.GetDivisions(e.Identifier),
-                TimingPoints = database.GetTimingPoints(e.Identifier)
+                TimingPoints = database.GetTimingPoints(e.Identifier),
+                EventOptions = database.GetEventOptions(e.Identifier)
             };
             return JsonConvert.SerializeObject(update);
         }

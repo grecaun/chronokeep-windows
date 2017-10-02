@@ -119,10 +119,14 @@ namespace EventDirector
                         JsonClientParticipantSet clientPartSet = jsonObject.ToObject<JsonClientParticipantSet>();
                         jsonHandler.HandleJsonClientParticipantSet(clientPartSet);
                         BroadcastJson(jsonHandler.GetJsonServerSetParticipant(clientPartSet.EventId, clientPartSet.ParticipantId, clientPartSet.Value));
-                        // BROADCAST PARTICIPANT SET
                         break;
                 }
             }
+        }
+
+        internal void UpdateEvent(int eventId)
+        {
+            BroadcastJson(jsonHandler.GetJsonServerEventUpdate(eventId));
         }
 
         private void SendJson(String json, Socket sock)

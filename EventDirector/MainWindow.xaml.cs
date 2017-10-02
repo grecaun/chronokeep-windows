@@ -350,6 +350,43 @@ namespace EventDirector
                 timingPointsListView.Visibility = Visibility.Visible;
                 UpdateDivisionsBox(anEvent.Identifier);
                 UpdateTimingPointsBox(anEvent.Identifier);
+                List<JsonOption> options = database.GetEventOptions(anEvent.Identifier);
+                foreach (JsonOption opt in options)
+                {
+                    if (opt.Name == "results_open")
+                    {
+                        if (opt.Value == "true")
+                        {
+                            eventsToggleResultsButton.Opacity = 1;
+                        }
+                        else
+                        {
+                            eventsToggleResultsButton.Opacity = 0.5;
+                        }
+                    }
+                    else if (opt.Name == "allow_early_start")
+                    {
+                        if (opt.Value == "true")
+                        {
+                            eventsToggleEarlyStartButton.Opacity = 1;
+                        }
+                        else
+                        {
+                            eventsToggleEarlyStartButton.Opacity = 0.5;
+                        }
+                    }
+                    else if (opt.Name == "registration_open")
+                    {
+                        if (opt.Value == "true")
+                        {
+                            eventsToggleRegistrationButton.Opacity = 1;
+                        }
+                        else
+                        {
+                            eventsToggleRegistrationButton.Opacity = 0.5;
+                        }
+                    }
+                }
             }
             else
             {
@@ -449,7 +486,7 @@ namespace EventDirector
                 }
             }
             database.SetEventOptions(eventId, list);
-            // send event update to clients
+            tcpServer.UpdateEvent(eventId);
         }
 
         private void EventsToggleResultsButton_Click(object sender, RoutedEventArgs e)
@@ -474,7 +511,7 @@ namespace EventDirector
                 }
             }
             database.SetEventOptions(eventId, list);
-            // send event update to clients
+            tcpServer.UpdateEvent(eventId);
         }
 
         private void EventsToggleEarlyStartButton_Click(object sender, RoutedEventArgs e)
@@ -499,7 +536,7 @@ namespace EventDirector
                 }
             }
             database.SetEventOptions(eventId, list);
-            // send event update to clients
+            tcpServer.UpdateEvent(eventId);
         }
     }
 }
