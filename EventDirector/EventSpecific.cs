@@ -8,8 +8,10 @@ namespace EventDirector
 {
     public class EventSpecific
     {
-        private int identifier, eventIdentifier, divisionIdentifier, bib, chip, checkedIn = 0, shirtPurchase = 0, earlystart = 0;
+        private int identifier, eventIdentifier, divisionIdentifier, bib, chip, checkedIn = 0, earlystart = 0;
         private String shirtSize, comments, divisionName, secondShirt, owes, hat, other;
+
+        public EventSpecific() { }
 
         public EventSpecific(
             int eid,
@@ -76,18 +78,18 @@ namespace EventDirector
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public int EventIdentifier { get => eventIdentifier; }
-        public int DivisionIdentifier { get => divisionIdentifier; }
-        public int Bib { get => bib; }
-        public int Chip { get => chip; }
-        public int CheckedIn { get => checkedIn; }
-        public string ShirtSize { get => shirtSize; }
-        public string Comments { get => comments; }
-        public string DivisionName { get => divisionName; }
-        public string SecondShirt { get => secondShirt; }
-        public string Owes { get => owes; }
-        public string Hat { get => hat; }
-        public string Other { get => other; }
-        public int EarlyStart { get => earlystart; }
+        public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
+        public int DivisionIdentifier { get => divisionIdentifier; set => divisionIdentifier = value; }
+        public int Bib { get => bib; set => bib = value; }
+        public int Chip { get => chip; set => chip = value; }
+        public int CheckedIn { get => checkedIn; set => checkedIn = value; }
+        public string ShirtSize { get => shirtSize; set => shirtSize = value; }
+        public string Comments { get => comments; set => comments = value; }
+        public string DivisionName { get => divisionName; set => divisionName = value; }
+        public string SecondShirt { get => secondShirt; set => secondShirt = value; }
+        public string Owes { get => owes; set => owes = value; }
+        public string Hat { get => hat; set => hat = value; }
+        public string Other { get => other; set => other = value; }
+        public int EarlyStart { get => earlystart; set => earlystart = value; }
     }
 }

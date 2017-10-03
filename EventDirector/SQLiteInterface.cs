@@ -523,7 +523,7 @@ namespace EventDirector
             using (var transaction = connection.BeginTransaction()) {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "INSERT INTO emergencycontacts (emergencycontact_name, emergencycontact_phone, emergencycontact_email) VALUES (@0,@1,@2); DELETE FROM emergencycontacts AS e LEFT OUTER JOIN participants AS p on e.emergencycontact_id=p.emergencycontact_id WHERE p.participant_id IS NULL AND e.emergencycontact_id != 0; SELECT emergencycontact_id FROM emergencycontacts WHERE emergencycontact_name=@0";
+                command.CommandText = "INSERT OR IGNORE INTO emergencycontacts (emergencycontact_name, emergencycontact_phone, emergencycontact_email) VALUES (@0,@1,@2); DELETE FROM emergencycontacts WHERE emergencycontact_id IN (SELECT e.emergencycontact_id FROM emergencycontacts AS e LEFT OUTER JOIN participants AS p ON e.emergencycontact_id=p.emergencycontact_id WHERE p.participant_id IS NULL AND e.emergencycontact_id != 0); SELECT emergencycontact_id FROM emergencycontacts WHERE emergencycontact_name=@0";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", person.EmergencyContact.Name),
                     new SQLiteParameter("@1", person.EmergencyContact.Phone),
@@ -612,7 +612,7 @@ namespace EventDirector
 
         public void CheckInParticipant(Participant person)
         {
-            CheckInParticipant(person.EventSpecific.EventIdentifier, person.Identifier, person.EventSpecific.CheckedIn);
+            CheckInParticipant((int)person.EventSpecific.EventIdentifier, person.Identifier, (int)person.EventSpecific.CheckedIn);
         }
 
         public void HardResetDatabase()
@@ -977,7 +977,7 @@ namespace EventDirector
 
         public void SetEarlyStartParticipant(Participant person)
         {
-            SetEarlyStartParticipant(person.EventSpecific.EventIdentifier, person.Identifier, person.EventSpecific.EarlyStart);
+            SetEarlyStartParticipant((int)person.EventSpecific.EventIdentifier, person.Identifier, (int)person.EventSpecific.EarlyStart);
         }
 
         public Event GetEvent(int id)

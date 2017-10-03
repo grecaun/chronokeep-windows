@@ -14,22 +14,9 @@ namespace EventDirector
         private EventSpecific eventSpecific;
 
         public Participant(
-            string first,
-            string last,
-            string street,
-            string city,
-            string state,
-            string zip,
-            string birthday,
-            EmergencyContact ec,
-            EventSpecific epi,
-            string phone,
-            string email,
-            string mobile,
-            string parent,
-            string country,
-            string street2,
-            string gender
+            string first, string last, string street, string city, string state, string zip,
+            string birthday, EmergencyContact ec, EventSpecific epi, string phone, string email,
+            string mobile, string parent, string country, string street2, string gender
             )
         {
             this.birthdate = birthday;
@@ -51,62 +38,9 @@ namespace EventDirector
         }
 
         public Participant(
-            int id,
-            string first,
-            string last,
-            string street,
-            string city,
-            string state,
-            string zip,
-            long birthday,
-            EmergencyContact ec,
-            EventSpecific epi,
-            string phone,
-            string email,
-            string mobile,
-            string parent,
-            string country,
-            string street2,
-            string gender
-            )
-        {
-            this.identifier = id;
-            this.birthdate = new DateTime(birthday).ToShortDateString();
-            this.firstName = first ?? "Unknown";
-            this.lastName = last ?? "Unknown";
-            this.street = street;
-            this.city = city;
-            this.state = state;
-            this.zip = zip;
-            this.emergencyContact = ec ?? new EmergencyContact();
-            this.eventSpecific = epi;
-            this.phone = phone ?? "";
-            this.email = email ?? "";
-            this.mobile = mobile ?? "";
-            this.parent = parent ?? "";
-            this.country = country ?? "";
-            this.street2 = street2 ?? "";
-            this.gender = gender ?? "";
-        }
-
-        public Participant(
-            int id,
-            string first,
-            string last,
-            string street,
-            string city,
-            string state,
-            string zip,
-            string birthday,
-            EmergencyContact ec,
-            EventSpecific epi,
-            string phone,
-            string email,
-            string mobile,
-            string parent,
-            string country,
-            string street2,
-            string gender
+            int id, string first, string last, string street, string city, string state, string zip,
+            string birthday, EmergencyContact ec, EventSpecific epi, string phone, string email,
+            string mobile, string parent, string country, string street2, string gender
             )
         {
             this.identifier = id;
@@ -134,9 +68,9 @@ namespace EventDirector
         internal EventSpecific EventSpecific { get => eventSpecific; }
 
         // Event Specific binding stuffs
-        public int EventIdentifier { get => eventSpecific.EventIdentifier; }
-        public int Bib { get => eventSpecific.Bib; }
-        public int Chip { get => eventSpecific.Chip; }
+        public long EventIdentifier { get => eventSpecific.EventIdentifier; }
+        public long Bib { get => eventSpecific.Bib; }
+        public long Chip { get => eventSpecific.Chip; }
         public string Division { get => eventSpecific.DivisionName; }
         public string CheckedIn { get => eventSpecific.CheckedIn == 0 ? "No" : "Yes"; }
         public string ShirtSize { get => eventSpecific.ShirtSize; }

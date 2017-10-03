@@ -40,6 +40,16 @@ namespace EventDirector
             }
         }
 
+        public Participant HandleJsonClientParticipantUpdate(JsonClientParticipantUpdate clientPartUpd)
+        {
+            JsonParticipant jPart = clientPartUpd.Participant;
+            Participant part = new Participant(jPart.Id, jPart.First, jPart.Last, jPart.Street, jPart.City, jPart.State, jPart.Zip,
+                                                jPart.Birthday, jPart.EmergencyContact, jPart.Specific, jPart.Phone, jPart.Email,
+                                                jPart.Mobile, jPart.Parent, jPart.Country, jPart.Street2, jPart.Gender);
+            database.UpdateParticipant(part);
+            return part;
+        }
+
         public List<JObject> ParseJsonMessage(String message)
         {
             List<JObject> output = new List<JObject>();
@@ -125,6 +135,7 @@ namespace EventDirector
         // JsonServerUpdateParticipant
         public String GetJsonServerUpdateParticipant(int id, Participant p)
         {
+            Log.D("Getting update participant");
             JsonServerUpdateParticipant update = new JsonServerUpdateParticipant()
             {
                 EventId = id,

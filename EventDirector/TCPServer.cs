@@ -62,10 +62,11 @@ namespace EventDirector
                                 ProcessMessage(msg, sock);
                             }
                         }
-                        catch
+                        catch (Exception e)
                         {
                             Log.D("Appears the client has disconnected.");
                             clients.Remove(sock);
+                            Log.D(e.StackTrace);
                         }
                     }
                 }
@@ -104,7 +105,10 @@ namespace EventDirector
                         break;
                     case "client_participant_update":
                         Log.D("Client participant update received.");
-                        JsonClientParticipantUpdate clientPartUpd = jsonObject.ToObject<JsonClientParticipantUpdate>();
+                        JsonClientParticipantUpdate partUpd = jsonObject.ToObject<JsonClientParticipantUpdate>();
+                        Log.D("Client participant parsed.");
+                        Participant newPart = jsonHandler.HandleJsonClientParticipantUpdate(partUpd);
+                        BroadcastJson(jsonHandler.GetJsonServerUpdateParticipant(partUpd.EventId, newPart));
                         // UPDATE PARTICIPANT IN DATABASE
                         // BROADCAST PARTICIPANT UPDATE
                         break;

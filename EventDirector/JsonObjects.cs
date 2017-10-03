@@ -104,6 +104,7 @@ namespace EventDirector
 
     public class JsonParticipant
     {
+        public JsonParticipant() { }
         public JsonParticipant(Participant p)
         {
             Id = p.Identifier;
