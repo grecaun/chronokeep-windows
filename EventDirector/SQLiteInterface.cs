@@ -204,16 +204,16 @@ namespace EventDirector
                     "old_birthday VARCHAR(15) NOT NULL," +
                     "old_phone VARCHAR(20)," +
                     "old_email VARCHAR(150)," +
-                    "old_emergency_id INTEGER," +
+                    "old_emergency_id INTEGER DEFAULT -1," +
                     "old_emergency_name VARCHAR(150)," +
                     "old_emergency_phone VARCHAR(20)," +
                     "old_emergency_email VARCHAR(150)," +
-                    "old_event_spec_id INTEGER NOT NULL," +
-                    "old_event_spec_event_id INTEGER NOT NULL," +
-                    "old_event_spec_division_id INTEGER NOT NULL," +
+                    "old_event_spec_id INTEGER DEFAULT -1," +
+                    "old_event_spec_event_id INTEGER DEFAULT -1," +
+                    "old_event_spec_division_id INTEGER DEFAULT -1," +
                     "old_event_spec_bib INTEGER," +
                     "old_event_spec_chip INTEGER," +
-                    "old_event_spec_checkedin INTEGER NOT NULL," +
+                    "old_event_spec_checkedin INTEGER DEFAULT -1," +
                     "old_event_spec_shirtsize VARCHAR(5)," +
                     "old_event_spec_comments VARCHAR," +
                     "old_mobile VARCHAR(20)," +
@@ -225,7 +225,7 @@ namespace EventDirector
                     "old_hat VARCHAR(20)," +
                     "old_other VARCHAR," +
                     "old_gender VARCHAR(10)," +
-                    "old_earlystart INTEGER," +
+                    "old_earlystart INTEGER DEFAULT -1," +
 
                     "new_participant_id INTEGER NOT NULL," +
                     "new_first VARCHAR(50) NOT NULL," +
@@ -237,16 +237,16 @@ namespace EventDirector
                     "new_birthday VARCHAR(15) NOT NULL," +
                     "new_phone VARCHAR(20)," +
                     "new_email VARCHAR(150)," +
-                    "new_emergency_id INTEGER," +
+                    "new_emergency_id INTEGER DEFAULT -1," +
                     "new_emergency_name VARCHAR(150)," +
                     "new_emergency_phone VARCHAR(20)," +
                     "new_emergency_email VARCHAR(150)," +
-                    "new_event_spec_id INTEGER NOT NULL," +
-                    "new_event_spec_event_id INTEGER NOT NULL," +
-                    "new_event_spec_division_id INTEGER NOT NULL," +
-                    "new_event_spec_bib INTEGER," +
-                    "new_event_spec_chip INTEGER," +
-                    "new_event_spec_checkedin INTEGER NOT NULL," +
+                    "new_event_spec_id INTEGER DEFAULT -1," +
+                    "new_event_spec_event_id INTEGER DEFAULT -1," +
+                    "new_event_spec_division_id INTEGER DEFAULT -1," +
+                    "new_event_spec_bib INTEGER DEFAULT -1," +
+                    "new_event_spec_chip INTEGER DEFAULT -1," +
+                    "new_event_spec_checkedin INTEGER DEFAULT -1," +
                     "new_event_spec_shirtsize VARCHAR(5)," +
                     "new_event_spec_comments VARCHAR," +
                     "new_mobile VARCHAR(20)," +
@@ -258,9 +258,10 @@ namespace EventDirector
                     "new_hat VARCHAR(20)," +
                     "new_other VARCHAR," +
                     "new_gender VARCHAR(10)," +
-                    "new_earlystart INTEGER" +
+                    "new_earlystart INTEGER DEFAULT -1" +
                     ")");
                 queries.Add("INSERT INTO emergencycontacts (emergencycontact_id, emergencycontact_name) VALUES (0,'')");
+                queries.Add("INSERT INTO participants (participant_id, participant_first, participant_last, participant_birthday, emergencycontact_id) VALUES (0, 'J', 'Doe', '01/01/1901', 0)");
 
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -523,15 +524,18 @@ namespace EventDirector
             using (var transaction = connection.BeginTransaction()) {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "INSERT OR IGNORE INTO emergencycontacts (emergencycontact_name, emergencycontact_phone, emergencycontact_email) VALUES (@0,@1,@2); DELETE FROM emergencycontacts WHERE emergencycontact_id IN (SELECT e.emergencycontact_id FROM emergencycontacts AS e LEFT OUTER JOIN participants AS p ON e.emergencycontact_id=p.emergencycontact_id WHERE p.participant_id IS NULL AND e.emergencycontact_id != 0); SELECT emergencycontact_id FROM emergencycontacts WHERE emergencycontact_name=@0";
+                Log.D("Inserting into Emergency Contacts.");
+                command.CommandText = "INSERT OR IGNORE INTO emergencycontacts (emergencycontact_name, emergencycontact_phone, emergencycontact_email) VALUES (@0,@1,@2); DELETE FROM emergencycontacts WHERE emergencycontact_id IN (SELECT e.emergencycontact_id FROM emergencycontacts AS e LEFT OUTER JOIN participants AS p ON e.emergencycontact_id=p.emergencycontact_id WHERE p.participant_id IS NULL AND e.emergencycontact_id != 0); SELECT * FROM emergencycontacts WHERE emergencycontact_name=@0";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", person.EmergencyContact.Name),
                     new SQLiteParameter("@1", person.EmergencyContact.Phone),
                     new SQLiteParameter("@2", person.EmergencyContact.Email) } );
                 SQLiteDataReader reader = command.ExecuteReader();
                 person.EmergencyContact.Identifier = reader.Read() ? Convert.ToInt32(reader["emergencycontact_id"]) : 0;
+                Log.D("Emergency contact identifier is now " + person.EmergencyContact.Identifier + " name is " + person.EmergencyContact.Name);
                 command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
+                Log.D("Updating participant values.");
                 command.CommandText = "UPDATE participants SET participant_first=@0, participant_last=@1, participant_street=@2, participant_city=@3, participant_state=@4, participant_zip=@5, participant_birthday=@6, emergencycontact_id=@7, participant_phone=@8, participant_email=@9, participant_mobile=@mobile, participant_parent=@parent, participant_country=@country, participant_street2=@street2 WHERE participant_id=@10";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", person.FirstName),
@@ -552,6 +556,7 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
+                Log.D("Updating event specific.... bib is " + person.EventSpecific.Bib);
                 command.CommandText = "UPDATE eventspecific SET division_id=@0, eventspecific_bib=@1, eventspecific_chip=@2, eventspecific_checkedin=@3, eventspecific_shirtsize=@4, eventspecific_secondshirt=@secondshirt, eventspecific_owes=@owes, eventspecific_hat=@hat, eventspecific_other=@other, eventspecific_earlystart=@earlystart WHERE eventspecific_id=@5";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", person.EventSpecific.DivisionIdentifier),
@@ -567,6 +572,7 @@ namespace EventDirector
                     new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart)
                 } );
                 command.ExecuteNonQuery();
+                transaction.Commit();
             }
         }
 
@@ -619,9 +625,7 @@ namespace EventDirector
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = new SQLiteCommand("SELECT name FROM sqlite_master", connection);
-                SQLiteDataReader reader = command.ExecuteReader();
-                command = new SQLiteCommand("DROP TABLE events; DROP TABLE divisions; DROP TABLE timingpoints; DROP TABLE emergencycontacts; DROP TABLE participants; DROP TABLE eventspecific; DROP TABLE timeresults; DROP TABLE changes; DROP TABLE settings", connection);
+                SQLiteCommand command = new SQLiteCommand("DROP TABLE events; DROP TABLE divisions; DROP TABLE timingpoints; DROP TABLE emergencycontacts; DROP TABLE participants; DROP TABLE eventspecific; DROP TABLE timeresults; DROP TABLE changes; DROP TABLE settings", connection);
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
@@ -774,19 +778,152 @@ namespace EventDirector
 
         public void AddChange(Participant newParticipant, Participant oldParticipant)
         {
+            SQLiteCommand command = connection.CreateCommand();
             Log.D("Adding change - new participant id is " + newParticipant.Identifier + " old participant id is" + oldParticipant.Identifier);
-            if (newParticipant.Identifier == oldParticipant.Identifier && newParticipant.EventSpecific.EventIdentifier == oldParticipant.EventSpecific.EventIdentifier)
+            if (oldParticipant == null)
             {
-                Log.D("Valid change found.");
-                UpdateParticipant(newParticipant);
+                Log.D("Found an add player change.");
+                command.CommandText = "INSERT INTO changes (old_participant_id, old_first, old_last, old_birthday, old_emergency_id," +
+                    "new_participant_id, new_first, new_last, new_street, new_city, new_state, new_zip, new_birthday, new_phone, new_email," +
+                    "new_emergency_id, new_emergency_name, new_emergency_phone, new_emergency_email, new_event_spec_id, new_event_spec_event_id," +
+                    "new_event_spec_division_id, new_event_spec_bib, new_event_spec_chip, new_event_spec_checkedin, new_event_spec_shirtsize," +
+                    "new_event_spec_comments, new_mobile, new_parent, new_country, new_street2, new_secondshirt, new_owes, new_hat, new_other," +
+                    "new_gender, new_earlystart) VALUES" +
+                    "(0, 'J', 'Doe', '01/01/1901', 0, @newPartId, @newFirst, @newLast, @newStreet," +
+                    "@newCity, @newState, @newZip, @newBirthday, @newPhone, @newEmail, @newEId, @newEName, @newEPhone, @newEEmail, @newESId, @newESEvId," +
+                    "@newESDId, @newESBib, @newESChip, @newESCheckedIn, @newESShirtSize, @newESComments, @newMobile, @newParent, @newCountry, @newStreet2," +
+                    "@newShirt2, @newOwes, @newHat, @newOther, @newGender, @newEarlyStart)";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@newPartId", newParticipant.Identifier),
+                    new SQLiteParameter("@newFirst", newParticipant.FirstName),
+                    new SQLiteParameter("@newLast", newParticipant.LastName),
+                    new SQLiteParameter("@newStreet", newParticipant.Street),
+                    new SQLiteParameter("@newCity", newParticipant.City),
+                    new SQLiteParameter("@newState", newParticipant.State),
+                    new SQLiteParameter("@newZip", newParticipant.Zip),
+                    new SQLiteParameter("@newBirthday", newParticipant.Birthdate),
+                    new SQLiteParameter("@newPhone", newParticipant.Phone),
+                    new SQLiteParameter("@newEmail", newParticipant.Email),
+                    new SQLiteParameter("@newEId", newParticipant.EmergencyContact.Identifier),
+                    new SQLiteParameter("@newEName", newParticipant.EmergencyContact.Name),
+                    new SQLiteParameter("@newEPhone", newParticipant.EmergencyContact.Phone),
+                    new SQLiteParameter("@newEEmail", newParticipant.EmergencyContact.Email),
+                    new SQLiteParameter("@newESId", newParticipant.EventSpecific.Identifier),
+                    new SQLiteParameter("@newESEvId", newParticipant.EventSpecific.EventIdentifier),
+                    new SQLiteParameter("@newESDId", newParticipant.EventSpecific.DivisionIdentifier),
+                    new SQLiteParameter("@newESBib", newParticipant.EventSpecific.Bib),
+                    new SQLiteParameter("@newESChip", newParticipant.EventSpecific.Chip),
+                    new SQLiteParameter("@newESCheckedIn", newParticipant.EventSpecific.CheckedIn),
+                    new SQLiteParameter("@newESShirtSize", newParticipant.EventSpecific.ShirtSize),
+                    new SQLiteParameter("@newESComments", newParticipant.EventSpecific.Comments),
+                    new SQLiteParameter("@newMobile", newParticipant.Mobile),
+                    new SQLiteParameter("@newParent", newParticipant.Parent),
+                    new SQLiteParameter("@newCountry", newParticipant.Country),
+                    new SQLiteParameter("@newStreet2", newParticipant.Street2),
+                    new SQLiteParameter("@newShirt2", newParticipant.EventSpecific.SecondShirt),
+                    new SQLiteParameter("@newOwes", newParticipant.EventSpecific.Owes),
+                    new SQLiteParameter("@newHat", newParticipant.EventSpecific.Hat),
+                    new SQLiteParameter("@newOther", newParticipant.EventSpecific.Other),
+                    new SQLiteParameter("@newGender", newParticipant.Gender),
+                    new SQLiteParameter("@newEarlyStart", newParticipant.EventSpecific.EarlyStart)
+                });
+                command.ExecuteNonQuery();
             }
             else
             {
-                Log.D("Invalid change attempt. Nothing will be done.");
+                Log.D("An update occured.");
+                command.CommandText = "INSERT INTO changes (" +
+                    "old_participant_id, old_first, old_last, old_street, old_city, old_state, old_zip, old_birthday, old_phone, old_email," +
+                    "old_emergency_id, old_emergency_name, old_emergency_phone, old_emergency_email, old_event_spec_id, old_event_spec_event_id," +
+                    "old_event_spec_division_id, old_event_spec_bib, old_event_spec_chip, old_event_spec_checkedin, old_event_spec_shirtsize," +
+                    "old_event_spec_comments, old_mobile, old_parent, old_country, old_street2, old_secondshirt, old_owes, old_hat, old_other," +
+                    "old_gender, old_earlystart," +
+                    "new_participant_id, new_first, new_last, new_street, new_city, new_state, new_zip, new_birthday, new_phone, new_email," +
+                    "new_emergency_id, new_emergency_name, new_emergency_phone, new_emergency_email, new_event_spec_id, new_event_spec_event_id," +
+                    "new_event_spec_division_id, new_event_spec_bib, new_event_spec_chip, new_event_spec_checkedin, new_event_spec_shirtsize," +
+                    "new_event_spec_comments, new_mobile, new_parent, new_country, new_street2, new_secondshirt, new_owes, new_hat, new_other," +
+                    "new_gender, new_earlystart)" +
+                    "VALUES" +
+                    "(@oldPartId, @oldFirst, @oldLast, @oldStreet, @oldCity, @oldState, @oldZip, @oldBirthday, @oldPhone, @oldEmail, @oldEId," +
+                    "@oldEName, @oldEPhone, @oldEEmail, @oldESId, @oldESEvId, @oldESDId, @oldESBib, @oldESChip, @oldESCheckedIn, @oldESShirtSize," +
+                    "@oldESComments, @oldMobile, @oldParent, @oldCountry, @oldStreet2, @oldShirt2, @oldOwes, @oldHat, @oldOther, @oldGender," +
+                    "@oldEarlyStart," +
+                    "@newPartId, @newFirst, @newLast, @newStreet, @newCity, @newState, @newZip, @newBirthday, @newPhone, @newEmail, @newEId," +
+                    "@newEName, @newEPhone, @newEEmail, @newESId, @newESEvId, @newESDId, @newESBib, @newESChip, @newESCheckedIn, @newESShirtSize," +
+                    "@newESComments, @newMobile, @newParent, @newCountry, @newStreet2, @newShirt2, @newOwes, @newHat, @newOther, @newGender," +
+                    "@newEarlyStart)";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@oldPartId", oldParticipant.Identifier),
+                    new SQLiteParameter("@oldFirst", oldParticipant.FirstName),
+                    new SQLiteParameter("@oldLast", oldParticipant.LastName),
+                    new SQLiteParameter("@oldStreet", oldParticipant.Street),
+                    new SQLiteParameter("@oldCity", oldParticipant.City),
+                    new SQLiteParameter("@oldState", oldParticipant.State),
+                    new SQLiteParameter("@oldZip", oldParticipant.Zip),
+                    new SQLiteParameter("@oldBirthday", oldParticipant.Birthdate),
+                    new SQLiteParameter("@oldPhone", oldParticipant.Phone),
+                    new SQLiteParameter("@oldEmail", oldParticipant.Email),
+                    new SQLiteParameter("@oldEId", oldParticipant.EmergencyContact.Identifier),
+                    new SQLiteParameter("@oldEName", oldParticipant.EmergencyContact.Name),
+                    new SQLiteParameter("@oldEPhone", oldParticipant.EmergencyContact.Phone),
+                    new SQLiteParameter("@oldEEmail", oldParticipant.EmergencyContact.Email),
+                    new SQLiteParameter("@oldESId", oldParticipant.EventSpecific.Identifier),
+                    new SQLiteParameter("@oldESEvId", oldParticipant.EventSpecific.EventIdentifier),
+                    new SQLiteParameter("@oldESDId", oldParticipant.EventSpecific.DivisionIdentifier),
+                    new SQLiteParameter("@oldESBib", oldParticipant.EventSpecific.Bib),
+                    new SQLiteParameter("@oldESChip", oldParticipant.EventSpecific.Chip),
+                    new SQLiteParameter("@oldESCheckedIn", oldParticipant.EventSpecific.CheckedIn),
+                    new SQLiteParameter("@oldESShirtSize", oldParticipant.EventSpecific.ShirtSize),
+                    new SQLiteParameter("@oldESComments", oldParticipant.EventSpecific.Comments),
+                    new SQLiteParameter("@oldMobile", oldParticipant.Mobile),
+                    new SQLiteParameter("@oldParent", oldParticipant.Parent),
+                    new SQLiteParameter("@oldCountry", oldParticipant.Country),
+                    new SQLiteParameter("@oldStreet2", oldParticipant.Street2),
+                    new SQLiteParameter("@oldShirt2", oldParticipant.EventSpecific.SecondShirt),
+                    new SQLiteParameter("@oldOwes", oldParticipant.EventSpecific.Owes),
+                    new SQLiteParameter("@oldHat", oldParticipant.EventSpecific.Hat),
+                    new SQLiteParameter("@oldOther", oldParticipant.EventSpecific.Other),
+                    new SQLiteParameter("@oldGender", oldParticipant.Gender),
+                    new SQLiteParameter("@oldEarlyStart", oldParticipant.EventSpecific.EarlyStart),
+
+                    new SQLiteParameter("@newPartId", newParticipant.Identifier),
+                    new SQLiteParameter("@newFirst", newParticipant.FirstName),
+                    new SQLiteParameter("@newLast", newParticipant.LastName),
+                    new SQLiteParameter("@newStreet", newParticipant.Street),
+                    new SQLiteParameter("@newCity", newParticipant.City),
+                    new SQLiteParameter("@newState", newParticipant.State),
+                    new SQLiteParameter("@newZip", newParticipant.Zip),
+                    new SQLiteParameter("@newBirthday", newParticipant.Birthdate),
+                    new SQLiteParameter("@newPhone", newParticipant.Phone),
+                    new SQLiteParameter("@newEmail", newParticipant.Email),
+                    new SQLiteParameter("@newEId", newParticipant.EmergencyContact.Identifier),
+                    new SQLiteParameter("@newEName", newParticipant.EmergencyContact.Name),
+                    new SQLiteParameter("@newEPhone", newParticipant.EmergencyContact.Phone),
+                    new SQLiteParameter("@newEEmail", newParticipant.EmergencyContact.Email),
+                    new SQLiteParameter("@newESId", newParticipant.EventSpecific.Identifier),
+                    new SQLiteParameter("@newESEvId", newParticipant.EventSpecific.EventIdentifier),
+                    new SQLiteParameter("@newESDId", newParticipant.EventSpecific.DivisionIdentifier),
+                    new SQLiteParameter("@newESBib", newParticipant.EventSpecific.Bib),
+                    new SQLiteParameter("@newESChip", newParticipant.EventSpecific.Chip),
+                    new SQLiteParameter("@newESCheckedIn", newParticipant.EventSpecific.CheckedIn),
+                    new SQLiteParameter("@newESShirtSize", newParticipant.EventSpecific.ShirtSize),
+                    new SQLiteParameter("@newESComments", newParticipant.EventSpecific.Comments),
+                    new SQLiteParameter("@newMobile", newParticipant.Mobile),
+                    new SQLiteParameter("@newParent", newParticipant.Parent),
+                    new SQLiteParameter("@newCountry", newParticipant.Country),
+                    new SQLiteParameter("@newStreet2", newParticipant.Street2),
+                    new SQLiteParameter("@newShirt2", newParticipant.EventSpecific.SecondShirt),
+                    new SQLiteParameter("@newOwes", newParticipant.EventSpecific.Owes),
+                    new SQLiteParameter("@newHat", newParticipant.EventSpecific.Hat),
+                    new SQLiteParameter("@newOther", newParticipant.EventSpecific.Other),
+                    new SQLiteParameter("@newGender", newParticipant.Gender),
+                    new SQLiteParameter("@newEarlyStart", newParticipant.EventSpecific.EarlyStart)
+                });
+                command.ExecuteNonQuery();
             }
         }
 
-        public List<Change> GetChanges(int eventId)
+        public List<Change> GetChanges()
         {
             Log.D("Getting changes.");
             List<Change> output = new List<Change>();
@@ -797,8 +934,7 @@ namespace EventDirector
                 divisions.Add(d.Identifier, d.Name);
             }
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM changes WHERE old_event_spec_event_id=@eventId";
-            command.Parameters.Add(new SQLiteParameter("@eventId", eventId));
+            command.CommandText = "SELECT * FROM changes";
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -1069,6 +1205,59 @@ namespace EventDirector
                 new SQLiteParameter("@id", eventId)
             });
             command.ExecuteNonQuery();
+        }
+
+        public Participant GetParticipant(int eventId, int identifier)
+        {
+            Participant output = null;
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM participants AS p, emergencycontacts AS e, eventspecific AS s, divisions AS d WHERE p.emergencycontact_id=e.emergencycontact_id AND p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id AND p.participant_id=@partId";
+            command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
+            command.Parameters.Add(new SQLiteParameter("@partId", identifier));
+            SQLiteDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                output = new Participant(
+                    Convert.ToInt32(reader["participant_id"]),
+                    reader["participant_first"].ToString(),
+                    reader["participant_last"].ToString(),
+                    reader["participant_street"].ToString(),
+                    reader["participant_city"].ToString(),
+                    reader["participant_state"].ToString(),
+                    reader["participant_zip"].ToString(),
+                    reader["participant_birthday"].ToString(),
+                    new EmergencyContact(
+                        Convert.ToInt32(reader["emergencycontact_id"]),
+                        reader["emergencycontact_name"].ToString(),
+                        reader["emergencycontact_phone"].ToString(),
+                        reader["emergencycontact_email"].ToString()
+                        ),
+                    new EventSpecific(
+                        Convert.ToInt32(reader["eventspecific_id"]),
+                        Convert.ToInt32(reader["event_id"]),
+                        Convert.ToInt32(reader["division_id"]),
+                        reader["division_name"].ToString(),
+                        Convert.ToInt32(reader["eventspecific_bib"]),
+                        Convert.ToInt32(reader["eventspecific_chip"]),
+                        Convert.ToInt32(reader["eventspecific_checkedin"]),
+                        reader["eventspecific_shirtsize"].ToString(),
+                        reader["eventspecific_comments"].ToString(),
+                        reader["eventspecific_secondshirt"].ToString(),
+                        reader["eventspecific_owes"].ToString(),
+                        reader["eventspecific_hat"].ToString(),
+                        reader["eventspecific_other"].ToString(),
+                        Convert.ToInt32(reader["eventspecific_earlystart"])
+                        ),
+                    reader["participant_phone"].ToString(),
+                    reader["participant_email"].ToString(),
+                    reader["participant_mobile"].ToString(),
+                    reader["participant_parent"].ToString(),
+                    reader["participant_country"].ToString(),
+                    reader["participant_street2"].ToString(),
+                    reader["participant_gender"].ToString()
+                    );
+            }
+            return output;
         }
     }
 }

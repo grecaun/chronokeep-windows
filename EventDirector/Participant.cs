@@ -26,7 +26,7 @@ namespace EventDirector
             this.city = city;
             this.state = state;
             this.zip = zip;
-            this.emergencyContact = ec ?? new EmergencyContact();
+            this.emergencyContact = ec ?? EmergencyContact.BlankContact();
             this.eventSpecific = epi;
             this.phone = phone ?? "";
             this.email = email ?? "";
@@ -51,7 +51,7 @@ namespace EventDirector
             this.city = city;
             this.state = state;
             this.zip = zip;
-            this.emergencyContact = ec ?? new EmergencyContact();
+            this.emergencyContact = ec ?? EmergencyContact.BlankContact();
             this.eventSpecific = epi;
             this.phone = phone ?? "";
             this.email = email ?? "";

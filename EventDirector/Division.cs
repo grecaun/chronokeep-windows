@@ -11,6 +11,8 @@ namespace EventDirector
         private String name;
         private int identifier, eventIdentifier;
 
+        public Division() { }
+
         public Division(string name, int eventIdentifier)
         {
             this.name = name;
@@ -25,7 +27,7 @@ namespace EventDirector
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public string Name { get => name; }
-        public int EventIdentifier { get => eventIdentifier; }
+        public string Name { get => name; set => name = value; }
+        public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
     }
 }

@@ -15,10 +15,14 @@ namespace EventDirector
         Socket server;
         List<Socket> clients = new List<Socket>(), readList = new List<Socket>();
         JsonHandler jsonHandler;
+        IDBInterface database;
+        IChangeUpdater changeUpdater;
 
-        public TCPServer(IDBInterface database)
+        public TCPServer(IDBInterface database, IChangeUpdater changeUpdater)
         {
             jsonHandler = new JsonHandler(database);
+            this.database = database;
+            this.changeUpdater = changeUpdater;
         }
 
         public void Run()
@@ -106,11 +110,16 @@ namespace EventDirector
                     case "client_participant_update":
                         Log.D("Client participant update received.");
                         JsonClientParticipantUpdate partUpd = jsonObject.ToObject<JsonClientParticipantUpdate>();
-                        Log.D("Client participant parsed.");
-                        Participant newPart = jsonHandler.HandleJsonClientParticipantUpdate(partUpd);
+                        Participant oldPart = database.GetParticipant(partUpd.EventId, partUpd.Participant.Id);
+                        Participant newPart = new Participant(partUpd.Participant.Id, partUpd.Participant.First, partUpd.Participant.Last, partUpd.Participant.Street, partUpd.Participant.City, partUpd.Participant.State, partUpd.Participant.Zip,
+                                                partUpd.Participant.Birthday, partUpd.Participant.EmergencyContact, partUpd.Participant.Specific, partUpd.Participant.Phone, partUpd.Participant.Email,
+                                                partUpd.Participant.Mobile, partUpd.Participant.Parent, partUpd.Participant.Country, partUpd.Participant.Street2, partUpd.Participant.Gender);
+                        Log.D("NewPart has emergency contact name of " + partUpd.Participant.EmergencyContact.Name);
+                        database.UpdateParticipant(newPart);
+                        newPart = database.GetParticipant(partUpd.EventId, partUpd.Participant.Id);
+                        database.AddChange(newPart, oldPart);
+                        changeUpdater.UpdateChangesBox();
                         BroadcastJson(jsonHandler.GetJsonServerUpdateParticipant(partUpd.EventId, newPart));
-                        // UPDATE PARTICIPANT IN DATABASE
-                        // BROADCAST PARTICIPANT UPDATE
                         break;
                     case "client_participant_add":
                         Log.D("Client participant add received.");
@@ -121,7 +130,16 @@ namespace EventDirector
                     case "client_participant_set":
                         Log.D("Client participant set received.");
                         JsonClientParticipantSet clientPartSet = jsonObject.ToObject<JsonClientParticipantSet>();
-                        jsonHandler.HandleJsonClientParticipantSet(clientPartSet);
+                        if (clientPartSet.Value.Name == "checked_in")
+                        {
+                            Log.D("Checked in set value found.");
+                            database.CheckInParticipant(clientPartSet.EventId, clientPartSet.ParticipantId, Convert.ToInt32(clientPartSet.Value.Value));
+                        }
+                        else if (clientPartSet.Value.Name == "early_start")
+                        {
+                            Log.D("Early start set value found.");
+                            database.SetEarlyStartParticipant(clientPartSet.EventId, clientPartSet.ParticipantId, Convert.ToInt32(clientPartSet.Value.Value));
+                        }
                         BroadcastJson(jsonHandler.GetJsonServerSetParticipant(clientPartSet.EventId, clientPartSet.ParticipantId, clientPartSet.Value));
                         break;
                 }

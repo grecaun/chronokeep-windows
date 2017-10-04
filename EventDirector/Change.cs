@@ -11,6 +11,8 @@ namespace EventDirector
         int identifier;
         Participant newParticipant, oldParticipant;
 
+        public Change() { }
+
         public Change(int identifier, Participant np, Participant op)
         {
             this.identifier = identifier;

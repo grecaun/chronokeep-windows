@@ -40,22 +40,22 @@
                 <Label Content="Events" FontSize="15"/>
             </Label>
             <Button x:Name="eventsAddButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="AddButton_Click" AutomationProperties.HelpText="Add">
-                <Image Source="pack://application:,,,/Icons/Plus.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/plus-8x.png" Height="20"/>
             </Button>
             <Button x:Name="eventsModifyButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="ModifyButton_Click" AutomationProperties.HelpText="Modify">
-                <Image Source="pack://application:,,,/Icons/Gear.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/cog-8x.png" Height="20"/>
             </Button>
             <Button x:Name="eventsRemoveButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,75,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="RemoveButton_Click" AutomationProperties.HelpText="Remove">
-                <Image Source="pack://application:,,,/Icons/Rubbish.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/trash-8x.png" Height="20"/>
             </Button>
             <Button x:Name="eventsToggleRegistrationButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,110,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="EventsToggleRegistrationButton_Click" AutomationProperties.HelpText="Registration" Opacity="0.5">
-                <Image Source="pack://application:,,,/Icons/Lock.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/check-8x.png" Height="20"/>
             </Button>
             <Button x:Name="eventsToggleResultsButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,145,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="EventsToggleResultsButton_Click" AutomationProperties.HelpText="Results" Opacity="0.5">
-                <Image Source="pack://application:,,,/Icons/Broadcast.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/flag-8x.png" Height="20"/>
             </Button>
             <Button x:Name="eventsToggleEarlyStartButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,180,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="EventsToggleEarlyStartButton_Click" AutomationProperties.HelpText="Early Start"  Opacity="0.5">
-                <Image Source="pack://application:,,,/Icons/Bolt.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/clock-8x.png" Height="20"/>
             </Button>
             <ListView x:Name="eventsListView" Height="200" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1" SelectionChanged="EventsListView_SelectionChanged">
                 <ListView.View>
@@ -70,13 +70,13 @@
                 <Label Content="Divisions" FontSize="15"/>
             </Label>
             <Button Visibility="Hidden" x:Name="divisionsAddButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="30" Height="30" Grid.Row="0" Grid.Column="1" Click="AddButton_Click">
-                <Image Source="pack://application:,,,/Icons/Plus.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/plus-8x.png" Height="20"/>
             </Button>
             <Button Visibility="Hidden" x:Name="divisionsModifyButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0" Width="30" Height="30" Grid.Row="0" Grid.Column="1" Click="ModifyButton_Click">
-                <Image Source="pack://application:,,,/Icons/Gear.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/cog-8x.png" Height="20"/>
             </Button>
             <Button Visibility="Hidden" x:Name="divisionsRemoveButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,75,0" Width="30" Height="30" Grid.Row="0" Grid.Column="1" Click="RemoveButton_Click">
-                <Image Source="pack://application:,,,/Icons/Rubbish.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/trash-8x.png" Height="20"/>
             </Button>
             <ListView Visibility="Hidden" x:Name="divisionsListView" Height="200" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" SelectionChanged="DivisionsListView_SelectionChanged">
                 <ListView.View>
@@ -91,13 +91,13 @@
                 <Label Content="Timing Points" FontSize="15"/>
             </Label>
             <Button Visibility="Hidden" x:Name="timingPointsAddButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" Width="30" Height="30" Grid.Row="0" Grid.Column="2" Click="AddButton_Click">
-                <Image Source="pack://application:,,,/Icons/Plus.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/plus-8x.png" Height="20"/>
             </Button>
             <Button Visibility="Hidden" x:Name="timingPointsModifyButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,40,0" Width="30" Height="30" Grid.Row="0" Grid.Column="2" Click="ModifyButton_Click">
-                <Image Source="pack://application:,,,/Icons/Gear.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/cog-8x.png" Height="20"/>
             </Button>
             <Button Visibility="Hidden" x:Name="timingPointsRemoveButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,75,0" Width="30" Height="30" Grid.Row="0" Grid.Column="2" Click="RemoveButton_Click">
-                <Image Source="pack://application:,,,/Icons/Rubbish.png" Height="20"/>
+                <Image Source="pack://application:,,,/Icons/trash-8x.png" Height="20"/>
             </Button>
             <ListView Visibility="Hidden" x:Name="timingPointsListView" Height="200" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1" SelectionChanged="TimingPointsListView_SelectionChanged">
                 <ListView.View>
@@ -111,7 +111,45 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" Grid.ColumnSpan="3" Grid.Row="2"/>
+            <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" Grid.ColumnSpan="3" Grid.Row="2">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="#" DisplayMemberBinding="{Binding ChangeIdentifier}" />
+                        <GridViewColumn Header="Which" DisplayMemberBinding="{Binding Which}" />
+                        <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Identifier}" />
+                        <GridViewColumn Header="EventID" DisplayMemberBinding="{Binding EventIdentifier}" />
+                        <GridViewColumn Header="Bib" DisplayMemberBinding="{Binding Bib}" />
+                        <GridViewColumn Header="Chip" DisplayMemberBinding="{Binding Chip}" />
+                        <GridViewColumn Header="Division" DisplayMemberBinding="{Binding Division}" />
+                        <GridViewColumn Header="First" DisplayMemberBinding="{Binding FirstName}" />
+                        <GridViewColumn Header="Last" DisplayMemberBinding="{Binding LastName}" />
+                        <GridViewColumn Header="Gender" DisplayMemberBinding="{Binding Gender}" />
+                        <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding Birthdate}" />
+                        <GridViewColumn Header="Parent" DisplayMemberBinding="{Binding Parent}" />
+                        <GridViewColumn Header="Street" DisplayMemberBinding="{Binding Street}" />
+                        <GridViewColumn Header="Street 2" DisplayMemberBinding="{Binding Street2}" />
+                        <GridViewColumn Header="City" DisplayMemberBinding="{Binding City}" />
+                        <GridViewColumn Header="State" DisplayMemberBinding="{Binding State}" />
+                        <GridViewColumn Header="Zip" DisplayMemberBinding="{Binding Zip}" />
+                        <GridViewColumn Header="Country" DisplayMemberBinding="{Binding Country}" />
+                        <GridViewColumn Header="Phone" DisplayMemberBinding="{Binding Phone}" />
+                        <GridViewColumn Header="Mobile" DisplayMemberBinding="{Binding Mobile}" />
+                        <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}" />
+                        <GridViewColumn Header="Checked In" DisplayMemberBinding="{Binding CheckedIn}" />
+                        <GridViewColumn Header="EarlyStart" DisplayMemberBinding="{Binding EarlyStart}" />
+                        <GridViewColumn Header="Shirt Size" DisplayMemberBinding="{Binding ShirtSize}" />
+                        <GridViewColumn Header="Shirt 2" DisplayMemberBinding="{Binding SecondShirt}" />
+                        <GridViewColumn Header="Hat" DisplayMemberBinding="{Binding Hat}" />
+                        <GridViewColumn Header="Owes" DisplayMemberBinding="{Binding Owes}" />
+                        <GridViewColumn Header="ECID" DisplayMemberBinding="{Binding ECID}" />
+                        <GridViewColumn Header="EC Name" DisplayMemberBinding="{Binding ECName}" />
+                        <GridViewColumn Header="EC Phone" DisplayMemberBinding="{Binding ECPhone}" />
+                        <GridViewColumn Header="EC Email" DisplayMemberBinding="{Binding ECEmail}" />
+                        <GridViewColumn Header="Comments" DisplayMemberBinding="{Binding Comments}" />
+                        <GridViewColumn Header="Other" DisplayMemberBinding="{Binding Other}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </Grid>
     </DockPanel>
 </Window>

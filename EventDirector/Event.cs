@@ -11,6 +11,8 @@ namespace EventDirector
         private int identifier;
         private string name, date;
 
+        public Event() { }
+
         public Event(string n, long d)
         {
             this.date = new DateTime(d).ToShortDateString();
@@ -32,7 +34,7 @@ namespace EventDirector
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public string Name { get => name; }
-        public string Date { get => date; }
+        public string Name { get => name; set => name = value; }
+        public string Date { get => date; set => date = value; }
     }
 }

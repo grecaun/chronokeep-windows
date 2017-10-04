@@ -26,20 +26,6 @@ namespace EventDirector
             this.database = database;
         }
 
-        public void HandleJsonClientParticipantSet(JsonClientParticipantSet participantSet)
-        {
-            if (participantSet.Value.Name == "checked_in")
-            {
-                Log.D("Checked in set value found.");
-                database.CheckInParticipant(participantSet.EventId, participantSet.ParticipantId, Convert.ToInt32(participantSet.Value.Value));
-            }
-            else if (participantSet.Value.Name == "early_start")
-            {
-                Log.D("Early start set value found.");
-                database.SetEarlyStartParticipant(participantSet.EventId, participantSet.ParticipantId, Convert.ToInt32(participantSet.Value.Value));
-            }
-        }
-
         public Participant HandleJsonClientParticipantUpdate(JsonClientParticipantUpdate clientPartUpd)
         {
             JsonParticipant jPart = clientPartUpd.Participant;
@@ -47,6 +33,7 @@ namespace EventDirector
                                                 jPart.Birthday, jPart.EmergencyContact, jPart.Specific, jPart.Phone, jPart.Email,
                                                 jPart.Mobile, jPart.Parent, jPart.Country, jPart.Street2, jPart.Gender);
             database.UpdateParticipant(part);
+            part = database.GetParticipant(part.EventSpecific.EventIdentifier, part.Identifier);
             return part;
         }
 

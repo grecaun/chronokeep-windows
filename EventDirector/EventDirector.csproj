@@ -80,7 +80,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ChangeParticipant.cs" />
     <Compile Include="CSVImporter.cs" />
+    <Compile Include="IChangeUpdater.cs" />
     <Compile Include="IDBInterface.cs" />
     <Compile Include="Division.cs" />
     <Compile Include="EmergencyContact.cs" />
@@ -189,19 +191,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Gear.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Icons\Gear.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Plus.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Icons\Plus.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Rubbish.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Icons\Rubbish.png" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
@@ -224,19 +220,25 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Bolt.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Icons\Bolt.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Broadcast.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Icons\Broadcast.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Lock.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Icons\Lock.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\check-8x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\clock-8x.png" />
+    <Resource Include="Icons\cog-8x.png" />
+    <Resource Include="Icons\flag-8x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\plus-8x.png" />
+    <Resource Include="Icons\trash-8x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets')" />

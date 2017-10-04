@@ -11,12 +11,17 @@ namespace EventDirector
         private int identifier;
         private string name, phone, email;
 
-        public EmergencyContact()
+        public EmergencyContact() { }
+
+        public static EmergencyContact BlankContact()
         {
-            identifier = 0;
-            name = "";
-            phone = "";
-            email = "";
+            return new EmergencyContact()
+            {
+                identifier = 0,
+                name = "",
+                phone = "",
+                email = ""
+            };
         }
 
         public EmergencyContact(string n, string p, string e)
@@ -34,9 +39,9 @@ namespace EventDirector
             this.email = e;
         }
 
-        public string Name { get => name; }
-        public string Phone { get => phone; }
-        public string Email { get => email; }
+        public string Name { get => name; set => name = value; }
+        public string Phone { get => phone; set => phone = value; }
+        public string Email { get => email; set => email = value; }
         public int Identifier { get => identifier; set => identifier = value; }
     }
 }

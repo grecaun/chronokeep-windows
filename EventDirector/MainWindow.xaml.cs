@@ -1,29 +1,19 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace EventDirector
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IChangeUpdater
     {
         IDBInterface database;
         String dbName = "EventDirector.sqlite";
@@ -51,12 +41,13 @@ namespace EventDirector
             database.Initialize();
             UpdateEventBox();
             Log.D("Starting TCP server thread.");
-            tcpServer = new TCPServer(database);
+            tcpServer = new TCPServer(database, this);
             tcpServerThread = new Thread(new ThreadStart(tcpServer.Run));
             tcpServerThread.Start();
             Log.D("Starting zero configuration thread.");
             zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
             zeroConfThread.Start();
+            InitialUpdateChangesBox();
         }
 
         private async void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -75,6 +66,7 @@ namespace EventDirector
                     });
                     Log.D("Database Rebuilt.");
                     UpdateEventBox();
+                    InitialUpdateChangesBox();
                     break;
                 case 3:     // Clear Database
                     Log.D("Clear Database.");
@@ -296,10 +288,35 @@ namespace EventDirector
             }
         }
 
-        private void UpdateChangesBox(int eventId)
+        public void UpdateChangesBox()
         {
             Log.D("Updating changes box.");
+            List<Change> changes = database.GetChanges();
+            List<ChangeParticipant> changeParts = new List<ChangeParticipant>();
+            foreach (Change c in changes)
+            {
+                if (c.OldParticipant != null)
+                {
+                    changeParts.Add(new ChangeParticipant(c.Identifier, "Old", c.OldParticipant));
+                }
+                if (c.NewParticipant != null)
+                {
+                    changeParts.Add(new ChangeParticipant(c.Identifier, "New", c.NewParticipant));
+                }
+            }
+            changeParts.Sort();
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            {
+                updateListView.ItemsSource = changeParts;
+            }));
+        }
 
+        internal async void InitialUpdateChangesBox()
+        {
+            await Task.Run(() =>
+            {
+                UpdateChangesBox();
+            });
         }
 
         private async void UpdateTimingPointsBox(int eventId)
