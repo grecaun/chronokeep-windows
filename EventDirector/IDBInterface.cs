@@ -58,6 +58,7 @@ namespace EventDirector
         List<Participant> GetParticipants();
         List<Participant> GetParticipants(int eventId);
         Participant GetParticipant(int eventIdentifier, int identifier);
+        Participant GetParticipant(int eventIdentifier, Participant unknown);
         List<TimeResult> GetTimingResults(int eventId);
         List<Change> GetChanges();
     }

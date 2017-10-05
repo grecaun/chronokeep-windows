@@ -114,7 +114,6 @@ namespace EventDirector
                         Participant newPart = new Participant(partUpd.Participant.Id, partUpd.Participant.First, partUpd.Participant.Last, partUpd.Participant.Street, partUpd.Participant.City, partUpd.Participant.State, partUpd.Participant.Zip,
                                                 partUpd.Participant.Birthday, partUpd.Participant.EmergencyContact, partUpd.Participant.Specific, partUpd.Participant.Phone, partUpd.Participant.Email,
                                                 partUpd.Participant.Mobile, partUpd.Participant.Parent, partUpd.Participant.Country, partUpd.Participant.Street2, partUpd.Participant.Gender);
-                        Log.D("NewPart has emergency contact name of " + partUpd.Participant.EmergencyContact.Name);
                         database.UpdateParticipant(newPart);
                         newPart = database.GetParticipant(partUpd.EventId, partUpd.Participant.Id);
                         database.AddChange(newPart, oldPart);
@@ -124,8 +123,14 @@ namespace EventDirector
                     case "client_participant_add":
                         Log.D("Client participant add received.");
                         JsonClientParticipantAdd clientPartAdd = jsonObject.ToObject<JsonClientParticipantAdd>();
-                        // ADD NEW PARTICIPANT
-                        // BROADCAST NEW PARTICIPANT
+                        Participant addPart = new Participant(clientPartAdd.Participant.First, clientPartAdd.Participant.Last, clientPartAdd.Participant.Street, clientPartAdd.Participant.City, clientPartAdd.Participant.State,
+                            clientPartAdd.Participant.Zip, clientPartAdd.Participant.Birthday, clientPartAdd.Participant.EmergencyContact, clientPartAdd.Participant.Specific, clientPartAdd.Participant.Phone, clientPartAdd.Participant.Email,
+                            clientPartAdd.Participant.Mobile, clientPartAdd.Participant.Parent, clientPartAdd.Participant.Country, clientPartAdd.Participant.Street2, clientPartAdd.Participant.Gender);
+                        database.AddParticipant(addPart);
+                        addPart = database.GetParticipant(clientPartAdd.EventId, addPart);
+                        database.AddChange(addPart, null);
+                        changeUpdater.UpdateChangesBox();
+                        BroadcastJson(jsonHandler.GetJsonServerAddParticipant(clientPartAdd.EventId, addPart));
                         break;
                     case "client_participant_set":
                         Log.D("Client participant set received.");

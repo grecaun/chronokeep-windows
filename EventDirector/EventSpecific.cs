@@ -77,6 +77,11 @@ namespace EventDirector
             this.earlystart = earlystart != 0 ? 1 : 0;
         }
 
+        internal EventSpecific Blank()
+        {
+            return new EventSpecific(-1, -1, -1, "None", -1, -1, 0, "", "", "", "", "", "", 0);
+        }
+
         public int Identifier { get => identifier; set => identifier = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public int DivisionIdentifier { get => divisionIdentifier; set => divisionIdentifier = value; }

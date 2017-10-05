@@ -24,7 +24,7 @@ namespace EventDirector
         {
             if (ChangeIdentifier == other.ChangeIdentifier)
             {
-                return Which.CompareTo(other.Which);
+                return other.Which.CompareTo(Which);
             }
             return ChangeIdentifier.CompareTo(other.ChangeIdentifier);
         }

@@ -26,17 +26,17 @@ namespace EventDirector
 
         public EmergencyContact(string n, string p, string e)
         {
-            this.name = n;
-            this.phone = p;
-            this.email = e;
+            this.name = n ?? "";
+            this.phone = p ?? "";
+            this.email = e ?? "";
         }
 
         public EmergencyContact(int id, string n, string p, string e)
         {
             this.identifier = id;
-            this.name = n;
-            this.phone = p;
-            this.email = e;
+            this.name = n ?? "";
+            this.phone = p ?? "";
+            this.email = e ?? "";
         }
 
         public string Name { get => name; set => name = value; }

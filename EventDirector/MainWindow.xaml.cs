@@ -47,7 +47,7 @@ namespace EventDirector
             Log.D("Starting zero configuration thread.");
             zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
             zeroConfThread.Start();
-            InitialUpdateChangesBox();
+            AsyncUpdateChangesBox();
         }
 
         private async void MenuItem_Click(object sender, RoutedEventArgs e)
@@ -66,7 +66,7 @@ namespace EventDirector
                     });
                     Log.D("Database Rebuilt.");
                     UpdateEventBox();
-                    InitialUpdateChangesBox();
+                    AsyncUpdateChangesBox();
                     break;
                 case 3:     // Clear Database
                     Log.D("Clear Database.");
@@ -293,25 +293,26 @@ namespace EventDirector
             Log.D("Updating changes box.");
             List<Change> changes = database.GetChanges();
             List<ChangeParticipant> changeParts = new List<ChangeParticipant>();
-            foreach (Change c in changes)
-            {
-                if (c.OldParticipant != null)
-                {
-                    changeParts.Add(new ChangeParticipant(c.Identifier, "Old", c.OldParticipant));
-                }
-                if (c.NewParticipant != null)
-                {
-                    changeParts.Add(new ChangeParticipant(c.Identifier, "New", c.NewParticipant));
-                }
-            }
-            changeParts.Sort();
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
+                Event anEvent = (Event)eventsListView.SelectedItem;
+                foreach (Change c in changes)
+                {
+                    if (c.OldParticipant != null && (anEvent == null || anEvent.Identifier == c.OldParticipant.EventIdentifier || c.OldParticipant.EventIdentifier == -1))
+                    {
+                        changeParts.Add(new ChangeParticipant(c.Identifier, "Old", c.OldParticipant));
+                    }
+                    if (c.NewParticipant != null && (anEvent == null || anEvent.Identifier == c.OldParticipant.EventIdentifier))
+                    {
+                        changeParts.Add(new ChangeParticipant(c.Identifier, "New", c.NewParticipant));
+                    }
+                }
+                changeParts.Sort();
                 updateListView.ItemsSource = changeParts;
             }));
         }
 
-        internal async void InitialUpdateChangesBox()
+        internal async void AsyncUpdateChangesBox()
         {
             await Task.Run(() =>
             {
@@ -421,6 +422,7 @@ namespace EventDirector
                 divisionsModifyButton.Visibility = Visibility.Hidden;
                 divisionsRemoveButton.Visibility = Visibility.Hidden;
             }
+            AsyncUpdateChangesBox();
         }
 
         private void TimingPointsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

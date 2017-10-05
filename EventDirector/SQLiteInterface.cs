@@ -779,17 +779,28 @@ namespace EventDirector
         public void AddChange(Participant newParticipant, Participant oldParticipant)
         {
             SQLiteCommand command = connection.CreateCommand();
-            Log.D("Adding change - new participant id is " + newParticipant.Identifier + " old participant id is" + oldParticipant.Identifier);
+            Log.D("Adding change - new participant id is " + newParticipant.Identifier + " old participant id is" + (oldParticipant == null ? -1 : oldParticipant.Identifier));
             if (oldParticipant == null)
             {
                 Log.D("Found an add player change.");
-                command.CommandText = "INSERT INTO changes (old_participant_id, old_first, old_last, old_birthday, old_emergency_id," +
+                command.CommandText = "INSERT INTO changes (" +
+                    "old_participant_id, old_first, old_last, old_street, old_city, old_state, old_zip, old_birthday, old_phone, old_email," +
+                    "old_emergency_id, old_emergency_name, old_emergency_phone, old_emergency_email, old_event_spec_id, old_event_spec_event_id," +
+                    "old_event_spec_division_id, old_event_spec_bib, old_event_spec_chip, old_event_spec_checkedin, old_event_spec_shirtsize," +
+                    "old_event_spec_comments, old_mobile, old_parent, old_country, old_street2, old_secondshirt, old_owes, old_hat, old_other," +
+                    "old_gender, old_earlystart," +
                     "new_participant_id, new_first, new_last, new_street, new_city, new_state, new_zip, new_birthday, new_phone, new_email," +
                     "new_emergency_id, new_emergency_name, new_emergency_phone, new_emergency_email, new_event_spec_id, new_event_spec_event_id," +
                     "new_event_spec_division_id, new_event_spec_bib, new_event_spec_chip, new_event_spec_checkedin, new_event_spec_shirtsize," +
                     "new_event_spec_comments, new_mobile, new_parent, new_country, new_street2, new_secondshirt, new_owes, new_hat, new_other," +
-                    "new_gender, new_earlystart) VALUES" +
-                    "(0, 'J', 'Doe', '01/01/1901', 0, @newPartId, @newFirst, @newLast, @newStreet," +
+                    "new_gender, new_earlystart)" +
+                    " VALUES" +
+                    "(0, 'J', 'Doe', '', '', '', '', '01/01/1901', '', '', " +
+                    "0, '', '', '', 0, 0, " +
+                    "-1, -1, -1, 0, '', " +
+                    "'New Participant', '', '', '', '', '', '', '', ''," +
+                    "'', 0," +
+                    " @newPartId, @newFirst, @newLast, @newStreet," +
                     "@newCity, @newState, @newZip, @newBirthday, @newPhone, @newEmail, @newEId, @newEName, @newEPhone, @newEEmail, @newESId, @newESEvId," +
                     "@newESDId, @newESBib, @newESChip, @newESCheckedIn, @newESShirtSize, @newESComments, @newMobile, @newParent, @newCountry, @newStreet2," +
                     "@newShirt2, @newOwes, @newHat, @newOther, @newGender, @newEarlyStart)";
@@ -938,46 +949,10 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
+                int val = Convert.ToInt32(reader["old_event_spec_division_id"]);
+                String oldDivName = Convert.ToInt32(reader["old_event_spec_division_id"]) == -1 ? "" : divisions[Convert.ToInt32(reader["old_event_spec_division_id"])].ToString();
                 output.Add(new Change(
                     Convert.ToInt32(reader["change_id"]),
-                    new Participant(
-                        Convert.ToInt32(reader["old_participant_id"]),
-                        reader["old_first"].ToString(),
-                        reader["old_last"].ToString(),
-                        reader["old_street"].ToString(),
-                        reader["old_city"].ToString(),
-                        reader["old_state"].ToString(),
-                        reader["old_zip"].ToString(),
-                        reader["old_birthday"].ToString(),
-                        new EmergencyContact(
-                            Convert.ToInt32(reader["old_emergency_id"]),
-                            reader["old_emergency_name"].ToString(),
-                            reader["old_emergency_phone"].ToString(),
-                            reader["old_emergency_email"].ToString()),
-                        new EventSpecific(
-                            Convert.ToInt32(reader["old_event_spec_id"]),
-                            Convert.ToInt32(reader["old_event_spec_event_id"]),
-                            Convert.ToInt32(reader["old_event_spec_division_id"]),
-                            divisions[Convert.ToInt32(reader["old_event_spec_division_id"])].ToString(),
-                            Convert.ToInt32(reader["old_event_spec_bib"]),
-                            Convert.ToInt32(reader["old_event_spec_chip"]),
-                            Convert.ToInt32(reader["old_event_spec_checkedin"]),
-                            reader["old_event_spec_shirtsize"].ToString(),
-                            reader["old_event_spec_comments"].ToString(),
-                            reader["old_secondshirt"].ToString(),
-                            reader["old_owes"].ToString(),
-                            reader["old_hat"].ToString(),
-                            reader["old_other"].ToString(),
-                            Convert.ToInt32(reader["old_earlystart"])
-                            ),
-                        reader["old_phone"].ToString(),
-                        reader["old_email"].ToString(),
-                        reader["old_mobile"].ToString(),
-                        reader["old_parent"].ToString(),
-                        reader["old_country"].ToString(),
-                        reader["old_street2"].ToString(),
-                        reader["old_gender"].ToString()
-                    ),
                     new Participant(
                         Convert.ToInt32(reader["new_participant_id"]),
                         reader["new_first"].ToString(),
@@ -1012,6 +987,44 @@ namespace EventDirector
                         reader["new_parent"].ToString(),
                         reader["new_country"].ToString(),
                         reader["new_street2"].ToString(),
+                        reader["old_gender"].ToString()
+                    ),
+                    new Participant(
+                        Convert.ToInt32(reader["old_participant_id"]),
+                        reader["old_first"].ToString(),
+                        reader["old_last"].ToString(),
+                        reader["old_street"].ToString(),
+                        reader["old_city"].ToString(),
+                        reader["old_state"].ToString(),
+                        reader["old_zip"].ToString(),
+                        reader["old_birthday"].ToString(),
+                        new EmergencyContact(
+                            Convert.ToInt32(reader["old_emergency_id"]),
+                            reader["old_emergency_name"].ToString(),
+                            reader["old_emergency_phone"].ToString(),
+                            reader["old_emergency_email"].ToString()),
+                        new EventSpecific(
+                            Convert.ToInt32(reader["old_event_spec_id"]),
+                            Convert.ToInt32(reader["old_event_spec_event_id"]),
+                            Convert.ToInt32(reader["old_event_spec_division_id"]),
+                            oldDivName,
+                            Convert.ToInt32(reader["old_event_spec_bib"]),
+                            Convert.ToInt32(reader["old_event_spec_chip"]),
+                            Convert.ToInt32(reader["old_event_spec_checkedin"]),
+                            reader["old_event_spec_shirtsize"].ToString(),
+                            reader["old_event_spec_comments"].ToString(),
+                            reader["old_secondshirt"].ToString(),
+                            reader["old_owes"].ToString(),
+                            reader["old_hat"].ToString(),
+                            reader["old_other"].ToString(),
+                            Convert.ToInt32(reader["old_earlystart"])
+                            ),
+                        reader["old_phone"].ToString(),
+                        reader["old_email"].ToString(),
+                        reader["old_mobile"].ToString(),
+                        reader["old_parent"].ToString(),
+                        reader["old_country"].ToString(),
+                        reader["old_street2"].ToString(),
                         reader["old_gender"].ToString()
                     )
                 ));
@@ -1214,6 +1227,68 @@ namespace EventDirector
             command.CommandText = "SELECT * FROM participants AS p, emergencycontacts AS e, eventspecific AS s, divisions AS d WHERE p.emergencycontact_id=e.emergencycontact_id AND p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id AND p.participant_id=@partId";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             command.Parameters.Add(new SQLiteParameter("@partId", identifier));
+            SQLiteDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                output = new Participant(
+                    Convert.ToInt32(reader["participant_id"]),
+                    reader["participant_first"].ToString(),
+                    reader["participant_last"].ToString(),
+                    reader["participant_street"].ToString(),
+                    reader["participant_city"].ToString(),
+                    reader["participant_state"].ToString(),
+                    reader["participant_zip"].ToString(),
+                    reader["participant_birthday"].ToString(),
+                    new EmergencyContact(
+                        Convert.ToInt32(reader["emergencycontact_id"]),
+                        reader["emergencycontact_name"].ToString(),
+                        reader["emergencycontact_phone"].ToString(),
+                        reader["emergencycontact_email"].ToString()
+                        ),
+                    new EventSpecific(
+                        Convert.ToInt32(reader["eventspecific_id"]),
+                        Convert.ToInt32(reader["event_id"]),
+                        Convert.ToInt32(reader["division_id"]),
+                        reader["division_name"].ToString(),
+                        Convert.ToInt32(reader["eventspecific_bib"]),
+                        Convert.ToInt32(reader["eventspecific_chip"]),
+                        Convert.ToInt32(reader["eventspecific_checkedin"]),
+                        reader["eventspecific_shirtsize"].ToString(),
+                        reader["eventspecific_comments"].ToString(),
+                        reader["eventspecific_secondshirt"].ToString(),
+                        reader["eventspecific_owes"].ToString(),
+                        reader["eventspecific_hat"].ToString(),
+                        reader["eventspecific_other"].ToString(),
+                        Convert.ToInt32(reader["eventspecific_earlystart"])
+                        ),
+                    reader["participant_phone"].ToString(),
+                    reader["participant_email"].ToString(),
+                    reader["participant_mobile"].ToString(),
+                    reader["participant_parent"].ToString(),
+                    reader["participant_country"].ToString(),
+                    reader["participant_street2"].ToString(),
+                    reader["participant_gender"].ToString()
+                    );
+            }
+            return output;
+        }
+
+        public Participant GetParticipant(int eventId, Participant unknown)
+        {
+            Participant output = null;
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM participants AS p, emergencycontacts AS e, eventspecific AS s, divisions AS d WHERE p.emergencycontact_id=e.emergencycontact_id AND p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id AND " +
+                "p.participant_first=@first AND p.participant_last=@last AND p.participant_street=@street AND p.participant_city=@city AND p.participant_state=@state AND p.participant_zip=@zip AND p.participant_birthday=@birthday";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@eventid", eventId),
+                new SQLiteParameter("@first", unknown.FirstName),
+                new SQLiteParameter("@last", unknown.LastName),
+                new SQLiteParameter("@street", unknown.Street),
+                new SQLiteParameter("@city", unknown.City),
+                new SQLiteParameter("@state", unknown.State),
+                new SQLiteParameter("@zip", unknown.Zip),
+                new SQLiteParameter("@birthday", unknown.Birthdate)
+            });
             SQLiteDataReader reader = command.ExecuteReader();
             if (reader.Read())
             {

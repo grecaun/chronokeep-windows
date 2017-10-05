@@ -43,16 +43,16 @@ namespace EventDirector
             string mobile, string parent, string country, string street2, string gender
             )
         {
-            this.identifier = id;
+            this.identifier = id ;
             this.birthdate = birthday;
             this.firstName = first ?? "Unknown";
             this.lastName = last ?? "Unknown";
-            this.street = street;
-            this.city = city;
-            this.state = state;
-            this.zip = zip;
+            this.street = street ?? "";
+            this.city = city ?? "";
+            this.state = state ?? "";
+            this.zip = zip ?? "";
             this.emergencyContact = ec ?? EmergencyContact.BlankContact();
-            this.eventSpecific = epi;
+            this.eventSpecific = epi ?? EventSpecific.Blank();
             this.phone = phone ?? "";
             this.email = email ?? "";
             this.mobile = mobile ?? "";
