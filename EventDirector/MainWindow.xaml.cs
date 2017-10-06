@@ -17,6 +17,7 @@ namespace EventDirector
     {
         IDBInterface database;
         String dbName = "EventDirector.sqlite";
+        String programDir = "EventDirector";
         ParticipantsListWindow partList = null;
         bool closing = false;
 
@@ -31,13 +32,20 @@ namespace EventDirector
         public MainWindow()
         {
             InitializeComponent();
+            String dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), programDir);
+            String path = System.IO.Path.Combine(dirPath, dbName);
             Log.D("Looking for database file.");
-            if (!File.Exists(dbName))
+            if (!Directory.Exists(dirPath))
+            {
+                Log.D("Creating directory.");
+                Directory.CreateDirectory(dirPath);
+            }
+            if (!File.Exists(path))
             {
                 Log.D("Creating database file.");
-                SQLiteConnection.CreateFile(dbName);
+                SQLiteConnection.CreateFile(path);
             }
-            database = new SQLiteInterface(dbName);
+            database = new SQLiteInterface(path);
             database.Initialize();
             UpdateEventBox();
             Log.D("Starting TCP server thread.");

@@ -22,7 +22,8 @@ namespace EventDirector
     {
         IDBInterface database;
         MainWindow mainWindow;
-        String directory = "Exports";
+        String programDir = "EventDirector";
+        String exportDir = "Exports";
 
         public ExportParticipants(IDBInterface database, MainWindow mainWindow)
         {
@@ -51,6 +52,7 @@ namespace EventDirector
                 await Task.Run(() =>
                 {
                     Log.D("Event has name " + anEvent.Name + " and date of " + anEvent.Date + " and finally has ID " + anEvent.Identifier);
+                    String directory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), programDir, exportDir);
                     String fullPath;
                     if (!Directory.Exists(directory))
                     {

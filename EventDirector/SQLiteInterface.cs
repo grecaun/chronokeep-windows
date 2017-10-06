@@ -12,6 +12,7 @@ namespace EventDirector
     {
         private readonly int version = 2;
         SQLiteConnection connection;
+        String programDir = "EventDirector";
 
         public SQLiteInterface(String info)
         {
