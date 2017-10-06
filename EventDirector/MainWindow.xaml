@@ -20,6 +20,9 @@
             <MenuItem Header="Import">
                 <MenuItem Header="_Import Participants (CSV)" Click="MenuItem_Click" Uid="5" />
             </MenuItem>
+            <MenuItem Header="Export">
+                <MenuItem Header="_Export Participants (CSV)" Click="MenuItem_Click" Uid="8" />
+            </MenuItem>
             <MenuItem Header="Event Options">
                 <MenuItem Header="List Participants" Click="MenuItem_Click" Uid="7" />
                 <MenuItem Header="_Assign Bibs/Chips" Click="MenuItem_Click" Uid="6" />

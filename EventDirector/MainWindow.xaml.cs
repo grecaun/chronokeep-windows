@@ -107,6 +107,12 @@ namespace EventDirector
                     partList = new ParticipantsListWindow(database, this);
                     partList.Show();
                     break;
+                case 8:
+                    Log.D("Export participants.");
+                    ExportParticipants export = new ExportParticipants(database, this);
+                    windows.Add(export);
+                    export.Show();
+                    break;
                 default:
                     break;
             }

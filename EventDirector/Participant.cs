@@ -116,5 +116,17 @@ namespace EventDirector
             if (other == null) return false;
             return this.Identifier == other.Identifier;
         }
+
+        public String Age(String eventDate)
+        {
+            DateTime eventDateTime = Convert.ToDateTime(eventDate);
+            DateTime myDateTime = Convert.ToDateTime(birthdate);
+            int numYears = eventDateTime.Year - myDateTime.Year;
+            if (eventDateTime.Month < myDateTime.Month || (eventDateTime.Month == myDateTime.Month && eventDateTime.Date < myDateTime.Date))
+            {
+                numYears--;
+            }
+            return Convert.ToString(numYears);
+        }
     }
 }
