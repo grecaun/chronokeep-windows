@@ -64,18 +64,18 @@ namespace EventDirector
                     }
                     FileStream outFile = File.Create(fullPath);
                     String format = "\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"{11}\",\"{12}\",\"{13}\"," +
-                    "\"{14}\",\"{15}\",\"{16}\",\"{17}\",\"{18}\",\"{19}\",\"{20}\",\"{21}\",\"{22}\",\"{23}\",\"{24}\",\"{25}\",\"{26}\",\"{27}\",\"{28}\"";
+                    "\"{14}\",\"{15}\",\"{16}\",\"{17}\",\"{18}\",\"{19}\",\"{20}\",\"{21}\",\"{22}\",\"{23}\",\"{24}\",\"{25}\",\"{26}\",\"{27}\",\"{28}\",\"{29}\"";
                     using (StreamWriter outWriter = new StreamWriter(outFile))
                     {
                         outWriter.WriteLine(String.Format(format, "Bib", "Chip", "Distance", "Checked In", "Early Start", "First", "Last", "Birthday",
                             "Age", "Street", "Apartment", "City", "State", "Zip", "Country", "Phone", "Mobile", "Email", "Parent", "Gender", "Shirt",
-                            "Second Shirt", "Hat", "Comments", "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone", "Emergency Contact Email"));
+                            "Second Shirt", "Fleece", "Hat", "Comments", "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone", "Emergency Contact Email"));
                         List<Participant> parts = database.GetParticipants(anEvent.Identifier);
                         foreach (Participant p in parts)
                         {
                             outWriter.WriteLine(String.Format(format, p.Bib, p.Chip, p.Division, p.CheckedIn, p.EarlyStart, p.FirstName, p.LastName, p.Birthdate,
                                 p.Age(anEvent.Date), p.Street, p.Street2, p.City, p.State, p.Zip, p.Country, p.Phone, p.Mobile, p.Email, p.Parent, p.Gender, p.ShirtSize,
-                                p.SecondShirt, p.Hat, p.Comments, p.Other, p.Owes, p.ECName, p.ECPhone, p.ECEmail));
+                                p.SecondShirt, p.Fleece, p.Hat, p.Comments, p.Other, p.Owes, p.ECName, p.ECPhone, p.ECEmail));
                         }
                     }
                     // Bib, Chip, Distance, Checked In, Early Start, First, Last, Birthday, Age, Street, Street2, City, State, Zip, Country, Phone,

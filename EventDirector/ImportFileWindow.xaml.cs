@@ -50,7 +50,8 @@ namespace EventDirector
             "Division",
             "Emergency Contact Name",
             "Emergency Contact Phone",
-            "Emergency Contact Email"
+            "Emergency Contact Email",
+            "Fleece"
         };
 
         public ImportFileWindow(MainWindow mainWindow, CSVImporter importer, IDBInterface database)
@@ -82,7 +83,7 @@ namespace EventDirector
             {
                 return 3;
             }
-            else if (String.Equals(s, "Birthday", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Birthdate", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(s, "Birthday", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Birthdate", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "DOB", StringComparison.OrdinalIgnoreCase))
             {
                 return 4;
             }
@@ -162,7 +163,7 @@ namespace EventDirector
             {
                 return 23;
             }
-            else if (s.Contains("emergency") && s.Contains("name"))
+            else if ((s.Contains("emergency") && s.Contains("name")) || String.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
             {
                 return 24;
             }
@@ -173,6 +174,10 @@ namespace EventDirector
             else if (s.Contains("emergency") && s.Contains("email"))
             {
                 return 26;
+            }
+            else if (String.Equals(s, "Fleece", StringComparison.OrdinalIgnoreCase))
+            {
+                return 27;
             }
             return 0;
         }
@@ -229,7 +234,7 @@ namespace EventDirector
                 Hashtable divHash = new Hashtable(500);
                 foreach (string divName in divisions)
                 {
-                    Division newDiv = new Division(divName, anEvent.Identifier);
+                    Division newDiv = new Division(divName, anEvent.Identifier, 7000);
                     database.AddDivision(newDiv);
                     newDiv.Identifier = database.GetDivisionID(newDiv);
                     divHash.Add(divName, newDiv);
@@ -265,7 +270,8 @@ namespace EventDirector
                             data.Data[counter][keys[18]], // owes
                             data.Data[counter][keys[21]], // hat
                             data.Data[counter][keys[22]], // other
-                            0                             // early start
+                            0,                            // early start
+                            data.Data[counter][keys[27]]  // fleece
                             ),
                         data.Data[counter][keys[11]], // phone
                         data.Data[counter][keys[12]], // email

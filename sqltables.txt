@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS
     divisions (
         division_id INTEGER PRIMARY KEY,
         division_name VARCHAR(100) NOT NULL,
+        division_cost VARCHAR(25) DEFAULT '',
         event_id INTEGER NOT NULL REFERENCES events(event_id))
 
 CREATE TABLE IF NOT EXISTS
@@ -62,13 +63,14 @@ CREATE TABLE IF NOT EXISTS
         eventspecific_chip INTEGER,
         eventspecific_checkedin INTEGER DEFAULT 0,
         eventspecific_shirtpurchase INTEGER DEFAULT 0,
-        eventspecific_shirtsize VARCHAR(5),
+        eventspecific_shirtsize VARCHAR,
         eventspecific_comments VARCHAR,
         eventspecific_secondshirt VARCHAR,
         eventspecific_owes VARCHAR(50),
         eventspecific_hat VARCHAR(20),
         eventspecific_other VARCHAR,
         eventspecific_earlystart INTEGER DEFAULT 0
+        eventspecific_fleece VARCHAR DEFAULT ''
         )
 
 CREATE TABLE IF NOT EXISTS
@@ -113,6 +115,7 @@ CREATE TABLE IF NOT EXISTS
         old_other VARCHAR,
         old_gender VARCHAR(10),
         old_earlystart INTEGER DEFAULT -1,
+        old_fleece VARCHAR DEFAULT '',
 
         new_participant_id INTEGER NOT NULL,
         new_first VARCHAR(50) NOT NULL,
@@ -145,7 +148,8 @@ CREATE TABLE IF NOT EXISTS
         new_hat VARCHAR(20),
         new_other VARCHAR,
         new_gender VARCHAR(10),
-        new_earlystart INTEGER DEFAULT -1
+        new_earlystart INTEGER DEFAULT -1,
+        new_fleece VARCHAR DEFAULT '',
         ));
 
 CREATE TABLE IF NOT EXISTS

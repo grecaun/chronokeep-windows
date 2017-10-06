@@ -80,6 +80,7 @@ namespace EventDirector
         public string Other { get => eventSpecific.Other; }
         public string Comments { get => eventSpecific.Comments; }
         public string EarlyStart { get => eventSpecific.EarlyStart == 0 ? "No" : "Yes"; }
+        public string Fleece { get => eventSpecific.Fleece; }
 
         // Emergency Contact binding stuffs
         public int ECID { get => emergencyContact.Identifier; }

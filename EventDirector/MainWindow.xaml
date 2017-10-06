@@ -85,7 +85,8 @@
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Identifier}" />
-                        <GridViewColumn Header="Name" Width="300" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="Name" Width="220" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="Cost" Width="80" DisplayMemberBinding="{Binding Cost}" />
                         <GridViewColumn Header="EventID" Width="50" DisplayMemberBinding="{Binding EventIdentifier}" />
                     </GridView>
                 </ListView.View>
@@ -142,6 +143,7 @@
                         <GridViewColumn Header="EarlyStart" DisplayMemberBinding="{Binding EarlyStart}" />
                         <GridViewColumn Header="Shirt Size" DisplayMemberBinding="{Binding ShirtSize}" />
                         <GridViewColumn Header="Shirt 2" DisplayMemberBinding="{Binding SecondShirt}" />
+                        <GridViewColumn Header="Fleece" DisplayMemberBinding="{Binding Fleece}" />
                         <GridViewColumn Header="Hat" DisplayMemberBinding="{Binding Hat}" />
                         <GridViewColumn Header="Owes" DisplayMemberBinding="{Binding Owes}" />
                         <GridViewColumn Header="ECID" DisplayMemberBinding="{Binding ECID}" />

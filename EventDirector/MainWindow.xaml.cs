@@ -137,11 +137,28 @@ namespace EventDirector
             UpdateEventBox();
         }
 
-        internal async void UpdateDivision(int eventId, int divisionIdentifier, string nameString)
+        internal async void UpdateDivision(int eventId, int divisionIdentifier, string nameString, string costString)
         {
             await Task.Run(() =>
             {
-                database.UpdateDivision(new Division(divisionIdentifier, nameString, eventId));
+                String[] split = costString.Split('.');
+                int dollar = 70;
+                if (split.Length > 0)
+                {
+                    int.TryParse(split[0], out dollar);
+                }
+                dollar = dollar * 100;
+                int cents = 0;
+                if (split.Length > 1)
+                {
+                    int.TryParse(split[1], out cents);
+                }
+                while (cents > 100)
+                {
+                    cents = cents / 10;
+                }
+                dollar += cents;
+                database.UpdateDivision(new Division(divisionIdentifier, nameString, eventId, dollar));
             });
             UpdateDivisionsBox(eventId);
         }
@@ -195,7 +212,7 @@ namespace EventDirector
                 Event thisEvent = (Event)eventsListView.SelectedItem;
                 if (div != null)
                 {
-                    NewDivisionWindow win = new NewDivisionWindow(this, thisEvent.Identifier, div.Identifier, div.Name);
+                    NewDivisionWindow win = new NewDivisionWindow(this, thisEvent.Identifier, div.Identifier, div.Name, div.Cost);
                     windows.Add(win);
                     win.Show();
                 }
@@ -271,11 +288,28 @@ namespace EventDirector
             UpdateTimingPointsBox(eventId);
         }
 
-        internal async void AddDivision(int eventId, string nameString)
+        internal async void AddDivision(int eventId, string nameString, string costString)
         {
             await Task.Run(() =>
             {
-                database.AddDivision(new Division(nameString, eventId));
+                String[] split = costString.Split('.');
+                int dollar = 70;
+                if (split.Length > 0)
+                {
+                    int.TryParse(split[0], out dollar);
+                }
+                dollar = dollar * 100;
+                int cents = 0;
+                if (split.Length > 1)
+                {
+                    int.TryParse(split[1], out cents);
+                }
+                while (cents > 100)
+                {
+                    cents = cents / 10;
+                }
+                dollar += cents;
+                database.AddDivision(new Division(nameString, eventId, dollar));
             });
             UpdateDivisionsBox(eventId);
         }

@@ -9,7 +9,7 @@ namespace EventDirector
     public class EventSpecific
     {
         private int identifier, eventIdentifier, divisionIdentifier, bib, chip, checkedIn = 0, earlystart = 0;
-        private String shirtSize, comments, divisionName, secondShirt, owes, hat, other;
+        private String shirtSize, comments, divisionName, secondShirt, owes, hat, other, fleece;
 
         public EventSpecific() { }
 
@@ -26,7 +26,8 @@ namespace EventDirector
             string owes,
             string hat,
             string other,
-            int earlystart
+            int earlystart,
+            string fleece
             )
         {
             this.eventIdentifier = eid;
@@ -42,6 +43,7 @@ namespace EventDirector
             this.hat = hat ?? "";
             this.other = other ?? "";
             this.earlystart = earlystart == 0 ? 0 : 1;
+            this.fleece = fleece;
         }
 
         public EventSpecific(
@@ -58,7 +60,8 @@ namespace EventDirector
             string owes,
             string hat,
             string other,
-            int earlystart
+            int earlystart,
+            string fleece
             )
         {
             this.identifier = id;
@@ -75,11 +78,12 @@ namespace EventDirector
             this.hat = hat ?? "";
             this.other = other ?? "";
             this.earlystart = earlystart != 0 ? 1 : 0;
+            this.fleece = fleece;
         }
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", -1, -1, 0, "", "", "", "", "", "", 0);
+            return new EventSpecific(-1, -1, -1, "None", -1, -1, 0, "", "", "", "", "", "", 0, "");
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -96,5 +100,6 @@ namespace EventDirector
         public string Hat { get => hat; set => hat = value; }
         public string Other { get => other; set => other = value; }
         public int EarlyStart { get => earlystart; set => earlystart = value; }
+        public string Fleece { get => fleece; set => fleece = value; }
     }
 }

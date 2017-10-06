@@ -41,6 +41,7 @@
                     <GridViewColumn Header="EarlyStart" DisplayMemberBinding="{Binding EarlyStart}" />
                     <GridViewColumn Header="Shirt Size" DisplayMemberBinding="{Binding ShirtSize}" />
                     <GridViewColumn Header="Shirt 2" DisplayMemberBinding="{Binding SecondShirt}" />
+                    <GridViewColumn Header="Fleece" DisplayMemberBinding="{Binding Fleece}" />
                     <GridViewColumn Header="Hat" DisplayMemberBinding="{Binding Hat}" />
                     <GridViewColumn Header="Owes" DisplayMemberBinding="{Binding Owes}" />
                     <GridViewColumn Header="ECID" DisplayMemberBinding="{Binding ECID}" />

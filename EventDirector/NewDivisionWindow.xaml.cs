@@ -30,12 +30,13 @@ namespace EventDirector
             this.eventId = eventId;
         }
 
-        public NewDivisionWindow(MainWindow mWindow, int eventId, int divId, string name)
+        public NewDivisionWindow(MainWindow mWindow, int eventId, int divId, string name, int cost)
         {
             InitializeComponent();
             this.mainWindow = mWindow;
             this.divisionIdentifier = divId;
             this.eventId = eventId;
+            costBox.Text = String.Format("{0}.{1:D2}", cost/100, cost%100);
             nameBox.Text = name;
         }
 
@@ -47,7 +48,8 @@ namespace EventDirector
         private void Submit()
         {
             String nameString = nameBox.Text.Trim();
-            Log.D("Name given for division: '" + nameString + "'");
+            String costString = costBox.Text.Trim();
+            Log.D("Name given for division: '" + nameString + "' cost is '" + costString + "'");
             if (nameString == "")
             {
                 MessageBox.Show("Please input a value in the name box.");
@@ -55,11 +57,11 @@ namespace EventDirector
             }
             if (divisionIdentifier != -1)
             {
-                mainWindow.UpdateDivision(eventId, divisionIdentifier, nameString);
+                mainWindow.UpdateDivision(eventId, divisionIdentifier, nameString, costString);
             }
             else
             {
-                mainWindow.AddDivision(eventId, nameString);
+                mainWindow.AddDivision(eventId, nameString, costString);
             }
             this.Close();
         }
