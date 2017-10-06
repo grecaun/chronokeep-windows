@@ -821,7 +821,7 @@ namespace EventDirector
                     "0, '', '', '', 0, 0, " +
                     "-1, -1, -1, 0, '', " +
                     "'New Participant', '', '', '', '', '', '', '', ''," +
-                    "'', 0, ''" +
+                    "'', 0, ''," +
                     " @newPartId, @newFirst, @newLast, @newStreet," +
                     "@newCity, @newState, @newZip, @newBirthday, @newPhone, @newEmail, @newEId, @newEName, @newEPhone, @newEEmail, @newESId, @newESEvId," +
                     "@newESDId, @newESBib, @newESChip, @newESCheckedIn, @newESShirtSize, @newESComments, @newMobile, @newParent, @newCountry, @newStreet2," +
@@ -878,14 +878,16 @@ namespace EventDirector
                     "new_event_spec_comments, new_mobile, new_parent, new_country, new_street2, new_secondshirt, new_owes, new_hat, new_other," +
                     "new_gender, new_earlystart, new_fleece)" +
                     "VALUES" +
-                    "(@oldPartId, @oldFirst, @oldLast, @oldStreet, @oldCity, @oldState, @oldZip, @oldBirthday, @oldPhone, @oldEmail, @oldEId," +
-                    "@oldEName, @oldEPhone, @oldEEmail, @oldESId, @oldESEvId, @oldESDId, @oldESBib, @oldESChip, @oldESCheckedIn, @oldESShirtSize," +
-                    "@oldESComments, @oldMobile, @oldParent, @oldCountry, @oldStreet2, @oldShirt2, @oldOwes, @oldHat, @oldOther, @oldGender," +
-                    "@oldEarlyStart, @oldFleece," +
-                    "@newPartId, @newFirst, @newLast, @newStreet, @newCity, @newState, @newZip, @newBirthday, @newPhone, @newEmail, @newEId," +
-                    "@newEName, @newEPhone, @newEEmail, @newESId, @newESEvId, @newESDId, @newESBib, @newESChip, @newESCheckedIn, @newESShirtSize," +
-                    "@newESComments, @newMobile, @newParent, @newCountry, @newStreet2, @newShirt2, @newOwes, @newHat, @newOther, @newGender," +
-                    "@newEarlyStart, @newFleece)";
+                    "(@oldPartId, @oldFirst, @oldLast, @oldStreet, @oldCity, @oldState, @oldZip, @oldBirthday, @oldPhone, @oldEmail," +
+                    "@oldEId, @oldEName, @oldEPhone, @oldEEmail, @oldESId, @oldESEvId," +
+                    "@oldESDId, @oldESBib, @oldESChip, @oldESCheckedIn, @oldESShirtSize," +
+                    "@oldESComments, @oldMobile, @oldParent, @oldCountry, @oldStreet2, @oldShirt2, @oldOwes, @oldHat, @oldOther," +
+                    "@oldGender, @oldEarlyStart, @oldFleece," +
+                    "@newPartId, @newFirst, @newLast, @newStreet, @newCity, @newState, @newZip, @newBirthday, @newPhone, @newEmail," +
+                    "@newEId, @newEName, @newEPhone, @newEEmail, @newESId, @newESEvId," +
+                    "@newESDId, @newESBib, @newESChip, @newESCheckedIn, @newESShirtSize," +
+                    "@newESComments, @newMobile, @newParent, @newCountry, @newStreet2, @newShirt2, @newOwes, @newHat, @newOther," +
+                    "@newGender, @newEarlyStart, @newFleece)";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@oldPartId", oldParticipant.Identifier),
                     new SQLiteParameter("@oldFirst", oldParticipant.FirstName),

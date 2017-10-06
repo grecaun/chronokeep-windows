@@ -12,8 +12,8 @@ namespace EventDirector
         public String Which { get; set; }
 
         public ChangeParticipant(int changeId, String which, Participant p)
-            : base(p.Identifier, p.Birthdate, p.FirstName, p.LastName, p.Street, p.City,
-                p.State, p.Zip, p.EmergencyContact, p.EventSpecific, p.Phone, p.Email,
+            : base(p.Identifier, p.FirstName, p.LastName, p.Street, p.City,
+                p.State, p.Zip, p.Birthdate, p.EmergencyContact, p.EventSpecific, p.Phone, p.Email,
                 p.Mobile, p.Parent, p.Country, p.Street2, p.Gender)
         {
             ChangeIdentifier = changeId;
