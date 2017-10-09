@@ -133,6 +133,7 @@ namespace EventDirector
             {
                 database.UpdateTimingPoint(new TimingPoint(timingPointIdentifier, eventId, divisionId, nameString, distanceStr, unitString));
             });
+            tcpServer.UpdateEvent(eventId);
             UpdateTimingPointsBox(eventId);
         }
 
@@ -142,6 +143,7 @@ namespace EventDirector
             {
                 database.UpdateEvent(new Event(eventIdentifier, nameString, dateVal));
             });
+            tcpServer.UpdateEvent(eventIdentifier);
             UpdateEventBox();
         }
 
@@ -168,6 +170,7 @@ namespace EventDirector
                 dollar += cents;
                 database.UpdateDivision(new Division(divisionIdentifier, nameString, eventId, dollar));
             });
+            tcpServer.UpdateEvent(eventId);
             UpdateDivisionsBox(eventId);
         }
 
@@ -178,7 +181,11 @@ namespace EventDirector
             {
                 Log.D("Events - Remove Button Pressed.");
                 Event anEvent = (Event)eventsListView.SelectedItem;
-                if (anEvent != null) database.RemoveEvent(anEvent);
+                if (anEvent != null)
+                {
+                    database.RemoveEvent(anEvent);
+                    tcpServer.UpdateEventList();
+                }
                 UpdateEventBox();
             }
             else if (buttonName == "divisionsRemoveButton")
@@ -187,7 +194,11 @@ namespace EventDirector
                 Division division = (Division)divisionsListView.SelectedItem;
                 if (division != null) database.RemoveDivision(division);
                 Event anEvent = (Event)eventsListView.SelectedItem;
-                if (anEvent != null) UpdateDivisionsBox(anEvent.Identifier);
+                if (anEvent != null)
+                {
+                    UpdateDivisionsBox(anEvent.Identifier);
+                    tcpServer.UpdateEvent(anEvent.Identifier);
+                }
             }
             else if (buttonName == "timingPointsRemoveButton")
             {
@@ -195,7 +206,11 @@ namespace EventDirector
                 TimingPoint timingPoint = (TimingPoint)timingPointsListView.SelectedItem;
                 if (timingPoint != null) database.RemoveTimingPoint(timingPoint);
                 Event anEvent = (Event)eventsListView.SelectedItem;
-                if (anEvent != null) UpdateTimingPointsBox(anEvent.Identifier);
+                if (anEvent != null)
+                {
+                    UpdateTimingPointsBox(anEvent.Identifier);
+                    tcpServer.UpdateEvent(anEvent.Identifier);
+                }
             }
         }
 
@@ -279,10 +294,14 @@ namespace EventDirector
 
         internal async void AddEvent(String name, long date)
         {
+            Event anEvent = new Event(name, date);
+            int eventId = -1;
             await Task.Run(() =>
             {
-                database.AddEvent(new Event(name, date));
+                database.AddEvent(anEvent);
+                eventId = database.GetEventID(anEvent);
             });
+            tcpServer.UpdateEvent(eventId);
             UpdateEventBox();
         }
 
@@ -293,6 +312,7 @@ namespace EventDirector
             {
                 database.AddTimingPoint(new TimingPoint(eventId, divisionId, nameString, distanceStr, unitString));
             });
+            tcpServer.UpdateEvent(eventId);
             UpdateTimingPointsBox(eventId);
         }
 
@@ -319,6 +339,7 @@ namespace EventDirector
                 dollar += cents;
                 database.AddDivision(new Division(nameString, eventId, dollar));
             });
+            tcpServer.UpdateEvent(eventId);
             UpdateDivisionsBox(eventId);
         }
 

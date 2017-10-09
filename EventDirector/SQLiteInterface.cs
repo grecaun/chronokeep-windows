@@ -444,7 +444,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "DELETE FROM divisions WHERE division_id=@0";
+            command.CommandText = " DELETE FROM eventspecific WHERE division_id=@0; DELETE FROM divisions WHERE division_id=@0";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", identifier) } );
             command.ExecuteNonQuery();
@@ -461,7 +461,7 @@ namespace EventDirector
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "DELETE FROM events WHERE event_id=@0; DELETE FROM divisions WHERE event_id=@0; DELETE FROM timingpoints WHERE event_id=@0; DELETE FROM timeresults WHERE event_id=@0; DELETE FROM eventspecific WHERE event_id=@0";
+                command.CommandText = "DELETE FROM events WHERE event_id=@0; DELETE FROM divisions WHERE event_id=@0; DELETE FROM timingpoints WHERE event_id=@0; DELETE FROM timeresults WHERE event_id=@0; DELETE FROM eventspecific WHERE event_id=@0; DELETE FROM changes WHERE old_event_spec_event_id=@0 OR new_event_spec_event_id=@0";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
                 command.ExecuteNonQuery();
@@ -498,7 +498,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "DELETE FROM timingpoints WHERE timingpoint_id=@0";
+            command.CommandText = "DELETE FROM timeresults WHERE timingpoint_id=@0; DELETE FROM timingpoints WHERE timingpoint_id=@0";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
             command.ExecuteNonQuery();

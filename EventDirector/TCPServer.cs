@@ -156,6 +156,11 @@ namespace EventDirector
             BroadcastJson(jsonHandler.GetJsonServerEventUpdate(eventId));
         }
 
+        internal void UpdateEventList()
+        {
+            BroadcastJson(jsonHandler.GetJsonServerEventList());
+        }
+
         private void SendJson(String json, Socket sock)
         {
             Log.D("Message length is " + json.Length + " Content is '" + json + "'");
