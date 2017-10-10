@@ -101,6 +101,10 @@
     </ApplicationDefinition>
     <Compile Include="ChangeParticipant.cs" />
     <Compile Include="CSVImporter.cs" />
+    <Compile Include="DayOfParticipant.cs" />
+    <Compile Include="ExampleLiabilityWaiver.xaml.cs">
+      <DependentUpon>ExampleLiabilityWaiver.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExportParticipants.xaml.cs">
       <DependentUpon>ExportParticipants.xaml</DependentUpon>
     </Compile>
@@ -118,6 +122,21 @@
     <Compile Include="JsonHandler.cs" />
     <Compile Include="JsonObjects.cs" />
     <Compile Include="JsonOutputTester.cs" />
+    <Compile Include="KioskSettup.xaml.cs">
+      <DependentUpon>KioskSettup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="KioskSettupPage1.xaml.cs">
+      <DependentUpon>KioskSettupPage1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="KioskSettupPage2.xaml.cs">
+      <DependentUpon>KioskSettupPage2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="KioskSettupPage3.xaml.cs">
+      <DependentUpon>KioskSettupPage3.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="KioskSettupPage4.xaml.cs">
+      <DependentUpon>KioskSettupPage4.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Log.cs" />
     <Compile Include="NetCore.cs" />
     <Compile Include="NewDivisionWindow.xaml.cs">
@@ -135,12 +154,39 @@
     <Compile Include="TempUdpThread.cs" />
     <Compile Include="TimeResult.cs" />
     <Compile Include="TimingPoint.cs" />
+    <Compile Include="Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ZeroConf.cs" />
+    <Page Include="ExampleLiabilityWaiver.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ExportParticipants.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ImportFileWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="KioskSettup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="KioskSettupPage1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="KioskSettupPage2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="KioskSettupPage3.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="KioskSettupPage4.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -169,6 +215,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ParticipantsList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

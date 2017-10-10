@@ -11,6 +11,9 @@ namespace EventDirector
     {
         void Initialize();
 
+        void SetServerName(String name);
+        String GetServerName();
+
         void AddEvent(Event anEvent);
         void RemoveEvent(int identifier);
         void RemoveEvent(Event anEvent);
@@ -45,6 +48,12 @@ namespace EventDirector
         void CheckInParticipant(Participant person);
         void SetEarlyStartParticipant(int eventId, int identifier, int earlystart);
         void SetEarlyStartParticipant(Participant person);
+
+        void AddDayOfParticipant(DayOfParticipant part);
+        List<DayOfParticipant> GetDayOfParticipants(int eventId);
+        List<DayOfParticipant> GetDayOfParticipants();
+        void ApproveDayOfParticipant(int eventId, int identifier, EventSpecific specific);
+        void ApproveDayOfParticipant(DayOfParticipant part, EventSpecific specific);
 
         void AddChange(Participant newParticipant, Participant oldParticipant);
 

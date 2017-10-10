@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="Window1" Height="210" Width="250" ResizeMode="NoResize"
+        Title="Event" Height="210" Width="250" ResizeMode="NoResize"
         Closing="Window_Closing">
-    <Grid FocusManager.FocusedElement="{Binding ElementName=nameBox}">
+    <Grid>
         <Label Content="Name" HorizontalAlignment="Left" Margin="20,15,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="nameBox" HorizontalAlignment="Left" Height="23" Margin="20,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="200" KeyUp="Keyboard_Up"/>
         <Label Content="Date" HorizontalAlignment="Left" Margin="20,65,20,0" VerticalAlignment="Top"/>

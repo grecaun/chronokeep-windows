@@ -25,7 +25,7 @@ namespace EventDirector
         TCPServer tcpServer;
 
         Thread zeroConfThread;
-        ZeroConf zeroConf = new ZeroConf();
+        ZeroConf zeroConf;
 
         List<Window> windows = new List<Window>();
 
@@ -53,6 +53,7 @@ namespace EventDirector
             tcpServerThread = new Thread(new ThreadStart(tcpServer.Run));
             tcpServerThread.Start();
             Log.D("Starting zero configuration thread.");
+            zeroConf = new ZeroConf(database.GetServerName());
             zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
             zeroConfThread.Start();
             AsyncUpdateChangesBox();
@@ -65,6 +66,14 @@ namespace EventDirector
             {
                 case 1:     // Connection Settings
                     Log.D("Settings");
+                    string name = "Northwest Endurance Events";
+                    await Task.Run(() =>
+                    {
+                        name = database.GetServerName();
+                    });
+                    Settings settings = new Settings(this, name);
+                    windows.Add(settings);
+                    settings.Show();
                     break;
                 case 2:
                     Log.D("Rebuild Database.");
@@ -98,6 +107,7 @@ namespace EventDirector
                             CSVImporter importer = new CSVImporter(dialog.FileName);
                             importer.FetchHeaders();
                             ImportFileWindow win = new ImportFileWindow(this, importer, database);
+                            windows.Add(win);
                             win.Show();
                         }
                         catch (Exception ex)
@@ -120,6 +130,12 @@ namespace EventDirector
                     ExportParticipants export = new ExportParticipants(database, this);
                     windows.Add(export);
                     export.Show();
+                    break;
+                case 9:
+                    Log.D("Setup kiosk");
+                    KioskSettup kiosk = new KioskSettup(this, database);
+                    windows.Add(kiosk);
+                    kiosk.Show();
                     break;
                 default:
                     break;
@@ -625,6 +641,22 @@ namespace EventDirector
             }
             database.SetEventOptions(eventId, list);
             tcpServer.UpdateEvent(eventId);
+        }
+
+        public async void UpdateSettings(String name)
+        {
+            string newName = "Northwest Endurance Events";
+            await Task.Run(() =>
+            {
+                database.SetServerName(name);
+                newName = database.GetServerName();
+            });
+            zeroConf.SetName(newName);
+        }
+
+        public void AddWindow(Window win)
+        {
+            windows.Add(win);
         }
     }
 }

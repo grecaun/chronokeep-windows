@@ -25,7 +25,8 @@
             </MenuItem>
             <MenuItem Header="Event Options">
                 <MenuItem Header="List Participants" Click="MenuItem_Click" Uid="7" />
-                <MenuItem Header="_Assign Bibs/Chips" Click="MenuItem_Click" Uid="6" />
+                <MenuItem Header="Setup Kiosk" Click="MenuItem_Click" Uid="9" />
+                <!-- <MenuItem Header="_Assign Bibs/Chips" Click="MenuItem_Click" Uid="6" /> -->
             </MenuItem>
         </Menu>
         <Grid VerticalAlignment="Top">
@@ -60,7 +61,7 @@
             <Button x:Name="eventsToggleEarlyStartButton" Visibility="Hidden" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,180,0" Width="30" Height="30" Grid.Row="0" Grid.Column="0" Click="EventsToggleEarlyStartButton_Click" AutomationProperties.HelpText="Early Start"  Opacity="0.5">
                 <Image Source="pack://application:,,,/Icons/clock-8x.png" Height="20"/>
             </Button>
-            <ListView x:Name="eventsListView" Height="200" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1" SelectionChanged="EventsListView_SelectionChanged">
+            <ListView x:Name="eventsListView" Height="200" VerticalAlignment="Top" Grid.Column="0" Grid.Row="1" SelectionChanged="EventsListView_SelectionChanged" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Identifier}" />
@@ -81,7 +82,7 @@
             <Button Visibility="Hidden" x:Name="divisionsRemoveButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,75,0" Width="30" Height="30" Grid.Row="0" Grid.Column="1" Click="RemoveButton_Click">
                 <Image Source="pack://application:,,,/Icons/trash-8x.png" Height="20"/>
             </Button>
-            <ListView Visibility="Hidden" x:Name="divisionsListView" Height="200" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" SelectionChanged="DivisionsListView_SelectionChanged">
+            <ListView Visibility="Hidden" x:Name="divisionsListView" Height="200" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" SelectionChanged="DivisionsListView_SelectionChanged" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" Width="50" DisplayMemberBinding="{Binding Identifier}" />
@@ -103,7 +104,7 @@
             <Button Visibility="Hidden" x:Name="timingPointsRemoveButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,75,0" Width="30" Height="30" Grid.Row="0" Grid.Column="2" Click="RemoveButton_Click">
                 <Image Source="pack://application:,,,/Icons/trash-8x.png" Height="20"/>
             </Button>
-            <ListView Visibility="Hidden" x:Name="timingPointsListView" Height="200" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1" SelectionChanged="TimingPointsListView_SelectionChanged">
+            <ListView Visibility="Hidden" x:Name="timingPointsListView" Height="200" VerticalAlignment="Top" Grid.Column="2" Grid.Row="1" SelectionChanged="TimingPointsListView_SelectionChanged" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="ID" Width="30" DisplayMemberBinding="{Binding Identifier}" />
@@ -115,7 +116,7 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" Grid.ColumnSpan="3" Grid.Row="2">
+            <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" Grid.ColumnSpan="3" Grid.Row="2" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="#" DisplayMemberBinding="{Binding ChangeIdentifier}" />

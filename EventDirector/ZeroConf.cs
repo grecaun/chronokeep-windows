@@ -15,7 +15,7 @@ namespace EventDirector
         String servername = "Northwest Endurance Events";
         String serverid;
 
-        public ZeroConf()
+        public ZeroConf(string name)
         {
             Char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
             Char[] serverid_chars = new Char[10];
@@ -24,6 +24,7 @@ namespace EventDirector
             {
                 serverid_chars[i] = chars[rng.Next(0, chars.Length)];
             }
+            servername = name;
             serverid = new String(serverid_chars);
             Log.D("Server name is " + servername + " and has an id of " + serverid + ".");
         }
@@ -68,6 +69,11 @@ namespace EventDirector
             {
                 udpClient.Close();
             }
+        }
+
+        public void SetName(String name)
+        {
+            servername = name;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 2;
+        private readonly int version = 4;
         SQLiteConnection connection;
         String programDir = "EventDirector";
 
@@ -55,6 +55,7 @@ namespace EventDirector
                             "event_results_open INTEGER DEFAULT 0," +
                             "event_announce_available INTEGER DEFAULT 0," +
                             "event_allow_early_start INTEGER DEFAULT 0," +
+                            "event_kiosk INTEGER DEFAULT 0," +
                             "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                             ")");
                     queries.Add("CREATE TABLE IF NOT EXISTS emergencycontacts (" +
@@ -63,9 +64,38 @@ namespace EventDirector
                             "emergencycontact_phone VARCHAR(20)," +
                             "emergencycontact_email VARCHAR(150)" +
                             ")");
+                    queries.Add("CREATE TABLE IF NOT EXISTS dayof_participant (" +
+                            "dop_id INTEGER PRIMARY KEY," +
+                            "dop_event_id INTEGER NOT NULL," +
+                            "dop_first VARCHAR NOT NULL," +
+                            "dop_last VARCHAR NOT NULL," +
+                            "dop_street VARCHAR," +
+                            "dop_city VARCHAR," +
+                            "dop_state VARCHAR," +
+                            "dop_zip VARCHAR," +
+                            "dop_birthday VARCHAR NOT NULL," +
+                            "dop_phone VARCHAR NOT NULL," +
+                            "dop_email VARCHAR," +
+                            "dop_mobile VARCHAR," +
+                            "dop_parent VARCHAR," +
+                            "dop_country VARCHAR," +
+                            "dop_street2 VARCHAR," +
+                            "dop_gender VARCHAR," +
+                            "dop_comments VARCHAR," +
+                            "dop_other VARCHAR," +
+                            "dop_other2 VARCHAR," +
+                            "dop_emergency_name VARCHAR NOT NULL," +
+                            "dop_emergency_phone VARCHAR NOT NULL," +
+                            "UNIQUE (dop_first, dop_last, dop_street, dop_city, dop_state, dop_zip, dop_birthday)" +
+                            ")");
                     if (reader.GetInt32(0) == 1)
                     {
                         Log.D("Foreign keys work. Setting table creation queries.");
+                        queries.Add("CREATE TABLE IF NOT EXISTS kiosk (" +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                            "kiosk_waiver_text VARCHAR NOT NULL," +
+                            "UNIQUE (event_id) ON CONFLICT IGNORE" +
+                            ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS divisions (" +
                             "division_id INTEGER PRIMARY KEY," +
                             "division_name VARCHAR(100) NOT NULL," +
@@ -130,6 +160,11 @@ namespace EventDirector
                     else
                     {
                         Log.D("Foreign keys DO NOT work. Setting table creation queries.");
+                        queries.Add("CREATE TABLE IF NOT EXISTS kiosk (" +
+                            "event_id INTEGER NOT NULL," +
+                            "kiosk_waiver_text VARCHAR NOT NULL," +
+                            "UNIQUE (event_id) ON CONFLICT IGNORE" +
+                            ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS divisions (" +
                             "division_id INTEGER PRIMARY KEY," +
                             "division_name VARCHAR(100) NOT NULL," +
@@ -196,7 +231,7 @@ namespace EventDirector
                 {
                     return;
                 }
-                queries.Add("CREATE TABLE IF NOT EXISTS settings (version INTEGER NOT NULL); INSERT INTO settings (version) VALUES (" + version + ")");
+                queries.Add("CREATE TABLE IF NOT EXISTS settings (version INTEGER NOT NULL, name VARCHAR NOT NULL); INSERT INTO settings (version, name) VALUES (" + version + ", 'Northwest Endurance Events')");
                 queries.Add("CREATE TABLE IF NOT EXISTS changes (" +
                     "change_id INTEGER PRIMARY KEY, " +
                     "old_participant_id INTEGER NOT NULL," +
@@ -287,17 +322,57 @@ namespace EventDirector
         private void UpdateDatabase(int oldversion, int newversion)
         {
             Log.D("Database is version " + oldversion + " but it needs to be upgraded to version " + newversion);
+            SQLiteCommand command = connection.CreateCommand();
             switch (oldversion)
             {
                 case 1:
                     Log.D("Updating from version 1.");
                     using (var transaction = connection.BeginTransaction()) {
-                        SQLiteCommand command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE divisions ADD division_cost INTEGER DEFAULT 7000; ALTER TABLE eventspecific ADD eventspecific_fleece VARCHAR DEFAULT '';" +
-                                "ALTER TABLE changes ADD old_fleece VARCHAR DEFAULT ''; ALTER TABLE changes ADD new_fleece VARCHAR DEFAULT '';";
+                                "ALTER TABLE changes ADD old_fleece VARCHAR DEFAULT ''; ALTER TABLE changes ADD new_fleece VARCHAR DEFAULT '';UPDATE settings SET version=2 WHERE version=1;";
                         command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    goto case 2;
+                case 2:
+                    Log.D("Updating from version 2.");
+                    using (var transaction = connection.BeginTransaction())
+                    {
                         command = connection.CreateCommand();
-                        command.CommandText = "UPDATE settings SET version=2 WHERE version=1;";
+                        command.CommandText = "ALTER TABLE settings ADD name VARCHAR DEFAULT 'Northwest Endurance Events'; ALTER TABLE events ADD event_kiosk INTEGER DEFAULT 0; CREATE TABLE IF NOT EXISTS kiosk (event_id INTEGER NOT NULL, kiosk_waiver_text VARCHAR NOT NULL, UNIQUE (event_id) ON CONFLICT IGNORE);UPDATE settings SET version=3 WHERE version=2;";
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    goto case 3;
+                case 3:
+                    Log.D("Updating from version 3");
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE TABLE IF NOT EXISTS dayof_participant (" +
+                            "dop_id INTEGER PRIMARY KEY," +
+                            "dop_event_id INTEGER NOT NULL," +
+                            "dop_first VARCHAR NOT NULL," +
+                            "dop_last VARCHAR NOT NULL," +
+                            "dop_street VARCHAR," +
+                            "dop_city VARCHAR," +
+                            "dop_state VARCHAR," +
+                            "dop_zip VARCHAR," +
+                            "dop_birthday VARCHAR NOT NULL," +
+                            "dop_phone VARCHAR NOT NULL," +
+                            "dop_email VARCHAR," +
+                            "dop_mobile VARCHAR," +
+                            "dop_parent VARCHAR," +
+                            "dop_country VARCHAR," +
+                            "dop_street2 VARCHAR," +
+                            "dop_gender VARCHAR," +
+                            "dop_comments VARCHAR," +
+                            "dop_other VARCHAR," +
+                            "dop_other2 VARCHAR," +
+                            "dop_emergency_name VARCHAR NOT NULL," +
+                            "dop_emergency_phone VARCHAR NOT NULL," +
+                            "UNIQUE (dop_first, dop_last, dop_street, dop_city, dop_state, dop_zip, dop_birthday)" +
+                            ")";
                         command.ExecuteNonQuery();
                         transaction.Commit();
                     }
@@ -461,7 +536,7 @@ namespace EventDirector
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "DELETE FROM events WHERE event_id=@0; DELETE FROM divisions WHERE event_id=@0; DELETE FROM timingpoints WHERE event_id=@0; DELETE FROM timeresults WHERE event_id=@0; DELETE FROM eventspecific WHERE event_id=@0; DELETE FROM changes WHERE old_event_spec_event_id=@0 OR new_event_spec_event_id=@0";
+                command.CommandText = "DELETE FROM events WHERE event_id=@0; DELETE FROM divisions WHERE event_id=@0; DELETE FROM timingpoints WHERE event_id=@0; DELETE FROM timeresults WHERE event_id=@0; DELETE FROM eventspecific WHERE event_id=@0; DELETE FROM changes WHERE old_event_spec_event_id=@0 OR new_event_spec_event_id=@0; DELETE FROM kiosk WHERE event_id=@0";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
                 command.ExecuteNonQuery();
@@ -1365,6 +1440,56 @@ namespace EventDirector
                     );
             }
             return output;
+        }
+
+        public void SetServerName(string name)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "UPDATE settings SET name=@name";
+                command.Parameters.Add(new SQLiteParameter("@name", name));
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public string GetServerName()
+        {
+            String output = "Northwest Endurance Events";
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT name FROM settings;";
+            SQLiteDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                output = reader["name"].ToString();
+            }
+            return output;
+        }
+
+        public void AddDayOfParticipant(DayOfParticipant part)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<DayOfParticipant> GetDayOfParticipants(int eventId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<DayOfParticipant> GetDayOfParticipants()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ApproveDayOfParticipant(int eventId, int identifier, EventSpecific specific)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ApproveDayOfParticipant(DayOfParticipant part, EventSpecific specific)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="ImportFileWindow" Height="600" Width="500" MinWidth="300">
+        Title="ImportFileWindow" Height="600" Width="500" MinWidth="300"
+        Closing="Window_Closing">
     <Grid>
         <Label x:Name="eventLabel" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,7,10,10" />
         <DatePicker x:Name="date" Height="25" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,148,10" />

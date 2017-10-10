@@ -347,5 +347,10 @@ namespace EventDirector
                 Grid.SetColumn(HeaderBox, 1);
             }
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            mainWindow.WindowClosed(this);
+        }
     }
 }
