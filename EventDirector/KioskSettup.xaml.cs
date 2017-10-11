@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -55,9 +56,24 @@ namespace EventDirector
 
         public void Finish(String liabilityWaiver)
         {
-            this.liabilityWaiver = liabilityWaiver;
-            Log.D("We've clicked finish. Event id is " + eventId + " and the waiver is " + liabilityWaiver);
-            // TODO do stuff
+            this.liabilityWaiver = WebUtility.HtmlEncode(liabilityWaiver);
+            if (this.liabilityWaiver.Contains("\r"))
+            {
+                Log.D("Found a \\r");
+                this.liabilityWaiver = this.liabilityWaiver.Replace("\r", "");
+            }
+            if (this.liabilityWaiver.Contains("\n"))
+            {
+                Log.D("Found a \\n");
+                this.liabilityWaiver = this.liabilityWaiver.Replace("\n", "&#10;");
+            }
+            if (this.liabilityWaiver.Contains("\n") || this.liabilityWaiver.Contains("\r"))
+            {
+                Log.D("We didn't get them all! The horror.");
+            }
+            Log.D("We've clicked finish. Event id is " + eventId + " and the waiver is " + this.liabilityWaiver);
+            database.SetLiabilityWaiver(eventId, this.liabilityWaiver);
+            mainWindow.EnableKiosk(eventId);
             this.Close();
         }
 

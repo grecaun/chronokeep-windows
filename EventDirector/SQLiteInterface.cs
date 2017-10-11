@@ -1285,6 +1285,13 @@ namespace EventDirector
                     Name = "allow_early_start",
                     Value = val == 0 ? "false" : "true"
                 });
+                Log.D("Event Kiosk is in the DB as " + reader["event_kiosk"].ToString());
+                int.TryParse(reader["event_kiosk"].ToString(), out val);
+                output.Add(new JsonOption()
+                {
+                    Name = "kiosk",
+                    Value = val == 0 ? "false" : "true"
+                });
             }
             return output;
         }
@@ -1293,8 +1300,8 @@ namespace EventDirector
         {
             List<JsonOption> output = new List<JsonOption>();
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "UPDATE events SET event_allow_early_start=@es, event_announce_available=@announce, event_results_open=@results, event_registration_open=@registration WHERE event_id=@id";
-            int es = 0, results = 0, registration = 0, announce = 0;
+            command.CommandText = "UPDATE events SET event_allow_early_start=@es, event_announce_available=@announce, event_results_open=@results, event_registration_open=@registration, event_kiosk=@kiosk WHERE event_id=@id";
+            int es = 0, results = 0, registration = 0, announce = 0, kiosk = 0;
             foreach (JsonOption opt in options)
             {
                 int val = opt.Value == "true" ? 1 : 0;
@@ -1313,6 +1320,9 @@ namespace EventDirector
                     case "allow_early_start":
                         es = val;
                         break;
+                    case "kiosk":
+                        kiosk = val;
+                        break;
                 }
             }
             command.Parameters.AddRange(new SQLiteParameter[] {
@@ -1320,7 +1330,8 @@ namespace EventDirector
                 new SQLiteParameter("@announce", announce),
                 new SQLiteParameter("@results", results),
                 new SQLiteParameter("@registration", registration),
-                new SQLiteParameter("@id", eventId)
+                new SQLiteParameter("@id", eventId),
+                new SQLiteParameter("@kiosk", kiosk)
             });
             command.ExecuteNonQuery();
         }
@@ -1469,27 +1480,224 @@ namespace EventDirector
 
         public void AddDayOfParticipant(DayOfParticipant part)
         {
-            throw new NotImplementedException();
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "INSERT INTO dayof_participant (dop_event_id, dop_first, dop_last, dop_street, dop_city, dop_state, dop_zip, dop_birthday, dop_phone, dop_email, dop_mobile, dop_parent, dop_country, dop_street2, dop_gender, dop_comments, dop_other, dop_other2, dop_emergency_name, dop_emergency_phone)" +
+                                                            " VALUES (@eventId, @first, @last, @street, @city, @state, @zip, @birthday, @phone, @email, @mobile, @parent, @country, @street2, @gender, @comments, @other, @other2, @eName, @ePhone);";
+                command.Parameters.AddRange(new SQLiteParameter[]
+                {
+                    new SQLiteParameter("@eventId", part.EventIdentifier),
+                    new SQLiteParameter("@first", part.First),
+                    new SQLiteParameter("@last", part.Last),
+                    new SQLiteParameter("@street", part.Street),
+                    new SQLiteParameter("@city", part.City),
+                    new SQLiteParameter("@state", part.State),
+                    new SQLiteParameter("@zip", part.Zip),
+                    new SQLiteParameter("@birthday", part.Birthday),
+                    new SQLiteParameter("@phone", part.Phone),
+                    new SQLiteParameter("@email", part.Email),
+                    new SQLiteParameter("@mobile", part.Mobile),
+                    new SQLiteParameter("@parent", part.Parent),
+                    new SQLiteParameter("@country", part.Country),
+                    new SQLiteParameter("@street2", part.Street2),
+                    new SQLiteParameter("@gender", part.Gender),
+                    new SQLiteParameter("@comments", part.Comments),
+                    new SQLiteParameter("@other", part.Other),
+                    new SQLiteParameter("@other2", part.Other2),
+                    new SQLiteParameter("@eName", part.EmergencyName),
+                    new SQLiteParameter("@ePhone", part.EmergencyPhone)
+                });
+            }
         }
 
         public List<DayOfParticipant> GetDayOfParticipants(int eventId)
         {
-            throw new NotImplementedException();
+            return InternalGetDayOfParticipants("SELECT * FROM dayof_participant WHERE dop_event_id=@eventId;", eventId);
         }
 
         public List<DayOfParticipant> GetDayOfParticipants()
         {
-            throw new NotImplementedException();
+            return InternalGetDayOfParticipants("SELECT * FROM dayof_participant;", -1);
         }
 
-        public void ApproveDayOfParticipant(int eventId, int identifier, EventSpecific specific)
+        private List<DayOfParticipant> InternalGetDayOfParticipants(String query, int eventId)
         {
-            throw new NotImplementedException();
+            List<DayOfParticipant> output = new List<DayOfParticipant>();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = query;
+            if (eventId != -1)
+            {
+                command.Parameters.Add(new SQLiteParameter("@eventId", eventId));
+            }
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new DayOfParticipant(
+                    Convert.ToInt32(reader["dop_id"]),
+                    Convert.ToInt32(reader["dop_event_id"]),
+                    reader["dop_first"].ToString(),
+                    reader["dop_last"].ToString(),
+                    reader["dop_street"].ToString(),
+                    reader["dop_city"].ToString(),
+                    reader["dop_state"].ToString(),
+                    reader["dop_zip"].ToString(),
+                    reader["dop_birthday"].ToString(),
+                    reader["dop_phone"].ToString(),
+                    reader["dop_email"].ToString(),
+                    reader["dop_mobile"].ToString(),
+                    reader["dop_parent"].ToString(),
+                    reader["dop_country"].ToString(),
+                    reader["dop_street2"].ToString(),
+                    reader["dop_gender"].ToString(),
+                    reader["dop_comments"].ToString(),
+                    reader["dop_other"].ToString(),
+                    reader["dop_other2"].ToString(),
+                    reader["dop_emergency_name"].ToString(),
+                    reader["dop_emergency_phone"].ToString()
+                    ));
+            }
+            return output;
         }
 
-        public void ApproveDayOfParticipant(DayOfParticipant part, EventSpecific specific)
+        public bool ApproveDayOfParticipant(int eventId, int identifier, EventSpecific specific)
         {
-            throw new NotImplementedException();
+            Participant newPart = null;
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT * FROM dayof_participant WHERE dop_id=@id;";
+                command.Parameters.Add(new SQLiteParameter("@id", identifier));
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        EventSpecific newSpecific = new EventSpecific(specific);
+                        newSpecific.Comments = reader["dop_comments"].ToString();
+                        newSpecific.Other = reader["dop_other"].ToString();
+                        newPart = new Participant(
+                            reader["dop_first"].ToString(),
+                            reader["dop_last"].ToString(),
+                            reader["dop_street"].ToString(),
+                            reader["dop_city"].ToString(),
+                            reader["dop_state"].ToString(),
+                            reader["dop_zip"].ToString(),
+                            reader["dop_birthday"].ToString(),
+                            new EmergencyContact(
+                                reader["dop_emergency_name"].ToString(),
+                                reader["dop_emergency_phone"].ToString(),
+                                ""
+                                ),
+                            newSpecific,
+                            reader["dop_phone"].ToString(),
+                            reader["dop_email"].ToString(),
+                            reader["dop_mobile"].ToString(),
+                            reader["dop_parent"].ToString(),
+                            reader["dop_country"].ToString(),
+                            reader["dop_street2"].ToString(),
+                            reader["dop_gender"].ToString()
+                            );
+                    }
+                }
+            }
+            if (newPart != null)
+            {
+                AddParticipant(newPart);
+                using (var transaction = connection.BeginTransaction())
+                {
+                    using (SQLiteCommand command = connection.CreateCommand())
+                    {
+                        command.CommandText = "DELETE FROM dayof_participant WHERE dop_id=@id";
+                        command.Parameters.Add(new SQLiteParameter("@id", identifier));
+                        command.ExecuteNonQuery();
+                    }
+                    transaction.Commit();
+                }
+                return true;
+            }
+            return false;
+        }
+
+        public bool ApproveDayOfParticipant(DayOfParticipant part, EventSpecific specific)
+        {
+            return ApproveDayOfParticipant(part.EventIdentifier, part.Identifier, specific);
+        }
+
+        public void SetLiabilityWaiver(int eventId, string waiver)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "INSERT OR REPLACE INTO kiosk (event_id, kiosk_waiver_text) VALUES (@eventId, @waiver);";
+                command.Parameters.AddRange(new SQLiteParameter[]
+                {
+                    new SQLiteParameter("@eventId", eventId),
+                    new SQLiteParameter("@waiver", waiver)
+                });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public string GetLiabilityWaiver(int eventId)
+        {
+            String output = "";
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM kiosk WHERE event_id=@eventId;";
+            command.Parameters.Add(new SQLiteParameter("@eventId", eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                output = reader["kiosk_waiver_text"].ToString();
+            }
+            return output;
+        }
+
+        public DayOfParticipant GetDayOfParticipant(DayOfParticipant part)
+        {
+            DayOfParticipant output = null;
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT * FROM dayof_participant WHERE dop_first=@first AND dop_last=@last AND dop_street=@street AND dop_city=@city AND dop_state=@state AND dop_zip=@zip AND dop_birthday=@birthday";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@first", part.First),
+                new SQLiteParameter("@last", part.Last),
+                new SQLiteParameter("@street", part.Street),
+                new SQLiteParameter("@city", part.City),
+                new SQLiteParameter("@state", part.State),
+                new SQLiteParameter("@zip", part.Zip),
+                new SQLiteParameter("@birthday", part.Birthday)
+            });
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        output = new DayOfParticipant(
+                            Convert.ToInt32(reader["dop_id"]),
+                            Convert.ToInt32(reader["dop_event_id"]),
+                            reader["dop_first"].ToString(),
+                            reader["dop_last"].ToString(),
+                            reader["dop_street"].ToString(),
+                            reader["dop_city"].ToString(),
+                            reader["dop_state"].ToString(),
+                            reader["dop_zip"].ToString(),
+                            reader["dop_birthday"].ToString(),
+                            reader["dop_phone"].ToString(),
+                            reader["dop_email"].ToString(),
+                            reader["dop_mobile"].ToString(),
+                            reader["dop_parent"].ToString(),
+                            reader["dop_country"].ToString(),
+                            reader["dop_street2"].ToString(),
+                            reader["dop_gender"].ToString(),
+                            reader["dop_comments"].ToString(),
+                            reader["dop_other"].ToString(),
+                            reader["dop_other2"].ToString(),
+                            reader["dop_emergency_name"].ToString(),
+                            reader["dop_emergency_phone"].ToString()
+                            );
+                    }
+                }
+            }
+            return output;
         }
     }
 }

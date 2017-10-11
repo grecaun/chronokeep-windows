@@ -438,8 +438,12 @@ namespace EventDirector
         private void EventsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender == null) { return; }
+            UpdateEventButtons();
+        }
+
+        private void UpdateEventButtons()
+        {
             Event anEvent = (Event)eventsListView.SelectedItem;
-            Log.D("Sender is as follows: " + sender + " the event associated with it has an eventId of " + (anEvent == null ? "null" : anEvent.Identifier.ToString()));
             if (anEvent != null)
             {
                 eventsModifyButton.Visibility = Visibility.Visible;
@@ -487,6 +491,17 @@ namespace EventDirector
                         else
                         {
                             eventsToggleRegistrationButton.Opacity = 0.5;
+                        }
+                    }
+                    else if (opt.Name == "kiosk")
+                    {
+                        if (opt.Value == "true")
+                        {
+                            eventsToggleKioskButton.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            eventsToggleKioskButton.Visibility = Visibility.Hidden;
                         }
                     }
                 }
@@ -641,6 +656,40 @@ namespace EventDirector
             }
             database.SetEventOptions(eventId, list);
             tcpServer.UpdateEvent(eventId);
+        }
+
+        private void KioskButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool value = false;
+            int eventId = ((Event)eventsListView.SelectedItem).Identifier;
+            List<JsonOption> list = database.GetEventOptions(eventId);
+            foreach (JsonOption opt in list)
+            {
+                if (opt.Name == "kiosk")
+                {
+                    opt.Value = value.ToString().ToLower();
+                }
+            }
+            database.SetEventOptions(eventId, list);
+            tcpServer.UpdateEvent(eventId);
+            UpdateEventButtons();
+        }
+
+        public void EnableKiosk(int eventId)
+        {
+            bool value = true;
+            List<JsonOption> list = database.GetEventOptions(eventId);
+            foreach (JsonOption opt in list)
+            {
+                if (opt.Name == "kiosk")
+                {
+                    opt.Value = value.ToString().ToLower();
+                }
+            }
+            database.SetEventOptions(eventId, list);
+            tcpServer.UpdateEvent(eventId);
+            tcpServer.UpdateEventKiosk(eventId);
+            UpdateEventButtons();
         }
 
         public async void UpdateSettings(String name)

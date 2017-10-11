@@ -147,6 +147,30 @@ namespace EventDirector
                         }
                         BroadcastJson(jsonHandler.GetJsonServerSetParticipant(clientPartSet.EventId, clientPartSet.ParticipantId, clientPartSet.Value));
                         break;
+                    case "client_kiosk_dayof_add":
+                        Log.D("Client day of participant add received.");
+                        JsonClientDayOfAdd dayofPartAdd = jsonObject.ToObject<JsonClientDayOfAdd>();
+                        database.AddDayOfParticipant(dayofPartAdd.Participant);
+                        BroadcastJson(jsonHandler.GetJsonServerKioskDayOfAdd(dayofPartAdd.EventId, dayofPartAdd.Participant));
+                        break;
+                    case "client_kiosk_dayof_approve":
+                        Log.D("Client day of participant approve received.");
+                        JsonClientDayOfApprove dayofPartApprove = jsonObject.ToObject<JsonClientDayOfApprove>();
+                        if (database.ApproveDayOfParticipant(dayofPartApprove.EventId, dayofPartApprove.DayOfId, dayofPartApprove.Specific))
+                        {
+                            BroadcastJson(jsonHandler.GetJsonServerKioskDayOfRemove(dayofPartApprove.EventId, dayofPartApprove.DayOfId));
+                        }
+                        break;
+                    case "client_kiosk_dayof":
+                        Log.D("Client request for day of registrants list received.");
+                        JsonClientDayOfParticipants clientDayOfList = jsonObject.ToObject<JsonClientDayOfParticipants>();
+                        SendJson(jsonHandler.GetJsonServerKioskDayOfParticipants(clientDayOfList.EventId), sock);
+                        break;
+                    case "client_kiosk":
+                        Log.D("Client kiosk received.");
+                        JsonClientKiosk clientKiosk = jsonObject.ToObject<JsonClientKiosk>();
+                        SendJson(jsonHandler.GetJsonServerKioskWaiver(clientKiosk.EventId), sock);
+                        break;
                 }
             }
         }
@@ -184,6 +208,11 @@ namespace EventDirector
         {
             server.Close();
             keepalive = false;
+        }
+
+        public void UpdateEventKiosk(int eventId)
+        {
+            BroadcastJson(jsonHandler.GetJsonServerKioskWaiver(eventId));
         }
 
     }

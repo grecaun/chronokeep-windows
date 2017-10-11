@@ -50,10 +50,13 @@ namespace EventDirector
         void SetEarlyStartParticipant(Participant person);
 
         void AddDayOfParticipant(DayOfParticipant part);
+        DayOfParticipant GetDayOfParticipant(DayOfParticipant part);
         List<DayOfParticipant> GetDayOfParticipants(int eventId);
         List<DayOfParticipant> GetDayOfParticipants();
-        void ApproveDayOfParticipant(int eventId, int identifier, EventSpecific specific);
-        void ApproveDayOfParticipant(DayOfParticipant part, EventSpecific specific);
+        bool ApproveDayOfParticipant(int eventId, int identifier, EventSpecific specific);
+        bool ApproveDayOfParticipant(DayOfParticipant part, EventSpecific specific);
+        void SetLiabilityWaiver(int eventId, String waiver);
+        String GetLiabilityWaiver(int eventId);
 
         void AddChange(Participant newParticipant, Participant oldParticipant);
 

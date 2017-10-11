@@ -62,6 +62,33 @@ namespace EventDirector
         public JsonOption Value { get; set; }
     }
 
+    public class JsonClientDayOfAdd
+    {
+        public String Command { get; set; }
+        public int EventId { get; set; }
+        public DayOfParticipant Participant { get; set; }
+    }
+
+    public class JsonClientDayOfApprove
+    {
+        public String Command { get; set; }
+        public int EventId { get; set; }
+        public int DayOfId { get; set; }
+        public EventSpecific Specific { get; set; }
+    }
+
+    public class JsonClientDayOfParticipants
+    {
+        public String Command { get; set; }
+        public int EventId { get; set; }
+    }
+
+    public class JsonClientKiosk
+    {
+        public String Command { get; set; }
+        public int EventId { get; set; }
+    }
+
     /**
      *
      * Classes for generating responses to client queries.
@@ -100,6 +127,34 @@ namespace EventDirector
         public String Command = "server_participants";
         public int EventId { get; set; }
         public List<JsonParticipant> Participants { get; set; }
+    }
+
+    public class JsonServerKioskDayOfParticipants
+    {
+        public String Command = "server_kiosk_dayof";
+        public int EventId { get; set; }
+        public List<DayOfParticipant> Participants { get; set; }
+    }
+
+    public class JsonServerKioskDayOfAdd
+    {
+        public String Command = "server_kiosk_dayof_add";
+        public int EventId { get; set; }
+        public DayOfParticipant Participant { get; set; }
+    }
+
+    public class JsonServerKioskDayOfRemove
+    {
+        public String Command = "server_kiosk_dayof_remove";
+        public int EventId { get; set; }
+        public int DayOfId { get; set; }
+    }
+
+    public class JsonServerKioskWaiver
+    {
+        public String Command = "server_kiosk_waiver";
+        public int EventId { get; set; }
+        public String Waiver { get; set; }
     }
 
     public class JsonParticipant

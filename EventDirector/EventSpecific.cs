@@ -81,6 +81,25 @@ namespace EventDirector
             this.fleece = fleece;
         }
 
+        public EventSpecific(EventSpecific that)
+        {
+            this.identifier = that.identifier;
+            this.eventIdentifier = that.eventIdentifier;
+            this.divisionIdentifier = that.divisionIdentifier;
+            this.divisionName = that.divisionName;
+            this.bib = that.bib;
+            this.chip = that.chip;
+            this.checkedIn = that.checkedIn;
+            this.shirtSize = that.shirtSize;
+            this.comments = that.comments;
+            this.secondShirt = that.secondShirt;
+            this.owes = that.owes;
+            this.hat = that.hat;
+            this.other = that.other;
+            this.earlystart = that.earlystart;
+            this.fleece = that.fleece;
+        }
+
         internal EventSpecific Blank()
         {
             return new EventSpecific(-1, -1, -1, "None", -1, -1, 0, "", "", "", "", "", "", 0, "");

@@ -318,6 +318,9 @@
     <Resource Include="Icons\plus-8x.png" />
     <Resource Include="Icons\trash-8x.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\tablet-8x.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -26,17 +26,6 @@ namespace EventDirector
             this.database = database;
         }
 
-        public Participant HandleJsonClientParticipantUpdate(JsonClientParticipantUpdate clientPartUpd)
-        {
-            JsonParticipant jPart = clientPartUpd.Participant;
-            Participant part = new Participant(jPart.Id, jPart.First, jPart.Last, jPart.Street, jPart.City, jPart.State, jPart.Zip,
-                                                jPart.Birthday, jPart.EmergencyContact, jPart.Specific, jPart.Phone, jPart.Email,
-                                                jPart.Mobile, jPart.Parent, jPart.Country, jPart.Street2, jPart.Gender);
-            database.UpdateParticipant(part);
-            part = database.GetParticipant(part.EventSpecific.EventIdentifier, part.Identifier);
-            return part;
-        }
-
         public List<JObject> ParseJsonMessage(String message)
         {
             List<JObject> output = new List<JObject>();
@@ -105,6 +94,50 @@ namespace EventDirector
                 Participants = parts
             };
             return JsonConvert.SerializeObject(jsonParts);
+        }
+
+        // JsonServerKioskDayOfParticipants
+        public String GetJsonServerKioskDayOfParticipants(int eventId)
+        {
+            JsonServerKioskDayOfParticipants parts = new JsonServerKioskDayOfParticipants()
+            {
+                EventId = eventId,
+                Participants = database.GetDayOfParticipants(eventId)
+            };
+            return JsonConvert.SerializeObject(parts);
+        }
+
+        // JsonServerKioskDayOfAdd
+        public String GetJsonServerKioskDayOfAdd(int eventId, DayOfParticipant part)
+        {
+            JsonServerKioskDayOfAdd add = new JsonServerKioskDayOfAdd()
+            {
+                EventId = eventId,
+                Participant = database.GetDayOfParticipant(part)
+            };
+            return JsonConvert.SerializeObject(add);
+        }
+
+        // JsonServerKioskDayOfRemove
+        public String GetJsonServerKioskDayOfRemove(int eventId, int partId)
+        {
+            JsonServerKioskDayOfRemove remove = new JsonServerKioskDayOfRemove()
+            {
+                EventId = eventId,
+                DayOfId = partId
+            };
+            return JsonConvert.SerializeObject(remove);
+        }
+
+        // JsonServerKioskWaiver
+        public String GetJsonServerKioskWaiver(int eventId)
+        {
+            JsonServerKioskWaiver waiver = new JsonServerKioskWaiver()
+            {
+                EventId = eventId,
+                Waiver = database.GetLiabilityWaiver(eventId)
+            };
+            return JsonConvert.SerializeObject(waiver);
         }
 
         // JsonServerResults

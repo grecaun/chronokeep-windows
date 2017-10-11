@@ -10,11 +10,12 @@ namespace EventDirector
     {
         public DayOfParticipant() { }
 
-        public DayOfParticipant(int eventId, String first, String last, String street, String city, String state, String zip,
+        public DayOfParticipant(int eventId, int divisionId, String first, String last, String street, String city, String state, String zip,
             String birthday, String phone, String email, String mobile, String parent, String country, String street2,
             String gender, String comments, String other, String other2, String eName, String ePhone)
         {
             EventIdentifier = eventId;
+            DivisionIdentifier = divisionId;
             First = first;
             Last = last;
             Street = street;
@@ -36,12 +37,13 @@ namespace EventDirector
             EmergencyPhone = ePhone;
         }
 
-        public DayOfParticipant(int id, int eventId, String first, String last, String street, String city, String state, String zip,
+        public DayOfParticipant(int id, int eventId, int divisionId, String first, String last, String street, String city, String state, String zip,
             String birthday, String phone, String email, String mobile, String parent, String country, String street2,
             String gender, String comments, String other, String other2, String eName, String ePhone)
         {
             Identifier = id;
             EventIdentifier = eventId;
+            DivisionIdentifier = divisionId;
             First = first;
             Last = last;
             Street = street;
@@ -63,26 +65,27 @@ namespace EventDirector
             EmergencyPhone = ePhone;
         }
 
-        int Identifier { get; set; }
-        int EventIdentifier { get; set; }
-        String First { get; set; }
-        String Last { get; set; }
-        String Street { get; set; }
-        String City { get; set; }
-        String State { get; set; }
-        String Zip { get; set; }
-        String Birthday { get; set; }
-        String Phone { get; set; }
-        String Email { get; set; }
-        String Mobile { get; set; }
-        String Parent { get; set; }
-        String Country { get; set; }
-        String Street2 { get; set; }
-        String Gender { get; set; }
-        String Comments { get; set; }
-        String Other { get; set; }
-        String Other2 { get; set; }
-        String EmergencyName { get; set; }
-        String EmergencyPhone { get; set; }
+        public int Identifier { get; set; }
+        public int EventIdentifier { get; set; }
+        public int DivisionIdentifier { get;set; }
+        public String First { get; set; }
+        public String Last { get; set; }
+        public String Street { get; set; }
+        public String City { get; set; }
+        public String State { get; set; }
+        public String Zip { get; set; }
+        public String Birthday { get; set; }
+        public String Phone { get; set; }
+        public String Email { get; set; }
+        public String Mobile { get; set; }
+        public String Parent { get; set; }
+        public String Country { get; set; }
+        public String Street2 { get; set; }
+        public String Gender { get; set; }
+        public String Comments { get; set; }
+        public String Other { get; set; }
+        public String Other2 { get; set; }
+        public String EmergencyName { get; set; }
+        public String EmergencyPhone { get; set; }
     }
 }

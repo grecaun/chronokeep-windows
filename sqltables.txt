@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS
 CREATE TABLE IF NOT EXISTS
     dayof_participant (
         dop_id INTEGER PRIMARY KEY,
+        dop_event_id INTEGER NOT NULL,
         dop_first VARCHAR NOT NULL,
         dop_last VARCHAR NOT NULL,
         dop_street VARCHAR,
@@ -39,8 +40,8 @@ CREATE TABLE IF NOT EXISTS
         dop_other VARCHAR,
         dop_other2 VARCHAR,
         dop_emergency_name VARCHAR NOT NULL,
-        dop_emergency_phone VARCHAR NOT NULL
-        UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday)
+        dop_emergency_phone VARCHAR NOT NULL,
+        UNIQUE (dop_first, dop_last, dop_street, dop_city, dop_state, dop_zip, dop_birthday)
     )
 
 CREATE TABLE IF NOT EXISTS
