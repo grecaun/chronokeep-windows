@@ -102,6 +102,9 @@
     <Compile Include="ChangeParticipant.cs" />
     <Compile Include="CSVImporter.cs" />
     <Compile Include="DayOfParticipant.cs" />
+    <Compile Include="DayOfParticipantsList.xaml.cs">
+      <DependentUpon>DayOfParticipantsList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExampleLiabilityWaiver.xaml.cs">
       <DependentUpon>ExampleLiabilityWaiver.xaml</DependentUpon>
     </Compile>
@@ -158,6 +161,10 @@
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Compile Include="ZeroConf.cs" />
+    <Page Include="DayOfParticipantsList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ExampleLiabilityWaiver.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

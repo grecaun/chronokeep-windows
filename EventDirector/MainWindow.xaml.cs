@@ -19,6 +19,7 @@ namespace EventDirector
         String dbName = "EventDirector.sqlite";
         String programDir = "EventDirector";
         ParticipantsListWindow partList = null;
+        DayOfParticipantsListWindow doPartList = null;
         bool closing = false;
 
         Thread tcpServerThread;
@@ -136,6 +137,11 @@ namespace EventDirector
                     KioskSettup kiosk = new KioskSettup(this, database);
                     windows.Add(kiosk);
                     kiosk.Show();
+                    break;
+                case 10:
+                    Log.D("List day of registrants");
+                    doPartList = new DayOfParticipantsListWindow(database, this);
+                    doPartList.Show();
                     break;
                 default:
                     break;
@@ -561,6 +567,12 @@ namespace EventDirector
             partList = null;
         }
 
+        public void DoPartListClosed()
+        {
+            Log.D("Day of Registrants list has closed.");
+            doPartList = null;
+        }
+
         public void WindowClosed(Window window)
         {
             if (closing == false)
@@ -573,6 +585,7 @@ namespace EventDirector
         {
             closing = true;
             if (partList != null) partList.Close();
+            if (doPartList != null) doPartList.Close();
             foreach (Window w in windows)
             {
                 w.Close();

@@ -10,7 +10,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 4;
+        private readonly int version = 5;
         SQLiteConnection connection;
         String programDir = "EventDirector";
 
@@ -67,6 +67,7 @@ namespace EventDirector
                     queries.Add("CREATE TABLE IF NOT EXISTS dayof_participant (" +
                             "dop_id INTEGER PRIMARY KEY," +
                             "dop_event_id INTEGER NOT NULL," +
+                            "dop_division_id INTEGER NOT NULL," +
                             "dop_first VARCHAR NOT NULL," +
                             "dop_last VARCHAR NOT NULL," +
                             "dop_street VARCHAR," +
@@ -372,7 +373,16 @@ namespace EventDirector
                             "dop_emergency_name VARCHAR NOT NULL," +
                             "dop_emergency_phone VARCHAR NOT NULL," +
                             "UNIQUE (dop_first, dop_last, dop_street, dop_city, dop_state, dop_zip, dop_birthday)" +
-                            ")";
+                            ");UPDATE settings SET version=4 WHERE version=3;";
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    goto case 4;
+                case 4:
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE dayof_participant ADD dop_division_id INTEGER NOT NULL DEFAULT -1;UPDATE settings SET version=5 WHERE version=4;";
                         command.ExecuteNonQuery();
                         transaction.Commit();
                     }
@@ -1483,11 +1493,12 @@ namespace EventDirector
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO dayof_participant (dop_event_id, dop_first, dop_last, dop_street, dop_city, dop_state, dop_zip, dop_birthday, dop_phone, dop_email, dop_mobile, dop_parent, dop_country, dop_street2, dop_gender, dop_comments, dop_other, dop_other2, dop_emergency_name, dop_emergency_phone)" +
-                                                            " VALUES (@eventId, @first, @last, @street, @city, @state, @zip, @birthday, @phone, @email, @mobile, @parent, @country, @street2, @gender, @comments, @other, @other2, @eName, @ePhone);";
+                command.CommandText = "INSERT INTO dayof_participant (dop_event_id, dop_division_id, dop_first, dop_last, dop_street, dop_city, dop_state, dop_zip, dop_birthday, dop_phone, dop_email, dop_mobile, dop_parent, dop_country, dop_street2, dop_gender, dop_comments, dop_other, dop_other2, dop_emergency_name, dop_emergency_phone)" +
+                                                            " VALUES (@eventId, @divisionId, @first, @last, @street, @city, @state, @zip, @birthday, @phone, @email, @mobile, @parent, @country, @street2, @gender, @comments, @other, @other2, @eName, @ePhone);";
                 command.Parameters.AddRange(new SQLiteParameter[]
                 {
                     new SQLiteParameter("@eventId", part.EventIdentifier),
+                    new SQLiteParameter("@divisionId", part.DivisionIdentifier),
                     new SQLiteParameter("@first", part.First),
                     new SQLiteParameter("@last", part.Last),
                     new SQLiteParameter("@street", part.Street),
@@ -1508,6 +1519,8 @@ namespace EventDirector
                     new SQLiteParameter("@eName", part.EmergencyName),
                     new SQLiteParameter("@ePhone", part.EmergencyPhone)
                 });
+                command.ExecuteNonQuery();
+                transaction.Commit();
             }
         }
 

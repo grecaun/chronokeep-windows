@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    public class DayOfParticipant
+    public class DayOfParticipant : IEquatable<DayOfParticipant>, IComparable<DayOfParticipant>
     {
         public DayOfParticipant() { }
 
@@ -87,5 +87,21 @@ namespace EventDirector
         public String Other2 { get; set; }
         public String EmergencyName { get; set; }
         public String EmergencyPhone { get; set; }
+
+        public int CompareTo(DayOfParticipant other)
+        {
+            if (other == null) return 1;
+            else if (this.DivisionIdentifier == other.DivisionIdentifier)
+            {
+                return this.Last.CompareTo(other.Last);
+            }
+            return this.DivisionIdentifier.CompareTo(other.DivisionIdentifier);
+        }
+
+        public bool Equals(DayOfParticipant other)
+        {
+            if (other == null) return false;
+            return this.Identifier == other.Identifier;
+        }
     }
 }

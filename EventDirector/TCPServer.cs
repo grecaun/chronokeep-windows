@@ -150,6 +150,7 @@ namespace EventDirector
                     case "client_kiosk_dayof_add":
                         Log.D("Client day of participant add received.");
                         JsonClientDayOfAdd dayofPartAdd = jsonObject.ToObject<JsonClientDayOfAdd>();
+                        Log.D("First '" + dayofPartAdd.Participant.First + "' Last '" + dayofPartAdd.Participant.Last + "'");
                         database.AddDayOfParticipant(dayofPartAdd.Participant);
                         BroadcastJson(jsonHandler.GetJsonServerKioskDayOfAdd(dayofPartAdd.EventId, dayofPartAdd.Participant));
                         break;

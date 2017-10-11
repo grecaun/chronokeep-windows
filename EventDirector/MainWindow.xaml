@@ -25,6 +25,7 @@
             </MenuItem>
             <MenuItem Header="Event Options">
                 <MenuItem Header="List Participants" Click="MenuItem_Click" Uid="7" />
+                <MenuItem Header="List Day Of Registrants" Click="MenuItem_Click" Uid="10" />
                 <MenuItem Header="Setup Kiosk" Click="MenuItem_Click" Uid="9" />
                 <!-- <MenuItem Header="_Assign Bibs/Chips" Click="MenuItem_Click" Uid="6" /> -->
             </MenuItem>
