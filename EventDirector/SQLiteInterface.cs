@@ -138,7 +138,6 @@ namespace EventDirector
                             "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                             "division_id INTEGER NOT NULL REFERENCES divisions(division_id)," +
                             "eventspecific_bib INTEGER," +
-                            "eventspecific_chip INTEGER," +
                             "eventspecific_checkedin INTEGER DEFAULT 0," +
                             "eventspecific_shirtsize VARCHAR," +
                             "eventspecific_comments VARCHAR," +
@@ -207,7 +206,6 @@ namespace EventDirector
                             "event_id INTEGER NOT NULL," +
                             "division_id INTEGER NOT NULL," +
                             "eventspecific_bib INTEGER," +
-                            "eventspecific_chip INTEGER," +
                             "eventspecific_checkedin INTEGER DEFAULT 0," +
                             "eventspecific_shirtsize VARCHAR," +
                             "eventspecific_comments VARCHAR," +
@@ -253,7 +251,6 @@ namespace EventDirector
                     "old_event_spec_event_id INTEGER DEFAULT -1," +
                     "old_event_spec_division_id INTEGER DEFAULT -1," +
                     "old_event_spec_bib INTEGER," +
-                    "old_event_spec_chip INTEGER," +
                     "old_event_spec_checkedin INTEGER DEFAULT -1," +
                     "old_event_spec_shirtsize VARCHAR," +
                     "old_event_spec_comments VARCHAR," +
@@ -287,7 +284,6 @@ namespace EventDirector
                     "new_event_spec_event_id INTEGER DEFAULT -1," +
                     "new_event_spec_division_id INTEGER DEFAULT -1," +
                     "new_event_spec_bib INTEGER DEFAULT -1," +
-                    "new_event_spec_chip INTEGER DEFAULT -1," +
                     "new_event_spec_checkedin INTEGER DEFAULT -1," +
                     "new_event_spec_shirtsize VARCHAR(5)," +
                     "new_event_spec_comments VARCHAR," +
@@ -479,13 +475,13 @@ namespace EventDirector
             }
             command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, division_id, eventspecific_bib, eventspecific_chip, eventspecific_checkedin, eventspecific_shirtsize, eventspecific_comments, eventspecific_secondshirt, eventspecific_owes, eventspecific_hat, eventspecific_other, eventspecific_earlystart, eventspecific_fleece) VALUES (@0,@1,@2,@3,@4,@5,@6,@comments,@secondshirt,@owes,@hat,@other,@earlystart,@fleece)";
+            command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, division_id, eventspecific_bib, eventspecific_checkedin, eventspecific_shirtsize, eventspecific_comments, eventspecific_secondshirt, eventspecific_owes, eventspecific_hat, eventspecific_other, eventspecific_earlystart, eventspecific_fleece) " +
+                "VALUES (@0,@1,@2,@3,@5,@6,@comments,@secondshirt,@owes,@hat,@other,@earlystart,@fleece)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", person.Identifier),
                 new SQLiteParameter("@1", person.EventSpecific.EventIdentifier),
                 new SQLiteParameter("@2", person.EventSpecific.DivisionIdentifier),
                 new SQLiteParameter("@3", person.EventSpecific.Bib),
-                new SQLiteParameter("@4", person.EventSpecific.Chip),
                 new SQLiteParameter("@5", person.EventSpecific.CheckedIn),
                 new SQLiteParameter("@6", person.EventSpecific.ShirtSize),
                 new SQLiteParameter("@comments", person.EventSpecific.Comments),
@@ -663,11 +659,10 @@ namespace EventDirector
                 command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
                 Log.D("Updating event specific.... bib is " + person.EventSpecific.Bib);
-                command.CommandText = "UPDATE eventspecific SET division_id=@0, eventspecific_bib=@1, eventspecific_chip=@2, eventspecific_checkedin=@3, eventspecific_shirtsize=@4, eventspecific_secondshirt=@secondshirt, eventspecific_owes=@owes, eventspecific_hat=@hat, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_fleece=@fleece WHERE eventspecific_id=@5";
+                command.CommandText = "UPDATE eventspecific SET division_id=@0, eventspecific_bib=@1, eventspecific_checkedin=@3, eventspecific_shirtsize=@4, eventspecific_secondshirt=@secondshirt, eventspecific_owes=@owes, eventspecific_hat=@hat, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_fleece=@fleece WHERE eventspecific_id=@5";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", person.EventSpecific.DivisionIdentifier),
                     new SQLiteParameter("@1", person.EventSpecific.Bib),
-                    new SQLiteParameter("@2", person.EventSpecific.Chip),
                     new SQLiteParameter("@3", person.EventSpecific.CheckedIn),
                     new SQLiteParameter("@4", person.EventSpecific.ShirtSize),
                     new SQLiteParameter("@5", person.EventSpecific.Identifier),
@@ -841,7 +836,6 @@ namespace EventDirector
                         Convert.ToInt32(reader["division_id"]),
                         reader["division_name"].ToString(),
                         Convert.ToInt32(reader["eventspecific_bib"]),
-                        Convert.ToInt32(reader["eventspecific_chip"]),
                         Convert.ToInt32(reader["eventspecific_checkedin"]),
                         reader["eventspecific_shirtsize"].ToString(),
                         reader["eventspecific_comments"].ToString(),
@@ -894,23 +888,23 @@ namespace EventDirector
                 command.CommandText = "INSERT INTO changes (" +
                     "old_participant_id, old_first, old_last, old_street, old_city, old_state, old_zip, old_birthday, old_phone, old_email," +
                     "old_emergency_id, old_emergency_name, old_emergency_phone, old_emergency_email, old_event_spec_id, old_event_spec_event_id," +
-                    "old_event_spec_division_id, old_event_spec_bib, old_event_spec_chip, old_event_spec_checkedin, old_event_spec_shirtsize," +
+                    "old_event_spec_division_id, old_event_spec_bib, old_event_spec_checkedin, old_event_spec_shirtsize," +
                     "old_event_spec_comments, old_mobile, old_parent, old_country, old_street2, old_secondshirt, old_owes, old_hat, old_other," +
                     "old_gender, old_earlystart, old_fleece," +
                     "new_participant_id, new_first, new_last, new_street, new_city, new_state, new_zip, new_birthday, new_phone, new_email," +
                     "new_emergency_id, new_emergency_name, new_emergency_phone, new_emergency_email, new_event_spec_id, new_event_spec_event_id," +
-                    "new_event_spec_division_id, new_event_spec_bib, new_event_spec_chip, new_event_spec_checkedin, new_event_spec_shirtsize," +
+                    "new_event_spec_division_id, new_event_spec_bib, new_event_spec_checkedin, new_event_spec_shirtsize," +
                     "new_event_spec_comments, new_mobile, new_parent, new_country, new_street2, new_secondshirt, new_owes, new_hat, new_other," +
                     "new_gender, new_earlystart, new_fleece)" +
                     " VALUES" +
                     "(0, 'J', 'Doe', '', '', '', '', '01/01/1901', '', '', " +
                     "0, '', '', '', 0, 0, " +
-                    "-1, -1, -1, 0, '', " +
+                    "-1, -1, 0, '', " +
                     "'New Participant', '', '', '', '', '', '', '', ''," +
                     "'', 0, ''," +
                     " @newPartId, @newFirst, @newLast, @newStreet," +
                     "@newCity, @newState, @newZip, @newBirthday, @newPhone, @newEmail, @newEId, @newEName, @newEPhone, @newEEmail, @newESId, @newESEvId," +
-                    "@newESDId, @newESBib, @newESChip, @newESCheckedIn, @newESShirtSize, @newESComments, @newMobile, @newParent, @newCountry, @newStreet2," +
+                    "@newESDId, @newESBib, @newESCheckedIn, @newESShirtSize, @newESComments, @newMobile, @newParent, @newCountry, @newStreet2," +
                     "@newShirt2, @newOwes, @newHat, @newOther, @newGender, @newEarlyStart, @newFleece)";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@newPartId", newParticipant.Identifier),
@@ -931,7 +925,6 @@ namespace EventDirector
                     new SQLiteParameter("@newESEvId", newParticipant.EventSpecific.EventIdentifier),
                     new SQLiteParameter("@newESDId", newParticipant.EventSpecific.DivisionIdentifier),
                     new SQLiteParameter("@newESBib", newParticipant.EventSpecific.Bib),
-                    new SQLiteParameter("@newESChip", newParticipant.EventSpecific.Chip),
                     new SQLiteParameter("@newESCheckedIn", newParticipant.EventSpecific.CheckedIn),
                     new SQLiteParameter("@newESShirtSize", newParticipant.EventSpecific.ShirtSize),
                     new SQLiteParameter("@newESComments", newParticipant.EventSpecific.Comments),
@@ -955,23 +948,23 @@ namespace EventDirector
                 command.CommandText = "INSERT INTO changes (" +
                     "old_participant_id, old_first, old_last, old_street, old_city, old_state, old_zip, old_birthday, old_phone, old_email," +
                     "old_emergency_id, old_emergency_name, old_emergency_phone, old_emergency_email, old_event_spec_id, old_event_spec_event_id," +
-                    "old_event_spec_division_id, old_event_spec_bib, old_event_spec_chip, old_event_spec_checkedin, old_event_spec_shirtsize," +
+                    "old_event_spec_division_id, old_event_spec_bib, old_event_spec_checkedin, old_event_spec_shirtsize," +
                     "old_event_spec_comments, old_mobile, old_parent, old_country, old_street2, old_secondshirt, old_owes, old_hat, old_other," +
                     "old_gender, old_earlystart, old_fleece," +
                     "new_participant_id, new_first, new_last, new_street, new_city, new_state, new_zip, new_birthday, new_phone, new_email," +
                     "new_emergency_id, new_emergency_name, new_emergency_phone, new_emergency_email, new_event_spec_id, new_event_spec_event_id," +
-                    "new_event_spec_division_id, new_event_spec_bib, new_event_spec_chip, new_event_spec_checkedin, new_event_spec_shirtsize," +
+                    "new_event_spec_division_id, new_event_spec_bib, new_event_spec_checkedin, new_event_spec_shirtsize," +
                     "new_event_spec_comments, new_mobile, new_parent, new_country, new_street2, new_secondshirt, new_owes, new_hat, new_other," +
                     "new_gender, new_earlystart, new_fleece)" +
                     "VALUES" +
                     "(@oldPartId, @oldFirst, @oldLast, @oldStreet, @oldCity, @oldState, @oldZip, @oldBirthday, @oldPhone, @oldEmail," +
                     "@oldEId, @oldEName, @oldEPhone, @oldEEmail, @oldESId, @oldESEvId," +
-                    "@oldESDId, @oldESBib, @oldESChip, @oldESCheckedIn, @oldESShirtSize," +
+                    "@oldESDId, @oldESBib, @oldESCheckedIn, @oldESShirtSize," +
                     "@oldESComments, @oldMobile, @oldParent, @oldCountry, @oldStreet2, @oldShirt2, @oldOwes, @oldHat, @oldOther," +
                     "@oldGender, @oldEarlyStart, @oldFleece," +
                     "@newPartId, @newFirst, @newLast, @newStreet, @newCity, @newState, @newZip, @newBirthday, @newPhone, @newEmail," +
                     "@newEId, @newEName, @newEPhone, @newEEmail, @newESId, @newESEvId," +
-                    "@newESDId, @newESBib, @newESChip, @newESCheckedIn, @newESShirtSize," +
+                    "@newESDId, @newESBib, @newESCheckedIn, @newESShirtSize," +
                     "@newESComments, @newMobile, @newParent, @newCountry, @newStreet2, @newShirt2, @newOwes, @newHat, @newOther," +
                     "@newGender, @newEarlyStart, @newFleece)";
                 command.Parameters.AddRange(new SQLiteParameter[] {
@@ -993,7 +986,6 @@ namespace EventDirector
                     new SQLiteParameter("@oldESEvId", oldParticipant.EventSpecific.EventIdentifier),
                     new SQLiteParameter("@oldESDId", oldParticipant.EventSpecific.DivisionIdentifier),
                     new SQLiteParameter("@oldESBib", oldParticipant.EventSpecific.Bib),
-                    new SQLiteParameter("@oldESChip", oldParticipant.EventSpecific.Chip),
                     new SQLiteParameter("@oldESCheckedIn", oldParticipant.EventSpecific.CheckedIn),
                     new SQLiteParameter("@oldESShirtSize", oldParticipant.EventSpecific.ShirtSize),
                     new SQLiteParameter("@oldESComments", oldParticipant.EventSpecific.Comments),
@@ -1027,7 +1019,6 @@ namespace EventDirector
                     new SQLiteParameter("@newESEvId", newParticipant.EventSpecific.EventIdentifier),
                     new SQLiteParameter("@newESDId", newParticipant.EventSpecific.DivisionIdentifier),
                     new SQLiteParameter("@newESBib", newParticipant.EventSpecific.Bib),
-                    new SQLiteParameter("@newESChip", newParticipant.EventSpecific.Chip),
                     new SQLiteParameter("@newESCheckedIn", newParticipant.EventSpecific.CheckedIn),
                     new SQLiteParameter("@newESShirtSize", newParticipant.EventSpecific.ShirtSize),
                     new SQLiteParameter("@newESComments", newParticipant.EventSpecific.Comments),
@@ -1084,7 +1075,6 @@ namespace EventDirector
                             Convert.ToInt32(reader["new_event_spec_division_id"]),
                             divisions[Convert.ToInt32(reader["new_event_spec_division_id"])].ToString(),
                             Convert.ToInt32(reader["new_event_spec_bib"]),
-                            Convert.ToInt32(reader["new_event_spec_chip"]),
                             Convert.ToInt32(reader["new_event_spec_checkedin"]),
                             reader["new_event_spec_shirtsize"].ToString(),
                             reader["new_event_spec_comments"].ToString(),
@@ -1123,7 +1113,6 @@ namespace EventDirector
                             Convert.ToInt32(reader["old_event_spec_division_id"]),
                             oldDivName,
                             Convert.ToInt32(reader["old_event_spec_bib"]),
-                            Convert.ToInt32(reader["old_event_spec_chip"]),
                             Convert.ToInt32(reader["old_event_spec_checkedin"]),
                             reader["old_event_spec_shirtsize"].ToString(),
                             reader["old_event_spec_comments"].ToString(),
@@ -1377,7 +1366,6 @@ namespace EventDirector
                         Convert.ToInt32(reader["division_id"]),
                         reader["division_name"].ToString(),
                         Convert.ToInt32(reader["eventspecific_bib"]),
-                        Convert.ToInt32(reader["eventspecific_chip"]),
                         Convert.ToInt32(reader["eventspecific_checkedin"]),
                         reader["eventspecific_shirtsize"].ToString(),
                         reader["eventspecific_comments"].ToString(),
@@ -1440,7 +1428,6 @@ namespace EventDirector
                         Convert.ToInt32(reader["division_id"]),
                         reader["division_name"].ToString(),
                         Convert.ToInt32(reader["eventspecific_bib"]),
-                        Convert.ToInt32(reader["eventspecific_chip"]),
                         Convert.ToInt32(reader["eventspecific_checkedin"]),
                         reader["eventspecific_shirtsize"].ToString(),
                         reader["eventspecific_comments"].ToString(),

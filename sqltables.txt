@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS
     dayof_participant (
         dop_id INTEGER PRIMARY KEY,
         dop_event_id INTEGER NOT NULL,
+        dop_dividion_id INTEGER NOT NULL,
         dop_first VARCHAR NOT NULL,
         dop_last VARCHAR NOT NULL,
         dop_street VARCHAR,

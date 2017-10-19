@@ -70,7 +70,6 @@ namespace EventDirector
         // Event Specific binding stuffs
         public long EventIdentifier { get => eventSpecific.EventIdentifier; }
         public long Bib { get => eventSpecific.Bib; }
-        public long Chip { get => eventSpecific.Chip; }
         public string Division { get => eventSpecific.DivisionName; }
         public string CheckedIn { get => eventSpecific.CheckedIn == 0 ? "No" : "Yes"; }
         public string ShirtSize { get => eventSpecific.ShirtSize; }

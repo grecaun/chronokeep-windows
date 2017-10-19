@@ -55,6 +55,19 @@ namespace EventDirector
                 }
                 Data.AddData(dataLine);
             }
+            Finish();
+        }
+
+        public void Finish()
+        {
+            try
+            {
+                Log.D("Closing file.");
+                file.Close();
+            } catch
+            {
+                Log.D("Already closed.");
+            }
         }
     }
 }

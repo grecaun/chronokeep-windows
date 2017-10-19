@@ -8,7 +8,7 @@ namespace EventDirector
 {
     public class EventSpecific
     {
-        private int identifier, eventIdentifier, divisionIdentifier, bib, chip, checkedIn = 0, earlystart = 0;
+        private int identifier, eventIdentifier, divisionIdentifier, bib, checkedIn = 0, earlystart = 0;
         private String shirtSize, comments, divisionName, secondShirt, owes, hat, other, fleece;
 
         public EventSpecific() { }
@@ -18,7 +18,6 @@ namespace EventDirector
             int did,
             string divName,
             string bib,
-            string chip,
             int ci,
             string size,
             string comments,
@@ -34,7 +33,6 @@ namespace EventDirector
             this.divisionIdentifier = did;
             this.divisionName = divName ?? "";
             this.bib = Int32.TryParse(bib, out int tempBib) ? tempBib : -1;
-            this.chip = Int32.TryParse(chip, out int tempChip) ? tempChip : -1;
             this.checkedIn = ci == 0 ? 0 : 1;
             this.shirtSize = size ?? "";
             this.comments = comments ?? "";
@@ -52,7 +50,6 @@ namespace EventDirector
             int did,
             string divName,
             int bib,
-            int chip,
             int ci,
             string size,
             string comments,
@@ -69,7 +66,6 @@ namespace EventDirector
             this.divisionIdentifier = did;
             this.divisionName = divName ?? "";
             this.bib = bib;
-            this.chip = chip;
             this.checkedIn = ci != 0 ? 1 : 0;
             this.shirtSize = size ?? "";
             this.comments = comments ?? "";
@@ -88,7 +84,6 @@ namespace EventDirector
             this.divisionIdentifier = that.divisionIdentifier;
             this.divisionName = that.divisionName;
             this.bib = that.bib;
-            this.chip = that.chip;
             this.checkedIn = that.checkedIn;
             this.shirtSize = that.shirtSize;
             this.comments = that.comments;
@@ -102,14 +97,13 @@ namespace EventDirector
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", -1, -1, 0, "", "", "", "", "", "", 0, "");
+            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", "", "", "", 0, "");
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public int DivisionIdentifier { get => divisionIdentifier; set => divisionIdentifier = value; }
         public int Bib { get => bib; set => bib = value; }
-        public int Chip { get => chip; set => chip = value; }
         public int CheckedIn { get => checkedIn; set => checkedIn = value; }
         public string ShirtSize { get => shirtSize; set => shirtSize = value; }
         public string Comments { get => comments; set => comments = value; }

@@ -262,7 +262,6 @@ namespace EventDirector
                             thisDiv.Identifier,
                             thisDiv.Name,
                             data.Data[counter][keys[15]], // Bib number
-                            data.Data[counter][keys[16]], // chip
                             0,                            // checked in
                             data.Data[counter][keys[17]], // shirt size
                             data.Data[counter][keys[19]], // comments

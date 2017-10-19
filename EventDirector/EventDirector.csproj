@@ -90,6 +90,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="VfpClient, Version=0.5.14.0, Culture=neutral, PublicKeyToken=78aaa56544ab725d, processorArchitecture=x86">
+      <HintPath>..\packages\VfpClient.0.5.14.0\lib\net45\VfpClient.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
