@@ -21,7 +21,6 @@
                     <GridViewColumn Header="ID" DisplayMemberBinding="{Binding Identifier}" />
                     <GridViewColumn Header="EventID" DisplayMemberBinding="{Binding EventIdentifier}" />
                     <GridViewColumn Header="Bib" DisplayMemberBinding="{Binding Bib}" />
-                    <GridViewColumn Header="Chip" DisplayMemberBinding="{Binding Chip}" />
                     <GridViewColumn Header="Division" DisplayMemberBinding="{Binding Division}" />
                     <GridViewColumn Header="First" DisplayMemberBinding="{Binding FirstName}" />
                     <GridViewColumn Header="Last" DisplayMemberBinding="{Binding LastName}" />

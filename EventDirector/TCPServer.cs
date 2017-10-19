@@ -157,9 +157,14 @@ namespace EventDirector
                     case "client_kiosk_dayof_approve":
                         Log.D("Client day of participant approve received.");
                         JsonClientDayOfApprove dayofPartApprove = jsonObject.ToObject<JsonClientDayOfApprove>();
-                        if (database.ApproveDayOfParticipant(dayofPartApprove.EventId, dayofPartApprove.DayOfId, dayofPartApprove.Specific))
+                        if (database.ApproveDayOfParticipant(dayofPartApprove.EventId, dayofPartApprove.DayOfId, dayofPartApprove.Bib, dayofPartApprove.EarlyStart))
                         {
+                            Log.D("Approved.");
                             BroadcastJson(jsonHandler.GetJsonServerKioskDayOfRemove(dayofPartApprove.EventId, dayofPartApprove.DayOfId));
+                        }
+                        else
+                        {
+                            Log.D("Denied.");
                         }
                         break;
                     case "client_kiosk_dayof":

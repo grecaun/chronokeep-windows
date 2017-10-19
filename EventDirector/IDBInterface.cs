@@ -53,8 +53,8 @@ namespace EventDirector
         DayOfParticipant GetDayOfParticipant(DayOfParticipant part);
         List<DayOfParticipant> GetDayOfParticipants(int eventId);
         List<DayOfParticipant> GetDayOfParticipants();
-        bool ApproveDayOfParticipant(int eventId, int identifier, EventSpecific specific);
-        bool ApproveDayOfParticipant(DayOfParticipant part, EventSpecific specific);
+        bool ApproveDayOfParticipant(int eventId, int identifier, int Bib, int earlystart);
+        bool ApproveDayOfParticipant(DayOfParticipant part, int Bib, int earlystart);
         void SetLiabilityWaiver(int eventId, String waiver);
         String GetLiabilityWaiver(int eventId);
 

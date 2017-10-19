@@ -1536,6 +1536,7 @@ namespace EventDirector
                 output.Add(new DayOfParticipant(
                     Convert.ToInt32(reader["dop_id"]),
                     Convert.ToInt32(reader["dop_event_id"]),
+                    Convert.ToInt32(reader["dop_division_id"]),
                     reader["dop_first"].ToString(),
                     reader["dop_last"].ToString(),
                     reader["dop_street"].ToString(),
@@ -1560,18 +1561,34 @@ namespace EventDirector
             return output;
         }
 
-        public bool ApproveDayOfParticipant(int eventId, int identifier, EventSpecific specific)
+        public bool ApproveDayOfParticipant(int eventId, int identifier, int bib, int earlystart)
         {
             Participant newPart = null;
             using (SQLiteCommand command = connection.CreateCommand())
             {
-                command.CommandText = "SELECT * FROM dayof_participant WHERE dop_id=@id;";
+                command.CommandText = "SELECT * FROM dayof_participant AS dop, divisions AS d WHERE dop.dop_id=@id AND dop.dop_division_id=d.division_id;";
                 command.Parameters.Add(new SQLiteParameter("@id", identifier));
+                Log.D("Identifier is " + identifier);
                 using (SQLiteDataReader reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        EventSpecific newSpecific = new EventSpecific(specific);
+                        Log.D("We've found something.");
+                        EventSpecific newSpecific = new EventSpecific(
+                            Convert.ToInt32(reader["dop_event_id"]),
+                            Convert.ToInt32(reader["dop_division_id"]),
+                            reader["division_name"].ToString(),
+                            bib.ToString(),
+                            1,
+                            "",
+                            reader["dop_comments"].ToString(),
+                            "",
+                            "",
+                            "",
+                            reader["dop_other"].ToString(),
+                            earlystart,
+                            ""
+                            );
                         newSpecific.Comments = reader["dop_comments"].ToString();
                         newSpecific.Other = reader["dop_other"].ToString();
                         newPart = new Participant(
@@ -1617,9 +1634,9 @@ namespace EventDirector
             return false;
         }
 
-        public bool ApproveDayOfParticipant(DayOfParticipant part, EventSpecific specific)
+        public bool ApproveDayOfParticipant(DayOfParticipant part, int bib, int earlystart)
         {
-            return ApproveDayOfParticipant(part.EventIdentifier, part.Identifier, specific);
+            return ApproveDayOfParticipant(part.EventIdentifier, part.Identifier, bib, earlystart);
         }
 
         public void SetLiabilityWaiver(int eventId, string waiver)

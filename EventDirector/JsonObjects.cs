@@ -74,7 +74,8 @@ namespace EventDirector
         public String Command { get; set; }
         public int EventId { get; set; }
         public int DayOfId { get; set; }
-        public EventSpecific Specific { get; set; }
+        public int Bib { get; set; }
+        public int EarlyStart { get; set; }
     }
 
     public class JsonClientDayOfParticipants
