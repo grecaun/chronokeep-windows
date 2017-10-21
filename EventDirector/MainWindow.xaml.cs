@@ -143,6 +143,18 @@ namespace EventDirector
                     doPartList = new DayOfParticipantsListWindow(database, this);
                     doPartList.Show();
                     break;
+                case 11:
+                    Log.D("Import participants - Excel");
+                    break;
+                case 12:
+                    Log.D("Export Participants - Excel");
+                    break;
+                case 13:
+                    Log.D("Export Changes - CSV");
+                    break;
+                case 14:
+                    Log.D("Export Changes - Excel");
+                    break;
                 default:
                     break;
             }

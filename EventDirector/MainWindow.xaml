@@ -18,10 +18,14 @@
                 <MenuItem Header="_Exit" Click="MenuItem_Click" Uid="4" />
             </MenuItem>
             <MenuItem Header="Import">
-                <MenuItem Header="_Import Participants (CSV)" Click="MenuItem_Click" Uid="5" />
+                <MenuItem Header="Import Participants (CSV)" Click="MenuItem_Click" Uid="5" />
+                <MenuItem Header="Import Participants (Excel)" Click="MenuItem_Click" Uid="11" />
             </MenuItem>
             <MenuItem Header="Export">
-                <MenuItem Header="_Export Participants (CSV)" Click="MenuItem_Click" Uid="8" />
+                <MenuItem Header="Export Participants (CSV)" Click="MenuItem_Click" Uid="8" />
+                <MenuItem Header="Export Participants (Excel)" Click="MenuItem_Click" Uid="12" />
+                <MenuItem Header="Export Changes (CSV)" Click="MenuItem_Click" Uid="13" />
+                <MenuItem Header="Export Changes (Excel)" Click="MenuItem_Click" Uid="14" />
             </MenuItem>
             <MenuItem Header="Event Options">
                 <MenuItem Header="List Participants" Click="MenuItem_Click" Uid="7" />
