@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    public class CSVImporter
+    public class CSVImporter : IDataImporter
     {
         Regex regex = new Regex("\".*\",|[^,]*,|[^,]*$");
 
@@ -35,7 +35,7 @@ namespace EventDirector
             {
                 headers[counter++] = m.Value.Replace('"',' ').TrimEnd(',').Trim();
             }
-            Data = new ImportData(headers, FilePath);
+            Data = new ImportData(headers, FilePath, ImportData.FileType.CSV);
         }
 
         public void FetchData()

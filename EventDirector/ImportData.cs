@@ -11,13 +11,15 @@ namespace EventDirector
     public class ImportData
     {
         public String FileName { get; private set; }
+        public FileType Type { get; private set; }
         public string[] Headers { get; private set; }
         public List<String[]> Data { get; private set; }
         Regex regex = new Regex("[^\\\\]*\\.");
 
 
-        public ImportData(string[] headers, string filename)
+        public ImportData(string[] headers, string filename, FileType type)
         {
+            this.Type = type;
             FileName = regex.Match(filename).Value.TrimEnd('.');
             Log.D(FileName + " is the filename.");
             string[] newheaders = new string[headers.Length + 1];
@@ -63,11 +65,13 @@ namespace EventDirector
             HashSet<String> values = new HashSet<string>();
             foreach (string[] line in Data)
             {
-                values.Add(line[index].ToLower());
+                values.Add(Utils.UppercaseFirst(line[index].ToLower()));
             }
             string[] output = new string[values.Count];
             values.CopyTo(output);
             return output;
         }
+
+        public enum FileType { EXCEL, CSV }
     }
 }

@@ -106,7 +106,10 @@ namespace EventDirector
                         try
                         {
                             CSVImporter importer = new CSVImporter(dialog.FileName);
-                            importer.FetchHeaders();
+                            await Task.Run(() =>
+                            {
+                                importer.FetchHeaders();
+                            });
                             ImportFileWindow win = new ImportFileWindow(this, importer, database);
                             windows.Add(win);
                             win.Show();
@@ -145,6 +148,24 @@ namespace EventDirector
                     break;
                 case 11:
                     Log.D("Import participants - Excel");
+                    Log.D("Import (CSV)");
+                    OpenFileDialog excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx)|*.xlsx|All files|*" };
+                    if (excel_dialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            ExcelImporter excel = new ExcelImporter(excel_dialog.FileName);
+                            await Task.Run(() =>
+                            {
+                                excel.FetchHeaders();
+                            });
+                            ImportFileWindow excelImp = new ImportFileWindow(this, excel, database);
+                            windows.Add(excelImp);
+                            excelImp.Show();
+                        }
+                        catch
+                        {}
+                    }
                     break;
                 case 12:
                     Log.D("Export Participants - Excel");

@@ -119,10 +119,12 @@
     <Compile Include="ExampleLiabilityWaiver.xaml.cs">
       <DependentUpon>ExampleLiabilityWaiver.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ExcelImporter.cs" />
     <Compile Include="ExportParticipants.xaml.cs">
       <DependentUpon>ExportParticipants.xaml</DependentUpon>
     </Compile>
     <Compile Include="IChangeUpdater.cs" />
+    <Compile Include="IDataImporter.cs" />
     <Compile Include="IDBInterface.cs" />
     <Compile Include="Division.cs" />
     <Compile Include="EmergencyContact.cs" />
@@ -171,6 +173,7 @@
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils.cs" />
     <Compile Include="ZeroConf.cs" />
     <Page Include="DayOfParticipantsList.xaml">
       <SubType>Designer</SubType>
@@ -301,6 +304,15 @@
       <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
       <VersionMajor>2</VersionMajor>
       <VersionMinor>7</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>8</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>

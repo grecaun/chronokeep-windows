@@ -20,9 +20,10 @@ namespace EventDirector
     /// </summary>
     public partial class ImportFileWindow : Window
     {
-        CSVImporter importer;
+        IDataImporter importer;
         MainWindow mainWindow;
         IDBInterface database;
+        Boolean init = true;
         static string[] human_fields = new string[] {
             "",
             "First Name",
@@ -54,7 +55,7 @@ namespace EventDirector
             "Fleece"
         };
 
-        public ImportFileWindow(MainWindow mainWindow, CSVImporter importer, IDBInterface database)
+        public ImportFileWindow(MainWindow mainWindow, IDataImporter importer, IDBInterface database)
         {
             InitializeComponent();
             this.importer = importer;
@@ -65,6 +66,19 @@ namespace EventDirector
             for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
             {
                 headerListBox.Items.Add(new AListBoxItem(importer.Data.Headers[i], i));
+            }
+            if (importer.Data.Type == ImportData.FileType.EXCEL)
+            {
+                SheetsLabel.Visibility = Visibility.Visible;
+                SheetsBox.Visibility = Visibility.Visible;
+                SheetsBox.ItemsSource = ((ExcelImporter)importer).SheetNames;
+                SheetsBox.SelectedIndex = 0;
+                init = false;
+                HeaderWindow.Margin = new Thickness(0, 80, 0, 0);
+                Done.Margin = new Thickness(6, 47, 77, 10);
+                Cancel.Margin = new Thickness(77, 47, 6, 10);
+                date.Margin = new Thickness(10, 47, 148, 10);
+                eventLabel.HorizontalAlignment = HorizontalAlignment.Center;
             }
         }
 
@@ -243,7 +257,7 @@ namespace EventDirector
                 List<Participant> participants = new List<Participant>();
                 for (int counter = 0; counter < numEntries; counter++)
                 {
-                    Division thisDiv = (Division)divHash[data.Data[counter][keys[23]].ToLower()];
+                    Division thisDiv = (Division)divHash[Utils.UppercaseFirst(data.Data[counter][keys[23]].ToLower())];
                     participants.Add(new Participant(
                         data.Data[counter][keys[1]], // First Name
                         data.Data[counter][keys[2]], // Last Name
@@ -289,6 +303,7 @@ namespace EventDirector
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            importer.Finish();
             Log.D("Import - Cancel button clicked.");
             this.Close();
         }
@@ -340,7 +355,7 @@ namespace EventDirector
                 HeaderBox = new ComboBox
                 {
                     ItemsSource = human_fields,
-                    SelectedIndex = GetHeaderBoxIndex(s.ToLower()),
+                    SelectedIndex = GetHeaderBoxIndex(s.ToLower().Trim()),
                 };
                 theGrid.Children.Add(HeaderBox);
                 Grid.SetColumn(HeaderBox, 1);
@@ -350,6 +365,21 @@ namespace EventDirector
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             mainWindow.WindowClosed(this);
+        }
+
+        private void SheetsBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (init) { return; }
+            int selection = ((ComboBox)sender).SelectedIndex;
+            Log.D("You've selected number " + selection);
+            ExcelImporter excelImporter = (ExcelImporter)importer;
+            excelImporter.ChangeSheet(selection + 1);
+            excelImporter.FetchHeaders();
+            headerListBox.Items.Clear();
+            for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
+            {
+                headerListBox.Items.Add(new AListBoxItem(importer.Data.Headers[i], i));
+            }
         }
     }
 }
