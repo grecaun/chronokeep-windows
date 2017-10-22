@@ -10,12 +10,13 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File" >
-                <MenuItem Header="_Settings" Click="MenuItem_Click" Uid="1" />
+                <MenuItem Header="About" Click="MenuItem_Click" Uid="15" />
+                <MenuItem Header="Settings" Click="MenuItem_Click" Uid="1" />
                 <Separator />
-                <MenuItem Header="_Clear Database" Click="MenuItem_Click" Uid="3" />
-                <MenuItem Header="_Rebuild Database" Click="MenuItem_Click" Uid="2" />
+                <MenuItem Header="Clear Database" Click="MenuItem_Click" Uid="3" />
+                <MenuItem Header="Rebuild Database" Click="MenuItem_Click" Uid="2" />
                 <Separator />
-                <MenuItem Header="_Exit" Click="MenuItem_Click" Uid="4" />
+                <MenuItem Header="Exit" Click="MenuItem_Click" Uid="4" />
             </MenuItem>
             <MenuItem Header="Import">
                 <MenuItem Header="Import Participants (CSV)" Click="MenuItem_Click" Uid="5" />

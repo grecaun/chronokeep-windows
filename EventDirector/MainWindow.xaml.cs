@@ -33,6 +33,7 @@ namespace EventDirector
         public MainWindow()
         {
             InitializeComponent();
+            CheatingInit();
             String dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), programDir);
             String path = System.IO.Path.Combine(dirPath, dbName);
             Log.D("Looking for database file.");
@@ -131,7 +132,7 @@ namespace EventDirector
                     break;
                 case 8:
                     Log.D("Export participants.");
-                    ExportParticipants export = new ExportParticipants(database, this);
+                    ExportParticipantsCSV export = new ExportParticipantsCSV(database, this);
                     windows.Add(export);
                     export.Show();
                     break;
@@ -175,6 +176,12 @@ namespace EventDirector
                     break;
                 case 14:
                     Log.D("Export Changes - Excel");
+                    break;
+                case 15:
+                    Log.D("About");
+                    About aboutWin = new About(this);
+                    windows.Add(aboutWin);
+                    aboutWin.Show();
                     break;
                 default:
                     break;
@@ -752,6 +759,14 @@ namespace EventDirector
         public void AddWindow(Window win)
         {
             windows.Add(win);
+        }
+
+        private async void CheatingInit()
+        {
+            await Task.Run(() =>
+            {
+                Utils.UppercaseFirst("Something");
+            });
         }
     }
 }

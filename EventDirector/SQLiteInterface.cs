@@ -12,7 +12,6 @@ namespace EventDirector
     {
         private readonly int version = 5;
         SQLiteConnection connection;
-        String programDir = "EventDirector";
 
         public SQLiteInterface(String info)
         {
@@ -1589,8 +1588,6 @@ namespace EventDirector
                             earlystart,
                             ""
                             );
-                        newSpecific.Comments = reader["dop_comments"].ToString();
-                        newSpecific.Other = reader["dop_other"].ToString();
                         newPart = new Participant(
                             reader["dop_first"].ToString(),
                             reader["dop_last"].ToString(),

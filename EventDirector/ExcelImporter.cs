@@ -13,7 +13,6 @@ namespace EventDirector
     {
         public ImportData Data { get; private set; }
         string FilePath;
-        Application _excelApp;
         Workbook workBook;
         Worksheet currentSheet;
         public List<string> SheetNames { get; private set; }
@@ -21,11 +20,12 @@ namespace EventDirector
 
         public ExcelImporter(String filename)
         {
-            _excelApp = new Application();
+            Log.D("Creating importer object.");
             FilePath = filename;
             try
             {
-                workBook = _excelApp.Workbooks.Open(FilePath, ReadOnly: true);
+                Log.D("Opening workbook.");
+                workBook = Utils.excelApp.Workbooks.Open(FilePath, ReadOnly: true);
                 NumSheets = workBook.Sheets.Count;
                 if (NumSheets > 0)
                 {
@@ -61,7 +61,7 @@ namespace EventDirector
             }
         }
 
-        public async void FetchHeaders()
+        public void FetchHeaders()
         {
             Log.D("Getting headers from excel file.");
             try
@@ -122,7 +122,6 @@ namespace EventDirector
             Log.D("Closing file.");
             workBook.Close();
             Marshal.ReleaseComObject(workBook);
-            _excelApp = null;
         }
     }
 }

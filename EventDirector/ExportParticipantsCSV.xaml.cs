@@ -18,14 +18,14 @@ namespace EventDirector
     /// <summary>
     /// Interaction logic for ExportParticipants.xaml
     /// </summary>
-    public partial class ExportParticipants : Window
+    public partial class ExportParticipantsCSV : Window
     {
         IDBInterface database;
         MainWindow mainWindow;
         String programDir = "EventDirector";
         String exportDir = "Exports";
 
-        public ExportParticipants(IDBInterface database, MainWindow mainWindow)
+        public ExportParticipantsCSV(IDBInterface database, MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
             this.database = database;
