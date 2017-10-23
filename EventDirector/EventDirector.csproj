@@ -281,7 +281,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="keys.pfx" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -401,6 +403,6 @@
     <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets'))" />
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>"C:\Program Files\Git\bin\git.exe" describe --long &gt; "$(ProjectDir)\version.txt"</PreBuildEvent>
+    <PreBuildEvent>"C:\Program Files\Git\bin\git.exe" describe --tag &gt; "$(ProjectDir)\version.txt"</PreBuildEvent>
   </PropertyGroup>
 </Project>
