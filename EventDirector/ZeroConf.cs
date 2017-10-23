@@ -13,7 +13,7 @@ namespace EventDirector
         bool keepAlive = true;
         UdpClient udpClient;
         String servername = "Northwest Endurance Events";
-        String serverid;
+        public static String serverid;
 
         public ZeroConf(string name)
         {

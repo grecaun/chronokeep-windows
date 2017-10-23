@@ -131,10 +131,10 @@ namespace EventDirector
                     partList.Show();
                     break;
                 case 8:
-                    Log.D("Export participants.");
-                    ExportParticipantsCSV export = new ExportParticipantsCSV(database, this);
-                    windows.Add(export);
-                    export.Show();
+                    Log.D("Export participants - CSV.");
+                    ExportParticipants exportPartsCSV = new ExportParticipants(database, this);
+                    windows.Add(exportPartsCSV);
+                    exportPartsCSV.Show();
                     break;
                 case 9:
                     Log.D("Setup kiosk");
@@ -149,7 +149,6 @@ namespace EventDirector
                     break;
                 case 11:
                     Log.D("Import participants - Excel");
-                    Log.D("Import (CSV)");
                     OpenFileDialog excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx)|*.xlsx|All files|*" };
                     if (excel_dialog.ShowDialog() == true)
                     {
@@ -170,12 +169,21 @@ namespace EventDirector
                     break;
                 case 12:
                     Log.D("Export Participants - Excel");
+                    ExportParticipants exportPartsExcel = new ExportParticipants(database, this, Utils.FileType.EXCEL);
+                    windows.Add(exportPartsExcel);
+                    exportPartsExcel.Show();
                     break;
                 case 13:
                     Log.D("Export Changes - CSV");
+                    ExportChanges exportChangeCSV = new ExportChanges(database, this);
+                    windows.Add(exportChangeCSV);
+                    exportChangeCSV.Show();
                     break;
                 case 14:
                     Log.D("Export Changes - Excel");
+                    ExportChanges exportChangesExcel = new ExportChanges(database, this, Utils.FileType.EXCEL);
+                    windows.Add(exportChangesExcel);
+                    exportChangesExcel.Show();
                     break;
                 case 15:
                     Log.D("About");
@@ -634,6 +642,7 @@ namespace EventDirector
             tcpServerThread.Abort();
             zeroConf.Stop();
             zeroConfThread.Abort();
+            Utils.excelApp.Quit();
         }
 
         private void EventsToggleRegistrationButton_Click(object sender, RoutedEventArgs e)

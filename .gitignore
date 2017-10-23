@@ -2,3 +2,4 @@ bin/
 obj/
 .vs/
 version.txt
+*.pfx

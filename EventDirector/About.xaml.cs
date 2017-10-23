@@ -39,6 +39,8 @@ namespace EventDirector
 
             Log.D("Version: " + gitVersion);
             VersionLabel.Content = gitVersion;
+            Log.D("Unique token: " + ZeroConf.serverid);
+            TokenLabel.Content = ZeroConf.serverid;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

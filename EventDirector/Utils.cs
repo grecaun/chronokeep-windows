@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    class Utils
+    public class Utils
     {
         public static readonly Application excelApp = new Application();
 
@@ -17,5 +17,7 @@ namespace EventDirector
             charArray[0] = char.ToUpper(charArray[0]);
             return new string(charArray);
         }
+
+        public enum FileType { CSV, EXCEL }
     }
 }

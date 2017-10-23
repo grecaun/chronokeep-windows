@@ -31,8 +31,8 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>index.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>5</ApplicationRevision>
-    <ApplicationVersion>0.1.1.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.1.6.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -79,8 +79,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>keys.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -124,8 +123,11 @@
       <DependentUpon>ExampleLiabilityWaiver.xaml</DependentUpon>
     </Compile>
     <Compile Include="ExcelImporter.cs" />
-    <Compile Include="ExportParticipantsCSV.xaml.cs">
-      <DependentUpon>ExportParticipantsCSV.xaml</DependentUpon>
+    <Compile Include="ExportChanges.xaml.cs">
+      <DependentUpon>ExportChanges.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExportParticipants.xaml.cs">
+      <DependentUpon>ExportParticipants.xaml</DependentUpon>
     </Compile>
     <Compile Include="IChangeUpdater.cs" />
     <Compile Include="IDataImporter.cs" />
@@ -191,7 +193,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExportParticipantsCSV.xaml">
+    <Page Include="ExportChanges.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExportParticipants.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -274,6 +280,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="keys.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
