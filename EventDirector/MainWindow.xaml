@@ -24,9 +24,9 @@
             </MenuItem>
             <MenuItem Header="Export">
                 <MenuItem Header="Export Participants (CSV)" Click="MenuItem_Click" Uid="8" />
-                <MenuItem Header="Export Participants (Excel)" Click="MenuItem_Click" Uid="12" />
+                <MenuItem x:Name="exportPartMenuItem" Header="Export Participants (Excel)" Click="MenuItem_Click" Uid="12" Visibility="Collapsed"/>
                 <MenuItem Header="Export Changes (CSV)" Click="MenuItem_Click" Uid="13" />
-                <MenuItem Header="Export Changes (Excel)" Click="MenuItem_Click" Uid="14" />
+                <MenuItem x:Name="exportChangesMenuItem" Header="Export Changes (Excel)" Click="MenuItem_Click" Uid="14" Visibility="Collapsed"/>
             </MenuItem>
             <MenuItem Header="Event Options">
                 <MenuItem Header="List Participants" Click="MenuItem_Click" Uid="7" />

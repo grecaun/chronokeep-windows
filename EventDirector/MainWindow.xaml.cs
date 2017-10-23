@@ -59,6 +59,28 @@ namespace EventDirector
             zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
             zeroConfThread.Start();
             AsyncUpdateChangesBox();
+            UpdateExportOptions();
+        }
+
+        private async void UpdateExportOptions()
+        {
+            bool excelEnabled = false;
+            await Task.Run(() =>
+            {
+                excelEnabled = Utils.ExcelEnabled();
+            });
+            if (excelEnabled)
+            {
+                Log.D("Excel is allowed.");
+                exportPartMenuItem.Visibility = Visibility.Visible;
+                exportChangesMenuItem.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Log.D("Excel is not allowed.");
+                exportPartMenuItem.Visibility = Visibility.Collapsed;
+                exportPartMenuItem.Visibility = Visibility.Collapsed;
+            }
         }
 
         private async void MenuItem_Click(object sender, RoutedEventArgs e)
