@@ -154,6 +154,7 @@ namespace EventDirector
                         database.AddDayOfParticipant(dayofPartAdd.Participant);
                         if (database.GetPrintOption(dayofPartAdd.EventId) == 1)
                         {
+                            Log.D("Print option is set to 1.");
                             List<Division> divs = database.GetDivisions(dayofPartAdd.EventId);
                             foreach (Division d in divs)
                             {
