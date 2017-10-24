@@ -74,12 +74,14 @@ namespace EventDirector
                 Log.D("Excel is allowed.");
                 exportPartMenuItem.Visibility = Visibility.Visible;
                 exportChangesMenuItem.Visibility = Visibility.Visible;
+                importExcel.Visibility = Visibility.Visible;
             }
             else
             {
                 Log.D("Excel is not allowed.");
                 exportPartMenuItem.Visibility = Visibility.Collapsed;
                 exportPartMenuItem.Visibility = Visibility.Collapsed;
+                importExcel.Visibility = Visibility.Collapsed;
             }
         }
 

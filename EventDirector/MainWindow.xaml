@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1300"
+        Title="MainWindow" Height="750" Width="1300" MinHeight="500" MinWidth="800"
         Closing="Window_Closing">
     <DockPanel>
         <Menu DockPanel.Dock="Top">
@@ -20,7 +20,7 @@
             </MenuItem>
             <MenuItem Header="Import">
                 <MenuItem Header="Import Participants (CSV)" Click="MenuItem_Click" Uid="5" />
-                <MenuItem Header="Import Participants (Excel)" Click="MenuItem_Click" Uid="11" />
+                <MenuItem x:Name="importExcel" Header="Import Participants (Excel)" Click="MenuItem_Click" Uid="11" Visibility="Collapsed" />
             </MenuItem>
             <MenuItem Header="Export">
                 <MenuItem Header="Export Participants (CSV)" Click="MenuItem_Click" Uid="8" />
