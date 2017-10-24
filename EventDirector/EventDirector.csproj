@@ -171,6 +171,7 @@
     <Compile Include="ParticipantsList.xaml.cs">
       <DependentUpon>ParticipantsList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Printerface.cs" />
     <Compile Include="SQLiteInterface.cs" />
     <Compile Include="TCPServer.cs" />
     <Compile Include="TempUdpThread.cs" />

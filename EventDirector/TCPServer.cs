@@ -152,6 +152,18 @@ namespace EventDirector
                         JsonClientDayOfAdd dayofPartAdd = jsonObject.ToObject<JsonClientDayOfAdd>();
                         Log.D("First '" + dayofPartAdd.Participant.First + "' Last '" + dayofPartAdd.Participant.Last + "'");
                         database.AddDayOfParticipant(dayofPartAdd.Participant);
+                        if (database.GetPrintOption(dayofPartAdd.EventId) == 1)
+                        {
+                            List<Division> divs = database.GetDivisions(dayofPartAdd.EventId);
+                            foreach (Division d in divs)
+                            {
+                                if (d.Identifier == dayofPartAdd.Participant.DivisionIdentifier)
+                                {
+                                    Printerface.PrintDayOf(dayofPartAdd.Participant, d);
+                                    break;
+                                }
+                            }
+                        }
                         BroadcastJson(jsonHandler.GetJsonServerKioskDayOfAdd(dayofPartAdd.EventId, dayofPartAdd.Participant));
                         break;
                     case "client_kiosk_dayof_approve":

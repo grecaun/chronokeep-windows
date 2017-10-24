@@ -25,6 +25,7 @@ namespace EventDirector
         IDBInterface database;
         String liabilityWaiver;
         int eventId;
+        int print = 0;
 
         public KioskSettup(MainWindow mainWindow, IDBInterface database)
         {
@@ -41,10 +42,11 @@ namespace EventDirector
             KioskFrame.Content = new KioskSettupPage2(this, database);
         }
 
-        public void GotoPage3(int eventId)
+        public void GotoPage3(int eventId, int print)
         {
             this.eventId = eventId;
-            Log.D("Showing third page.");
+            this.print = print;
+            Log.D("Showing third page. EventId is " + eventId + " print is set to " + print);
             KioskFrame.Content = new KioskSettupPage3(this);
         }
 
@@ -73,6 +75,7 @@ namespace EventDirector
             }
             Log.D("We've clicked finish. Event id is " + eventId + " and the waiver is " + this.liabilityWaiver);
             database.SetLiabilityWaiver(eventId, this.liabilityWaiver);
+            database.SetPrintOption(eventId, print);
             mainWindow.EnableKiosk(eventId);
             this.Close();
         }

@@ -10,7 +10,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 5;
+        private readonly int version = 6;
         SQLiteConnection connection;
 
         public SQLiteInterface(String info)
@@ -94,6 +94,7 @@ namespace EventDirector
                         queries.Add("CREATE TABLE IF NOT EXISTS kiosk (" +
                             "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                             "kiosk_waiver_text VARCHAR NOT NULL," +
+                            "kiosk_print_new INTEGER DEFAULT 0," +
                             "UNIQUE (event_id) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS divisions (" +
@@ -162,6 +163,7 @@ namespace EventDirector
                         queries.Add("CREATE TABLE IF NOT EXISTS kiosk (" +
                             "event_id INTEGER NOT NULL," +
                             "kiosk_waiver_text VARCHAR NOT NULL," +
+                            "kiosk_print_new INTEGER DEFAULT 0," +
                             "UNIQUE (event_id) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS divisions (" +
@@ -378,6 +380,15 @@ namespace EventDirector
                     {
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE dayof_participant ADD dop_division_id INTEGER NOT NULL DEFAULT -1;UPDATE settings SET version=5 WHERE version=4;";
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    goto case 5;
+                case 5:
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE kiosk ADD kiosk_print_new INTEGER DEFAULT 0; UPDATE settings SET version=6 WHERE version=5;";
                         command.ExecuteNonQuery();
                         transaction.Commit();
                     }
@@ -1712,6 +1723,43 @@ namespace EventDirector
                 }
             }
             return output;
+        }
+
+        public void SetPrintOption(int eventId, int print)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "UPDATE kiosk SET kiosk_print_new=@print WHERE event_id=@eventId;";
+                command.Parameters.AddRange(new SQLiteParameter[]
+                {
+                    new SQLiteParameter("print", print),
+                    new SQLiteParameter("eventId", eventId)
+                });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public int GetPrintOption(int eventId)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM kiosk WHERE event_id=@eventId";
+            command.Parameters.Add(new SQLiteParameter("eventId", eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            int outval = 0;
+            if (reader.Read())
+            {
+                try
+                {
+                    outval = Convert.ToInt32(reader["kiosk_print_new"]);
+                }
+                catch
+                {
+                    outval = 0;
+                }
+            }
+            return outval;
         }
     }
 }

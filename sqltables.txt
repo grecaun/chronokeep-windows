@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS
     kiosk (
         event_id INTEGER NOT NULL REFERENCES events(event_id),
         kiosk_waiver_text VARCHAR NOT NULL,
+        kiosk_print_new INTEGER DEFAULT 0,
         UNIQUE (event_id) ON CONFLICT IGNORE
     )
 

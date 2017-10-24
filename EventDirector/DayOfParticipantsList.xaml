@@ -15,6 +15,7 @@
         <ComboBox x:Name="dofEventComboBox" Grid.Row="0" Height="25" Width="150" HorizontalAlignment="Left" Margin="65,0,0,0" SelectedIndex="0" SelectionChanged="EventComboBox_SelectionChanged">
             <ComboBoxItem Content="All" />
         </ComboBox>
+        <Button Content="Print Participant" HorizontalAlignment="Left" Margin="225,0,0,0" Grid.Row="0" Height="25" Width="130" Click="PrintParticipant" />
         <ListView x:Name="participantsListView" Grid.Row="1" Width="Auto" Height="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <ListView.View>
                 <GridView>

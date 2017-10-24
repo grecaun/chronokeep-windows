@@ -94,6 +94,28 @@ namespace EventDirector
             participantsListView.ItemsSource = participants;
         }
 
+        private void PrintParticipant(object sender, RoutedEventArgs e)
+        {
+            if (participantsListView.SelectedIndex >= 0)
+            {
+                Log.D("Printing actual participant");
+                DayOfParticipant part = (DayOfParticipant)participantsListView.SelectedItem;
+                List<Division> divs = database.GetDivisions(part.EventIdentifier);
+                foreach (Division d in divs)
+                {
+                    if (d.Identifier == part.DivisionIdentifier)
+                    {
+                        Printerface.PrintDayOfShowDialog(part, d);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Log.D("No participant found.");
+            }
+        }
+
         private void EventComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Log.D("Event selected.");

@@ -57,6 +57,8 @@ namespace EventDirector
         bool ApproveDayOfParticipant(DayOfParticipant part, int Bib, int earlystart);
         void SetLiabilityWaiver(int eventId, String waiver);
         String GetLiabilityWaiver(int eventId);
+        void SetPrintOption(int eventId, int print);
+        int GetPrintOption(int eventId);
 
         void AddChange(Participant newParticipant, Participant oldParticipant);
 
