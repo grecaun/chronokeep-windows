@@ -12,7 +12,7 @@
         <DatePicker x:Name="date" Height="25" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,148,10" />
         <Button x:Name="Done" Height="25" Width="65" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Done" Margin="6,10,77,10" Click="Done_Click"/>
         <Button x:Name="Cancel" Height="25" Width="65" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Cancel" Margin="77,10,6,10" Click="Cancel_Click"/>
-        <Grid x:Name="HeaderWindow" VerticalAlignment="Bottom" Margin="0,80,0,0" >
+        <Grid x:Name="HeaderWindow" VerticalAlignment="Top" Margin="0,80,0,0" >
             <ListBox x:Name="headerListBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" >
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">

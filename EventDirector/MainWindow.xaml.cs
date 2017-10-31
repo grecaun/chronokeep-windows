@@ -529,8 +529,10 @@ namespace EventDirector
                 eventsToggleEarlyStartButton.Visibility = Visibility.Visible;
                 eventsToggleRegistrationButton.Visibility = Visibility.Visible;
                 eventsToggleResultsButton.Visibility = Visibility.Visible;
+                divisionsLabel.Visibility = Visibility.Visible;
                 divisionsAddButton.Visibility = Visibility.Visible;
                 divisionsListView.Visibility = Visibility.Visible;
+                timingPointsLabel.Visibility = Visibility.Visible;
                 timingPointsAddButton.Visibility = Visibility.Visible;
                 timingPointsListView.Visibility = Visibility.Visible;
                 UpdateDivisionsBox(anEvent.Identifier);
@@ -591,14 +593,16 @@ namespace EventDirector
                 eventsToggleEarlyStartButton.Visibility = Visibility.Hidden;
                 eventsToggleRegistrationButton.Visibility = Visibility.Hidden;
                 eventsToggleResultsButton.Visibility = Visibility.Hidden;
+                divisionsLabel.Visibility = Visibility.Hidden;
                 divisionsAddButton.Visibility = Visibility.Hidden;
                 divisionsListView.Visibility = Visibility.Hidden;
+                divisionsModifyButton.Visibility = Visibility.Hidden;
+                divisionsRemoveButton.Visibility = Visibility.Hidden;
+                timingPointsLabel.Visibility = Visibility.Hidden;
                 timingPointsAddButton.Visibility = Visibility.Hidden;
                 timingPointsListView.Visibility = Visibility.Hidden;
                 timingPointsModifyButton.Visibility = Visibility.Hidden;
                 timingPointsRemoveButton.Visibility = Visibility.Hidden;
-                divisionsModifyButton.Visibility = Visibility.Hidden;
-                divisionsRemoveButton.Visibility = Visibility.Hidden;
             }
             AsyncUpdateChangesBox();
         }
