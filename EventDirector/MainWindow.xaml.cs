@@ -122,6 +122,7 @@ namespace EventDirector
                     break;
                 case 4:     // Exit
                     Log.D("Goodbye");
+                    this.Close();
                     break;
                 case 5:     // Import participants
                     Log.D("Import (CSV)");
