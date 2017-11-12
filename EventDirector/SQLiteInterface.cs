@@ -10,7 +10,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 6;
+        private readonly int version = 7;
         SQLiteConnection connection;
 
         public SQLiteInterface(String info)
@@ -55,6 +55,8 @@ namespace EventDirector
                             "event_announce_available INTEGER DEFAULT 0," +
                             "event_allow_early_start INTEGER DEFAULT 0," +
                             "event_kiosk INTEGER DEFAULT 0," +
+                            "event_next_year_event_id INTEGER DEFAULT -1," +
+                            "event_shirt_optional INTEGER DEFAULT 1," +
                             "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                             ")");
                     queries.Add("CREATE TABLE IF NOT EXISTS emergencycontacts (" +
@@ -130,6 +132,7 @@ namespace EventDirector
                             "participant_country VARCHAR(50)," +
                             "participant_street2 VARCHAR(50)," +
                             "participant_gender VARCHAR(10)," +
+                            "participant_next_year INTEGER DEFAULT 0," +
                             "UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (" +
@@ -199,6 +202,7 @@ namespace EventDirector
                             "participant_country VARCHAR(50)," +
                             "participant_street2 VARCHAR(50)," +
                             "participant_gender VARCHAR(10)," +
+                            "participant_next_year INTEGER DEFAULT 0," +
                             "UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (" +
@@ -389,6 +393,15 @@ namespace EventDirector
                     {
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE kiosk ADD kiosk_print_new INTEGER DEFAULT 0; UPDATE settings SET version=6 WHERE version=5;";
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    goto case 6;
+                case 6:
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events ADD event_next_year_event_id INTEGER DEFAULT 0; ALTER TABLE events ADD event_shirt_optional INTEGER DEFAULT 1; ALTER TABLE participants ADD participant_next_year INTEGER DEFAULT 0; UPDATE settings SET version=7 WHERE version=6;";
                         command.ExecuteNonQuery();
                         transaction.Commit();
                     }

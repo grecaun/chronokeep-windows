@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS
         event_announce_available INTEGER DEFAULT 0,
         event_allow_early_start INTEGER DEFAULT 0,
         event_kiosk INTEGER DEFAULT 0,
+        event_next_year_event_id INTEGER DEFAULT -1,
+        event_shirt_optional INTEGER DEFAULT 1,
         UNIQUE (event_name, event_date) ON CONFLICT IGNORE
         )
 
@@ -86,7 +88,8 @@ CREATE TABLE IF NOT EXISTS
         participant_parent VARCHAR(150),
         participant_country VARCHAR(50),
         participant_street2 VARCHAR(50),
-        participant_gender VARCHAR(10)
+        participant_gender VARCHAR(10),
+        participant_next_year INTEGER DEFAULT 0,
         UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday
         )
 
