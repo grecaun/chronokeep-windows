@@ -49,6 +49,7 @@
                     <GridViewColumn Header="EC Email" DisplayMemberBinding="{Binding ECEmail}" />
                     <GridViewColumn Header="Comments" DisplayMemberBinding="{Binding Comments}" />
                     <GridViewColumn Header="Other" DisplayMemberBinding="{Binding Other}" />
+                    <GridViewColumn Header="Next Year?" DisplayMemberBinding="{Binding NextYear}" />
                 </GridView>
             </ListView.View>
         </ListView>

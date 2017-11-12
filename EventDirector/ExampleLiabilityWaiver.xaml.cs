@@ -20,9 +20,9 @@ namespace EventDirector
     public partial class ExampleLiabilityWaiver : Window
     {
         MainWindow mainWindow;
-        KioskSettup kioskSettup;
+        KioskSetup kioskSettup;
 
-        public ExampleLiabilityWaiver(MainWindow mainWindow, KioskSettup kioskSettup)
+        public ExampleLiabilityWaiver(MainWindow mainWindow, KioskSetup kioskSettup)
         {
             InitializeComponent();
             this.mainWindow = mainWindow;

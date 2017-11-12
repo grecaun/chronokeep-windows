@@ -155,20 +155,23 @@
     <Compile Include="JsonHandler.cs" />
     <Compile Include="JsonObjects.cs" />
     <Compile Include="JsonOutputTester.cs" />
-    <Compile Include="KioskSettup.xaml.cs">
-      <DependentUpon>KioskSettup.xaml</DependentUpon>
+    <Compile Include="KioskSetup.xaml.cs">
+      <DependentUpon>KioskSetup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="KioskSettupPage1.xaml.cs">
-      <DependentUpon>KioskSettupPage1.xaml</DependentUpon>
+    <Compile Include="KioskSetupPage1.xaml.cs">
+      <DependentUpon>KioskSetupPage1.xaml</DependentUpon>
     </Compile>
-    <Compile Include="KioskSettupPage2.xaml.cs">
-      <DependentUpon>KioskSettupPage2.xaml</DependentUpon>
+    <Compile Include="NextYearSetupPage1.xaml.cs">
+      <DependentUpon>NextYearSetupPage1.xaml</DependentUpon>
     </Compile>
-    <Compile Include="KioskSettupPage3.xaml.cs">
-      <DependentUpon>KioskSettupPage3.xaml</DependentUpon>
+    <Compile Include="KioskSetupPage2.xaml.cs">
+      <DependentUpon>KioskSetupPage2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="KioskSettupPage4.xaml.cs">
-      <DependentUpon>KioskSettupPage4.xaml</DependentUpon>
+    <Compile Include="KioskSetupPage3.xaml.cs">
+      <DependentUpon>KioskSetupPage3.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="KioskSetupPage4.xaml.cs">
+      <DependentUpon>KioskSetupPage4.xaml</DependentUpon>
     </Compile>
     <Compile Include="Log.cs" />
     <Compile Include="NetCore.cs" />
@@ -179,6 +182,12 @@
       <DependentUpon>NewEventWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Change.cs" />
+    <Compile Include="NextYearSetup.xaml.cs">
+      <DependentUpon>NextYearSetup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NextYearSetupPage2.xaml.cs">
+      <DependentUpon>NextYearSetupPage2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ParticipantsList.xaml.cs">
       <DependentUpon>ParticipantsList.xaml</DependentUpon>
     </Compile>
@@ -217,23 +226,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="KioskSettup.xaml">
+    <Page Include="KioskSetup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="KioskSettupPage1.xaml">
+    <Page Include="KioskSetupPage1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="KioskSettupPage2.xaml">
+    <Page Include="NextYearSetupPage1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="KioskSetupPage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="KioskSettupPage3.xaml">
+    <Page Include="KioskSetupPage3.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="KioskSettupPage4.xaml">
+    <Page Include="KioskSetupPage4.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -258,6 +271,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="NewTimingPointWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NextYearSetup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NextYearSetupPage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

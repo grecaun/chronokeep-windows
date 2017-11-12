@@ -41,7 +41,6 @@ namespace EventDirector
             "Mobile",
             "Parent",
             "Bib",
-            "Chip",
             "Shirt Size",
             "Owes",
             "Comments",
@@ -145,53 +144,49 @@ namespace EventDirector
             {
                 return 15;
             }
-            else if (String.Equals(s, "Chip", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(s, "Shirt Size", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Shirt", StringComparison.OrdinalIgnoreCase))
             {
                 return 16;
             }
-            else if (String.Equals(s, "Shirt Size", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Shirt", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(s, "Owes", StringComparison.OrdinalIgnoreCase))
             {
                 return 17;
             }
-            else if (String.Equals(s, "Owes", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(s, "Comments", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Notes", StringComparison.OrdinalIgnoreCase))
             {
                 return 18;
             }
-            else if (String.Equals(s, "Comments", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Notes", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(s, "Second Shirt", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "2nd Shirt", StringComparison.OrdinalIgnoreCase))
             {
                 return 19;
             }
-            else if (String.Equals(s, "Second Shirt", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "2nd Shirt", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(s, "Hat", StringComparison.OrdinalIgnoreCase))
             {
                 return 20;
             }
-            else if (String.Equals(s, "Hat", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(s, "Other", StringComparison.OrdinalIgnoreCase))
             {
                 return 21;
             }
-            else if (String.Equals(s, "Other", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(s, "Division", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Distance", StringComparison.OrdinalIgnoreCase))
             {
                 return 22;
             }
-            else if (String.Equals(s, "Division", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Distance", StringComparison.OrdinalIgnoreCase))
+            else if ((s.Contains("emergency") && s.Contains("name")) || String.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
             {
                 return 23;
             }
-            else if ((s.Contains("emergency") && s.Contains("name")) || String.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
+            else if (s.Contains("emergency") && (s.Contains("phone") || s.Contains("cell")))
             {
                 return 24;
             }
-            else if (s.Contains("emergency") && (s.Contains("phone") || s.Contains("cell")))
+            else if (s.Contains("emergency") && s.Contains("email"))
             {
                 return 25;
             }
-            else if (s.Contains("emergency") && s.Contains("email"))
-            {
-                return 26;
-            }
             else if (String.Equals(s, "Fleece", StringComparison.OrdinalIgnoreCase))
             {
-                return 27;
+                return 26;
             }
             return 0;
         }
@@ -236,7 +231,7 @@ namespace EventDirector
             {
                 importer.FetchData();
                 ImportData data = importer.Data;
-                string[] divisions = data.GetDivisionNames(keys[23]);
+                string[] divisions = data.GetDivisionNames(keys[22]);
                 StringBuilder sb = new StringBuilder("Division names are");
                 foreach (String s in divisions)
                 {
@@ -257,7 +252,7 @@ namespace EventDirector
                 List<Participant> participants = new List<Participant>();
                 for (int counter = 0; counter < numEntries; counter++)
                 {
-                    Division thisDiv = (Division)divHash[Utils.UppercaseFirst(data.Data[counter][keys[23]].ToLower())];
+                    Division thisDiv = (Division)divHash[Utils.UppercaseFirst(data.Data[counter][keys[22]].ToLower())];
                     participants.Add(new Participant(
                         data.Data[counter][keys[1]], // First Name
                         data.Data[counter][keys[2]], // Last Name
@@ -267,9 +262,9 @@ namespace EventDirector
                         data.Data[counter][keys[9]], // Zip
                         data.Data[counter][keys[4]], // Birthday
                         new EmergencyContact(
-                            data.Data[counter][keys[24]], // Name
-                            data.Data[counter][keys[25]], // Phone
-                            data.Data[counter][keys[26]]  // Email
+                            data.Data[counter][keys[23]], // Name
+                            data.Data[counter][keys[24]], // Phone
+                            data.Data[counter][keys[25]]  // Email
                             ),
                         new EventSpecific(
                             anEvent.Identifier,
@@ -277,14 +272,15 @@ namespace EventDirector
                             thisDiv.Name,
                             data.Data[counter][keys[15]], // Bib number
                             0,                            // checked in
-                            data.Data[counter][keys[17]], // shirt size
-                            data.Data[counter][keys[19]], // comments
-                            data.Data[counter][keys[20]], // second shirt
-                            data.Data[counter][keys[18]], // owes
-                            data.Data[counter][keys[21]], // hat
-                            data.Data[counter][keys[22]], // other
+                            data.Data[counter][keys[16]], // shirt size
+                            data.Data[counter][keys[18]], // comments
+                            data.Data[counter][keys[19]], // second shirt
+                            data.Data[counter][keys[17]], // owes
+                            data.Data[counter][keys[20]], // hat
+                            data.Data[counter][keys[21]], // other
                             0,                            // early start
-                            data.Data[counter][keys[27]]  // fleece
+                            data.Data[counter][keys[26]], // fleece
+                            0                             // used next year registration option
                             ),
                         data.Data[counter][keys[11]], // phone
                         data.Data[counter][keys[12]], // email

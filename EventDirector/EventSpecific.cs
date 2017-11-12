@@ -8,7 +8,7 @@ namespace EventDirector
 {
     public class EventSpecific
     {
-        private int identifier, eventIdentifier, divisionIdentifier, bib, checkedIn = 0, earlystart = 0;
+        private int identifier, eventIdentifier, divisionIdentifier, bib, checkedIn = 0, earlystart = 0, nextyear = 0;
         private String shirtSize, comments, divisionName, secondShirt, owes, hat, other, fleece;
 
         public EventSpecific() { }
@@ -26,7 +26,8 @@ namespace EventDirector
             string hat,
             string other,
             int earlystart,
-            string fleece
+            string fleece,
+            int nextyear
             )
         {
             this.eventIdentifier = eid;
@@ -42,6 +43,7 @@ namespace EventDirector
             this.other = other ?? "";
             this.earlystart = earlystart == 0 ? 0 : 1;
             this.fleece = fleece;
+            this.nextyear = nextyear;
         }
 
         public EventSpecific(
@@ -58,7 +60,8 @@ namespace EventDirector
             string hat,
             string other,
             int earlystart,
-            string fleece
+            string fleece,
+            int nextyear
             )
         {
             this.identifier = id;
@@ -75,6 +78,7 @@ namespace EventDirector
             this.other = other ?? "";
             this.earlystart = earlystart != 0 ? 1 : 0;
             this.fleece = fleece;
+            this.nextyear = nextyear;
         }
 
         public EventSpecific(EventSpecific that)
@@ -93,11 +97,12 @@ namespace EventDirector
             this.other = that.other;
             this.earlystart = that.earlystart;
             this.fleece = that.fleece;
+            this.nextyear = that.nextyear;
         }
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", "", "", "", 0, "");
+            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", "", "", "", 0, "", 0);
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -114,5 +119,6 @@ namespace EventDirector
         public string Other { get => other; set => other = value; }
         public int EarlyStart { get => earlystart; set => earlystart = value; }
         public string Fleece { get => fleece; set => fleece = value; }
+        public int NextYear { get => nextyear; set => nextyear = value; }
     }
 }

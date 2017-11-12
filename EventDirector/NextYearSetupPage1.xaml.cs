@@ -18,11 +18,11 @@ namespace EventDirector
     /// <summary>
     /// Interaction logic for KioskSettupPage2.xaml
     /// </summary>
-    public partial class KioskSettupPage2 : Page
+    public partial class NextYearSetupPage1 : Page
     {
-        KioskSettup kiosk;
+        NextYearSetup kiosk;
 
-        public KioskSettupPage2(KioskSettup kiosk, IDBInterface database)
+        public NextYearSetupPage1(NextYearSetup kiosk, IDBInterface database)
         {
             InitializeComponent();
             this.kiosk = kiosk;
@@ -49,7 +49,7 @@ namespace EventDirector
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            kiosk.GotoPage3(Convert.ToInt32(((ComboBoxItem)events.SelectedItem).Uid), (yesRadio.IsChecked == true ? 1 : 0));
+            kiosk.GotoPage2(Convert.ToInt32(((ComboBoxItem)events.SelectedItem).Uid), (String)((ComboBoxItem)events.SelectedItem).Content, (yesRadio.IsChecked == true ? 1 : 0));
         }
     }
 }

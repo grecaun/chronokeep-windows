@@ -18,13 +18,13 @@ namespace EventDirector
     /// <summary>
     /// Interaction logic for KioskSettupPage4.xaml
     /// </summary>
-    public partial class KioskSettupPage4 : Page
+    public partial class KioskSetupPage4 : Page
     {
         MainWindow mainWindow;
-        KioskSettup kioskWin;
+        KioskSetup kioskWin;
         ExampleLiabilityWaiver example = null;
 
-        public KioskSettupPage4(MainWindow mainWindow, KioskSettup kioskWin)
+        public KioskSetupPage4(MainWindow mainWindow, KioskSetup kioskWin)
         {
             InitializeComponent();
             this.mainWindow = mainWindow;

@@ -10,32 +10,40 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace EventDirector
 {
     /// <summary>
-    /// Interaction logic for Window1.xaml
+    /// Interaction logic for NextYearSetupPage2.xaml
     /// </summary>
-    public partial class NewEventWindow : Window
+    public partial class NextYearSetupPage2 : Page
     {
-        MainWindow mainWindow;
-        Event theEvent = null;
+        NextYearSetup kiosk;
 
-        public NewEventWindow(MainWindow mainWindow)
+        public NextYearSetupPage2(NextYearSetup kiosk, string eventName)
         {
             InitializeComponent();
+            string[] parts = eventName.Split();
+            int year;
+            for (int i = 0; i < parts.Length; i++ )
+            {
+                int.TryParse(parts[i], out year);
+                if (year != 0 && year > 1999)
+                {
+                    parts[i] = String.Format("{0}", year + 1);
+                    break;
+                }
+            }
+            StringBuilder sb = new StringBuilder();
+            foreach (string s in parts)
+            {
+                sb.Append(s + " ");
+            }
+            nameBox.Text = sb.ToString().Trim();
             datePicker.SelectedDate = DateTime.Today;
-            this.mainWindow = mainWindow;
-        }
-
-        public NewEventWindow(MainWindow mW, Event e)
-        {
-            InitializeComponent();
-            nameBox.Text = e.Name;
-            datePicker.SelectedDate = DateTime.Parse(e.Date);
-            this.mainWindow = mW;
-            this.theEvent = e;
+            this.kiosk = kiosk;
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
@@ -53,20 +61,12 @@ namespace EventDirector
                 MessageBox.Show("Please input a value in the name box.");
                 return;
             }
-            if (theEvent == null)
-            {
-                mainWindow.AddEvent(nameString, dateVal);
-            }
-            else
-            {
-                mainWindow.UpdateEvent(theEvent.Identifier, nameString, dateVal, theEvent.NextYear, theEvent.ShirtOptional);
-            }
-            this.Close();
+            kiosk.Finish(nameString, dateVal);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            kiosk.Close();
         }
 
         private void Keyboard_Up(object sender, KeyEventArgs e)
@@ -75,11 +75,6 @@ namespace EventDirector
             {
                 Submit();
             }
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            mainWindow.WindowClosed(this);
         }
     }
 }

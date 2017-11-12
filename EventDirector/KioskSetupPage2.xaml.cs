@@ -16,16 +16,30 @@ using System.Windows.Shapes;
 namespace EventDirector
 {
     /// <summary>
-    /// Interaction logic for KioskSettupPage3.xaml
+    /// Interaction logic for KioskSettupPage2.xaml
     /// </summary>
-    public partial class KioskSettupPage3 : Page
+    public partial class KioskSetupPage2 : Page
     {
-        KioskSettup kiosk;
+        KioskSetup kiosk;
 
-        public KioskSettupPage3(KioskSettup kiosk)
+        public KioskSetupPage2(KioskSetup kiosk, IDBInterface database)
         {
             InitializeComponent();
             this.kiosk = kiosk;
+
+            List<Event> eventList = database.GetEvents();
+            events.Items.Clear();
+            ComboBoxItem boxItem;
+            foreach (Event e in eventList)
+            {
+                boxItem = new ComboBoxItem
+                {
+                    Content = e.Name,
+                    Uid = e.Identifier.ToString()
+                };
+                events.Items.Add(boxItem);
+            }
+            events.SelectedIndex = 0;
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -35,7 +49,7 @@ namespace EventDirector
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            kiosk.GotoPage4();
+            kiosk.GotoPage3(Convert.ToInt32(((ComboBoxItem)events.SelectedItem).Uid), (yesRadio.IsChecked == true ? 1 : 0));
         }
     }
 }

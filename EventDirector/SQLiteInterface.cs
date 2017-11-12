@@ -132,7 +132,6 @@ namespace EventDirector
                             "participant_country VARCHAR(50)," +
                             "participant_street2 VARCHAR(50)," +
                             "participant_gender VARCHAR(10)," +
-                            "participant_next_year INTEGER DEFAULT 0," +
                             "UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (" +
@@ -150,6 +149,7 @@ namespace EventDirector
                             "eventspecific_other VARCHAR," +
                             "eventspecific_earlystart INTEGER DEFAULT 0," +
                             "eventspecific_fleece VARCHAR DEFAULT ''," +
+                            "eventspecific_next_year INTEGER DEFAULT 0," +
                             "UNIQUE (participant_id, event_id) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS timeresults (" +
@@ -202,7 +202,6 @@ namespace EventDirector
                             "participant_country VARCHAR(50)," +
                             "participant_street2 VARCHAR(50)," +
                             "participant_gender VARCHAR(10)," +
-                            "participant_next_year INTEGER DEFAULT 0," +
                             "UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (" +
@@ -220,6 +219,7 @@ namespace EventDirector
                             "eventspecific_other VARCHAR," +
                             "eventspecific_earlystart INTEGER DEFAULT 0," +
                             "eventspecific_fleece VARCHAR DEFAULT ''," +
+                            "eventspecific_next_year INTEGER DEFAULT 0," +
                             "UNIQUE (participant_id, event_id) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS timeresults (" +
@@ -270,6 +270,7 @@ namespace EventDirector
                     "old_gender VARCHAR(10)," +
                     "old_earlystart INTEGER DEFAULT -1," +
                     "old_fleece VARCHAR DEFAULT ''," +
+                    "old_next_year INTEGER DEFAULT 0," +
 
                     "new_participant_id INTEGER NOT NULL," +
                     "new_first VARCHAR(50) NOT NULL," +
@@ -302,7 +303,8 @@ namespace EventDirector
                     "new_other VARCHAR," +
                     "new_gender VARCHAR(10)," +
                     "new_earlystart INTEGER DEFAULT -1," +
-                    "new_fleece VARCHAR DEFAULT ''" +
+                    "new_fleece VARCHAR DEFAULT ''," +
+                    "new_next_year INTEGER DEFAULT 0" +
                     ")");
                 queries.Add("INSERT INTO emergencycontacts (emergencycontact_id, emergencycontact_name) VALUES (0,'')");
                 queries.Add("INSERT INTO participants (participant_id, participant_first, participant_last, participant_birthday, emergencycontact_id) VALUES (0, 'J', 'Doe', '01/01/1901', 0)");
@@ -401,7 +403,7 @@ namespace EventDirector
                     using (var transaction = connection.BeginTransaction())
                     {
                         command = connection.CreateCommand();
-                        command.CommandText = "ALTER TABLE events ADD event_next_year_event_id INTEGER DEFAULT 0; ALTER TABLE events ADD event_shirt_optional INTEGER DEFAULT 1; ALTER TABLE participants ADD participant_next_year INTEGER DEFAULT 0; UPDATE settings SET version=7 WHERE version=6;";
+                        command.CommandText = "ALTER TABLE events ADD event_next_year_event_id INTEGER DEFAULT -1; ALTER TABLE events ADD event_shirt_optional INTEGER DEFAULT 1; ALTER TABLE eventspecific ADD eventspecific_next_year INTEGER DEFAULT 0; ALTER TABLE changes ADD old_next_year INTEGER DEFAULT 0; ALTER TABLE changes ADD new_next_year INTEGER DEFAULT 0; UPDATE settings SET version=7 WHERE version=6;";
                         command.ExecuteNonQuery();
                         transaction.Commit();
                     }
@@ -565,7 +567,9 @@ namespace EventDirector
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "DELETE FROM events WHERE event_id=@0; DELETE FROM divisions WHERE event_id=@0; DELETE FROM timingpoints WHERE event_id=@0; DELETE FROM timeresults WHERE event_id=@0; DELETE FROM eventspecific WHERE event_id=@0; DELETE FROM changes WHERE old_event_spec_event_id=@0 OR new_event_spec_event_id=@0; DELETE FROM kiosk WHERE event_id=@0";
+                command.CommandText = "DELETE FROM events WHERE event_id=@0; DELETE FROM divisions WHERE event_id=@0; DELETE FROM timingpoints WHERE event_id=@0; DELETE FROM timeresults WHERE event_id=@0;" +
+                    "DELETE FROM eventspecific WHERE event_id=@0; DELETE FROM changes WHERE old_event_spec_event_id=@0 OR new_event_spec_event_id=@0; DELETE FROM kiosk WHERE event_id=@0;" +
+                    "UPDATE events SET event_next_year_event_id='-1' WHERE event_next_year_event_id=@0";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
                 command.ExecuteNonQuery();
@@ -636,11 +640,13 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE events SET event_name=@0, event_date=@1 WHERE event_id=@2";
+            command.CommandText = "UPDATE events SET event_name=@0, event_date=@1, event_next_year_event_id=@ny, event_shirt_optional=@so WHERE event_id=@2";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", anEvent.Name),
                 new SQLiteParameter("@1", anEvent.Date),
-                new SQLiteParameter("@2", anEvent.Identifier) } );
+                new SQLiteParameter("@2", anEvent.Identifier),
+                new SQLiteParameter("@ny", anEvent.NextYear),
+                new SQLiteParameter("@so", anEvent.ShirtOptional) } );
             command.ExecuteNonQuery();
         }
 
@@ -776,7 +782,7 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString()));
+                output.Add(new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString(), Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"])));
             }
             return output;
         }
@@ -867,7 +873,8 @@ namespace EventDirector
                         reader["eventspecific_hat"].ToString(),
                         reader["eventspecific_other"].ToString(),
                         Convert.ToInt32(reader["eventspecific_earlystart"]),
-                        reader["eventspecific_fleece"].ToString()
+                        reader["eventspecific_fleece"].ToString(),
+                        Convert.ToInt32(reader["eventspecific_next_year"])
                         ),
                     reader["participant_phone"].ToString(),
                     reader["participant_email"].ToString(),
@@ -1106,7 +1113,8 @@ namespace EventDirector
                             reader["new_hat"].ToString(),
                             reader["new_other"].ToString(),
                             Convert.ToInt32(reader["new_earlystart"]),
-                            reader["new_fleece"].ToString()
+                            reader["new_fleece"].ToString(),
+                            Convert.ToInt32(reader["new_next_year"])
                             ),
                         reader["new_phone"].ToString(),
                         reader["new_email"].ToString(),
@@ -1144,7 +1152,8 @@ namespace EventDirector
                             reader["old_hat"].ToString(),
                             reader["old_other"].ToString(),
                             Convert.ToInt32(reader["old_earlystart"]),
-                            reader["old_fleece"].ToString()
+                            reader["old_fleece"].ToString(),
+                            Convert.ToInt32(reader["old_next_year"])
                             ),
                         reader["old_phone"].ToString(),
                         reader["old_email"].ToString(),
@@ -1265,7 +1274,7 @@ namespace EventDirector
             Event output = null;
             if (reader.Read())
             {
-                output = new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString());
+                output = new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString(), Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"]));
             }
             return output;
         }
@@ -1397,7 +1406,8 @@ namespace EventDirector
                         reader["eventspecific_hat"].ToString(),
                         reader["eventspecific_other"].ToString(),
                         Convert.ToInt32(reader["eventspecific_earlystart"]),
-                        reader["eventspecific_fleece"].ToString()
+                        reader["eventspecific_fleece"].ToString(),
+                        Convert.ToInt32(reader["eventspecific_next_year"])
                         ),
                     reader["participant_phone"].ToString(),
                     reader["participant_email"].ToString(),
@@ -1459,7 +1469,8 @@ namespace EventDirector
                         reader["eventspecific_hat"].ToString(),
                         reader["eventspecific_other"].ToString(),
                         Convert.ToInt32(reader["eventspecific_earlystart"]),
-                        reader["eventspecific_fleece"].ToString()
+                        reader["eventspecific_fleece"].ToString(),
+                        Convert.ToInt32(reader["eventspecific_next_year"])
                         ),
                     reader["participant_phone"].ToString(),
                     reader["participant_email"].ToString(),
@@ -1610,7 +1621,8 @@ namespace EventDirector
                             "",
                             reader["dop_other"].ToString(),
                             earlystart,
-                            ""
+                            "",
+                            0
                             );
                         newPart = new Participant(
                             reader["dop_first"].ToString(),

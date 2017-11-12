@@ -18,7 +18,7 @@ namespace EventDirector
     /// <summary>
     /// Interaction logic for KioskSettup.xaml
     /// </summary>
-    public partial class KioskSettup : Window
+    public partial class KioskSetup : Window
     {
         MainWindow mainWindow;
         ExampleLiabilityWaiver exampleLiabilityWaiver = null;
@@ -27,19 +27,19 @@ namespace EventDirector
         int eventId;
         int print = 0;
 
-        public KioskSettup(MainWindow mainWindow, IDBInterface database)
+        public KioskSetup(MainWindow mainWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mainWindow = mainWindow;
             this.database = database;
             Log.D("Showing first page.");
-            KioskFrame.Content = new KioskSettupPage1(this);
+            KioskFrame.Content = new KioskSetupPage1(this);
         }
 
         public void GotoPage2()
         {
             Log.D("Showing second page.");
-            KioskFrame.Content = new KioskSettupPage2(this, database);
+            KioskFrame.Content = new KioskSetupPage2(this, database);
         }
 
         public void GotoPage3(int eventId, int print)
@@ -47,13 +47,13 @@ namespace EventDirector
             this.eventId = eventId;
             this.print = print;
             Log.D("Showing third page. EventId is " + eventId + " print is set to " + print);
-            KioskFrame.Content = new KioskSettupPage3(this);
+            KioskFrame.Content = new KioskSetupPage3(this);
         }
 
         public void GotoPage4()
         {
             Log.D("Showing final page.");
-            KioskFrame.Content = new KioskSettupPage4(mainWindow, this);
+            KioskFrame.Content = new KioskSetupPage4(mainWindow, this);
         }
 
         public void Finish(String liabilityWaiver)

@@ -1,4 +1,4 @@
-﻿<Page x:Class="EventDirector.KioskSettupPage4"
+﻿<Page x:Class="EventDirector.KioskSetupPage4"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:EventDirector"
       mc:Ignorable="d" 
       d:DesignHeight="380" d:DesignWidth="380"
-      Title="KioskSettupPage4">
+      Title="KioskSetupPage4">
 
     <Grid>
         <Label Content="Liability Waiver:" FontSize="18" Margin="10,18,10,0" Height="Auto" Width="Auto"

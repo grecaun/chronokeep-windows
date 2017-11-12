@@ -16,13 +16,13 @@ using System.Windows.Shapes;
 namespace EventDirector
 {
     /// <summary>
-    /// Interaction logic for KioskSettupPage1.xaml
+    /// Interaction logic for KioskSettupPage3.xaml
     /// </summary>
-    public partial class KioskSettupPage1 : Page
+    public partial class KioskSetupPage3 : Page
     {
-        KioskSettup kiosk;
+        KioskSetup kiosk;
 
-        public KioskSettupPage1(KioskSettup kiosk)
+        public KioskSetupPage3(KioskSetup kiosk)
         {
             InitializeComponent();
             this.kiosk = kiosk;
@@ -35,7 +35,7 @@ namespace EventDirector
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            kiosk.GotoPage2();
+            kiosk.GotoPage4();
         }
     }
 }

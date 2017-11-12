@@ -119,6 +119,7 @@ namespace EventDirector
                     });
                     Log.D("Database Reset.");
                     UpdateEventBox();
+                    AsyncUpdateChangesBox();
                     break;
                 case 4:     // Exit
                     Log.D("Goodbye");
@@ -163,7 +164,7 @@ namespace EventDirector
                     break;
                 case 9:
                     Log.D("Setup kiosk");
-                    KioskSettup kiosk = new KioskSettup(this, database);
+                    KioskSetup kiosk = new KioskSetup(this, database);
                     windows.Add(kiosk);
                     kiosk.Show();
                     break;
@@ -216,6 +217,12 @@ namespace EventDirector
                     windows.Add(aboutWin);
                     aboutWin.Show();
                     break;
+                case 16:
+                    Log.D("Setup Next Year Registration");
+                    NextYearSetup nysetup = new NextYearSetup(this, database);
+                    windows.Add(nysetup);
+                    nysetup.Show();
+                    break;
                 default:
                     break;
             }
@@ -232,11 +239,11 @@ namespace EventDirector
             UpdateTimingPointsBox(eventId);
         }
 
-        internal async void UpdateEvent(int eventIdentifier, string nameString, long dateVal)
+        internal async void UpdateEvent(int eventIdentifier, string nameString, long dateVal, int nextyear, int shirtoptional)
         {
             await Task.Run(() =>
             {
-                database.UpdateEvent(new Event(eventIdentifier, nameString, dateVal));
+                database.UpdateEvent(new Event(eventIdentifier, nameString, dateVal, nextyear, shirtoptional));
             });
             tcpServer.UpdateEvent(eventIdentifier);
             UpdateEventBox();
@@ -318,7 +325,7 @@ namespace EventDirector
                 Event thisEvent = (Event)eventsListView.SelectedItem;
                 if (thisEvent != null)
                 {
-                    NewEventWindow win = new NewEventWindow(this, thisEvent.Identifier, thisEvent.Name, thisEvent.Date);
+                    NewEventWindow win = new NewEventWindow(this, thisEvent);
                     windows.Add(win);
                     win.Show();
                 }
@@ -604,6 +611,7 @@ namespace EventDirector
                 timingPointsListView.Visibility = Visibility.Hidden;
                 timingPointsModifyButton.Visibility = Visibility.Hidden;
                 timingPointsRemoveButton.Visibility = Visibility.Hidden;
+                eventsToggleKioskButton.Visibility = Visibility.Hidden;
             }
             AsyncUpdateChangesBox();
         }

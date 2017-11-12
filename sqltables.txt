@@ -89,7 +89,6 @@ CREATE TABLE IF NOT EXISTS
         participant_country VARCHAR(50),
         participant_street2 VARCHAR(50),
         participant_gender VARCHAR(10),
-        participant_next_year INTEGER DEFAULT 0,
         UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday
         )
 
@@ -109,8 +108,9 @@ CREATE TABLE IF NOT EXISTS
         eventspecific_owes VARCHAR(50),
         eventspecific_hat VARCHAR(20),
         eventspecific_other VARCHAR,
-        eventspecific_earlystart INTEGER DEFAULT 0
-        eventspecific_fleece VARCHAR DEFAULT ''
+        eventspecific_earlystart INTEGER DEFAULT 0,
+        eventspecific_fleece VARCHAR DEFAULT '',
+        eventspecific_next_year INTEGER DEFAULT 0,
         )
 
 CREATE TABLE IF NOT EXISTS
