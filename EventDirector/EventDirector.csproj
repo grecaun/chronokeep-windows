@@ -161,6 +161,9 @@
     <Compile Include="KioskSetupPage1.xaml.cs">
       <DependentUpon>KioskSetupPage1.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NextYearSetupPage0.xaml.cs">
+      <DependentUpon>NextYearSetupPage0.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NextYearSetupPage1.xaml.cs">
       <DependentUpon>NextYearSetupPage1.xaml</DependentUpon>
     </Compile>
@@ -231,6 +234,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="KioskSetupPage1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NextYearSetupPage0.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

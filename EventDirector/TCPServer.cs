@@ -190,6 +190,36 @@ namespace EventDirector
                         JsonClientKiosk clientKiosk = jsonObject.ToObject<JsonClientKiosk>();
                         SendJson(jsonHandler.GetJsonServerKioskWaiver(clientKiosk.EventId), sock);
                         break;
+                    case "client_register_next_year":
+                        Log.D("Client register next year received.");
+                        JsonClientRegisterNextYear regNextYear = jsonObject.ToObject<JsonClientRegisterNextYear>();
+                        Event thisYear = database.GetEvent(regNextYear.EventId);
+                        List<Division> nextYearDivs = database.GetDivisions(thisYear.NextYear);
+                        Division nextYearDiv = nextYearDivs[0];
+                        foreach (Division d in nextYearDivs)
+                        {
+                            if (d.Name.Equals(regNextYear.Participant.Specific.DivisionName))
+                            {
+                                nextYearDiv = d;
+                                break;
+                            }
+                        }
+                        Participant thisYearEntry = database.GetParticipant(thisYear.Identifier, regNextYear.Participant.Id);
+                        thisYearEntry.EventSpecific.NextYear = 1;
+                        database.UpdateParticipant(thisYearEntry);
+                        Participant nextYearEntry = new Participant(regNextYear.Participant.First, regNextYear.Participant.Last, regNextYear.Participant.Street, regNextYear.Participant.City,
+                                                                    regNextYear.Participant.State, regNextYear.Participant.Zip, regNextYear.Participant.Birthday, regNextYear.Participant.EmergencyContact,
+                                                                    regNextYear.Participant.Specific, regNextYear.Participant.Phone, regNextYear.Participant.Email, regNextYear.Participant.Mobile,
+                                                                    regNextYear.Participant.Parent, regNextYear.Participant.Country, regNextYear.Participant.Street2, regNextYear.Participant.Gender);
+                        nextYearEntry.EventSpecific.DivisionIdentifier = nextYearDiv.Identifier;
+                        nextYearEntry.EventSpecific.EventIdentifier = thisYear.NextYear;
+                        database.AddParticipant(nextYearEntry);
+                        nextYearEntry = database.GetParticipant(thisYear.NextYear, nextYearEntry);
+                        database.AddChange(nextYearEntry, null);
+                        changeUpdater.UpdateChangesBox();
+                        BroadcastJson(jsonHandler.GetJsonServerAddParticipant(thisYear.NextYear, nextYearEntry));
+                        BroadcastJson(jsonHandler.GetJsonServerUpdateParticipant(thisYear.Identifier, thisYearEntry));
+                        break;
                 }
             }
         }

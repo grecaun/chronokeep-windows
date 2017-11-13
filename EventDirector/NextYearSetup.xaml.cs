@@ -31,6 +31,11 @@ namespace EventDirector
             this.mainWindow = mainWindow;
             this.database = database;
             Log.D("Showing first page.");
+            NYFrame.Content = new NextYearSetupPage0(this);
+        }
+
+        public void GotoPage1()
+        {
             NYFrame.Content = new NextYearSetupPage1(this, database);
         }
 

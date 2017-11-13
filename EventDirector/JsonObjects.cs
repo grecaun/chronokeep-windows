@@ -90,6 +90,13 @@ namespace EventDirector
         public int EventId { get; set; }
     }
 
+    public class JsonClientRegisterNextYear
+    {
+        public String Command { get; set; }
+        public int EventId { get; set; }
+        public JsonParticipant Participant { get; set; }
+    }
+
     /**
      *
      * Classes for generating responses to client queries.

@@ -156,6 +156,7 @@ CREATE TABLE IF NOT EXISTS
         old_gender VARCHAR(10),
         old_earlystart INTEGER DEFAULT -1,
         old_fleece VARCHAR DEFAULT '',
+        old_next_year INTEGER DEFAULT 0
 
         new_participant_id INTEGER NOT NULL,
         new_first VARCHAR(50) NOT NULL,
