@@ -140,7 +140,7 @@ namespace EventDirector
             {
                 return 14;
             }
-            else if (String.Equals(s, "Bib", StringComparison.OrdinalIgnoreCase))
+            else if (s.IndexOf("Bib", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return 15;
             }
@@ -168,19 +168,19 @@ namespace EventDirector
             {
                 return 21;
             }
-            else if (String.Equals(s, "Division", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Distance", StringComparison.OrdinalIgnoreCase))
+            else if (s.IndexOf("Division", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("Distance", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return 22;
             }
-            else if ((s.Contains("emergency") && s.Contains("name")) || String.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
+            else if ((s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("name", StringComparison.OrdinalIgnoreCase) >= 0) || String.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
             {
                 return 23;
             }
-            else if (s.Contains("emergency") && (s.Contains("phone") || s.Contains("cell")))
+            else if (s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && (s.IndexOf("phone", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("cell", StringComparison.OrdinalIgnoreCase) >= 0))
             {
                 return 24;
             }
-            else if (s.Contains("emergency") && s.Contains("email"))
+            else if (s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("email", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return 25;
             }
@@ -208,7 +208,6 @@ namespace EventDirector
             {
                 Log.D("No repeat headers found.");
                 ImportWork();
-                this.Close(); //*/
             }
         }
 
@@ -227,11 +226,18 @@ namespace EventDirector
                 }
             }
             Event anEvent = new Event(importer.Data.FileName, date.SelectedDate.Value.Ticks);
+            bool valid = true;
             await Task.Run(() =>
             {
                 importer.FetchData();
                 ImportData data = importer.Data;
                 string[] divisions = data.GetDivisionNames(keys[22]);
+                if (divisions.Length <= 0)
+                {
+                    MessageBox.Show("No divisions found in file, or nothing selected for divisions/distance.  Please correct this or cancel.");
+                    valid = false;
+                    return;
+                }
                 StringBuilder sb = new StringBuilder("Division names are");
                 foreach (String s in divisions)
                 {
@@ -252,49 +258,56 @@ namespace EventDirector
                 List<Participant> participants = new List<Participant>();
                 for (int counter = 0; counter < numEntries; counter++)
                 {
-                    Division thisDiv = (Division)divHash[Utils.UppercaseFirst(data.Data[counter][keys[22]].ToLower())];
-                    participants.Add(new Participant(
-                        data.Data[counter][keys[1]], // First Name
-                        data.Data[counter][keys[2]], // Last Name
-                        data.Data[counter][keys[5]], // Street
-                        data.Data[counter][keys[7]], // City
-                        data.Data[counter][keys[8]], // State
-                        data.Data[counter][keys[9]], // Zip
-                        data.Data[counter][keys[4]], // Birthday
-                        new EmergencyContact(
-                            data.Data[counter][keys[23]], // Name
-                            data.Data[counter][keys[24]], // Phone
-                            data.Data[counter][keys[25]]  // Email
-                            ),
-                        new EventSpecific(
-                            anEvent.Identifier,
-                            thisDiv.Identifier,
-                            thisDiv.Name,
-                            data.Data[counter][keys[15]], // Bib number
-                            0,                            // checked in
-                            data.Data[counter][keys[16]], // shirt size
-                            data.Data[counter][keys[18]], // comments
-                            data.Data[counter][keys[19]], // second shirt
-                            data.Data[counter][keys[17]], // owes
-                            data.Data[counter][keys[20]], // hat
-                            data.Data[counter][keys[21]], // other
-                            0,                            // early start
-                            data.Data[counter][keys[26]], // fleece
-                            0                             // used next year registration option
-                            ),
-                        data.Data[counter][keys[11]], // phone
-                        data.Data[counter][keys[12]], // email
-                        data.Data[counter][keys[13]], // mobile
-                        data.Data[counter][keys[14]], // parent
-                        data.Data[counter][keys[10]], // country
-                        data.Data[counter][keys[6]], // street2
-                        data.Data[counter][keys[3]] // gender
-                        ));
+                    if (data.Data[counter][keys[22]] != null && data.Data[counter][keys[22]].Length > 0)
+                    {
+                        Division thisDiv = (Division)divHash[Utils.UppercaseFirst(data.Data[counter][keys[22]].ToLower())];
+                        participants.Add(new Participant(
+                            data.Data[counter][keys[1]], // First Name
+                            data.Data[counter][keys[2]], // Last Name
+                            data.Data[counter][keys[5]], // Street
+                            data.Data[counter][keys[7]], // City
+                            data.Data[counter][keys[8]], // State
+                            data.Data[counter][keys[9]], // Zip
+                            data.Data[counter][keys[4]], // Birthday
+                            new EmergencyContact(
+                                data.Data[counter][keys[23]], // Name
+                                data.Data[counter][keys[24]], // Phone
+                                data.Data[counter][keys[25]]  // Email
+                                ),
+                            new EventSpecific(
+                                anEvent.Identifier,
+                                thisDiv.Identifier,
+                                thisDiv.Name,
+                                data.Data[counter][keys[15]], // Bib number
+                                0,                            // checked in
+                                data.Data[counter][keys[16]], // shirt size
+                                data.Data[counter][keys[18]], // comments
+                                data.Data[counter][keys[19]], // second shirt
+                                data.Data[counter][keys[17]], // owes
+                                data.Data[counter][keys[20]], // hat
+                                data.Data[counter][keys[21]], // other
+                                0,                            // early start
+                                data.Data[counter][keys[26]], // fleece
+                                0                             // used next year registration option
+                                ),
+                            data.Data[counter][keys[11]], // phone
+                            data.Data[counter][keys[12]], // email
+                            data.Data[counter][keys[13]], // mobile
+                            data.Data[counter][keys[14]], // parent
+                            data.Data[counter][keys[10]], // country
+                            data.Data[counter][keys[6]], // street2
+                            data.Data[counter][keys[3]] // gender
+                            ));
+                    }
                 }
                 database.AddParticipants(participants);
             });
-            Log.D("All done with the import.");
-            mainWindow.UpdateEventBox();
+            if (valid)
+            {
+                Log.D("All done with the import.");
+                this.Close();
+                mainWindow.UpdateEventBox();
+            }
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

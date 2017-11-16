@@ -65,7 +65,10 @@ namespace EventDirector
             HashSet<String> values = new HashSet<string>();
             foreach (string[] line in Data)
             {
-                values.Add(Utils.UppercaseFirst(line[index].ToLower()));
+                if (line[index] != null && line[index].Length > 0)
+                {
+                    values.Add(Utils.UppercaseFirst(line[index].ToLower()));
+                }
             }
             string[] output = new string[values.Count];
             values.CopyTo(output);
