@@ -84,11 +84,6 @@ namespace EventDirector
             {
                 this.street = addressArray[0];
             }
-            int street2Ix = street.IndexOf(street2, StringComparison.OrdinalIgnoreCase);
-            if (street2Ix >= 0)
-            {
-                this.street = street.Remove(street2Ix, street2.Length).Trim();
-            }
             if (country.Equals("US", StringComparison.OrdinalIgnoreCase))
             {
                 this.country = "USA";
@@ -97,6 +92,7 @@ namespace EventDirector
             {
                 this.country = "CA";
             }
+            state = state.Trim();
             if (state.Length > 2)
             {
                 if (state.Equals("Alabama", StringComparison.OrdinalIgnoreCase))
@@ -359,6 +355,14 @@ namespace EventDirector
                 {
                     state = "AP";
                 }
+                else if (state.Equals("British Columbia", StringComparison.OrdinalIgnoreCase))
+                {
+                    state = "BC";
+                }
+            }
+            else
+            {
+                state = state.ToUpper();
             }
             string tmpPhone = phone.Replace("-","").Replace("+","").Replace("(","").Replace(")","").Replace(" ","").Replace(",","").Replace(".","").Trim();
             if (tmpPhone.Length == 10)
