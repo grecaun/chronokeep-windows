@@ -36,6 +36,8 @@ namespace EventDirector
             datePicker.SelectedDate = DateTime.Parse(e.Date);
             this.mainWindow = mW;
             this.theEvent = e;
+            shirtOptional.IsChecked = e.ShirtOptional == 1 ? true : false;
+            shirtPriceBox.Text = String.Format("{0}.{1:D2}", e.ShirtPrice / 100, e.ShirtPrice % 100);
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
@@ -46,6 +48,24 @@ namespace EventDirector
         private void Submit()
         {
             String nameString = nameBox.Text.Trim();
+            int shirtPrice = -1, shirtOptionalVal = shirtOptional.IsChecked == true ? 1 : 0;
+            string[] parts = shirtPriceBox.Text.Split('.');
+            shirtPrice = 20;
+            if (parts.Length > 0)
+            {
+                int.TryParse(parts[0].Trim(), out shirtPrice);
+            }
+            shirtPrice = shirtPrice * 100;
+            int cents = 0;
+            if (parts.Length > 1)
+            {
+                int.TryParse(parts[1].Trim(), out cents);
+            }
+            while (cents > 100)
+            {
+                cents = cents / 100;
+            }
+            shirtPrice += cents;
             long dateVal = datePicker.SelectedDate.Value.Date.Ticks;
             Log.D("Name given for event: '" + nameString + "' Date Given: " + datePicker.SelectedDate.Value.Date.ToShortDateString() + " Date Value: " + dateVal);
             if (nameString == "")
@@ -55,11 +75,11 @@ namespace EventDirector
             }
             if (theEvent == null)
             {
-                mainWindow.AddEvent(nameString, dateVal);
+                mainWindow.AddEvent(nameString, dateVal, shirtOptionalVal, shirtPrice);
             }
             else
             {
-                mainWindow.UpdateEvent(theEvent.Identifier, nameString, dateVal, theEvent.NextYear, theEvent.ShirtOptional);
+                mainWindow.UpdateEvent(theEvent.Identifier, nameString, dateVal, theEvent.NextYear, shirtOptionalVal, shirtPrice);
             }
             this.Close();
         }

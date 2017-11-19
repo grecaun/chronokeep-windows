@@ -79,6 +79,7 @@
                         <GridViewColumn Header="Date" Width="100" DisplayMemberBinding="{Binding Date}" />
                         <GridViewColumn Header="Next Year" Width="50" DisplayMemberBinding="{Binding NextYear}" />
                         <GridViewColumn Header="Shirt Optional" Width="50" DisplayMemberBinding="{Binding ShirtOptional}" />
+                        <GridViewColumn Header="Shirt Price" Width="50" DisplayMemberBinding="{Binding ShirtPrice}" />
                     </GridView>
                 </ListView.View>
             </ListView>

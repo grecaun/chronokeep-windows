@@ -22,14 +22,13 @@ namespace EventDirector
     {
         NextYearSetup kiosk;
 
-        public NextYearSetupPage2(NextYearSetup kiosk, string eventName)
+        public NextYearSetupPage2(NextYearSetup kiosk, Event oldEvent)
         {
             InitializeComponent();
-            string[] parts = eventName.Split();
-            int year;
-            for (int i = 0; i < parts.Length; i++ )
+            string[] parts = oldEvent.Name.Split();
+            for (int i = 0; i < parts.Length; i++)
             {
-                int.TryParse(parts[i], out year);
+                int.TryParse(parts[i], out int year);
                 if (year != 0 && year > 1999)
                 {
                     parts[i] = String.Format("{0}", year + 1);
@@ -43,6 +42,8 @@ namespace EventDirector
             }
             nameBox.Text = sb.ToString().Trim();
             datePicker.SelectedDate = DateTime.Today;
+            shirtOptionalBox.IsChecked = oldEvent.ShirtOptional == 1 ? true : false;
+            shirtPriceBox.Text = String.Format("{0}.{1:D2}", oldEvent.ShirtPrice / 100, oldEvent.ShirtPrice % 100);
             this.kiosk = kiosk;
         }
 
@@ -54,6 +55,24 @@ namespace EventDirector
         private void Submit()
         {
             String nameString = nameBox.Text.Trim();
+            int shirtOptional = 1, shirtPrice = 0;
+            string[] shirtVals = shirtPriceBox.Text.Split('.');
+            shirtPrice = 20;
+            if (shirtVals.Length > 0)
+            {
+                int.TryParse(shirtVals[0].Trim(), out shirtPrice);
+            }
+            shirtPrice = shirtPrice * 100;
+            int cents = 0;
+            if (shirtVals.Length > 1)
+            {
+                int.TryParse(shirtVals[1].Trim(), out cents);
+            }
+            while (cents > 100)
+            {
+                cents = cents / 100;
+            }
+            shirtPrice += cents;
             long dateVal = datePicker.SelectedDate.Value.Date.Ticks;
             Log.D("Name given for event: '" + nameString + "' Date Given: " + datePicker.SelectedDate.Value.Date.ToShortDateString() + " Date Value: " + dateVal);
             if (nameString == "")
@@ -61,7 +80,7 @@ namespace EventDirector
                 MessageBox.Show("Please input a value in the name box.");
                 return;
             }
-            kiosk.Finish(nameString, dateVal);
+            kiosk.GoToPage3(nameString, dateVal, shirtOptional, shirtPrice);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

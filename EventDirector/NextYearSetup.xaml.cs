@@ -22,8 +22,7 @@ namespace EventDirector
     {
         MainWindow mainWindow;
         IDBInterface database;
-        int oldEventId;
-        int shirtOptional = 1;
+        Event oldEvent, newEvent;
 
         public NextYearSetup(MainWindow mainWindow, IDBInterface database)
         {
@@ -39,30 +38,32 @@ namespace EventDirector
             NYFrame.Content = new NextYearSetupPage1(this, database);
         }
 
-        public void GotoPage2(int eventId, string eventName, int shirtOptional)
+        public void GotoPage2(int eventId)
         {
-            this.oldEventId = eventId;
-            this.shirtOptional = shirtOptional;
-            NYFrame.Content = new NextYearSetupPage2(this, eventName);
+            oldEvent = database.GetEvent(eventId);
+            NYFrame.Content = new NextYearSetupPage2(this, oldEvent);
         }
 
-        public void Finish(string newEventName, long date)
+        public void GoToPage3(string newEventName, long date, int shirtOptional, int shirtPrice)
         {
             // Add new event for next year
-            Event newEvent = new Event(newEventName, date);
+            newEvent = new Event(newEventName, date, shirtOptional, shirtPrice);
             database.AddEvent(newEvent);
             newEvent = database.GetEvent(database.GetEventID(newEvent));
             // Get old event.
-            Event oldEvent = database.GetEvent(oldEventId);
             // Add divisions to new event. Same as last year. User can edit these later.
             List<Division> divs = database.GetDivisions(oldEvent.Identifier);
+            NYFrame.Content = new NextYearSetupPage3(divs, this);
+        }
+
+        public void GoToPage4(List<Division> divs)
+        {
             foreach (Division d in divs)
             {
                 database.AddDivision(new Division(d.Name, newEvent.Identifier, d.Cost));
             }
             // Update old event with new information.
             oldEvent.NextYear = newEvent.Identifier;
-            oldEvent.ShirtOptional = shirtOptional;
             database.UpdateEvent(oldEvent);
             mainWindow.UpdateEventBox();
             this.Close();

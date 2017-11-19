@@ -120,8 +120,15 @@ namespace EventDirector
         public void Finish()
         {
             Log.D("Closing file.");
-            workBook.Close();
-            Marshal.ReleaseComObject(workBook);
+            try
+            {
+                workBook.Close(0);
+                Marshal.ReleaseComObject(workBook);
+            }
+            catch
+            {
+                Log.D("Something went wrong when trying to close excel file.");
+            }
         }
     }
 }

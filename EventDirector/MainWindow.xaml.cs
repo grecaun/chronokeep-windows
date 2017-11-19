@@ -239,11 +239,11 @@ namespace EventDirector
             UpdateTimingPointsBox(eventId);
         }
 
-        internal async void UpdateEvent(int eventIdentifier, string nameString, long dateVal, int nextyear, int shirtoptional)
+        internal async void UpdateEvent(int eventIdentifier, string nameString, long dateVal, int nextyear, int shirtoptional, int shirtprice)
         {
             await Task.Run(() =>
             {
-                database.UpdateEvent(new Event(eventIdentifier, nameString, dateVal, nextyear, shirtoptional));
+                database.UpdateEvent(new Event(eventIdentifier, nameString, dateVal, nextyear, shirtoptional, shirtprice));
             });
             tcpServer.UpdateEvent(eventIdentifier);
             UpdateEventBox();
@@ -394,9 +394,9 @@ namespace EventDirector
             }
         }
 
-        internal async void AddEvent(String name, long date)
+        internal async void AddEvent(String name, long date, int shirtOptional, int shirtPrice)
         {
-            Event anEvent = new Event(name, date);
+            Event anEvent = new Event(name, date, shirtOptional, shirtPrice);
             int eventId = -1;
             await Task.Run(() =>
             {

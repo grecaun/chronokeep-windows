@@ -8,20 +8,15 @@
         Title="ImportFileWindow" Height="600" Width="500" MinWidth="450"
         Closing="Window_Closing">
     <Grid>
-        <Label x:Name="eventLabel" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,7,10,10" />
-        <DatePicker x:Name="date" Height="25" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,148,10" />
-        <Button x:Name="Done" Height="25" Width="65" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Done" Margin="6,10,77,10" Click="Done_Click"/>
-        <Button x:Name="Cancel" Height="25" Width="65" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Cancel" Margin="77,10,6,10" Click="Cancel_Click"/>
-        <Grid x:Name="HeaderWindow" VerticalAlignment="Top" Margin="0,80,0,0" >
-            <ListBox x:Name="headerListBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" >
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
-        </Grid>
-        <Label x:Name="SheetsLabel" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,43,355,6" Content="Sheet" Visibility="Collapsed" />
-        <ComboBox x:Name="SheetsBox" Height="25" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="70,47,255,8" Visibility="Collapsed" SelectionChanged="SheetsBox_SelectionChanged"/>
+        <Label x:Name="eventLabel" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,7,10,10" IsTabStop="False" />
+        <DatePicker x:Name="date" Height="25" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,47,128,10" TabIndex="2" />
+        <CheckBox x:Name="shirtOptionalBox" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Shirt Optional" IsChecked="True" Margin="10,53,235,10" TabIndex="1"/>
+        <Label Content="Shirt Price" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,47,410,10" IsTabStop="False" />
+        <TextBox x:Name="shirtPriceBox" VerticalAlignment="Top" HorizontalAlignment="Right" Width="75" Height="25" FontSize="16" Margin="10,47,335,10" TabIndex="0" />
+        <Button x:Name="Done" Height="25" Width="55" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Next" Margin="6,47,67,10" Click="Done_Click" TabIndex="500"/>
+        <Button x:Name="Cancel" Height="25" Width="55" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Cancel" Margin="77,47,6,10" Click="Cancel_Click" TabIndex="501"/>
+        <Frame x:Name="Frame"  NavigationUIVisibility="Hidden" Margin="0,80,0,0" IsTabStop="False" />
+        <Label x:Name="SheetsLabel" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,7,110,6" Content="Sheet" Visibility="Collapsed" IsTabStop="False"/>
+        <ComboBox x:Name="SheetsBox" Height="25" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="70,10,10,8" Visibility="Collapsed" SelectionChanged="SheetsBox_SelectionChanged" IsTabStop="False"/>
     </Grid>
 </Window>

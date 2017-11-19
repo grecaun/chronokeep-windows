@@ -49,7 +49,7 @@ namespace EventDirector
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            kiosk.GotoPage2(Convert.ToInt32(((ComboBoxItem)events.SelectedItem).Uid), (String)((ComboBoxItem)events.SelectedItem).Content, (yesRadio.IsChecked == true ? 1 : 0));
+            kiosk.GotoPage2(Convert.ToInt32(((ComboBoxItem)events.SelectedItem).Uid));
         }
     }
 }

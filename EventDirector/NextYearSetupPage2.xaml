@@ -9,11 +9,14 @@
       Title="NextYearSetupPage2">
 
     <Grid>
-        <Label Content="Name" HorizontalAlignment="Left" Margin="20,125,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="nameBox" HorizontalAlignment="Left" Height="23" Margin="20,150,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="338" KeyUp="Keyboard_Up"/>
-        <Label Content="Date" HorizontalAlignment="Left" Margin="20,175,20,0" VerticalAlignment="Top"/>
-        <DatePicker x:Name="datePicker" HorizontalAlignment="Left" Margin="20,200,0,0" VerticalAlignment="Top" Width="338" KeyUp="Keyboard_Up"/>
-        <Button Content="Submit" Height="25" Width="100" VerticalAlignment="Bottom" Margin="0,0,150,10" HorizontalAlignment="Center" Click="Submit_Click"/>
+        <Label Content="Name" HorizontalAlignment="Left" Margin="20,95,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="nameBox" HorizontalAlignment="Left" Height="23" Margin="20,120,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="338" FontSize="15" KeyUp="Keyboard_Up"/>
+        <Label Content="Date" HorizontalAlignment="Left" Margin="20,145,20,0" VerticalAlignment="Top"/>
+        <DatePicker x:Name="datePicker" HorizontalAlignment="Left" Margin="20,170,0,0" VerticalAlignment="Top" Width="338" KeyUp="Keyboard_Up"/>
+        <CheckBox x:Name="shirtOptionalBox" IsChecked="True" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,210,20,0" Content="Shirt Optional"/>
+        <Label Content="Shirt Price" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,230,20,0" />
+        <TextBox x:Name="shirtPriceBox" FontSize="15" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,255,20,0" Width="340" Height="23" KeyUp="Keyboard_Up"/>
+        <Button Content="Next" Height="25" Width="100" VerticalAlignment="Bottom" Margin="0,0,150,10" HorizontalAlignment="Center" Click="Submit_Click"/>
         <Button Content="Cancel" Height="25" Width="100" VerticalAlignment="Bottom" Margin="150,0,0,10" HorizontalAlignment="Center" Click="Cancel_Click"/>
     </Grid>
 </Page>

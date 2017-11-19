@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS
         event_kiosk INTEGER DEFAULT 0,
         event_next_year_event_id INTEGER DEFAULT -1,
         event_shirt_optional INTEGER DEFAULT 1,
+        event_shirt_price INTEGER DEFAULT 0,
         UNIQUE (event_name, event_date) ON CONFLICT IGNORE
         )
 

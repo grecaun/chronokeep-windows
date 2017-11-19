@@ -8,48 +8,37 @@ namespace EventDirector
 {
     public class Event
     {
-        private int identifier, nextYear = -1, shirtOptional = 1;
+        private int identifier, nextYear = -1, shirtOptional = 1, shirtPrice = 2000;
         private string name, date;
 
         public Event() { }
 
-        public Event(string n, long d)
+        public Event(string n, long d, int so, int price)
         {
-            this.date = new DateTime(d).ToShortDateString();
-            this.name = n;
-        }
-
-        public Event(int id, string n, long d)
-        {
-            this.identifier = id;
-            this.name = n;
-            this.date = new DateTime(d).ToShortDateString();
-        }
-
-        public Event(string n, long d, int ny, int so)
-        {
-            this.nextYear = ny;
             this.shirtOptional = so;
             this.date = new DateTime(d).ToShortDateString();
             this.name = n;
+            this.shirtPrice = price;
         }
 
-        public Event(int id, string n, long d, int ny, int so)
+        public Event(int id, string n, long d, int ny, int so, int price)
         {
             this.nextYear = ny;
             this.identifier = id;
             this.shirtOptional = so;
             this.name = n;
             this.date = new DateTime(d).ToShortDateString();
+            this.shirtPrice = price;
         }
 
-        public Event(int id, string n, string d, int ny, int so)
+        public Event(int id, string n, string d, int ny, int so, int price)
         {
             this.nextYear = ny;
             this.identifier = id;
             this.shirtOptional = so;
             this.name = n;
             this.date = d;
+            this.shirtPrice = price;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -57,5 +46,6 @@ namespace EventDirector
         public string Name { get => name; set => name = value; }
         public string Date { get => date; set => date = value; }
         public int ShirtOptional { get => shirtOptional; set => shirtOptional = value; }
+        public int ShirtPrice { get => shirtPrice; set => shirtPrice = value; }
     }
 }

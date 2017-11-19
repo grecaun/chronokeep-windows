@@ -10,7 +10,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 7;
+        private readonly int version = 8;
         SQLiteConnection connection;
 
         public SQLiteInterface(String info)
@@ -27,7 +27,7 @@ namespace EventDirector
             if (reader.Read())
             {
                 Log.D("Tables do not need to be made.");
-                command = new SQLiteCommand("SELECT version FROM settings", connection);
+                command = new SQLiteCommand("SELECT version FROM settings;", connection);
                 reader = command.ExecuteReader();
                 if (reader.Read())
                 {
@@ -57,6 +57,7 @@ namespace EventDirector
                             "event_kiosk INTEGER DEFAULT 0," +
                             "event_next_year_event_id INTEGER DEFAULT -1," +
                             "event_shirt_optional INTEGER DEFAULT 1," +
+                            "event_shirt_price INTEGER DEFAULT 0," +
                             "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                             ")");
                     queries.Add("CREATE TABLE IF NOT EXISTS emergencycontacts (" +
@@ -407,6 +408,15 @@ namespace EventDirector
                         command.ExecuteNonQuery();
                         transaction.Commit();
                     }
+                    goto case 7;
+                case 7:
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events ADD event_shirt_price INTEGER DEFAULT 0; UPDATE settings SET version=8 WHERE version=7;";
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
                     break;
             }
         }
@@ -429,10 +439,12 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO events(event_name, event_date) values(@name,@date)";
+            command.CommandText = "INSERT INTO events(event_name, event_date, event_shirt_optional, event_shirt_price) values(@name,@date,@so,@price)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
-                new SQLiteParameter("@date", anEvent.Date) });
+                new SQLiteParameter("@date", anEvent.Date),
+                new SQLiteParameter("@so", anEvent.ShirtOptional),
+                new SQLiteParameter("@price", anEvent.ShirtPrice) });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
         }
@@ -640,13 +652,14 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE events SET event_name=@0, event_date=@1, event_next_year_event_id=@ny, event_shirt_optional=@so WHERE event_id=@2";
+            command.CommandText = "UPDATE events SET event_name=@0, event_date=@1, event_next_year_event_id=@ny, event_shirt_optional=@so, event_shirt_price=@price WHERE event_id=@2";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", anEvent.Name),
                 new SQLiteParameter("@1", anEvent.Date),
                 new SQLiteParameter("@2", anEvent.Identifier),
                 new SQLiteParameter("@ny", anEvent.NextYear),
-                new SQLiteParameter("@so", anEvent.ShirtOptional) } );
+                new SQLiteParameter("@so", anEvent.ShirtOptional),
+                new SQLiteParameter("@price", anEvent.ShirtPrice) } );
             command.ExecuteNonQuery();
         }
 
@@ -782,7 +795,7 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString(), Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"])));
+                output.Add(new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString(), Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"]), Convert.ToInt32(reader["event_shirt_price"])));
             }
             return output;
         }
@@ -1274,7 +1287,7 @@ namespace EventDirector
             Event output = null;
             if (reader.Read())
             {
-                output = new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString(), Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"]));
+                output = new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString(), Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"]), Convert.ToInt32(reader["event_shirt_price"]));
             }
             return output;
         }
