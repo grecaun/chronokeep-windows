@@ -478,7 +478,7 @@ namespace EventDirector
             DateTime eventDateTime = Convert.ToDateTime(eventDate);
             DateTime myDateTime = Convert.ToDateTime(birthdate);
             int numYears = eventDateTime.Year - myDateTime.Year;
-            if (eventDateTime.Month < myDateTime.Month || (eventDateTime.Month == myDateTime.Month && eventDateTime.Date < myDateTime.Date))
+            if (eventDateTime.Month < myDateTime.Month || (eventDateTime.Month == myDateTime.Month && eventDateTime.Day < myDateTime.Day))
             {
                 numYears--;
             }
