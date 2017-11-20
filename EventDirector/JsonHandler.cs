@@ -76,8 +76,10 @@ namespace EventDirector
                 Event = oneEvent,
                 Divisions = database.GetDivisions(oneEvent.Identifier),
                 TimingPoints = database.GetTimingPoints(oneEvent.Identifier),
-                EventOptions = eventOptions
-            };
+                EventOptions = eventOptions,
+                NextYear = database.GetEvent(oneEvent.NextYear),
+                NextYearDivisions = database.GetDivisions(oneEvent.NextYear)
+        };
             return JsonConvert.SerializeObject(serverEvent);
         }
 
