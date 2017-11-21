@@ -8,7 +8,7 @@
         Title="ImportFileWindow" Height="600" Width="500" MinWidth="450"
         Closing="Window_Closing">
     <Grid>
-        <Label x:Name="eventLabel" FontSize="16" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,7,10,10" IsTabStop="False" />
+        <TextBox x:Name="eventLabel" FontSize="17" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,10,10" IsTabStop="False" Width="460" />
         <DatePicker x:Name="date" Height="25" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,47,128,10" TabIndex="2" />
         <CheckBox x:Name="shirtOptionalBox" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Shirt Optional" IsChecked="True" Margin="10,53,235,10" TabIndex="1"/>
         <Label Content="Shirt Price" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,47,410,10" IsTabStop="False" />

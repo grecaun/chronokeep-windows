@@ -40,7 +40,7 @@ namespace EventDirector
 
     internal class DListBoxItem : ListBoxItem
     {
-        public TextBox DivisionName { get; private set; }
+        public Label DivisionName { get; private set; }
         public TextBox DivisionCost { get; private set; }
 
         public DListBoxItem(String name, int cost)
@@ -50,9 +50,9 @@ namespace EventDirector
             this.Content = theGrid;
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            DivisionName = new TextBox
+            DivisionName = new Label
             {
-                Text = name
+                Content = name
             };
             theGrid.Children.Add(DivisionName);
             Grid.SetColumn(DivisionName, 0);
@@ -93,7 +93,7 @@ namespace EventDirector
 
         public string DivName()
         {
-            return DivisionName.Text.Trim();
+            return DivisionName.Content.ToString().Trim();
         }
     }
 }
