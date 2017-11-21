@@ -941,7 +941,7 @@ namespace EventDirector
                     "new_gender, new_earlystart, new_fleece)" +
                     " VALUES" +
                     "(0, 'J', 'Doe', '', '', '', '', '01/01/1901', '', '', " +
-                    "0, '', '', '', 0, 0, " +
+                    "0, '', '', '', 0, -1, " +
                     "-1, -1, 0, '', " +
                     "'New Participant', '', '', '', '', '', '', '', ''," +
                     "'', 0, ''," +

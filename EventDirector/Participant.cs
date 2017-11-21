@@ -404,6 +404,81 @@ namespace EventDirector
             {
                 birthdate = "01/01/0001";
             }
+            this.eventSpecific.ShirtSize = eventSpecific.ShirtSize.Trim();
+            if ((eventSpecific.ShirtSize.IndexOf("Extra", StringComparison.OrdinalIgnoreCase) >= 0 && eventSpecific.ShirtSize.IndexOf("Small", StringComparison.OrdinalIgnoreCase) >= 0) || eventSpecific.ShirtSize.Equals("XS", StringComparison.OrdinalIgnoreCase) || eventSpecific.ShirtSize.Equals("X-Small", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.ShirtSize = "XS";
+            }
+            else if (eventSpecific.ShirtSize.Equals("Small", StringComparison.OrdinalIgnoreCase) || eventSpecific.ShirtSize.Equals("Sm", StringComparison.OrdinalIgnoreCase) || eventSpecific.ShirtSize.Equals("S", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.ShirtSize = "S";
+            }
+            else if (eventSpecific.ShirtSize.Equals("Medium", StringComparison.OrdinalIgnoreCase) || eventSpecific.ShirtSize.Equals("Md", StringComparison.OrdinalIgnoreCase) || eventSpecific.ShirtSize.Equals("M", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.ShirtSize = "M";
+            }
+            else if (eventSpecific.ShirtSize.Equals("Large", StringComparison.OrdinalIgnoreCase) || eventSpecific.ShirtSize.Equals("Lg", StringComparison.OrdinalIgnoreCase) || eventSpecific.ShirtSize.Equals("L", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.ShirtSize = "L";
+            }
+            else if ((eventSpecific.ShirtSize.IndexOf("Extra", StringComparison.OrdinalIgnoreCase) >= 0 && eventSpecific.ShirtSize.IndexOf("Large", StringComparison.OrdinalIgnoreCase) >= 0) || eventSpecific.ShirtSize.Equals("XL", StringComparison.OrdinalIgnoreCase) || eventSpecific.ShirtSize.Equals("X-Large", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.ShirtSize = "XL";
+            }
+            else if ((eventSpecific.ShirtSize.IndexOf("XX", StringComparison.OrdinalIgnoreCase) >= 0 && eventSpecific.ShirtSize.IndexOf("Large", StringComparison.OrdinalIgnoreCase) >= 0) || eventSpecific.ShirtSize.Equals("XXL", StringComparison.OrdinalIgnoreCase) || eventSpecific.ShirtSize.Equals("2XL", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.ShirtSize = "XXL";
+            }
+            this.eventSpecific.SecondShirt = eventSpecific.SecondShirt.Trim();
+            if ((eventSpecific.SecondShirt.IndexOf("Extra", StringComparison.OrdinalIgnoreCase) >= 0 && eventSpecific.SecondShirt.IndexOf("Small", StringComparison.OrdinalIgnoreCase) >= 0) || eventSpecific.SecondShirt.Equals("XS", StringComparison.OrdinalIgnoreCase) || eventSpecific.SecondShirt.Equals("X-Small", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.SecondShirt = "XS";
+            }
+            else if (eventSpecific.SecondShirt.Equals("Small", StringComparison.OrdinalIgnoreCase) || eventSpecific.SecondShirt.Equals("Sm", StringComparison.OrdinalIgnoreCase) || eventSpecific.SecondShirt.Equals("S", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.SecondShirt = "S";
+            }
+            else if (eventSpecific.SecondShirt.Equals("Medium", StringComparison.OrdinalIgnoreCase) || eventSpecific.SecondShirt.Equals("Md", StringComparison.OrdinalIgnoreCase) || eventSpecific.SecondShirt.Equals("M", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.SecondShirt = "M";
+            }
+            else if (eventSpecific.SecondShirt.Equals("Large", StringComparison.OrdinalIgnoreCase) || eventSpecific.SecondShirt.Equals("Lg", StringComparison.OrdinalIgnoreCase) || eventSpecific.SecondShirt.Equals("L", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.SecondShirt = "L";
+            }
+            else if ((eventSpecific.SecondShirt.IndexOf("Extra", StringComparison.OrdinalIgnoreCase) >= 0 && eventSpecific.SecondShirt.IndexOf("Large", StringComparison.OrdinalIgnoreCase) >= 0) || eventSpecific.SecondShirt.Equals("XL", StringComparison.OrdinalIgnoreCase) || eventSpecific.SecondShirt.Equals("X-Large", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.SecondShirt = "XL";
+            }
+            else if ((eventSpecific.SecondShirt.IndexOf("XX", StringComparison.OrdinalIgnoreCase) >= 0 && eventSpecific.SecondShirt.IndexOf("Large", StringComparison.OrdinalIgnoreCase) >= 0) || eventSpecific.SecondShirt.Equals("XXL", StringComparison.OrdinalIgnoreCase) || eventSpecific.SecondShirt.Equals("2XL", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.SecondShirt = "XXL";
+            }
+            this.eventSpecific.Fleece = eventSpecific.Fleece.Trim();
+            if ((eventSpecific.Fleece.IndexOf("Extra", StringComparison.OrdinalIgnoreCase) >= 0 && eventSpecific.Fleece.IndexOf("Small", StringComparison.OrdinalIgnoreCase) >= 0) || eventSpecific.Fleece.Equals("XS", StringComparison.OrdinalIgnoreCase) || eventSpecific.Fleece.Equals("X-Small", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.Fleece = "XS";
+            }
+            else if (eventSpecific.Fleece.Equals("Small", StringComparison.OrdinalIgnoreCase) || eventSpecific.Fleece.Equals("Sm", StringComparison.OrdinalIgnoreCase) || eventSpecific.Fleece.Equals("S", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.Fleece = "S";
+            }
+            else if (eventSpecific.Fleece.Equals("Medium", StringComparison.OrdinalIgnoreCase) || eventSpecific.Fleece.Equals("Md", StringComparison.OrdinalIgnoreCase) || eventSpecific.Fleece.Equals("M", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.Fleece = "M";
+            }
+            else if (eventSpecific.Fleece.Equals("Large", StringComparison.OrdinalIgnoreCase) || eventSpecific.Fleece.Equals("Lg", StringComparison.OrdinalIgnoreCase) || eventSpecific.Fleece.Equals("L", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.Fleece = "L";
+            }
+            else if ((eventSpecific.Fleece.IndexOf("Extra", StringComparison.OrdinalIgnoreCase) >= 0 && eventSpecific.Fleece.IndexOf("Large", StringComparison.OrdinalIgnoreCase) >= 0) || eventSpecific.Fleece.Equals("XL", StringComparison.OrdinalIgnoreCase) || eventSpecific.Fleece.Equals("X-Large", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.Fleece = "XL";
+            }
+            else if ((eventSpecific.Fleece.IndexOf("XX", StringComparison.OrdinalIgnoreCase) >= 0 && eventSpecific.Fleece.IndexOf("Large", StringComparison.OrdinalIgnoreCase) >= 0) || eventSpecific.Fleece.Equals("XXL", StringComparison.OrdinalIgnoreCase) || eventSpecific.Fleece.Equals("2XL", StringComparison.OrdinalIgnoreCase))
+            {
+                this.eventSpecific.Fleece = "XXL";
+            }
             Log.D("New data should be First: " + firstName + " Last: " + lastName + " City: " + city + " Street: " + street + " Country: " + country + " Phone: " + phone + " Mobile: " + mobile + " Emergency Contact Phone: " + emergencyContact.Phone + " Gender: " + gender);
         }
 

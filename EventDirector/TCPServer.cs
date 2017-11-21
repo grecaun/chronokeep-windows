@@ -205,6 +205,10 @@ namespace EventDirector
                             }
                         }
                         Participant thisYearEntry = database.GetParticipant(thisYear.Identifier, regNextYear.Participant.Id);
+                        if (thisYearEntry.EventSpecific.NextYear  == 1)
+                        {
+                            break;
+                        }
                         thisYearEntry.EventSpecific.NextYear = 1;
                         database.UpdateParticipant(thisYearEntry);
                         Participant nextYearEntry = new Participant(regNextYear.Participant.First, regNextYear.Participant.Last, regNextYear.Participant.Street, regNextYear.Participant.City,

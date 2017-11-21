@@ -64,12 +64,13 @@ namespace EventDirector
             this.mainWindow = mainWindow;
             this.database = database;
             date.SelectedDate = DateTime.Today;
-            eventLabel.Content = importer.Data.FileName;
+            eventLabel.Text = importer.Data.FileName;
             shirtPriceBox.Text = "20.00";
             if (importer.Data.Type == ImportData.FileType.EXCEL)
             {
                 SheetsLabel.Visibility = Visibility.Visible;
                 SheetsBox.Visibility = Visibility.Visible;
+                eventLabel.Width = 315;
                 SheetsBox.ItemsSource = ((ExcelImporter)importer).SheetNames;
                 SheetsBox.SelectedIndex = 0;
                 init = false;
@@ -139,6 +140,7 @@ namespace EventDirector
             page2 = new ImportFilePage2(divisions);
             SheetsLabel.Visibility = Visibility.Collapsed;
             SheetsBox.Visibility = Visibility.Collapsed;
+            eventLabel.Width = 460;
             Done.Content = "Done";
             Frame.Content = page2;
         }
@@ -167,7 +169,7 @@ namespace EventDirector
             }
             shirtPrice += cents;
             int shirtOption = shirtOptionalBox.IsChecked == true ? 1 : 0;
-            Event anEvent = new Event(importer.Data.FileName, date.SelectedDate.Value.Ticks, shirtOption, shirtPrice);
+            Event anEvent = new Event(eventLabel.Text.Trim(), date.SelectedDate.Value.Ticks, shirtOption, shirtPrice);
             bool valid = true;
             await Task.Run(() =>
             {
