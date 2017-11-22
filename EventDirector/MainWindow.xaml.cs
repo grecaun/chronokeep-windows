@@ -469,11 +469,11 @@ namespace EventDirector
                 Event anEvent = (Event)eventsListView.SelectedItem;
                 foreach (Change c in changes)
                 {
-                    if (c.OldParticipant != null && (anEvent == null || anEvent.Identifier == c.OldParticipant.EventIdentifier || c.OldParticipant.EventIdentifier == -1))
+                    if (c.OldParticipant != null && (anEvent == null || anEvent.Identifier == c.OldParticipant.EventIdentifier))
                     {
                         changeParts.Add(new ChangeParticipant(c.Identifier, "Old", c.OldParticipant));
                     }
-                    if (c.NewParticipant != null && (anEvent == null || anEvent.Identifier == c.OldParticipant.EventIdentifier))
+                    if (c.NewParticipant != null && (anEvent == null || anEvent.Identifier == c.NewParticipant.EventIdentifier))
                     {
                         changeParts.Add(new ChangeParticipant(c.Identifier, "New", c.NewParticipant));
                     }

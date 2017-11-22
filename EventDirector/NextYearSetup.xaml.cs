@@ -40,6 +40,7 @@ namespace EventDirector
 
         public void GotoPage2(int eventId)
         {
+            // Get old event.
             oldEvent = database.GetEvent(eventId);
             NYFrame.Content = new NextYearSetupPage2(this, oldEvent);
         }
@@ -48,9 +49,6 @@ namespace EventDirector
         {
             // Add new event for next year
             newEvent = new Event(newEventName, date, shirtOptional, shirtPrice);
-            database.AddEvent(newEvent);
-            newEvent = database.GetEvent(database.GetEventID(newEvent));
-            // Get old event.
             // Add divisions to new event. Same as last year. User can edit these later.
             List<Division> divs = database.GetDivisions(oldEvent.Identifier);
             NYFrame.Content = new NextYearSetupPage3(divs, this);
@@ -58,6 +56,8 @@ namespace EventDirector
 
         public void GoToPage4(List<Division> divs)
         {
+            database.AddEvent(newEvent);
+            newEvent = database.GetEvent(database.GetEventID(newEvent));
             foreach (Division d in divs)
             {
                 database.AddDivision(new Division(d.Name, newEvent.Identifier, d.Cost));

@@ -70,11 +70,12 @@ namespace EventDirector
                     {
                         dotPath = ".xlsx";
                     }
-                    fullPath = System.IO.Path.Combine(directory, anEvent.Name + dotPath);
+                    String fileName = anEvent.Name + " Changes";
+                    fullPath = System.IO.Path.Combine(directory, fileName + dotPath);
                     int number = 1;
                     while (File.Exists(fullPath))
                     {
-                        fullPath = System.IO.Path.Combine(directory, anEvent.Name + " (" + number++ + ")" + dotPath);
+                        fullPath = System.IO.Path.Combine(directory, fileName + " (" + number++ + ")" + dotPath);
                     }
                     List<Change> changes = database.GetChanges();
                     List<ChangeParticipant> parts = new List<ChangeParticipant>();

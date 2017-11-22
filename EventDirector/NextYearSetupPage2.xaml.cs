@@ -55,7 +55,7 @@ namespace EventDirector
         private void Submit()
         {
             String nameString = nameBox.Text.Trim();
-            int shirtOptional = 1, shirtPrice = 0;
+            int shirtOptional = shirtOptionalBox.IsChecked == true ? 1 : 0, shirtPrice = 0;
             string[] shirtVals = shirtPriceBox.Text.Split('.');
             shirtPrice = 20;
             if (shirtVals.Length > 0)

@@ -28,7 +28,7 @@ namespace EventDirector
             this.kiosk = nextYear;
             foreach (Division div in divs)
             {
-                DListBoxItem newBox = new DListBoxItem(div.Name, div.Cost);
+                D2ListBoxItem newBox = new D2ListBoxItem(div.Name, div.Cost);
                 divisionListBox.Items.Add(newBox);
             }
         }
@@ -41,7 +41,7 @@ namespace EventDirector
         private void Submit()
         {
             List<Division> divisions = new List<Division>();
-            foreach (DListBoxItem div in divisionListBox.Items)
+            foreach (D2ListBoxItem div in divisionListBox.Items)
             {
                 divisions.Add(new Division(div.DivName(), -1, div.Cost()));
             }
