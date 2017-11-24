@@ -65,7 +65,7 @@ namespace EventDirector
             // Update old event with new information.
             oldEvent.NextYear = newEvent.Identifier;
             database.UpdateEvent(oldEvent);
-            mainWindow.UpdateEventBox();
+            mainWindow.NextYearSetupFinalize(oldEvent.Identifier);
             this.Close();
         }
 

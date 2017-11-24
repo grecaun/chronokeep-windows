@@ -800,23 +800,42 @@ namespace EventDirector
             return output;
         }
 
+
+
+        public List<Division> GetDivisions()
+        {
+            List<Division> output = new List<Division>();
+            String commandTxt = "SELECT * FROM divisions";
+            SQLiteCommand command = new SQLiteCommand(commandTxt, connection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new Division(Convert.ToInt32(reader["division_id"]), reader["division_name"].ToString(), Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_cost"])));
+            }
+            return output;
+        }
+
         public List<Division> GetDivisions(int eventId)
         {
+            List<Division> output = new List<Division>();
+            if (eventId < 0)
+            {
+                return output;
+            }
             String commandTxt;
             if (eventId != -1)
             {
-                commandTxt = "SELECT * FROM divisions WHERE event_id = "+eventId;
+                commandTxt = "SELECT * FROM divisions WHERE event_id = " + eventId;
             }
             else
             {
                 commandTxt = "SELECT * FROM divisions";
             }
-            List<Division> output = new List<Division>();
             SQLiteCommand command = new SQLiteCommand(commandTxt, connection);
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Division(Convert.ToInt32(reader["division_id"]),reader["division_name"].ToString(),Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_cost"])));
+                output.Add(new Division(Convert.ToInt32(reader["division_id"]), reader["division_name"].ToString(), Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_cost"])));
             }
             return output;
         }
@@ -1086,7 +1105,7 @@ namespace EventDirector
             Log.D("Getting changes.");
             List<Change> output = new List<Change>();
             Hashtable divisions = new Hashtable();
-            List<Division> divs = GetDivisions(-1);
+            List<Division> divs = GetDivisions();
             foreach (Division d in divs)
             {
                 divisions.Add(d.Identifier, d.Name);
@@ -1280,6 +1299,10 @@ namespace EventDirector
 
         public Event GetEvent(int id)
         {
+            if (id < 0)
+            {
+                return null;
+            }
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM events WHERE event_id=@id";
             command.Parameters.Add(new SQLiteParameter("@id",id));

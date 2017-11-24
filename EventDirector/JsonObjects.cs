@@ -246,6 +246,8 @@ namespace EventDirector
         public List<Division> Divisions { get; set; }
         public List<TimingPoint> TimingPoints { get; set; }
         public List<JsonOption> EventOptions { get; set; }
+        public Event NextYear { get; set; }
+        public List<Division> NextYearDivisions { get; set; }
     }
 
     public class JsonServerResultUpdate

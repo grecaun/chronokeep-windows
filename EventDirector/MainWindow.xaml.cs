@@ -791,6 +791,12 @@ namespace EventDirector
             UpdateEventButtons();
         }
 
+        public void NextYearSetupFinalize(int eventId)
+        {
+            tcpServer.UpdateEventList();
+            UpdateEventBox();
+        }
+
         public async void UpdateSettings(String name)
         {
             string newName = "Northwest Endurance Events";

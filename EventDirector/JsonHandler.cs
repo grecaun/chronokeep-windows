@@ -192,12 +192,15 @@ namespace EventDirector
         // JsonServerEventUpdate
         public String GetJsonServerEventUpdate(int eventId)
         {
+            Event thisYear = database.GetEvent(eventId);
             JsonServerEventUpdate update = new JsonServerEventUpdate()
             {
-                Event = database.GetEvent(eventId),
+                Event = thisYear,
                 Divisions = database.GetDivisions(eventId),
                 TimingPoints = database.GetTimingPoints(eventId),
-                EventOptions = database.GetEventOptions(eventId)
+                EventOptions = database.GetEventOptions(eventId),
+                NextYear = database.GetEvent(thisYear.NextYear),
+                NextYearDivisions = database.GetDivisions(thisYear.NextYear)
             };
             return JsonConvert.SerializeObject(update);
         }
