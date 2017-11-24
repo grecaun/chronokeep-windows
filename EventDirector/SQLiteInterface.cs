@@ -10,7 +10,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 8;
+        private readonly int version = 9;
         SQLiteConnection connection;
 
         public SQLiteInterface(String info)
@@ -308,6 +308,7 @@ namespace EventDirector
                     "new_next_year INTEGER DEFAULT 0" +
                     ")");
                 queries.Add("INSERT INTO emergencycontacts (emergencycontact_id, emergencycontact_name) VALUES (0,'')");
+                queries.Add("CREATE INDEX idx_participants_emergencyId ON participants(emergencycontact_id);");
                 queries.Add("INSERT INTO participants (participant_id, participant_first, participant_last, participant_birthday, emergencycontact_id) VALUES (0, 'J', 'Doe', '01/01/1901', 0)");
 
                 using (var transaction = connection.BeginTransaction())
@@ -417,6 +418,15 @@ namespace EventDirector
                         command.ExecuteNonQuery();
                         transaction.Commit();
                     }
+                    goto case 8;
+                case 8:
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE INDEX idx_participants_emergencyId ON participants(emergencycontact_id); UPDATE settings SET version=9 WHERE version=8;";
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
                     break;
             }
         }
@@ -505,6 +515,7 @@ namespace EventDirector
                 new SQLiteParameter("@country", person.Country),
                 new SQLiteParameter("@street2", person.Street2),
                 new SQLiteParameter("@gender", person.Gender) } );
+            Log.D("SQL query: '" + command.CommandText + "'");
             reader = command.ExecuteReader();
             if (reader.Read())
             {
@@ -512,8 +523,8 @@ namespace EventDirector
             }
             command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, division_id, eventspecific_bib, eventspecific_checkedin, eventspecific_shirtsize, eventspecific_comments, eventspecific_secondshirt, eventspecific_owes, eventspecific_hat, eventspecific_other, eventspecific_earlystart, eventspecific_fleece) " +
-                "VALUES (@0,@1,@2,@3,@5,@6,@comments,@secondshirt,@owes,@hat,@other,@earlystart,@fleece)";
+            command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, division_id, eventspecific_bib, eventspecific_checkedin, eventspecific_shirtsize, eventspecific_comments, eventspecific_secondshirt, eventspecific_owes, eventspecific_hat, eventspecific_other, eventspecific_earlystart, eventspecific_fleece, eventspecific_next_year) " +
+                "VALUES (@0,@1,@2,@3,@5,@6,@comments,@secondshirt,@owes,@hat,@other,@earlystart,@fleece,@nextYear)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@0", person.Identifier),
                 new SQLiteParameter("@1", person.EventSpecific.EventIdentifier),
@@ -527,7 +538,9 @@ namespace EventDirector
                 new SQLiteParameter("@hat", person.EventSpecific.Hat),
                 new SQLiteParameter("@other", person.EventSpecific.Other),
                 new SQLiteParameter("@fleece", person.EventSpecific.Fleece),
-                new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart) } );
+                new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart),
+                new SQLiteParameter("@nextYear", person.EventSpecific.NextYear) } );
+            Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
         }
 
@@ -701,7 +714,7 @@ namespace EventDirector
                 command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
                 Log.D("Updating event specific.... bib is " + person.EventSpecific.Bib);
-                command.CommandText = "UPDATE eventspecific SET division_id=@0, eventspecific_bib=@1, eventspecific_checkedin=@3, eventspecific_shirtsize=@4, eventspecific_secondshirt=@secondshirt, eventspecific_owes=@owes, eventspecific_hat=@hat, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_fleece=@fleece WHERE eventspecific_id=@5";
+                command.CommandText = "UPDATE eventspecific SET division_id=@0, eventspecific_bib=@1, eventspecific_checkedin=@3, eventspecific_shirtsize=@4, eventspecific_secondshirt=@secondshirt, eventspecific_owes=@owes, eventspecific_hat=@hat, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_fleece=@fleece, eventspecific_next_year=@nextYear WHERE eventspecific_id=@5";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", person.EventSpecific.DivisionIdentifier),
                     new SQLiteParameter("@1", person.EventSpecific.Bib),
@@ -713,7 +726,8 @@ namespace EventDirector
                     new SQLiteParameter("@hat", person.EventSpecific.Hat),
                     new SQLiteParameter("@other", person.EventSpecific.Other),
                     new SQLiteParameter("@fleece", person.EventSpecific.Fleece),
-                    new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart)
+                    new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart),
+                    new SQLiteParameter("@nextYear", person.EventSpecific.NextYear)
                 } );
                 command.ExecuteNonQuery();
                 transaction.Commit();

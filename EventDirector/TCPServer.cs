@@ -209,8 +209,6 @@ namespace EventDirector
                         {
                             break;
                         }
-                        thisYearEntry.EventSpecific.NextYear = 1;
-                        database.UpdateParticipant(thisYearEntry);
                         Participant nextYearEntry = new Participant(regNextYear.Participant.First, regNextYear.Participant.Last, regNextYear.Participant.Street, regNextYear.Participant.City,
                                                                     regNextYear.Participant.State, regNextYear.Participant.Zip, regNextYear.Participant.Birthday, regNextYear.Participant.EmergencyContact,
                                                                     regNextYear.Participant.Specific, regNextYear.Participant.Phone, regNextYear.Participant.Email, regNextYear.Participant.Mobile,
@@ -219,10 +217,19 @@ namespace EventDirector
                         nextYearEntry.EventSpecific.EventIdentifier = thisYear.NextYear;
                         database.AddParticipant(nextYearEntry);
                         nextYearEntry = database.GetParticipant(thisYear.NextYear, nextYearEntry);
-                        database.AddChange(nextYearEntry, null);
-                        changeUpdater.UpdateChangesBox();
-                        BroadcastJson(jsonHandler.GetJsonServerAddParticipant(thisYear.NextYear, nextYearEntry));
-                        BroadcastJson(jsonHandler.GetJsonServerUpdateParticipant(thisYear.Identifier, thisYearEntry));
+                        if (nextYearEntry != null)
+                        {
+                            thisYearEntry.EventSpecific.NextYear = 1;
+                            database.UpdateParticipant(thisYearEntry);
+                            database.AddChange(nextYearEntry, null);
+                            BroadcastJson(jsonHandler.GetJsonServerAddParticipant(thisYear.NextYear, nextYearEntry));
+                            BroadcastJson(jsonHandler.GetJsonServerUpdateParticipant(thisYear.Identifier, thisYearEntry));
+                            changeUpdater.UpdateChangesBox();
+                        }
+                        else
+                        {
+                            Log.D("Hmm, something went wrong.");
+                        }
                         break;
                 }
             }
