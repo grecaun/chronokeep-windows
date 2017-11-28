@@ -196,14 +196,17 @@ namespace EventDirector
                         Event thisYear = database.GetEvent(regNextYear.EventId);
                         List<Division> nextYearDivs = database.GetDivisions(thisYear.NextYear);
                         Division nextYearDiv = nextYearDivs[0];
+                        Log.D("Getting division");
                         foreach (Division d in nextYearDivs)
                         {
-                            if (d.Name.Equals(regNextYear.Participant.Specific.DivisionName))
+                            if (d.Identifier == regNextYear.Participant.Specific.DivisionIdentifier || d.Name.Equals(regNextYear.Participant.Specific.DivisionName))
                             {
+                                Log.D("Division found. Id is " + d.Identifier + " Name is " + d.Name);
                                 nextYearDiv = d;
                                 break;
                             }
                         }
+                        Log.D("Getting participant information from this year.");
                         Participant thisYearEntry = database.GetParticipant(thisYear.Identifier, regNextYear.Participant.Id);
                         if (thisYearEntry.EventSpecific.NextYear  == 1)
                         {
@@ -215,10 +218,12 @@ namespace EventDirector
                                                                     regNextYear.Participant.Parent, regNextYear.Participant.Country, regNextYear.Participant.Street2, regNextYear.Participant.Gender);
                         nextYearEntry.EventSpecific.DivisionIdentifier = nextYearDiv.Identifier;
                         nextYearEntry.EventSpecific.EventIdentifier = thisYear.NextYear;
+                        Log.D("Adding next year entry.");
                         database.AddParticipant(nextYearEntry);
                         nextYearEntry = database.GetParticipant(thisYear.NextYear, nextYearEntry);
                         if (nextYearEntry != null)
                         {
+                            Log.D("Participant successfully added to database.");
                             thisYearEntry.EventSpecific.NextYear = 1;
                             database.UpdateParticipant(thisYearEntry);
                             database.AddChange(nextYearEntry, null);
@@ -228,7 +233,16 @@ namespace EventDirector
                         }
                         else
                         {
-                            Log.D("Hmm, something went wrong.");
+                            Log.D("Hmm, unable to add participant for some reason.");
+                            nextYearEntry = new Participant(regNextYear.Participant.First, regNextYear.Participant.Last, regNextYear.Participant.Street, regNextYear.Participant.City,
+                                                            regNextYear.Participant.State, regNextYear.Participant.Zip, regNextYear.Participant.Birthday, regNextYear.Participant.EmergencyContact,
+                                                            regNextYear.Participant.Specific, regNextYear.Participant.Phone, regNextYear.Participant.Email, regNextYear.Participant.Mobile,
+                                                            regNextYear.Participant.Parent, regNextYear.Participant.Country, regNextYear.Participant.Street2, regNextYear.Participant.Gender);
+                            nextYearEntry.EventSpecific.DivisionIdentifier = nextYearDiv.Identifier;
+                            nextYearEntry.EventSpecific.EventIdentifier = thisYear.NextYear;
+                            nextYearEntry.EventSpecific.Comments = "Error adding this person to the entrants for next year.";
+                            database.AddChange(nextYearEntry, null);
+                            changeUpdater.UpdateChangesBox();
                         }
                         break;
                 }

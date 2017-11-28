@@ -100,6 +100,18 @@ namespace EventDirector
             this.nextyear = that.nextyear;
         }
 
+        internal void Trim()
+        {
+            divisionName = divisionName.Trim();
+            shirtSize = shirtSize.Trim();
+            secondShirt = secondShirt.Trim();
+            owes = owes.Trim();
+            hat = hat.Trim();
+            other = other.Trim();
+            fleece = fleece.Trim();
+            comments = comments.Trim();
+        }
+
         internal EventSpecific Blank()
         {
             return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", "", "", "", 0, "", 0);

@@ -39,6 +39,12 @@ namespace EventDirector
             this.email = e ?? "";
         }
 
+        internal void Trim()
+        {
+            name = name.Trim();
+            email = email.Trim();
+        }
+
         public string Name { get => name; set => name = value; }
         public string Phone { get => phone; set => phone = value; }
         public string Email { get => email; set => email = value; }

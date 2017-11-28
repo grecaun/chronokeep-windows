@@ -19,7 +19,7 @@ namespace EventDirector
             string mobile, string parent, string country, string street2, string gender
             )
         {
-            this.birthdate = birthday;
+            this.birthdate = birthday.Trim();
             this.firstName = first ?? "Unknown";
             this.lastName = last ?? "Unknown";
             this.street = street;
@@ -35,6 +35,7 @@ namespace EventDirector
             this.country = country ?? "";
             this.street2 = street2 ?? "";
             this.gender = gender ?? "";
+            Trim();
             FormatData();
         }
 
@@ -44,7 +45,7 @@ namespace EventDirector
             string mobile, string parent, string country, string street2, string gender
             )
         {
-            this.identifier = id ;
+            this.identifier = id;
             this.birthdate = birthday;
             this.firstName = first ?? "Unknown";
             this.lastName = last ?? "Unknown";
@@ -61,12 +62,33 @@ namespace EventDirector
             this.country = country ?? "";
             this.street2 = street2 ?? "";
             this.gender = gender ?? "";
+            Trim();
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
         public string Birthdate { get => birthdate; }
         internal EmergencyContact EmergencyContact { get => emergencyContact; }
         internal EventSpecific EventSpecific { get => eventSpecific; }
+
+        internal void Trim()
+        {
+            birthdate = birthdate.Trim();
+            firstName = firstName.Trim();
+            lastName = lastName.Trim();
+            street = street.Trim();
+            street2 = street.Trim();
+            city = city.Trim();
+            state = state.Trim();
+            zip = zip.Trim();
+            emergencyContact.Trim();
+            eventSpecific.Trim();
+            phone = phone.Trim();
+            email = email.Trim();
+            mobile = mobile.Trim();
+            parent = parent.Trim();
+            country = country.Trim();
+            gender = gender.Trim();
+        }
 
         internal void FormatData()
         {
@@ -97,7 +119,7 @@ namespace EventDirector
             }
             if (country != null && country.Length > 0)
             {
-                if (country.Equals("US", StringComparison.OrdinalIgnoreCase))
+                if (country.Equals("US", StringComparison.OrdinalIgnoreCase) || country.Equals("United States of America", StringComparison.OrdinalIgnoreCase) || country.Equals("United States", StringComparison.OrdinalIgnoreCase))
                 {
                     this.country = "USA";
                 }
@@ -108,7 +130,6 @@ namespace EventDirector
             }
             if (state != null && state.Length > 0)
             {
-                state = state.Trim();
                 if (state.Length > 2)
                 {
                     if (state.Equals("Alabama", StringComparison.OrdinalIgnoreCase))
@@ -542,6 +563,17 @@ namespace EventDirector
                 return outval.ToUpper();
             }
             return outval.Substring(0, 1).ToUpper() + outval.Substring(1, outval.Length - 1);
+        }
+
+        internal string CapitalizeFirstAll(String val)
+        {
+            string[] tmp = val.Split(' ');
+            StringBuilder output = new StringBuilder();
+            foreach (string s in tmp)
+            {
+                output.Append(CapitalizeFirst(s.Trim()) + " ");
+            }
+            return output.ToString().Trim();
         }
 
         // Event Specific binding stuffs
