@@ -22,6 +22,7 @@ namespace EventDirector
     {
         private ChipReaderWindow readerWindow;
         private string eventDate;
+        readonly object _locker = new object();
 
         public ChipPersonWindow(ChipReaderWindow reader, string eventDate)
         {
@@ -32,6 +33,14 @@ namespace EventDirector
 
         public async void UpdateInfo(Participant person)
         {
+            await Task.Run(() =>
+            {
+                lock (_locker)
+                {
+                    Monitor.Pulse(_locker);
+                }
+                Thread.Sleep(100);
+            });
             if (person != null)
             {
                 Bib.Content = "Bib: " + person.EventSpecific.Bib;
@@ -56,7 +65,10 @@ namespace EventDirector
             }
             await Task.Run(() =>
             {
-                Thread.Sleep(5000);
+                lock (_locker)
+                {
+                    Monitor.Wait(_locker, 5000);
+                }
             });
             Bib.Content = "";
             Chip.Content = "";
