@@ -166,7 +166,20 @@
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
     <Compile Include="AListBoxItem.cs" />
+    <Compile Include="BibChipAssociation.cs" />
+    <Compile Include="BibChipAssociationWindow.xaml.cs">
+      <DependentUpon>BibChipAssociationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BibChipViewer.xaml.cs">
+      <DependentUpon>BibChipViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ChangeParticipant.cs" />
+    <Compile Include="ChipPersonWindow.xaml.cs">
+      <DependentUpon>ChipPersonWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ChipReaderWindow.xaml.cs">
+      <DependentUpon>ChipReaderWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CSVImporter.cs" />
     <Compile Include="DayOfParticipant.cs" />
     <Compile Include="DayOfParticipantsList.xaml.cs">
@@ -209,6 +222,7 @@
     <Compile Include="KioskSetupPage1.xaml.cs">
       <DependentUpon>KioskSetupPage1.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NewReader.cs" />
     <Compile Include="NextYearSetupPage0.xaml.cs">
       <DependentUpon>NextYearSetupPage0.xaml</DependentUpon>
     </Compile>
@@ -246,6 +260,7 @@
       <DependentUpon>ParticipantsList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Printerface.cs" />
+    <Compile Include="RFIDSerial.cs" />
     <Compile Include="SQLiteInterface.cs" />
     <Compile Include="TCPServer.cs" />
     <Compile Include="TempUdpThread.cs" />
@@ -257,6 +272,22 @@
     <Compile Include="Utils.cs" />
     <Compile Include="ZeroConf.cs" />
     <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BibChipAssociationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BibChipViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ChipPersonWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ChipReaderWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

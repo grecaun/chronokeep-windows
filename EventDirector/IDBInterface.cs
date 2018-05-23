@@ -40,6 +40,8 @@ namespace EventDirector
         void UpdateParticipant(Participant person);
         int GetParticipantID(Participant person);
 
+        void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc);
+
         void AddTimingResult(TimeResult tr);
         void RemoveTimingResult(TimeResult tr);
         void UpdateTimingResult(TimeResult oldResult, TimeResult newResult);
@@ -75,5 +77,7 @@ namespace EventDirector
         Participant GetParticipant(int eventIdentifier, Participant unknown);
         List<TimeResult> GetTimingResults(int eventId);
         List<Change> GetChanges();
+        List<BibChipAssociation> GetBibChips();
+        List<BibChipAssociation> GetBibChips(int eventId);
     }
 }

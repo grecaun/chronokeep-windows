@@ -223,6 +223,61 @@ namespace EventDirector
                     windows.Add(nysetup);
                     nysetup.Show();
                     break;
+                case 17:
+                    Log.D("Associate chips and bibs - CSV");
+                    OpenFileDialog bib_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv)|*.csv|All files|*" };
+                    if (bib_dialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            CSVImporter importer = new CSVImporter(bib_dialog.FileName);
+                            await Task.Run(() =>
+                            {
+                                importer.FetchHeaders();
+                            });
+                            BibChipAssociationWindow win = new BibChipAssociationWindow(this, importer, database);
+                            windows.Add(win);
+                            win.Show();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.E("Something went wrong when trying to read the CSV file.");
+                            Log.E(ex.StackTrace);
+                        }
+                    }
+                    break;
+                case 18:
+                    Log.D("Associate chips and bibs - Excel");
+                    OpenFileDialog bib_excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx)|*.xlsx|All files|*" };
+                    if (bib_excel_dialog.ShowDialog() == true)
+                    {
+                        try
+                        {
+                            ExcelImporter excel = new ExcelImporter(bib_excel_dialog.FileName);
+                            await Task.Run(() =>
+                            {
+                                excel.FetchHeaders();
+                            });
+                            BibChipAssociationWindow excelImp = new BibChipAssociationWindow(this, excel, database);
+                            windows.Add(excelImp);
+                            excelImp.Show();
+                        }
+                        catch
+                        { }
+                    }
+                    break;
+                case 19:
+                    Log.D("View Bib Chip Associations");
+                    BibChipViewer bibChipViewer = new BibChipViewer(database, this);
+                    windows.Add(bibChipViewer);
+                    bibChipViewer.Show();
+                    break;
+                case 20:
+                    Log.D("Chip reader");
+                    ChipReaderWindow chipWindow = new ChipReaderWindow(database, this);
+                    windows.Add(chipWindow);
+                    chipWindow.Show();
+                    break;
                 default:
                     break;
             }

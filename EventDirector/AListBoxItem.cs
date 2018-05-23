@@ -38,6 +38,53 @@ namespace EventDirector
         }
     }
 
+    internal class H2ListBoxItem : ListBoxItem
+    {
+        public Label HeaderLabel { get; private set; }
+        public ComboBox HeaderBox { get; private set; }
+        public int Index { get; private set; }
+        public string[] human_fields = {
+            "",
+            "Bib",
+            "Chip"
+        };
+
+        public H2ListBoxItem(String s, int ix)
+        {
+            this.IsTabStop = false;
+            Index = ix;
+            Grid theGrid = new Grid();
+            this.Content = theGrid;
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            HeaderLabel = new Label
+            {
+                Content = s
+            };
+            theGrid.Children.Add(HeaderLabel);
+            Grid.SetColumn(HeaderLabel, 0);
+            HeaderBox = new ComboBox
+            {
+                ItemsSource = human_fields,
+                SelectedIndex = GetHeaderBoxIndex(s.ToLower().Trim()),
+            };
+            theGrid.Children.Add(HeaderBox);
+            Grid.SetColumn(HeaderBox, 1);
+        }
+
+        internal int GetHeaderBoxIndex(string s) {
+            if (String.Equals(s, "bib", StringComparison.OrdinalIgnoreCase))
+            {
+                return 1;
+            }
+            else if (String.Equals(s, "chip", StringComparison.OrdinalIgnoreCase))
+            {
+                return 2;
+            }
+            return 0;
+        }
+    }
+
     internal class DListBoxItem : ListBoxItem
     {
         public Label DivisionName { get; private set; }

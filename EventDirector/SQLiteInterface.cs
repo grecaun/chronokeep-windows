@@ -10,7 +10,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 9;
+        private readonly int version = 12;
         SQLiteConnection connection;
 
         public SQLiteInterface(String info)
@@ -46,6 +46,13 @@ namespace EventDirector
                 reader = command.ExecuteReader();
                 if (reader.Read())
                 {
+                    queries.Add("CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
+                            "event_id INTEGER NOT NULL," +
+                            "bib INTEGER NOT NULL," +
+                            "chip INTEGER NOT NULL," +
+                            "UNIQUE (event_id, bib) ON CONFLICT REPLACE," +
+                            "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
+                            ")");
                     queries.Add("CREATE TABLE IF NOT EXISTS events (" +
                             "event_id INTEGER PRIMARY KEY," +
                             "event_name VARCHAR(100) NOT NULL," +
@@ -151,7 +158,7 @@ namespace EventDirector
                             "eventspecific_earlystart INTEGER DEFAULT 0," +
                             "eventspecific_fleece VARCHAR DEFAULT ''," +
                             "eventspecific_next_year INTEGER DEFAULT 0," +
-                            "UNIQUE (participant_id, event_id) ON CONFLICT IGNORE" +
+                            "UNIQUE (participant_id, event_id, division_id) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS timeresults (" +
                             "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
@@ -424,6 +431,70 @@ namespace EventDirector
                     {
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE INDEX idx_participants_emergencyId ON participants(emergencycontact_id); UPDATE settings SET version=9 WHERE version=8;";
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    goto case 9;
+                case 9:
+                    using (var transcation = connection.BeginTransaction())
+                    {
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE eventspecific RENAME TO old_eventspecific;"+
+                            "CREATE TABLE IF NOT EXISTS eventspecific(" +
+                            "eventspecific_id INTEGER PRIMARY KEY," +
+                            "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                            "division_id INTEGER NOT NULL REFERENCES divisions(division_id)," +
+                            "eventspecific_bib INTEGER," +
+                            "eventspecific_checkedin INTEGER DEFAULT 0," +
+                            "eventspecific_shirtsize VARCHAR," +
+                            "eventspecific_comments VARCHAR," +
+                            "eventspecific_secondshirt VARCHAR," +
+                            "eventspecific_owes VARCHAR(50)," +
+                            "eventspecific_hat VARCHAR(20)," +
+                            "eventspecific_other VARCHAR," +
+                            "eventspecific_earlystart INTEGER DEFAULT 0," +
+                            "eventspecific_fleece VARCHAR DEFAULT ''," +
+                            "eventspecific_next_year INTEGER DEFAULT 0," +
+                            "UNIQUE (participant_id, event_id, division_id) ON CONFLICT IGNORE" +
+                            "); CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
+                            "event_id INTEGER PRIMARY KEY," +
+                            "bib INTEGER NOT NULL," +
+                            "chip INTEGER NOT NULL" +
+                            ");"+
+                            "INSERT INTO eventspecific SELECT * FROM old_eventspecific; UPDATE settings SET version=10 WHERE version=9;";
+                        command.ExecuteNonQuery();
+                        transcation.Commit();
+                    }
+                    goto case 10;
+                case 10:
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO old_bib_chip_assoc;" +
+                            "CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
+                            "event_id INTEGER PRIMARY KEY," +
+                            "bib INTEGER NOT NULL," +
+                            "chip INTEGER NOT NULL," +
+                            "UNIQUE (event_id, bib) ON CONFLICT REPLACE," +
+                            "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
+                            "); INSERT INTO bib_chip_assoc SELECT * FROM old_bib_chip_assoc; UPDATE settings SET version=11 WHERE version=10;";
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    goto case 11;
+                case 11:
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO old_old_bib_chip_assoc;" +
+                            "CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
+                            "event_id INTEGER," +
+                            "bib INTEGER NOT NULL," +
+                            "chip INTEGER NOT NULL," +
+                            "UNIQUE (event_id, bib) ON CONFLICT REPLACE," +
+                            "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
+                            "); INSERT INTO bib_chip_assoc SELECT * FROM old_bib_chip_assoc; UPDATE settings SET version=12 WHERE version=11;";
                         command.ExecuteNonQuery();
                         transaction.Commit();
                     }
@@ -813,8 +884,6 @@ namespace EventDirector
             }
             return output;
         }
-
-
 
         public List<Division> GetDivisions()
         {
@@ -1475,18 +1544,30 @@ namespace EventDirector
         {
             Participant output = null;
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM participants AS p, emergencycontacts AS e, eventspecific AS s, divisions AS d WHERE p.emergencycontact_id=e.emergencycontact_id AND p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id AND " +
-                "p.participant_first=@first AND p.participant_last=@last AND p.participant_street=@street AND p.participant_city=@city AND p.participant_state=@state AND p.participant_zip=@zip AND p.participant_birthday=@birthday";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                new SQLiteParameter("@eventid", eventId),
-                new SQLiteParameter("@first", unknown.FirstName),
-                new SQLiteParameter("@last", unknown.LastName),
-                new SQLiteParameter("@street", unknown.Street),
-                new SQLiteParameter("@city", unknown.City),
-                new SQLiteParameter("@state", unknown.State),
-                new SQLiteParameter("@zip", unknown.Zip),
-                new SQLiteParameter("@birthday", unknown.Birthdate)
-            });
+            if (unknown.EventSpecific.Chip != -1)
+            {
+                command.CommandText = "SELECT * FROM participants AS p, emergencycontacts AS e, eventspecific AS s, divisions AS d, bib_chip_assoc as b WHERE p.emergencycontact_id=e.emergencycontact_id AND p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id AND " +
+                    "s.eventspecific_bib=b.bib AND b.chip=@chip AND b.event_id=s.event_id;";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@eventid", eventId),
+                    new SQLiteParameter("@chip", unknown.EventSpecific.Chip),
+                });
+            } else
+            {
+                command.CommandText = "SELECT * FROM participants AS p, emergencycontacts AS e, eventspecific AS s, divisions AS d WHERE p.emergencycontact_id=e.emergencycontact_id AND p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id AND " +
+                    "p.participant_first=@first AND p.participant_last=@last AND p.participant_street=@street AND p.participant_city=@city AND p.participant_state=@state AND p.participant_zip=@zip AND p.participant_birthday=@birthday";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@eventid", eventId),
+                    new SQLiteParameter("@first", unknown.FirstName),
+                    new SQLiteParameter("@last", unknown.LastName),
+                    new SQLiteParameter("@street", unknown.Street),
+                    new SQLiteParameter("@city", unknown.City),
+                    new SQLiteParameter("@state", unknown.State),
+                    new SQLiteParameter("@zip", unknown.Zip),
+                    new SQLiteParameter("@birthday", unknown.Birthdate)
+                });
+                
+            }
             SQLiteDataReader reader = command.ExecuteReader();
             if (reader.Read())
             {
@@ -1511,6 +1592,7 @@ namespace EventDirector
                         Convert.ToInt32(reader["division_id"]),
                         reader["division_name"].ToString(),
                         Convert.ToInt32(reader["eventspecific_bib"]),
+                        Convert.ToInt32(reader["chip"]),
                         Convert.ToInt32(reader["eventspecific_checkedin"]),
                         reader["eventspecific_shirtsize"].ToString(),
                         reader["eventspecific_comments"].ToString(),
@@ -1835,6 +1917,64 @@ namespace EventDirector
                 }
             }
             return outval;
+        }
+
+        public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "INSERT INTO bib_chip_assoc (event_id, bib, chip) VALUES (@eventId, @bib, @chip);";
+                foreach (BibChipAssociation item in assoc)
+                {
+                    Log.D("Event id " + eventId + " Bib " + item.Bib + " Chip " + item.Chip);
+                    command.Parameters.AddRange(new SQLiteParameter[]
+                    {
+                        new SQLiteParameter("@eventId", eventId),
+                        new SQLiteParameter("@bib", item.Bib),
+                        new SQLiteParameter("@chip", item.Chip),
+                    });
+                    command.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+        }
+
+        public List<BibChipAssociation> GetBibChips()
+        {
+            List<BibChipAssociation> output = new List<BibChipAssociation>();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM bib_chip_assoc";
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new BibChipAssociation
+                {
+                    EventId = Convert.ToInt32(reader["event_id"]),
+                    Bib = Convert.ToInt32(reader["bib"]),
+                    Chip = Convert.ToInt32(reader["chip"])
+                });
+            }
+            return output;
+        }
+
+        public List<BibChipAssociation> GetBibChips(int eventId)
+        {
+            List<BibChipAssociation> output = new List<BibChipAssociation>();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM bib_chip_assoc WHERE event_id=@eventId";
+            command.Parameters.Add(new SQLiteParameter("@eventId", eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new BibChipAssociation
+                {
+                    EventId = Convert.ToInt32(reader["event_id"]),
+                    Bib = Convert.ToInt32(reader["bib"]),
+                    Chip = Convert.ToInt32(reader["chip"])
+                });
+            }
+            return output;
         }
     }
 }

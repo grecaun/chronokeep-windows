@@ -8,7 +8,7 @@ namespace EventDirector
 {
     public class EventSpecific
     {
-        private int identifier, eventIdentifier, divisionIdentifier, bib, checkedIn = 0, earlystart = 0, nextyear = 0;
+        private int identifier, eventIdentifier, divisionIdentifier, bib, checkedIn = 0, earlystart = 0, nextyear = 0, chip = -1;
         private String shirtSize, comments, divisionName, secondShirt, owes, hat, other, fleece;
 
         public EventSpecific() { }
@@ -42,7 +42,7 @@ namespace EventDirector
             this.hat = hat ?? "";
             this.other = other ?? "";
             this.earlystart = earlystart == 0 ? 0 : 1;
-            this.fleece = fleece;
+            this.fleece = fleece ?? "";
             this.nextyear = nextyear;
         }
 
@@ -77,7 +77,44 @@ namespace EventDirector
             this.hat = hat ?? "";
             this.other = other ?? "";
             this.earlystart = earlystart != 0 ? 1 : 0;
-            this.fleece = fleece;
+            this.fleece = fleece ?? "";
+            this.nextyear = nextyear;
+        }
+
+        public EventSpecific(
+            int id,
+            int eid,
+            int did,
+            string divName,
+            int bib,
+            int chip,
+            int ci,
+            string size,
+            string comments,
+            string secondshirt,
+            string owes,
+            string hat,
+            string other,
+            int earlystart,
+            string fleece,
+            int nextyear
+            )
+        {
+            this.identifier = id;
+            this.eventIdentifier = eid;
+            this.divisionIdentifier = did;
+            this.divisionName = divName ?? "";
+            this.bib = bib;
+            this.chip = chip;
+            this.checkedIn = ci != 0 ? 1 : 0;
+            this.shirtSize = size ?? "";
+            this.comments = comments ?? "";
+            this.secondShirt = secondshirt ?? "";
+            this.owes = owes ?? "";
+            this.hat = hat ?? "";
+            this.other = other ?? "";
+            this.earlystart = earlystart != 0 ? 1 : 0;
+            this.fleece = fleece ?? "";
             this.nextyear = nextyear;
         }
 
@@ -121,6 +158,7 @@ namespace EventDirector
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public int DivisionIdentifier { get => divisionIdentifier; set => divisionIdentifier = value; }
         public int Bib { get => bib; set => bib = value; }
+        public int Chip { get => chip; set => chip = value; }
         public int CheckedIn { get => checkedIn; set => checkedIn = value; }
         public string ShirtSize { get => shirtSize; set => shirtSize = value; }
         public string Comments { get => comments; set => comments = value; }

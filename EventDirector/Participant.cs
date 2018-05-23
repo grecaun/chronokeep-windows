@@ -13,6 +13,11 @@ namespace EventDirector
         private EmergencyContact emergencyContact;
         private EventSpecific eventSpecific;
 
+        public Participant()
+        {
+            eventSpecific = new EventSpecific();
+        }
+
         public Participant(
             string first, string last, string street, string city, string state, string zip,
             string birthday, EmergencyContact ec, EventSpecific epi, string phone, string email,
