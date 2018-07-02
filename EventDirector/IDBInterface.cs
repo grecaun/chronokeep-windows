@@ -64,6 +64,8 @@ namespace EventDirector
 
         void AddChange(Participant newParticipant, Participant oldParticipant);
 
+        void AddChipRead(ChipRead read);
+
         void ResetDatabase();
 
         Event GetEvent(int id);
@@ -79,5 +81,7 @@ namespace EventDirector
         List<Change> GetChanges();
         List<BibChipAssociation> GetBibChips();
         List<BibChipAssociation> GetBibChips(int eventId);
+        List<ChipRead> GetChipReads();
+        List<ChipRead> GetChipReads(int eventId);
     }
 }

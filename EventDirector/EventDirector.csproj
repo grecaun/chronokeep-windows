@@ -260,6 +260,7 @@
       <DependentUpon>ParticipantsList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Printerface.cs" />
+    <Compile Include="RFIDUltraInterface.cs" />
     <Compile Include="RFIDSerial.cs" />
     <Compile Include="SQLiteInterface.cs" />
     <Compile Include="TCPServer.cs" />

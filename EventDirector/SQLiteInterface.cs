@@ -1976,5 +1976,20 @@ namespace EventDirector
             }
             return output;
         }
+
+        public void AddChipRead(ChipRead read)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<ChipRead> GetChipReads()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<ChipRead> GetChipReads(int eventId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
