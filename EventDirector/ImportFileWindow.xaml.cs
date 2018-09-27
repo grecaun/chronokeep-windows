@@ -51,7 +51,8 @@ namespace EventDirector
             "Emergency Contact Name",
             "Emergency Contact Phone",
             "Emergency Contact Email",
-            "Fleece"
+            "Fleece",
+            "Age"
         };
         ImportFilePage1 page1 = null;
         ImportFilePage2 page2 = null;
@@ -114,6 +115,10 @@ namespace EventDirector
         {
             importer.FetchData();
             keys = new int[human_fields.Length + 1];
+            for (int i = 0; i< keys.Length; i++)
+            {
+                keys[i] = 0;
+            }
             foreach (HListBoxItem item in headerListBoxItems)
             {
                 Log.D("Header is " + item.HeaderLabel.Content);
@@ -171,6 +176,8 @@ namespace EventDirector
             int shirtOption = shirtOptionalBox.IsChecked == true ? 1 : 0;
             Event anEvent = new Event(eventLabel.Text.Trim(), date.SelectedDate.Value.Ticks, shirtOption, shirtPrice);
             bool valid = true;
+            int thisYear = date.SelectedDate.Value.Year;
+            date.Visibility = Visibility.Hidden;
             await Task.Run(() =>
             {
                 ImportData data = importer.Data;
@@ -193,6 +200,17 @@ namespace EventDirector
                     {
                         Log.D("Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[22]].ToLower()));
                         Division thisDiv = (Division)divHash[Utils.UppercaseFirst(data.Data[counter][keys[22]].Trim().ToLower())];
+                        string birthday = "01/01/1900";
+                        if (keys[4] == 0 && keys[27] != 0) // birthday not set but age is
+                        {
+                            Log.D(String.Format("Counter is {0} and keys[27] is {1}", counter, keys[27]));
+                            Log.D("Age of participant is " + data.Data[counter][keys[27]]);
+                            int age = Convert.ToInt32(data.Data[counter][keys[27]]);
+                            birthday = String.Format("01/01/{0,4}", thisYear - age);
+                        } else if (keys[4] != 0)
+                        {
+                            birthday = data.Data[counter][keys[4]]; // birthday
+                        }
                         participants.Add(new Participant(
                             data.Data[counter][keys[1]], // First Name
                             data.Data[counter][keys[2]], // Last Name
@@ -200,7 +218,7 @@ namespace EventDirector
                             data.Data[counter][keys[7]], // City
                             data.Data[counter][keys[8]], // State
                             data.Data[counter][keys[9]], // Zip
-                            data.Data[counter][keys[4]], // Birthday
+                            birthday, // Birthday
                             new EmergencyContact(
                                 data.Data[counter][keys[23]], // Name
                                 data.Data[counter][keys[24]], // Phone
@@ -312,7 +330,7 @@ namespace EventDirector
             {
                 return 15;
             }
-            else if (String.Equals(s, "Shirt Size", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Shirt", StringComparison.OrdinalIgnoreCase))
+            else if (String.Equals(s, "Shirt Size", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Shirt", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "T-Shirt", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "TShirt", StringComparison.OrdinalIgnoreCase))
             {
                 return 16;
             }
@@ -355,6 +373,10 @@ namespace EventDirector
             else if (String.Equals(s, "Fleece", StringComparison.OrdinalIgnoreCase))
             {
                 return 26;
+            }
+            else if (String.Equals(s, "Age", StringComparison.OrdinalIgnoreCase))
+            {
+                return 27;
             }
             return 0;
         }

@@ -11,7 +11,7 @@ namespace EventDirector
 {
     public class CSVImporter : IDataImporter
     {
-        Regex regex = new Regex("\".*\",|[^,]*,|[^,]*$");
+        Regex regex = new Regex("\"[^\"]*\",|[^,]*,|[^,]*$");
 
         public ImportData Data { get; private set; }
         string FilePath;

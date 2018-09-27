@@ -140,7 +140,7 @@ namespace EventDirector
                             "participant_country VARCHAR(50)," +
                             "participant_street2 VARCHAR(50)," +
                             "participant_gender VARCHAR(10)," +
-                            "UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
+                            "UNIQUE (participant_first, participant_last, participant_street, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (" +
                             "eventspecific_id INTEGER PRIMARY KEY," +
@@ -210,7 +210,7 @@ namespace EventDirector
                             "participant_country VARCHAR(50)," +
                             "participant_street2 VARCHAR(50)," +
                             "participant_gender VARCHAR(10)," +
-                            "UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
+                            "UNIQUE (participant_first, participant_last, participant_street, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
                             ")");
                         queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (" +
                             "eventspecific_id INTEGER PRIMARY KEY," +
