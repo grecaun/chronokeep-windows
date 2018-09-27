@@ -98,14 +98,14 @@ namespace EventDirector
                             {
                                 outWriter.WriteLine(String.Format(format, "Change Id", "New/Old", "Participant Id", "Event Id", "Bib", "Distance", "Checked In", "Early Start", "First", "Last",
                                     "Birthday", "Street", "Apartment", "City", "State", "Zip", "Country", "Phone", "Mobile", "Email",
-                                    "Parent", "Gender", "Shirt", "Second Shirt", "Fleece", "Hat", "Comments", "Other", "Owes", "Emergency Contact Id",
-                                    "Emergency Contact Name", "Emergency Contact Phone", "Emergency Contact Email"));
+                                    "Parent", "Gender", "Shirt", "Second Shirt", "Fleece", "Hat", "Comments", "Other", "Owes",
+                                    "Emergency Contact Name", "Emergency Contact Phone"));
                                 foreach (ChangeParticipant p in parts)
                                 {
                                     outWriter.WriteLine(String.Format(format, p.ChangeIdentifier, p.Which, p.Identifier, p.EventIdentifier, p.Bib, p.Division, p.CheckedIn, p.EarlyStart, p.FirstName, p.LastName,
                                         p.Birthdate, p.Street, p.Street2, p.City, p.State, p.Zip, p.Country, p.Phone, p.Mobile, p.Email,
-                                        p.Parent, p.Gender, p.ShirtSize, p.SecondShirt, p.Fleece, p.Hat, p.Comments, p.Other, p.Owes, p.EmergencyContact.Identifier,
-                                        p.ECName, p.ECPhone, p.ECEmail));
+                                        p.Parent, p.Gender, p.ShirtSize, p.SecondShirt, p.Fleece, p.Hat, p.Comments, p.Other, p.Owes,
+                                        p.ECName, p.ECPhone));
                                 }
                             }
                             outFile.Close();
@@ -118,17 +118,19 @@ namespace EventDirector
                             Utils.excelApp.ScreenUpdating = false;
                             Workbook wBook = Utils.excelApp.Workbooks.Add("");
                             Worksheet wSheet = wBook.ActiveSheet;
-                            List<object[]> data = new List<object[]>();
-                            data.Add(new object[] {"Change Id", "New/Old", "Participant Id", "Event Id", "Bib", "Distance", "Checked In", "Early Start", "First", "Last",
+                            List<object[]> data = new List<object[]>
+                            {
+                                new object[] {"Change Id", "New/Old", "Participant Id", "Event Id", "Bib", "Distance", "Checked In", "Early Start", "First", "Last",
                                     "Birthday", "Street", "Apartment", "City", "State", "Zip", "Country", "Phone", "Mobile", "Email",
-                                    "Parent", "Gender", "Shirt", "Second Shirt", "Fleece", "Hat", "Comments", "Other", "Owes", "Emergency Contact Id",
-                                    "Emergency Contact Name", "Emergency Contact Phone", "Emergency Contact Email"});
+                                    "Parent", "Gender", "Shirt", "Second Shirt", "Fleece", "Hat", "Comments", "Other", "Owes",
+                                    "Emergency Contact Name", "Emergency Contact Phone"}
+                            };
                             foreach (ChangeParticipant p in parts)
                             {
                                 data.Add(new object[] {p.ChangeIdentifier, p.Which, p.Identifier, p.EventIdentifier, p.Bib, p.Division, p.CheckedIn, p.EarlyStart, p.FirstName, p.LastName,
                                         p.Birthdate, p.Street, p.Street2, p.City, p.State, p.Zip, p.Country, p.Phone, p.Mobile, p.Email,
-                                        p.Parent, p.Gender, p.ShirtSize, p.SecondShirt, p.Fleece, p.Hat, p.Comments, p.Other, p.Owes, p.EmergencyContact.Identifier,
-                                        p.ECName, p.ECPhone, p.ECEmail});
+                                        p.Parent, p.Gender, p.ShirtSize, p.SecondShirt, p.Fleece, p.Hat, p.Comments, p.Other, p.Owes,
+                                        p.ECName, p.ECPhone});
                             }
                             object[,] newData = new object[data.Count, data[0].Length];
                             for (int i = 0; i < data.Count; i++)

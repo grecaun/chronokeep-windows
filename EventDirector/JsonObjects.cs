@@ -187,7 +187,8 @@ namespace EventDirector
             Email = p.Email;
             Parent = p.Parent;
             Gender = p.Gender;
-            EmergencyContact = p.EmergencyContact;
+            EmergencyContactName = p.EmergencyContact.Name;
+            EmergencyContactPhone = p.EmergencyContact.Phone;
             Specific = p.EventSpecific;
         }
 
@@ -206,7 +207,8 @@ namespace EventDirector
         public String Email { get; set; }
         public String Parent { get; set; }
         public String Gender { get; set; }
-        public EmergencyContact EmergencyContact { get; set; }
+        public String EmergencyContactName { get; set; }
+        public String EmergencyContactPhone { get; set; }
         public EventSpecific Specific { get; set; }
     }
 

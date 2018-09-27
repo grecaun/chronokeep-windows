@@ -165,10 +165,8 @@
                         <GridViewColumn Header="Fleece" DisplayMemberBinding="{Binding Fleece}" />
                         <GridViewColumn Header="Hat" DisplayMemberBinding="{Binding Hat}" />
                         <GridViewColumn Header="Owes" DisplayMemberBinding="{Binding Owes}" />
-                        <GridViewColumn Header="ECID" DisplayMemberBinding="{Binding ECID}" />
                         <GridViewColumn Header="EC Name" DisplayMemberBinding="{Binding ECName}" />
                         <GridViewColumn Header="EC Phone" DisplayMemberBinding="{Binding ECPhone}" />
-                        <GridViewColumn Header="EC Email" DisplayMemberBinding="{Binding ECEmail}" />
                         <GridViewColumn Header="Comments" DisplayMemberBinding="{Binding Comments}" />
                         <GridViewColumn Header="Other" DisplayMemberBinding="{Binding Other}" />
                     </GridView>

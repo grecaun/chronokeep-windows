@@ -91,12 +91,12 @@ namespace EventDirector
                             {
                                 outWriter.WriteLine(String.Format(format, "Bib", "Distance", "Checked In", "Early Start", "First", "Last", "Birthday",
                                     "Age", "Street", "Apartment", "City", "State", "Zip", "Country", "Phone", "Mobile", "Email", "Parent", "Gender", "Shirt",
-                                    "Second Shirt", "Fleece", "Hat", "Comments", "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone", "Emergency Contact Email", "Division"));
+                                    "Second Shirt", "Fleece", "Hat", "Comments", "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone", "Division"));
                                 foreach (Participant p in parts)
                                 {
                                     outWriter.WriteLine(String.Format(format, p.Bib, p.Division, p.CheckedIn, p.EarlyStart, p.FirstName, p.LastName, p.Birthdate,
                                         p.Age(anEvent.Date), p.Street, p.Street2, p.City, p.State, p.Zip, p.Country, p.Phone, p.Mobile, p.Email, p.Parent, p.Gender, p.ShirtSize,
-                                        p.SecondShirt, p.Fleece, p.Hat, p.Comments, p.Other, p.Owes, p.ECName, p.ECPhone, p.ECEmail, p.Division + (p.EventSpecific.EarlyStart == 1 ? " Early Start" : "")));
+                                        p.SecondShirt, p.Fleece, p.Hat, p.Comments, p.Other, p.Owes, p.ECName, p.ECPhone, p.Division + (p.EventSpecific.EarlyStart == 1 ? " Early Start" : "")));
                                 }
                             }
                             outFile.Close();
@@ -108,15 +108,17 @@ namespace EventDirector
                             Utils.excelApp.ScreenUpdating = false;
                             Workbook wBook = Utils.excelApp.Workbooks.Add("");
                             Worksheet wSheet = wBook.ActiveSheet;
-                            List<object[]> data = new List<object[]>();
-                            data.Add(new object[] { "Bib", "Distance", "Checked In", "Early Start", "First", "Last", "Birthday",
+                            List<object[]> data = new List<object[]>
+                            {
+                                new object[] { "Bib", "Distance", "Checked In", "Early Start", "First", "Last", "Birthday",
                                     "Age", "Street", "Apartment", "City", "State", "Zip", "Country", "Phone", "Mobile", "Email", "Parent", "Gender", "Shirt",
-                                    "Second Shirt", "Fleece", "Hat", "Comments", "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone", "Emergency Contact Email", "Division" });
+                                    "Second Shirt", "Fleece", "Hat", "Comments", "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone", "Division" }
+                            };
                             foreach (Participant p in parts)
                             {
                                 data.Add(new object[] { p.Bib, p.Division, p.CheckedIn, p.EarlyStart, p.FirstName, p.LastName, p.Birthdate,
                                         p.Age(anEvent.Date), p.Street, p.Street2, p.City, p.State, p.Zip, p.Country, p.Phone, p.Mobile, p.Email, p.Parent, p.Gender, p.ShirtSize,
-                                        p.SecondShirt, p.Fleece, p.Hat, p.Comments, p.Other, p.Owes, p.ECName, p.ECPhone, p.ECEmail, p.Division + (p.EventSpecific.EarlyStart == 1 ? " Early Start" : "") });
+                                        p.SecondShirt, p.Fleece, p.Hat, p.Comments, p.Other, p.Owes, p.ECName, p.ECPhone, p.Division + (p.EventSpecific.EarlyStart == 1 ? " Early Start" : "") });
                             }
                             object[,] outData = new object[data.Count, data[0].Length];
                             for (int i = 0; i < data.Count; i++)

@@ -597,10 +597,8 @@ namespace EventDirector
         public string NextYear { get => eventSpecific.NextYear == 0 ? "No" : "Yes"; }
 
         // Emergency Contact binding stuffs
-        public int ECID { get => emergencyContact.Identifier; }
         public string ECName { get => emergencyContact.Name; }
         public string ECPhone { get => emergencyContact.Phone; }
-        public string ECEmail { get => emergencyContact.Email; }
         
         public string FirstName { get => firstName; }
         public string LastName { get => lastName; }

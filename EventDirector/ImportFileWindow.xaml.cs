@@ -50,7 +50,6 @@ namespace EventDirector
             "Division",
             "Emergency Contact Name",
             "Emergency Contact Phone",
-            "Emergency Contact Email",
             "Fleece",
             "Age"
         };
@@ -201,11 +200,11 @@ namespace EventDirector
                         Log.D("Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[22]].ToLower()));
                         Division thisDiv = (Division)divHash[Utils.UppercaseFirst(data.Data[counter][keys[22]].Trim().ToLower())];
                         string birthday = "01/01/1900";
-                        if (keys[4] == 0 && keys[27] != 0) // birthday not set but age is
+                        if (keys[4] == 0 && keys[26] != 0) // birthday not set but age is
                         {
-                            Log.D(String.Format("Counter is {0} and keys[27] is {1}", counter, keys[27]));
-                            Log.D("Age of participant is " + data.Data[counter][keys[27]]);
-                            int age = Convert.ToInt32(data.Data[counter][keys[27]]);
+                            Log.D(String.Format("Counter is {0} and keys[26] is {1}", counter, keys[26]));
+                            Log.D("Age of participant is " + data.Data[counter][keys[26]]);
+                            int age = Convert.ToInt32(data.Data[counter][keys[26]]);
                             birthday = String.Format("01/01/{0,4}", thisYear - age);
                         } else if (keys[4] != 0)
                         {
@@ -221,8 +220,7 @@ namespace EventDirector
                             birthday, // Birthday
                             new EmergencyContact(
                                 data.Data[counter][keys[23]], // Name
-                                data.Data[counter][keys[24]], // Phone
-                                data.Data[counter][keys[25]]  // Email
+                                data.Data[counter][keys[24]] // Phone
                                 ),
                             new EventSpecific(
                                 anEvent.Identifier,
@@ -237,7 +235,7 @@ namespace EventDirector
                                 data.Data[counter][keys[20]], // hat
                                 data.Data[counter][keys[21]], // other
                                 0,                            // early start
-                                data.Data[counter][keys[26]], // fleece
+                                data.Data[counter][keys[25]], // fleece
                                 0                             // used next year registration option
                                 ),
                             data.Data[counter][keys[11]], // phone
@@ -366,17 +364,13 @@ namespace EventDirector
             {
                 return 24;
             }
-            else if (s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("email", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (String.Equals(s, "Fleece", StringComparison.OrdinalIgnoreCase))
             {
                 return 25;
             }
-            else if (String.Equals(s, "Fleece", StringComparison.OrdinalIgnoreCase))
-            {
-                return 26;
-            }
             else if (String.Equals(s, "Age", StringComparison.OrdinalIgnoreCase))
             {
-                return 27;
+                return 26;
             }
             return 0;
         }
