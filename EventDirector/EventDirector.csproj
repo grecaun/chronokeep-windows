@@ -270,6 +270,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FileVersion.tt</DependentUpon>
     </Compile>
+    <Compile Include="RFIDSettings.xaml.cs">
+      <DependentUpon>RFIDSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RFIDTime.xaml.cs">
+      <DependentUpon>RFIDTime.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RFIDUltraInterface.cs" />
     <Compile Include="RFIDSerial.cs" />
     <Compile Include="SQLiteInterface.cs" />
@@ -279,6 +285,12 @@
     <Compile Include="TimingPoint.cs" />
     <Compile Include="Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TimingRawReads.xaml.cs">
+      <DependentUpon>TimingRawReads.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TimingWindow.xaml.cs">
+      <DependentUpon>TimingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="ZeroConf.cs" />
@@ -398,7 +410,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="RFIDSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RFIDTime.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Settings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TimingRawReads.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TimingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
