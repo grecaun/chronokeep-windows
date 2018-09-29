@@ -112,7 +112,7 @@ namespace EventDirector
                         JsonClientParticipantUpdate partUpd = jsonObject.ToObject<JsonClientParticipantUpdate>();
                         Participant oldPart = database.GetParticipant(partUpd.EventId, partUpd.Participant.Id);
                         Participant newPart = new Participant(partUpd.Participant.Id, partUpd.Participant.First, partUpd.Participant.Last, partUpd.Participant.Street, partUpd.Participant.City, partUpd.Participant.State, partUpd.Participant.Zip,
-                                                partUpd.Participant.Birthday, partUpd.Participant.EmergencyContact, partUpd.Participant.Specific, partUpd.Participant.Phone, partUpd.Participant.Email,
+                                                partUpd.Participant.Birthday, new EmergencyContact( partUpd.Participant.EmergencyContactName, partUpd.Participant.EmergencyContactPhone ), partUpd.Participant.Specific, partUpd.Participant.Phone, partUpd.Participant.Email,
                                                 partUpd.Participant.Mobile, partUpd.Participant.Parent, partUpd.Participant.Country, partUpd.Participant.Street2, partUpd.Participant.Gender);
                         database.UpdateParticipant(newPart);
                         newPart = database.GetParticipant(partUpd.EventId, partUpd.Participant.Id);
@@ -124,7 +124,7 @@ namespace EventDirector
                         Log.D("Client participant add received.");
                         JsonClientParticipantAdd clientPartAdd = jsonObject.ToObject<JsonClientParticipantAdd>();
                         Participant addPart = new Participant(clientPartAdd.Participant.First, clientPartAdd.Participant.Last, clientPartAdd.Participant.Street, clientPartAdd.Participant.City, clientPartAdd.Participant.State,
-                            clientPartAdd.Participant.Zip, clientPartAdd.Participant.Birthday, clientPartAdd.Participant.EmergencyContact, clientPartAdd.Participant.Specific, clientPartAdd.Participant.Phone, clientPartAdd.Participant.Email,
+                            clientPartAdd.Participant.Zip, clientPartAdd.Participant.Birthday, new EmergencyContact(clientPartAdd.Participant.EmergencyContactName, clientPartAdd.Participant.EmergencyContactPhone), clientPartAdd.Participant.Specific, clientPartAdd.Participant.Phone, clientPartAdd.Participant.Email,
                             clientPartAdd.Participant.Mobile, clientPartAdd.Participant.Parent, clientPartAdd.Participant.Country, clientPartAdd.Participant.Street2, clientPartAdd.Participant.Gender);
                         database.AddParticipant(addPart);
                         addPart = database.GetParticipant(clientPartAdd.EventId, addPart);
@@ -213,7 +213,7 @@ namespace EventDirector
                             break;
                         }
                         Participant nextYearEntry = new Participant(regNextYear.Participant.First, regNextYear.Participant.Last, regNextYear.Participant.Street, regNextYear.Participant.City,
-                                                                    regNextYear.Participant.State, regNextYear.Participant.Zip, regNextYear.Participant.Birthday, regNextYear.Participant.EmergencyContact,
+                                                                    regNextYear.Participant.State, regNextYear.Participant.Zip, regNextYear.Participant.Birthday, new EmergencyContact(regNextYear.Participant.EmergencyContactName, regNextYear.Participant.EmergencyContactPhone),
                                                                     regNextYear.Participant.Specific, regNextYear.Participant.Phone, regNextYear.Participant.Email, regNextYear.Participant.Mobile,
                                                                     regNextYear.Participant.Parent, regNextYear.Participant.Country, regNextYear.Participant.Street2, regNextYear.Participant.Gender);
                         nextYearEntry.EventSpecific.DivisionIdentifier = nextYearDiv.Identifier;
@@ -235,7 +235,7 @@ namespace EventDirector
                         {
                             Log.D("Hmm, unable to add participant for some reason.");
                             nextYearEntry = new Participant(regNextYear.Participant.First, regNextYear.Participant.Last, regNextYear.Participant.Street, regNextYear.Participant.City,
-                                                            regNextYear.Participant.State, regNextYear.Participant.Zip, regNextYear.Participant.Birthday, regNextYear.Participant.EmergencyContact,
+                                                            regNextYear.Participant.State, regNextYear.Participant.Zip, regNextYear.Participant.Birthday, new EmergencyContact(regNextYear.Participant.EmergencyContactName, regNextYear.Participant.EmergencyContactPhone),
                                                             regNextYear.Participant.Specific, regNextYear.Participant.Phone, regNextYear.Participant.Email, regNextYear.Participant.Mobile,
                                                             regNextYear.Participant.Parent, regNextYear.Participant.Country, regNextYear.Participant.Street2, regNextYear.Participant.Gender);
                             nextYearEntry.EventSpecific.DivisionIdentifier = nextYearDiv.Identifier;

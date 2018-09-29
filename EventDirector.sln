@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventDirector", "EventDirector\EventDirector.csproj", "{19A9995C-79B6-4A3C-9906-F391FB1BA33D}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "EventDirectorSetup", "EventDirectorSetup\EventDirectorSetup.vdproj", "{68284157-ECA3-4481-8343-48674F9351C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,9 @@ Global
 		{19A9995C-79B6-4A3C-9906-F391FB1BA33D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{19A9995C-79B6-4A3C-9906-F391FB1BA33D}.x64|Any CPU.ActiveCfg = x64|Any CPU
 		{19A9995C-79B6-4A3C-9906-F391FB1BA33D}.x64|Any CPU.Build.0 = x64|Any CPU
+		{68284157-ECA3-4481-8343-48674F9351C7}.Debug|Any CPU.ActiveCfg = Debug
+		{68284157-ECA3-4481-8343-48674F9351C7}.Release|Any CPU.ActiveCfg = Release
+		{68284157-ECA3-4481-8343-48674F9351C7}.x64|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
