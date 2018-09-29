@@ -4,3 +4,4 @@ obj/
 version.txt
 *.pfx
 packages/
+FileVersion.cs
