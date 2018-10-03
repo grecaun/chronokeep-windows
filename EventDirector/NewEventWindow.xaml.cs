@@ -19,10 +19,10 @@ namespace EventDirector
     /// </summary>
     public partial class NewEventWindow : Window
     {
-        MainWindow mainWindow;
+        IMainWindow mainWindow;
         Event theEvent = null;
 
-        public NewEventWindow(MainWindow mainWindow)
+        public NewEventWindow(IMainWindow mainWindow)
         {
             InitializeComponent();
             datePicker.SelectedDate = DateTime.Today;

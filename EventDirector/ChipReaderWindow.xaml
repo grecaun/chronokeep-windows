@@ -34,8 +34,8 @@
             <ComboBox Name="eventCB" Height="Auto" Width="100" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1" />
             <Label Content="Serial Port" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Height="Auto" Grid.Column="2" />
             <ComboBox Name="serialPortCB" Height="Auto" Width="70" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3" />
-            <Button Content="Refresh" Name="refreshBtn" Width="Auto" Padding="10,0,10,0" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Column="4" Click="refreshBtn_Click" />
-            <Button Content="Connect" Name="connectBtn" Width="Auto" Padding="10,0,10,0" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Column="5" Click="connectBtn_Click" />
+            <Button Content="Refresh" Name="refreshBtn" Width="Auto" Padding="10,0,10,0" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Column="4" Click="RefreshBtn_Click" />
+            <Button Content="Connect" Name="connectBtn" Width="Auto" Padding="10,0,10,0" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Column="5" Click="ConnectBtn_Click" />
         </Grid>
     </Grid>
 </Window>

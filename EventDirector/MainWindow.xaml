@@ -40,6 +40,7 @@
                 <MenuItem Header="Associate Chips with Bibs - Excel" Click="MenuItem_Click" Uid="18" />
                 <MenuItem Header="View Bib Chip Associations" Click="MenuItem_Click" Uid="19" />
                 <MenuItem Header="Chip Reader" Click="MenuItem_Click" Uid="20" />
+                <MenuItem Header="Timing Window" Click="MenuItem_Click" Uid="21" />
             </MenuItem>
         </Menu>
         <Grid VerticalAlignment="Top">

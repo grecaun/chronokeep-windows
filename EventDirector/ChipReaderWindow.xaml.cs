@@ -28,10 +28,10 @@ namespace EventDirector
         RFIDSerial serial;
         private static ChipPersonWindow personWindow;
         private IDBInterface database;
-        private MainWindow mainWindow;
+        private IMainWindow mainWindow;
         int eventId = -1;
 
-        public ChipReaderWindow(IDBInterface database, MainWindow mWindow)
+        public ChipReaderWindow(IDBInterface database, IMainWindow mWindow)
         {
             InitializeComponent();
             InstantiateSerialPortList();
@@ -78,12 +78,12 @@ namespace EventDirector
             }
         }
 
-        private void refreshBtn_Click(object sender, RoutedEventArgs e)
+        private void RefreshBtn_Click(object sender, RoutedEventArgs e)
         {
             InstantiateSerialPortList();
         }
 
-        private void connectBtn_Click(object sender, RoutedEventArgs e)
+        private void ConnectBtn_Click(object sender, RoutedEventArgs e)
         {
             if (connectBtn.Content.Equals("Connect"))
             {

@@ -13,7 +13,7 @@ namespace EventDirector
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IChangeUpdater
+    public partial class MainWindow : Window, IChangeUpdater, IMainWindow
     {
         IDBInterface database;
         String dbName = "EventDirector.sqlite";
@@ -277,6 +277,12 @@ namespace EventDirector
                     ChipReaderWindow chipWindow = new ChipReaderWindow(database, this);
                     windows.Add(chipWindow);
                     chipWindow.Show();
+                    break;
+                case 21:
+                    Log.D("TimingWindow");
+                    TimingWindow timingWindow = new TimingWindow(database, this);
+                    windows.Add(timingWindow);
+                    timingWindow.Show();
                     break;
                 default:
                     break;
@@ -874,6 +880,16 @@ namespace EventDirector
             {
                 Utils.UppercaseFirst("Something");
             });
+        }
+
+        void IMainWindow.UpdateEvent(int identifier, string nameString, long dateVal, int nextYear, int shirtOptionalVal, int shirtPrice)
+        {
+            this.UpdateEvent(identifier, nameString, dateVal, nextYear, shirtOptionalVal, shirtPrice);
+        }
+
+        void IMainWindow.AddEvent(string nameString, long dateVal, int shirtOptionalVal, int shirtPrice)
+        {
+            this.AddEvent(nameString, dateVal, shirtOptionalVal, shirtPrice);
         }
     }
 }
