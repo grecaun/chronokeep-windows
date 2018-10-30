@@ -61,7 +61,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>0986582457BEF4CF659A1BED6BB00168304E72CA</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>7E845AD0B0249645E015F1386B1DFD7046FCBE22</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>EventDirector_TemporaryKey.pfx</ManifestKeyFile>
@@ -82,7 +82,8 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>keys.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x64|AnyCPU'">
     <OutputPath>bin\x64\</OutputPath>
@@ -137,6 +138,9 @@
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\x64\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>EventDirector.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -184,215 +188,225 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="About.xaml.cs">
+    <Compile Include="Constants\Distances.cs" />
+    <Compile Include="Objects\Apparel.cs" />
+    <Compile Include="Objects\AppSetting.cs" />
+    <Compile Include="Objects\ChipRead.cs" />
+    <Compile Include="Objects\Segment.cs" />
+    <Compile Include="UI\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI_Old\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AListBoxItem.cs" />
-    <Compile Include="BibChipAssociation.cs" />
-    <Compile Include="BibChipAssociationWindow.xaml.cs">
+    <Compile Include="UIObjects\AListBoxItem.cs" />
+    <Compile Include="Objects\BibChipAssociation.cs" />
+    <Compile Include="UI_Old\BibChipAssociationWindow.xaml.cs">
       <DependentUpon>BibChipAssociationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BibChipViewer.xaml.cs">
+    <Compile Include="UI_Old\BibChipViewer.xaml.cs">
       <DependentUpon>BibChipViewer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ChangeParticipant.cs" />
-    <Compile Include="ChipPersonWindow.xaml.cs">
+    <Compile Include="Objects\ChangeParticipant.cs" />
+    <Compile Include="UHF RFID Reader\ChipPersonWindow.xaml.cs">
       <DependentUpon>ChipPersonWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ChipReaderWindow.xaml.cs">
+    <Compile Include="UHF RFID Reader\ChipReaderWindow.xaml.cs">
       <DependentUpon>ChipReaderWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CSVImporter.cs" />
-    <Compile Include="DayOfParticipant.cs" />
-    <Compile Include="DayOfParticipantsList.xaml.cs">
+    <Compile Include="IO\CSVImporter.cs" />
+    <Compile Include="Objects\DayOfParticipant.cs" />
+    <Compile Include="UI_Old\DayOfParticipantsList.xaml.cs">
       <DependentUpon>DayOfParticipantsList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ExampleLiabilityWaiver.xaml.cs">
+    <Compile Include="UI_Old\ExampleLiabilityWaiver.xaml.cs">
       <DependentUpon>ExampleLiabilityWaiver.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ExcelImporter.cs" />
-    <Compile Include="ExportChanges.xaml.cs">
+    <Compile Include="IO\ExcelImporter.cs" />
+    <Compile Include="UI_Old\ExportChanges.xaml.cs">
       <DependentUpon>ExportChanges.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ExportParticipants.xaml.cs">
+    <Compile Include="UI_Old\ExportParticipants.xaml.cs">
       <DependentUpon>ExportParticipants.xaml</DependentUpon>
     </Compile>
-    <Compile Include="IChangeUpdater.cs" />
-    <Compile Include="IDataImporter.cs" />
-    <Compile Include="IDBInterface.cs" />
-    <Compile Include="Division.cs" />
-    <Compile Include="EmergencyContact.cs" />
-    <Compile Include="Event.cs" />
-    <Compile Include="EventSpecific.cs" />
-    <Compile Include="IEDConnection.cs" />
-    <Compile Include="IMainWindow.cs" />
-    <Compile Include="ImportData.cs" />
-    <Compile Include="ImportFilePage1.xaml.cs">
+    <Compile Include="Interfaces\IChangeUpdater.cs" />
+    <Compile Include="IO\IDataImporter.cs" />
+    <Compile Include="Database\IDBInterface.cs" />
+    <Compile Include="Objects\Division.cs" />
+    <Compile Include="Objects\EmergencyContact.cs" />
+    <Compile Include="Objects\Event.cs" />
+    <Compile Include="Objects\EventSpecific.cs" />
+    <Compile Include="Interfaces\IEDConnection.cs" />
+    <Compile Include="Interfaces\IMainWindow.cs" />
+    <Compile Include="IO\ImportData.cs" />
+    <Compile Include="UI\ImportFilePage1.xaml.cs">
       <DependentUpon>ImportFilePage1.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ImportFilePage2.xaml.cs">
+    <Compile Include="UI\ImportFilePage2.xaml.cs">
       <DependentUpon>ImportFilePage2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ImportFileWindow.xaml.cs">
+    <Compile Include="UI\ImportFileWindow.xaml.cs">
       <DependentUpon>ImportFileWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JsonHandler.cs" />
-    <Compile Include="JsonObjects.cs" />
-    <Compile Include="JsonOutputTester.cs" />
-    <Compile Include="KioskSetup.xaml.cs">
+    <Compile Include="Network\JsonHandler.cs" />
+    <Compile Include="Objects\JsonObjects.cs" />
+    <Compile Include="UI_Old\KioskSetup.xaml.cs">
       <DependentUpon>KioskSetup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="KioskSetupPage1.xaml.cs">
+    <Compile Include="UI_Old\KioskSetupPage1.xaml.cs">
       <DependentUpon>KioskSetupPage1.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NewReader.cs" />
-    <Compile Include="NextYearSetupPage0.xaml.cs">
+    <Compile Include="UHF RFID Reader\NewReader.cs" />
+    <Compile Include="UI_Old\NextYearSetupPage0.xaml.cs">
       <DependentUpon>NextYearSetupPage0.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NextYearSetupPage1.xaml.cs">
+    <Compile Include="UI_Old\NextYearSetupPage1.xaml.cs">
       <DependentUpon>NextYearSetupPage1.xaml</DependentUpon>
     </Compile>
-    <Compile Include="KioskSetupPage2.xaml.cs">
+    <Compile Include="UI_Old\KioskSetupPage2.xaml.cs">
       <DependentUpon>KioskSetupPage2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="KioskSetupPage3.xaml.cs">
+    <Compile Include="UI_Old\KioskSetupPage3.xaml.cs">
       <DependentUpon>KioskSetupPage3.xaml</DependentUpon>
     </Compile>
-    <Compile Include="KioskSetupPage4.xaml.cs">
+    <Compile Include="UI_Old\KioskSetupPage4.xaml.cs">
       <DependentUpon>KioskSetupPage4.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Log.cs" />
-    <Compile Include="NetCore.cs" />
-    <Compile Include="NewDivisionWindow.xaml.cs">
+    <Compile Include="Objects\Log.cs" />
+    <Compile Include="Network\NetCore.cs" />
+    <Compile Include="UI_Old\NewDivisionWindow.xaml.cs">
       <DependentUpon>NewDivisionWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NewEventWindow.xaml.cs">
+    <Compile Include="UI_Old\NewEventWindow.xaml.cs">
       <DependentUpon>NewEventWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Change.cs" />
-    <Compile Include="NextYearSetup.xaml.cs">
+    <Compile Include="Objects\Change.cs" />
+    <Compile Include="UI_Old\NextYearSetup.xaml.cs">
       <DependentUpon>NextYearSetup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NextYearSetupPage2.xaml.cs">
+    <Compile Include="UI_Old\NextYearSetupPage2.xaml.cs">
       <DependentUpon>NextYearSetupPage2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NextYearSetupPage3.xaml.cs">
+    <Compile Include="UI_Old\NextYearSetupPage3.xaml.cs">
       <DependentUpon>NextYearSetupPage3.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ParticipantsList.xaml.cs">
+    <Compile Include="UI_Old\ParticipantsList.xaml.cs">
       <DependentUpon>ParticipantsList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Printerface.cs" />
+    <Compile Include="IO\Printerface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\FileVersion.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>FileVersion.tt</DependentUpon>
     </Compile>
-    <Compile Include="RawReadsWindow.xaml.cs">
+    <Compile Include="UI\RawReadsWindow.xaml.cs">
       <DependentUpon>RawReadsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RFIDSettings.xaml.cs">
+    <Compile Include="RFID\RFIDSettings.xaml.cs">
       <DependentUpon>RFIDSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RFIDTime.xaml.cs">
+    <Compile Include="RFID\RFIDTime.xaml.cs">
       <DependentUpon>RFIDTime.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RFIDUltraInterface.cs" />
-    <Compile Include="RFIDSerial.cs" />
-    <Compile Include="SQLiteInterface.cs" />
-    <Compile Include="TCPServer.cs" />
-    <Compile Include="TempUdpThread.cs" />
-    <Compile Include="TimeResult.cs" />
-    <Compile Include="TimingPoint.cs" />
-    <Compile Include="Settings.xaml.cs">
+    <Compile Include="RFID\RFIDUltraInterface.cs" />
+    <Compile Include="UHF RFID Reader\RFIDSerial.cs" />
+    <Compile Include="Database\SQLiteInterface.cs" />
+    <Compile Include="Network\TCPServer.cs" />
+    <Compile Include="Objects\TimeResult.cs" />
+    <Compile Include="Objects\TimingLocation.cs" />
+    <Compile Include="UI_Old\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TimingRawReads.xaml.cs">
+    <Compile Include="UI\TimingRawReads.xaml.cs">
       <DependentUpon>TimingRawReads.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TimingWindow.xaml.cs">
+    <Compile Include="UI\TimingWindow.xaml.cs">
       <DependentUpon>TimingWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils.cs" />
-    <Compile Include="ZeroConf.cs" />
-    <Page Include="About.xaml">
+    <Compile Include="Objects\Helpers\Utils.cs" />
+    <Compile Include="Network\ZeroConf.cs" />
+    <Page Include="UI\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BibChipAssociationWindow.xaml">
+    <Page Include="UI_Old\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="BibChipViewer.xaml">
+    <Page Include="UI_Old\BibChipAssociationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ChipPersonWindow.xaml">
+    <Page Include="UI_Old\BibChipViewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ChipReaderWindow.xaml">
+    <Page Include="UHF RFID Reader\ChipPersonWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DayOfParticipantsList.xaml">
+    <Page Include="UHF RFID Reader\ChipReaderWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExampleLiabilityWaiver.xaml">
+    <Page Include="UI_Old\DayOfParticipantsList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExportChanges.xaml">
+    <Page Include="UI_Old\ExampleLiabilityWaiver.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ExportParticipants.xaml">
+    <Page Include="UI_Old\ExportChanges.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ImportFilePage1.xaml">
+    <Page Include="UI_Old\ExportParticipants.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ImportFilePage2.xaml">
+    <Page Include="UI\ImportFilePage1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ImportFileWindow.xaml">
+    <Page Include="UI\ImportFilePage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="KioskSetup.xaml">
+    <Page Include="UI\ImportFileWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="KioskSetupPage1.xaml">
+    <Page Include="UI_Old\KioskSetup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NextYearSetupPage0.xaml">
+    <Page Include="UI_Old\KioskSetupPage1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NextYearSetupPage1.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="KioskSetupPage2.xaml">
+    <Page Include="UI_Old\NextYearSetupPage0.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="KioskSetupPage3.xaml">
+    <Page Include="UI_Old\NextYearSetupPage1.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI_Old\KioskSetupPage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="KioskSetupPage4.xaml">
+    <Page Include="UI_Old\KioskSetupPage3.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="UI_Old\KioskSetupPage4.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI_Old\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -400,68 +414,68 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="UI_Old\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="NewDivisionWindow.xaml">
+    <Page Include="UI_Old\NewDivisionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NewEventWindow.xaml">
+    <Page Include="UI_Old\NewEventWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NewTimingPointWindow.xaml">
+    <Page Include="UI_Old\NewTimingPointWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NextYearSetup.xaml">
+    <Page Include="UI_Old\NextYearSetup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NextYearSetupPage2.xaml">
+    <Page Include="UI_Old\NextYearSetupPage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NextYearSetupPage3.xaml">
+    <Page Include="UI_Old\NextYearSetupPage3.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ParticipantsList.xaml">
+    <Page Include="UI_Old\ParticipantsList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RawReadsWindow.xaml">
+    <Page Include="UI\RawReadsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RFIDSettings.xaml">
+    <Page Include="RFID\RFIDSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RFIDTime.xaml">
+    <Page Include="RFID\RFIDTime.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Settings.xaml">
+    <Page Include="UI_Old\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TimingRawReads.xaml">
+    <Page Include="UI\TimingRawReads.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TimingWindow.xaml">
+    <Page Include="UI\TimingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NewTimingPointWindow.xaml.cs">
+    <Compile Include="UI_Old\NewTimingPointWindow.xaml.cs">
       <DependentUpon>NewTimingPointWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Participant.cs" />
+    <Compile Include="Objects\Participant.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -476,7 +490,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="keys.pfx" />
+    <None Include="EventDirector_TemporaryKey.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -589,6 +603,7 @@
       <LastGenOutput>FileVersion.cs</LastGenOutput>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files\Git\bin\git.exe" describe --tag &gt; "$(ProjectDir)\version.txt"</PreBuildEvent>

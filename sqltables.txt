@@ -1,201 +1,203 @@
-CREATE TABLE IF NOT EXISTS
-    events (
-        event_id INTEGER PRIMARY KEY,
-        event_name VARCHAR(100) NOT NULL,
-        event_date INTEGER NOT NULL,
-        event_registration_open INTEGER DEFAULT 0,
-        event_results_open INTEGER DEFAULT 0,
-        event_announce_available INTEGER DEFAULT 0,
-        event_allow_early_start INTEGER DEFAULT 0,
-        event_kiosk INTEGER DEFAULT 0,
-        event_next_year_event_id INTEGER DEFAULT -1,
-        event_shirt_optional INTEGER DEFAULT 1,
-        event_shirt_price INTEGER DEFAULT 0,
-        UNIQUE (event_name, event_date) ON CONFLICT IGNORE
-        )
+CREATE TABLE IF NOT EXISTS bib_chip_assoc
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      bib INTEGER NOT NULL,
+      chip INTEGER NOT NULL,
+      UNIQUE (event_id, chip) ON CONFLICT REPLACE
+CREATE TABLE IF NOT EXISTS events
+      event_id INTEGER PRIMARY KEY,
+      event_name VARCHAR(100) NOT NULL,
+      event_date VARCHAR(15) NOT NULL,
+      event_registration_open INTEGER DEFAULT 0,
+      event_results_open INTEGER DEFAULT 0,
+      event_announce_available INTEGER DEFAULT 0,
+      event_allow_early_start INTEGER DEFAULT 0,
+      event_kiosk INTEGER DEFAULT 0,
+      event_next_year_event_id INTEGER DEFAULT -1,
+      event_shirt_optional INTEGER DEFAULT 1,
+      event_shirt_price INTEGER DEFAULT 0,
+      event_rank_by_gun INTEGER DEFAULT 1,
+      event_common_age_groups INTEGER DEFAULT 1,
+      event_common_start_finish INTEGER DEFAULT 1,
+      event_division_specific_segments INTEGER DEFAULT 0,
+      UNIQUE (event_name, event_date) ON CONFLICT IGNORE
+CREATE TABLE IF NOT EXISTS dayof_participant
+      dop_id INTEGER PRIMARY KEY,
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      division_id INTEGER NOT NULL REFERENCES divisions(division_id),
+      dop_first VARCHAR NOT NULL,
+      dop_last VARCHAR NOT NULL,
+      dop_street VARCHAR,
+      dop_city VARCHAR,
+      dop_state VARCHAR,
+      dop_zip VARCHAR,
+      dop_birthday VARCHAR NOT NULL,
+      dop_email VARCHAR,
+      dop_mobile VARCHAR,
+      dop_parent VARCHAR,
+      dop_country VARCHAR,
+      dop_street2 VARCHAR,
+      dop_gender VARCHAR,
+      dop_comments VARCHAR,
+      dop_other VARCHAR,
+      dop_other2 VARCHAR,
+      dop_emergency_name VARCHAR NOT NULL,
+      dop_emergency_phone VARCHAR NOT NULL,
+      UNIQUE (event_id, dop_first, dop_last, dop_street, dop_zip, dop_birthday) ON CONFLICT IGNORE
+CREATE TABLE IF NOT EXISTS kiosk
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      kiosk_waiver_text VARCHAR NOT NULL,
+      kiosk_print_new INTEGER DEFAULT 0,
+      UNIQUE (event_id) ON CONFLICT IGNORE
+CREATE TABLE IF NOT EXISTS divisions
+      division_id INTEGER PRIMARY KEY,
+      division_name VARCHAR(100) NOT NULL,
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      division_cost INTEGER DEFAULT 7000,
+      division_distance DECIMAL(10,2) DEFAULT 0.0,
+      division_distance_unit INTEGER DEFAULT 0,
+      division_start_location INTEGER DEFAULT -2,
+      division_start_within INTEGER DEFAULT -1,
+      division_finish_location INTEGER DEFAULT -1,
+      division_finish_occurance INTEGER DEFAULT 1,
+      UNIQUE (division_name, event_id) ON CONFLICT IGNORE
+CREATE TABLE IF NOT EXISTS timing_locations
+      location_id INTEGER PRIMARY KEY,
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      location_name VARCHAR(100) NOT NULL,
+      UNIQUE (event_id, location_name) ON CONFLICT IGNORE
+CREATE TABLE IF NOT EXISTS participants
+      participant_id INTEGER PRIMARY KEY,
+      participant_first VARCHAR(50) NOT NULL,
+      participant_last VARCHAR(75) NOT NULL,
+      participant_street VARCHAR(150),
+      participant_city VARCHAR(75),
+      participant_state VARCHAR(25),
+      participant_zip VARCHAR(10),
+      participant_birthday VARCHAR(15) NOT NULL,
+      participant_email VARCHAR(150),
+      participant_mobile VARCHAR(20),
+      participant_parent VARCHAR(150),
+      participant_country VARCHAR(50),
+      participant_street2 VARCHAR(50),
+      participant_gender VARCHAR(10),
+      emergencycontact_name VARCHAR(150) NOT NULL DEFAULT '911',
+      emergencycontact_phone VARCHAR(20),
+      UNIQUE (participant_first, participant_last, participant_street, participant_zip, participant_birthday) ON CONFLICT IGNORE
+CREATE TABLE IF NOT EXISTS eventspecific
+      eventspecific_id INTEGER PRIMARY KEY,
+      participant_id INTEGER NOT NULL REFERENCES participants(participant_id),
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      division_id INTEGER NOT NULL REFERENCES divisions(division_id),
+      eventspecific_bib INTEGER,
+      eventspecific_checkedin INTEGER DEFAULT 0,
+      eventspecific_comments VARCHAR,
+      eventspecific_owes VARCHAR(50),
+      eventspecific_other VARCHAR,
+      eventspecific_earlystart INTEGER DEFAULT 0,
+      eventspecific_next_year INTEGER DEFAULT 0,
+      UNIQUE (participant_id, event_id, division_id) ON CONFLICT IGNORE
+CREATE TABLE IF NOT EXISTS eventspecific_apparel
+      eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id),
+      name VARCHAR NOT NULL,
+      value VARCHAR NOT NULL,
+      UNIQUE (eventspecific_id, name) ON CONFLICT IGNORE
+CREATE TABLE IF NOT EXISTS segments
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      division_id INTEGER DEFAULT -1,
+      location_id INTEGER DEFAULT -1,
+      occurance INTEGER DEFAULT 1,
+      name VARCHAR DEFAULT '',
+      distance_segment DECIMAL (10,2) DEFAULT 0.0,
+      distance_cumulative DECIMAL (10,2) DEFAULT 0.0,
+      distance_unit INTEGER DEFAULT 0,
+      UNIQUE (event_id, division_id, location_id, occurance) ON CONFLICT IGNORE,
+CREATE TABLE IF NOT EXISTS time_results
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id),
+      location_id INTEGER NOT NULL,
+      timeresult_time INTEGER NOT NULL,
+      segment_id INTEGER NOT NULL DEFAULT -3,
+      timeresult_occurance INTEGER NOT NULL,
+      UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance) ON CONFLICT IGNORE
+      ););
+CREATE TABLE IF NOT EXISTS chipreads
+      read_id INTEGER NOT NULL PRIMARY KEY,
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      read_status INTEGER NOT NULL DEFAULT 0,
+      location_id INTEGER NOT NULL REFERENCES timing_locations(location_id),
+      read_chipnumber INTEGER NOT NULL,
+      read_seconds INTEGER NOT NULL,
+      read_milliseconds INTEGER NOT NULL,
+      read_antenna INTEGER NOT NULL,
+      read_reader INTEGER NOT NULL,
+      read_box INTEGER NOT NULL,
+      read_logindex INTEGER NOT NULL,
+      read_rssi INTEGER NOT NULL,
+      read_isrewind INTEGER NOT NULL,
+      read_readertime TEXT NOT NULL,
+      read_starttime INTEGER NOT NULL,
+      UNIQUE (read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE
+CREATE TABLE IF NOT EXISTS changes
+      change_id INTEGER PRIMARY KEY,
+      old_participant_id INTEGER NOT NULL,
+      old_first VARCHAR(50) NOT NULL,
+      old_last VARCHAR(75) NOT NULL,
+      old_street VARCHAR(150),
+      old_city VARCHAR(75),
+      old_state VARCHAR(25),
+      old_zip VARCHAR(10),
+      old_birthday VARCHAR(15) NOT NULL,
+      old_phone VARCHAR(20),
+      old_email VARCHAR(150),
+      old_emergency_id INTEGER DEFAULT -1,
+      old_emergency_name VARCHAR(150),
+      old_emergency_email VARCHAR(150),
+      old_event_spec_id INTEGER DEFAULT -1,
+      old_event_spec_event_id INTEGER DEFAULT -1,
+      old_event_spec_division_id INTEGER DEFAULT -1,
+      old_event_spec_bib INTEGER,
+      old_event_spec_checkedin INTEGER DEFAULT -1,
+      old_event_spec_comments VARCHAR,
+      old_mobile VARCHAR(20),
+      old_parent VARCHAR(150),
+      old_country VARCHAR(50),
+      old_street2 VARCHAR(50),
+      old_owes VARCHAR(50),
+      old_other VARCHAR,
+      old_gender VARCHAR(10),
+      old_earlystart INTEGER DEFAULT -1,
+      old_next_year INTEGER DEFAULT 0,
 
-CREATE TABLE IF NOT EXISTS
-    kiosk (
-        event_id INTEGER NOT NULL REFERENCES events(event_id),
-        kiosk_waiver_text VARCHAR NOT NULL,
-        kiosk_print_new INTEGER DEFAULT 0,
-        UNIQUE (event_id) ON CONFLICT IGNORE
-    )
-
-CREATE TABLE IF NOT EXISTS
-    dayof_participant (
-        dop_id INTEGER PRIMARY KEY,
-        dop_event_id INTEGER NOT NULL,
-        dop_division_id INTEGER NOT NULL,
-        dop_first VARCHAR NOT NULL,
-        dop_last VARCHAR NOT NULL,
-        dop_street VARCHAR,
-        dop_city VARCHAR,
-        dop_state VARCHAR,
-        dop_zip VARCHAR,
-        dop_birthday VARCHAR NOT NULL,
-        dop_phone VARCHAR,
-        dop_email VARCHAR,
-        dop_mobile VARCHAR,
-        dop_parent VARCHAR,
-        dop_country VARCHAR,
-        dop_street2 VARCHAR,
-        dop_gender VARCHAR,
-        dop_comments VARCHAR,
-        dop_other VARCHAR,
-        dop_other2 VARCHAR,
-        dop_emergency_name VARCHAR NOT NULL,
-        dop_emergency_phone VARCHAR NOT NULL,
-        UNIQUE (dop_first, dop_last, dop_street, dop_city, dop_state, dop_zip, dop_birthday)
-    )
-
-CREATE TABLE IF NOT EXISTS
-    divisions (
-        division_id INTEGER PRIMARY KEY,
-        division_name VARCHAR(100) NOT NULL,
-        division_cost VARCHAR(25) DEFAULT '',
-        event_id INTEGER NOT NULL REFERENCES events(event_id))
-
-CREATE TABLE IF NOT EXISTS
-    timingpoints (
-        timingpoint_id INTEGER PRIMARY KEY,
-        event_id INTEGER NOT NULL REFERENCES events(event_id),
-        division_id INTEGER NOT NULL REFERENCES divisions(division_id)
-        timingpoint_name VARCHAR(100) NOT NULL,
-        timingpoint_distance VARCHAR(5),
-        timingpoint_unit VARCHAR(2))
-
-CREATE TABLE IF NOT EXISTS
-    emergencycontacts (
-        emergencycontact_id INTEGER PRIMARY KEY,
-        emergencycontact_name VARCHAR(150) NOT NULL,
-        emergencycontact_phone VARCHAR(20),
-        emergencycontact_email VARCHAR(150))
-
-CREATE TABLE IF NOT EXISTS
-    participants (
-        participant_id INTEGER PRIMARY KEY,
-        participant_first VARCHAR(50) NOT NULL,
-        participant_last VARCHAR(75) NOT NULL,
-        participant_street VARCHAR(150),
-        participant_city VARCHAR(75),
-        participant_state VARCHAR(25),
-        participant_zip VARCHAR(10),
-        participant_birthday INTEGER NOT NULL,
-        emergencycontact_id INTEGER REFERENCES emergencycontacts(emergencycontact_id),
-        participant_phone VARCHAR(20),
-        participant_email VARCHAR(150),
-        participant_mobile VARCHAR(20),
-        participant_parent VARCHAR(150),
-        participant_country VARCHAR(50),
-        participant_street2 VARCHAR(50),
-        participant_gender VARCHAR(10),
-        UNIQUE (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday
-        )
-
-CREATE TABLE IF NOT EXISTS
-    eventspecific (
-        eventspecific_id INTEGER PRIMARY KEY,
-        participant_id INTEGER NOT NULL REFERENCES participants(participant_id),
-        event_id INTEGER NOT NULL REFERENCES events(event_id),
-        division_id INTEGER NOT NULL REFERENCES divisions(division_id),
-        eventspecific_bib INTEGER,
-        eventspecific_chip INTEGER,
-        eventspecific_checkedin INTEGER DEFAULT 0,
-        eventspecific_shirtpurchase INTEGER DEFAULT 0,
-        eventspecific_shirtsize VARCHAR,
-        eventspecific_comments VARCHAR,
-        eventspecific_secondshirt VARCHAR,
-        eventspecific_owes VARCHAR(50),
-        eventspecific_hat VARCHAR(20),
-        eventspecific_other VARCHAR,
-        eventspecific_earlystart INTEGER DEFAULT 0,
-        eventspecific_fleece VARCHAR DEFAULT '',
-        eventspecific_next_year INTEGER DEFAULT 0,
-        )
-
-CREATE TABLE IF NOT EXISTS
-    timeresults (
-        event_id INTEGER NOT NULL REFERENCES events(event_id),
-        eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id),
-        timingpoint_id INTEGER NOT NULL REFERENCES timingpoints(timingpoint_id),
-        timeresult_time INTEGER NOT NULL)
-
-CREATE TABLE IF NOT EXISTS
-    changes (
-        change_id INTEGER PRIMARY KEY,
-        old_participant_id INTEGER NOT NULL,
-        old_first VARCHAR(50) NOT NULL,
-        old_last VARCHAR(75) NOT NULL,
-        old_street VARCHAR(150),
-        old_city VARCHAR(75),
-        old_state VARCHAR(25),
-        old_zip VARCHAR(10),
-        old_birthday VARCHAR(15) NOT NULL,
-        old_phone VARCHAR(20),
-        old_email VARCHAR(150),
-        old_emergency_id INTEGER DEFAULT -1,
-        old_emergency_name VARCHAR(150),
-        old_emergency_phone VARCHAR(20),
-        old_emergency_email VARCHAR(150),
-        old_event_spec_id INTEGER DEFAULT -1,
-        old_event_spec_event_id INTEGER DEFAULT -1,
-        old_event_spec_division_id INTEGER DEFAULT -1,
-        old_event_spec_bib INTEGER,
-        old_event_spec_chip INTEGER,
-        old_event_spec_checkedin INTEGER DEFAULT -1,
-        old_event_spec_shirtsize VARCHAR(5),
-        old_event_spec_comments VARCHAR,
-        old_mobile VARCHAR(20),
-        old_parent VARCHAR(150),
-        old_country VARCHAR(50),
-        old_street2 VARCHAR(50),
-        old_secondshirt VARCHAR,
-        old_owes VARCHAR(50),
-        old_hat VARCHAR(20),
-        old_other VARCHAR,
-        old_gender VARCHAR(10),
-        old_earlystart INTEGER DEFAULT -1,
-        old_fleece VARCHAR DEFAULT '',
-        old_next_year INTEGER DEFAULT 0
-
-        new_participant_id INTEGER NOT NULL,
-        new_first VARCHAR(50) NOT NULL,
-        new_last VARCHAR(75) NOT NULL,
-        new_street VARCHAR(150),
-        new_city VARCHAR(75),
-        new_state VARCHAR(25),
-        new_zip VARCHAR(10),
-        new_birthday VARCHAR(15) NOT NULL,
-        new_phone VARCHAR(20),
-        new_email VARCHAR(150),
-        new_emergency_id INTEGER DEFAULT -1,
-        new_emergency_name VARCHAR(150),
-        new_emergency_phone VARCHAR(20),
-        new_emergency_email VARCHAR(150),
-        new_event_spec_id INTEGER DEFAULT -1,
-        new_event_spec_event_id INTEGER DEFAULT -1,
-        new_event_spec_division_id INTEGER DEFAULT -1,
-        new_event_spec_bib INTEGER DEFAULT -1,
-        new_event_spec_chip INTEGER DEFAULT -1,
-        new_event_spec_checkedin INTEGER DEFAULT -1,
-        new_event_spec_shirtsize VARCHAR(5),
-        new_event_spec_comments VARCHAR,
-        new_mobile VARCHAR(20),
-        new_parent VARCHAR(150),
-        new_country VARCHAR(50),
-        new_street2 VARCHAR(50),
-        new_secondshirt VARCHAR,
-        new_owes VARCHAR(50),
-        new_hat VARCHAR(20),
-        new_other VARCHAR,
-        new_gender VARCHAR(10),
-        new_earlystart INTEGER DEFAULT -1,
-        new_fleece VARCHAR DEFAULT '',
-        ));
-
-CREATE TABLE IF NOT EXISTS
-    settings (
-        version INTEGER NOT NULL,
-        name VARCHAR NOT NULL
-        )
+      new_participant_id INTEGER NOT NULL,
+      new_first VARCHAR(50) NOT NULL,
+      new_last VARCHAR(75) NOT NULL,
+      new_street VARCHAR(150),
+      new_city VARCHAR(75),
+      new_state VARCHAR(25),
+      new_zip VARCHAR(10),
+      new_birthday VARCHAR(15) NOT NULL,
+      new_phone VARCHAR(20),
+      new_email VARCHAR(150),
+      new_emergency_id INTEGER DEFAULT -1,
+      new_emergency_name VARCHAR(150),
+      new_emergency_phone VARCHAR(20),
+      new_emergency_email VARCHAR(150),
+      new_event_spec_id INTEGER DEFAULT -1,
+      new_event_spec_event_id INTEGER DEFAULT -1,
+      new_event_spec_division_id INTEGER DEFAULT -1,
+      new_event_spec_bib INTEGER DEFAULT -1,
+      new_event_spec_checkedin INTEGER DEFAULT -1,
+      new_event_spec_comments VARCHAR,
+      new_mobile VARCHAR(20),
+      new_parent VARCHAR(150),
+      new_country VARCHAR(50),
+      new_street2 VARCHAR(50),
+      new_owes VARCHAR(50),
+      new_other VARCHAR,
+      new_gender VARCHAR(10),
+      new_earlystart INTEGER DEFAULT -1,
+      new_next_year INTEGER DEFAULT 0
+CREATE TABLE IF NOT EXISTS app_settings
+      setting VARCHAR NOT NULL,
+      value VARCHAR NOT NULL,
+      UNIQUE (setting) ON CONFLICT REPLACE

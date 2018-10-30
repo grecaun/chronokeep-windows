@@ -1,0 +1,18 @@
+﻿<Page x:Class="EventDirector.NextYearSetupPage0"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EventDirector"
+      mc:Ignorable="d" 
+      d:DesignHeight="380" d:DesignWidth="380"
+      Title="NextYearSetupPage0">
+
+    <Grid>
+        <TextBlock Text="This function adds an event for next year and then allows you to transfer a participant's information into the next year." HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="25" Width="340" Margin="20,40,20,0" Height="200" TextWrapping="Wrap" />
+        <Button Content="Next" Height="25" Width="100" VerticalAlignment="Bottom" Margin="0,0,150,10" Click="Next_Click" 
+               HorizontalAlignment="Center" />
+        <Button Content="Cancel" Height="25" Width="100" VerticalAlignment="Bottom" Margin="150,0,0,10" Click="Cancel_Click"
+                HorizontalAlignment="Center" />
+    </Grid>
+</Page>
