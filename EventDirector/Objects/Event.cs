@@ -10,7 +10,7 @@ namespace EventDirector
     {
         private int identifier, nextYear = -1, shirtOptional = 1, shirtPrice = 2000;
         private int common_age_groups = 1, common_start_finish = 1, division_specific_segments = 0, rank_by_gun = 1;
-        private string name, date;
+        private string name, date, yearcode;
 
         public Event() { }
 
@@ -58,7 +58,7 @@ namespace EventDirector
             this.rank_by_gun = gun;
         }
 
-        public Event(int id, string n, string d, int ny, int so, int price, int age, int start, int seg, int gun)
+        public Event(int id, string n, string d, int ny, int so, int price, int age, int start, int seg, int gun, string yearcode)
         {
             this.nextYear = ny;
             this.identifier = id;
@@ -70,6 +70,7 @@ namespace EventDirector
             this.common_start_finish = start;
             this.division_specific_segments = seg;
             this.rank_by_gun = gun;
+            this.yearcode = yearcode;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -82,5 +83,6 @@ namespace EventDirector
         public int CommonStartFinish { get => common_start_finish; set => common_start_finish = value; }
         public int DivisionSpecificSegments { get => division_specific_segments; set => division_specific_segments = value; }
         public int RankByGun { get => rank_by_gun; set => rank_by_gun = value; }
+        public string YearCode { get => yearcode; set => yearcode = value; }
     }
 }

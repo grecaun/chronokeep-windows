@@ -8,7 +8,7 @@ namespace EventDirector
 {
     public class TimingLocation
     {
-        private int identifier, eventIdentifier;
+        private int identifier, eventIdentifier, max_occurances, ignore_within;
         private string name;
 
         public TimingLocation() { }
@@ -17,6 +17,8 @@ namespace EventDirector
         {
             this.eventIdentifier = eventIdentifier;
             this.name = nameString;
+            this.max_occurances = 1;
+            this.ignore_within = -1;
         }
 
         public TimingLocation(int identifier, int eventIdentifier, string nameString)
@@ -24,10 +26,23 @@ namespace EventDirector
             this.identifier = identifier;
             this.eventIdentifier = eventIdentifier;
             this.name = nameString;
+            this.max_occurances = 1;
+            this.ignore_within = -1;
+        }
+
+        public TimingLocation(int id, int eventId, string name, int maxOcc, int ignore)
+        {
+            this.identifier = id;
+            this.eventIdentifier = eventId;
+            this.name = name;
+            this.max_occurances = maxOcc;
+            this.ignore_within = ignore;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public string Name { get => name; set => name = value; }
+        public int MaxOccurances { get => max_occurances; set => max_occurances = value; }
+        public int IgnoreWithin { get => ignore_within; set => ignore_within = value; }
     }
 }

@@ -119,7 +119,7 @@ namespace EventDirector
                         database.UpdateParticipant(newPart);
                         newPart = database.GetParticipant(partUpd.EventId, partUpd.Participant.Id);
                         database.AddChange(newPart, oldPart);
-                        changeUpdater.UpdateChangesBox();
+                        if (changeUpdater != null) changeUpdater.UpdateChangesBox();
                         BroadcastJson(jsonHandler.GetJsonServerUpdateParticipant(partUpd.EventId, newPart));
                         break;
                     case "client_participant_add":
@@ -134,7 +134,7 @@ namespace EventDirector
                         database.AddParticipant(addPart);
                         addPart = database.GetParticipant(clientPartAdd.EventId, addPart);
                         database.AddChange(addPart, null);
-                        changeUpdater.UpdateChangesBox();
+                        if (changeUpdater != null) changeUpdater.UpdateChangesBox();
                         BroadcastJson(jsonHandler.GetJsonServerAddParticipant(clientPartAdd.EventId, addPart));
                         break;
                     case "client_participant_set":
@@ -236,7 +236,7 @@ namespace EventDirector
                             database.AddChange(nextYearEntry, null);
                             BroadcastJson(jsonHandler.GetJsonServerAddParticipant(thisYear.NextYear, nextYearEntry));
                             BroadcastJson(jsonHandler.GetJsonServerUpdateParticipant(thisYear.Identifier, thisYearEntry));
-                            changeUpdater.UpdateChangesBox();
+                            if (changeUpdater != null) changeUpdater.UpdateChangesBox();
                         }
                         else
                         {
@@ -250,7 +250,7 @@ namespace EventDirector
                             nextYearEntry.EventSpecific.EventIdentifier = thisYear.NextYear;
                             nextYearEntry.EventSpecific.Comments = "Error adding this person to the entrants for next year.";
                             database.AddChange(nextYearEntry, null);
-                            changeUpdater.UpdateChangesBox();
+                            if (changeUpdater != null) changeUpdater.UpdateChangesBox();
                         }
                         break;
                 }

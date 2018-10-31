@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS events
       event_id INTEGER PRIMARY KEY,
       event_name VARCHAR(100) NOT NULL,
       event_date VARCHAR(15) NOT NULL,
+      event_yearcode VARCHAR(10) NOT NULL DEFAULT '',
       event_registration_open INTEGER DEFAULT 0,
       event_results_open INTEGER DEFAULT 0,
       event_announce_available INTEGER DEFAULT 0,
@@ -64,6 +65,8 @@ CREATE TABLE IF NOT EXISTS timing_locations
       location_id INTEGER PRIMARY KEY,
       event_id INTEGER NOT NULL REFERENCES events(event_id),
       location_name VARCHAR(100) NOT NULL,
+      location_max_occurances INTEGER NOT NULL DEFAULT 1,
+      location_ignore_within INTEGER NOT NULL DEFAULT -1,
       UNIQUE (event_id, location_name) ON CONFLICT IGNORE
 CREATE TABLE IF NOT EXISTS participants
       participant_id INTEGER PRIMARY KEY,

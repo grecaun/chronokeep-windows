@@ -14,6 +14,8 @@ namespace EventDirector
         void SetServerName(string name);
         String GetServerName();
         AppSetting GetAppSetting(string name);
+        void SetAppSetting(string name, string value);
+        void SetAppSetting(AppSetting setting);
 
         // Event Functions
         void AddEvent(Event anEvent);
@@ -60,6 +62,8 @@ namespace EventDirector
 
         // Bib Chip Association Functions
         void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc);
+        List<BibChipAssociation> GetBibChips();
+        List<BibChipAssociation> GetBibChips(int eventId);
 
         // Timing Result Functions
         void AddTimingResult(TimeResult tr);
@@ -83,8 +87,6 @@ namespace EventDirector
         // Change Functions
         void AddChange(Participant newParticipant, Participant oldParticipant);
         List<Change> GetChanges();
-        List<BibChipAssociation> GetBibChips();
-        List<BibChipAssociation> GetBibChips(int eventId);
 
         // Chip Read Functions
         void AddChipRead(ChipRead read);

@@ -11,7 +11,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 16;
+        private readonly int version = 17;
         SQLiteConnection connection;
         readonly string connectionInfo;
 
@@ -59,10 +59,12 @@ namespace EventDirector
                     "event_id INTEGER PRIMARY KEY," +
                     "event_name VARCHAR(100) NOT NULL," +
                     "event_date VARCHAR(15) NOT NULL," +
+                    "event_yearcode VARCHAR(10) NOT NULL DEFAULT ''," +
                     "event_registration_open INTEGER DEFAULT 0," +
                     "event_results_open INTEGER DEFAULT 0," +
                     "event_announce_available INTEGER DEFAULT 0," +
                     "event_allow_early_start INTEGER DEFAULT 0," +
+                    "event_eary_start_difference INTEGER NOT NULL DEFAULT 0," +
                     "event_kiosk INTEGER DEFAULT 0," +
                     "event_next_year_event_id INTEGER DEFAULT -1," +
                     "event_shirt_optional INTEGER DEFAULT 1," +
@@ -120,6 +122,8 @@ namespace EventDirector
                     "location_id INTEGER PRIMARY KEY," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "location_name VARCHAR(100) NOT NULL," +
+                    "location_max_occurances INTEGER NOT NULL DEFAULT 1," +
+                    "location_ignore_within INTEGER NOT NULL DEFAULT -1," +
                     "UNIQUE (event_id, location_name) ON CONFLICT IGNORE" +
                     ")");
                 queries.Add("CREATE TABLE IF NOT EXISTS participants (" +
@@ -765,6 +769,21 @@ namespace EventDirector
                         command.ExecuteNonQuery();
                         transaction.Commit();
                     }
+                    goto case 16;
+                case 16:
+                    Log.D("Upgrading from verison 16.");
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE timing_locations ADD location_max_occurances INTEGER NOT NULL DEFAULT 1;" +
+                                "ALTER TABLE timing_locations ADD location_ignore_within INTEGER NOT NULL DEFAULT -1;" +
+                                "ALTER TABLE events ADD event_yearcode VARCHAR(10) NOT NULL DEFAULT '';" +
+                                "ALTER TABLE events ADD event_eary_start_difference INTEGER NOT NULL DEFAULT 0;" +
+                                "UPDATE settings SET version=17 WHERE version=16;";
+                        Log.D(command.CommandText);
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
                     break;
             }
         }
@@ -904,8 +923,8 @@ namespace EventDirector
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO events(event_name, event_date, event_shirt_optional, event_shirt_price," +
-                "event_common_age_groups, event_common_start_finish, event_rank_by_gun, event_division_specific_segments)" +
-                " values(@name,@date,@so,@price,@age,@start,@gun,@sepseg)";
+                "event_common_age_groups, event_common_start_finish, event_rank_by_gun, event_division_specific_segments, event_yearcode)" +
+                " values(@name,@date,@so,@price,@age,@start,@gun,@sepseg,@yearcode)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
@@ -914,7 +933,8 @@ namespace EventDirector
                 new SQLiteParameter("@age", anEvent.CommonAgeGroups),
                 new SQLiteParameter("@start", anEvent.CommonStartFinish),
                 new SQLiteParameter("@gun", anEvent.RankByGun),
-                new SQLiteParameter("@sepseg", anEvent.DivisionSpecificSegments) });
+                new SQLiteParameter("@sepseg", anEvent.DivisionSpecificSegments),
+                new SQLiteParameter("@yearcode", anEvent.YearCode) });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
         }
@@ -947,7 +967,7 @@ namespace EventDirector
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE events SET event_name=@name, event_date=@date, event_next_year_event_id=@ny, event_shirt_optional=@so," +
                 "event_shirt_price=@price, event_common_age_groups=@age, event_common_start_finish=@start, event_rank_by_gun=@gun, " +
-                "event_division_specific_segments=@seg WHERE event_id=@id";
+                "event_division_specific_segments=@seg, event_yearcode=@yearcode WHERE event_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
@@ -958,7 +978,8 @@ namespace EventDirector
                 new SQLiteParameter("@start", anEvent.CommonStartFinish),
                 new SQLiteParameter("@gun", anEvent.RankByGun),
                 new SQLiteParameter("@seg", anEvent.DivisionSpecificSegments),
-                new SQLiteParameter("@price", anEvent.ShirtPrice) });
+                new SQLiteParameter("@price", anEvent.ShirtPrice),
+                new SQLiteParameter("@yearcode", anEvent.YearCode) });
             command.ExecuteNonQuery();
         }
 
@@ -973,7 +994,7 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"]),
                     Convert.ToInt32(reader["event_shirt_price"]), Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]), Convert.ToInt32(reader["event_division_specific_segments"]),
-                    Convert.ToInt32(reader["event_rank_by_gun"])));
+                    Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString()));
             }
             return output;
         }
@@ -1013,7 +1034,7 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"]),
                     Convert.ToInt32(reader["event_shirt_price"]), Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]), Convert.ToInt32(reader["event_division_specific_segments"]),
-                    Convert.ToInt32(reader["event_rank_by_gun"]));
+                    Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString());
             }
             return output;
         }
@@ -1485,10 +1506,13 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO timing_locations (event_id, location_name) VALUES (@event,@name)";
+            command.CommandText = "INSERT INTO timing_locations (event_id, location_name, location_max_occurances, location_ignore_within) " +
+                "VALUES (@event,@name,@max,@ignore)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tl.EventIdentifier),
-                new SQLiteParameter("@name", tl.Name) } );
+                new SQLiteParameter("@name", tl.Name),
+                new SQLiteParameter("@max", tl.MaxOccurances),
+                new SQLiteParameter("@ignore", tl.IgnoreWithin) } );
             command.ExecuteNonQuery();
         }
 
@@ -1511,10 +1535,13 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE timing_locations SET event_id=@event, location_name=@name, WHERE location_id=@id";
+            command.CommandText = "UPDATE timing_locations SET event_id=@event, location_name=@name, location_max_occurances=@max, " +
+                "location_ignore_within=@ignore WHERE location_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tl.EventIdentifier),
                 new SQLiteParameter("@name", tl.Name),
+                new SQLiteParameter("@max", tl.MaxOccurances),
+                new SQLiteParameter("@ignore", tl.IgnoreWithin),
                 new SQLiteParameter("@id", tl.Identifier) });
             command.ExecuteNonQuery();
         }
@@ -1527,7 +1554,7 @@ namespace EventDirector
             while (reader.Read())
             {
                 output.Add(new TimingLocation(Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["event_id"]),
-                    reader["location_name"].ToString()));
+                    reader["location_name"].ToString(), Convert.ToInt32(reader["location_max_occurances"]), Convert.ToInt32(reader["location_ignore_within"])));
             }
             return output;
         }
@@ -2267,21 +2294,45 @@ namespace EventDirector
 
         public AppSetting GetAppSetting(string name)
         {
-            AppSetting output = new AppSetting()
-                {
-                    name = "",
-                    value = ""
-                };
+            AppSetting output = null;
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM app_settings WHERE name=@name";
+            command.CommandText = "SELECT * FROM app_settings WHERE setting=@name";
             command.Parameters.Add(new SQLiteParameter("@name", name));
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.name = Convert.ToString(reader["name"]);
-                output.value = Convert.ToString(reader["value"]);
+                output = new AppSetting
+                {
+                    name = Convert.ToString(reader["setting"]),
+                    value = Convert.ToString(reader["value"])
+                };
             }
             return output;
+        }
+
+        public void SetAppSetting(string n, string v)
+        {
+            AppSetting setting = new AppSetting()
+            {
+                name = n,
+                value = v
+            };
+            SetAppSetting(setting);
+        }
+
+        public void SetAppSetting(AppSetting setting)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "INSERT INTO app_settings (setting, value)" +
+                    " VALUES (@name,@value)";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@name", setting.name),
+                new SQLiteParameter("@value", setting.value) });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
         }
     }
 }
