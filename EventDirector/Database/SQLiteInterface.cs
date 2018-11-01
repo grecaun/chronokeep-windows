@@ -64,7 +64,7 @@ namespace EventDirector
                     "event_results_open INTEGER DEFAULT 0," +
                     "event_announce_available INTEGER DEFAULT 0," +
                     "event_allow_early_start INTEGER DEFAULT 0," +
-                    "event_eary_start_difference INTEGER NOT NULL DEFAULT 0," +
+                    "event_early_start_difference INTEGER NOT NULL DEFAULT 0," +
                     "event_kiosk INTEGER DEFAULT 0," +
                     "event_next_year_event_id INTEGER DEFAULT -1," +
                     "event_shirt_optional INTEGER DEFAULT 1," +
@@ -778,7 +778,7 @@ namespace EventDirector
                         command.CommandText = "ALTER TABLE timing_locations ADD location_max_occurances INTEGER NOT NULL DEFAULT 1;" +
                                 "ALTER TABLE timing_locations ADD location_ignore_within INTEGER NOT NULL DEFAULT -1;" +
                                 "ALTER TABLE events ADD event_yearcode VARCHAR(10) NOT NULL DEFAULT '';" +
-                                "ALTER TABLE events ADD event_eary_start_difference INTEGER NOT NULL DEFAULT 0;" +
+                                "ALTER TABLE events ADD event_early_start_difference INTEGER NOT NULL DEFAULT 0;" +
                                 "UPDATE settings SET version=17 WHERE version=16;";
                         Log.D(command.CommandText);
                         command.ExecuteNonQuery();
@@ -967,7 +967,8 @@ namespace EventDirector
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE events SET event_name=@name, event_date=@date, event_next_year_event_id=@ny, event_shirt_optional=@so," +
                 "event_shirt_price=@price, event_common_age_groups=@age, event_common_start_finish=@start, event_rank_by_gun=@gun, " +
-                "event_division_specific_segments=@seg, event_yearcode=@yearcode WHERE event_id=@id";
+                "event_division_specific_segments=@seg, event_yearcode=@yearcode, event_allow_early_start=@early, " +
+                "event_early_start_difference=@diff WHERE event_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
@@ -979,7 +980,9 @@ namespace EventDirector
                 new SQLiteParameter("@gun", anEvent.RankByGun),
                 new SQLiteParameter("@seg", anEvent.DivisionSpecificSegments),
                 new SQLiteParameter("@price", anEvent.ShirtPrice),
-                new SQLiteParameter("@yearcode", anEvent.YearCode) });
+                new SQLiteParameter("@yearcode", anEvent.YearCode),
+                new SQLiteParameter("@early", anEvent.AllowEarlyStart),
+                new SQLiteParameter("@diff", anEvent.EarlyStartDifference) });
             command.ExecuteNonQuery();
         }
 
@@ -994,7 +997,8 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"]),
                     Convert.ToInt32(reader["event_shirt_price"]), Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]), Convert.ToInt32(reader["event_division_specific_segments"]),
-                    Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString()));
+                    Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString(), Convert.ToInt32(reader["event_allow_early_start"]),
+                    Convert.ToInt32(reader["event_early_start_difference"])));
             }
             return output;
         }
@@ -1017,6 +1021,11 @@ namespace EventDirector
             return output;
         }
 
+        public Event GetCurrentEvent()
+        {
+            return GetEvent(Convert.ToInt32(GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
+        }
+
         public Event GetEvent(int id)
         {
             if (id < 0)
@@ -1034,7 +1043,8 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"]),
                     Convert.ToInt32(reader["event_shirt_price"]), Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]), Convert.ToInt32(reader["event_division_specific_segments"]),
-                    Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString());
+                    Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString(), Convert.ToInt32(reader["event_allow_early_start"]),
+                    Convert.ToInt32(reader["event_early_start_difference"]));
             }
             return output;
         }

@@ -188,9 +188,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Constants\DashboardLabels.cs" />
     <Compile Include="Constants\Distances.cs" />
+    <Compile Include="Constants\JsonOptions.cs" />
     <Compile Include="Constants\Settings.cs" />
+    <Compile Include="Interfaces\IMainPage.cs" />
     <Compile Include="Interfaces\INewMainWindow.cs" />
+    <Compile Include="Interfaces\IWindowCallback.cs" />
     <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
     <Compile Include="Objects\ChipRead.cs" />
@@ -244,37 +248,37 @@
     <Compile Include="Interfaces\IEDConnection.cs" />
     <Compile Include="Interfaces\IMainWindow.cs" />
     <Compile Include="IO\ImportData.cs" />
-    <Compile Include="UI\ImportFilePage1.xaml.cs">
+    <Compile Include="UI\Import\ImportFilePage1.xaml.cs">
       <DependentUpon>ImportFilePage1.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ImportFilePage2.xaml.cs">
+    <Compile Include="UI\Import\ImportFilePage2.xaml.cs">
       <DependentUpon>ImportFilePage2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ImportFileWindow.xaml.cs">
+    <Compile Include="UI\Import\ImportFileWindow.xaml.cs">
       <DependentUpon>ImportFileWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Network\JsonHandler.cs" />
     <Compile Include="Objects\JsonObjects.cs" />
-    <Compile Include="UI_Old\KioskSetup.xaml.cs">
+    <Compile Include="UI\Kiosk\KioskSetup.xaml.cs">
       <DependentUpon>KioskSetup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\KioskSetupPage1.xaml.cs">
+    <Compile Include="UI\Kiosk\KioskSetupPage1.xaml.cs">
       <DependentUpon>KioskSetupPage1.xaml</DependentUpon>
     </Compile>
     <Compile Include="UHF RFID Reader\NewReader.cs" />
-    <Compile Include="UI_Old\NextYearSetupPage0.xaml.cs">
+    <Compile Include="UI\NextYear\NextYearSetupPage0.xaml.cs">
       <DependentUpon>NextYearSetupPage0.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\NextYearSetupPage1.xaml.cs">
+    <Compile Include="UI\NextYear\NextYearSetupPage1.xaml.cs">
       <DependentUpon>NextYearSetupPage1.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\KioskSetupPage2.xaml.cs">
+    <Compile Include="UI\Kiosk\KioskSetupPage2.xaml.cs">
       <DependentUpon>KioskSetupPage2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\KioskSetupPage3.xaml.cs">
+    <Compile Include="UI\Kiosk\KioskSetupPage3.xaml.cs">
       <DependentUpon>KioskSetupPage3.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\KioskSetupPage4.xaml.cs">
+    <Compile Include="UI\Kiosk\KioskSetupPage4.xaml.cs">
       <DependentUpon>KioskSetupPage4.xaml</DependentUpon>
     </Compile>
     <Compile Include="Objects\Log.cs" />
@@ -286,13 +290,13 @@
       <DependentUpon>NewEventWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Objects\Change.cs" />
-    <Compile Include="UI_Old\NextYearSetup.xaml.cs">
+    <Compile Include="UI\NextYear\NextYearSetup.xaml.cs">
       <DependentUpon>NextYearSetup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\NextYearSetupPage2.xaml.cs">
+    <Compile Include="UI\NextYear\NextYearSetupPage2.xaml.cs">
       <DependentUpon>NextYearSetupPage2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\NextYearSetupPage3.xaml.cs">
+    <Compile Include="UI\NextYear\NextYearSetupPage3.xaml.cs">
       <DependentUpon>NextYearSetupPage3.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI_Old\ParticipantsList.xaml.cs">
@@ -305,7 +309,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FileVersion.tt</DependentUpon>
     </Compile>
-    <Compile Include="UI\RawReadsWindow.xaml.cs">
+    <Compile Include="UI\Timing\RawReadsWindow.xaml.cs">
       <DependentUpon>RawReadsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="RFID\RFIDSettings.xaml.cs">
@@ -323,10 +327,10 @@
     <Compile Include="UI_Old\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\TimingRawReads.xaml.cs">
+    <Compile Include="UI\Timing\TimingRawReads.xaml.cs">
       <DependentUpon>TimingRawReads.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\TimingWindow.xaml.cs">
+    <Compile Include="UI\Timing\TimingWindow.xaml.cs">
       <DependentUpon>TimingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Objects\Helpers\Utils.cs" />
@@ -375,43 +379,43 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\ImportFilePage1.xaml">
+    <Page Include="UI\Import\ImportFilePage1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\ImportFilePage2.xaml">
+    <Page Include="UI\Import\ImportFilePage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\ImportFileWindow.xaml">
+    <Page Include="UI\Import\ImportFileWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\KioskSetup.xaml">
+    <Page Include="UI\Kiosk\KioskSetup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\KioskSetupPage1.xaml">
+    <Page Include="UI\Kiosk\KioskSetupPage1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\NextYearSetupPage0.xaml">
+    <Page Include="UI\NextYear\NextYearSetupPage0.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\NextYearSetupPage1.xaml">
+    <Page Include="UI\NextYear\NextYearSetupPage1.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UI_Old\KioskSetupPage2.xaml">
+    <Page Include="UI\Kiosk\KioskSetupPage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\KioskSetupPage3.xaml">
+    <Page Include="UI\Kiosk\KioskSetupPage3.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\KioskSetupPage4.xaml">
+    <Page Include="UI\Kiosk\KioskSetupPage4.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -439,15 +443,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\NextYearSetup.xaml">
+    <Page Include="UI\NextYear\NextYearSetup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\NextYearSetupPage2.xaml">
+    <Page Include="UI\NextYear\NextYearSetupPage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\NextYearSetupPage3.xaml">
+    <Page Include="UI\NextYear\NextYearSetupPage3.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -455,7 +459,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\RawReadsWindow.xaml">
+    <Page Include="UI\Timing\RawReadsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -471,11 +475,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\TimingRawReads.xaml">
+    <Page Include="UI\Timing\TimingRawReads.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\TimingWindow.xaml">
+    <Page Include="UI\Timing\TimingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -612,7 +616,9 @@
       <LastGenOutput>FileVersion.cs</LastGenOutput>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="UI\Export\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files\Git\bin\git.exe" describe --tag &gt; "$(ProjectDir)\version.txt"</PreBuildEvent>

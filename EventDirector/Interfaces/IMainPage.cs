@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace EventDirector.Interfaces
 {
-    public interface INewMainWindow : IMainWindow, IWindowCallback
+    interface IMainPage
     {
-        bool StartNetworkServices();
-        bool StopNetworkServices();
+        void Update();
     }
 }

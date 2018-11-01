@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS events
       event_results_open INTEGER DEFAULT 0,
       event_announce_available INTEGER DEFAULT 0,
       event_allow_early_start INTEGER DEFAULT 0,
+      event_eary_start_difference INTEGER NOT NULL DEFAULT 0,
       event_kiosk INTEGER DEFAULT 0,
       event_next_year_event_id INTEGER DEFAULT -1,
       event_shirt_optional INTEGER DEFAULT 1,

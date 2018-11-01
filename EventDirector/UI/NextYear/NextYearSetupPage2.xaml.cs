@@ -35,6 +35,9 @@ namespace EventDirector
                     break;
                 }
             }
+            int yearcode = DateTime.Parse(oldEvent.Date).Year + 1;
+            yearBox.Text = yearcode.ToString();
+
             StringBuilder sb = new StringBuilder();
             foreach (string s in parts)
             {
@@ -55,6 +58,7 @@ namespace EventDirector
         private void Submit()
         {
             String nameString = nameBox.Text.Trim();
+            String yearCode = yearBox.Text.Trim();
             int shirtOptional = shirtOptionalBox.IsChecked == true ? 1 : 0, shirtPrice = 0;
             string[] shirtVals = shirtPriceBox.Text.Split('.');
             shirtPrice = 20;
@@ -80,7 +84,7 @@ namespace EventDirector
                 MessageBox.Show("Please input a value in the name box.");
                 return;
             }
-            kiosk.GoToPage3(nameString, dateVal, shirtOptional, shirtPrice);
+            kiosk.GoToPage3(nameString, yearCode, dateVal, shirtOptional, shirtPrice);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

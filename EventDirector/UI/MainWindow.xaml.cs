@@ -25,6 +25,7 @@ namespace EventDirector.UI
     public partial class MainWindow : Window, INewMainWindow, IChangeUpdater
     {
         IDBInterface database;
+        IMainPage page;
         String dbName = "EventDirector.sqlite";
         String programDir = "EventDirector";
         bool closing = false;
@@ -55,7 +56,8 @@ namespace EventDirector.UI
 
             SetupSettings();
 
-            TheFrame.Content = new DashboardPage(this, database);
+            page = new DashboardPage(this, database);
+            TheFrame.Content = page;
         }
 
         private void SetupSettings()
@@ -129,65 +131,68 @@ namespace EventDirector.UI
 
         }
 
-        private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            await StopNetworkServices();
+            StopNetworkServices();
         }
 
         public void WindowClosed(Window window) { }
 
-        public void UpdateEvent(int identifier, string nameString, long dateVal, int nextYear, int shirtOptionalVal, int shirtPrice) { }
+        public void UpdateEvent(int identifier, string nameString, long dateVal, int nextYear, int shirtOptionalVal, int shirtPrice)
+        {
+            Log.D("Updating event information via TCP Server.");
+            tcpServer.UpdateEvent(identifier);
+        }
 
         public void AddEvent(string nameString, long dateVal, int shirtOptionalVal, int shirtPrice) { }
 
-        public async Task<bool> StartNetworkServices()
+        public bool StartNetworkServices()
         {
-            return await Task.Run( () =>
+            try
             {
-                try
-                {
-                    Log.D("Starting TCP server thread.");
-                    tcpServer = new TCPServer(database, this);
-                    tcpServerThread = new Thread(new ThreadStart(tcpServer.Run));
-                    tcpServerThread.Start();
-                    Log.D("Starting zero configuration thread.");
-                    zeroConf = new ZeroConf(database.GetServerName());
-                    zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
-                    zeroConfThread.Start();
-                }
-                catch
-                {
-                    return false;
-                }
-                return true;
-            });
+                Log.D("Starting TCP server thread.");
+                tcpServer = new TCPServer(database, this);
+                tcpServerThread = new Thread(new ThreadStart(tcpServer.Run));
+                tcpServerThread.Start();
+                Log.D("Starting zero configuration thread.");
+                zeroConf = new ZeroConf(database.GetServerName());
+                zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
+                zeroConfThread.Start();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
 
-        public async Task<bool> StopNetworkServices()
+        public bool StopNetworkServices()
         {
-            return await Task.Run(() =>
+            try
             {
-                try
-                {
-                    Log.D("Stopping TCP server thread.");
-                    tcpServer.Stop();
-                    tcpServerThread.Abort();
-                    tcpServerThread.Join();
-                    Log.D("Stopping zero configuration thread.");
-                    zeroConf.Stop();
-                    zeroConfThread.Abort();
-                    zeroConfThread.Join();
-                }
-                catch
-                {
-                    return false;
-                }
-                return true;
-            });
+                Log.D("Stopping TCP server thread.");
+                tcpServer.Stop();
+                tcpServerThread.Abort();
+                tcpServerThread.Join();
+                Log.D("Stopping zero configuration thread.");
+                zeroConf.Stop();
+                zeroConfThread.Abort();
+                zeroConfThread.Join();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
 
         public void UpdateChangesBox()
         {
+        }
+
+        public void WindowFinalize()
+        {
+            page.Update();
         }
     }
 }
