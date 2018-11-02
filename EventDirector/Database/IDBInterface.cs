@@ -45,6 +45,14 @@ namespace EventDirector
         int GetTimingLocationID(TimingLocation tp);
         List<TimingLocation> GetTimingLocations(int eventId);
 
+        // Segment Functions
+        void AddSegment(Segment seg);
+        void RemoveSegment(Segment seg);
+        void RemoveSegment(int identifier);
+        void UpdateSegment(Segment seg);
+        int GetSegmentId(Segment seg);
+        List<Segment> GetSegments(int eventId);
+
         // Participant Functions
         void AddParticipant(Participant person);
         void AddParticipants(List<Participant> people);

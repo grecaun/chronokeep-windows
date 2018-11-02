@@ -36,6 +36,14 @@ namespace EventDirector.UI.MainPages
         public void Update()
         {
             theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier == -1)
+            {
+                LeftPanel.Visibility = Visibility.Hidden;
+                RightPanel.Visibility = Visibility.Hidden;
+                return;
+            }
+            LeftPanel.Visibility = Visibility.Visible;
+            RightPanel.Visibility = Visibility.Visible;
             eventNameTextBox.Text = theEvent.Name;
             eventYearCodeTextBox.Text = theEvent.YearCode;
             eventDatePicker.Text = theEvent.Date;
@@ -312,9 +320,13 @@ namespace EventDirector.UI.MainPages
             Log.D("Setup Next Year Mode clicked.");
             if (setupNextYear.Content.ToString() == Constants.DashboardLabels.SETUP_NEXT_YEAR)
             {
-                setupNextYear.Content = Constants.DashboardLabels.WORKING;
-                NextYearSetup nysetup = new NextYearSetup(mWindow, database, theEvent);
-                nysetup.Show();
+                NextYearSetup nysetup = NextYearSetup.NewWindow(mWindow, database, theEvent);
+                if (nysetup != null)
+                {
+                    setupNextYear.Content = Constants.DashboardLabels.WORKING;
+                    mWindow.AddWindow(nysetup);
+                    nysetup.Show();
+                }
             }
             else if (setupNextYear.Content.ToString() == Constants.DashboardLabels.CANCEL_NEXT_YEAR)
             {
@@ -328,6 +340,12 @@ namespace EventDirector.UI.MainPages
         private void NewEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("New event clicked.");
+            NewEventWindow newEventWindow = NewEventWindow.NewWindow(mWindow, database);
+            if (newEventWindow != null)
+            {
+                mWindow.AddWindow(newEventWindow);
+                newEventWindow.Show();
+            }
         }
 
         private void ImportEvent_Click(object sender, RoutedEventArgs e)
@@ -338,6 +356,34 @@ namespace EventDirector.UI.MainPages
         private void ChangeEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Change event clicked.");
+            ChangeEventWindow changeEventWindow = ChangeEventWindow.NewWindow(mWindow, database);
+            if (changeEventWindow != null)
+            {
+                mWindow.AddWindow(changeEventWindow);
+                changeEventWindow.Show();
+            }
+        }
+
+        private void DeleteEvent_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Delete event clicked.");
+            try
+            {
+                Log.D("Attempting to delete.");
+                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this event? This cannot be undone.",
+                                                            "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    database.RemoveEvent(theEvent.Identifier);
+                    database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
+                    Update();
+                }
+            }
+            catch
+            {
+                Log.D("Unable to remove the event.");
+                MessageBox.Show("Unable to remove the event.");
+            }
         }
 
         private void EarlyCheckBox_Click(object sender, RoutedEventArgs e)
@@ -353,11 +399,6 @@ namespace EventDirector.UI.MainPages
             }
         }
 
-        private void DeleteEvent_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Delete event clicked.");
-        }
-
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Cancel clicked.");
@@ -365,6 +406,21 @@ namespace EventDirector.UI.MainPages
             Update();
             editButton.Content = Constants.DashboardLabels.EDIT;
             cancelButton.Visibility = Visibility.Collapsed;
+        }
+
+        private void AnnouncerButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Announcer clicked.");
+        }
+
+        private void TagTesterButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Tag Tester clicked.");
+        }
+
+        private void TimingButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Timing clicked.");
         }
     }
 }

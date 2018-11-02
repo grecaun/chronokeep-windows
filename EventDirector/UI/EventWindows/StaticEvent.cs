@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace EventDirector.Interfaces
+namespace EventDirector.UI.EventWindows
 {
-    public interface IWindowCallback
+    public class StaticEvent
     {
-        void WindowFinalize(Window w);
+        public static Window oneWindow = null;
     }
 }

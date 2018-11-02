@@ -1,4 +1,5 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.UI.EventWindows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,17 @@ namespace EventDirector
             this.oldEvent = oldEvent;
         }
 
+        public static NextYearSetup NewWindow(IWindowCallback nextYearCallBack, IDBInterface database, Event oldEvent)
+        {
+            if (StaticEvent.oneWindow != null)
+            {
+                return null;
+            }
+            NextYearSetup output = new NextYearSetup(nextYearCallBack, database, oldEvent);
+            StaticEvent.oneWindow = output;
+            return output;
+        }
+
         public void GotoPage1()
         {
             if (oldEvent == null)
@@ -82,18 +94,30 @@ namespace EventDirector
             {
                 database.AddDivision(new Division(d.Name, newEvent.Identifier, d.Cost));
             }
+            List<TimingLocation> locations = database.GetTimingLocations(oldEvent.Identifier);
+            foreach (TimingLocation loc in locations)
+            {
+                loc.EventIdentifier = newEvent.Identifier;
+                database.AddTimingLocation(loc);
+            }
+            List<Segment> segments = database.GetSegments(oldEvent.Identifier);
+            foreach (Segment s in segments)
+            {
+                s.EventId = newEvent.Identifier;
+                database.AddSegment(s);
+            }
             // Update old event with new information.
             oldEvent.NextYear = newEvent.Identifier;
             database.UpdateEvent(oldEvent);
             if (mainWindow != null) mainWindow.NextYearSetupFinalize(oldEvent.Identifier);
-            if (callback != null) callback.WindowFinalize();
             this.Close();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (callback != null) callback.WindowFinalize();
+            if (callback != null) callback.WindowFinalize(this);
             if (mainWindow != null) mainWindow.WindowClosed(this);
+            StaticEvent.oneWindow = null;
         }
     }
 }

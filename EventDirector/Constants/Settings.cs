@@ -17,6 +17,8 @@ namespace EventDirector.Constants
         public static readonly string CURRENT_EVENT         = "SETTING_CURRENT_EVENT";
         public static readonly string COMPANY_NAME          = "SETTING_COMPANY_NAME";
 
+        public static readonly string NULL_EVENT_ID     = "-1";
+
         public static readonly string TIMING_RFID       = "RFID";
         public static readonly string TIMING_IPICO      = "IPICO";
         public static readonly string TIMING_MANUAL     = "MANUAL";

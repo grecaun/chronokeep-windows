@@ -8,10 +8,36 @@ namespace EventDirector
 {
     public class Segment
     {
-        private int event_id, division_id, location_id, occurance;
+        private int id, event_id, division_id, location_id, occurance;
         private double distance_segment, distance_cumulative;
         private int distance_unit;
         private string name;
+
+        public Segment(int e, int d, int l, int occ, int dseg, int dcum, int dunit, string n)
+        {
+            this.id = -1;
+            this.event_id = e;
+            this.division_id = d;
+            this.location_id = l;
+            this.occurance = occ;
+            this.distance_segment = dseg;
+            this.distance_cumulative = dcum;
+            this.distance_unit = dunit;
+            this.name = n;
+        }
+
+        public Segment(int id, int e, int d, int l, int occ, int dseg, int dcum, int dunit, string n)
+        {
+            this.id = id;
+            this.event_id = e;
+            this.division_id = d;
+            this.location_id = l;
+            this.occurance = occ;
+            this.distance_segment = dseg;
+            this.distance_cumulative = dcum;
+            this.distance_unit = dunit;
+            this.name = n;
+        }
 
         public string Name { get => name; set => name = value; }
         public int DistanceUnit { get => distance_unit; set => distance_unit = value; }
@@ -21,5 +47,6 @@ namespace EventDirector
         public int DivisionId { get => division_id; set => division_id = value; }
         public int LocationId { get => location_id; set => location_id = value; }
         public int Occurance { get => occurance; set => occurance = value; }
+        public int Identifier { get => id; set => id = value; }
     }
 }

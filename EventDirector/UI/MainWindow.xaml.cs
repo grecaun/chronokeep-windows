@@ -35,6 +35,8 @@ namespace EventDirector.UI
         Thread zeroConfThread = null;
         ZeroConf zeroConf = null;
 
+        List<Window> openWindows = new List<Window>();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -77,13 +79,7 @@ namespace EventDirector.UI
             }
             if (database.GetAppSetting(Constants.Settings.CURRENT_EVENT) == null)
             {
-                List<Event> events = database.GetEvents();
-                int highest = -1;
-                foreach (Event e in events)
-                {
-                    highest = e.Identifier > highest ? e.Identifier : highest;
-                }
-                database.SetAppSetting(Constants.Settings.CURRENT_EVENT, highest.ToString());
+                database.SetAppSetting(Constants.Settings.CURRENT_EVENT, Constants.Settings.NULL_EVENT_ID);
             }
             if (database.GetAppSetting(Constants.Settings.COMPANY_NAME) == null)
             {
@@ -133,7 +129,19 @@ namespace EventDirector.UI
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            closing = true;
             StopNetworkServices();
+            foreach (Window w in openWindows)
+            {
+                try
+                {
+                    w.Close();
+                }
+                catch
+                {
+                    Log.D("Oh well!");
+                }
+            }
         }
 
         public void WindowClosed(Window window) { }
@@ -190,9 +198,15 @@ namespace EventDirector.UI
         {
         }
 
-        public void WindowFinalize()
+        public void WindowFinalize(Window w)
         {
             page.Update();
+            if (!closing) openWindows.Remove(w);
+        }
+
+        public void AddWindow(Window w)
+        {
+            openWindows.Add(w);
         }
     }
 }

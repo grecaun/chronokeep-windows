@@ -189,6 +189,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Constants\DashboardLabels.cs" />
+    <Compile Include="Constants\DefaultTiming.cs" />
     <Compile Include="Constants\Distances.cs" />
     <Compile Include="Constants\JsonOptions.cs" />
     <Compile Include="Constants\Settings.cs" />
@@ -199,6 +200,10 @@
     <Compile Include="Objects\AppSetting.cs" />
     <Compile Include="Objects\ChipRead.cs" />
     <Compile Include="Objects\Segment.cs" />
+    <Compile Include="UI\EventWindows\ChangeEventWindow.xaml.cs">
+      <DependentUpon>ChangeEventWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\EventWindows\StaticEvent.cs" />
     <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -286,7 +291,7 @@
     <Compile Include="UI_Old\NewDivisionWindow.xaml.cs">
       <DependentUpon>NewDivisionWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\NewEventWindow.xaml.cs">
+    <Compile Include="UI\EventWindows\NewEventWindow.xaml.cs">
       <DependentUpon>NewEventWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Objects\Change.cs" />
@@ -335,6 +340,10 @@
     </Compile>
     <Compile Include="Objects\Helpers\Utils.cs" />
     <Compile Include="Network\ZeroConf.cs" />
+    <Page Include="UI\EventWindows\ChangeEventWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -435,7 +444,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\NewEventWindow.xaml">
+    <Page Include="UI\EventWindows\NewEventWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

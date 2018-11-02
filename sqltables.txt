@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS eventspecific_apparel
       value VARCHAR NOT NULL,
       UNIQUE (eventspecific_id, name) ON CONFLICT IGNORE
 CREATE TABLE IF NOT EXISTS segments
+      segment_id INTEGER PRIMARY KEY,
       event_id INTEGER NOT NULL REFERENCES events(event_id),
       division_id INTEGER DEFAULT -1,
       location_id INTEGER DEFAULT -1,

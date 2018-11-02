@@ -1588,6 +1588,105 @@ namespace EventDirector
         }
 
         /*
+         * Segment
+         */
+
+        public void AddSegment(Segment seg)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "INSERT INTO segments (event_id, division_id, location_id, occurance, name, distance_segment, " +
+                    "distance_cumulative, distance_unit) " +
+                    "VALUES (@event,@division,@location,@occurance,@name,@dseg,@dcum,@dunit)";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@event",seg.EventId),
+                new SQLiteParameter("@division",seg.DivisionId),
+                new SQLiteParameter("@location",seg.LocationId),
+                new SQLiteParameter("@occurance",seg.Occurance),
+                new SQLiteParameter("@name",seg.Name),
+                new SQLiteParameter("@dseg",seg.SegmentDistance),
+                new SQLiteParameter("@dcum",seg.CumulativeDistance),
+                new SQLiteParameter("@dunit",seg.DistanceUnit) });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public void RemoveSegment(Segment seg)
+        {
+            RemoveSegment(seg.Identifier);
+        }
+
+        public void RemoveSegment(int identifier)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "DELETE FROM segments WHERE segment_id=@id";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@id", identifier) });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public void UpdateSegment(Segment seg)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "UPDATE segments SET event_id=@event, division_id=@division, location_id=@location, " +
+                    "occurance=@occurance, name=@name, distance_segment=@dseg, distance_cumulative=@dcum, distance_unit=@dunit " +
+                    "WHERE segment_id=@id";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@event",seg.EventId),
+                new SQLiteParameter("@division",seg.DivisionId),
+                new SQLiteParameter("@location",seg.LocationId),
+                new SQLiteParameter("@occurance",seg.Occurance),
+                new SQLiteParameter("@name",seg.Name),
+                new SQLiteParameter("@dseg",seg.SegmentDistance),
+                new SQLiteParameter("@dcum",seg.CumulativeDistance),
+                new SQLiteParameter("@dunit",seg.DistanceUnit),
+                new SQLiteParameter("@id",seg.Identifier) });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public int GetSegmentId(Segment seg)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM segments WHERE event_id=@event, division_id=@division, location_id=@location, occurance=@occurance;";
+            SQLiteDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                return Convert.ToInt32(reader["segment_id"]);
+            }
+            return -1;
+        }
+
+        public List<Segment> GetSegments(int eventId)
+        {
+            List<Segment> output = new List<Segment>();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM segments WHERE event_id=@event";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@event",eventId), });
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new Segment(Convert.ToInt32(reader["segment_id"]), Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_id"]),
+                    Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["occurance"]), Convert.ToInt32(reader["distance_segment"]),
+                    Convert.ToInt32(reader["distance_cumulative"]), Convert.ToInt32(reader["distance_unit"]), reader["name"].ToString()));
+            }
+            return output;
+        }
+
+        /*
          * Timing Results
          */
 

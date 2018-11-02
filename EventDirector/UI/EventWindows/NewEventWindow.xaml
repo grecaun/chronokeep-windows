@@ -1,0 +1,38 @@
+﻿<Window x:Class="EventDirector.NewEventWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EventDirector"
+        mc:Ignorable="d"
+        Title="Event" Height="410" Width="350" ResizeMode="NoResize" Closing="Window_Closing" Topmost="True">
+    <StackPanel>
+        <DockPanel>
+            <Label Content="Name" Margin="10,10,0,10" FontSize="16" Width="80" HorizontalContentAlignment="Right"/>
+            <TextBox x:Name="nameBox" FontSize="16" Margin="5,10,10,10" TextWrapping="Wrap" KeyUp="Keyboard_Up" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Year Code" Margin="10,10,0,10" FontSize="16" Width="80" HorizontalContentAlignment="Right"/>
+            <TextBox x:Name="yearCodeBox" FontSize="16" Margin="5,10,10,10" KeyUp="Keyboard_Up"/>
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Date" Margin="10,10,0,10" FontSize="16" Width="80" HorizontalContentAlignment="Right"/>
+            <DatePicker x:Name="datePicker" Margin="5,10,10,10" KeyUp="Keyboard_Up" FontSize="16"/>
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Shirt Price" Margin="10,10,0,10" FontSize="16" Width="80" HorizontalContentAlignment="Right"/>
+            <TextBox x:Name="shirtPriceBox" FontSize="16" Margin="5,10,10,10"  KeyUp="Keyboard_Up" />
+        </DockPanel>
+        <CheckBox x:Name="shirtOptional" Margin="95,5,0,10" Content="Shirt Optional" IsChecked="True" KeyUp="Keyboard_Up" FontSize="16" VerticalContentAlignment="Center"/>
+        <Label Name="CopyLabel" Content="Copy from old event:" Margin="20,0,20,10" FontSize="16"/>
+        <ComboBox Name="oldEvent" FontSize="16" Margin="20,0,20,10" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Submit" Margin="20,10,20,0" VerticalAlignment="Bottom" Click="Submit_Click" Grid.Column="0" FontSize="16" Height="35"/>
+            <Button Content="Cancel" Margin="20,10,20,0" VerticalAlignment="Bottom"  Click="Cancel_Click" Grid.Column="1" FontSize="16" Height="35"/>
+        </Grid>
+    </StackPanel>
+</Window>

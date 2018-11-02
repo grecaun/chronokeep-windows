@@ -1,0 +1,29 @@
+﻿<Window x:Class="EventDirector.UI.ChangeEventWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Change Event" Height="300" Width="400"  Closing="Window_Closing" Topmost="True">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="60"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <ListView x:Name="eventList" Grid.Row="0" Grid.ColumnSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Auto" Width="Auto" Height="Auto" SizeChanged="EventList_SizeChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="YearCode" DisplayMemberBinding="{Binding YearCode}"/>
+                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button Name="changeButton" Height="35" FontSize="16" Content="Change" Grid.Row="1" Grid.Column="0" Margin="20,0,20,0" Click="ChangeButton_Click"/>
+        <Button Name="cancelButton" Height="35" FontSize="16" Content="Cancel" Grid.Row="1" Grid.Column="1" Margin="20,0,20,0" Click="CancelButton_Click"/>
+    </Grid>
+</Window>
