@@ -49,12 +49,12 @@ namespace EventDirector
 
         public static NextYearSetup NewWindow(IWindowCallback nextYearCallBack, IDBInterface database, Event oldEvent)
         {
-            if (StaticEvent.oneWindow != null)
+            if (StaticEvent.changeMainEventWindow != null || StaticEvent.nextYearWindow != null)
             {
                 return null;
             }
             NextYearSetup output = new NextYearSetup(nextYearCallBack, database, oldEvent);
-            StaticEvent.oneWindow = output;
+            StaticEvent.nextYearWindow = output;
             return output;
         }
 
@@ -88,7 +88,15 @@ namespace EventDirector
 
         public void GoToPage4(List<Division> divs)
         {
-            database.AddEvent(newEvent);
+            try
+            {
+                database.AddEvent(newEvent);
+            }
+            catch
+            {
+                MessageBox.Show("Unable to create new event.");
+                this.Close();
+            }
             newEvent = database.GetEvent(database.GetEventID(newEvent));
             foreach (Division d in divs)
             {
@@ -117,7 +125,7 @@ namespace EventDirector
         {
             if (callback != null) callback.WindowFinalize(this);
             if (mainWindow != null) mainWindow.WindowClosed(this);
-            StaticEvent.oneWindow = null;
+            StaticEvent.nextYearWindow = null;
         }
     }
 }

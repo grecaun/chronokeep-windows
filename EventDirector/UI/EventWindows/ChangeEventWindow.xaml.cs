@@ -34,12 +34,16 @@ namespace EventDirector.UI
 
         public static ChangeEventWindow NewWindow(IWindowCallback window, IDBInterface database)
         {
-            if (StaticEvent.oneWindow != null)
+            if (StaticEvent.changeMainEventWindow != null)
+            {
+                return null;
+            }
+            if (StaticEvent.AreToolWindowsOpen())
             {
                 return null;
             }
             ChangeEventWindow output = new ChangeEventWindow(window, database);
-            StaticEvent.oneWindow = output;
+            StaticEvent.changeMainEventWindow = output;
             return output;
         }
 
@@ -95,7 +99,7 @@ namespace EventDirector.UI
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             window.WindowFinalize(this);
-            StaticEvent.oneWindow = null;
+            StaticEvent.changeMainEventWindow = null;
         }
     }
 }

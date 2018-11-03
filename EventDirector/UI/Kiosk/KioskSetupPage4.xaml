@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:EventDirector"
       mc:Ignorable="d" 
-      d:DesignHeight="380" d:DesignWidth="380"
+      d:DesignHeight="480" d:DesignWidth="380"
       Title="KioskSetupPage4">
 
     <Grid>
@@ -13,8 +13,12 @@
                 VerticalAlignment="Top" HorizontalAlignment="Left" />
         <Button Content="?" FontSize="18" Margin="200,18,10,0" Height="Auto" Width="Auto"  HorizontalAlignment="Right" Click="Help_Click"
                  VerticalAlignment="Top" />
-        <TextBox x:Name="liability" TextWrapping="Wrap" Margin="10,55,10,45" AcceptsReturn="True"
+        <TextBox x:Name="liability" TextWrapping="Wrap" Margin="10,55,10,120" AcceptsReturn="True"
                   VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+        <Label Content="Enable Automatic Printing of New Registrants?" FontSize="16" Margin="20,180,20,80"
+               HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+        <RadioButton x:Name="yesRadio" GroupName="Print" Content="Yes" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="-100,215,20,60" />
+        <RadioButton GroupName="Print" IsChecked="True" Content="No" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="100,215,20,60" />
         <Button Content="Finish" Height="25" Width="100" VerticalAlignment="Bottom" Margin="0,0,150,10" Click="Finish_Click" />
         <Button Content="Cancel" Height="25" Width="100" VerticalAlignment="Bottom" Margin="150,0,0,10" Click="Cancel_Click" />
     </Grid>

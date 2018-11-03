@@ -233,7 +233,7 @@
     <Compile Include="UI_Old\DayOfParticipantsList.xaml.cs">
       <DependentUpon>DayOfParticipantsList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\ExampleLiabilityWaiver.xaml.cs">
+    <Compile Include="UI\Kiosk\ExampleLiabilityWaiver.xaml.cs">
       <DependentUpon>ExampleLiabilityWaiver.xaml</DependentUpon>
     </Compile>
     <Compile Include="IO\ExcelImporter.cs" />
@@ -376,7 +376,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\ExampleLiabilityWaiver.xaml">
+    <Page Include="UI\Kiosk\ExampleLiabilityWaiver.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

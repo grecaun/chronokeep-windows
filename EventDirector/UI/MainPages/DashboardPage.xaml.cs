@@ -66,6 +66,7 @@ namespace EventDirector.UI.MainPages
             List<JsonOption> options = database.GetEventOptions(theEvent.Identifier);
             foreach (JsonOption opt in options)
             {
+                Log.D("Option is " + opt.Name + " value is " + opt.Value);
                 if (opt.Name == Constants.JsonOptions.RESULTS)
                 {
                     if (opt.Value == Constants.JsonOptions.TRUE)
@@ -249,6 +250,28 @@ namespace EventDirector.UI.MainPages
         private void SetupKiosk_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Setup Kiosk Button Clicked.");
+            if (setupKiosk.Content.ToString() == Constants.DashboardLabels.SETUP_KIOSK)
+            {
+                KioskSetup kiosk = KioskSetup.NewWindow(mWindow, database);
+                if (kiosk != null)
+                {
+                    mWindow.AddWindow(kiosk);
+                    kiosk.Show();
+                }
+            }
+            else if (setupKiosk.Content.ToString() == Constants.DashboardLabels.CANCEL_KIOSK)
+            {
+                List<JsonOption> list = database.GetEventOptions(theEvent.Identifier);
+                foreach (JsonOption opt in list)
+                {
+                    if (opt.Name == "kiosk")
+                    {
+                        opt.Value = "false";
+                    }
+                }
+                database.SetEventOptions(theEvent.Identifier, list);
+                Update();
+            }
         }
 
         private void StartCheckIn_Click(object sender, RoutedEventArgs e)
@@ -323,14 +346,12 @@ namespace EventDirector.UI.MainPages
                 NextYearSetup nysetup = NextYearSetup.NewWindow(mWindow, database, theEvent);
                 if (nysetup != null)
                 {
-                    setupNextYear.Content = Constants.DashboardLabels.WORKING;
                     mWindow.AddWindow(nysetup);
                     nysetup.Show();
                 }
             }
             else if (setupNextYear.Content.ToString() == Constants.DashboardLabels.CANCEL_NEXT_YEAR)
             {
-                setupNextYear.Content = Constants.DashboardLabels.WORKING;
                 theEvent.NextYear = -1;
                 database.UpdateEvent(theEvent);
                 Update();
@@ -416,11 +437,27 @@ namespace EventDirector.UI.MainPages
         private void TagTesterButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Tag Tester clicked.");
+            ChipReaderWindow crWindow = ChipReaderWindow.NewWindow(mWindow, database);
+            if (crWindow != null)
+            {
+                mWindow.AddWindow(crWindow);
+                crWindow.Show();
+            }
         }
 
         private void TimingButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Timing clicked.");
+        }
+
+        private void TagAssignButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Tag Assignment Button clicked.");
+        }
+
+        private void BibAssignButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Bib assignment button clicked.");
         }
     }
 }

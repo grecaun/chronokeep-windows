@@ -13,10 +13,6 @@
                HorizontalAlignment="Left" VerticalAlignment="Top" />
         <ComboBox x:Name="events" Margin="20,150,20,0" Width="340"
                HorizontalAlignment="Left" VerticalAlignment="Top" />
-        <Label Content="Enable Automatic Printing of New Registrants?" FontSize="16" Margin="20,180,20,0"
-               HorizontalAlignment="Left" VerticalAlignment="Top" />
-        <RadioButton x:Name="yesRadio" GroupName="Print" Content="Yes" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,215,20,0" />
-        <RadioButton GroupName="Print" IsChecked="True" Content="No" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="100,215,20,0" />
         <Button Content="Next" Height="25" Width="100" VerticalAlignment="Bottom" Margin="0,0,150,10" Click="Next_Click" 
                HorizontalAlignment="Center" />
         <Button Content="Cancel" Height="25" Width="100" VerticalAlignment="Bottom" Margin="150,0,0,10" Click="Cancel_Click"

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="Kiosk Setup" Height="420" Width="420" ResizeMode="NoResize"
+        Title="Kiosk Setup" Height="420" Width="420" ResizeMode="NoResize" Topmost="True"
         Closing="Window_Closing"
         >
     <Grid>

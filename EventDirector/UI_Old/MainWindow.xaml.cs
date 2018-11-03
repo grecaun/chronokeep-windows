@@ -837,18 +837,6 @@ namespace EventDirector
 
         public void EnableKiosk(int eventId)
         {
-            bool value = true;
-            List<JsonOption> list = database.GetEventOptions(eventId);
-            foreach (JsonOption opt in list)
-            {
-                if (opt.Name == "kiosk")
-                {
-                    opt.Value = value.ToString().ToLower();
-                }
-            }
-            database.SetEventOptions(eventId, list);
-            tcpServer.UpdateEvent(eventId);
-            tcpServer.UpdateEventKiosk(eventId);
             UpdateEventButtons();
         }
 

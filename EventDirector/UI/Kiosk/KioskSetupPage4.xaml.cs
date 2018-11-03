@@ -20,15 +20,14 @@ namespace EventDirector
     /// </summary>
     public partial class KioskSetupPage4 : Page
     {
-        MainWindow mainWindow;
         KioskSetup kioskWin;
         ExampleLiabilityWaiver example = null;
 
-        public KioskSetupPage4(MainWindow mainWindow, KioskSetup kioskWin)
+        public KioskSetupPage4(KioskSetup kioskWin, IDBInterface database)
         {
             InitializeComponent();
-            this.mainWindow = mainWindow;
             this.kioskWin = kioskWin;
+            liability.Text = database.GetAppSetting(Constants.Settings.DEFAULT_WAIVER).value;
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -38,13 +37,13 @@ namespace EventDirector
 
         private void Finish_Click(object sender, RoutedEventArgs e)
         {
-            kioskWin.Finish(liability.Text);
+            kioskWin.Finish(liability.Text, (yesRadio.IsChecked == true ? 1 : 0));
         }
 
         private void Help_Click(object sender, RoutedEventArgs e)
         {
-            example = new ExampleLiabilityWaiver(mainWindow, kioskWin);
-            mainWindow.AddWindow(example);
+            if (kioskWin.ExampleWaiverWindowOpen()) return;
+            example = new ExampleLiabilityWaiver(kioskWin);
             example.Show();
         }
     }

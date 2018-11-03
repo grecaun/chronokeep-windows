@@ -202,6 +202,15 @@ namespace EventDirector.UI
         {
             page.Update();
             if (!closing) openWindows.Remove(w);
+            try
+            {
+                if (tcpServer != null)
+                {
+                    tcpServer.UpdateEvent(Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
+                    tcpServer.UpdateEventKiosk(Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
+                }
+            }
+            catch { }
         }
 
         public void AddWindow(Window w)

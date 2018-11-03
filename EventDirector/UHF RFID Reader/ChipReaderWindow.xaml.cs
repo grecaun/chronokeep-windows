@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EventDirector.Interfaces;
+using EventDirector.UI.EventWindows;
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
@@ -28,9 +30,10 @@ namespace EventDirector
         RFIDSerial serial;
         private static ChipPersonWindow personWindow;
         private IDBInterface database;
-        private IMainWindow mainWindow;
+        private IMainWindow mainWindow = null;
+        private IWindowCallback window = null;
         int eventId = -1;
-
+        
         public ChipReaderWindow(IDBInterface database, IMainWindow mWindow)
         {
             InitializeComponent();
@@ -49,6 +52,30 @@ namespace EventDirector
                 });
             }
             eventCB.SelectedIndex = 0;
+        }
+
+        private ChipReaderWindow(IWindowCallback window, IDBInterface database)
+        {
+            InitializeComponent();
+            InstantiateSerialPortList();
+            reader = new NewReader(600, this);
+            this.database = database;
+            this.mainWindow = null;
+            eventId = Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value);
+            EventPickerHolder.Visibility = Visibility.Hidden;
+            EventNameHolder.Visibility = Visibility.Visible;
+            eventName.Content = database.GetEvent(eventId).Name;
+        }
+
+        public static ChipReaderWindow NewWindow(IWindowCallback window, IDBInterface database)
+        {
+            if (StaticEvent.changeMainEventWindow != null || StaticEvent.tagToolWindow != null)
+            {
+                return null;
+            }
+            ChipReaderWindow output = new ChipReaderWindow(window, database);
+            StaticEvent.tagToolWindow = output;
+            return output;
         }
 
         internal void PersonWindowClosing()
@@ -103,7 +130,10 @@ namespace EventDirector
                     return;
                 }
                 connectBtn.Content = "Disconnect";
-                eventId = Convert.ToInt32(((ComboBoxItem)eventCB.SelectedItem).Uid);
+                if (eventId == -1)
+                {
+                    eventId = Convert.ToInt32(((ComboBoxItem)eventCB.SelectedItem).Uid);
+                }
                 Event thisEvent = database.GetEvent(eventId);
                 chipNumbers.Items.Add(new RFIDSerial.Info { DecNumber = 0 });
                 readingThread = new Thread(new ThreadStart(reader.Run));
@@ -161,7 +191,8 @@ namespace EventDirector
             {
                 Log.E("Things are already closed.");
             }
-            mainWindow.WindowClosed(this);
+            if (mainWindow != null) mainWindow.WindowClosed(this);
+            if (window != null) window.WindowFinalize(this);
         }
     }
 }

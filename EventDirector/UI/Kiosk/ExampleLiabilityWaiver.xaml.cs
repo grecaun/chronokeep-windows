@@ -19,13 +19,11 @@ namespace EventDirector
     /// </summary>
     public partial class ExampleLiabilityWaiver : Window
     {
-        MainWindow mainWindow;
         KioskSetup kioskSettup;
 
-        public ExampleLiabilityWaiver(MainWindow mainWindow, KioskSetup kioskSettup)
+        public ExampleLiabilityWaiver(KioskSetup kioskSettup)
         {
             InitializeComponent();
-            this.mainWindow = mainWindow;
             this.kioskSettup = kioskSettup;
             kioskSettup.RegisterExampleWaiver(this);
         }
@@ -42,7 +40,6 @@ namespace EventDirector
                 kioskSettup.DeRegisterExampleWaiver();
             }
             catch { }
-            mainWindow.WindowClosed(this);
         }
     }
 }

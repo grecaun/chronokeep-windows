@@ -9,7 +9,7 @@
       Title="Kiosk Setup">
 
     <Grid>
-        <TextBlock Text="This tool will enable the kiosk ability of the tablet app for a specific event.  Please click next to continue." FontSize="32" TextWrapping="Wrap" Margin="10,40,10,0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+        <TextBlock Text="This tool will enable you to use a tablet as a kiosk if the correct app is installed.  Please click next to continue." FontSize="32" TextWrapping="Wrap" Margin="10,40,10,0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
         <Button Content="Next" Height="25" Width="100" VerticalAlignment="Bottom" Margin="0,0,150,10" Click="Next_Click" />
         <Button Content="Cancel" Height="25" Width="100" VerticalAlignment="Bottom" Margin="150,0,0,10" Click="Cancel_Click" />
     </Grid>

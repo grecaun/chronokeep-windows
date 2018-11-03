@@ -76,12 +76,16 @@ namespace EventDirector
 
         public static NewEventWindow NewWindow(IWindowCallback window, IDBInterface database)
         {
-            if (StaticEvent.oneWindow != null)
+            if (StaticEvent.changeMainEventWindow != null)
+            {
+                return null;
+            }
+            if (StaticEvent.AreToolWindowsOpen())
             {
                 return null;
             }
             NewEventWindow output = new NewEventWindow(window, database);
-            StaticEvent.oneWindow = output;
+            StaticEvent.changeMainEventWindow = output;
             return output;
         }
 
@@ -184,7 +188,7 @@ namespace EventDirector
         {
             if (mainWindow != null) mainWindow.WindowClosed(this);
             if (window != null) window.WindowFinalize(this);
-            StaticEvent.oneWindow = null;
+            StaticEvent.changeMainEventWindow = null;
         }
     }
 }
