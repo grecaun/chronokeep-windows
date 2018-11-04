@@ -89,7 +89,15 @@ namespace EventDirector.UI
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Dashboard button clicked.");
+            if (page is DashboardPage)
+            {
+                Log.D("Dashboard page already displayed.");
+                return;
+            }
+            TheFrame.NavigationService.RemoveBackEntry();
+            page = new DashboardPage(this, database);
+            TheFrame.Content = page;
         }
 
         private void ReportsButton_Click(object sender, RoutedEventArgs e)
@@ -100,6 +108,24 @@ namespace EventDirector.UI
         private void ParticipantsButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void BibsButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ChipsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Chips button clicked.");
+            if (page is ChipAssigmentPage)
+            {
+                Log.D("Chips page already displayed.");
+                return;
+            }
+            TheFrame.NavigationService.RemoveBackEntry();
+            page = new ChipAssigmentPage(this, database);
+            TheFrame.Content = page;
         }
 
         private void DivisionsButton_Click(object sender, RoutedEventArgs e)
@@ -211,11 +237,39 @@ namespace EventDirector.UI
                 }
             }
             catch { }
+            UpdateStatus();
         }
 
         public void AddWindow(Window w)
         {
             openWindows.Add(w);
+        }
+
+        public void UpdateStatus()
+        {
+            Event theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier == -1)
+            {
+                participantsButton.IsEnabled = false;
+                bibsButton.IsEnabled = false;
+                chipsButton.IsEnabled = false;
+                reportsButton.IsEnabled = false;
+                divisionsButton.IsEnabled = false;
+                locationsButton.IsEnabled = false;
+                segmentsButton.IsEnabled = false;
+                agegroupsButton.IsEnabled = false;
+            }
+            else
+            {
+                participantsButton.IsEnabled = true;
+                bibsButton.IsEnabled = true;
+                chipsButton.IsEnabled = true;
+                reportsButton.IsEnabled = true;
+                divisionsButton.IsEnabled = true;
+                locationsButton.IsEnabled = true;
+                segmentsButton.IsEnabled = true;
+                agegroupsButton.IsEnabled = true;
+            }
         }
     }
 }

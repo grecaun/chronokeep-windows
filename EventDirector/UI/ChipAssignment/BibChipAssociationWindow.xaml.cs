@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EventDirector.Interfaces;
+using EventDirector.UI.EventWindows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +22,8 @@ namespace EventDirector
     public partial class BibChipAssociationWindow : Window
     {
         IDataImporter importer;
-        MainWindow mainWindow;
+        MainWindow mainWindow = null;
+        IWindowCallback window = null;
         IDBInterface database;
         Boolean init = true;
         int[] keys;
@@ -56,6 +59,40 @@ namespace EventDirector
                 events.Items.Add(boxItem);
             }
             events.SelectedIndex = 0;
+        }
+
+        private BibChipAssociationWindow(IWindowCallback window, IDataImporter importer, IDBInterface database)
+        {
+            InitializeComponent();
+            this.importer = importer;
+            this.mainWindow = null;
+            this.window = window;
+            this.database = database;
+            if (importer.Data.Type == ImportData.FileType.EXCEL)
+            {
+                SheetsLabel.Visibility = Visibility.Visible;
+                SheetsBox.Visibility = Visibility.Visible;
+                SheetsBox.ItemsSource = ((ExcelImporter)importer).SheetNames;
+                SheetsBox.SelectedIndex = 0;
+                init = false;
+            }
+            for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
+            {
+                headerListBox.Items.Add(new H2ListBoxItem(importer.Data.Headers[i], i));
+            }
+            EventHolder.Visibility = Visibility.Collapsed;
+            TopRow.Height = new GridLength(0);
+        }
+
+        public static BibChipAssociationWindow NewWindow(IWindowCallback window, IDataImporter importer, IDBInterface database)
+        {
+            if (StaticEvent.changeMainEventWindow != null || StaticEvent.chipAssigmentWindow != null)
+            {
+                return null;
+            }
+            BibChipAssociationWindow output = new BibChipAssociationWindow(window, importer, database);
+            StaticEvent.chipAssigmentWindow = output;
+            return output;
         }
 
         internal List<String> RepeatHeaders()
@@ -107,7 +144,9 @@ namespace EventDirector
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            mainWindow.WindowClosed(this);
+            if (mainWindow != null) mainWindow.WindowClosed(this);
+            if (window != null) window.WindowFinalize(this);
+            StaticEvent.chipAssigmentWindow = null;
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -121,7 +160,9 @@ namespace EventDirector
         {
             Log.D("Bib Chip Association = Done Clicked.");
             List<String> headers = RepeatHeaders();
-            int.TryParse(((ComboBoxItem)events.SelectedItem).Uid, out int eventId);
+            int eventId = -1;
+            if (mainWindow != null) int.TryParse(((ComboBoxItem)events.SelectedItem).Uid, out eventId);
+            else if (window != null) eventId = database.GetCurrentEvent().Identifier;
             if (headers == null)
             {
                 importer.FetchData();
@@ -133,11 +174,20 @@ namespace EventDirector
                         keys[item.HeaderBox.SelectedIndex] = item.Index;
                     }
                 }
+                bool extraAssoc = Headers.IsChecked == false;
                 await Task.Run(() =>
                 {
                     ImportData data = importer.Data;
                     int numEntries = data.Data.Count;
                     List<BibChipAssociation> items = new List<BibChipAssociation>();
+                    if (extraAssoc)
+                    {
+                        items.Add(new BibChipAssociation
+                        {
+                            Bib = int.Parse(data.Headers[keys[1]]),
+                            Chip = int.Parse(data.Headers[keys[2]])
+                        });
+                    }
                     for (int counter = 0; counter < numEntries; counter++)
                     {
                         try

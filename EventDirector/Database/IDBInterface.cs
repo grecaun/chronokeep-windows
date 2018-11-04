@@ -73,6 +73,9 @@ namespace EventDirector
         void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc);
         List<BibChipAssociation> GetBibChips();
         List<BibChipAssociation> GetBibChips(int eventId);
+        void RemoveBibChipAssociation(int eventId, int chip);
+        void RemoveBibChipAssociation(BibChipAssociation assoc);
+        void RemoveBibChipAssociations(List<BibChipAssociation> assocs);
 
         // Timing Result Functions
         void AddTimingResult(TimeResult tr);

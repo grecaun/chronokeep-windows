@@ -12,5 +12,6 @@ namespace EventDirector.Interfaces
         bool StartNetworkServices();
         bool StopNetworkServices();
         void AddWindow(Window w);
+        void UpdateStatus();
     }
 }

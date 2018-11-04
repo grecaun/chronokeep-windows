@@ -10,8 +10,8 @@ namespace EventDirector.UI.EventWindows
     public class StaticEvent
     {
         public static Window changeMainEventWindow = null;
-        public static Window tagToolWindow = null;
-        public static Window tagAssignmentWindow = null;
+        public static Window chipReaderWindow = null;
+        public static Window chipAssigmentWindow = null;
         public static Window timingWindow = null;
         public static Window announceWindow = null;
         public static Window nextYearWindow = null;
@@ -19,7 +19,8 @@ namespace EventDirector.UI.EventWindows
 
         public static bool AreToolWindowsOpen()
         {
-            return (tagToolWindow != null || tagAssignmentWindow != null | timingWindow != null || announceWindow != null || nextYearWindow != null || kioskWindow != null);
+            return (chipReaderWindow != null || chipAssigmentWindow != null | timingWindow != null
+                || announceWindow != null || nextYearWindow != null || kioskWindow != null);
         }
     }
 }

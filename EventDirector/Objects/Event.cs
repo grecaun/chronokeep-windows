@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    public class Event
+    public class Event : IEquatable<Event>, IComparable<Event>
     {
         private int identifier, nextYear = -1, shirtOptional = 1, shirtPrice = 2000;
         private int common_age_groups = 1, common_start_finish = 1, division_specific_segments = 0, rank_by_gun = 1;
@@ -98,6 +98,20 @@ namespace EventDirector
         public string YearCode { get => yearcode; set => yearcode = value; }
         public int AllowEarlyStart { get => allow_early_start; set => allow_early_start = value; }
         public int EarlyStartDifference { get => early_start_difference; set => early_start_difference = value; }
+
+        public int CompareTo(Event other)
+        {
+            if (other == null) return 1;
+            DateTime thisDate = DateTime.Parse(this.Date);
+            DateTime otherDate = DateTime.Parse(other.Date);
+            return thisDate.CompareTo(otherDate) * -1;
+        }
+
+        public bool Equals(Event other)
+        {
+            if (other == null) return false;
+            return (this.Date == other.Date && this.name == other.name) || this.Identifier == other.Identifier;
+        }
 
         public string GetEarlyStartString()
         {

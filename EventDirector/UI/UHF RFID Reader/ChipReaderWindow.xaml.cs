@@ -69,12 +69,12 @@ namespace EventDirector
 
         public static ChipReaderWindow NewWindow(IWindowCallback window, IDBInterface database)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.tagToolWindow != null)
+            if (StaticEvent.changeMainEventWindow != null || StaticEvent.chipReaderWindow != null)
             {
                 return null;
             }
             ChipReaderWindow output = new ChipReaderWindow(window, database);
-            StaticEvent.tagToolWindow = output;
+            StaticEvent.chipReaderWindow = output;
             return output;
         }
 
@@ -193,6 +193,7 @@ namespace EventDirector
             }
             if (mainWindow != null) mainWindow.WindowClosed(this);
             if (window != null) window.WindowFinalize(this);
+            StaticEvent.chipReaderWindow = null;
         }
     }
 }

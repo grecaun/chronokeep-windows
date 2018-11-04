@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EventDirector.Interfaces;
+using EventDirector.UI.EventWindows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,18 +23,41 @@ namespace EventDirector
     public partial class TimingWindow : Window
     {
         private IDBInterface database;
-        private IMainWindow mainWindow;
+        private IWindowCallback window = null;
+        private IMainWindow mainWindow = null;
         private DateTime startTime;
         DispatcherTimer Timer = new DispatcherTimer();
         private Boolean TimerStarted = false;
 
         public TimingWindow(IDBInterface database, IMainWindow mainWindow)
         {
-            this.database = database;
-            this.mainWindow = mainWindow;
             InitializeComponent();
+            this.database = database;
+            this.window = null;
+            this.mainWindow = mainWindow;
             Timer.Tick += new EventHandler(Timer_Click);
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+        }
+
+        public TimingWindow(IWindowCallback window, IDBInterface database)
+        {
+            InitializeComponent();
+            this.database = database;
+            this.window = window;
+            this.mainWindow = null;
+            Timer.Tick += new EventHandler(Timer_Click);
+            Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+        }
+
+        public static TimingWindow NewWindow(IWindowCallback window, IDBInterface database)
+        {
+            if (StaticEvent.changeMainEventWindow != null || StaticEvent.timingWindow != null)
+            {
+                return null;
+            }
+            TimingWindow output = new TimingWindow(window, database);
+            StaticEvent.timingWindow = output;
+            return output;
         }
 
         private void Timer_Click(object sender, EventArgs e)
@@ -52,7 +77,9 @@ namespace EventDirector
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            mainWindow.WindowClosed(this);
+            if (mainWindow != null) mainWindow.WindowClosed(this);
+            if (window != null) window.WindowFinalize(this);
+            StaticEvent.timingWindow = null;
         }
 
         private void EditSelected(object sender, RoutedEventArgs e)

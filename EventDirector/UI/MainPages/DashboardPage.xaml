@@ -65,11 +65,9 @@
             <Button Name="setupNextYear" Content="Setup Next Year Mode" Margin="10,5,10,5" Click="SetupNextYear_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" Visibility="Collapsed"/>
             <Button Name="setupKiosk" Content="Setup Kiosk Mode" Margin="10,5,10,5" Click="SetupKiosk_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" Visibility="Collapsed"/>
             <Separator Margin="10,10,10,10" />
-            <Button Name="timingButton" Content="Timing" Margin="10,5,10,5" Click="TimingButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" IsEnabled="False"/>
-            <Button Name="bibAssignButton" Content="Assign Bibs" Margin="10,5,10,5" Click="BibAssignButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" IsEnabled="False"/>
-            <Button Name="tagAssignButton" Content="Chip/Tag Tool" Margin="10,5,10,5" Click="TagAssignButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" IsEnabled="False"/>
+            <Button Name="timingButton" Content="Timing" Margin="10,5,10,5" Click="TimingButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
             <Button Name="announcerButton" Content="Announcer Window" Margin="10,5,10,5" Click="AnnouncerButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" IsEnabled="False"/>
-            <Button Name="tagTesterButton" Content="Tag Tester" Margin="10,5,10,5" Click="TagTesterButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
+            <Button Name="tagTesterButton" Content="Chip Tester" Margin="10,5,10,5" Click="TagTesterButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
         </StackPanel>
     </Grid>
 </Page>

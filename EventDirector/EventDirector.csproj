@@ -199,11 +199,15 @@
     <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
     <Compile Include="Objects\ChipRead.cs" />
+    <Compile Include="Objects\Range.cs" />
     <Compile Include="Objects\Segment.cs" />
     <Compile Include="UI\EventWindows\ChangeEventWindow.xaml.cs">
       <DependentUpon>ChangeEventWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\EventWindows\StaticEvent.cs" />
+    <Compile Include="UI\MainPages\ChipAssigmentPage.xaml.cs">
+      <DependentUpon>ChipAssigmentPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -215,17 +219,17 @@
     </Compile>
     <Compile Include="UIObjects\AListBoxItem.cs" />
     <Compile Include="Objects\BibChipAssociation.cs" />
-    <Compile Include="UI_Old\BibChipAssociationWindow.xaml.cs">
+    <Compile Include="UI\ChipAssignment\BibChipAssociationWindow.xaml.cs">
       <DependentUpon>BibChipAssociationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI_Old\BibChipViewer.xaml.cs">
       <DependentUpon>BibChipViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Objects\ChangeParticipant.cs" />
-    <Compile Include="UHF RFID Reader\ChipPersonWindow.xaml.cs">
+    <Compile Include="UI\UHF RFID Reader\ChipPersonWindow.xaml.cs">
       <DependentUpon>ChipPersonWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UHF RFID Reader\ChipReaderWindow.xaml.cs">
+    <Compile Include="UI\UHF RFID Reader\ChipReaderWindow.xaml.cs">
       <DependentUpon>ChipReaderWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="IO\CSVImporter.cs" />
@@ -244,7 +248,7 @@
       <DependentUpon>ExportParticipants.xaml</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\IChangeUpdater.cs" />
-    <Compile Include="IO\IDataImporter.cs" />
+    <Compile Include="Interfaces\IDataImporter.cs" />
     <Compile Include="Database\IDBInterface.cs" />
     <Compile Include="Objects\Division.cs" />
     <Compile Include="Objects\EmergencyContact.cs" />
@@ -270,7 +274,7 @@
     <Compile Include="UI\Kiosk\KioskSetupPage1.xaml.cs">
       <DependentUpon>KioskSetupPage1.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UHF RFID Reader\NewReader.cs" />
+    <Compile Include="UI\UHF RFID Reader\NewReader.cs" />
     <Compile Include="UI\NextYear\NextYearSetupPage0.xaml.cs">
       <DependentUpon>NextYearSetupPage0.xaml</DependentUpon>
     </Compile>
@@ -324,7 +328,7 @@
       <DependentUpon>RFIDTime.xaml</DependentUpon>
     </Compile>
     <Compile Include="RFID\RFIDUltraInterface.cs" />
-    <Compile Include="UHF RFID Reader\RFIDSerial.cs" />
+    <Compile Include="UI\UHF RFID Reader\RFIDSerial.cs" />
     <Compile Include="Database\SQLiteInterface.cs" />
     <Compile Include="Network\TCPServer.cs" />
     <Compile Include="Objects\TimeResult.cs" />
@@ -344,6 +348,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\MainPages\ChipAssigmentPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -356,7 +364,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\BibChipAssociationWindow.xaml">
+    <Page Include="UI\ChipAssignment\BibChipAssociationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -364,11 +372,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UHF RFID Reader\ChipPersonWindow.xaml">
+    <Page Include="UI\UHF RFID Reader\ChipPersonWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UHF RFID Reader\ChipReaderWindow.xaml">
+    <Page Include="UI\UHF RFID Reader\ChipReaderWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -626,6 +634,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="UI\BibAssignment\" />
     <Folder Include="UI\Export\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

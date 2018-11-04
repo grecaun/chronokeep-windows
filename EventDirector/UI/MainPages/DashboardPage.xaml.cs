@@ -40,6 +40,7 @@ namespace EventDirector.UI.MainPages
             {
                 LeftPanel.Visibility = Visibility.Hidden;
                 RightPanel.Visibility = Visibility.Hidden;
+                mWindow.UpdateStatus();
                 return;
             }
             LeftPanel.Visibility = Visibility.Visible;
@@ -448,11 +449,18 @@ namespace EventDirector.UI.MainPages
         private void TimingButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Timing clicked.");
+            TimingWindow tWindow = TimingWindow.NewWindow(mWindow, database);
+            if (tWindow != null)
+            {
+                mWindow.AddWindow(tWindow);
+                tWindow.Show();
+            }
         }
 
-        private void TagAssignButton_Click(object sender, RoutedEventArgs e)
+        private void ChipAssignmentButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Tag Assignment Button clicked.");
+            Log.D("Chip Assignment Button clicked.");
+
         }
 
         private void BibAssignButton_Click(object sender, RoutedEventArgs e)

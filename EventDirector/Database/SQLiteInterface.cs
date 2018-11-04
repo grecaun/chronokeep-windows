@@ -2353,6 +2353,34 @@ namespace EventDirector
             return output;
         }
 
+        public void RemoveBibChipAssociation(int eventId, int chip)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "DELETE FROM bib_chip_assoc WHERE event_id=@event AND chip=@chip;";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@chip", chip) });
+            command.ExecuteNonQuery();
+        }
+
+        public void RemoveBibChipAssociation(BibChipAssociation assoc)
+        {
+            if (assoc != null) RemoveBibChipAssociation(assoc.EventId, assoc.Chip);
+        }
+
+        public void RemoveBibChipAssociations(List<BibChipAssociation> assocs)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (BibChipAssociation b in assocs)
+                {
+                    RemoveBibChipAssociation(b);
+                }
+                transaction.Commit();
+            }
+        }
+
         /*
          * Chip Reads
          */
