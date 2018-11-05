@@ -57,17 +57,18 @@ namespace EventDirector
             this.window = window;
             this.database = database;
             oldEvent.Items.Clear();
-            List<Event> events = database.GetEvents();
             oldEvent.Items.Add(new ComboBoxItem
             {
                 Content = "None",
                 Uid = "-1"
             });
+            List<Event> events = database.GetEvents();
+            events.Sort();
             foreach (Event e in events)
             {
                 oldEvent.Items.Add(new ComboBoxItem
                 {
-                    Content = e.YearCode + e.Name,
+                    Content = (e.YearCode + " " + e.Name).Trim(),
                     Uid = e.Identifier.ToString()
                 });
             }

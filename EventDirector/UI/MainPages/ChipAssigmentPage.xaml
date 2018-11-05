@@ -17,7 +17,7 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="35"/>
+                <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
             <ListView Name="bibChipList" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SelectionMode="Extended" SizeChanged="BibChipList_SizeChanged" Grid.Column="1">
                 <ListView.View>
@@ -33,7 +33,7 @@
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel>
+                    <StackPanel Grid.Column="0">
                         <Label Content="Assign Single" FontSize="20" Margin="10,5,10,0" HorizontalContentAlignment="Center"/>
                         <DockPanel>
                             <Label Content="Bib" Margin="10,0,10,0" FontSize="16" HorizontalContentAlignment="Right" Width="50"/>
@@ -43,10 +43,10 @@
                             <Label Content="Chip" Margin="10,0,10,0" FontSize="16" HorizontalContentAlignment="Right" Width="50"/>
                             <TextBox Name="SingleChipBox" FontSize="16" Margin="5,5,5,5" KeyDown="KeyPressHandler"/>
                         </DockPanel>
-                        <Button Name="SaveSingleButton" Content="Save Single" Width="150" Click="SaveSingleButton_Click" Margin="0,10,0,10" Height="35" FontSize="16"/>
+                        <Button Name="SaveSingleButton" Content="Save Single" MaxWidth="150" Click="SaveSingleButton_Click" Margin="10,10,10,10" Height="35" FontSize="16"/>
                         <Separator/>
-                        <Button Name="FileImport" Content="Import From CSV" Margin="10,10,10,0" Height="35" FontSize="16" Click="FileImport_Click"/>
-                        <Button Name="ExcelImport" Content="Import From Excel" Margin="10,10,10,0" Height="35" FontSize="16" Click="ExcelImport_Click" Visibility="Collapsed"/>
+                        <Button Name="FileImport" Content="From CSV" Margin="10,10,10,0" Height="35" FontSize="16" Click="FileImport_Click"/>
+                        <Button Name="ExcelImport" Content="From Excel" Margin="10,10,10,0" Height="35" FontSize="16" Click="ExcelImport_Click" Visibility="Collapsed"/>
                         <Button Name="UseTool" Content="Use Tool" Margin="10,10,10,0" Height="35" FontSize="16" Click="UseTool_Click"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1">
@@ -73,13 +73,20 @@
                         </Grid>
                         <Button Name="SaveRangeButton" Content="Save Range" Width="150" Click="SaveRangeButton_Click" Margin="0,10,0,10" Height="35" FontSize="16"/>
                         <Separator/>
-                        <Label Content="Copy from previous event:" Margin="10,2,10,0" FontSize="20" HorizontalContentAlignment="Center"/>
+                        <Label Content="Copy from:" Margin="10,2,10,0" FontSize="20" HorizontalContentAlignment="Center"/>
                         <ComboBox Name="previousEvents" FontSize="16" Margin="10,5,10,10"/>
                         <Button Name="copy" Content="Copy" Margin="10,0,10,10" Height="35" FontSize="16" Click="Copy_Click"/>
                     </StackPanel>
                 </Grid>
             </StackPanel>
-            <Button Name="Delete" Content="Delete" Margin="10,5,10,5" Height="25" Click="Delete_Click" Grid.Column="1" Grid.Row="1"/>
+            <Grid Grid.Column="1" Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="110"/>
+                </Grid.ColumnDefinitions>
+                <Button Name="Delete" Content="Delete Selected" Margin="10,5,5,5" FontSize="16" Height="35" Click="Delete_Click" Grid.Column="0" Grid.Row="0"/>
+                <Button Name="Clear" Content="Delete All" Margin="5,5,10,5" FontSize="16" Height="35" Click="Clear_Click" Grid.Column="1" Grid.Row="0"/>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

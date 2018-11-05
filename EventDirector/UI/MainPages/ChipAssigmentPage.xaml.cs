@@ -1,4 +1,5 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.UI.ChipAssignment;
 using Microsoft.Win32;
 using System;
 using System.Collections;
@@ -34,7 +35,7 @@ namespace EventDirector.UI.MainPages
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
             Update();
-            UpdateExportOptions();
+            UpdateImportOptions();
         }
 
         private void BibChipList_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -184,6 +185,7 @@ namespace EventDirector.UI.MainPages
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Delete clicked.");
+            Log.D("Attempting to delete.");
             IList selected = bibChipList.SelectedItems;
             List<BibChipAssociation> items = new List<BibChipAssociation>();
             foreach (BibChipAssociation b in selected)
@@ -197,6 +199,12 @@ namespace EventDirector.UI.MainPages
         private void UseTool_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Use Tool clicked.");
+            ChipTool chipTool = ChipTool.NewWindow(mWindow, database);
+            if (chipTool != null)
+            {
+                mWindow.AddWindow(chipTool);
+                chipTool.Show();
+            }
         }
 
         private void KeyPressHandler(object sender, KeyEventArgs e)
@@ -248,7 +256,7 @@ namespace EventDirector.UI.MainPages
             }
         }
 
-        private async void UpdateExportOptions()
+        private async void UpdateImportOptions()
         {
             bool excelEnabled = false;
             await Task.Run(() =>
@@ -264,6 +272,18 @@ namespace EventDirector.UI.MainPages
             {
                 Log.D("Excel is not allowed.");
                 ExcelImport.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete everything? This cannot be undone.",
+                                                        "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                List<BibChipAssociation> list = (List<BibChipAssociation>) bibChipList.ItemsSource;
+                database.RemoveBibChipAssociations(list);
+                Update();
             }
         }
     }

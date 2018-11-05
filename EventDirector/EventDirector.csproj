@@ -198,13 +198,21 @@
     <Compile Include="Interfaces\IWindowCallback.cs" />
     <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
+    <Compile Include="Objects\AvailableBib.cs" />
+    <Compile Include="Objects\BibGroup.cs" />
     <Compile Include="Objects\ChipRead.cs" />
     <Compile Include="Objects\Range.cs" />
     <Compile Include="Objects\Segment.cs" />
+    <Compile Include="UI\ChipAssignment\ChipTool.xaml.cs">
+      <DependentUpon>ChipTool.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\EventWindows\ChangeEventWindow.xaml.cs">
       <DependentUpon>ChangeEventWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\EventWindows\StaticEvent.cs" />
+    <Compile Include="UI\MainPages\BibAssignmentPage.xaml.cs">
+      <DependentUpon>BibAssignmentPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainPages\ChipAssigmentPage.xaml.cs">
       <DependentUpon>ChipAssigmentPage.xaml</DependentUpon>
     </Compile>
@@ -344,7 +352,15 @@
     </Compile>
     <Compile Include="Objects\Helpers\Utils.cs" />
     <Compile Include="Network\ZeroConf.cs" />
+    <Page Include="UI\ChipAssignment\ChipTool.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\EventWindows\ChangeEventWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainPages\BibAssignmentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

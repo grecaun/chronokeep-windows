@@ -6,12 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using EventDirector.Objects;
 
 namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 17;
+        private readonly int version = 20;
         SQLiteConnection connection;
         readonly string connectionInfo;
 
@@ -73,6 +74,8 @@ namespace EventDirector
                     "event_common_age_groups INTEGER DEFAULT 1," +
                     "event_common_start_finish INTEGER DEFAULT 1," +
                     "event_division_specific_segments INTEGER DEFAULT 0," +
+                    "event_start_time_seconds INTEGER NOT NULL DEFAULT 0," +
+                    "event_start_time_milliseconds INTEGER NOT NULL DEFAULT 0," +
                     "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                     ")");
                 queries.Add("CREATE TABLE IF NOT EXISTS dayof_participant (" +
@@ -116,6 +119,10 @@ namespace EventDirector
                     "division_start_within INTEGER DEFAULT -1," +
                     "division_finish_location INTEGER DEFAULT -1," +
                     "division_finish_occurance INTEGER DEFAULT 1," +
+                    "division_wave INTEGER NOT NULL DEFAULT 1," +
+                    "bib_group_number INTEGER NOT NULL DEFAULT -1," +
+                    "division_start_offset_seconds INTEGER NOT NULL DEFAULT 0," +
+                    "division_start_offset_milliseconds INTEGER NOT NULL DEFAULT 0," +
                     "UNIQUE (division_name, event_id) ON CONFLICT IGNORE" +
                     ")");
                 queries.Add("CREATE TABLE IF NOT EXISTS timing_locations (" +
@@ -157,6 +164,7 @@ namespace EventDirector
                     "eventspecific_other VARCHAR," +
                     "eventspecific_earlystart INTEGER DEFAULT 0," +
                     "eventspecific_next_year INTEGER DEFAULT 0," +
+                    "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
                     "UNIQUE (participant_id, event_id, division_id) ON CONFLICT IGNORE" +
                     ")");
                 queries.Add("CREATE TABLE IF NOT EXISTS eventspecific_apparel (" +
@@ -269,6 +277,17 @@ namespace EventDirector
                     "value VARCHAR NOT NULL," +
                     "UNIQUE (setting) ON CONFLICT REPLACE" +
                     ")");
+                queries.Add("CREATE TABLE IF NOT EXISTS bib_group (" +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "bib_group_number INTEGER NOT NULL," +
+                    "bib_group_name VARCHAR NOT NULL," +
+                    "UNIQUE (event_id, bib_group_number) ON CONFLICT REPLACE," +
+                    "UNIQUE (event_id, bib_group_name) ON CONFLICT REPLACE);");
+                queries.Add("CREATE TABLE IF NOT EXISTS available_bibs (" +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "bib_group_number INTEGER NOT NULL DEFAULT -1," +
+                    "bib INTEGER NOT NULL," +
+                    "UNIQUE (event_id, bib) ON CONFLICT REPLACE);");
 
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -304,31 +323,24 @@ namespace EventDirector
         {
             Log.D("Database is version " + oldversion + " but it needs to be upgraded to version " + newversion);
             SQLiteCommand command = connection.CreateCommand();
-            switch (oldversion)
+            using (var transaction = connection.BeginTransaction())
             {
-                case 1:
-                    Log.D("Updating from version 1.");
-                    using (var transaction = connection.BeginTransaction()) {
+                switch (oldversion)
+                {
+                    case 1:
+                        Log.D("Updating from version 1.");
                         command.CommandText = "ALTER TABLE divisions ADD division_cost INTEGER DEFAULT 7000; ALTER TABLE eventspecific ADD eventspecific_fleece VARCHAR DEFAULT '';" +
                                 "ALTER TABLE changes ADD old_fleece VARCHAR DEFAULT ''; ALTER TABLE changes ADD new_fleece VARCHAR DEFAULT '';UPDATE settings SET version=2 WHERE version=1;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 2;
-                case 2:
-                    Log.D("Updating from version 2.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 2;
+                    case 2:
+                        Log.D("Updating from version 2.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE settings ADD name VARCHAR DEFAULT 'Northwest Endurance Events'; ALTER TABLE events ADD event_kiosk INTEGER DEFAULT 0; CREATE TABLE IF NOT EXISTS kiosk (event_id INTEGER NOT NULL, kiosk_waiver_text VARCHAR NOT NULL, UNIQUE (event_id) ON CONFLICT IGNORE);UPDATE settings SET version=3 WHERE version=2;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 3;
-                case 3:
-                    Log.D("Updating from version 3");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 3;
+                    case 3:
+                        Log.D("Updating from version 3");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS dayof_participant (" +
                             "dop_id INTEGER PRIMARY KEY," +
@@ -355,65 +367,41 @@ namespace EventDirector
                             "UNIQUE (dop_first, dop_last, dop_street, dop_city, dop_state, dop_zip, dop_birthday)" +
                             ");UPDATE settings SET version=4 WHERE version=3;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 4;
-                case 4:
-                    Log.D("Updating from version 4.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 4;
+                    case 4:
+                        Log.D("Updating from version 4.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE dayof_participant ADD dop_division_id INTEGER NOT NULL DEFAULT -1;UPDATE settings SET version=5 WHERE version=4;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 5;
-                case 5:
-                    Log.D("Updating from version 5.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 5;
+                    case 5:
+                        Log.D("Updating from version 5.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE kiosk ADD kiosk_print_new INTEGER DEFAULT 0; UPDATE settings SET version=6 WHERE version=5;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 6;
-                case 6:
-                    Log.D("Updating from version 6.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 6;
+                    case 6:
+                        Log.D("Updating from version 6.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD event_next_year_event_id INTEGER DEFAULT -1; ALTER TABLE events ADD event_shirt_optional INTEGER DEFAULT 1; ALTER TABLE eventspecific ADD eventspecific_next_year INTEGER DEFAULT 0; ALTER TABLE changes ADD old_next_year INTEGER DEFAULT 0; ALTER TABLE changes ADD new_next_year INTEGER DEFAULT 0; UPDATE settings SET version=7 WHERE version=6;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 7;
-                case 7:
-                    Log.D("Updating from version 7.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 7;
+                    case 7:
+                        Log.D("Updating from version 7.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD event_shirt_price INTEGER DEFAULT 0; UPDATE settings SET version=8 WHERE version=7;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 8;
-                case 8:
-                    Log.D("Updating from version 8.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 8;
+                    case 8:
+                        Log.D("Updating from version 8.");
                         command = connection.CreateCommand();
                         command.CommandText = "UPDATE settings SET version=9 WHERE version=8;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 9;
-                case 9:
-                    Log.D("Updating from version 9.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 9;
+                    case 9:
+                        Log.D("Updating from version 9.");
                         command = connection.CreateCommand();
-                        command.CommandText = "ALTER TABLE eventspecific RENAME TO old_eventspecific;"+
+                        command.CommandText = "ALTER TABLE eventspecific RENAME TO old_eventspecific;" +
                             "CREATE TABLE IF NOT EXISTS eventspecific(" +
                             "eventspecific_id INTEGER PRIMARY KEY," +
                             "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
@@ -435,16 +423,12 @@ namespace EventDirector
                             "event_id INTEGER PRIMARY KEY," +
                             "bib INTEGER NOT NULL," +
                             "chip INTEGER NOT NULL" +
-                            ");"+
+                            ");" +
                             "INSERT INTO eventspecific SELECT * FROM old_eventspecific; UPDATE settings SET version=10 WHERE version=9;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 10;
-                case 10:
-                    Log.D("Updating from version 10.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 10;
+                    case 10:
+                        Log.D("Updating from version 10.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO old_bib_chip_assoc;" +
                             "CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
@@ -455,13 +439,9 @@ namespace EventDirector
                             "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
                             "); INSERT INTO bib_chip_assoc SELECT * FROM old_bib_chip_assoc; UPDATE settings SET version=11 WHERE version=10;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 11;
-                case 11:
-                    Log.D("Updating from version 11.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 11;
+                    case 11:
+                        Log.D("Updating from version 11.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO old_old_bib_chip_assoc;" +
                             "CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
@@ -472,13 +452,9 @@ namespace EventDirector
                             "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
                             "); INSERT INTO bib_chip_assoc SELECT * FROM old_bib_chip_assoc; UPDATE settings SET version=12 WHERE version=11;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 12;
-                case 12:
-                    Log.D("Updating from version 12.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 12;
+                    case 12:
+                        Log.D("Updating from version 12.");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS chipreads (" +
                             "read_id INTEGER NOT NULL PRIMARY KEY," +
@@ -542,40 +518,26 @@ namespace EventDirector
                             "INSERT INTO eventspecific SELECT * FROM older_eventspecific;" +
                             "UPDATE settings SET version=13, identifier='" + Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "") + "' WHERE version=12;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 13;
-                case 13:
-                    Log.D("Updating from version 13.");
-                    Log.D("Attempting to delete.");
-                    Log.D("Creating command.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 13;
+                    case 13:
+                        Log.D("Updating from version 13.");
                         command = connection.CreateCommand();
                         command.CommandText = "DELETE FROM old_eventspecific; DROP TABLE old_eventspecific; DELETE FROM older_eventspecific; DROP TABLE older_eventspecific;" +
                             "DELETE FROM old_participants; DROP TABLE old_participants; DELETE FROM emergencycontacts; DROP TABLE emergencycontacts;" +
                             "UPDATE settings SET version=14 WHERE version=13;";
                         Log.D("Executing query.");
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    Log.D("Done deleting.");
-                    goto case 14;
-                case 14:
-                    Log.D("Updating from version 14.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        Log.D("Done deleting.");
+                        goto case 14;
+                    case 14:
+                        Log.D("Updating from version 14.");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS app_settings (setting VARCHAR NOT NULL, value VARCHAR NOT NULL, UNIQUE (setting) ON CONFLICT REPLACE); ALTER TABLE events ADD " +
                         "event_rank_by_gun INTEGER DEFAULT 1;UPDATE settings SET version=15 WHERE version=14;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 15;
-                case 15:
-                    Log.D("Updating from version 15.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 15;
+                    case 15:
+                        Log.D("Updating from version 15.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD event_common_age_groups INTEGER DEFAULT 1;" +
                             "ALTER TABLE events ADD event_common_start_finish INTEGER DEFAULT 1;" +
@@ -767,13 +729,9 @@ namespace EventDirector
                                 ");" +
                             "UPDATE settings SET version=16 WHERE version=15;";
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    goto case 16;
-                case 16:
-                    Log.D("Upgrading from verison 16.");
-                    using (var transaction = connection.BeginTransaction())
-                    {
+                        goto case 16;
+                    case 16:
+                        Log.D("Upgrading from verison 16.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE timing_locations ADD location_max_occurances INTEGER NOT NULL DEFAULT 1;" +
                                 "ALTER TABLE timing_locations ADD location_ignore_within INTEGER NOT NULL DEFAULT -1;" +
@@ -782,9 +740,45 @@ namespace EventDirector
                                 "UPDATE settings SET version=17 WHERE version=16;";
                         Log.D(command.CommandText);
                         command.ExecuteNonQuery();
-                        transaction.Commit();
-                    }
-                    break;
+                        goto case 17;
+                    case 17:
+                        Log.D("Upgrading from version 17.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE divisions ADD bib_group_number INTEGER NOT NULL DEFAULT -1; " +
+                            "ALTER TABLE divisions ADD division_wave INTEGER NOT NULL DEFAULT 1;" +
+                            "CREATE TABLE IF NOT EXISTS bib_group (" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "bib_group_number INTEGER NOT NULL," +
+                                "bib_group_name VARCHAR NOT NULL," +
+                                "UNIQUE (event_id, bib_group_number) ON CONFLICT REPLACE," +
+                                "UNIQUE (event_id, bib_group_name) ON CONFLICT REPLACE);" +
+                                "UPDATE settings SET version=18 WHERE version=17";
+                        command.ExecuteNonQuery();
+                        goto case 18;
+                    case 18:
+                        Log.D("Upgrading from version 18.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events ADD event_start_time_seconds INTEGER NOT NULL DEFAULT 0;" +
+                            "ALTER TABLE events ADD event_start_time_milliseconds INTEGER NOT NULL DEFAULT 0;" +
+                            "ALTER TABLE divisions ADD division_start_offset_seconds INTEGER NOT NULL DEFAULT 0;" +
+                            "ALTER TABLE divisions ADD division_start_offset_milliseconds INTEGER NOT NULL DEFAULT 0;" +
+                            "ALTER TABLE eventspecific ADD eventspecific_registration_date VARCHAR NOT NULL DEFAULT '';" +
+                            "UPDATE settings SET version=19 WHERE version=18;";
+                        command.ExecuteNonQuery();
+                        goto case 19;
+                    case 19:
+                        Log.D("Upgrading from version 19.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE TABLE IF NOT EXISTS available_bibs (" +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                            "bib_group_number INTEGER NOT NULL DEFAULT -1," +
+                            "bib INTEGER NOT NULL," +
+                            "UNIQUE (event_id, bib) ON CONFLICT REPLACE);" +
+                            "UPDATE settings SET version=20 WHERE version=19;";
+                        command.ExecuteNonQuery();
+                        break;
+                }
+                transaction.Commit();
             }
         }
 
@@ -2468,6 +2462,148 @@ namespace EventDirector
                 new SQLiteParameter("@name", setting.name),
                 new SQLiteParameter("@value", setting.value) });
                 command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        /*
+         * Bib Groups
+         */
+        public void AddBibGroup(int eventId, BibGroup group)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "INSERT INTO bib_group (event_id, bib_group_number, bib_group_name) " +
+                    "VALUES (@event, @number, @name);";
+                command.Parameters.AddRange(new SQLiteParameter[]
+                {
+                    new SQLiteParameter("@event", eventId),
+                    new SQLiteParameter("@number", group.Number),
+                    new SQLiteParameter("@name", group.Name)
+                });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public List<BibGroup> GetBibGroups(int eventId)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM bib_group WHERE event_id=@event;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId)
+            });
+            List<BibGroup> output = new List<BibGroup>();
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new BibGroup()
+                {
+                    EventId = Convert.ToInt32(reader["event_id"]),
+                    Number = Convert.ToInt32(reader["bib_group_number"]),
+                    Name = reader["bib_group_name"].ToString()
+                });
+            }
+            return output;
+        }
+
+        public void RemoveBibGroup(BibGroup group)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM bib_group WHERE event_id=@event AND bib_group_number=@number;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", group.EventId),
+                new SQLiteParameter("@number", group.Number)
+            });
+            command.ExecuteNonQuery();
+        }
+
+        /*
+         * Bibs
+         */
+        public void AddBibs(int eventId, int group, List<int> bibs)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (int bib in bibs)
+                {
+                    AddBib(eventId, group, bib);
+                }
+                transaction.Commit();
+            }
+        }
+
+        public void AddBibs(int eventId, List<AvailableBib> bibs)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (AvailableBib bib in bibs)
+                {
+                    AddBib(eventId, bib.GroupNumber, bib.Bib);
+                }
+                transaction.Commit();
+            }
+        }
+
+        public void AddBib(int eventId, int group, int bib)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO available_bibs (event_id, bib_group_number, bib) " +
+                "VALUES (@event, @group, @bib);";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@group", group),
+                new SQLiteParameter("@bib", bib)
+            });
+            command.ExecuteNonQuery();
+        }
+
+        public List<AvailableBib> GetBibs(int eventId)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT a.bib_group_number as bib_group_number, a.event_id as event_id," +
+                " a.bib as bib, b.bib_group_name as bib_group_name FROM available_bibs a, bib_group b WHERE" +
+                " b.event_id = a.event_id AND b.bib_group_number = a.bib_group_number AND b.event_id=@event;";
+
+            List<AvailableBib> output = new List<AvailableBib>();
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new AvailableBib()
+                {
+                    EventId = Convert.ToInt32(reader["event_id"]),
+                    GroupNumber = Convert.ToInt32(reader["bib_group_number"]),
+                    GroupName = reader["bib_group_name"].ToString(),
+                    Bib = Convert.ToInt32(reader["bib"])
+                });
+            }
+            return output;
+        }
+
+        public void RemoveBib(int eventId, int bib)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM available_bibs WHERE event_id=@event AND bib=@bib;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@bib", bib)
+            });
+            command.ExecuteNonQuery();
+        }
+
+        public void RemoveBibs(int eventId, List<AvailableBib> bibs)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (AvailableBib bib in bibs)
+                {
+                    RemoveBib(eventId, bib.Bib);
+                }
                 transaction.Commit();
             }
         }

@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS events
       event_common_age_groups INTEGER DEFAULT 1,
       event_common_start_finish INTEGER DEFAULT 1,
       event_division_specific_segments INTEGER DEFAULT 0,
+      event_start_time_seconds INTEGER NOT NULL DEFAULT 0,
+      event_start_time_milliseconds INTEGER NOT NULL DEFAULT 0,
       UNIQUE (event_name, event_date) ON CONFLICT IGNORE
 CREATE TABLE IF NOT EXISTS dayof_participant
       dop_id INTEGER PRIMARY KEY,
@@ -61,6 +63,10 @@ CREATE TABLE IF NOT EXISTS divisions
       division_start_within INTEGER DEFAULT -1,
       division_finish_location INTEGER DEFAULT -1,
       division_finish_occurance INTEGER DEFAULT 1,
+      division_wave INTEGER NOT NULL DEFAULT 1,
+      division_start_offset_seconds INTEGER NOT NULL DEFALT 0,
+      division_start_offset_milliseconds INTEGER NOT NULL DEFAULT 0,
+      bib_group_number INTEGER NOT NULL DEFAULT -1,
       UNIQUE (division_name, event_id) ON CONFLICT IGNORE
 CREATE TABLE IF NOT EXISTS timing_locations
       location_id INTEGER PRIMARY KEY,
@@ -99,6 +105,7 @@ CREATE TABLE IF NOT EXISTS eventspecific
       eventspecific_other VARCHAR,
       eventspecific_earlystart INTEGER DEFAULT 0,
       eventspecific_next_year INTEGER DEFAULT 0,
+      eventspecific_registration_date = VARCHAR NOT NULL DEFAULT '',
       UNIQUE (participant_id, event_id, division_id) ON CONFLICT IGNORE
 CREATE TABLE IF NOT EXISTS eventspecific_apparel
       eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id),
@@ -206,3 +213,14 @@ CREATE TABLE IF NOT EXISTS app_settings
       setting VARCHAR NOT NULL,
       value VARCHAR NOT NULL,
       UNIQUE (setting) ON CONFLICT REPLACE
+CREATE TABLE IF NOT EXISTS bib_group
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      bib_group_number INTEGER NOT NULL,
+      bib_group_name VARCHAR NOT NULL,
+      UNIQUE (event_id, bib_group_number) ON CONFLICT REPLACE,
+      UNIQUE (event_id, bib_group_name) ON CONFLICT REPLACE
+CREATE TABLE IF NOT EXISTS available_bibs
+      event_id INTEGER NOT NULL REFERENCES events(event_id),
+      bib_group_number INTEGER NOT NULL DEFAULT -1,
+      bib INTEGER NOT NULL,
+      UNIQUE (event_id, bib) ON CONFLICT REPLACE

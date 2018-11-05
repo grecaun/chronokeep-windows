@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EventDirector.Objects;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,6 +77,19 @@ namespace EventDirector
         void RemoveBibChipAssociation(int eventId, int chip);
         void RemoveBibChipAssociation(BibChipAssociation assoc);
         void RemoveBibChipAssociations(List<BibChipAssociation> assocs);
+
+        // Bib Functions
+        void AddBibs(int eventId, int group, List<int> bibs);
+        void AddBibs(int eventId, List<AvailableBib> bibs);
+        void AddBib(int eventId, int group, int bib);
+        List<AvailableBib> GetBibs(int eventId);
+        void RemoveBib(int eventId, int bib);
+        void RemoveBibs(int eventId, List<AvailableBib> bibs);
+
+        // Bib Group Functions
+        void AddBibGroup(int eventId, BibGroup group);
+        List<BibGroup> GetBibGroups(int eventId);
+        void RemoveBibGroup(BibGroup group);
 
         // Timing Result Functions
         void AddTimingResult(TimeResult tr);
