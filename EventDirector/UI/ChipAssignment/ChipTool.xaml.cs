@@ -24,18 +24,17 @@ namespace EventDirector.UI.ChipAssignment
     {
         IWindowCallback window;
         IDBInterface database;
-        int num = 0;
 
         public ChipTool()
         {
             InitializeComponent();
-            correlationBox.Items.Add(new ATagRange(correlationBox, num++));
+            correlationBox.Items.Add(new ATagRange(correlationBox));
         }
 
         private ChipTool(IWindowCallback window, IDBInterface database)
         {
             InitializeComponent();
-            correlationBox.Items.Add(new ATagRange(correlationBox, num++));
+            correlationBox.Items.Add(new ATagRange(correlationBox));
             this.window = window;
             this.database = database;
         }
@@ -61,7 +60,7 @@ namespace EventDirector.UI.ChipAssignment
 
             ListBox parent;
 
-            public ATagRange(ListBox correlationBox, int num)
+            public ATagRange(ListBox correlationBox)
             {
                 Grid theGrid = new Grid();
                 this.Content = theGrid;
@@ -223,14 +222,13 @@ namespace EventDirector.UI.ChipAssignment
 
         private void AddRange_Click(object sender, RoutedEventArgs e)
         {
-            correlationBox.Items.Add(new ATagRange(correlationBox, num++));
+            correlationBox.Items.Add(new ATagRange(correlationBox));
         }
 
         private void Reset()
         {
-            num = 0;
             correlationBox.Items.Clear();
-            correlationBox.Items.Add(new ATagRange(correlationBox, num++));
+            correlationBox.Items.Add(new ATagRange(correlationBox));
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)

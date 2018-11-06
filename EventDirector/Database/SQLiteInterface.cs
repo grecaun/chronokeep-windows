@@ -2512,7 +2512,8 @@ namespace EventDirector
         public void RemoveBibGroup(BibGroup group)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM bib_group WHERE event_id=@event AND bib_group_number=@number;";
+            command.CommandText = "DELETE FROM available_bibs WHERE event_id=@event AND bib_group_number=@number;" +
+                "DELETE FROM bib_group WHERE event_id=@event AND bib_group_number=@number;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", group.EventId),
@@ -2568,7 +2569,10 @@ namespace EventDirector
             command.CommandText = "SELECT a.bib_group_number as bib_group_number, a.event_id as event_id," +
                 " a.bib as bib, b.bib_group_name as bib_group_name FROM available_bibs a, bib_group b WHERE" +
                 " b.event_id = a.event_id AND b.bib_group_number = a.bib_group_number AND b.event_id=@event;";
-
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId)
+            });
             List<AvailableBib> output = new List<AvailableBib>();
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
@@ -2584,6 +2588,23 @@ namespace EventDirector
             return output;
         }
 
+        public int LargestBib(int eventId)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT MAX(bib) as max_bib FROM available_bibs WHERE event_id=@event;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId)
+            });
+            int largest = -1;
+            SQLiteDataReader reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                if (!(reader["max_bib"] is DBNull)) largest = Convert.ToInt32(reader["max_bib"]);
+            }
+            return largest;
+        }
+
         public void RemoveBib(int eventId, int bib)
         {
             SQLiteCommand command = connection.CreateCommand();
@@ -2596,13 +2617,13 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
-        public void RemoveBibs(int eventId, List<AvailableBib> bibs)
+        public void RemoveBibs(List<AvailableBib> bibs)
         {
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (AvailableBib bib in bibs)
                 {
-                    RemoveBib(eventId, bib.Bib);
+                    RemoveBib(bib.EventId, bib.Bib);
                 }
                 transaction.Commit();
             }

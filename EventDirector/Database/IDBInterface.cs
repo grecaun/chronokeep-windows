@@ -84,7 +84,8 @@ namespace EventDirector
         void AddBib(int eventId, int group, int bib);
         List<AvailableBib> GetBibs(int eventId);
         void RemoveBib(int eventId, int bib);
-        void RemoveBibs(int eventId, List<AvailableBib> bibs);
+        void RemoveBibs(List<AvailableBib> bibs);
+        int LargestBib(int eventId);
 
         // Bib Group Functions
         void AddBibGroup(int eventId, BibGroup group);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector.Objects
 {
-    public class BibGroup
+    public class BibGroup : IEquatable<BibGroup>, IComparable<BibGroup>
     {
         public BibGroup(int eventId)
         {
@@ -20,5 +20,17 @@ namespace EventDirector.Objects
         public int EventId { get; set; }
         public string Name { get; set; }
         public int Number { get; set; }
+
+        public int CompareTo(BibGroup other)
+        {
+            if (other == null) return 1;
+            return this.Number.CompareTo(other.Number);
+        }
+
+        public bool Equals(BibGroup other)
+        {
+            if (other == null) return false;
+            return this.Number == other.Number && this.EventId == other.EventId;
+        }
     }
 }

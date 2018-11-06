@@ -13,7 +13,7 @@
         <Grid Name="everything">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="260"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -23,7 +23,7 @@
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Bib" Width="60" DisplayMemberBinding="{Binding Bib}"/>
-                        <GridViewColumn Header="Name" Width="140" DisplayMemberBinding="{Binding Name}"/>
+                        <GridViewColumn Header="Name" Width="140" DisplayMemberBinding="{Binding GroupName}"/>
                     </GridView>
                 </ListView.View>
             </ListView>

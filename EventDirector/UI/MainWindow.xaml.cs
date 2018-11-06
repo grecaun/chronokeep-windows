@@ -112,7 +112,15 @@ namespace EventDirector.UI
 
         private void BibsButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Bibs button clicked.");
+            if (page is BibAssignmentPage)
+            {
+                Log.D("Bib page already displayed.");
+                return;
+            }
+            TheFrame.NavigationService.RemoveBackEntry();
+            page = new BibAssignmentPage(this, database);
+            TheFrame.Content = page;
         }
 
         private void ChipsButton_Click(object sender, RoutedEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using EventDirector.Interfaces;
 using EventDirector.Objects;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,12 +21,11 @@ namespace EventDirector.UI.MainPages
     /// <summary>
     /// Interaction logic for BibAssignmentPage.xaml
     /// </summary>
-    public partial class BibAssignmentPage : Page
+    public partial class BibAssignmentPage : Page, IMainPage
     {
         private INewMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
-        int count = 0;
 
         public BibAssignmentPage(INewMainWindow mWindow, IDBInterface database)
         {
@@ -49,39 +49,146 @@ namespace EventDirector.UI.MainPages
             gView.Columns[1].Width = workingWidth * 0.7;
         }
 
-        private void Update()
+        public async void Update()
         {
-
+            GroupsBox.Items.Clear();
+            Event theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                return;
+            }
+            List<BibGroup> bibGroups = database.GetBibGroups(theEvent.Identifier);
+            if (bibGroups.Count < 1)
+            {
+                GroupsBox.Items.Add(new ABibGroup(this, new BibGroup(theEvent.Identifier), database.LargestBib(theEvent.Identifier) + 1));
+            }
+            else
+            {
+                bibGroups.Sort();
+                foreach (BibGroup bg in bibGroups)
+                {
+                    Log.D("Adding BibGroup number " + bg.Number);
+                    GroupsBox.Items.Add(new ABibGroup(this, bg, database.LargestBib(theEvent.Identifier) + 1));
+                }
+            }
+            List<AvailableBib> availableBibs = new List<AvailableBib>();
+            await Task.Run(() =>
+            {
+                availableBibs = database.GetBibs(theEvent.Identifier);
+            });
+            availableBibs.Sort();
+            bibList.ItemsSource = availableBibs;
         }
 
-        private void UpdateImportOptions()
+        private async void UpdateImportOptions()
         {
-
+            bool excelEnabled = false;
+            await Task.Run(() =>
+            {
+                excelEnabled = Utils.ExcelEnabled();
+            });
+            if (excelEnabled)
+            {
+                Log.D("Excel is allowed.");
+                //ExcelImport.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Log.D("Excel is not allowed.");
+                //ExcelImport.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Delete clicked.  Attempting to do so.");
+            IList selected = bibList.SelectedItems;
+            List<AvailableBib> items = new List<AvailableBib>();
+            foreach (AvailableBib b in selected)
+            {
+                items.Add(b);
+            }
+            database.RemoveBibs(items);
+            Update();
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Delete all clicked.");
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete everything? This cannot be undone.",
+                                                        "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                List<AvailableBib> list = (List<AvailableBib>)bibList.ItemsSource;
+                database.RemoveBibs(list);
+                Update();
+            }
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("New Group clicked.");
+            Event theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                return;
+            }
+            List<BibGroup> list = database.GetBibGroups(theEvent.Identifier);
+            int groupNum = 1;
+            foreach (BibGroup b in list)
+            {
+                groupNum = b.Number + 1 > groupNum ? b.Number + 1 : groupNum;
+            }
+            database.AddBibGroup(theEvent.Identifier, new BibGroup()
+            {
+                Name = "New Group " + groupNum.ToString(),
+                Number = groupNum
+            });
+            Update();
         }
 
-        public void AddBibRange(int start, int end)
+        internal void RemoveGroup(BibGroup group)
         {
-
+            database.RemoveBibGroup(group);
+            Update();
         }
 
-        public void AddBib(int number)
+        internal void AddBibRange(int group, int start, int end)
         {
+            Event theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                return;
+            }
+            List<int> bibs = new List<int>();
+            for (int bib = start; bib <= end; bib++)
+            {
+                bibs.Add(bib);
+            }
+            database.AddBibs(theEvent.Identifier, group, bibs);
+            Update();
+        }
 
+        internal void AddBib(int group, int bib)
+        {
+            Event theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                return;
+            }
+            database.AddBib(theEvent.Identifier, group, bib);
+            Update();
+        }
+
+        internal void UpdateGroup(BibGroup group)
+        {
+            Event theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                return;
+            }
+            database.AddBibGroup(theEvent.Identifier, group);
+            Update();
         }
 
         private class ABibGroup : ListBoxItem
@@ -89,21 +196,18 @@ namespace EventDirector.UI.MainPages
             public TextBox SingleBib { get; private set; }
             public TextBox RangeStartBib { get; private set; }
             public TextBox RangeEndBib { get; private set; }
-            public TextBox GroupNumber { get; private set; }
             public TextBox GroupName { get; private set; }
             public Button AddSingle { get; private set; }
             public Button AddRange { get; private set; }
             public Button Remove { get; private set; }
             public Button Save { get; private set; }
 
-            ListBox parent;
             BibAssignmentPage page;
             BibGroup myGroup;
 
-            public ABibGroup(ListBox parent, BibAssignmentPage page, BibGroup bg, int number, int basebib)
+            public ABibGroup(BibAssignmentPage page, BibGroup bg, int basebib)
             {
                 this.page = page;
-                this.parent = parent;
                 this.myGroup = bg;
                 Grid theGrid = new Grid();
                 this.Content = theGrid;
@@ -117,62 +221,60 @@ namespace EventDirector.UI.MainPages
                 GroupName = new TextBox()
                 {
                     Text = bg.Name,
-                    FontSize = 16,
-                    Margin = new Thickness(10,10,10,10)
+                    FontSize = 18,
+                    Margin = new Thickness(10,10,10,10),
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center
                 };
                 GroupName.GotFocus += new RoutedEventHandler(this.SelectAll);
                 theGrid.Children.Add(GroupName);
                 Grid.SetColumn(GroupName, 0);
                 Grid.SetRow(GroupName, 0);
 
-                // number + save + remove buttons
-                DockPanel numberDP = new DockPanel();
-                GroupNumber = new TextBox()
-                {
-                    Text = bg.Number.ToString(),
-                    FontSize = 16,
-                    Margin = new Thickness(10,10,10,10),
-                    Width = 50
-                };
-                GroupNumber.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                GroupNumber.GotFocus += new RoutedEventHandler(this.SelectAll);
-                numberDP.Children.Add(GroupNumber);
+                // save + remove buttons
+                Grid numberGrid = new Grid();
+                numberGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                numberGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                    // Save button
                 Save = new Button()
                 {
                     Content = "Save",
                     FontSize = 16,
                     Height = 35,
-                    Width = 60,
                     Margin = new Thickness(5, 5, 5, 5)
                 };
                 Save.Click += new RoutedEventHandler(this.Save_Click);
-                numberDP.Children.Add(Save);
+                numberGrid.Children.Add(Save);
+                Grid.SetColumn(Save, 0);
+                    // Remove Button
                 Remove = new Button()
                 {
                     Content = "Remove",
                     FontSize = 16,
                     Height = 35,
-                    Width = 60,
                     Margin = new Thickness(5, 5, 5, 5)
                 };
                 Remove.Click += new RoutedEventHandler(this.Remove_Click);
-                numberDP.Children.Add(Remove);
-                theGrid.Children.Add(numberDP);
-                Grid.SetColumn(numberDP, 1);
-                Grid.SetRow(numberDP, 0);
+                numberGrid.Children.Add(Remove);
+                Grid.SetColumn(Remove, 1);
+
+                // Add number grid with children to overall grid, then set it in proper areas
+                theGrid.Children.Add(numberGrid);
+                Grid.SetColumn(numberGrid, 1);
+                Grid.SetRow(numberGrid, 0);
 
                 // If we're the catchall, don't let them edit things.
                 if (bg.Number == -1)
                 {
+                    Log.D("BibGroup number is -1");
                     GroupName.IsEnabled = false;
-                    GroupNumber.Visibility = Visibility.Collapsed;
                     Save.Visibility = Visibility.Collapsed;
                     Remove.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
+                    Log.D("BibGroup number is NOT -1");
                     GroupName.IsEnabled = true;
-                    GroupNumber.Visibility = Visibility.Visible;
                     Save.Visibility = Visibility.Visible;
                     Remove.Visibility = Visibility.Visible;
                 }
@@ -259,7 +361,8 @@ namespace EventDirector.UI.MainPages
                 RangeEndBib.KeyDown += new KeyEventHandler(this.KeyPressHandler);
                 RangeEndBib.GotFocus += new RoutedEventHandler(this.SelectAll);
                 bibs.Children.Add(RangeEndBib);
-                Grid.SetColumn(RangeEndBib, 1);
+                Grid.SetColumn(RangeEndBib, 2);
+                range.Children.Add(bibs);
                 AddRange = new Button()
                 {
                     Content = "Save Range",
@@ -288,26 +391,55 @@ namespace EventDirector.UI.MainPages
                     MessageBox.Show("Unable to add bib number.");
                     return;
                 }
+                this.page.AddBib(this.myGroup.Number, bib);
             }
 
             private void AddRange_Click(object senter, EventArgs e)
             {
-
+                Log.D("Add range clicked.");
+                int startbib = -1, endbib = -1;
+                try
+                {
+                    startbib = int.Parse(RangeStartBib.Text);
+                    endbib = int.Parse(RangeEndBib.Text);
+                }
+                catch
+                {
+                    MessageBox.Show("Unable to add range of bib numbers.");
+                    return;
+                }
+                if (endbib < startbib)
+                {
+                    MessageBox.Show("Second box is smaller than the first. Please switch them.");
+                    return;
+                }
+                if (endbib < 0 || startbib < 0)
+                {
+                    MessageBox.Show("Bib numbers must be greater than zero.");
+                    return;
+                }
+                this.page.AddBibRange(this.myGroup.Number, startbib, endbib);
             }
 
             private void Remove_Click(object sender, EventArgs e)
             {
                 Log.D("Removing an item.");
-                try
-                {
-                    parent.Items.Remove(this);
-                }
-                catch { }
+                this.page.RemoveGroup(this.myGroup);
             }
 
             private void Save_Click(object sender, EventArgs e)
             {
-
+                Log.D("Save clicked.");
+                try
+                {
+                    myGroup.Name = GroupName.Text;
+                }
+                catch
+                {
+                    MessageBox.Show("Error with values given.");
+                    return;
+                }
+                this.page.UpdateGroup(myGroup);
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)
