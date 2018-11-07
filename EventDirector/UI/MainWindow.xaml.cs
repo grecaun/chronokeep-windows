@@ -29,6 +29,7 @@ namespace EventDirector.UI
         String dbName = "EventDirector.sqlite";
         String programDir = "EventDirector";
         bool closing = false;
+        bool excelEnabled = false;
 
         Thread tcpServerThread = null;
         TCPServer tcpServer = null;
@@ -56,10 +57,19 @@ namespace EventDirector.UI
             database = new SQLiteInterface(path);
             database.Initialize();
 
+            UpdateImportOptions();
             SetupSettings();
 
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
+        }
+
+        private async void UpdateImportOptions()
+        {
+            await Task.Run(() =>
+            {
+                excelEnabled = Utils.ExcelEnabled();
+            });
         }
 
         private void SetupSettings()
@@ -102,12 +112,28 @@ namespace EventDirector.UI
 
         private void ReportsButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Reports button clicked.");
+            if (page is ReportsPage)
+            {
+                Log.D("Reports page already displayed");
+                return;
+            }
+            //TheFrame.NavigationService.RemoveBackEntry();
+            //page = new ReportsPage(this, database);
+            //TheFrame.Content = page;
         }
 
         private void ParticipantsButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Participants button clicked.");
+            if (page is ParticipantsPage)
+            {
+                Log.D("Participants page already displayed.");
+                return;
+            }
+            TheFrame.NavigationService.RemoveBackEntry();
+            page = new ParticipantsPage(this, database);
+            TheFrame.Content = page;
         }
 
         private void BibsButton_Click(object sender, RoutedEventArgs e)
@@ -138,27 +164,63 @@ namespace EventDirector.UI
 
         private void DivisionsButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Divisions button clicked.");
+            if (page is DivisionsPage)
+            {
+                Log.D("Divisions page already displayed.");
+            }
+            //TheFrame.NavigationService.RemoveBackEntry();
+            //page = new ReportsPage(this, database);
+            //TheFrame.Content = page;
         }
 
         private void LocationsButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Locations button clicked.");
+            if (page is LocationsPage)
+            {
+                Log.D("Locations page already displayed.");
+                return;
+            }
+            //TheFrame.NavigationService.RemoveBackEntry();
+            //page = new ReportsPage(this, database);
+            //TheFrame.Content = page;
         }
 
         private void SegmentsButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Segments button clicked.");
+            if (page is SegmentsPage)
+            {
+                Log.D("Segments page already displayed.");
+                return;
+            }
+            //TheFrame.NavigationService.RemoveBackEntry();
+            //page = new ReportsPage(this, database);
+            //TheFrame.Content = page;
         }
 
         private void AgegroupsButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Age Groups button clicked.");
+            if (page is AgeGroupsPage)
+            {
+                Log.D("Age groups page already displayed.");
+                return;
+            }
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-
+            Log.D("Settings button clicked.");
+            if (page is SettingsPage)
+            {
+                Log.D("Settings page already displayed.");
+                return;
+            }
+            //TheFrame.NavigationService.RemoveBackEntry();
+            //page = new ReportsPage(this, database);
+            //TheFrame.Content = page;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -278,6 +340,11 @@ namespace EventDirector.UI
                 segmentsButton.IsEnabled = true;
                 agegroupsButton.IsEnabled = true;
             }
+        }
+
+        public bool ExcelEnabled()
+        {
+            return excelEnabled;
         }
     }
 }

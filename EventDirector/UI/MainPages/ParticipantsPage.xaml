@@ -1,0 +1,51 @@
+﻿<Page x:Class="EventDirector.UI.MainPages.ParticipantsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:EventDirector.UI.MainPages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ParticipantsPage">
+
+    <Grid>
+        <Label Name="nothing" Content="Event not set. Please choose an event before selecting this option." Visibility="Collapsed"/>
+        <Grid Name="everything">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="1">
+                <Button Name="ImportCSV" Content="Import (CSV)" FontSize="16" Height="35" Margin="10,10,10,10" Click="ImportCSV_Click"/>
+                <Button Name="ImportExcel" Content="Import (Excel)" FontSize="16" Height="35" Margin="10,10,10,10" Click="ImportExcel_Click"  Visibility="Collapsed"/>
+                <Label Content="View only" FontSize="16" Margin="10,10,10,0" HorizontalContentAlignment="Center"/>
+                <ComboBox Name="DivisionBox" FontSize="16" Margin="10,0,10,10" SelectionChanged="DivisionBox_SelectionChanged" />
+                <Button Name="Add" Content="Add" FontSize="16" Height="35" Margin="10,10,10,10" Click="Add_Click"/>
+                <Button Name="Modify" Content="Modify" FontSize="16" Height="35" Margin="10,10,10,10" Click="Modify_Click"/>
+                <Button Name="Remove" Content="Remove" FontSize="16" Height="35" Margin="10,10,10,10" Click="Remove_Click"/>
+            </StackPanel>
+            <ListView Name="ParticipantsList" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SelectionMode="Extended" SizeChanged="ParticipantsList_SizeChanged"  Grid.Column="0">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Bib" DisplayMemberBinding="{Binding Bib}" />
+                        <GridViewColumn Header="Division" DisplayMemberBinding="{Binding Division}" />
+                        <GridViewColumn Header="First" DisplayMemberBinding="{Binding FirstName}" />
+                        <GridViewColumn Header="Last" DisplayMemberBinding="{Binding LastName}" />
+                        <GridViewColumn Header="Gender" DisplayMemberBinding="{Binding Gender}" />
+                        <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding Birthdate}" />
+                        <GridViewColumn Header="Parent" DisplayMemberBinding="{Binding Parent}" />
+                        <GridViewColumn Header="Mobile" DisplayMemberBinding="{Binding Mobile}" />
+                        <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}" />
+                        <GridViewColumn Header="Check" DisplayMemberBinding="{Binding CheckedIn}" />
+                        <GridViewColumn Header="Early" DisplayMemberBinding="{Binding EarlyStart}" />
+                        <GridViewColumn Header="EC Name" DisplayMemberBinding="{Binding ECName}" />
+                        <GridViewColumn Header="EC Phone" DisplayMemberBinding="{Binding ECPhone}" />
+                        <GridViewColumn Header="Comments" DisplayMemberBinding="{Binding Comments}" />
+                        <GridViewColumn Header="Other" DisplayMemberBinding="{Binding Other}" />
+                        <GridViewColumn Header="Owes" DisplayMemberBinding="{Binding Owes}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </Grid>
+</Page>

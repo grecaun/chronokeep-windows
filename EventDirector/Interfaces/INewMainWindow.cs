@@ -13,5 +13,6 @@ namespace EventDirector.Interfaces
         bool StopNetworkServices();
         void AddWindow(Window w);
         void UpdateStatus();
+        bool ExcelEnabled();
     }
 }

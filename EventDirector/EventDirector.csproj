@@ -210,11 +210,32 @@
       <DependentUpon>ChangeEventWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\EventWindows\StaticEvent.cs" />
+    <Compile Include="UI\MainPages\AgeGroupsPage.xaml.cs">
+      <DependentUpon>AgeGroupsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainPages\BibAssignmentPage.xaml.cs">
       <DependentUpon>BibAssignmentPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainPages\ChipAssigmentPage.xaml.cs">
       <DependentUpon>ChipAssigmentPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MainPages\DivisionsPage.xaml.cs">
+      <DependentUpon>DivisionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MainPages\LocationsPage.xaml.cs">
+      <DependentUpon>LocationsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MainPages\ParticipantsPage.xaml.cs">
+      <DependentUpon>ParticipantsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MainPages\ReportsPage.xaml.cs">
+      <DependentUpon>ReportsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MainPages\SegmentsPage.xaml.cs">
+      <DependentUpon>SegmentsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MainPages\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -259,7 +280,6 @@
     <Compile Include="Interfaces\IDataImporter.cs" />
     <Compile Include="Database\IDBInterface.cs" />
     <Compile Include="Objects\Division.cs" />
-    <Compile Include="Objects\EmergencyContact.cs" />
     <Compile Include="Objects\Event.cs" />
     <Compile Include="Objects\EventSpecific.cs" />
     <Compile Include="Interfaces\IEDConnection.cs" />
@@ -360,11 +380,39 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\MainPages\AgeGroupsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\MainPages\BibAssignmentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\MainPages\ChipAssigmentPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainPages\DivisionsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainPages\LocationsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainPages\ParticipantsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainPages\ReportsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainPages\SegmentsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainPages\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    public class Division
+    public class Division : IEquatable<Division>, IComparable<Division>
     {
         private String name;
         private int identifier, eventIdentifier, cost;
@@ -67,5 +67,21 @@ namespace EventDirector
         public int FinishOccurance { get => finish_occurance; set => finish_occurance = value; }
         public int StartLocation { get => start_location; set => start_location = value; }
         public int StartWithin { get => start_within; set => start_within = value; }
+
+        public int CompareTo(Division other)
+        {
+            if (other == null) return 1;
+            if (this.EventIdentifier == other.EventIdentifier)
+            {
+                return this.Name.CompareTo(other.Name);
+            }
+            return this.EventIdentifier.CompareTo(other.EventIdentifier);
+        }
+
+        public bool Equals(Division other)
+        {
+            if (other == null) return false;
+            return this.EventIdentifier == other.EventIdentifier && this.Identifier == other.Identifier;
+        }
     }
 }

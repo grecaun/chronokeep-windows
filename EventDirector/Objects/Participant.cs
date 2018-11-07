@@ -520,7 +520,7 @@ namespace EventDirector
             {
                 return this.LastName.CompareTo(other.LastName);
             }
-            return this.EventSpecific.DivisionIdentifier.CompareTo(other.EventSpecific.DivisionIdentifier);
+            return this.EventSpecific.DivisionName.CompareTo(other.EventSpecific.DivisionName);
         }
 
         public bool Equals(Participant other)

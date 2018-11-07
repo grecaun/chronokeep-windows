@@ -1308,24 +1308,37 @@ namespace EventDirector
         {
             Log.D("Getting all participants for all events.");
             return GetParticipantsWorker("SELECT * FROM participants AS p, eventspecific as s, divisions AS d WHERE " +
-                "p.participant_id=s.participant_id AND d.division_id=s.division_id", -1);
+                "p.participant_id=s.participant_id AND d.division_id=s.division_id", -1, -1);
         }
 
         public List<Participant> GetParticipants(int eventId)
         {
             Log.D("Getting all participants for event with id of " + eventId);
             return GetParticipantsWorker("SELECT * FROM participants AS p, eventspecific AS s, divisions AS d WHERE " +
-                "p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id", eventId);
+                "p.participant_id=s.participant_id AND s.event_id=@event AND d.division_id=s.division_id", eventId, -1);
         }
 
-        public List<Participant> GetParticipantsWorker(string query, int eventId)
+
+        public List<Participant> GetParticipants(int eventId, int divisionId)
+        {
+            Log.D("Getting all participants for event with id of " + eventId);
+            return GetParticipantsWorker("SELECT * FROM participants AS p, eventspecific AS s, divisions AS d WHERE " +
+                "p.participant_id=s.participant_id AND s.event_id=@event AND d.division_id=s.division_id AND" +
+                " d.division_id=@division", eventId, divisionId);
+        }
+
+        public List<Participant> GetParticipantsWorker(string query, int eventId, int divisionId)
         {
             List<Participant> output = new List<Participant>();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = query;
             if (eventId != -1)
             {
-                command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
+                command.Parameters.Add(new SQLiteParameter("@event", eventId));
+            }
+            if (divisionId != -1)
+            {
+                command.Parameters.Add(new SQLiteParameter("@division", divisionId));
             }
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())

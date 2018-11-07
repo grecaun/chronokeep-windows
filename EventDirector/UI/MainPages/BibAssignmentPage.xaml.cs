@@ -52,7 +52,7 @@ namespace EventDirector.UI.MainPages
         public async void Update()
         {
             GroupsBox.Items.Clear();
-            Event theEvent = database.GetCurrentEvent();
+            theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
                 return;
@@ -80,14 +80,9 @@ namespace EventDirector.UI.MainPages
             bibList.ItemsSource = availableBibs;
         }
 
-        private async void UpdateImportOptions()
+        private void UpdateImportOptions()
         {
-            bool excelEnabled = false;
-            await Task.Run(() =>
-            {
-                excelEnabled = Utils.ExcelEnabled();
-            });
-            if (excelEnabled)
+            if (mWindow.ExcelEnabled())
             {
                 Log.D("Excel is allowed.");
                 //ExcelImport.Visibility = Visibility.Visible;

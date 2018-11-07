@@ -67,6 +67,7 @@ namespace EventDirector
         void SetEarlyStartParticipant(Participant person);
         List<Participant> GetParticipants();
         List<Participant> GetParticipants(int eventId);
+        List<Participant> GetParticipants(int eventId, int divisionId);
         Participant GetParticipant(int eventIdentifier, int identifier);
         Participant GetParticipant(int eventIdentifier, Participant unknown);
 

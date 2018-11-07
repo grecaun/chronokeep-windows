@@ -45,8 +45,8 @@
                         </DockPanel>
                         <Button Name="SaveSingleButton" Content="Save Single" MaxWidth="150" Click="SaveSingleButton_Click" Margin="10,10,10,10" Height="35" FontSize="16"/>
                         <Separator/>
-                        <Button Name="FileImport" Content="From CSV" Margin="10,10,10,0" Height="35" FontSize="16" Click="FileImport_Click"/>
-                        <Button Name="ExcelImport" Content="From Excel" Margin="10,10,10,0" Height="35" FontSize="16" Click="ExcelImport_Click" Visibility="Collapsed"/>
+                        <Button Name="FileImport" Content="Import (CSV)" Margin="10,10,10,0" Height="35" FontSize="16" Click="FileImport_Click"/>
+                        <Button Name="ExcelImport" Content="Import (Excel)" Margin="10,10,10,0" Height="35" FontSize="16" Click="ExcelImport_Click" Visibility="Collapsed"/>
                         <Button Name="UseTool" Content="Use Tool" Margin="10,10,10,0" Height="35" FontSize="16" Click="UseTool_Click"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1">

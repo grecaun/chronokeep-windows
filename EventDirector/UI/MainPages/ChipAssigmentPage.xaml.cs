@@ -33,7 +33,6 @@ namespace EventDirector.UI.MainPages
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
-            this.theEvent = database.GetCurrentEvent();
             Update();
             UpdateImportOptions();
         }
@@ -51,6 +50,7 @@ namespace EventDirector.UI.MainPages
 
         public async void Update()
         {
+            theEvent = database.GetCurrentEvent();
             if (theEvent == null)
             {
                 return;
@@ -256,14 +256,9 @@ namespace EventDirector.UI.MainPages
             }
         }
 
-        private async void UpdateImportOptions()
+        private void UpdateImportOptions()
         {
-            bool excelEnabled = false;
-            await Task.Run(() =>
-            {
-                excelEnabled = Utils.ExcelEnabled();
-            });
-            if (excelEnabled)
+            if (mWindow.ExcelEnabled())
             {
                 Log.D("Excel is allowed.");
                 ExcelImport.Visibility = Visibility.Visible;
