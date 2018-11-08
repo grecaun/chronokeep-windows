@@ -1158,11 +1158,17 @@ namespace EventDirector
 
         private void AddParticipantNoTransaction(Participant person)
         {
-
+            person.FormatData();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO participants (participant_first, participant_last, participant_street, participant_city, participant_state, participant_zip, participant_birthday, participant_email, participant_mobile, participant_parent, participant_country, participant_street2, participant_gender, emergencycontact_name, emergencycontact_phone)" +
-                " VALUES (@first,@last,@street,@city,@state,@zip,@birthdate,@email,@mobile,@parent,@country,@street2,@gender,@ecname,@ecphone); SELECT participant_id FROM participants WHERE participant_first=@0 AND participant_last=@1 AND participant_street=@2 AND participant_city=@3 AND participant_state=@4 AND participant_zip=@5";
+            command.CommandText = "INSERT INTO participants (participant_first, participant_last, participant_street, " +
+                "participant_city, participant_state, participant_zip, participant_birthday, participant_email, " +
+                "participant_mobile, participant_parent, participant_country, participant_street2, participant_gender, " +
+                "emergencycontact_name, emergencycontact_phone)" +
+                " VALUES (@first,@last,@street,@city,@state,@zip,@birthdate,@email,@mobile,@parent,@country,@street2," +
+                "@gender,@ecname,@ecphone); SELECT participant_id FROM participants WHERE participant_first=@first " +
+                "AND participant_last=@last AND participant_street=@street AND participant_city=@city AND " +
+                "participant_state=@state AND participant_zip=@zip;";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@first", person.FirstName),
                 new SQLiteParameter("@last", person.LastName),
@@ -1187,8 +1193,10 @@ namespace EventDirector
             }
             command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, division_id, eventspecific_bib, eventspecific_checkedin, eventspecific_comments, eventspecific_owes, eventspecific_other, eventspecific_earlystart, eventspecific_next_year) " +
-                "VALUES (@participant,@event,@division,@bib,@checkedin,@comments,@owes,,@other,@earlystart,,@nextYear)";
+            command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, division_id, eventspecific_bib, " +
+                "eventspecific_checkedin, eventspecific_comments, eventspecific_owes, eventspecific_other, " +
+                "eventspecific_earlystart, eventspecific_next_year) " +
+                "VALUES (@participant,@event,@division,@bib,@checkedin,@comments,@owes,@other,@earlystart,@nextYear)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@participant", person.Identifier),
                 new SQLiteParameter("@event", person.EventSpecific.EventIdentifier),
@@ -1207,20 +1215,59 @@ namespace EventDirector
         public void RemoveParticipant(int identifier)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@0; DELETE FROM participant WHERE participant_id=@0";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
             command.ExecuteNonQuery();
         }
 
-        public void RemoveParticipant(Participant person)
+        public void RemoveParticipantEntry(Participant person)
         {
             RemoveParticipant(person.Identifier);
         }
 
+        public void RemoveParticipantEntries(List<Participant> participants)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (Participant p in participants)
+                {
+                    RemoveParticipant(p.Identifier);
+                }
+                transaction.Commit();
+            }
+        }
+
+        public void RemoveEntry(int eventId, int participantId)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@participant AND event_id=@event;";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@event", eventId),
+                    new SQLiteParameter("@participant", participantId) });
+            command.ExecuteNonQuery();
+        }
+
+        public void RemoveEntry(Participant person)
+        {
+            RemoveEntry(person.EventIdentifier, person.Identifier);
+        }
+
+        public void RemoveEntries(List<Participant> people)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (Participant p in people)
+                {
+                    RemoveEntry(p.EventIdentifier, p.Identifier);
+                }
+                transaction.Commit();
+            }
+        }
+
         public void UpdateParticipant(Participant person)
         {
+            person.FormatData();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -1229,7 +1276,7 @@ namespace EventDirector
                 command.CommandText = "UPDATE participants SET participant_first=@first, participant_last=@last, participant_street=@street," +
                     " participant_city=@city, participant_state=@state, participant_zip=@zip, participant_birthday=@birthdate," +
                     " emergencycontact_name=@ecname, emergencycontact_phone=@ecphone, participant_email=@email, participant_mobile=@mobile," +
-                    " participant_parent=@parent, participant_country=@country, participant_street2=@street2 WHERE participant_id=@participantid";
+                    " participant_parent=@parent, participant_country=@country, participant_street2=@street2, participant_gender=@gender WHERE participant_id=@participantid";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@first", person.FirstName),
                     new SQLiteParameter("@last", person.LastName),
@@ -1245,13 +1292,15 @@ namespace EventDirector
                     new SQLiteParameter("@mobile", person.Mobile),
                     new SQLiteParameter("@parent", person.Parent),
                     new SQLiteParameter("@country", person.Country),
-                    new SQLiteParameter("@street2", person.Street2) });
+                    new SQLiteParameter("@street2", person.Street2),
+                    new SQLiteParameter("@gender", person.Gender) });
                 command.ExecuteNonQuery();
                 command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
                 Log.D("Updating event specific.... bib is " + person.EventSpecific.Bib);
                 command.CommandText = "UPDATE eventspecific SET division_id=@divid, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
-                    "eventspecific_owes=@owes, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_next_year=@nextYear " +
+                    "eventspecific_owes=@owes, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_next_year=@nextYear," +
+                    "eventspecific_comments=@comments " +
                     "WHERE eventspecific_id=@eventspecid";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@divid", person.EventSpecific.DivisionIdentifier),
@@ -1261,7 +1310,8 @@ namespace EventDirector
                     new SQLiteParameter("@owes", person.EventSpecific.Owes),
                     new SQLiteParameter("@other", person.EventSpecific.Other),
                     new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart),
-                    new SQLiteParameter("@nextYear", person.EventSpecific.NextYear)
+                    new SQLiteParameter("@nextYear", person.EventSpecific.NextYear),
+                    new SQLiteParameter("@comments", person.EventSpecific.Comments)
                 });
                 command.ExecuteNonQuery();
                 transaction.Commit();

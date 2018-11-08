@@ -16,11 +16,13 @@ namespace EventDirector.UI.EventWindows
         public static Window announceWindow = null;
         public static Window nextYearWindow = null;
         public static Window kioskWindow = null;
+        public static Window participantWindow = null;
 
         public static bool AreToolWindowsOpen()
         {
             return (chipReaderWindow != null || chipAssigmentWindow != null | timingWindow != null
-                || announceWindow != null || nextYearWindow != null || kioskWindow != null);
+                || announceWindow != null || nextYearWindow != null || kioskWindow != null 
+                || participantWindow != null);
         }
     }
 }

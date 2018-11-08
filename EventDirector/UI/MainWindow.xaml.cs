@@ -310,6 +310,11 @@ namespace EventDirector.UI
             UpdateStatus();
         }
 
+        public void Update()
+        {
+            page.Update();
+        }
+
         public void AddWindow(Window w)
         {
             openWindows.Add(w);

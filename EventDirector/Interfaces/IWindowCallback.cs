@@ -10,5 +10,6 @@ namespace EventDirector.Interfaces
     public interface IWindowCallback
     {
         void WindowFinalize(Window w);
+        void Update();
     }
 }

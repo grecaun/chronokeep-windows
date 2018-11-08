@@ -81,7 +81,7 @@ namespace EventDirector
             firstName = firstName.Trim();
             lastName = lastName.Trim();
             street = street.Trim();
-            street2 = street.Trim();
+            street2 = street2.Trim();
             city = city.Trim();
             state = state.Trim();
             zip = zip.Trim();
@@ -486,14 +486,16 @@ namespace EventDirector
         }
 
         // Event Specific binding stuffs
-        public long EventIdentifier { get => eventSpecific.EventIdentifier; }
-        public long Bib { get => eventSpecific.Bib; }
+        public int EventIdentifier { get => eventSpecific.EventIdentifier; }
+        public int Bib { get => eventSpecific.Bib; }
         public string Division { get => eventSpecific.DivisionName; }
         public string CheckedIn { get => eventSpecific.CheckedIn == 0 ? "No" : "Yes"; }
+        public bool IsCheckedIn { get => EventSpecific.CheckedIn == 0; }
         public string Owes { get => eventSpecific.Owes; }
         public string Other { get => eventSpecific.Other; }
         public string Comments { get => eventSpecific.Comments; }
         public string EarlyStart { get => eventSpecific.EarlyStart == 0 ? "No" : "Yes"; }
+        public bool IsEarlyStart { get => EventSpecific.EarlyStart == 0; }
         public string NextYear { get => eventSpecific.NextYear == 0 ? "No" : "Yes"; }
 
         // Emergency Contact binding stuffs

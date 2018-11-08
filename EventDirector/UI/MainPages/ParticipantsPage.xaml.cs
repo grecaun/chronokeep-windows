@@ -1,5 +1,7 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.UI.Participants;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -63,6 +65,7 @@ namespace EventDirector.UI.MainPages
             }
             participants.Sort();
             ParticipantsList.ItemsSource = participants;
+            ParticipantsList.SelectedItems.Clear();
         }
 
         public void UpdateDivisionsBox()
@@ -118,16 +121,49 @@ namespace EventDirector.UI.MainPages
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Add clicked.");
+            ModifyParticipantWindow addParticipant = ModifyParticipantWindow.NewWindow(mWindow, database);
+            if (addParticipant != null)
+            {
+                mWindow.AddWindow(addParticipant);
+                addParticipant.Show();
+            }
         }
 
         private void Modify_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Modify clicked.");
+            IList selected = ParticipantsList.SelectedItems;
+            Log.D(selected.Count + " participants selected.");
+            if (selected.Count > 1)
+            {
+                MessageBox.Show("You may only modify a single participant at a time.");
+                return;
+            }
+            Participant part = null;
+            foreach (Participant p in selected)
+            {
+                part = p;
+            }
+            if (part == null) return;
+            ModifyParticipantWindow modifyParticipant = ModifyParticipantWindow.NewWindow(mWindow, database, part);
+            if (modifyParticipant != null)
+            {
+                mWindow.AddWindow(modifyParticipant);
+                modifyParticipant.Show();
+            }
         }
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Remove clicked.");
+            IList selected = ParticipantsList.SelectedItems;
+            List<Participant> parts = new List<Participant>();
+            foreach (Participant p in selected)
+            {
+                parts.Add(p);
+            }
+            database.RemoveEntries(parts);
+            Update();
         }
 
         private void ParticipantsList_SizeChanged(object sender, SizeChangedEventArgs e)
