@@ -85,6 +85,56 @@ namespace EventDirector
         }
     }
 
+    internal class DListBoxItemAlt : ListBoxItem
+    {
+        public Label DivisionName { get; private set; }
+        public ComboBox Divisions { get; private set; }
+
+        public DListBoxItemAlt(String name, List<Division> divisions)
+        {
+            this.IsTabStop = false;
+            Grid theGrid = new Grid();
+            this.Content = theGrid;
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            DivisionName = new Label
+            {
+                Content = name
+            };
+            theGrid.Children.Add(DivisionName);
+            Grid.SetColumn(DivisionName, 0);
+            Divisions = new ComboBox();
+            Divisions.Items.Add(new ComboBoxItem()
+            {
+                Content = "Auto",
+                Uid = "-1"
+            });
+            foreach (Division d in divisions)
+            {
+                Divisions.Items.Add(new ComboBoxItem()
+                {
+                    Content = d.Name,
+                    Uid = d.Identifier.ToString()
+                });
+            }
+            Divisions.SelectedIndex = 0;
+            theGrid.Children.Add(Divisions);
+            Grid.SetColumn(Divisions, 1);
+        }
+
+        public string NameFromFile()
+        {
+            return DivisionName.Content.ToString().Trim();
+        }
+
+        public int DivisionId()
+        {
+            int output = -1;
+            int.TryParse(((ComboBoxItem)Divisions.SelectedItem).Uid, out output);
+            return output;
+        }
+    }
+
     internal class DListBoxItem : ListBoxItem
     {
         public Label DivisionName { get; private set; }

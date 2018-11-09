@@ -27,7 +27,6 @@ namespace EventDirector.UI
         IDBInterface database;
         IMainPage page;
         String dbName = "EventDirector.sqlite";
-        String programDir = "EventDirector";
         bool closing = false;
         bool excelEnabled = false;
 
@@ -41,7 +40,7 @@ namespace EventDirector.UI
         public MainWindow()
         {
             InitializeComponent();
-            String dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), programDir);
+            String dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
             String path = System.IO.Path.Combine(dirPath, dbName);
             Log.D("Looking for database file.");
             if (!Directory.Exists(dirPath))
@@ -58,7 +57,7 @@ namespace EventDirector.UI
             database.Initialize();
 
             UpdateImportOptions();
-            SetupSettings();
+            Constants.Settings.SetupSettings(database);
 
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
@@ -70,31 +69,6 @@ namespace EventDirector.UI
             {
                 excelEnabled = Utils.ExcelEnabled();
             });
-        }
-
-        private void SetupSettings()
-        {
-            if (database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR) == null)
-            {
-                String dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), programDir, "Exports");
-                database.SetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR, dirPath);
-            }
-            if (database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM) == null)
-            {
-                database.SetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM, Constants.Settings.TIMING_LAST_USED);
-            }
-            if (database.GetAppSetting(Constants.Settings.DEFAULT_WAIVER) == null)
-            {
-                database.SetAppSetting(Constants.Settings.DEFAULT_WAIVER, Constants.Settings.EXAMPLE_WAIVER);
-            }
-            if (database.GetAppSetting(Constants.Settings.CURRENT_EVENT) == null)
-            {
-                database.SetAppSetting(Constants.Settings.CURRENT_EVENT, Constants.Settings.NULL_EVENT_ID);
-            }
-            if (database.GetAppSetting(Constants.Settings.COMPANY_NAME) == null)
-            {
-                database.SetAppSetting(Constants.Settings.COMPANY_NAME, Constants.Settings.WAIVER_COMPANY);
-            }
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
@@ -170,7 +144,7 @@ namespace EventDirector.UI
                 Log.D("Divisions page already displayed.");
             }
             //TheFrame.NavigationService.RemoveBackEntry();
-            //page = new ReportsPage(this, database);
+            //page = new DivisionsPage(this, database);
             //TheFrame.Content = page;
         }
 
@@ -183,7 +157,7 @@ namespace EventDirector.UI
                 return;
             }
             //TheFrame.NavigationService.RemoveBackEntry();
-            //page = new ReportsPage(this, database);
+            //page = new LocationsPage(this, database);
             //TheFrame.Content = page;
         }
 
@@ -196,7 +170,7 @@ namespace EventDirector.UI
                 return;
             }
             //TheFrame.NavigationService.RemoveBackEntry();
-            //page = new ReportsPage(this, database);
+            //page = new SegmentsPage(this, database);
             //TheFrame.Content = page;
         }
 
@@ -208,6 +182,9 @@ namespace EventDirector.UI
                 Log.D("Age groups page already displayed.");
                 return;
             }
+            //TheFrame.NavigationService.RemoveBackEntry();
+            //page = new AgeGroupsPage(this, database);
+            //TheFrame.Content = page;
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -218,9 +195,9 @@ namespace EventDirector.UI
                 Log.D("Settings page already displayed.");
                 return;
             }
-            //TheFrame.NavigationService.RemoveBackEntry();
-            //page = new ReportsPage(this, database);
-            //TheFrame.Content = page;
+            TheFrame.NavigationService.RemoveBackEntry();
+            page = new SettingsPage(this, database);
+            TheFrame.Content = page;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

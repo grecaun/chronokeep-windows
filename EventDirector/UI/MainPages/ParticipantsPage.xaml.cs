@@ -1,5 +1,6 @@
 ﻿using EventDirector.Interfaces;
 using EventDirector.UI.Participants;
+using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -108,14 +109,60 @@ namespace EventDirector.UI.MainPages
             }
         }
 
-        private void ImportExcel_Click(object sender, RoutedEventArgs e)
+        private async void ImportExcel_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import Excel clicked.");
+            OpenFileDialog excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx)|*.xlsx|All files|*" };
+            if (excel_dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    ExcelImporter excel = new ExcelImporter(excel_dialog.FileName);
+                    await Task.Run(() =>
+                    {
+                        excel.FetchHeaders();
+                    });
+                    ImportFileWindow excelImp = ImportFileWindow.NewWindow(mWindow, excel, database);
+                    if (excelImp != null)
+                    {
+                        mWindow.AddWindow(excelImp);
+                        excelImp.Show();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.E("Something went wrong when trying to read the Excel file.");
+                    Log.E(ex.StackTrace);
+                }
+            }
         }
 
-        private void ImportCSV_Click(object sender, RoutedEventArgs e)
+        private async void ImportCSV_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import CSV clicked.");
+            OpenFileDialog csv_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv)|*.csv|All files|*" };
+            if (csv_dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    CSVImporter importer = new CSVImporter(csv_dialog.FileName);
+                    await Task.Run(() =>
+                    {
+                        importer.FetchHeaders();
+                    });
+                    ImportFileWindow excelImp = ImportFileWindow.NewWindow(mWindow, importer, database);
+                    if (excelImp != null)
+                    {
+                        mWindow.AddWindow(excelImp);
+                        excelImp.Show();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.E("Something went wrong when trying to read the CSV file.");
+                    Log.E(ex.StackTrace);
+                }
+            }
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)

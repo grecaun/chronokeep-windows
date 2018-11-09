@@ -13,7 +13,7 @@
         <Grid Name="everything">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1">
                 <Button Name="ImportCSV" Content="Import (CSV)" FontSize="16" Height="35" Margin="10,10,10,10" Click="ImportCSV_Click"/>

@@ -210,6 +210,9 @@
       <DependentUpon>ChangeEventWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\EventWindows\StaticEvent.cs" />
+    <Compile Include="UI\Import\ImportFilePage2Alt.xaml.cs">
+      <DependentUpon>ImportFilePage2Alt.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainPages\AgeGroupsPage.xaml.cs">
       <DependentUpon>AgeGroupsPage.xaml</DependentUpon>
     </Compile>
@@ -243,10 +246,13 @@
     <Compile Include="UI\MainPages\DashboardPage.xaml.cs">
       <DependentUpon>DashboardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Participants\ModifyParticipantWindow.xaml.cs">
+      <DependentUpon>ModifyParticipantWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI_Old\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIObjects\AListBoxItem.cs" />
+    <Compile Include="UI\UIObjects\AListBoxItem.cs" />
     <Compile Include="Objects\BibChipAssociation.cs" />
     <Compile Include="UI\ChipAssignment\BibChipAssociationWindow.xaml.cs">
       <DependentUpon>BibChipAssociationWindow.xaml</DependentUpon>
@@ -270,10 +276,10 @@
       <DependentUpon>ExampleLiabilityWaiver.xaml</DependentUpon>
     </Compile>
     <Compile Include="IO\ExcelImporter.cs" />
-    <Compile Include="UI_Old\ExportChanges.xaml.cs">
+    <Compile Include="UI\Export\ExportChanges.xaml.cs">
       <DependentUpon>ExportChanges.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\ExportParticipants.xaml.cs">
+    <Compile Include="UI\Export\ExportParticipants.xaml.cs">
       <DependentUpon>ExportParticipants.xaml</DependentUpon>
     </Compile>
     <Compile Include="Interfaces\IChangeUpdater.cs" />
@@ -380,6 +386,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Import\ImportFilePage2Alt.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\MainPages\AgeGroupsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -424,6 +434,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Participants\ModifyParticipantWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI_Old\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -452,11 +466,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\ExportChanges.xaml">
+    <Page Include="UI\Export\ExportChanges.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\ExportParticipants.xaml">
+    <Page Include="UI\Export\ExportParticipants.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -699,7 +713,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\BibAssignment\" />
-    <Folder Include="UI\Export\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
