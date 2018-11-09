@@ -1,4 +1,6 @@
-﻿using Microsoft.Office.Interop.Excel;
+﻿using EventDirector.Interfaces;
+using EventDirector.UI.IO;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +15,7 @@ namespace EventDirector
     public partial class ExportChanges : System.Windows.Window
     {
         IDBInterface database;
+        IDataExporter exporter;
         MainWindow mainWindow;
         String programDir = "EventDirector";
         String exportDir = "Exports";
@@ -55,27 +58,37 @@ namespace EventDirector
                 await Task.Run(() =>
                 {
                     Log.D("Event has name " + anEvent.Name + " and date of " + anEvent.Date + " and finally has ID " + anEvent.Identifier);
-                    String directory = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), programDir, exportDir);
-                    String fullPath, dotPath = ".csv";
+                    AppSetting directorySetting = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
+                    if (directorySetting == null) return;
+                    String directory = directorySetting.value;
+                    String fullPath, fileExtension;
                     if (!Directory.Exists(directory))
                     {
                         Directory.CreateDirectory(directory);
                     }
-                    directory = System.IO.Path.Combine(directory, changeDir);
+                    directory = Path.Combine(directory, changeDir);
                     if (!Directory.Exists(directory))
                     {
                         Directory.CreateDirectory(directory);
                     }
                     if (fileType == Utils.FileType.EXCEL)
                     {
-                        dotPath = ".xlsx";
+                        fileExtension = ".xlsx";
+                        exporter = new ExcelExporter();
+                    }
+                    else
+                    {
+                        fileExtension = ".csv";
+                        exporter = new CSVExporter("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\"," +
+                            "\"{8}\",\"{9}\",\"{10}\",\"{11}\",\"{12}\",\"{13}\",\"{14}\",\"{15}\",\"{16}\",\"{17}\"," +
+                            "\"{18}\",\"{19}\",\"{20}\",\"{21}\",\"{22}\",\"{23}\",\"{24}\",\"{25}\"");
                     }
                     String fileName = anEvent.Name + " Changes";
-                    fullPath = System.IO.Path.Combine(directory, fileName + dotPath);
+                    fullPath = Path.Combine(directory, fileName + fileExtension);
                     int number = 1;
                     while (File.Exists(fullPath))
                     {
-                        fullPath = System.IO.Path.Combine(directory, fileName + " (" + number++ + ")" + dotPath);
+                        fullPath = Path.Combine(directory, fileName + " (" + number++ + ")" + fileExtension);
                     }
                     List<Change> changes = database.GetChanges();
                     List<ChangeParticipant> parts = new List<ChangeParticipant>();
@@ -87,67 +100,23 @@ namespace EventDirector
                             parts.Add(new ChangeParticipant(c.Identifier, "New", c.NewParticipant));
                         }
                     }
-                    switch (fileType)
+                    string[] headers = new string[] {"Change Id", "New/Old", "Participant Id", "Event Id", "Bib", "Distance", "Checked In", "Early Start", "First", "Last",
+                                    "Birthday", "Street", "Apartment", "City", "State", "Zip", "Country", "Mobile", "Email",
+                                    "Parent", "Gender", "Comments", "Other", "Owes",
+                                    "Emergency Contact Name", "Emergency Contact Phone"};
+                    List<object[]> data = new List<object[]>();
+                    foreach (ChangeParticipant p in parts)
                     {
-                        case Utils.FileType.CSV:
-                            FileStream outFile = File.Create(fullPath);
-                            String format = "\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"{11}\",\"{12}\",\"{13}\"," +
-                            "\"{14}\",\"{15}\",\"{16}\",\"{17}\",\"{18}\",\"{19}\",\"{20}\",\"{21}\",\"{22}\",\"{23}\",\"{24}\",\"{25}\"";
-                            using (StreamWriter outWriter = new StreamWriter(outFile))
-                            {
-                                outWriter.WriteLine(String.Format(format, "Change Id", "New/Old", "Participant Id", "Event Id", "Bib", "Distance", "Checked In", "Early Start", "First", "Last",
-                                    "Birthday", "Street", "Apartment", "City", "State", "Zip", "Country", "Mobile", "Email",
-                                    "Parent", "Gender", "Comments", "Other", "Owes",
-                                    "Emergency Contact Name", "Emergency Contact Phone"));
-                                foreach (ChangeParticipant p in parts)
-                                {
-                                    outWriter.WriteLine(String.Format(format, p.ChangeIdentifier, p.Which, p.Identifier, p.EventIdentifier, p.Bib, p.Division, p.CheckedIn, p.EarlyStart, p.FirstName, p.LastName,
-                                        p.Birthdate, p.Street, p.Street2, p.City, p.State, p.Zip, p.Country, p.Mobile, p.Email,
-                                        p.Parent, p.Gender, p.Comments, p.Other, p.Owes,
-                                        p.ECName, p.ECPhone));
-                                }
-                            }
-                            outFile.Close();
-                            // Change Id, New/Old, Participant Id, Event Id, Bib, Distance, Checked In, Early Start, First, Last,
-                            // Birthday, Street, Street2, City, State, Zip, Country, Mobile, Email,
-                            // Parent, Gender, Comments, Other, Owes, Emergency Contact Id
-                            // Emergency Contact Name, Emergency Contact Phone, Emergency Contact Email
-                            break;
-                        case Utils.FileType.EXCEL:
-                            Utils.excelApp.ScreenUpdating = false;
-                            Workbook wBook = Utils.excelApp.Workbooks.Add("");
-                            Worksheet wSheet = wBook.ActiveSheet;
-                            List<object[]> data = new List<object[]>
-                            {
-                                new object[] {"Change Id", "New/Old", "Participant Id", "Event Id", "Bib", "Distance", "Checked In", "Early Start", "First", "Last",
-                                    "Birthday", "Street", "Apartment", "City", "State", "Zip", "Country", "Mobile", "Email",
-                                    "Parent", "Gender", "Comments", "Other", "Owes",
-                                    "Emergency Contact Name", "Emergency Contact Phone"}
-                            };
-                            foreach (ChangeParticipant p in parts)
-                            {
-                                data.Add(new object[] {p.ChangeIdentifier, p.Which, p.Identifier, p.EventIdentifier, p.Bib, p.Division, p.CheckedIn, p.EarlyStart, p.FirstName, p.LastName,
-                                        p.Birthdate, p.Street, p.Street2, p.City, p.State, p.Zip, p.Country, p.Mobile, p.Email,
-                                        p.Parent, p.Gender, p.Comments, p.Other, p.Owes,
-                                        p.ECName, p.ECPhone});
-                            }
-                            object[,] newData = new object[data.Count, data[0].Length];
-                            for (int i = 0; i < data.Count; i++)
-                            {
-                                for (int j = 0; j < data[0].Length; j++)
-                                {
-                                    newData[i, j] = data[i][j];
-                                }
-                            }
-                            Range startCell = wSheet.Cells[1, 1];
-                            Range endCell = wSheet.Cells[data.Count, data[0].Length];
-                            Range writeRange = wSheet.get_Range(startCell, endCell);
-                            writeRange.Value2 = newData;
-                            writeRange.EntireColumn.AutoFit();
-                            wBook.SaveAs(fullPath, XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing, false, false, XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-                            wBook.Close();
-                            Utils.excelApp.ScreenUpdating = true;
-                            break;
+                        data.Add(new object[] {p.ChangeIdentifier, p.Which, p.Identifier, p.EventIdentifier, p.Bib, p.Division, p.CheckedIn,
+                                p.EarlyStart, p.FirstName, p.LastName,
+                                p.Birthdate, p.Street, p.Street2, p.City, p.State, p.Zip, p.Country, p.Mobile, p.Email,
+                                p.Parent, p.Gender, p.Comments, p.Other, p.Owes,
+                                p.ECName, p.ECPhone});
+                    }
+                    if (exporter != null)
+                    {
+                        exporter.SetData(headers, data);
+                        exporter.ExportData(fullPath);
                     }
                 });
             }

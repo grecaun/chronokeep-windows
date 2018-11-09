@@ -217,7 +217,10 @@ namespace EventDirector.UI
             }
         }
 
-        public void WindowClosed(Window window) { }
+        public void WindowClosed(Window window)
+        {
+            Utils.QuitExcel();
+        }
 
         public void UpdateEvent(int identifier, string nameString, long dateVal, int nextYear, int shirtOptionalVal, int shirtPrice)
         {

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace EventDirector.UI.MainPages
 {
@@ -80,14 +82,42 @@ namespace EventDirector.UI.MainPages
             DefaultWaiverBox.Text = setting.value;
         }
 
-        private void ResetDB_Click(object sender, RoutedEventArgs e)
+        private async void ResetDB_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Reset button clicked.");
+            MessageBoxResult result = MessageBox.Show("This deletes all of the data stored in the database.  You cannot recover" +
+                " any of the data in the database after this step.\n\nAre you sure you wish to continue?",
+                                                        "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                ResetDB.IsEnabled = false;
+                await Task.Run(() =>
+                {
+                    database.ResetDatabase();
+                    Constants.Settings.SetupSettings(database);
+                });
+                Update();
+                ResetDB.IsEnabled = true;
+            }
         }
 
-        private void RebuildDB_Click(object sender, RoutedEventArgs e)
+        private async void RebuildDB_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Rebuild button clicked.");
+            MessageBoxResult result = MessageBox.Show("This deletes all of the tables and values in the database, then rebuilds all of the tables." +
+                "  You cannot recover any of the data in the database after this step.\n\nAre you sure you wish to continue?",
+                                                        "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                RebuildDB.IsEnabled = false;
+                await Task.Run(() =>
+                {
+                    database.HardResetDatabase();
+                    Constants.Settings.SetupSettings(database);
+                });
+                Update();
+                RebuildDB.IsEnabled = true;
+            }
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)
@@ -95,9 +125,41 @@ namespace EventDirector.UI.MainPages
             Log.D("Save button clicked.");
             database.SetAppSetting(Constants.Settings.COMPANY_NAME, CompanyNameBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM, ((ComboBoxItem)DefaultTimingBox.SelectedItem).Uid);
-            //database.SetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR, DefaultExportDirBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR, DefaultExportDirBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.DEFAULT_WAIVER, DefaultWaiverBox.Text);
             Update();
+        }
+
+        private void ChangeExport_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Change export directory button clicked.");
+            try
+            {
+                using (var dialog = new CommonOpenFileDialog())
+                {
+                    dialog.Title = "Export Directory";
+                    dialog.IsFolderPicker = true;
+                    dialog.InitialDirectory = DefaultExportDirBox.Text;
+
+                    dialog.AddToMostRecentlyUsedList = false;
+                    dialog.AllowNonFileSystemItems = false;
+                    dialog.DefaultDirectory = DefaultExportDirBox.Text;
+                    dialog.EnsureFileExists = true;
+                    dialog.EnsurePathExists = true;
+                    dialog.EnsureValidNames = true;
+                    dialog.Multiselect = false;
+                    dialog.ShowPlacesList = true;
+
+                    if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                    {
+                        DefaultExportDirBox.Text = dialog.FileName;
+                    }
+                }
+            }
+            catch
+            {
+                Log.E("Something went wrong with the dialog.");
+            }
         }
     }
 }

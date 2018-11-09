@@ -740,7 +740,7 @@ namespace EventDirector
             tcpServerThread.Abort();
             zeroConf.Stop();
             zeroConfThread.Abort();
-            Utils.excelApp.Quit();
+            Utils.QuitExcel();
         }
 
         private void EventsToggleRegistrationButton_Click(object sender, RoutedEventArgs e)

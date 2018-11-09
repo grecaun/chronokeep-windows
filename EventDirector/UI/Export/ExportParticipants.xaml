@@ -4,28 +4,34 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventDirector"
-        mc:Ignorable="d"
+        mc:Ignorable="d" Closing="Window_Closing"
         Title="ExportParticipants" Height="300" Width="350">
     <Grid>
-        <Button
+        <Grid VerticalAlignment="Bottom" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button
             x:Name="Done"
             Content="Submit"
-            Height="25"
-            Width="65"
-            VerticalAlignment="Bottom"
-            Margin="0,0,85,10"
+            FontSize="16"
+            Height="35"
+            Margin="10,10,5,10"
             Click="Done_Click"
+            Grid.Column="0"
             />
-        <Button
+            <Button
             x:Name="Cancel"
             Content="Cancel"
-            Height="25"
-            Width="65"
-            VerticalAlignment="Bottom"
-            Margin="85,0,0,10"
+            FontSize="16"
+            Height="35"
+            Margin="5,10,10,10"
             Click="Cancel_Click"
+            Grid.Column="1"
             />
-        <ListView
+        </Grid>
+        <ListView Visibility="Collapsed"
             x:Name="eventList"
             Margin="5,5,5,45"
             >
@@ -36,5 +42,11 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        <StackPanel Name="ExportAs" Visibility="Collapsed">
+            <Label Content="Export as" FontSize="18" HorizontalContentAlignment="Center" Margin="10,10,10,0"/>
+            <ComboBox Name="Type" Height="35" VerticalContentAlignment="Center" FontSize="16" Margin="10,0,10,10" VerticalAlignment="Top">
+                <ComboBoxItem Content="Comma Separated Values (*.csv)" Uid="1" />
+            </ComboBox>
+        </StackPanel>
     </Grid>
 </Window>

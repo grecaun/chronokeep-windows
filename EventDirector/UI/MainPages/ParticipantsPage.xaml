@@ -16,15 +16,16 @@
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1">
-                <Button Name="ImportCSV" Content="Import (CSV)" FontSize="16" Height="35" Margin="10,10,10,10" Click="ImportCSV_Click"/>
-                <Button Name="ImportExcel" Content="Import (Excel)" FontSize="16" Height="35" Margin="10,10,10,10" Click="ImportExcel_Click"  Visibility="Collapsed"/>
+                <Button Name="ImportCSV" Content="Import" FontSize="16" Height="35" Margin="10,10,10,10" Click="ImportCSV_Click"/>
+                <Button Name="ImportExcel" Content="Import" FontSize="16" Height="35" Margin="10,10,10,10" Click="ImportExcel_Click"  Visibility="Collapsed"/>
+                <Button Name="Export" Content="Export" FontSize="16" Height="35" Margin="10,10,10,10" Click="Export_Click" />
                 <Label Content="View only" FontSize="16" Margin="10,10,10,0" HorizontalContentAlignment="Center"/>
                 <ComboBox Name="DivisionBox" FontSize="16" Margin="10,0,10,10" SelectionChanged="DivisionBox_SelectionChanged" />
                 <Button Name="Add" Content="Add" FontSize="16" Height="35" Margin="10,10,10,10" Click="Add_Click"/>
                 <Button Name="Modify" Content="Modify" FontSize="16" Height="35" Margin="10,10,10,10" Click="Modify_Click"/>
                 <Button Name="Remove" Content="Remove" FontSize="16" Height="35" Margin="10,10,10,10" Click="Remove_Click"/>
             </StackPanel>
-            <ListView Name="ParticipantsList" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SelectionMode="Extended" SizeChanged="ParticipantsList_SizeChanged"  Grid.Column="0">
+            <ListView Name="ParticipantsList" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SelectionMode="Extended" Grid.Column="0">
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="Bib" DisplayMemberBinding="{Binding Bib}" />

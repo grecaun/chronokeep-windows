@@ -101,18 +101,20 @@ namespace EventDirector.UI.MainPages
             {
                 Log.D("Excel is allowed.");
                 ImportExcel.Visibility = Visibility.Visible;
+                ImportCSV.Visibility = Visibility.Collapsed;
             }
             else
             {
                 Log.D("Excel is not allowed.");
                 ImportExcel.Visibility = Visibility.Collapsed;
+                ImportCSV.Visibility = Visibility.Visible;
             }
         }
 
         private async void ImportExcel_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import Excel clicked.");
-            OpenFileDialog excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx)|*.xlsx|All files|*" };
+            OpenFileDialog excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.csv)|*.xlsx;*.csv|All files|*" };
             if (excel_dialog.ShowDialog() == true)
             {
                 try
@@ -213,14 +215,20 @@ namespace EventDirector.UI.MainPages
             Update();
         }
 
-        private void ParticipantsList_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-
-        }
-
         private void DivisionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Update();
+        }
+
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Export clicked.");
+            ExportParticipants exportParticipants = ExportParticipants.NewWindow(mWindow, database, mWindow.ExcelEnabled());
+            if (exportParticipants != null)
+            {
+                mWindow.AddWindow(exportParticipants);
+                exportParticipants.Show();
+            }
         }
     }
 }

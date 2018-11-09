@@ -145,7 +145,7 @@ namespace EventDirector.UI.MainPages
         private async void FileImport_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import from file clicked.");
-            OpenFileDialog bib_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv,*.txt)|*.csv;*.txt|All files|*" };
+            OpenFileDialog bib_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv)|*.csv|All files|*" };
             if (bib_dialog.ShowDialog() == true) {
                 try
                 {
@@ -231,7 +231,7 @@ namespace EventDirector.UI.MainPages
         private async void ExcelImport_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import from file clicked.");
-            OpenFileDialog bib_excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx)|*.xlsx|All files|*" };
+            OpenFileDialog bib_excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.csv)|*.xlsx;*.csv|All files|*" };
             if (bib_excel_dialog.ShowDialog() == true)
             {
                 try
@@ -262,11 +262,13 @@ namespace EventDirector.UI.MainPages
             {
                 Log.D("Excel is allowed.");
                 ExcelImport.Visibility = Visibility.Visible;
+                FileImport.Visibility = Visibility.Collapsed;
             }
             else
             {
                 Log.D("Excel is not allowed.");
                 ExcelImport.Visibility = Visibility.Collapsed;
+                FileImport.Visibility = Visibility.Visible;
             }
         }
 
@@ -279,6 +281,17 @@ namespace EventDirector.UI.MainPages
                 List<BibChipAssociation> list = (List<BibChipAssociation>) bibChipList.ItemsSource;
                 database.RemoveBibChipAssociations(list);
                 Update();
+            }
+        }
+
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Export clicked.");
+            ExportBibChip exportBibChip = ExportBibChip.NewWindow(mWindow, database, mWindow.ExcelEnabled());
+            if (exportBibChip != null)
+            {
+                mWindow.AddWindow(exportBibChip);
+                exportBibChip.Show();
             }
         }
     }

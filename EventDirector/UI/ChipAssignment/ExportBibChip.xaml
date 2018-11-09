@@ -1,0 +1,18 @@
+﻿<Window x:Class="EventDirector.UI.ChipAssignment.ExportBibChip"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EventDirector.UI.ChipAssignment"
+        mc:Ignorable="d" Closing="Window_Closing"
+        Title="Export Bib Chip Associations" Height="240" Width="300" ResizeMode="NoResize">
+    <StackPanel>
+        <Label Content="Export as" FontSize="18" HorizontalContentAlignment="Center" Margin="10,10,10,0"/>
+        <ComboBox Name="Type" FontSize="16" Margin="10,0,10,5">
+            <ComboBoxItem Content="Comma Separated Values (*.csv)" Uid="1" />
+        </ComboBox>
+        <CheckBox Name="Header" Content="Include Header" IsChecked="True" FontSize="16" VerticalContentAlignment="Center" Margin="10,5,10,0" />
+        <Button Name="Export" Content="Export" FontSize="16" Height="35" Margin="10,10,10,5" Click="Export_Click"/>
+        <Button Name="Cancel" Content="Cancel" FontSize="16" Height="35" Margin="10,5,10,10" Click="Cancel_Click"/>
+    </StackPanel>
+</Window>
