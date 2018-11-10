@@ -25,7 +25,7 @@ namespace EventDirector
             try
             {
                 Log.D("Opening workbook.");
-                workBook = Utils.excelApp.Workbooks.Open(FilePath, ReadOnly: true);
+                workBook = Utils.GetExcelApp().Workbooks.Open(FilePath, ReadOnly: true);
                 NumSheets = workBook.Sheets.Count;
                 if (NumSheets > 0)
                 {
@@ -124,6 +124,7 @@ namespace EventDirector
             {
                 workBook.Close(0);
                 Marshal.ReleaseComObject(workBook);
+                Utils.QuitExcel();
             }
             catch
             {

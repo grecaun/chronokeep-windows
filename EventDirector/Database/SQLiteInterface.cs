@@ -211,7 +211,9 @@ namespace EventDirector
                     "read_starttime INTEGER NOT NULL," +
                     "UNIQUE (read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
                     ")");
-                queries.Add("CREATE TABLE IF NOT EXISTS settings (version INTEGER NOT NULL, name VARCHAR NOT NULL, identifier VARCHAR NOT NULL); INSERT INTO settings (version, name, identifier) VALUES (" + version + ", 'Northwest Endurance Events', " + Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "") + ")");
+                queries.Add("CREATE TABLE IF NOT EXISTS settings (version INTEGER NOT NULL, name VARCHAR NOT NULL," +
+                    " identifier VARCHAR NOT NULL); INSERT INTO settings (version, name, identifier) VALUES " +
+                    "(" + version + ", 'Northwest Endurance Events', '" + Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "") + "')");
                 queries.Add("CREATE TABLE IF NOT EXISTS changes (" +
                     "change_id INTEGER PRIMARY KEY, " +
                     "old_participant_id INTEGER NOT NULL," +
@@ -271,7 +273,8 @@ namespace EventDirector
                     "new_earlystart INTEGER DEFAULT -1," +
                     "new_next_year INTEGER DEFAULT 0" +
                     ")");
-                queries.Add("INSERT INTO participants (participant_id, participant_first, participant_last, participant_birthday) VALUES (0, 'J', 'Doe', '01/01/1901', 0)");
+                queries.Add("INSERT INTO participants (participant_id, participant_first, participant_last," +
+                    " participant_birthday) VALUES (0, 'J', 'Doe', '01/01/1901')");
                 queries.Add("CREATE TABLE IF NOT EXISTS app_settings (" +
                     "setting VARCHAR NOT NULL," +
                     "value VARCHAR NOT NULL," +
@@ -1017,6 +1020,10 @@ namespace EventDirector
 
         public Event GetCurrentEvent()
         {
+            if (GetAppSetting(Constants.Settings.CURRENT_EVENT) == null)
+            {
+                return null;
+            }
             return GetEvent(Convert.ToInt32(GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
         }
 

@@ -164,7 +164,7 @@ namespace EventDirector
                 }
                 else
                 {
-                    database.AddDivision(new Division("Default Division", newEvent.Identifier, 7000));
+                    database.AddDivision(new Division("Default Division", newEvent.Identifier, 0));
                 }
                 database.SetAppSetting(Constants.Settings.CURRENT_EVENT, newEvent.Identifier.ToString());
                 window.WindowFinalize(this);

@@ -5,7 +5,7 @@ namespace EventDirector
 {
     public class Utils
     {
-        public static Application excelApp;
+        private static Application ExcelApp;
 
         public static string UppercaseFirst(string s)
         {
@@ -22,13 +22,38 @@ namespace EventDirector
         {
             try
             {
-                excelApp = new Application();
+                ExcelApp = new Application();
+                ExcelApp.Quit();
             }
             catch
             {
                 return false;
             }
             return true;
+        }
+
+        public static Application GetExcelApp()
+        {
+            if (ExcelApp == null)
+            {
+                try
+                {
+                    ExcelApp = new Application();
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+            return ExcelApp;
+        }
+
+        public static void QuitExcel()
+        {
+            if (ExcelApp != null)
+            {
+                ExcelApp.Quit();
+            }
         }
 
         public enum FileType { CSV, EXCEL }

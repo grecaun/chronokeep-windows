@@ -10,7 +10,10 @@ namespace EventDirector
 {
     public interface IDBInterface
     {
+        // Database Functions
         void Initialize();
+        void ResetDatabase();
+        void HardResetDatabase();
 
         void SetServerName(string name);
         String GetServerName();
@@ -124,8 +127,5 @@ namespace EventDirector
         void AddChipRead(ChipRead read);
         List<ChipRead> GetChipReads();
         List<ChipRead> GetChipReads(int eventId);
-
-        // Database Functions
-        void ResetDatabase();
     }
 }
