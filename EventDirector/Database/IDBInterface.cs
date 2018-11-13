@@ -28,6 +28,8 @@ namespace EventDirector
         void UpdateEvent(Event anEvent);
         int GetEventID(Event anEvent);
         void SetEventOptions(int eventId, List<JsonOption> options);
+        void SetStartWindow(Event anEvent);
+        void SetFinishOptions(Event anEvent);
         Event GetCurrentEvent();
         Event GetEvent(int id);
         List<Event> GetEvents();

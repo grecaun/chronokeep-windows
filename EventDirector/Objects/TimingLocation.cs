@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    public class TimingLocation
+    public class TimingLocation : IEquatable<TimingLocation>, IComparable<TimingLocation>
     {
-        private int identifier, eventIdentifier, max_occurances, ignore_within;
+        private int identifier = -1, eventIdentifier, max_occurances, ignore_within;
         private string name;
 
         public TimingLocation() { }
@@ -44,5 +44,17 @@ namespace EventDirector
         public string Name { get => name; set => name = value; }
         public int MaxOccurances { get => max_occurances; set => max_occurances = value; }
         public int IgnoreWithin { get => ignore_within; set => ignore_within = value; }
+
+        public int CompareTo(TimingLocation other)
+        {
+            if (other == null) return 1;
+            return this.Identifier.CompareTo(other.Identifier);
+        }
+
+        public bool Equals(TimingLocation other)
+        {
+            if (other == null) return false;
+            return this.Identifier == other.Identifier && this.EventIdentifier == other.EventIdentifier;
+        }
     }
 }

@@ -156,9 +156,9 @@ namespace EventDirector.UI
                 Log.D("Locations page already displayed.");
                 return;
             }
-            //TheFrame.NavigationService.RemoveBackEntry();
-            //page = new LocationsPage(this, database);
-            //TheFrame.Content = page;
+            TheFrame.NavigationService.RemoveBackEntry();
+            page = new LocationsPage(this, database);
+            TheFrame.Content = page;
         }
 
         private void SegmentsButton_Click(object sender, RoutedEventArgs e)

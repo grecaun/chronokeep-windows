@@ -11,6 +11,7 @@ namespace EventDirector
         private int identifier, nextYear = -1, shirtOptional = 1, shirtPrice = 2000;
         private int common_age_groups = 1, common_start_finish = 1, division_specific_segments = 0, rank_by_gun = 1;
         private int allow_early_start = 0, early_start_difference = -1;
+        private int finish_max_occurances = 1, finish_ignore_within = 0, start_window = -1;
         private string name, date, yearcode = "";
 
         public Event() { }
@@ -68,13 +69,14 @@ namespace EventDirector
             this.rank_by_gun = gun;
         }
 
-        public Event(int id, string n, string d, int ny, int so, int price, int age, int start, int seg, int gun, string yearcode, int early, int earlydiff)
+        public Event(int id, string n, string d, int ny, int so, int price, int age, int start, int seg,
+            int gun, string yearcode, int early, int earlydiff, int maxOcc, int ignWith, int window)
         {
             this.nextYear = ny;
             this.identifier = id;
             this.shirtOptional = so;
             this.name = n;
-            this.date = d;
+            this.date = DateTime.Parse(d).ToShortDateString();
             this.shirtPrice = price;
             this.common_age_groups = age;
             this.common_start_finish = start;
@@ -83,6 +85,9 @@ namespace EventDirector
             this.yearcode = yearcode;
             this.allow_early_start = early;
             this.early_start_difference = earlydiff;
+            this.finish_max_occurances = maxOcc;
+            this.finish_ignore_within = ignWith;
+            this.start_window = window;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -98,6 +103,9 @@ namespace EventDirector
         public string YearCode { get => yearcode; set => yearcode = value; }
         public int AllowEarlyStart { get => allow_early_start; set => allow_early_start = value; }
         public int EarlyStartDifference { get => early_start_difference; set => early_start_difference = value; }
+        public int StartWindow { get => start_window; set => start_window = value; }
+        public int FinishMaxOccurances { get => finish_max_occurances; set => finish_max_occurances = value; }
+        public int FinishIgnoreWithin { get => finish_ignore_within; set => finish_ignore_within = value; }
 
         public int CompareTo(Event other)
         {

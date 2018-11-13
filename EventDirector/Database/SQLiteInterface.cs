@@ -12,7 +12,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 20;
+        private readonly int version = 22;
         SQLiteConnection connection;
         readonly string connectionInfo;
 
@@ -76,6 +76,9 @@ namespace EventDirector
                     "event_division_specific_segments INTEGER DEFAULT 0," +
                     "event_start_time_seconds INTEGER NOT NULL DEFAULT 0," +
                     "event_start_time_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                    "event_finish_max_occurances INTEGER NOT NULL DEFAULT 1," +
+                    "event_finish_ignore_within INTEGER NOT NULL DEFAULT 0," +
+                    "event_start_window INTEGER NOT NULL DEFAULT -1," +
                     "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                     ")");
                 queries.Add("CREATE TABLE IF NOT EXISTS dayof_participant (" +
@@ -165,7 +168,7 @@ namespace EventDirector
                     "eventspecific_earlystart INTEGER DEFAULT 0," +
                     "eventspecific_next_year INTEGER DEFAULT 0," +
                     "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
-                    "UNIQUE (participant_id, event_id, division_id) ON CONFLICT IGNORE" +
+                    "UNIQUE (participant_id, event_id, division_id) ON CONFLICT REPLACE" +
                     ")");
                 queries.Add("CREATE TABLE IF NOT EXISTS eventspecific_apparel (" +
                     "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
@@ -779,6 +782,39 @@ namespace EventDirector
                             "UNIQUE (event_id, bib) ON CONFLICT REPLACE);" +
                             "UPDATE settings SET version=20 WHERE version=19;";
                         command.ExecuteNonQuery();
+                        goto case 20;
+                    case 20:
+                        Log.D("Upgrading from version 20.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "DROP TABLE old_eventspecific; DROP TABLE old_participants;" +
+                            "ALTER TABLE eventspecific RENAME TO old_eventspecific;" +
+                            "CREATE TABLE IF NOT EXISTS eventspecific(" +
+                            "eventspecific_id INTEGER PRIMARY KEY," +
+                            "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                            "division_id INTEGER NOT NULL REFERENCES divisions(division_id)," +
+                            "eventspecific_bib INTEGER," +
+                            "eventspecific_checkedin INTEGER DEFAULT 0," +
+                            "eventspecific_comments VARCHAR," +
+                            "eventspecific_owes VARCHAR(50)," +
+                            "eventspecific_other VARCHAR," +
+                            "eventspecific_earlystart INTEGER DEFAULT 0," +
+                            "eventspecific_next_year INTEGER DEFAULT 0," +
+                            "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
+                            "UNIQUE (participant_id, event_id, division_id) ON CONFLICT REPLACE);" +
+                            "INSERT INTO eventspecific SELECT * FROM old_eventspecific;" +
+                            "DROP TABLE old_eventspecific;" +
+                            "UPDATE settings SET version=21 WHERE version=20;";
+                        command.ExecuteNonQuery();
+                        goto case 21;
+                    case 21:
+                        Log.D("Upgrading from version 21.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events ADD event_finish_max_occurances INTEGER NOT NULL DEFAULT 1;" +
+                            "ALTER TABLE events ADD event_finish_ignore_within INTEGER NOT NULL DEFAULT 0;" +
+                            "ALTER TABLE events ADD event_start_window INTEGER NOT NULL DEFAULT -1;" +
+                            "UPDATE settings SET version=22 WHERE version=21;";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();
@@ -995,7 +1031,8 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_shirt_price"]), Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]), Convert.ToInt32(reader["event_division_specific_segments"]),
                     Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString(), Convert.ToInt32(reader["event_allow_early_start"]),
-                    Convert.ToInt32(reader["event_early_start_difference"])));
+                    Convert.ToInt32(reader["event_early_start_difference"]), Convert.ToInt32(reader["event_finish_max_occurances"]),
+                    Convert.ToInt32(reader["event_finish_ignore_within"]), Convert.ToInt32(reader["event_start_window"])));
             }
             return output;
         }
@@ -1045,7 +1082,8 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_shirt_price"]), Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]), Convert.ToInt32(reader["event_division_specific_segments"]),
                     Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString(), Convert.ToInt32(reader["event_allow_early_start"]),
-                    Convert.ToInt32(reader["event_early_start_difference"]));
+                    Convert.ToInt32(reader["event_early_start_difference"]), Convert.ToInt32(reader["event_finish_max_occurances"]),
+                    Convert.ToInt32(reader["event_finish_ignore_within"]), Convert.ToInt32(reader["event_start_window"]));
             }
             return output;
         }
@@ -1134,6 +1172,31 @@ namespace EventDirector
                 new SQLiteParameter("@registration", registration),
                 new SQLiteParameter("@id", eventId),
                 new SQLiteParameter("@kiosk", kiosk)
+            });
+            command.ExecuteNonQuery();
+        }
+
+        public void SetStartWindow(Event anEvent)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE events SET event_start_window=@window WHERE event_id=@event;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@window", anEvent.StartWindow),
+                new SQLiteParameter("@event", anEvent.Identifier)
+            });
+            command.ExecuteNonQuery();
+        }
+
+        public void SetFinishOptions(Event anEvent)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE events SET event_finish_max_occurances=@occ, event_finish_ignore_within=@ignore WHERE event_id=@event;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@occ", anEvent.FinishMaxOccurances),
+                new SQLiteParameter("@ignore", anEvent.FinishIgnoreWithin),
+                new SQLiteParameter("@event", anEvent.Identifier)
             });
             command.ExecuteNonQuery();
         }
