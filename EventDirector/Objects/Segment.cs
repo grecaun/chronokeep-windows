@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    public class Segment
+    public class Segment : IEquatable<Segment>, IComparable<Segment>
     {
         private int id, event_id, division_id, location_id, occurance;
         private double distance_segment, distance_cumulative;
         private int distance_unit;
         private string name;
 
-        public Segment(int e, int d, int l, int occ, int dseg, int dcum, int dunit, string n)
+        public Segment(int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n)
         {
             this.id = -1;
             this.event_id = e;
@@ -26,7 +26,7 @@ namespace EventDirector
             this.name = n;
         }
 
-        public Segment(int id, int e, int d, int l, int occ, int dseg, int dcum, int dunit, string n)
+        public Segment(int id, int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n)
         {
             this.id = id;
             this.event_id = e;
@@ -48,5 +48,28 @@ namespace EventDirector
         public int LocationId { get => location_id; set => location_id = value; }
         public int Occurance { get => occurance; set => occurance = value; }
         public int Identifier { get => id; set => id = value; }
+
+        public int CompareTo(Segment other)
+        {
+            if (other == null) return 1;
+            if (this.event_id != other.event_id)
+            {
+                return this.event_id.CompareTo(other.event_id);
+            } 
+            if (other.division_id != this.division_id)
+            {
+                return this.division_id.CompareTo(other.division_id);
+            }
+            if (this.location_id != other.location_id)
+            {
+                return this.location_id.CompareTo(other.location_id);
+            }
+            return this.occurance.CompareTo(other.occurance);
+        }
+
+        public bool Equals(Segment other)
+        {
+            return this.event_id == other.event_id && this.division_id == other.division_id && this.location_id == other.location_id && this.occurance == other.occurance; 
+        }
     }
 }

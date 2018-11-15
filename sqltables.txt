@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS segments
       event_id INTEGER NOT NULL REFERENCES events(event_id),
       division_id INTEGER DEFAULT -1,
       location_id INTEGER DEFAULT -1,
-      occurance INTEGER DEFAULT 1,
+      location_occurance INTEGER DEFAULT 1,
       name VARCHAR DEFAULT '',
       distance_segment DECIMAL (10,2) DEFAULT 0.0,
       distance_cumulative DECIMAL (10,2) DEFAULT 0.0,

@@ -12,7 +12,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 22;
+        private readonly int version = 24;
         SQLiteConnection connection;
         readonly string connectionInfo;
 
@@ -177,6 +177,7 @@ namespace EventDirector
                     "UNIQUE (eventspecific_id, name) ON CONFLICT IGNORE" +
                     ")");
                 queries.Add("CREATE TABLE IF NOT EXISTS segments (" +
+                    "segment_id INTEGER PRIMARY KEY," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "division_id INTEGER DEFAULT -1," +
                     "location_id INTEGER DEFAULT -1," +
@@ -294,6 +295,12 @@ namespace EventDirector
                     "bib_group_number INTEGER NOT NULL DEFAULT -1," +
                     "bib INTEGER NOT NULL," +
                     "UNIQUE (event_id, bib) ON CONFLICT REPLACE);");
+                queries.Add("CREATE TABLE IF NOT EXISTS age_groups (" +
+                    "group_id INTEGER PRIMARY KEY," +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "division_id INTEGER NOT NULL DEFAULT -1," +
+                    "start_age INTEGER NOT NULL," +
+                    "end_age INTEGER NOT NULL);");
 
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -815,6 +822,36 @@ namespace EventDirector
                             "ALTER TABLE events ADD event_start_window INTEGER NOT NULL DEFAULT -1;" +
                             "UPDATE settings SET version=22 WHERE version=21;";
                         command.ExecuteNonQuery();
+                        goto case 22;
+                    case 22:
+                        Log.D("Upgrading from version 22.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "DROP TABLE segments;" +
+                            "CREATE TABLE IF NOT EXISTS segments(" +
+                            "segment_id INTEGER PRIMARY KEY," +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                            "division_id INTEGER DEFAULT -1," +
+                            "location_id INTEGER DEFAULT -1," +
+                            "location_occurance INTEGER DEFAULT 1," +
+                            "name VARCHAR DEFAULT ''," +
+                            "distance_segment DECIMAL (10,2) DEFAULT 0.0," +
+                            "distance_cumulative DECIMAL (10,2) DEFAULT 0.0," +
+                            "distance_unit INTEGER DEFAULT 0," +
+                            "UNIQUE (event_id, division_id, location_id, location_occurance) ON CONFLICT IGNORE);" +
+                            "UPDATE settings SET version=23 WHERE version=22;";
+                        command.ExecuteNonQuery();
+                        goto case 23;
+                    case 23:
+                        Log.D("Upgrading from version 23.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE TABLE IF NOT EXISTS age_groups (" +
+                            "group_id INTEGER PRIMARY KEY," +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                            "division_id INTEGER NOT NULL DEFAULT -1," +
+                            "start_age INTEGER NOT NULL," +
+                            "end_age INTEGER NOT NULL);" +
+                            "UPDATE settings SET version=24 WHERE version=23;";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();
@@ -943,6 +980,29 @@ namespace EventDirector
             if (reader.Read())
             {
                 output = Convert.ToInt32(reader["division_id"]);
+            }
+            return output;
+        }
+
+        public Division GetDivision(int divId)
+        {
+            SQLiteCommand command = new SQLiteCommand
+            {
+                CommandText = "SELECT * FROM divisions WHERE division_id=@div"
+            };
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@div", divId)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            Division output = null;
+            if (reader.Read())
+            {
+                output = new Division(Convert.ToInt32(reader["division_id"]), reader["division_name"].ToString(),
+                    Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_cost"]),
+                    Convert.ToDouble(reader["division_distance"]), Convert.ToInt32(reader["division_distance_unit"]),
+                    Convert.ToInt32(reader["division_finish_location"]), Convert.ToInt32(reader["division_finish_occurance"]),
+                    Convert.ToInt32(reader["division_start_location"]), Convert.ToInt32(reader["division_start_within"]));
             }
             return output;
         }
@@ -1724,7 +1784,7 @@ namespace EventDirector
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "INSERT INTO segments (event_id, division_id, location_id, occurance, name, distance_segment, " +
+                command.CommandText = "INSERT INTO segments (event_id, division_id, location_id, location_occurance, name, distance_segment, " +
                     "distance_cumulative, distance_unit) " +
                     "VALUES (@event,@division,@location,@occurance,@name,@dseg,@dcum,@dunit)";
                 command.Parameters.AddRange(new SQLiteParameter[] {
@@ -1767,7 +1827,7 @@ namespace EventDirector
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
                 command.CommandText = "UPDATE segments SET event_id=@event, division_id=@division, location_id=@location, " +
-                    "occurance=@occurance, name=@name, distance_segment=@dseg, distance_cumulative=@dcum, distance_unit=@dunit " +
+                    "location_occurance=@occurance, name=@name, distance_segment=@dseg, distance_cumulative=@dcum, distance_unit=@dunit " +
                     "WHERE segment_id=@id";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event",seg.EventId),
@@ -1807,8 +1867,8 @@ namespace EventDirector
             while (reader.Read())
             {
                 output.Add(new Segment(Convert.ToInt32(reader["segment_id"]), Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_id"]),
-                    Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["occurance"]), Convert.ToInt32(reader["distance_segment"]),
-                    Convert.ToInt32(reader["distance_cumulative"]), Convert.ToInt32(reader["distance_unit"]), reader["name"].ToString()));
+                    Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["location_occurance"]), Convert.ToDouble(reader["distance_segment"]),
+                    Convert.ToDouble(reader["distance_cumulative"]), Convert.ToInt32(reader["distance_unit"]), reader["name"].ToString()));
             }
             return output;
         }
@@ -2760,6 +2820,98 @@ namespace EventDirector
                 }
                 transaction.Commit();
             }
+        }
+
+        /*
+         * Age Group Functions
+         */
+        public void AddAgeGroup(AgeGroup group)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "INSERT INTO age_groups (event_id, division_id, start_age, end_age)" +
+                    " VALUES (@event, @division, @start, @end);";
+                command.Parameters.AddRange(new SQLiteParameter[]
+                {
+                    new SQLiteParameter("@event", group.EventId),
+                    new SQLiteParameter("@division", group.DivisionId),
+                    new SQLiteParameter("@start", group.StartAge),
+                    new SQLiteParameter("@end", group.EndAge)
+                });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public void UpdateAgeGroup(AgeGroup group)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "UPDATE age_groups SET event_id=@event, division_id=@division, " +
+                    "start_age=@start, end_age=@end WHERE group_id=@group;";
+                command.Parameters.AddRange(new SQLiteParameter[]
+                {
+                    new SQLiteParameter("@event", group.EventId),
+                    new SQLiteParameter("@division", group.DivisionId),
+                    new SQLiteParameter("@start", group.StartAge),
+                    new SQLiteParameter("@end", group.EndAge),
+                    new SQLiteParameter("@group", group.GroupId)
+                });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public void RemoveAgeGroup(AgeGroup group)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM age_groups WHERE group_id=@group;";
+                command.Parameters.AddRange(new SQLiteParameter[]
+                {
+                    new SQLiteParameter("@group", group.GroupId)
+                });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public void RemoveAgeGroups(int eventId, int divisionId)
+        {
+
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM age_groups WHERE event_id=@event AND division_id=@division;";
+                command.Parameters.AddRange(new SQLiteParameter[]
+                {
+                    new SQLiteParameter("@event", eventId),
+                    new SQLiteParameter("@division", divisionId),
+                });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
+        public List<AgeGroup> GetAgeGroups(int eventId)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM age_groups WHERE event_id=@event;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                    new SQLiteParameter("@event", eventId)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            List<AgeGroup> output = new List<AgeGroup>();
+            while (reader.Read())
+            {
+                output.Add(new AgeGroup(Convert.ToInt32(reader["group_id"]), Convert.ToInt32(reader["event_id"]),
+                    Convert.ToInt32(reader["division_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"])));
+            }
+            return output;
         }
     }
 }

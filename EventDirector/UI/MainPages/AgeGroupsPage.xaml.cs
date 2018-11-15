@@ -1,7 +1,10 @@
-﻿using System;
+﻿using EventDirector.Interfaces;
+using EventDirector.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,11 +21,304 @@ namespace EventDirector.UI.MainPages
     /// <summary>
     /// Interaction logic for AgeGroupsPage.xaml
     /// </summary>
-    public partial class AgeGroupsPage : Page
+    public partial class AgeGroupsPage : Page, IMainPage
     {
-        public AgeGroupsPage()
+        private INewMainWindow mWindow;
+        private IDBInterface database;
+        private Event theEvent;
+
+        public AgeGroupsPage(INewMainWindow mWindow, IDBInterface database)
         {
             InitializeComponent();
+            this.mWindow = mWindow;
+            this.database = database;
+            Update();
+        }
+
+        private void Divisions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Log.D("Division changed.");
+            UpdateAgeGroupsList();
+        }
+
+        public void Update()
+        {
+            theEvent = database.GetCurrentEvent();
+            if (theEvent.CommonAgeGroups == 1)
+            {
+                DivisionRow.Height = new GridLength(0);
+            }
+            else
+            {
+                DivisionRow.Height = new GridLength(55);
+                UpdateDivisionsBox();
+            }
+            UpdateAgeGroupsList();
+        }
+
+        private void UpdateDivisionsBox()
+        {
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                return;
+            }
+            Divisions.Items.Clear();
+            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+            foreach (Division d in divisions)
+            {
+                Divisions.Items.Add(new ComboBoxItem()
+                {
+                    Content = d.Name,
+                    Uid = d.Identifier.ToString()
+                });
+            }
+            Divisions.SelectedIndex = 0;
+        }
+
+        private void UpdateAgeGroupsList()
+        {
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                return;
+            }
+            AgeGroupsBox.Items.Clear();
+            AgeGroupsBox.Items.Add(new ALabel());
+            List<AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier);
+            ageGroups.Sort();
+            foreach (AgeGroup group in ageGroups)
+            {
+                AgeGroupsBox.Items.Add(new AAgeGroup(this, group));
+            }
+        }
+
+        private void Add_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Adding group.");
+            int divId = -1;
+            if (theEvent.CommonAgeGroups != 1)
+            {
+                divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
+            }
+            AgeGroupsBox.Items.Add(new AAgeGroup(this, new AgeGroup(theEvent.Identifier, divId, 0, 0)));
+        }
+
+        private void AddDefault_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Add default age groups button clicked.");
+            int divId = -1;
+            if (theEvent.CommonAgeGroups != 1)
+            {
+                divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
+            }
+            database.RemoveAgeGroups(theEvent.Identifier, divId);
+            int increment;
+            switch (DefaultGroupsBox.SelectedIndex)
+            {
+                case 0:
+                    increment = 10;
+                    break;
+                case 1:
+                    increment = 5;
+                    break;
+                default:
+                    increment = 99;
+                    break;
+            }
+            if (DefaultGroupsBox.SelectedIndex != 2)
+            {
+                for (int i = 0; i < 100; i += increment)
+                {
+                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, i, i + increment - 1));
+                }
+            }
+            else
+            {
+                database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 0, 39));
+                database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 40, 59));
+                database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 60, 99));
+            }
+            UpdateAgeGroupsList();
+        }
+
+        private void Update_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Update age groups button clicked.");
+            List<AgeGroup> ageGroups = new List<AgeGroup>();
+            List<AgeGroup> toAdd = new List<AgeGroup>();
+            foreach (ListBoxItem aAge in AgeGroupsBox.Items)
+            {
+                if (aAge is AAgeGroup)
+                {
+                    ageGroups.Add(((AAgeGroup)aAge).GetAgeGroup());
+                }
+            }
+            ageGroups.Sort();
+            bool conflict = false;
+            AgeGroup previous = null;
+            foreach (AgeGroup current in ageGroups)
+            {
+                if (previous != null)
+                {
+                    if (previous.EndAge >= current.StartAge)
+                    {
+                        conflict = true;
+                        break;
+                    }
+                    else if (previous.EndAge != current.StartAge - 1)
+                    {
+                        toAdd.Add(new AgeGroup(current.EventId, current.DivisionId, previous.EndAge + 1, current.StartAge - 1));
+                    }
+                }
+                else if (current.StartAge > 1)
+                {
+                    toAdd.Add(new AgeGroup(current.EventId, current.DivisionId, 0, current.StartAge - 1));
+                }
+                previous = current;
+            }
+            if (conflict)
+            {
+                MessageBox.Show("There is a conflict in the age groups. Please fix this.");
+                return;
+            }
+            ageGroups.AddRange(toAdd);
+            int divId = -1;
+            if (theEvent.CommonAgeGroups != 1)
+            {
+                divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
+            }
+            database.RemoveAgeGroups(theEvent.Identifier, divId);
+            foreach (AgeGroup age in ageGroups)
+            {
+                database.AddAgeGroup(age);
+            }
+            UpdateAgeGroupsList();
+        }
+
+        private void RemoveAgeGroup(AAgeGroup group)
+        {
+            Log.D("Removing Age Group from view.");
+            AgeGroupsBox.Items.Remove(group);
+        }
+
+        private class ALabel : ListBoxItem
+        {
+            public ALabel()
+            {
+                Grid theGrid = new Grid()
+                {
+                    MaxWidth = 400
+                };
+                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                Label l = new Label()
+                {
+                    Content = "Start Age",
+                    FontSize = 16,
+                    Margin = new Thickness(10, 10, 10, 10),
+                    HorizontalContentAlignment = HorizontalAlignment.Center
+                };
+                theGrid.Children.Add(l);
+                Grid.SetColumn(l, 0);
+                l = new Label()
+                {
+                    Content = "End Age",
+                    FontSize = 16,
+                    Margin = new Thickness(10, 10, 10, 10),
+                    HorizontalContentAlignment = HorizontalAlignment.Center
+                };
+                theGrid.Children.Add(l);
+                Grid.SetColumn(l, 1);
+                this.Content = theGrid;
+                this.IsTabStop = false;
+            }
+        }
+
+        private class AAgeGroup : ListBoxItem
+        {
+            public TextBox StartAge { get; private set; }
+            public TextBox EndAge { get; private set; }
+            public Button Remove { get; private set; }
+            public Button Update { get; private set; }
+
+            private AgeGroupsPage page;
+            public AgeGroup MyGroup { get; private set; }
+
+            private readonly Regex allowedChars = new Regex("[^0-9]+");
+
+            public AAgeGroup(AgeGroupsPage page, AgeGroup group)
+            {
+                this.page = page;
+                this.MyGroup = group;
+                Grid theGrid = new Grid()
+                {
+                    MaxWidth = 400
+                };
+                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                StartAge = new TextBox()
+                {
+                    Text = group.StartAge.ToString(),
+                    FontSize = 16,
+                    Margin = new Thickness(10, 10, 10, 10),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                StartAge.GotFocus += new RoutedEventHandler(this.SelectAll);
+                StartAge.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                theGrid.Children.Add(StartAge);
+                Grid.SetColumn(StartAge, 0);
+                EndAge = new TextBox()
+                {
+                    Text = group.EndAge.ToString(),
+                    FontSize = 16,
+                    Margin = new Thickness(10, 10, 10, 10),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                EndAge.GotFocus += new RoutedEventHandler(this.SelectAll);
+                EndAge.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                theGrid.Children.Add(EndAge);
+                Grid.SetColumn(EndAge, 1);
+                Remove = new Button()
+                {
+                    Content = "Remove",
+                    FontSize = 16,
+                    Height = 35,
+                    Margin = new Thickness(10, 10, 10, 10)
+                };
+                Remove.Click += new RoutedEventHandler(this.Remove_Click);
+                theGrid.Children.Add(Remove);
+                Grid.SetColumn(Remove, 2);
+                this.Content = theGrid;
+                this.IsTabStop = false;
+            }
+
+            private void NumberValidation(object sender, TextCompositionEventArgs e)
+            {
+                e.Handled = allowedChars.IsMatch(e.Text);
+            }
+
+            private void Remove_Click(object sender, RoutedEventArgs e)
+            {
+                Log.D("Removing.");
+                page.RemoveAgeGroup(this);
+            }
+
+            public AgeGroup GetAgeGroup()
+            {
+                int start = MyGroup.StartAge, end = MyGroup.EndAge;
+                int.TryParse(StartAge.Text, out start);
+                int.TryParse(EndAge.Text, out end);
+                MyGroup.StartAge = start;
+                MyGroup.EndAge = end;
+                return MyGroup;
+            }
+
+            private void SelectAll(object sender, RoutedEventArgs e)
+            {
+                TextBox src = (TextBox)e.OriginalSource;
+                src.SelectAll();
+            }
         }
     }
 }

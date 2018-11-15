@@ -9,6 +9,38 @@
       Title="AgeGroupsPage">
 
     <Grid>
-        
+        <Label Name="nothing" Content="Event not set. Please choose an event before selecting this option." Visibility="Collapsed" />
+        <Grid Name="everything">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0" Name="DivisionRow"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="55"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="150"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox Name="Divisions" FontSize="16" Margin="10,10,10,10" Height="35" Width="250" SelectionChanged="Divisions_SelectionChanged" VerticalContentAlignment="Center"/>
+            <ListBox Name="AgeGroupsBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" Grid.Row="1">
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+            <DockPanel LastChildFill="False" Grid.Row="2" HorizontalAlignment="Center">
+                <Button Name="Add" Content="Add Group" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click"/>
+                <Button Name="Save" Content="Save" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Update_Click"/>
+            </DockPanel>
+            <StackPanel Grid.Row="1" Grid.Column="1">
+                <ComboBox Name="DefaultGroupsBox" Height="35" FontSize="16" VerticalContentAlignment="Center" Margin="10,100,10,10" SelectedIndex="0" HorizontalContentAlignment="Center">
+                    <ComboBoxItem Content="10 Years" Uid="1"/>
+                    <ComboBoxItem Content="5 Years" Uid="2"/>
+                    <ComboBoxItem Content="Under 40, Masters, Grand Masters" Uid="3"/>
+                </ComboBox>
+                <Button FontSize="16" Height="35" Content="Change" Name="AddDefault" Click="AddDefault_Click" Margin="10,0,10,0"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

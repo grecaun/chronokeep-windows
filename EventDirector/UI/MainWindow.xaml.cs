@@ -169,9 +169,9 @@ namespace EventDirector.UI
                 Log.D("Segments page already displayed.");
                 return;
             }
-            //TheFrame.NavigationService.RemoveBackEntry();
-            //page = new SegmentsPage(this, database);
-            //TheFrame.Content = page;
+            TheFrame.NavigationService.RemoveBackEntry();
+            page = new SegmentsPage(this, database);
+            TheFrame.Content = page;
         }
 
         private void AgegroupsButton_Click(object sender, RoutedEventArgs e)
@@ -182,9 +182,9 @@ namespace EventDirector.UI
                 Log.D("Age groups page already displayed.");
                 return;
             }
-            //TheFrame.NavigationService.RemoveBackEntry();
-            //page = new AgeGroupsPage(this, database);
-            //TheFrame.Content = page;
+            TheFrame.NavigationService.RemoveBackEntry();
+            page = new AgeGroupsPage(this, database);
+            TheFrame.Content = page;
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -319,7 +319,7 @@ namespace EventDirector.UI
                 participantsButton.IsEnabled = true;
                 bibsButton.IsEnabled = true;
                 chipsButton.IsEnabled = true;
-                reportsButton.IsEnabled = true;
+                reportsButton.IsEnabled = false;  // REPORTS DISABLED FOR NOW
                 divisionsButton.IsEnabled = true;
                 locationsButton.IsEnabled = true;
                 segmentsButton.IsEnabled = true;

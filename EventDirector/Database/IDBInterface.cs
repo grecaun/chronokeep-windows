@@ -42,6 +42,7 @@ namespace EventDirector
         void UpdateDivision(Division div);
         int GetDivisionID(Division div);
         List<Division> GetDivisions(int eventId);
+        Division GetDivision(int divId);
 
         // Timing Location Functions
         void AddTimingLocation(TimingLocation tp);
@@ -129,5 +130,12 @@ namespace EventDirector
         void AddChipRead(ChipRead read);
         List<ChipRead> GetChipReads();
         List<ChipRead> GetChipReads(int eventId);
+
+        // Age Group Functions
+        void AddAgeGroup(AgeGroup group);
+        void UpdateAgeGroup(AgeGroup group);
+        void RemoveAgeGroup(AgeGroup group);
+        void RemoveAgeGroups(int eventId, int divisionId);
+        List<AgeGroup> GetAgeGroups(int eventId);
     }
 }

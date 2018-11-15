@@ -39,6 +39,10 @@ namespace EventDirector.UI.MainPages
         public void Update()
         {
             this.theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                return;
+            }
             LocationsBox.Items.Clear();
             LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.DefaultTiming.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow)));
             LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurances, theEvent.FinishIgnoreWithin)));

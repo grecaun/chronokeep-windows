@@ -206,6 +206,7 @@
     <Compile Include="Interfaces\IMainPage.cs" />
     <Compile Include="Interfaces\INewMainWindow.cs" />
     <Compile Include="Interfaces\IWindowCallback.cs" />
+    <Compile Include="Objects\AgeGroup.cs" />
     <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
     <Compile Include="Objects\AvailableBib.cs" />
