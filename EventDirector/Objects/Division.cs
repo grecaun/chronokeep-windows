@@ -11,7 +11,8 @@ namespace EventDirector
         private String name;
         private int identifier, eventIdentifier, cost;
         private double distance;
-        private int distance_unit = 0, finish_location = -1, finish_occurance = 1, start_location=-2, start_within = 5;
+        private int distance_unit = Constants.Distances.MILES, finish_location = Constants.DefaultTiming.LOCATION_FINISH, finish_occurance = 1, start_location = Constants.DefaultTiming.LOCATION_START, start_within = 5;
+        private int wave = 1, bib_group_number = -1, start_offset_seconds = 0, start_offset_milliseconds = 0;
 
         public Division() { }
 
@@ -43,7 +44,7 @@ namespace EventDirector
             this.start_within = startwith;
         }
 
-        public Division(int identifier, string name, int eventIdentifier, int cost, double distance, int dunit, int finloc, int finocc, int startloc, int startwith)
+        public Division(int identifier, string name, int eventIdentifier, int cost, double distance, int dunit, int finloc, int finocc, int startloc, int startwith, int wave, int bgn, int soffsec, int soffmill)
         {
             this.identifier = identifier;
             this.name = name;
@@ -55,6 +56,10 @@ namespace EventDirector
             this.finish_occurance = finocc;
             this.start_location = startloc;
             this.start_within = startwith;
+            this.wave = wave;
+            this.bib_group_number = bgn;
+            this.start_offset_seconds = soffsec;
+            this.start_offset_milliseconds = soffmill;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -67,6 +72,10 @@ namespace EventDirector
         public int FinishOccurance { get => finish_occurance; set => finish_occurance = value; }
         public int StartLocation { get => start_location; set => start_location = value; }
         public int StartWithin { get => start_within; set => start_within = value; }
+        public int Wave { get => wave; set => wave = value; }
+        public int BibGroupNumber { get => bib_group_number; set => bib_group_number = value; }
+        public int StartOffsetSeconds { get => start_offset_seconds; set => start_offset_seconds = value; }
+        public int StartOffsetMilliseconds { get => start_offset_milliseconds; set => start_offset_milliseconds = value; }
 
         public int CompareTo(Division other)
         {

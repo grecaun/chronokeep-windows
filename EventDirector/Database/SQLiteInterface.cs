@@ -867,8 +867,9 @@ namespace EventDirector
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO divisions (division_name, event_id, division_cost, division_distance, division_distance_unit," +
-                "division_start_location, division_start_within, division_finish_location, division_finish_occurance) " +
-                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc)";
+                "division_start_location, division_start_within, division_finish_location, division_finish_occurance, division_wave, bib_group_number," +
+                "division_start_offset_seconds, division_start_offset_milliseconds) " +
+                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@bgn,@soffsec,@soffmill)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", div.Name),
                 new SQLiteParameter("@event_id", div.EventIdentifier),
@@ -878,7 +879,11 @@ namespace EventDirector
                 new SQLiteParameter("@startloc", div.StartLocation),
                 new SQLiteParameter("@startwithin", div.StartWithin),
                 new SQLiteParameter("@finishloc", div.FinishLocation),
-                new SQLiteParameter("@finishocc", div.FinishOccurance)
+                new SQLiteParameter("@finishocc", div.FinishOccurance),
+                new SQLiteParameter("@wave", div.Wave),
+                new SQLiteParameter("@bgn", div.BibGroupNumber),
+                new SQLiteParameter("@soffsec", div.StartOffsetSeconds),
+                new SQLiteParameter("@soffmill", div.StartOffsetMilliseconds),
             });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
@@ -905,7 +910,8 @@ namespace EventDirector
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE divisions SET division_name=@name, event_id=@event, division_cost=@cost, division_distance=@distance," +
                 "division_distance_unit=@unit, division_start_location=@startloc, division_start_within=@within, division_finish_location=@finishloc," +
-                "division_finish_occurance=@occurance WHERE division_id=@id";
+                "division_finish_occurance=@occurance, division_wave=@wave, bib_group_number=@bgn, division_start_offset_seconds=@soffsec, " +
+                "division_start_offset_milliseconds=@soffmill WHERE division_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", div.Name),
                 new SQLiteParameter("@event", div.EventIdentifier),
@@ -916,6 +922,10 @@ namespace EventDirector
                 new SQLiteParameter("@within", div.StartWithin),
                 new SQLiteParameter("@finishloc", div.FinishLocation),
                 new SQLiteParameter("@occurance", div.FinishOccurance),
+                new SQLiteParameter("@wave", div.Wave),
+                new SQLiteParameter("@bgn", div.BibGroupNumber),
+                new SQLiteParameter("@soffsec", div.StartOffsetSeconds),
+                new SQLiteParameter("@soffmill", div.StartOffsetMilliseconds),
                 new SQLiteParameter("@id", div.Identifier) });
             command.ExecuteNonQuery();
         }
@@ -932,7 +942,9 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_cost"]), Convert.ToDouble(reader["division_distance"]),
                     Convert.ToInt32(reader["division_distance_unit"]), Convert.ToInt32(reader["division_finish_location"]),
                     Convert.ToInt32(reader["division_finish_occurance"]), Convert.ToInt32(reader["division_start_location"]),
-                    Convert.ToInt32(reader["division_start_within"])));
+                    Convert.ToInt32(reader["division_start_within"]),
+                    Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
+                    Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"])));
             }
             return output;
         }
@@ -961,7 +973,9 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_cost"]),
                     Convert.ToDouble(reader["division_distance"]), Convert.ToInt32(reader["division_distance_unit"]),
                     Convert.ToInt32(reader["division_finish_location"]), Convert.ToInt32(reader["division_finish_occurance"]),
-                    Convert.ToInt32(reader["division_start_location"]), Convert.ToInt32(reader["division_start_within"])));
+                    Convert.ToInt32(reader["division_start_location"]), Convert.ToInt32(reader["division_start_within"]),
+                    Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
+                    Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"])));
             }
             return output;
         }
@@ -1002,7 +1016,9 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_cost"]),
                     Convert.ToDouble(reader["division_distance"]), Convert.ToInt32(reader["division_distance_unit"]),
                     Convert.ToInt32(reader["division_finish_location"]), Convert.ToInt32(reader["division_finish_occurance"]),
-                    Convert.ToInt32(reader["division_start_location"]), Convert.ToInt32(reader["division_start_within"]));
+                    Convert.ToInt32(reader["division_start_location"]), Convert.ToInt32(reader["division_start_within"]),
+                    Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
+                    Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"]));
             }
             return output;
         }

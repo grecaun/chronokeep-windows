@@ -58,9 +58,25 @@ namespace EventDirector.UI.MainPages
             int divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
             segments.Sort();
-            foreach (Segment s in segments)
+            if (theEvent.DivisionSpecificSegments == 1)
             {
-                if (s.DivisionId == divId)
+                foreach (Segment s in segments)
+                {
+                    if (s.DivisionId == divId)
+                    {
+                        SegmentsBox.Items.Add(new ASegment(this, s, locations, theEvent.CommonStartFinish == 1));
+                        if (s.LocationId == Constants.DefaultTiming.LOCATION_FINISH || s.LocationId == Constants.DefaultTiming.LOCATION_START)
+                        {
+                            finish_occurances = s.Occurance > finish_occurances ? s.Occurance : finish_occurances;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                DivisionRow.Height = new GridLength(0);
+                Divisions.IsEnabled = false;
+                foreach (Segment s in segments)
                 {
                     SegmentsBox.Items.Add(new ASegment(this, s, locations, theEvent.CommonStartFinish == 1));
                     if (s.LocationId == Constants.DefaultTiming.LOCATION_FINISH || s.LocationId == Constants.DefaultTiming.LOCATION_START)
@@ -99,10 +115,13 @@ namespace EventDirector.UI.MainPages
             UpdateSegmentsList();
         }
 
-        private void UpdateSegment(Segment mySegment)
+        private void UpdateBtn_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Updating segment.");
-            database.UpdateSegment(mySegment);
+            foreach (ASegment segItem in SegmentsBox.Items)
+            {
+                segItem.UpdateSegment();
+                database.UpdateSegment(segItem.mySegment);
+            }
             UpdateSegmentsList();
         }
 
@@ -127,11 +146,10 @@ namespace EventDirector.UI.MainPages
             public TextBox SegDistance { get; private set; }
             public TextBox CumDistance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
-            public Button Update { get; private set; }
             public Button Remove { get; private set; }
 
             readonly SegmentsPage page;
-            Segment mySegment;
+            public Segment mySegment;
 
             private readonly Regex allowedChars = new Regex("[^0-9.]+");
             private readonly Regex allowedNums = new Regex("[^0-9]+");
@@ -338,34 +356,20 @@ namespace EventDirector.UI.MainPages
                     bottomDock.Children.Add(DistanceUnit);
                     thePanel.Children.Add(bottomDock);
                 }
-                Grid buttons = new Grid();
-                buttons.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                buttons.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                Update = new Button()
-                {
-                    Content = "Update",
-                    FontSize = 16,
-                    Height = 35,
-                    Margin = new Thickness(10, 10, 10, 10)
-                };
-                Update.Click += new RoutedEventHandler(this.Save_Click);
-                buttons.Children.Add(Update);
-                Grid.SetColumn(Update, 0);
                 Remove = new Button()
                 {
                     Content = "Remove",
                     FontSize = 16,
                     Height = 35,
+                    Width = 150,
                     Margin = new Thickness(10, 10, 10, 10)
                 };
                 Remove.Click += new RoutedEventHandler(this.Remove_Click);
-                buttons.Children.Add(Remove);
-                Grid.SetColumn(Remove, 1);
                 if (mySegment.Identifier == Constants.DefaultTiming.SEGMENT_FINISH)
                 {
                     Remove.IsEnabled = false;
                 }
-                thePanel.Children.Add(buttons);
+                thePanel.Children.Add(Remove);
             }
 
             private void Remove_Click(object sender, EventArgs e)
@@ -374,7 +378,7 @@ namespace EventDirector.UI.MainPages
                 this.page.RemoveSegment(mySegment);
             }
 
-            private void Save_Click(object sender, EventArgs e)
+            public void UpdateSegment()
             {
                 Log.D("Save clicked.");
                 try
@@ -391,7 +395,6 @@ namespace EventDirector.UI.MainPages
                     MessageBox.Show("Error with values given.");
                     return;
                 }
-                this.page.UpdateSegment(mySegment);
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)

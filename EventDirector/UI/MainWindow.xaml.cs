@@ -143,9 +143,9 @@ namespace EventDirector.UI
             {
                 Log.D("Divisions page already displayed.");
             }
-            //TheFrame.NavigationService.RemoveBackEntry();
-            //page = new DivisionsPage(this, database);
-            //TheFrame.Content = page;
+            TheFrame.NavigationService.RemoveBackEntry();
+            page = new DivisionsPage(this, database);
+            TheFrame.Content = page;
         }
 
         private void LocationsButton_Click(object sender, RoutedEventArgs e)

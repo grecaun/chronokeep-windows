@@ -12,7 +12,7 @@
         <Label Name="nothing" Content="Event not set. Please choose an event before selecting this option." Visibility="Collapsed" />
         <Grid Name="everything">
             <Grid.RowDefinitions>
-                <RowDefinition Height="55"/>
+                <RowDefinition Height="55" Name="DivisionRow"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
@@ -25,7 +25,10 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
-            <Button Name="Add" Content="Add Segment" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click" Grid.Row="2" />
+            <DockPanel HorizontalAlignment="Center" Grid.Row="2">
+                <Button Name="Add" Content="Add Segment" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click" />
+                <Button Name="UpdateBtn" Content="Update Segments" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="UpdateBtn_Click" />
+            </DockPanel>
         </Grid>
     </Grid>
 </Page>

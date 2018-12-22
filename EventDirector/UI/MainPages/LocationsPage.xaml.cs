@@ -77,6 +77,17 @@ namespace EventDirector.UI.MainPages
             Update();
         }
 
+        public void Update_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Update all clicked.");
+            foreach (ALocation locItem in LocationsBox.Items)
+            {
+                locItem.UpdateLocation();
+                UpdateLocation(locItem.myLocation);
+            }
+            Update();
+        }
+
         internal void UpdateLocation(TimingLocation location)
         {
             Log.D("Updating location information.");
@@ -95,7 +106,6 @@ namespace EventDirector.UI.MainPages
             {
                 database.UpdateTimingLocation(location);
             }
-            Update();
         }
 
         private class ALocation : ListBoxItem
@@ -103,12 +113,11 @@ namespace EventDirector.UI.MainPages
             public TextBox LocationName { get; private set; }
             public TextBox MaxOccurances { get; private set; }
             public MaskedTextBox IgnoreWithin { get; private set; }
-            public Button Update { get; private set; }
             public Button Remove { get; private set; }
 
             private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}";
             readonly LocationsPage page;
-            TimingLocation myLocation;
+            public TimingLocation myLocation;
 
             private readonly Regex allowedChars = new Regex("[^0-9]+");
 
@@ -206,24 +215,12 @@ namespace EventDirector.UI.MainPages
                     Grid.SetColumnSpan(ignPanel, 2);
                 }
                 thePanel.Children.Add(settingsGrid);
-                settingsGrid = new Grid();
-                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                Update = new Button()
-                {
-                    Content = "Update",
-                    FontSize = 16,
-                    Height = 35,
-                    Margin = new Thickness(10, 10, 10, 10)
-                };
-                Update.Click += new RoutedEventHandler(this.Save_Click);
-                settingsGrid.Children.Add(Update);
-                Grid.SetColumn(Update, 0);
                 Remove = new Button()
                 {
                     Content = "Remove",
                     FontSize = 16,
                     Height = 35,
+                    Width = 150,
                     Margin = new Thickness(10,10,10,10)
                 };
                 if (myLocation.Identifier == Constants.DefaultTiming.LOCATION_FINISH 
@@ -231,11 +228,10 @@ namespace EventDirector.UI.MainPages
                 {
                     LocationName.IsEnabled = false;
                     Remove.IsEnabled = false;
+                    Remove.Visibility = Visibility.Collapsed;
                 }
                 Remove.Click += new RoutedEventHandler(this.Remove_Click);
-                settingsGrid.Children.Add(Remove);
-                Grid.SetColumn(Remove, 1);
-                thePanel.Children.Add(settingsGrid);
+                thePanel.Children.Add(Remove);
             }
 
             private void Remove_Click(object sender, EventArgs e)
@@ -244,9 +240,9 @@ namespace EventDirector.UI.MainPages
                 this.page.RemoveLocation(myLocation);
             }
 
-            private void Save_Click(object sender, EventArgs e)
+            public void UpdateLocation()
             {
-                Log.D("Save clicked.");
+                Log.D("Updating location.");
                 try
                 {
                     myLocation.Name = LocationName.Text;
@@ -260,7 +256,6 @@ namespace EventDirector.UI.MainPages
                     System.Windows.MessageBox.Show("Error with values given.");
                     return;
                 }
-                this.page.UpdateLocation(myLocation);
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)
