@@ -2829,19 +2829,36 @@ namespace EventDirector
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO age_groups (event_id, division_id, start_age, end_age)" +
-                    " VALUES (@event, @division, @start, @end);";
-                command.Parameters.AddRange(new SQLiteParameter[]
+                AddAgeGroupInternal(group);
+                transaction.Commit();
+            }
+        }
+
+        public void AddAgeGroups(List<AgeGroup> groups)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (AgeGroup group in groups)
                 {
+                    AddAgeGroupInternal(group);
+                }
+                transaction.Commit();
+            }
+        }
+
+        private void AddAgeGroupInternal(AgeGroup group)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO age_groups (event_id, division_id, start_age, end_age)" +
+                " VALUES (@event, @division, @start, @end);";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
                     new SQLiteParameter("@event", group.EventId),
                     new SQLiteParameter("@division", group.DivisionId),
                     new SQLiteParameter("@start", group.StartAge),
                     new SQLiteParameter("@end", group.EndAge)
-                });
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
+            });
+            command.ExecuteNonQuery();
         }
 
         public void UpdateAgeGroup(AgeGroup group)

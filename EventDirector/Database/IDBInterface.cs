@@ -133,6 +133,7 @@ namespace EventDirector
 
         // Age Group Functions
         void AddAgeGroup(AgeGroup group);
+        void AddAgeGroups(List<AgeGroup> groups);
         void UpdateAgeGroup(AgeGroup group);
         void RemoveAgeGroup(AgeGroup group);
         void RemoveAgeGroups(int eventId, int divisionId);
