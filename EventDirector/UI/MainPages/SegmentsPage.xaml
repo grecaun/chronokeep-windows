@@ -17,7 +17,7 @@
                 <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
             <ComboBox Name="Divisions" FontSize="16" Margin="10,10,10,10" Height="35" Width="250" SelectionChanged="Divisions_SelectionChanged" VerticalContentAlignment="Center"/>
-            <ListBox Name="SegmentsBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" Grid.Row="1">
+            <ListBox Name="SegmentsBox" KeyboardNavigation.TabNavigation="Continue" Grid.Row="1">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -27,7 +27,8 @@
             </ListBox>
             <DockPanel HorizontalAlignment="Center" Grid.Row="2">
                 <Button Name="Add" Content="Add Segment" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click" />
-                <Button Name="UpdateBtn" Content="Update Segments" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="UpdateBtn_Click" />
+                <Button Name="UpdateBtn" Content="Update" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Update_Click" />
+                <Button Name="ResetBtn" Content="Reset" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Reset_Click" />
             </DockPanel>
         </Grid>
     </Grid>

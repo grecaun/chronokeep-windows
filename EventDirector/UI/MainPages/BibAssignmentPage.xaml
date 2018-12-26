@@ -43,7 +43,11 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
-            <Button Name="Add" Content="New Group" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click" Grid.Column="0" Grid.Row="1"/>
+            <DockPanel Grid.Column="0" Grid.Row="1" LastChildFill="False" HorizontalAlignment="Center">
+                <Button Name="Add" Content="Add Group" Margin="10,5,10,5" FontSize="16" Height="35" Width="130" Click="Add_Click" />
+                <Button Name="UpdateBtn" Content="Save" Margin="10,5,10,5" FontSize="16" Height="35" Width="130" Click="UpdateBtn_Click" />
+                <Button Name="ResetBtn" Content="Reset" Margin="10,5,10,5" FontSize="16" Height="35" Width="130" Click="ResetBtn_Click" />
+            </DockPanel>
         </Grid>
     </Grid>
 </Page>

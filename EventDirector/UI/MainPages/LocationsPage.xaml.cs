@@ -33,10 +33,10 @@ namespace EventDirector.UI.MainPages
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
-            Update();
+            UpdateView();
         }
 
-        public void Update()
+        public void UpdateView()
         {
             this.theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
@@ -45,7 +45,7 @@ namespace EventDirector.UI.MainPages
             }
             LocationsBox.Items.Clear();
             LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.DefaultTiming.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow)));
-            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurances, theEvent.FinishIgnoreWithin)));
+            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurences, theEvent.FinishIgnoreWithin)));
             List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
             LocationCount = 1;
             locations.Sort();
@@ -59,13 +59,21 @@ namespace EventDirector.UI.MainPages
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Add Location clicked.");
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
             database.AddTimingLocation(new TimingLocation(theEvent.Identifier, "Location " + LocationCount));
-            Update();
+            UpdateView();
         }
 
         internal void RemoveLocation(TimingLocation location)
         {
             Log.D("Removing a location.");
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
             if (location.Identifier == Constants.DefaultTiming.LOCATION_FINISH || location.Identifier == Constants.DefaultTiming.LOCATION_START)
             {
                 Log.E("Somehow they told us to delete the start/finish location.");
@@ -74,44 +82,59 @@ namespace EventDirector.UI.MainPages
             {
                 database.RemoveTimingLocation(location);
             }
-            Update();
+            UpdateView();
         }
 
         public void Update_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Update all clicked.");
+            UpdateDatabase();
+            UpdateView();
+        }
+
+        public void UpdateDatabase()
+        {
             foreach (ALocation locItem in LocationsBox.Items)
             {
                 locItem.UpdateLocation();
-                UpdateLocation(locItem.myLocation);
+                if (locItem.myLocation.Identifier == Constants.DefaultTiming.LOCATION_FINISH)
+                {
+                    theEvent.FinishMaxOccurences = locItem.myLocation.MaxOccurences;
+                    theEvent.FinishIgnoreWithin = locItem.myLocation.IgnoreWithin;
+                    database.SetFinishOptions(theEvent);
+                }
+                else if (locItem.myLocation.Identifier == Constants.DefaultTiming.LOCATION_START)
+                {
+                    theEvent.StartWindow = locItem.myLocation.IgnoreWithin;
+                    database.SetStartWindow(theEvent);
+                }
+                else
+                {
+                    database.UpdateTimingLocation(locItem.myLocation);
+                }
             }
-            Update();
         }
 
-        internal void UpdateLocation(TimingLocation location)
+        public void Keyboard_Ctrl_A()
         {
-            Log.D("Updating location information.");
-            if (location.Identifier == Constants.DefaultTiming.LOCATION_FINISH)
-            {
-                theEvent.FinishMaxOccurances = location.MaxOccurances;
-                theEvent.FinishIgnoreWithin = location.IgnoreWithin;
-                database.SetFinishOptions(theEvent);
-            }
-            else if (location.Identifier == Constants.DefaultTiming.LOCATION_START)
-            {
-                theEvent.StartWindow = location.IgnoreWithin;
-                database.SetStartWindow(theEvent);
-            }
-            else
-            {
-                database.UpdateTimingLocation(location);
-            }
+            Add_Click(null, null);
+        }
+
+        public void Keyboard_Ctrl_S()
+        {
+            UpdateDatabase();
+            UpdateView();
+        }
+
+        public void Keyboard_Ctrl_Z()
+        {
+            UpdateView();
         }
 
         private class ALocation : ListBoxItem
         {
             public TextBox LocationName { get; private set; }
-            public TextBox MaxOccurances { get; private set; }
+            public TextBox MaxOccurences { get; private set; }
             public MaskedTextBox IgnoreWithin { get; private set; }
             public Button Remove { get; private set; }
 
@@ -153,30 +176,30 @@ namespace EventDirector.UI.MainPages
                 namePanel.Children.Add(LocationName);
                 thePanel.Children.Add(namePanel);
 
-                // Max Occurances - Ignore Within
+                // Max Occurences - Ignore Within
                 Grid settingsGrid = new Grid();
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 DockPanel occPanel = new DockPanel();
                 occPanel.Children.Add(new Label()
                 {
-                    Content = "Max Occurances",
+                    Content = "Max Occurences",
                     Width = 140,
                     FontSize = 16,
                     Margin = new Thickness(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Right
                 });
-                MaxOccurances = new TextBox()
+                MaxOccurences = new TextBox()
                 {
-                    Text = myLocation.MaxOccurances.ToString(),
+                    Text = myLocation.MaxOccurences.ToString(),
                     FontSize = 16,
                     Margin = new Thickness(0, 10, 0, 10),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                MaxOccurances.GotFocus += new RoutedEventHandler(this.SelectAll);
-                MaxOccurances.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
-                occPanel.Children.Add(MaxOccurances);
+                MaxOccurences.GotFocus += new RoutedEventHandler(this.SelectAll);
+                MaxOccurences.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                occPanel.Children.Add(MaxOccurences);
                 settingsGrid.Children.Add(occPanel);
                 Grid.SetColumn(occPanel, 0);
                 if (myLocation.Identifier == Constants.DefaultTiming.LOCATION_START)
@@ -246,7 +269,7 @@ namespace EventDirector.UI.MainPages
                 try
                 {
                     myLocation.Name = LocationName.Text;
-                    myLocation.MaxOccurances = Convert.ToInt32(MaxOccurances.Text);
+                    myLocation.MaxOccurences = Convert.ToInt32(MaxOccurences.Text);
                     string[] parts = IgnoreWithin.Text.Replace('_', '0').Split(':');
                     int hours = Convert.ToInt32(parts[0]), minutes = Convert.ToInt32(parts[1]), seconds = Convert.ToInt32(parts[2]);
                     myLocation.IgnoreWithin = (hours * 3600) + (minutes * 60) + seconds;
@@ -279,6 +302,11 @@ namespace EventDirector.UI.MainPages
             {
                 e.Handled = allowedChars.IsMatch(e.Text);
             }
+        }
+
+        private void ResetBtn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

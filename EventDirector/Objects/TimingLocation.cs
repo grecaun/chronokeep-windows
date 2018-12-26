@@ -8,7 +8,7 @@ namespace EventDirector
 {
     public class TimingLocation : IEquatable<TimingLocation>, IComparable<TimingLocation>
     {
-        private int identifier = -1, eventIdentifier, max_occurances, ignore_within;
+        private int identifier = -1, eventIdentifier, max_occurences, ignore_within;
         private string name;
 
         public TimingLocation() { }
@@ -17,7 +17,7 @@ namespace EventDirector
         {
             this.eventIdentifier = eventIdentifier;
             this.name = nameString;
-            this.max_occurances = 1;
+            this.max_occurences = 1;
             this.ignore_within = -1;
         }
 
@@ -26,7 +26,7 @@ namespace EventDirector
             this.identifier = identifier;
             this.eventIdentifier = eventIdentifier;
             this.name = nameString;
-            this.max_occurances = 1;
+            this.max_occurences = 1;
             this.ignore_within = -1;
         }
 
@@ -35,14 +35,14 @@ namespace EventDirector
             this.identifier = id;
             this.eventIdentifier = eventId;
             this.name = name;
-            this.max_occurances = maxOcc;
+            this.max_occurences = maxOcc;
             this.ignore_within = ignore;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public string Name { get => name; set => name = value; }
-        public int MaxOccurances { get => max_occurances; set => max_occurances = value; }
+        public int MaxOccurences { get => max_occurences; set => max_occurences = value; }
         public int IgnoreWithin { get => ignore_within; set => ignore_within = value; }
 
         public int CompareTo(TimingLocation other)

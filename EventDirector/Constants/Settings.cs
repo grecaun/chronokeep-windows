@@ -11,16 +11,20 @@ namespace EventDirector.Constants
         public static readonly string PROGRAM_DIR            = "EventDirector";
 
         public static readonly string DEFAULT_EXPORT_DIR    = "SETTING_DEFAULT_EXPORT_DIR";
-        public static readonly string AUTO_READ_LOG         = "SETTING_AUTO_READ_LOG";
-        public static readonly string AUTO_READ_LOG_DIR     = "SETTING_AUTO_READ_LOG_DIR";
         public static readonly string DEFAULT_TIMING_SYSTEM = "SETTING_DEFAULT_TIMING_SYSTEM";
         public static readonly string DEFAULT_WAIVER        = "SETTING_DEFAULT_WAIVER";
-        public static readonly string SHOW_PRICES           = "SETTING_SHOW_PRICES";
         public static readonly string CURRENT_EVENT         = "SETTING_CURRENT_EVENT";
         public static readonly string COMPANY_NAME          = "SETTING_COMPANY_NAME";
-        public static readonly string SETTING_LAST_TIMING   = "SETTING_LAST_USED_TIMING";
+        public static readonly string UPDATE_ON_PAGE_CHANGE = "SETTING_UPDATE_PAGE_CHANGE";
+        // Not yet implemented
+        public static readonly string AUTO_READ_LOG         = "SETTING_AUTO_READ_LOG";
+        public static readonly string AUTO_READ_LOG_DIR     = "SETTING_AUTO_READ_LOG_DIR";
+        public static readonly string SHOW_PRICES           = "SETTING_SHOW_PRICES";
 
         public static readonly string NULL_EVENT_ID     = "-1";
+
+        public static readonly string SETTING_TRUE      = "TRUE";
+        public static readonly string SETTING_FALSE     = "FALSE";
 
         public static readonly string TIMING_RFID       = "RFID";
         public static readonly string TIMING_IPICO      = "IPICO";
@@ -77,6 +81,10 @@ namespace EventDirector.Constants
             if (database.GetAppSetting(COMPANY_NAME) == null)
             {
                 database.SetAppSetting(COMPANY_NAME, WAIVER_COMPANY);
+            }
+            if (database.GetAppSetting(UPDATE_ON_PAGE_CHANGE) == null)
+            {
+                database.SetAppSetting(UPDATE_ON_PAGE_CHANGE, SETTING_TRUE);
             }
         }
     }

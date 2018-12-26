@@ -879,7 +879,7 @@ namespace EventDirector
                 new SQLiteParameter("@startloc", div.StartLocation),
                 new SQLiteParameter("@startwithin", div.StartWithin),
                 new SQLiteParameter("@finishloc", div.FinishLocation),
-                new SQLiteParameter("@finishocc", div.FinishOccurance),
+                new SQLiteParameter("@finishocc", div.FinishOccurence),
                 new SQLiteParameter("@wave", div.Wave),
                 new SQLiteParameter("@bgn", div.BibGroupNumber),
                 new SQLiteParameter("@soffsec", div.StartOffsetSeconds),
@@ -921,7 +921,7 @@ namespace EventDirector
                 new SQLiteParameter("@startloc", div.StartLocation),
                 new SQLiteParameter("@within", div.StartWithin),
                 new SQLiteParameter("@finishloc", div.FinishLocation),
-                new SQLiteParameter("@occurance", div.FinishOccurance),
+                new SQLiteParameter("@occurance", div.FinishOccurence),
                 new SQLiteParameter("@wave", div.Wave),
                 new SQLiteParameter("@bgn", div.BibGroupNumber),
                 new SQLiteParameter("@soffsec", div.StartOffsetSeconds),
@@ -1270,7 +1270,7 @@ namespace EventDirector
             command.CommandText = "UPDATE events SET event_finish_max_occurances=@occ, event_finish_ignore_within=@ignore WHERE event_id=@event;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
-                new SQLiteParameter("@occ", anEvent.FinishMaxOccurances),
+                new SQLiteParameter("@occ", anEvent.FinishMaxOccurences),
                 new SQLiteParameter("@ignore", anEvent.FinishIgnoreWithin),
                 new SQLiteParameter("@event", anEvent.Identifier)
             });
@@ -1724,7 +1724,7 @@ namespace EventDirector
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tl.EventIdentifier),
                 new SQLiteParameter("@name", tl.Name),
-                new SQLiteParameter("@max", tl.MaxOccurances),
+                new SQLiteParameter("@max", tl.MaxOccurences),
                 new SQLiteParameter("@ignore", tl.IgnoreWithin) } );
             command.ExecuteNonQuery();
         }
@@ -1753,7 +1753,7 @@ namespace EventDirector
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tl.EventIdentifier),
                 new SQLiteParameter("@name", tl.Name),
-                new SQLiteParameter("@max", tl.MaxOccurances),
+                new SQLiteParameter("@max", tl.MaxOccurences),
                 new SQLiteParameter("@ignore", tl.IgnoreWithin),
                 new SQLiteParameter("@id", tl.Identifier) });
             command.ExecuteNonQuery();
@@ -1807,7 +1807,7 @@ namespace EventDirector
                 new SQLiteParameter("@event",seg.EventId),
                 new SQLiteParameter("@division",seg.DivisionId),
                 new SQLiteParameter("@location",seg.LocationId),
-                new SQLiteParameter("@occurance",seg.Occurance),
+                new SQLiteParameter("@occurance",seg.Occurence),
                 new SQLiteParameter("@name",seg.Name),
                 new SQLiteParameter("@dseg",seg.SegmentDistance),
                 new SQLiteParameter("@dcum",seg.CumulativeDistance),
@@ -1849,7 +1849,7 @@ namespace EventDirector
                 new SQLiteParameter("@event",seg.EventId),
                 new SQLiteParameter("@division",seg.DivisionId),
                 new SQLiteParameter("@location",seg.LocationId),
-                new SQLiteParameter("@occurance",seg.Occurance),
+                new SQLiteParameter("@occurance",seg.Occurence),
                 new SQLiteParameter("@name",seg.Name),
                 new SQLiteParameter("@dseg",seg.SegmentDistance),
                 new SQLiteParameter("@dcum",seg.CumulativeDistance),
@@ -1905,7 +1905,7 @@ namespace EventDirector
                 new SQLiteParameter("@location", tr.LocationId),
                 new SQLiteParameter("@segment", tr.SegmentId),
                 new SQLiteParameter("@time", tr.Time),
-                new SQLiteParameter("@occ", tr.Occurance) } );
+                new SQLiteParameter("@occ", tr.Occurence) } );
             command.ExecuteNonQuery();
         }
 
@@ -1918,7 +1918,7 @@ namespace EventDirector
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tr.EventSpecificId),
                 new SQLiteParameter("@segment", tr.SegmentId),
-                new SQLiteParameter("@occurance", tr.Occurance),
+                new SQLiteParameter("@occurance", tr.Occurence),
                 new SQLiteParameter("@location", tr.LocationId) } );
             command.ExecuteNonQuery();
         }
@@ -1955,7 +1955,7 @@ namespace EventDirector
                 new SQLiteParameter("@event", oldResult.EventIdentifier),
                 new SQLiteParameter("@eventspecific", oldResult.EventSpecificId),
                 new SQLiteParameter("@location", oldResult.LocationId),
-                new SQLiteParameter("@occurance", oldResult.Occurance)} );
+                new SQLiteParameter("@occurance", oldResult.Occurence)} );
             command.ExecuteNonQuery();
         }
 
@@ -2776,8 +2776,9 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT a.bib_group_number as bib_group_number, a.event_id as event_id," +
-                " a.bib as bib, b.bib_group_name as bib_group_name FROM available_bibs a, bib_group b WHERE" +
-                " b.event_id = a.event_id AND b.bib_group_number = a.bib_group_number AND b.event_id=@event;";
+                " a.bib as bib, b.bib_group_name as bib_group_name" +
+                " FROM available_bibs a LEFT JOIN bib_group b ON a.event_id=b.event_id AND b.bib_group_number=a.bib_group_number" +
+                " WHERE a.event_id=@event;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId)

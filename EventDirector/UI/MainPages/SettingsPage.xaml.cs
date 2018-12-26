@@ -31,10 +31,10 @@ namespace EventDirector.UI.MainPages
             InitializeComponent();
             this.mWindow = mainWindow;
             this.database = database;
-            Update();
+            UpdateView();
         }
 
-        public void Update()
+        public void UpdateView()
         {
             AppSetting setting = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
             CompanyNameBox.Text = setting.value;
@@ -80,6 +80,8 @@ namespace EventDirector.UI.MainPages
             DefaultExportDirBox.Text = setting.value;
             setting = database.GetAppSetting(Constants.Settings.DEFAULT_WAIVER);
             DefaultWaiverBox.Text = setting.value;
+            setting = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
+            UpdatePage.IsChecked = setting.value == Constants.Settings.SETTING_TRUE;
         }
 
         private async void ResetDB_Click(object sender, RoutedEventArgs e)
@@ -96,7 +98,7 @@ namespace EventDirector.UI.MainPages
                     database.ResetDatabase();
                     Constants.Settings.SetupSettings(database);
                 });
-                Update();
+                UpdateView();
                 ResetDB.IsEnabled = true;
             }
         }
@@ -115,7 +117,7 @@ namespace EventDirector.UI.MainPages
                     database.HardResetDatabase();
                     Constants.Settings.SetupSettings(database);
                 });
-                Update();
+                UpdateView();
                 RebuildDB.IsEnabled = true;
             }
         }
@@ -127,7 +129,8 @@ namespace EventDirector.UI.MainPages
             database.SetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM, ((ComboBoxItem)DefaultTimingBox.SelectedItem).Uid);
             database.SetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR, DefaultExportDirBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.DEFAULT_WAIVER, DefaultWaiverBox.Text);
-            Update();
+            database.SetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE, UpdatePage.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
+            UpdateView();
         }
 
         private void ChangeExport_Click(object sender, RoutedEventArgs e)
@@ -160,6 +163,20 @@ namespace EventDirector.UI.MainPages
             {
                 Log.E("Something went wrong with the dialog.");
             }
+        }
+
+        public void UpdateDatabase() { }
+
+        public void Keyboard_Ctrl_A() { }
+
+        public void Keyboard_Ctrl_S()
+        {
+            Save_Click(null, null);
+        }
+
+        public void Keyboard_Ctrl_Z()
+        {
+            UpdateView();
         }
     }
 }

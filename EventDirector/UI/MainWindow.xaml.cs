@@ -79,6 +79,10 @@ namespace EventDirector.UI
                 Log.D("Dashboard page already displayed.");
                 return;
             }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
+            }
             TheFrame.NavigationService.RemoveBackEntry();
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
@@ -91,6 +95,10 @@ namespace EventDirector.UI
             {
                 Log.D("Reports page already displayed");
                 return;
+            }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
             }
             //TheFrame.NavigationService.RemoveBackEntry();
             //page = new ReportsPage(this, database);
@@ -105,6 +113,10 @@ namespace EventDirector.UI
                 Log.D("Participants page already displayed.");
                 return;
             }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
+            }
             TheFrame.NavigationService.RemoveBackEntry();
             page = new ParticipantsPage(this, database);
             TheFrame.Content = page;
@@ -117,6 +129,10 @@ namespace EventDirector.UI
             {
                 Log.D("Bib page already displayed.");
                 return;
+            }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
             }
             TheFrame.NavigationService.RemoveBackEntry();
             page = new BibAssignmentPage(this, database);
@@ -131,6 +147,10 @@ namespace EventDirector.UI
                 Log.D("Chips page already displayed.");
                 return;
             }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
+            }
             TheFrame.NavigationService.RemoveBackEntry();
             page = new ChipAssigmentPage(this, database);
             TheFrame.Content = page;
@@ -142,6 +162,10 @@ namespace EventDirector.UI
             if (page is DivisionsPage)
             {
                 Log.D("Divisions page already displayed.");
+            }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
             }
             TheFrame.NavigationService.RemoveBackEntry();
             page = new DivisionsPage(this, database);
@@ -156,6 +180,10 @@ namespace EventDirector.UI
                 Log.D("Locations page already displayed.");
                 return;
             }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
+            }
             TheFrame.NavigationService.RemoveBackEntry();
             page = new LocationsPage(this, database);
             TheFrame.Content = page;
@@ -168,6 +196,10 @@ namespace EventDirector.UI
             {
                 Log.D("Segments page already displayed.");
                 return;
+            }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
             }
             TheFrame.NavigationService.RemoveBackEntry();
             page = new SegmentsPage(this, database);
@@ -182,6 +214,10 @@ namespace EventDirector.UI
                 Log.D("Age groups page already displayed.");
                 return;
             }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
+            }
             TheFrame.NavigationService.RemoveBackEntry();
             page = new AgeGroupsPage(this, database);
             TheFrame.Content = page;
@@ -194,6 +230,10 @@ namespace EventDirector.UI
             {
                 Log.D("Settings page already displayed.");
                 return;
+            }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
             }
             TheFrame.NavigationService.RemoveBackEntry();
             page = new SettingsPage(this, database);
@@ -214,6 +254,10 @@ namespace EventDirector.UI
                 {
                     Log.D("Oh well!");
                 }
+            }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                page.UpdateDatabase();
             }
         }
 
@@ -276,7 +320,7 @@ namespace EventDirector.UI
 
         public void WindowFinalize(Window w)
         {
-            page.Update();
+            page.UpdateView();
             if (!closing) openWindows.Remove(w);
             try
             {
@@ -292,7 +336,7 @@ namespace EventDirector.UI
 
         public void Update()
         {
-            page.Update();
+            page.UpdateView();
         }
 
         public void AddWindow(Window w)

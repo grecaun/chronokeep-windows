@@ -33,7 +33,7 @@ namespace EventDirector.UI.MainPages
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
-            Update();
+            UpdateView();
             UpdateImportOptions();
         }
 
@@ -48,7 +48,7 @@ namespace EventDirector.UI.MainPages
             gView.Columns[1].Width = workingWidth * 0.5;
         }
 
-        public async void Update()
+        public async void UpdateView()
         {
             theEvent = database.GetCurrentEvent();
             if (theEvent == null)
@@ -117,7 +117,7 @@ namespace EventDirector.UI.MainPages
                 }
             };
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
-            Update();
+            UpdateView();
         }
 
         private void SaveRangeButton_Click(object sender, RoutedEventArgs e)
@@ -139,7 +139,7 @@ namespace EventDirector.UI.MainPages
                 });
             }
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
-            Update();
+            UpdateView();
         }
 
         private async void FileImport_Click(object sender, RoutedEventArgs e)
@@ -178,7 +178,7 @@ namespace EventDirector.UI.MainPages
             {
                 List<BibChipAssociation> assocs = database.GetBibChips(oldEventId);
                 database.AddBibChipAssociation(theEvent.Identifier, assocs);
-                Update();
+                UpdateView();
             }
         }
 
@@ -193,7 +193,7 @@ namespace EventDirector.UI.MainPages
                 items.Add(b);
             }
             database.RemoveBibChipAssociations(items);
-            Update();
+            UpdateView();
         }
 
         private void UseTool_Click(object sender, RoutedEventArgs e)
@@ -280,7 +280,7 @@ namespace EventDirector.UI.MainPages
             {
                 List<BibChipAssociation> list = (List<BibChipAssociation>) bibChipList.ItemsSource;
                 database.RemoveBibChipAssociations(list);
-                Update();
+                UpdateView();
             }
         }
 
@@ -294,5 +294,19 @@ namespace EventDirector.UI.MainPages
                 exportBibChip.Show();
             }
         }
+
+        public void UpdateDatabase() { }
+
+        public void Keyboard_Ctrl_A()
+        {
+            UseTool_Click(null, null);
+        }
+
+        public void Keyboard_Ctrl_S()
+        {
+            Export_Click(null, null);
+        }
+
+        public void Keyboard_Ctrl_Z() { }
     }
 }

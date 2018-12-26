@@ -26,6 +26,7 @@
             <DockPanel HorizontalAlignment="Center" Grid.Row="1">
                 <Button Name="Add" Content="Add Location" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click" />
                 <Button Name="UpdateBtn" Content="Update" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Update_Click" />
+                <Button Name="ResetBtn" Content="Reset" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="ResetBtn_Click" />
             </DockPanel>
         </Grid>
     </Grid>

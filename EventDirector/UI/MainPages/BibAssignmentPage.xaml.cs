@@ -30,12 +30,10 @@ namespace EventDirector.UI.MainPages
         public BibAssignmentPage(INewMainWindow mWindow, IDBInterface database)
         {
             InitializeComponent();
-            InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
-            Update();
-            UpdateImportOptions();
+            UpdateView();
         }
 
         private void BibList_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -49,7 +47,7 @@ namespace EventDirector.UI.MainPages
             gView.Columns[1].Width = workingWidth * 0.7;
         }
 
-        public async void Update()
+        public async void UpdateView()
         {
             GroupsBox.Items.Clear();
             theEvent = database.GetCurrentEvent();
@@ -80,20 +78,6 @@ namespace EventDirector.UI.MainPages
             bibList.ItemsSource = availableBibs;
         }
 
-        private void UpdateImportOptions()
-        {
-            if (mWindow.ExcelEnabled())
-            {
-                Log.D("Excel is allowed.");
-                //ExcelImport.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                Log.D("Excel is not allowed.");
-                //ExcelImport.Visibility = Visibility.Collapsed;
-            }
-        }
-
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Delete clicked.  Attempting to do so.");
@@ -104,7 +88,11 @@ namespace EventDirector.UI.MainPages
                 items.Add(b);
             }
             database.RemoveBibs(items);
-            Update();
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+            UpdateView();
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
@@ -116,7 +104,11 @@ namespace EventDirector.UI.MainPages
             {
                 List<AvailableBib> list = (List<AvailableBib>)bibList.ItemsSource;
                 database.RemoveBibs(list);
-                Update();
+                if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+                {
+                    UpdateDatabase();
+                }
+                UpdateView();
             }
         }
 
@@ -127,6 +119,10 @@ namespace EventDirector.UI.MainPages
             if (theEvent == null || theEvent.Identifier < 0)
             {
                 return;
+            }
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
             }
             List<BibGroup> list = database.GetBibGroups(theEvent.Identifier);
             int groupNum = 1;
@@ -139,13 +135,17 @@ namespace EventDirector.UI.MainPages
                 Name = "New Group " + groupNum.ToString(),
                 Number = groupNum
             });
-            Update();
+            UpdateView();
         }
 
         internal void RemoveGroup(BibGroup group)
         {
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
             database.RemoveBibGroup(group);
-            Update();
+            UpdateView();
         }
 
         internal void AddBibRange(int group, int start, int end)
@@ -161,7 +161,11 @@ namespace EventDirector.UI.MainPages
                 bibs.Add(bib);
             }
             database.AddBibs(theEvent.Identifier, group, bibs);
-            Update();
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+            UpdateView();
         }
 
         internal void AddBib(int group, int bib)
@@ -172,18 +176,38 @@ namespace EventDirector.UI.MainPages
                 return;
             }
             database.AddBib(theEvent.Identifier, group, bib);
-            Update();
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+            UpdateView();
         }
 
-        internal void UpdateGroup(BibGroup group)
+        public void UpdateDatabase()
         {
-            Event theEvent = database.GetCurrentEvent();
-            if (theEvent == null || theEvent.Identifier < 0)
+            foreach (ABibGroup bg in GroupsBox.Items)
             {
-                return;
+                BibGroup update = bg.UpdateGroup();
+                if (update.Number != -1)
+                {
+                    database.AddBibGroup(theEvent.Identifier, update);
+                }
             }
-            database.AddBibGroup(theEvent.Identifier, group);
-            Update();
+        }
+
+        public void Keyboard_Ctrl_A()
+        {
+            Add_Click(null, null);
+        }
+
+        public void Keyboard_Ctrl_S()
+        {
+            UpdateDatabase();
+        }
+
+        public void Keyboard_Ctrl_Z()
+        {
+            UpdateView();
         }
 
         private class ABibGroup : ListBoxItem
@@ -195,7 +219,6 @@ namespace EventDirector.UI.MainPages
             public Button AddSingle { get; private set; }
             public Button AddRange { get; private set; }
             public Button Remove { get; private set; }
-            public Button Save { get; private set; }
 
             BibAssignmentPage page;
             BibGroup myGroup;
@@ -226,22 +249,11 @@ namespace EventDirector.UI.MainPages
                 Grid.SetColumn(GroupName, 0);
                 Grid.SetRow(GroupName, 0);
 
-                // save + remove buttons
+                // remove button
                 Grid numberGrid = new Grid();
                 numberGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 numberGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                    // Save button
-                Save = new Button()
-                {
-                    Content = "Save",
-                    FontSize = 16,
-                    Height = 35,
-                    Margin = new Thickness(5, 5, 5, 5)
-                };
-                Save.Click += new RoutedEventHandler(this.Save_Click);
-                numberGrid.Children.Add(Save);
-                Grid.SetColumn(Save, 0);
-                    // Remove Button
+                // Remove Button
                 Remove = new Button()
                 {
                     Content = "Remove",
@@ -263,14 +275,12 @@ namespace EventDirector.UI.MainPages
                 {
                     Log.D("BibGroup number is -1");
                     GroupName.IsEnabled = false;
-                    Save.Visibility = Visibility.Collapsed;
                     Remove.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     Log.D("BibGroup number is NOT -1");
                     GroupName.IsEnabled = true;
-                    Save.Visibility = Visibility.Visible;
                     Remove.Visibility = Visibility.Visible;
                 }
 
@@ -422,19 +432,10 @@ namespace EventDirector.UI.MainPages
                 this.page.RemoveGroup(this.myGroup);
             }
 
-            private void Save_Click(object sender, EventArgs e)
+            internal BibGroup UpdateGroup()
             {
-                Log.D("Save clicked.");
-                try
-                {
-                    myGroup.Name = GroupName.Text;
-                }
-                catch
-                {
-                    MessageBox.Show("Error with values given.");
-                    return;
-                }
-                this.page.UpdateGroup(myGroup);
+                myGroup.Name = GroupName.Text;
+                return myGroup;
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)
@@ -453,6 +454,16 @@ namespace EventDirector.UI.MainPages
                     e.Handled = true;
                 }
             }
+        }
+
+        private void UpdateBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateDatabase();
+        }
+
+        private void ResetBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateView();
         }
     }
 }

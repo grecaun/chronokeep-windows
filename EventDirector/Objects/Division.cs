@@ -11,7 +11,7 @@ namespace EventDirector
         private String name;
         private int identifier, eventIdentifier, cost;
         private double distance;
-        private int distance_unit = Constants.Distances.MILES, finish_location = Constants.DefaultTiming.LOCATION_FINISH, finish_occurance = 1, start_location = Constants.DefaultTiming.LOCATION_START, start_within = 5;
+        private int distance_unit = Constants.Distances.MILES, finish_location = Constants.DefaultTiming.LOCATION_FINISH, finish_occurence = 1, start_location = Constants.DefaultTiming.LOCATION_START, start_within = 5;
         private int wave = 1, bib_group_number = -1, start_offset_seconds = 0, start_offset_milliseconds = 0;
 
         public Division() { }
@@ -39,7 +39,7 @@ namespace EventDirector
             this.distance = distance;
             this.distance_unit = dunit;
             this.finish_location = finloc;
-            this.finish_occurance = finocc;
+            this.finish_occurence = finocc;
             this.start_location = startloc;
             this.start_within = startwith;
         }
@@ -53,7 +53,7 @@ namespace EventDirector
             this.distance = distance;
             this.distance_unit = dunit;
             this.finish_location = finloc;
-            this.finish_occurance = finocc;
+            this.finish_occurence = finocc;
             this.start_location = startloc;
             this.start_within = startwith;
             this.wave = wave;
@@ -69,7 +69,7 @@ namespace EventDirector
         public double Distance { get => distance; set => distance = value; }
         public int DistanceUnit { get => distance_unit; set => distance_unit = value; }
         public int FinishLocation { get => finish_location; set => finish_location = value; }
-        public int FinishOccurance { get => finish_occurance; set => finish_occurance = value; }
+        public int FinishOccurence { get => finish_occurence; set => finish_occurence = value; }
         public int StartLocation { get => start_location; set => start_location = value; }
         public int StartWithin { get => start_within; set => start_within = value; }
         public int Wave { get => wave; set => wave = value; }

@@ -24,8 +24,9 @@
                 </ListBox.ItemContainerStyle>
             </ListBox>
             <DockPanel Grid.Row="1" HorizontalAlignment="Center">
-                <Button Name="Add" Content="Add Division" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click" />
-                <Button Name="UpdateBtn" Content="Update" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Update_Click" />
+                <Button Name="Add" Content="Add Group" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click" />
+                <Button Name="UpdateBtn" Content="Update" Click="Update_Click" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" />
+                <Button Name="ResetBtn" Content="Reset" Click="Revert_Click" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" />
             </DockPanel>
         </Grid>
     </Grid>

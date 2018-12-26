@@ -32,28 +32,32 @@ namespace EventDirector.UI.MainPages
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
-            Update();
+            UpdateView();
         }
 
         private void Divisions_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Log.D("Division changed.");
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
             UpdateAgeGroupsList();
         }
 
-        public void Update()
+        public void UpdateView()
         {
             theEvent = database.GetCurrentEvent();
             if (theEvent.CommonAgeGroups == 1)
             {
                 DivisionRow.Height = new GridLength(0);
+                UpdateAgeGroupsList();
             }
             else
             {
                 DivisionRow.Height = new GridLength(55);
                 UpdateDivisionsBox();
             }
-            UpdateAgeGroupsList();
         }
 
         private void UpdateDivisionsBox()
@@ -64,6 +68,7 @@ namespace EventDirector.UI.MainPages
             }
             Divisions.Items.Clear();
             List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+            divisions.Sort();
             foreach (Division d in divisions)
             {
                 Divisions.Items.Add(new ComboBoxItem()
@@ -177,7 +182,7 @@ namespace EventDirector.UI.MainPages
             }
             if (conflict)
             {
-                MessageBox.Show("There is a conflict in the age groups. Please fix this.");
+                MessageBox.Show("There is a conflict in the age groups. Unable to save.");
                 return;
             }
             ageGroups.AddRange(toAdd);
@@ -194,10 +199,36 @@ namespace EventDirector.UI.MainPages
             UpdateAgeGroupsList();
         }
 
+        private void Revert_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateAgeGroupsList();
+        }
+
         private void RemoveAgeGroup(AAgeGroup group)
         {
             Log.D("Removing Age Group from view.");
             AgeGroupsBox.Items.Remove(group);
+        }
+
+        public void UpdateDatabase()
+        {
+            Update_Click(null, null);
+        }
+
+        public void Keyboard_Ctrl_A()
+        {
+            Add_Click(null, null);
+        }
+
+        public void Keyboard_Ctrl_S()
+        {
+            UpdateDatabase();
+            UpdateAgeGroupsList();
+        }
+
+        public void Keyboard_Ctrl_Z()
+        {
+            UpdateAgeGroupsList();
         }
 
         private class ALabel : ListBoxItem

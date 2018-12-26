@@ -34,11 +34,11 @@ namespace EventDirector.UI.MainPages
             this.mWindow = mainWindow;
             this.database = database;
             UpdateDivisionsBox();
-            Update();
+            UpdateView();
             UpdateImportOptions();
         }
 
-        public void Update()
+        public void UpdateView()
         {
             Log.D("Updating Participants Page.");
             theEvent = database.GetCurrentEvent();
@@ -212,12 +212,12 @@ namespace EventDirector.UI.MainPages
                 parts.Add(p);
             }
             database.RemoveEntries(parts);
-            Update();
+            UpdateView();
         }
 
         private void DivisionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Update();
+            UpdateView();
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)
@@ -230,5 +230,16 @@ namespace EventDirector.UI.MainPages
                 exportParticipants.Show();
             }
         }
+
+        public void UpdateDatabase() { }
+
+        public void Keyboard_Ctrl_A()
+        {
+            Add_Click(null, null);
+        }
+
+        public void Keyboard_Ctrl_S() { }
+
+        public void Keyboard_Ctrl_Z() { }
     }
 }

@@ -32,6 +32,7 @@
             <DockPanel LastChildFill="False" Grid.Row="2" HorizontalAlignment="Center">
                 <Button Name="Add" Content="Add Group" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click"/>
                 <Button Name="Save" Content="Save" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Update_Click"/>
+                <Button Name="ResetBtn" Content="Reset" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Revert_Click" />
             </DockPanel>
             <StackPanel Grid.Row="1" Grid.Column="1">
                 <ComboBox Name="DefaultGroupsBox" Height="35" FontSize="16" VerticalContentAlignment="Center" Margin="10,100,10,10" SelectedIndex="0" HorizontalContentAlignment="Center">

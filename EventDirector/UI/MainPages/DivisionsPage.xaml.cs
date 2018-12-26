@@ -34,24 +34,36 @@ namespace EventDirector.UI.MainPages
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
-            Update();
+            this.theEvent = database.GetCurrentEvent();
+            if (theEvent != null)
+            {
+                locations = database.GetTimingLocations(theEvent.Identifier);
+                if (theEvent.CommonStartFinish == 1)
+                {
+                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurences, theEvent.FinishIgnoreWithin));
+                }
+                else
+                {
+                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_START, theEvent.Identifier, "Start", 1, theEvent.StartWindow));
+                }
+            }
+            UpdateView();
         }
 
-        public void Update()
+        public void UpdateView()
         {
-            this.theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
                 return;
             }
-            locations = database.GetTimingLocations(theEvent.Identifier);
             DivisionsBox.Items.Clear();
             List<Division> divisions = database.GetDivisions(theEvent.Identifier);
             DivisionCount = 1;
             divisions.Sort();
             foreach (Division div in divisions)
             {
-                DivisionsBox.Items.Add(new ADivision(this, div, locations, theEvent.CommonStartFinish == 1));
+                DivisionsBox.Items.Add(new ADivision(this, div, locations));
                 DivisionCount = div.Identifier > DivisionCount - 1 ? div.Identifier + 1 : DivisionCount;
             }
         }
@@ -59,25 +71,63 @@ namespace EventDirector.UI.MainPages
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Add division clicked.");
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
             database.AddDivision(new Division("New Division " + DivisionCount, theEvent.Identifier, 0));
-            Update();
+            UpdateView();
         }
 
         private void Update_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Update clicked.");
+            UpdateDatabase();
+            UpdateView();
+        }
+
+        private void Revert_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Revert clicked.");
+            UpdateView();
+        }
+
+        internal void RemoveDivision(Division division)
+        {
+            Log.D("Remove division clicked.");
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+            database.RemoveDivision(division);
+            UpdateView();
+        }
+
+        public void UpdateDatabase()
         {
             foreach (ADivision listDiv in DivisionsBox.Items)
             {
                 listDiv.UpdateDivision();
                 database.UpdateDivision(listDiv.theDivision);
             }
-            Update();
         }
 
-        internal void RemoveDivision(Division division)
+        public void Keyboard_Ctrl_A()
         {
-            Log.D("Remove division clicked.");
-            database.RemoveDivision(division);
-            Update();
+            Log.D("Ctrl + A Passed to this page.");
+            Add_Click(null, null);
+        }
+
+        public void Keyboard_Ctrl_S()
+        {
+            Log.D("Ctrl + S Passed to this page.");
+            UpdateDatabase();
+            UpdateView();
+        }
+
+        public void Keyboard_Ctrl_Z()
+        {
+            UpdateView();
         }
 
         private class ADivision : ListBoxItem
@@ -87,7 +137,7 @@ namespace EventDirector.UI.MainPages
             public TextBox Distance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
             public ComboBox FinishLocation { get; private set; }
-            public TextBox FinishOccurance { get; private set; }
+            public TextBox FinishOccurence { get; private set; }
             public ComboBox StartLocation { get; private set; }
             public TextBox Wave { get; private set; }
             public TextBox BibGroupNumber { get; private set; }
@@ -101,7 +151,7 @@ namespace EventDirector.UI.MainPages
             private readonly Regex allowedWithDot = new Regex("[^0-9.]");
             private readonly Regex allowedChars = new Regex("[^0-9]");
 
-            public ADivision(DivisionsPage page, Division division, List<TimingLocation> locations, bool CommonStartFinish)
+            public ADivision(DivisionsPage page, Division division, List<TimingLocation> locations)
             {
                 this.page = page;
                 this.theDivision = division;
@@ -117,7 +167,7 @@ namespace EventDirector.UI.MainPages
                 namePanel.Children.Add(new Label()
                 {
                     Content = "Name",
-                    Width = 140,
+                    Width = 75,
                     FontSize = 16,
                     Margin = new Thickness(0,0,0,0),
                     VerticalAlignment = VerticalAlignment.Center,
@@ -248,7 +298,7 @@ namespace EventDirector.UI.MainPages
                 Grid.SetColumn(DistanceUnit, 2);
                 thePanel.Children.Add(settingsGrid);
 
-                // Start Location - Finish Location - Occurance
+                // Start Location - Finish Location - Occurence
                 Grid locGrid = new Grid();
                 locGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 locGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -269,37 +319,7 @@ namespace EventDirector.UI.MainPages
                     Margin = new Thickness(0, 10, 0, 10),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                ComboBoxItem selected, current;
-                if (CommonStartFinish)
-                {
-                    current = new ComboBoxItem()
-                    {
-                        Content = "Start/Finish",
-                        Uid = Constants.DefaultTiming.LOCATION_FINISH.ToString()
-                    };
-                    StartLocation.Items.Add(current);
-                    selected = current;
-                }
-                else
-                {
-                    current = new ComboBoxItem()
-                    {
-                        Content = "Start",
-                        Uid = Constants.DefaultTiming.LOCATION_START.ToString()
-                    };
-                    StartLocation.Items.Add(current);
-                    selected = current;
-                    current = new ComboBoxItem()
-                    {
-                        Content = "Finish",
-                        Uid = Constants.DefaultTiming.LOCATION_FINISH.ToString()
-                    };
-                    StartLocation.Items.Add(current);
-                    if (theDivision.StartLocation == Constants.DefaultTiming.LOCATION_FINISH)
-                    {
-                        selected = current;
-                    }
-                }
+                ComboBoxItem selected = null, current;
                 foreach (TimingLocation loc in locations)
                 {
                     current = new ComboBoxItem()
@@ -313,7 +333,10 @@ namespace EventDirector.UI.MainPages
                         selected = current;
                     }
                 }
-                StartLocation.SelectedItem = selected;
+                if (selected != null)
+                {
+                    StartLocation.SelectedItem = selected;
+                }
                 startPanel.Children.Add(StartLocation);
                 locGrid.Children.Add(startPanel);
                 Grid.SetColumn(startPanel, 0);
@@ -333,36 +356,7 @@ namespace EventDirector.UI.MainPages
                     Margin = new Thickness(0, 10, 0, 10),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                if (CommonStartFinish)
-                {
-                    current = new ComboBoxItem()
-                    {
-                        Content = "Start/Finish",
-                        Uid = Constants.DefaultTiming.LOCATION_FINISH.ToString()
-                    };
-                    FinishLocation.Items.Add(current);
-                    selected = current;
-                }
-                else
-                {
-                    current = new ComboBoxItem()
-                    {
-                        Content = "Start",
-                        Uid = Constants.DefaultTiming.LOCATION_START.ToString()
-                    };
-                    FinishLocation.Items.Add(current);
-                    selected = current;
-                    current = new ComboBoxItem()
-                    {
-                        Content = "Finish",
-                        Uid = Constants.DefaultTiming.LOCATION_FINISH.ToString()
-                    };
-                    FinishLocation.Items.Add(current);
-                    if (theDivision.FinishLocation == Constants.DefaultTiming.LOCATION_FINISH)
-                    {
-                        selected = current;
-                    }
-                }
+                selected = null;
                 foreach (TimingLocation loc in locations)
                 {
                     current = new ComboBoxItem()
@@ -376,30 +370,33 @@ namespace EventDirector.UI.MainPages
                         selected = current;
                     }
                 }
-                FinishLocation.SelectedItem = selected;
+                if (selected != null)
+                {
+                    FinishLocation.SelectedItem = selected;
+                }
                 finPanel.Children.Add(FinishLocation);
                 locGrid.Children.Add(finPanel);
                 Grid.SetColumn(finPanel, 1);
                 DockPanel occPanel = new DockPanel();
                 occPanel.Children.Add(new Label()
                 {
-                    Content = "Occurance",
+                    Content = "Occurence",
                     Width = 100,
                     FontSize = 16,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Right
                 });
-                FinishOccurance = new TextBox()
+                FinishOccurence = new TextBox()
                 {
-                    Text = theDivision.FinishOccurance.ToString(),
+                    Text = theDivision.FinishOccurence.ToString(),
                     FontSize = 16,
                     Margin = new Thickness(0, 10, 0, 10),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                FinishOccurance.GotFocus += new RoutedEventHandler(this.SelectAll);
-                FinishOccurance.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
-                occPanel.Children.Add(FinishOccurance);
+                FinishOccurence.GotFocus += new RoutedEventHandler(this.SelectAll);
+                FinishOccurence.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                occPanel.Children.Add(FinishOccurence);
                 locGrid.Children.Add(occPanel);
                 Grid.SetColumn(occPanel, 2);
                 thePanel.Children.Add(locGrid);
@@ -538,10 +535,10 @@ namespace EventDirector.UI.MainPages
                 theDivision.FinishLocation = Convert.ToInt32(((ComboBoxItem)FinishLocation.SelectedItem).Uid);
                 theDivision.StartLocation = Convert.ToInt32(((ComboBoxItem)StartLocation.SelectedItem).Uid);
                 int finocc = -1;
-                int.TryParse(FinishOccurance.Text, out finocc);
+                int.TryParse(FinishOccurence.Text, out finocc);
                 if (finocc > 0)
                 {
-                    theDivision.FinishOccurance = finocc;
+                    theDivision.FinishOccurence = finocc;
                 }
                 int wave = -1;
                 int.TryParse(Wave.Text, out wave);

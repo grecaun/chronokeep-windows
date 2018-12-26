@@ -19,27 +19,40 @@
             <Button Name="RebuildDB" Content="Rebuild Database" Margin="10,10,10,10" Grid.Column="1" Height="35" FontSize="16" Click="RebuildDB_Click" />
             <Button Name="Save" Content="Save" Margin="10,10,10,10" Grid.Column="2" FontSize="16" Height="35" Click="Save_Click" />
         </Grid>
-        <DockPanel>
-            <Label Content="Company Name" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Right" Width="150" />
-            <TextBox Name="CompanyNameBox" FontSize="16" Margin="0,10,10,10" VerticalContentAlignment="Center" />
-        </DockPanel>
-        <DockPanel>
-            <Label Content="Timing Method" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Right" Width="150" />
-            <ComboBox Name="DefaultTimingBox" FontSize="16" Margin="0,10,10,10" VerticalContentAlignment="Center" />
-        </DockPanel>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="170"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-            <Label Content="Export Directory" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Right" Grid.Column="0"/>
-            <TextBox Name="DefaultExportDirBox" FontSize="16" Margin="0,10,10,10" VerticalContentAlignment="Center" IsEnabled="False" Grid.Column="1"/>
-            <Button Name="ChangeExport" FontSize="16" Height="35" Margin="0,10,10,10" Grid.Column="2" Content="Change" Click="ChangeExport_Click"/>
+            <StackPanel Grid.Column="0">
+                <DockPanel>
+                    <Label Content="Company Name" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Right" Width="150" />
+                    <TextBox Name="CompanyNameBox" FontSize="16" Margin="0,10,10,10" VerticalContentAlignment="Center" />
+                </DockPanel>
+                <DockPanel Grid.Column="0">
+                    <Label Content="Timing Method" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Right" Width="150" />
+                    <ComboBox Name="DefaultTimingBox" FontSize="16" Margin="0,10,10,10" VerticalContentAlignment="Center" />
+                </DockPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="170"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="120"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Export Directory" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Right" Grid.Column="0"/>
+                    <TextBox Name="DefaultExportDirBox" FontSize="16" Margin="0,10,10,10" VerticalContentAlignment="Center" IsEnabled="False" Grid.Column="1"/>
+                    <Button Name="ChangeExport" FontSize="16" Height="35" Margin="0,10,10,10" Grid.Column="2" Content="Change" Click="ChangeExport_Click"/>
+                </Grid>
+                <DockPanel>
+                    <Label Content="Liability Waiver" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="150" />
+                    <TextBox Name="DefaultWaiverBox" FontSize="16" Margin="0,10,10,10" AcceptsReturn="True" TextWrapping="Wrap" Height="200"/>
+                </DockPanel>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <DockPanel Grid.Column="1">
+                    <CheckBox Name="UpdatePage" Content="Auto-save changes?" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
+                </DockPanel>
+            </StackPanel>
         </Grid>
-        <DockPanel>
-            <Label Content="Liability Waiver" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Width="150" />
-            <TextBox Name="DefaultWaiverBox" FontSize="16" Margin="0,10,10,10" AcceptsReturn="True" TextWrapping="Wrap" Height="200"/>
-        </DockPanel>
     </StackPanel>
 </Page>

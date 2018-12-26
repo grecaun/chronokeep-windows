@@ -30,10 +30,10 @@ namespace EventDirector.UI.MainPages
             InitializeComponent();
             this.mWindow = mainWindow;
             this.database = db;
-            Update();
+            UpdateView();
         }
 
-        public void Update()
+        public void UpdateView()
         {
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier == -1)
@@ -271,7 +271,7 @@ namespace EventDirector.UI.MainPages
                     }
                 }
                 database.SetEventOptions(theEvent.Identifier, list);
-                Update();
+                UpdateView();
             }
         }
 
@@ -355,7 +355,7 @@ namespace EventDirector.UI.MainPages
             {
                 theEvent.NextYear = -1;
                 database.UpdateEvent(theEvent);
-                Update();
+                UpdateView();
             }
         }
 
@@ -398,7 +398,7 @@ namespace EventDirector.UI.MainPages
                 {
                     database.RemoveEvent(theEvent.Identifier);
                     database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
-                    Update();
+                    UpdateView();
                 }
             }
             catch
@@ -425,7 +425,7 @@ namespace EventDirector.UI.MainPages
         {
             Log.D("Cancel clicked.");
             DisableEditableFields();
-            Update();
+            UpdateView();
             editButton.Content = Constants.DashboardLabels.EDIT;
             cancelButton.Visibility = Visibility.Collapsed;
         }
@@ -457,15 +457,12 @@ namespace EventDirector.UI.MainPages
             }
         }
 
-        private void ChipAssignmentButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Chip Assignment Button clicked.");
+        public void UpdateDatabase() { }
 
-        }
+        public void Keyboard_Ctrl_A() { }
 
-        private void BibAssignButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Bib assignment button clicked.");
-        }
+        public void Keyboard_Ctrl_S() { }
+
+        public void Keyboard_Ctrl_Z() { }
     }
 }
