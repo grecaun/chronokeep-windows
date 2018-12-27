@@ -45,7 +45,7 @@ namespace EventDirector.UI.MainPages
             }
             LocationsBox.Items.Clear();
             LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.DefaultTiming.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow)));
-            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurences, theEvent.FinishIgnoreWithin)));
+            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin)));
             List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
             LocationCount = 1;
             locations.Sort();
@@ -99,7 +99,7 @@ namespace EventDirector.UI.MainPages
                 locItem.UpdateLocation();
                 if (locItem.myLocation.Identifier == Constants.DefaultTiming.LOCATION_FINISH)
                 {
-                    theEvent.FinishMaxOccurences = locItem.myLocation.MaxOccurences;
+                    theEvent.FinishMaxOccurrences = locItem.myLocation.MaxOccurrences;
                     theEvent.FinishIgnoreWithin = locItem.myLocation.IgnoreWithin;
                     database.SetFinishOptions(theEvent);
                 }
@@ -134,7 +134,7 @@ namespace EventDirector.UI.MainPages
         private class ALocation : ListBoxItem
         {
             public TextBox LocationName { get; private set; }
-            public TextBox MaxOccurences { get; private set; }
+            public TextBox MaxOccurrences { get; private set; }
             public MaskedTextBox IgnoreWithin { get; private set; }
             public Button Remove { get; private set; }
 
@@ -176,30 +176,30 @@ namespace EventDirector.UI.MainPages
                 namePanel.Children.Add(LocationName);
                 thePanel.Children.Add(namePanel);
 
-                // Max Occurences - Ignore Within
+                // Max Occurrences - Ignore Within
                 Grid settingsGrid = new Grid();
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 DockPanel occPanel = new DockPanel();
                 occPanel.Children.Add(new Label()
                 {
-                    Content = "Max Occurences",
+                    Content = "Max Occurrences",
                     Width = 140,
                     FontSize = 16,
                     Margin = new Thickness(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Right
                 });
-                MaxOccurences = new TextBox()
+                MaxOccurrences = new TextBox()
                 {
-                    Text = myLocation.MaxOccurences.ToString(),
+                    Text = myLocation.MaxOccurrences.ToString(),
                     FontSize = 16,
                     Margin = new Thickness(0, 10, 0, 10),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                MaxOccurences.GotFocus += new RoutedEventHandler(this.SelectAll);
-                MaxOccurences.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
-                occPanel.Children.Add(MaxOccurences);
+                MaxOccurrences.GotFocus += new RoutedEventHandler(this.SelectAll);
+                MaxOccurrences.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                occPanel.Children.Add(MaxOccurrences);
                 settingsGrid.Children.Add(occPanel);
                 Grid.SetColumn(occPanel, 0);
                 if (myLocation.Identifier == Constants.DefaultTiming.LOCATION_START)
@@ -269,7 +269,7 @@ namespace EventDirector.UI.MainPages
                 try
                 {
                     myLocation.Name = LocationName.Text;
-                    myLocation.MaxOccurences = Convert.ToInt32(MaxOccurences.Text);
+                    myLocation.MaxOccurrences = Convert.ToInt32(MaxOccurrences.Text);
                     string[] parts = IgnoreWithin.Text.Replace('_', '0').Split(':');
                     int hours = Convert.ToInt32(parts[0]), minutes = Convert.ToInt32(parts[1]), seconds = Convert.ToInt32(parts[2]);
                     myLocation.IgnoreWithin = (hours * 3600) + (minutes * 60) + seconds;

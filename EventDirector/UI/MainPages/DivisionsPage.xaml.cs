@@ -42,11 +42,11 @@ namespace EventDirector.UI.MainPages
                 locations = database.GetTimingLocations(theEvent.Identifier);
                 if (theEvent.CommonStartFinish == 1)
                 {
-                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 }
                 else
                 {
-                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                     locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_START, theEvent.Identifier, "Start", 1, theEvent.StartWindow));
                 }
                 bibGroups = database.GetBibGroups(theEvent.Identifier);
@@ -141,7 +141,7 @@ namespace EventDirector.UI.MainPages
             public TextBox Distance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
             public ComboBox FinishLocation { get; private set; }
-            public ComboBox FinishOccurence { get; private set; }
+            public ComboBox FinishOccurrence { get; private set; }
             public ComboBox StartLocation { get; private set; }
             public TextBox Wave { get; private set; }
             public ComboBox BibGroupNumber { get; private set; }
@@ -304,7 +304,7 @@ namespace EventDirector.UI.MainPages
                 Grid.SetColumn(DistanceUnit, 2);
                 thePanel.Children.Add(settingsGrid);
 
-                // Start Location - Finish Location - Occurence
+                // Start Location - Finish Location - Occurrence
                 Grid locGrid = new Grid();
                 locGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 locGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -369,7 +369,7 @@ namespace EventDirector.UI.MainPages
                 selected = null;
                 foreach (TimingLocation loc in locations)
                 {
-                    locationDictionary[loc.Identifier.ToString()] = loc.MaxOccurences;
+                    locationDictionary[loc.Identifier.ToString()] = loc.MaxOccurrences;
                     current = new ComboBoxItem()
                     {
                         Content = loc.Name,
@@ -396,46 +396,46 @@ namespace EventDirector.UI.MainPages
                 DockPanel occPanel = new DockPanel();
                 occPanel.Children.Add(new Label()
                 {
-                    Content = "Occurence",
+                    Content = "Occurrence",
                     Width = 100,
                     FontSize = 16,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Right
                 });
-                FinishOccurence = new ComboBox()
+                FinishOccurrence = new ComboBox()
                 {
                     FontSize = 16,
                     Margin = new Thickness(0, 10, 0, 10),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                if (FinishLocation.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)FinishLocation.SelectedItem).Uid, out int maxOccurences))
+                if (FinishLocation.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)FinishLocation.SelectedItem).Uid, out int maxOccurrences))
                 {
-                    maxOccurences = 1;
+                    maxOccurrences = 1;
                 }
                 selected = null;
-                for (int i=1; i<=maxOccurences; i++)
+                for (int i=1; i<=maxOccurrences; i++)
                 {
                     current = new ComboBoxItem()
                     {
                         Content = i.ToString(),
                         Uid = i.ToString()
                     };
-                    if (i == theDivision.FinishOccurence)
+                    if (i == theDivision.FinishOccurrence)
                     {
                         selected = current;
                     }
-                    FinishOccurence.Items.Add(current);
+                    FinishOccurrence.Items.Add(current);
                 }
                 if (selected != null)
                 {
-                    FinishOccurence.SelectedItem = selected;
+                    FinishOccurrence.SelectedItem = selected;
                 }
                 else
                 {
-                    FinishOccurence.SelectedIndex = 0;
+                    FinishOccurrence.SelectedIndex = 0;
                 }
-                occPanel.Children.Add(FinishOccurence);
+                occPanel.Children.Add(FinishOccurrence);
                 locGrid.Children.Add(occPanel);
                 Grid.SetColumn(occPanel, 2);
                 thePanel.Children.Add(locGrid);
@@ -556,20 +556,20 @@ namespace EventDirector.UI.MainPages
 
             private void FinishLocation_Changed(object sender, SelectionChangedEventArgs e)
             {
-                FinishOccurence.Items.Clear();
-                if (FinishLocation.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)FinishLocation.SelectedItem).Uid, out int maxOccurences))
+                FinishOccurrence.Items.Clear();
+                if (FinishLocation.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)FinishLocation.SelectedItem).Uid, out int maxOccurrences))
                 {
-                    maxOccurences = 1;
+                    maxOccurrences = 1;
                 }
-                for (int i = 1; i <= maxOccurences; i++)
+                for (int i = 1; i <= maxOccurrences; i++)
                 {
-                    FinishOccurence.Items.Add(new ComboBoxItem()
+                    FinishOccurrence.Items.Add(new ComboBoxItem()
                     {
                         Content = i.ToString(),
                         Uid = i.ToString()
                     });
                 }
-                FinishOccurence.SelectedIndex = 0;
+                FinishOccurrence.SelectedIndex = 0;
             }
 
             public void UpdateDivision()
@@ -610,9 +610,9 @@ namespace EventDirector.UI.MainPages
                 theDivision.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
                 theDivision.FinishLocation = Convert.ToInt32(((ComboBoxItem)FinishLocation.SelectedItem).Uid);
                 theDivision.StartLocation = Convert.ToInt32(((ComboBoxItem)StartLocation.SelectedItem).Uid);
-                if (FinishOccurence.SelectedItem != null)
+                if (FinishOccurrence.SelectedItem != null)
                 {
-                    theDivision.FinishOccurence = Convert.ToInt32(((ComboBoxItem)FinishOccurence.SelectedItem).Uid);
+                    theDivision.FinishOccurrence = Convert.ToInt32(((ComboBoxItem)FinishOccurrence.SelectedItem).Uid);
                 }
                 int wave = -1;
                 int.TryParse(Wave.Text, out wave);

@@ -8,17 +8,17 @@ namespace EventDirector
 {
     public class TimeResult
     {
-        int eventIdentifier, eventParticipantId, locationId, segment_id, occurence;
+        int eventIdentifier, eventParticipantId, locationId, segment_id, occurrence;
         string time;
 
-        public TimeResult(int ei, int epi, int tpi, int segi, string time, int occurence)
+        public TimeResult(int ei, int epi, int tpi, int segi, string time, int occurrence)
         {
             this.eventIdentifier = ei;
             this.eventParticipantId = epi;
             this.locationId = tpi;
             this.segment_id = segi;
             this.time = time;
-            this.occurence = occurence;
+            this.occurrence = occurrence;
         }
 
         public int EventSpecificId { get => eventParticipantId; set => eventParticipantId = value; }
@@ -26,6 +26,6 @@ namespace EventDirector
         public string Time { get => time; set => time = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public int SegmentId { get => segment_id; set => segment_id = value; }
-        public int Occurence { get => occurence; set => occurence = value; }
+        public int Occurrence { get => occurrence; set => occurrence = value; }
     }
 }

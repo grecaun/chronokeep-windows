@@ -26,7 +26,7 @@ namespace EventDirector.UI.MainPages
         private IDBInterface database;
         private Event theEvent;
         private List<TimingLocation> locations;
-        private int finish_occurences;
+        private int finish_occurrences;
 
         private static int selectedDiv = -1;
 
@@ -41,11 +41,11 @@ namespace EventDirector.UI.MainPages
                 locations = database.GetTimingLocations(theEvent.Identifier);
                 if (theEvent.CommonStartFinish == 1)
                 {
-                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 }
                 else
                 {
-                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                     locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_START, theEvent.Identifier, "Start", 1, theEvent.StartWindow));
                 }
             }
@@ -60,7 +60,7 @@ namespace EventDirector.UI.MainPages
             }
             SegmentsBox.Items.Clear();
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
-            finish_occurences = 0;
+            finish_occurrences = 0;
             segments.Sort();
             if (theEvent.DivisionSpecificSegments == 1)
             {
@@ -77,10 +77,10 @@ namespace EventDirector.UI.MainPages
                 SegmentsBox.Items.Add(new ASegment(this, s, locations));
                 if (s.LocationId == Constants.DefaultTiming.LOCATION_FINISH || s.LocationId == Constants.DefaultTiming.LOCATION_START)
                 {
-                    finish_occurences = s.Occurence > finish_occurences ? s.Occurence : finish_occurences;
+                    finish_occurrences = s.Occurrence > finish_occurrences ? s.Occurrence : finish_occurrences;
                 }
             }
-            finish_occurences++;
+            finish_occurrences++;
         }
 
         private static bool NotInDiv(Segment s)
@@ -115,7 +115,7 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
-            database.AddSegment(new Segment(theEvent.Identifier, divId, Constants.DefaultTiming.LOCATION_FINISH, finish_occurences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurences));
+            database.AddSegment(new Segment(theEvent.Identifier, divId, Constants.DefaultTiming.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
             UpdateView();
         }
 
@@ -180,7 +180,7 @@ namespace EventDirector.UI.MainPages
         {
             public TextBox SegName { get; private set; }
             public ComboBox Location { get; private set; }
-            public ComboBox Occurence { get; private set; }
+            public ComboBox Occurrence { get; private set; }
             public TextBox SegDistance { get; private set; }
             public TextBox CumDistance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
@@ -244,7 +244,7 @@ namespace EventDirector.UI.MainPages
                     {
                         selected = current;
                     }
-                    locationDictionary[loc.Identifier.ToString()] = loc.MaxOccurences;
+                    locationDictionary[loc.Identifier.ToString()] = loc.MaxOccurrences;
                 }
                 if (selected != null)
                 {
@@ -254,46 +254,46 @@ namespace EventDirector.UI.MainPages
                 topDock.Children.Add(Location);
                 topDock.Children.Add(new Label()
                 {
-                    Content = "Occurence",
+                    Content = "Occurrence",
                     Width = 100,
                     FontSize = 15,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Right
                 });
-                Occurence = new ComboBox()
+                Occurrence = new ComboBox()
                 {
                     FontSize = 16,
                     Margin = new Thickness(0, 10, 0, 10),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                if (Location.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)Location.SelectedItem).Uid, out int maxOccurences))
+                if (Location.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)Location.SelectedItem).Uid, out int maxOccurrences))
                 {
-                    maxOccurences = 1;
+                    maxOccurrences = 1;
                 }
                 selected = null;
-                for (int i=1; i<=maxOccurences; i++)
+                for (int i=1; i<=maxOccurrences; i++)
                 {
                     current = new ComboBoxItem()
                     {
                         Content = i.ToString(),
                         Uid = i.ToString()
                     };
-                    if (i == mySegment.Occurence)
+                    if (i == mySegment.Occurrence)
                     {
                         selected = current;
                     }
-                    Occurence.Items.Add(current);
+                    Occurrence.Items.Add(current);
                 }
                 if (selected != null)
                 {
-                    Occurence.SelectedItem = selected;
+                    Occurrence.SelectedItem = selected;
                 }
                 else
                 {
-                    Occurence.SelectedIndex = 0;
+                    Occurrence.SelectedIndex = 0;
                 }
-                topDock.Children.Add(Occurence);
+                topDock.Children.Add(Occurrence);
                 thePanel.Children.Add(topDock);
 
                 // Distance information
@@ -403,21 +403,21 @@ namespace EventDirector.UI.MainPages
 
             private void Location_Changed(object sender, SelectionChangedEventArgs e)
             {
-                Occurence.Items.Clear();
-                if (Location.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)Location.SelectedItem).Uid, out int maxOccurences))
+                Occurrence.Items.Clear();
+                if (Location.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)Location.SelectedItem).Uid, out int maxOccurrences))
                 {
-                    maxOccurences = 1;
+                    maxOccurrences = 1;
                 }
-                for (int i = 1; i <= maxOccurences; i++)
+                for (int i = 1; i <= maxOccurrences; i++)
                 {
 
-                    Occurence.Items.Add(new ComboBoxItem()
+                    Occurrence.Items.Add(new ComboBoxItem()
                     {
                         Content = i.ToString(),
                         Uid = i.ToString()
                     });
                 }
-                Occurence.SelectedIndex = 0;
+                Occurrence.SelectedIndex = 0;
             }
 
             private void Remove_Click(object sender, EventArgs e)
@@ -436,7 +436,7 @@ namespace EventDirector.UI.MainPages
                     mySegment.SegmentDistance = Convert.ToDouble(SegDistance.Text);
                     mySegment.CumulativeDistance = Convert.ToDouble(CumDistance.Text);
                     mySegment.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
-                    mySegment.Occurence = Convert.ToInt32(((ComboBoxItem)Occurence.SelectedItem).Uid);
+                    mySegment.Occurrence = Convert.ToInt32(((ComboBoxItem)Occurrence.SelectedItem).Uid);
                 }
                 catch
                 {
