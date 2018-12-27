@@ -180,7 +180,7 @@ namespace EventDirector.UI.MainPages
         {
             public TextBox SegName { get; private set; }
             public ComboBox Location { get; private set; }
-            public TextBox Occurence { get; private set; }
+            public ComboBox Occurence { get; private set; }
             public TextBox SegDistance { get; private set; }
             public TextBox CumDistance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
@@ -188,6 +188,7 @@ namespace EventDirector.UI.MainPages
 
             readonly SegmentsPage page;
             public Segment mySegment;
+            private Dictionary<string, int> locationDictionary;
 
             private readonly Regex allowedChars = new Regex("[^0-9.]+");
             private readonly Regex allowedNums = new Regex("[^0-9]+");
@@ -196,6 +197,7 @@ namespace EventDirector.UI.MainPages
             {
                 this.page = page;
                 this.mySegment = segment;
+                this.locationDictionary = new Dictionary<string, int>();
                 StackPanel thePanel = new StackPanel()
                 {
                     MaxWidth = 600
@@ -242,11 +244,13 @@ namespace EventDirector.UI.MainPages
                     {
                         selected = current;
                     }
+                    locationDictionary[loc.Identifier.ToString()] = loc.MaxOccurences;
                 }
                 if (selected != null)
                 {
                     Location.SelectedItem = selected;
                 }
+                Location.SelectionChanged += new SelectionChangedEventHandler(this.Location_Changed);
                 topDock.Children.Add(Location);
                 topDock.Children.Add(new Label()
                 {
@@ -257,15 +261,38 @@ namespace EventDirector.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Right
                 });
-                Occurence = new TextBox()
+                Occurence = new ComboBox()
                 {
-                    Text = mySegment.Occurence.ToString(),
                     FontSize = 16,
                     Margin = new Thickness(0, 10, 0, 10),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                Occurence.GotFocus += new RoutedEventHandler(this.SelectAll);
-                Occurence.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                if (Location.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)Location.SelectedItem).Uid, out int maxOccurences))
+                {
+                    maxOccurences = 1;
+                }
+                selected = null;
+                for (int i=1; i<=maxOccurences; i++)
+                {
+                    current = new ComboBoxItem()
+                    {
+                        Content = i.ToString(),
+                        Uid = i.ToString()
+                    };
+                    if (i == mySegment.Occurence)
+                    {
+                        selected = current;
+                    }
+                    Occurence.Items.Add(current);
+                }
+                if (selected != null)
+                {
+                    Occurence.SelectedItem = selected;
+                }
+                else
+                {
+                    Occurence.SelectedIndex = 0;
+                }
                 topDock.Children.Add(Occurence);
                 thePanel.Children.Add(topDock);
 
@@ -374,6 +401,25 @@ namespace EventDirector.UI.MainPages
                 thePanel.Children.Add(Remove);
             }
 
+            private void Location_Changed(object sender, SelectionChangedEventArgs e)
+            {
+                Occurence.Items.Clear();
+                if (Location.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)Location.SelectedItem).Uid, out int maxOccurences))
+                {
+                    maxOccurences = 1;
+                }
+                for (int i = 1; i <= maxOccurences; i++)
+                {
+
+                    Occurence.Items.Add(new ComboBoxItem()
+                    {
+                        Content = i.ToString(),
+                        Uid = i.ToString()
+                    });
+                }
+                Occurence.SelectedIndex = 0;
+            }
+
             private void Remove_Click(object sender, EventArgs e)
             {
                 Log.D("Removing an item.");
@@ -390,7 +436,7 @@ namespace EventDirector.UI.MainPages
                     mySegment.SegmentDistance = Convert.ToDouble(SegDistance.Text);
                     mySegment.CumulativeDistance = Convert.ToDouble(CumDistance.Text);
                     mySegment.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
-                    mySegment.Occurence = Convert.ToInt32(Occurence.Text);
+                    mySegment.Occurence = Convert.ToInt32(((ComboBoxItem)Occurence.SelectedItem).Uid);
                 }
                 catch
                 {

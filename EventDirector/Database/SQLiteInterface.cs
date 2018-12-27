@@ -2787,13 +2787,8 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new AvailableBib()
-                {
-                    EventId = Convert.ToInt32(reader["event_id"]),
-                    GroupNumber = Convert.ToInt32(reader["bib_group_number"]),
-                    GroupName = reader["bib_group_name"].ToString(),
-                    Bib = Convert.ToInt32(reader["bib"])
-                });
+                output.Add(new AvailableBib(Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["bib_group_number"]),
+                    reader["bib_group_name"].ToString(), Convert.ToInt32(reader["bib"])));
             }
             return output;
         }

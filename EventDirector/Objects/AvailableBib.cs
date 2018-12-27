@@ -13,6 +13,18 @@ namespace EventDirector.Objects
         public string GroupName { get; set; }
         public int Bib { get; set; }
 
+        public AvailableBib(int eventId, int groupNumber, string groupName, int bib)
+        {
+            EventId = eventId;
+            GroupNumber = groupNumber;
+            GroupName = groupName;
+            Bib = bib;
+            if (GroupNumber == Constants.DefaultTiming.DEFAULT_BIB_GROUP)
+            {
+                GroupName = "Default";
+            }
+        }
+
         public int CompareTo(AvailableBib other)
         {
             if (other == null) return 1;

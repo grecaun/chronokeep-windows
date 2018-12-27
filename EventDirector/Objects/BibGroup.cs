@@ -11,8 +11,8 @@ namespace EventDirector.Objects
         public BibGroup(int eventId)
         {
             this.EventId = eventId;
-            this.Name = "All";
-            this.Number = -1;
+            this.Name = "Default";
+            this.Number = Constants.DefaultTiming.DEFAULT_BIB_GROUP;
         }
 
         public BibGroup() { }

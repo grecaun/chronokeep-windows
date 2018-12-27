@@ -56,18 +56,12 @@ namespace EventDirector.UI.MainPages
                 return;
             }
             List<BibGroup> bibGroups = database.GetBibGroups(theEvent.Identifier);
-            if (bibGroups.Count < 1)
+            bibGroups.Add(new BibGroup(theEvent.Identifier));
+            bibGroups.Sort();
+            foreach (BibGroup bg in bibGroups)
             {
-                GroupsBox.Items.Add(new ABibGroup(this, new BibGroup(theEvent.Identifier), database.LargestBib(theEvent.Identifier) + 1));
-            }
-            else
-            {
-                bibGroups.Sort();
-                foreach (BibGroup bg in bibGroups)
-                {
-                    Log.D("Adding BibGroup number " + bg.Number);
-                    GroupsBox.Items.Add(new ABibGroup(this, bg, database.LargestBib(theEvent.Identifier) + 1));
-                }
+                Log.D("Adding BibGroup number " + bg.Number);
+                GroupsBox.Items.Add(new ABibGroup(this, bg, database.LargestBib(theEvent.Identifier) + 1));
             }
             List<AvailableBib> availableBibs = new List<AvailableBib>();
             await Task.Run(() =>
