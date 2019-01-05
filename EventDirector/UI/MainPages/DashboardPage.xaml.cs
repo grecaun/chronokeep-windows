@@ -110,6 +110,8 @@ namespace EventDirector.UI.MainPages
             {
                 setupNextYear.Content = Constants.DashboardLabels.SETUP_NEXT_YEAR;
             }
+            editButton.Content = Constants.DashboardLabels.EDIT;
+            cancelButton.Visibility = Visibility.Collapsed;
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
@@ -142,6 +144,7 @@ namespace EventDirector.UI.MainPages
                 {
                     theEvent.EarlyStartDifference = (Convert.ToInt32(nums[0]) * 3600) + (Convert.ToInt32(nums[1]) * 60) + Convert.ToInt32(nums[2]);
                 }
+                Log.D("Updating database.");
                 database.UpdateEvent(theEvent);
                 try
                 {
@@ -151,7 +154,8 @@ namespace EventDirector.UI.MainPages
                 {
                     Log.D("Unable to update event with mainwindow. TCP Server error or wrong main window.");
                 }
-                editButton.Content = Constants.DashboardLabels.EDIT;
+                Log.D("Updating view.");
+                UpdateView();
             }
             else
             {

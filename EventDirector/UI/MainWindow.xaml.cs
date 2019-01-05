@@ -1,4 +1,5 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.UI.EventWindows;
 using EventDirector.UI.MainPages;
 using System;
 using System.Collections.Generic;
@@ -269,7 +270,14 @@ namespace EventDirector.UI
         public void UpdateEvent(int identifier, string nameString, long dateVal, int nextYear, int shirtOptionalVal, int shirtPrice)
         {
             Log.D("Updating event information via TCP Server.");
-            tcpServer.UpdateEvent(identifier);
+            if (tcpServer != null)
+            {
+                tcpServer.UpdateEvent(identifier);
+            }
+            if (StaticEvent.timingWindow != null)
+            {
+                ((TimingWindow)StaticEvent.timingWindow).UpdateAll();
+            }
         }
 
         public void AddEvent(string nameString, long dateVal, int shirtOptionalVal, int shirtPrice) { }
@@ -337,6 +345,10 @@ namespace EventDirector.UI
         public void Update()
         {
             page.UpdateView();
+            if (StaticEvent.timingWindow != null)
+            {
+                ((TimingWindow)StaticEvent.timingWindow).UpdateAll();
+            }
         }
 
         public void AddWindow(Window w)

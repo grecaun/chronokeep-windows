@@ -371,13 +371,13 @@
     <Compile Include="UI\Timing\RawReadsWindow.xaml.cs">
       <DependentUpon>RawReadsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RFID\RFIDSettings.xaml.cs">
+    <Compile Include="Timing\RFID\RFIDSettings.xaml.cs">
       <DependentUpon>RFIDSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RFID\RFIDTime.xaml.cs">
+    <Compile Include="Timing\RFID\RFIDTime.xaml.cs">
       <DependentUpon>RFIDTime.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RFID\RFIDUltraInterface.cs" />
+    <Compile Include="Timing\RFID\RFIDUltraInterface.cs" />
     <Compile Include="UI\UHF RFID Reader\RFIDSerial.cs" />
     <Compile Include="Database\SQLiteInterface.cs" />
     <Compile Include="Network\TCPServer.cs" />
@@ -578,11 +578,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RFID\RFIDSettings.xaml">
+    <Page Include="Timing\RFID\RFIDSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RFID\RFIDTime.xaml">
+    <Page Include="Timing\RFID\RFIDTime.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -13,6 +13,8 @@ namespace EventDirector
         private int allow_early_start = 0, early_start_difference = -1;
         private int finish_max_occurrences = 1, finish_ignore_within = 0, start_window = -1;
         private string name, date, yearcode = "";
+        private long start_seconds = -1;
+        private int start_milliseconds;
 
         public Event() { }
 
@@ -70,7 +72,8 @@ namespace EventDirector
         }
 
         public Event(int id, string n, string d, int ny, int so, int price, int age, int start, int seg,
-            int gun, string yearcode, int early, int earlydiff, int maxOcc, int ignWith, int window)
+            int gun, string yearcode, int early, int earlydiff, int maxOcc, int ignWith, int window,
+            long startsec, int startmill)
         {
             this.nextYear = ny;
             this.identifier = id;
@@ -88,6 +91,8 @@ namespace EventDirector
             this.finish_max_occurrences = maxOcc;
             this.finish_ignore_within = ignWith;
             this.start_window = window;
+            this.start_seconds = startsec;
+            this.start_milliseconds = startmill;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -106,6 +111,8 @@ namespace EventDirector
         public int StartWindow { get => start_window; set => start_window = value; }
         public int FinishMaxOccurrences { get => finish_max_occurrences; set => finish_max_occurrences = value; }
         public int FinishIgnoreWithin { get => finish_ignore_within; set => finish_ignore_within = value; }
+        public long StartSeconds { get => start_seconds; set => start_seconds = value; }
+        public int StartMilliseconds { get => start_milliseconds; set => start_milliseconds = value; }
 
         public int CompareTo(Event other)
         {

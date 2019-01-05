@@ -7,7 +7,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="TimingWindow" Height="590" Width="830" MinWidth="830" MaxWidth="830" MinHeight="590">
+        Title="TimingWindow" Height="590" Width="830" MinWidth="830" MaxWidth="830" MinHeight="590" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -20,7 +20,7 @@
             <Label Name="EllapsedTime" Content="00:00:00" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,0" FontWeight="Bold" FontSize="40"/>
             <Grid Height="40" HorizontalAlignment="Center">
                 <Label Name="StartTimeLabel" Content="Start Time" Width="75" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Right" Margin="0,0,0,0" />
-                <xctk:MaskedTextBox Name="StartTime" ValueDataType="{x:Type s:String}" Mask="00:00:00" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="80,0,0,0" FontWeight="Bold" FontSize="16" KeyDown="StartTimeKeyDown" LostFocus="StartTimeLostFocus"/>
+                <xctk:MaskedTextBox Name="StartTime" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="80,0,0,0" FontWeight="Bold" FontSize="16" KeyDown="StartTimeKeyDown" LostFocus="StartTimeLostFocus"/>
             </Grid>
             <Button Name="StartRace" Content="Start Race" Width="100" Height="25" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,8,0,0" Click="StartRaceClick" />
             <Button Content="Edit Selected" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="EditSelected" IsEnabled="False"/>
@@ -41,7 +41,16 @@
             </Expander>
         </StackPanel>
         <StackPanel Grid.Column="0">
-            <Expander Name="readerExpander" MaxHeight="200" Margin="5,0,5,5" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Header="Readers" />
+            <Expander MaxHeight="200" Margin="5,0,5,5" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Header="Readers" IsExpanded="False" ExpandDirection="Down">
+                <ListBox Name="ReadersBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Expander>
             <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
