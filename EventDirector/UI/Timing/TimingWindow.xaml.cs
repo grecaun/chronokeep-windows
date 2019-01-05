@@ -1,4 +1,5 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.Objects;
 using EventDirector.UI.EventWindows;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace EventDirector
     public partial class TimingWindow : Window
     {
         private IDBInterface database;
-        private IWindowCallback window = null;
+        private INewMainWindow mWindow = null;
         private IMainWindow mainWindow = null;
 
         Event theEvent;
@@ -36,23 +37,24 @@ namespace EventDirector
         DispatcherTimer Timer = new DispatcherTimer();
         private Boolean TimerStarted = false;
 
+        private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
         private int[] baseIP = { 0, 0, 0, 0 };
 
         public TimingWindow(IDBInterface database, IMainWindow mainWindow)
         {
             InitializeComponent();
             this.database = database;
-            this.window = null;
+            this.mWindow = null;
             this.mainWindow = mainWindow;
             Timer.Tick += new EventHandler(Timer_Click);
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
         }
 
-        public TimingWindow(IWindowCallback window, IDBInterface database)
+        public TimingWindow(INewMainWindow window, IDBInterface database)
         {
             InitializeComponent();
             this.database = database;
-            this.window = window;
+            this.mWindow = window;
             this.mainWindow = null;
             theEvent = database.GetCurrentEvent();
 
@@ -119,9 +121,27 @@ namespace EventDirector
             {
                 locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
-            for (int i=0; i<4; i++)
+            List<TimingSystem> systems = mWindow.GetConnectedSystems();
+            int numSystems = systems.Count;
+            if (numSystems < 3)
             {
-                ReadersBox.Items.Add(new AReaderBox(this, baseIP, locations));
+                Log.D(systems.Count + " systems found.");
+                for (int i=0; i < 3-numSystems; i++)
+                {
+                    systems.Add(new TimingSystem()
+                    {
+                        IPAddress = String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
+                        Port = 22
+                    });
+                }
+            }
+            systems.Add(new TimingSystem()
+            {
+                IPAddress = String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
+                Port = 22
+            });
+            foreach (TimingSystem sys in systems) {
+                ReadersBox.Items.Add(new AReaderBox(this, sys, locations));
             }
         }
 
@@ -152,7 +172,7 @@ namespace EventDirector
             }
         }
 
-        public static TimingWindow NewWindow(IWindowCallback window, IDBInterface database)
+        public static TimingWindow NewWindow(INewMainWindow window, IDBInterface database)
         {
             if (StaticEvent.changeMainEventWindow != null || StaticEvent.timingWindow != null)
             {
@@ -181,7 +201,7 @@ namespace EventDirector
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (mainWindow != null) mainWindow.WindowClosed(this);
-            if (window != null) window.WindowFinalize(this);
+            if (mWindow != null) mWindow.WindowFinalize(this);
             StaticEvent.timingWindow = null;
         }
 
@@ -251,49 +271,76 @@ namespace EventDirector
             Log.D("Start time is " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
         }
 
+        internal bool ConnectSystem(TimingSystem sys)
+        {
+            return mWindow.ConnectToTimingSystem(sys);
+        }
+
+        internal bool DisconnectSystem(TimingSystem sys)
+        {
+            return mWindow.DisconnectFromTimingSystem(sys);
+        }
+
         private class AReaderBox : ListBoxItem
         {
             public TextBox ReaderIP { get; private set; }
+            public TextBox ReaderPort { get; private set; }
             public ComboBox ReaderLocation { get; private set; }
-            public Button ConnectBtn { get; private set; }
-            public Button ClockBtn { get; private set; }
-            public Button SettingsBtn { get; private set; }
+            public Button ConnectButton { get; private set; }
+            public Button ClockButton { get; private set; }
+            public Button SettingsButton { get; private set; }
 
-            private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
             readonly TimingWindow window;
             private List<TimingLocation> locations;
-            // public Reader reader;
+            public TimingSystem reader;
 
-            private readonly Regex allowedChars = new Regex("[^0-9.]");
+            private const string IPPattern = "^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
+            private const string allowedChars = "[^0-9.]";
+            private const string allowedNums = "[^0-9]";
 
-            public AReaderBox(TimingWindow window, int[] baseIP, List<TimingLocation> locations)
+            public AReaderBox(TimingWindow window, TimingSystem sys, List<TimingLocation> locations)
             {
                 this.window = window;
                 this.locations = locations;
-                Grid thePanel = new Grid();
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+                this.reader = sys;
+                Grid thePanel = new Grid()
+                {
+                    MaxWidth = 605
+                };
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
                 this.Content = thePanel;
                 ReaderIP = new TextBox()
                 {
-                    Text = String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
+                    Text = reader.IPAddress,
                     FontSize = 14,
                     VerticalContentAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(5,5,5,5)
                 };
                 ReaderIP.GotFocus += new RoutedEventHandler(this.SelectAll);
-                ReaderIP.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                ReaderIP.PreviewTextInput += new TextCompositionEventHandler(this.IPValidation);
                 thePanel.Children.Add(ReaderIP);
                 Grid.SetColumn(ReaderIP, 0);
+                ReaderPort = new TextBox()
+                {
+                    Text = reader.Port.ToString(),
+                    FontSize = 14,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5, 5, 5, 5)
+                };
+                ReaderPort.GotFocus += new RoutedEventHandler(this.SelectAll);
+                ReaderPort.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                thePanel.Children.Add(ReaderPort);
+                Grid.SetColumn(ReaderPort, 1);
                 ReaderLocation = new ComboBox()
                 {
                     VerticalContentAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(5, 5, 5, 5),
-                    Height = 25,
-                    Width = 100
+                    Height = 25
                 };
                 ComboBoxItem current = null, selected = null;
                 foreach (TimingLocation loc in this.locations)
@@ -303,7 +350,10 @@ namespace EventDirector
                         Content = loc.Name,
                         Uid = loc.Identifier.ToString()
                     };
-                    // check if location ID is the same as the reader location ID and set selected
+                    if (reader.LocationID == loc.Identifier)
+                    {
+                        selected = current;
+                    }
                     ReaderLocation.Items.Add(current);
                 }
                 if (selected != null)
@@ -315,8 +365,8 @@ namespace EventDirector
                     ReaderLocation.SelectedIndex = 0;
                 }
                 thePanel.Children.Add(ReaderLocation);
-                Grid.SetColumn(ReaderLocation, 1);
-                ClockBtn = new Button()
+                Grid.SetColumn(ReaderLocation, 2);
+                ClockButton = new Button()
                 {
                     Content = "Clock",
                     FontSize = 14,
@@ -325,10 +375,10 @@ namespace EventDirector
                     Height = 25,
                     IsEnabled = false
                 };
-                ClockBtn.Click += new RoutedEventHandler(this.Clock);
-                thePanel.Children.Add(ClockBtn);
-                Grid.SetColumn(ClockBtn, 2);
-                SettingsBtn = new Button()
+                ClockButton.Click += new RoutedEventHandler(this.Clock);
+                thePanel.Children.Add(ClockButton);
+                Grid.SetColumn(ClockButton, 3);
+                SettingsButton = new Button()
                 {
                     Content = "Settings",
                     FontSize = 14,
@@ -337,10 +387,10 @@ namespace EventDirector
                     Height = 25,
                     IsEnabled = false
                 };
-                SettingsBtn.Click += new RoutedEventHandler(this.Settings);
-                thePanel.Children.Add(SettingsBtn);
-                Grid.SetColumn(SettingsBtn, 3);
-                ConnectBtn = new Button()
+                SettingsButton.Click += new RoutedEventHandler(this.Settings);
+                thePanel.Children.Add(SettingsButton);
+                Grid.SetColumn(SettingsButton, 4);
+                ConnectButton = new Button()
                 {
                     Content = "Connect",
                     FontSize = 14,
@@ -348,9 +398,17 @@ namespace EventDirector
                     VerticalContentAlignment = VerticalAlignment.Center,
                     Height = 25
                 };
-                ConnectBtn.Click += new RoutedEventHandler(this.Connect);
-                thePanel.Children.Add(ConnectBtn);
-                Grid.SetColumn(ConnectBtn, 4);
+                ConnectButton.Click += new RoutedEventHandler(this.Connect);
+                thePanel.Children.Add(ConnectButton);
+                Grid.SetColumn(ConnectButton, 5);
+                if (reader.Connected)
+                {
+                    SetConnected();
+                }
+                else
+                {
+                    SetDisconnected();
+                }
             }
 
             public void UpdateLocations(List<TimingLocation> locations)
@@ -388,14 +446,70 @@ namespace EventDirector
                 src.SelectAll();
             }
 
+            private void IPValidation(object sender, TextCompositionEventArgs e)
+            {
+                e.Handled = Regex.IsMatch(e.Text, allowedChars);
+            }
+
             private void NumberValidation(object sender, TextCompositionEventArgs e)
             {
-                e.Handled = allowedChars.IsMatch(e.Text);
+                e.Handled = Regex.IsMatch(e.Text, allowedNums);
             }
 
             private void Connect(object sender, RoutedEventArgs e)
             {
                 Log.D("Connect button pressed. IP is " + ReaderIP.Text);
+                // Check if IP is a valid IP address
+                if (!Regex.IsMatch(ReaderIP.Text.Trim(), IPPattern))
+                {
+                    MessageBox.Show("IP address given not valid.");
+                    return;
+                }
+                reader.IPAddress = ReaderIP.Text.Trim();
+                // Check if Port is valid.
+                int portNo = -1;
+                int.TryParse(ReaderPort.Text.Trim(), out portNo);
+                if (portNo < 0 || portNo > 65535)
+                {
+                    MessageBox.Show("Port given not valid.");
+                    return;
+                }
+                reader.Port = portNo;
+                reader.LocationID = Convert.ToInt32(((ComboBoxItem)ReaderLocation.SelectedItem).Uid);
+                if ("Connect" == (String)ConnectButton.Content)
+                {
+                    if (window.ConnectSystem(reader)) // successful
+                    {
+                        SetConnected();
+                    }
+                }
+                else
+                {
+                    if (window.DisconnectSystem(reader))
+                    {
+                        SetDisconnected();
+                    }
+                }
+            }
+
+            private void SetConnected()
+            {
+                ReaderIP.IsEnabled = false;
+                ReaderPort.IsEnabled = false;
+                ReaderLocation.IsEnabled = false;
+                ClockButton.IsEnabled = true;
+                SettingsButton.IsEnabled = true;
+                ConnectButton.Content = "Disconnect";
+            }
+
+            private void SetDisconnected()
+            {
+                ReaderIP.IsEnabled = true;
+                ReaderPort.IsEnabled = true;
+                ReaderLocation.IsEnabled = true;
+                ClockButton.IsEnabled = false;
+                SettingsButton.IsEnabled = false;
+                ConnectButton.Content = "Connect";
             }
 
             private void Settings(object sender, RoutedEventArgs e)

@@ -58,6 +58,7 @@ namespace EventDirector.UI.MainPages
                 DivisionRow.Height = new GridLength(55);
                 UpdateDivisionsBox();
             }
+            mWindow.UpdateTimingWindow();
         }
 
         private void UpdateDivisionsBox()

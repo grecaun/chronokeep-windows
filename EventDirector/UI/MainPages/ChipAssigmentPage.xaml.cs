@@ -98,6 +98,7 @@ namespace EventDirector.UI.MainPages
                 }
             }
             previousEvents.SelectedIndex = 0;
+            mWindow.UpdateTimingWindow();
         }
 
         private void SaveSingleButton_Click(object sender, RoutedEventArgs e)

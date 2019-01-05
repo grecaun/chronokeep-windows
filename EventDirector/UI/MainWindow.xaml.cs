@@ -1,4 +1,5 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.Objects;
 using EventDirector.UI.EventWindows;
 using EventDirector.UI.MainPages;
 using System;
@@ -345,6 +346,10 @@ namespace EventDirector.UI
         public void Update()
         {
             page.UpdateView();
+        }
+
+        public void UpdateTimingWindow()
+        {
             if (StaticEvent.timingWindow != null)
             {
                 ((TimingWindow)StaticEvent.timingWindow).UpdateAll();
@@ -386,6 +391,22 @@ namespace EventDirector.UI
         public bool ExcelEnabled()
         {
             return excelEnabled;
+        }
+
+        public bool ConnectToTimingSystem(TimingSystem system)
+        {
+            return true;
+        }
+
+        public bool DisconnectFromTimingSystem(TimingSystem system)
+        {
+            return true;
+        }
+
+        public List<TimingSystem> GetConnectedSystems()
+        {
+            List<TimingSystem> output = new List<TimingSystem>();
+            return output;
         }
     }
 }

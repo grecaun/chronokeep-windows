@@ -81,6 +81,7 @@ namespace EventDirector.UI.MainPages
                 }
             }
             finish_occurrences++;
+            mWindow.UpdateTimingWindow();
         }
 
         private static bool NotInDiv(Segment s)

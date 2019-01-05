@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EventDirector.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +15,9 @@ namespace EventDirector.Interfaces
         void AddWindow(Window w);
         void UpdateStatus();
         bool ExcelEnabled();
+        bool ConnectToTimingSystem(TimingSystem system);
+        bool DisconnectFromTimingSystem(TimingSystem system);
+        List<TimingSystem> GetConnectedSystems();
+        void UpdateTimingWindow();
     }
 }

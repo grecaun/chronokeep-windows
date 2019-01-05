@@ -54,6 +54,7 @@ namespace EventDirector.UI.MainPages
                 LocationsBox.Items.Add(new ALocation(this, loc));
                 LocationCount = loc.Identifier > LocationCount - 1 ? loc.Identifier + 1 : LocationCount;
             }
+            mWindow.UpdateTimingWindow();
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)

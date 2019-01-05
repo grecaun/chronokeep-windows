@@ -82,6 +82,7 @@ namespace EventDirector.UI.MainPages
             DefaultWaiverBox.Text = setting.value;
             setting = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
             UpdatePage.IsChecked = setting.value == Constants.Settings.SETTING_TRUE;
+            mWindow.UpdateTimingWindow();
         }
 
         private async void ResetDB_Click(object sender, RoutedEventArgs e)

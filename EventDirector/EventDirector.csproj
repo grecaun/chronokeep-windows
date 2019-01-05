@@ -214,6 +214,7 @@
     <Compile Include="Objects\ChipRead.cs" />
     <Compile Include="Objects\Range.cs" />
     <Compile Include="Objects\Segment.cs" />
+    <Compile Include="Objects\TimingSystem.cs" />
     <Compile Include="UI\ChipAssignment\ChipTool.xaml.cs">
       <DependentUpon>ChipTool.xaml</DependentUpon>
     </Compile>

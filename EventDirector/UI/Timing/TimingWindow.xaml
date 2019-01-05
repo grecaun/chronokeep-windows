@@ -7,14 +7,14 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="TimingWindow" Height="590" Width="830" MinWidth="830" MaxWidth="830" MinHeight="590" Closing="Window_Closing">
+        Title="TimingWindow" Height="590" Width="900" MinWidth="900" MinHeight="590" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="576" />
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="254" />
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="1">
             <Label Name="EllapsedTime" Content="00:00:00" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,0" FontWeight="Bold" FontSize="40"/>
