@@ -37,6 +37,8 @@ namespace EventDirector.UI
         Thread zeroConfThread = null;
         ZeroConf zeroConf = null;
 
+        List<TimingSystem> connectedSystems = new List<TimingSystem>();
+
         List<Window> openWindows = new List<Window>();
 
         public MainWindow()
@@ -395,17 +397,21 @@ namespace EventDirector.UI
 
         public bool ConnectToTimingSystem(TimingSystem system)
         {
+            connectedSystems.Add(system);
+            system.Connected = true;
             return true;
         }
 
         public bool DisconnectFromTimingSystem(TimingSystem system)
         {
+            connectedSystems.Remove(system);
+            system.Connected = false;
             return true;
         }
 
         public List<TimingSystem> GetConnectedSystems()
         {
-            List<TimingSystem> output = new List<TimingSystem>();
+            List<TimingSystem> output = new List<TimingSystem>(connectedSystems);
             return output;
         }
     }

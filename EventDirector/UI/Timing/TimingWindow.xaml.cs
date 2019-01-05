@@ -37,6 +37,8 @@ namespace EventDirector
         DispatcherTimer Timer = new DispatcherTimer();
         private Boolean TimerStarted = false;
 
+        int total = 4, connected = 0;
+
         private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
         private int[] baseIP = { 0, 0, 0, 0 };
 
@@ -140,9 +142,15 @@ namespace EventDirector
                 IPAddress = String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
                 Port = 22
             });
+            connected = 0;
             foreach (TimingSystem sys in systems) {
                 ReadersBox.Items.Add(new AReaderBox(this, sys, locations));
+                if (sys.Connected)
+                {
+                    connected++;
+                }
             }
+            total = ReadersBox.Items.Count;
         }
 
         public void UpdateAll()
@@ -186,7 +194,7 @@ namespace EventDirector
         private void Timer_Click(object sender, EventArgs e)
         {
             TimeSpan ellapsed = DateTime.Now - startTime;
-            EllapsedTime.Content = String.Format("{0:D2}:{1:D2}:{2:D2}", ellapsed.Days * 24 + ellapsed.Hours, ellapsed.Minutes, ellapsed.Seconds);
+            EllapsedTime.Content = String.Format("{0:D2}:{1:D2}:{2:D2}", Math.Abs(ellapsed.Days) * 24 + Math.Abs(ellapsed.Hours), Math.Abs(ellapsed.Minutes), Math.Abs(ellapsed.Seconds));
         }
 
         private void StartRaceClick(object sender, RoutedEventArgs e)
@@ -273,12 +281,45 @@ namespace EventDirector
 
         internal bool ConnectSystem(TimingSystem sys)
         {
-            return mWindow.ConnectToTimingSystem(sys);
+            bool success = mWindow.ConnectToTimingSystem(sys);
+            if (success)
+            {
+                connected++;
+            }
+            if (connected >= total)
+            {
+                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem()
+                {
+                    IPAddress = String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
+                    Port = 22
+                }, locations));
+                total = ReadersBox.Items.Count;
+            }
+            return success;
         }
 
         internal bool DisconnectSystem(TimingSystem sys)
         {
-            return mWindow.DisconnectFromTimingSystem(sys);
+            bool success = mWindow.DisconnectFromTimingSystem(sys);
+            if (success)
+            {
+                connected--;
+            }
+            if (total > 4 && connected < total - 1)
+            {
+                AReaderBox removeMe = null;
+                foreach (AReaderBox aReader in ReadersBox.Items)
+                {
+                    if (!aReader.reader.Connected)
+                    {
+                        removeMe = aReader;
+                        break;
+                    }
+                }
+                ReadersBox.Items.Remove(removeMe);
+                total = ReadersBox.Items.Count;
+            }
+            return success;
         }
 
         private class AReaderBox : ListBoxItem
@@ -294,7 +335,7 @@ namespace EventDirector
             private List<TimingLocation> locations;
             public TimingSystem reader;
 
-            private const string IPPattern = "^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
+            private const string IPPattern = "^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$";
             private const string allowedChars = "[^0-9.]";
             private const string allowedNums = "[^0-9]";
 
