@@ -39,7 +39,7 @@ namespace EventDirector
                 Log.D("TCP Server is on loop " + counter++ + ".");
                 readList.Clear();
                 readList.AddRange(clients);
-                Socket.Select(readList, null, null, 60 * 1000 * 1000);
+                Socket.Select(readList, null, null, 60000000);
                 foreach (Socket sock in readList)
                 {
                     if (sock == server)

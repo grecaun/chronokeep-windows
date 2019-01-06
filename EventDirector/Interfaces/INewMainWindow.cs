@@ -15,8 +15,9 @@ namespace EventDirector.Interfaces
         void AddWindow(Window w);
         void UpdateStatus();
         bool ExcelEnabled();
-        bool ConnectToTimingSystem(TimingSystem system);
-        bool DisconnectFromTimingSystem(TimingSystem system);
+        void ConnectTimingSystem(TimingSystem system);
+        void DisconnectTimingSystem(TimingSystem system);
+        void TimingSystemDisconnected(TimingSystem system);
         List<TimingSystem> GetConnectedSystems();
         void UpdateTimingWindow();
     }

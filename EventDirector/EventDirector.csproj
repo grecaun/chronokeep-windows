@@ -215,6 +215,7 @@
     <Compile Include="Objects\Range.cs" />
     <Compile Include="Objects\Segment.cs" />
     <Compile Include="Objects\TimingSystem.cs" />
+    <Compile Include="Timing\TimingController.cs" />
     <Compile Include="UI\ChipAssignment\ChipTool.xaml.cs">
       <DependentUpon>ChipTool.xaml</DependentUpon>
     </Compile>
@@ -372,10 +373,10 @@
     <Compile Include="UI\Timing\RawReadsWindow.xaml.cs">
       <DependentUpon>RawReadsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Timing\RFID\RFIDSettings.xaml.cs">
+    <Compile Include="UI\Timing\RFID\RFIDSettings.xaml.cs">
       <DependentUpon>RFIDSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Timing\RFID\RFIDTime.xaml.cs">
+    <Compile Include="UI\Timing\RFID\RFIDTime.xaml.cs">
       <DependentUpon>RFIDTime.xaml</DependentUpon>
     </Compile>
     <Compile Include="Timing\RFID\RFIDUltraInterface.cs" />
@@ -579,11 +580,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Timing\RFID\RFIDSettings.xaml">
+    <Page Include="UI\Timing\RFID\RFIDSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Timing\RFID\RFIDTime.xaml">
+    <Page Include="UI\Timing\RFID\RFIDTime.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

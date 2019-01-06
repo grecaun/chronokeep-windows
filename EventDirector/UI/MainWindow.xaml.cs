@@ -1,5 +1,6 @@
 ﻿using EventDirector.Interfaces;
 using EventDirector.Objects;
+using EventDirector.Timing;
 using EventDirector.UI.EventWindows;
 using EventDirector.UI.MainPages;
 using System;
@@ -37,7 +38,8 @@ namespace EventDirector.UI
         Thread zeroConfThread = null;
         ZeroConf zeroConf = null;
 
-        List<TimingSystem> connectedSystems = new List<TimingSystem>();
+        Thread TimingControllerThread = null;
+        TimingController TimingController = null;
 
         List<Window> openWindows = new List<Window>();
 
@@ -65,6 +67,8 @@ namespace EventDirector.UI
 
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
+
+            TimingController = new TimingController(database, this);
         }
 
         private async void UpdateImportOptions()
@@ -395,24 +399,45 @@ namespace EventDirector.UI
             return excelEnabled;
         }
 
-        public bool ConnectToTimingSystem(TimingSystem system)
+        public async void ConnectTimingSystem(TimingSystem system)
         {
-            connectedSystems.Add(system);
-            system.Connected = true;
-            return true;
+            await Task.Run(() =>
+            {
+                TimingController.ConnectTimingSystem(system);
+            });
+            UpdateTimingWindow();
+            await Task.Run(() =>
+            {
+                if (!TimingController.IsRunning())
+                {
+                    TimingControllerThread = new Thread(new ThreadStart(TimingController.Run));
+                    TimingControllerThread.Start();
+                }
+            });
         }
 
-        public bool DisconnectFromTimingSystem(TimingSystem system)
+        public async void DisconnectTimingSystem(TimingSystem system)
         {
-            connectedSystems.Remove(system);
-            system.Connected = false;
-            return true;
+            await Task.Run(() =>
+            {
+                TimingController.DisconnectTimingSystem(system);
+            });
+            UpdateTimingWindow();
         }
 
         public List<TimingSystem> GetConnectedSystems()
         {
-            List<TimingSystem> output = new List<TimingSystem>(connectedSystems);
-            return output;
+            return TimingController.GetConnectedSystems();
+        }
+
+        public void TimingSystemDisconnected(TimingSystem system)
+        {
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            {
+                MessageBox.Show("Reader at " + system.LocationName + " has unexpectedly disconnected. IP Address was " + system.IPAddress + ".");
+                system.Status = SYSTEM_STATUS.DISCONNECTED;
+                UpdateTimingWindow();
+            }));
         }
     }
 }

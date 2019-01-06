@@ -145,7 +145,7 @@ namespace EventDirector
             connected = 0;
             foreach (TimingSystem sys in systems) {
                 ReadersBox.Items.Add(new AReaderBox(this, sys, locations));
-                if (sys.Connected)
+                if (sys.Status == SYSTEM_STATUS.CONNECTED)
                 {
                     connected++;
                 }
@@ -177,6 +177,7 @@ namespace EventDirector
             foreach (AReaderBox read in ReadersBox.Items)
             {
                 read.UpdateLocations(locations);
+                read.UpdateStatus();
             }
         }
 
@@ -281,8 +282,8 @@ namespace EventDirector
 
         internal bool ConnectSystem(TimingSystem sys)
         {
-            bool success = mWindow.ConnectToTimingSystem(sys);
-            if (success)
+            mWindow.ConnectTimingSystem(sys);
+            if (sys.Status == SYSTEM_STATUS.CONNECTED)
             {
                 connected++;
             }
@@ -295,13 +296,13 @@ namespace EventDirector
                 }, locations));
                 total = ReadersBox.Items.Count;
             }
-            return success;
+            return sys.Status == SYSTEM_STATUS.CONNECTED;
         }
 
         internal bool DisconnectSystem(TimingSystem sys)
         {
-            bool success = mWindow.DisconnectFromTimingSystem(sys);
-            if (success)
+            mWindow.DisconnectTimingSystem(sys);
+            if (sys.Status == SYSTEM_STATUS.DISCONNECTED)
             {
                 connected--;
             }
@@ -310,7 +311,7 @@ namespace EventDirector
                 AReaderBox removeMe = null;
                 foreach (AReaderBox aReader in ReadersBox.Items)
                 {
-                    if (!aReader.reader.Connected)
+                    if (aReader.reader.Status == SYSTEM_STATUS.DISCONNECTED)
                     {
                         removeMe = aReader;
                         break;
@@ -319,7 +320,7 @@ namespace EventDirector
                 ReadersBox.Items.Remove(removeMe);
                 total = ReadersBox.Items.Count;
             }
-            return success;
+            return sys.Status == SYSTEM_STATUS.DISCONNECTED;
         }
 
         private class AReaderBox : ListBoxItem
@@ -442,14 +443,7 @@ namespace EventDirector
                 ConnectButton.Click += new RoutedEventHandler(this.Connect);
                 thePanel.Children.Add(ConnectButton);
                 Grid.SetColumn(ConnectButton, 5);
-                if (reader.Connected)
-                {
-                    SetConnected();
-                }
-                else
-                {
-                    SetDisconnected();
-                }
+                UpdateStatus();
             }
 
             public void UpdateLocations(List<TimingLocation> locations)
@@ -478,6 +472,22 @@ namespace EventDirector
                 else
                 {
                     ReaderLocation.SelectedIndex = 0;
+                }
+            }
+
+            public void UpdateStatus()
+            {
+                if (reader.Status == SYSTEM_STATUS.CONNECTED)
+                {
+                    SetConnected();
+                }
+                else if (reader.Status == SYSTEM_STATUS.DISCONNECTED)
+                {
+                    SetDisconnected();
+                }
+                else
+                {
+                    SetWorking();
                 }
             }
 
@@ -517,20 +527,18 @@ namespace EventDirector
                 }
                 reader.Port = portNo;
                 reader.LocationID = Convert.ToInt32(((ComboBoxItem)ReaderLocation.SelectedItem).Uid);
+                reader.LocationName = ((ComboBoxItem)ReaderLocation.SelectedItem).Content.ToString();
                 if ("Connect" == (String)ConnectButton.Content)
                 {
-                    if (window.ConnectSystem(reader)) // successful
-                    {
-                        SetConnected();
-                    }
+                    window.ConnectSystem(reader);
+                    reader.Status = SYSTEM_STATUS.WORKING;
                 }
                 else
                 {
-                    if (window.DisconnectSystem(reader))
-                    {
-                        SetDisconnected();
-                    }
+                    window.DisconnectSystem(reader);
+                    reader.Status = SYSTEM_STATUS.WORKING;
                 }
+                UpdateStatus();
             }
 
             private void SetConnected()
@@ -540,6 +548,7 @@ namespace EventDirector
                 ReaderLocation.IsEnabled = false;
                 ClockButton.IsEnabled = true;
                 SettingsButton.IsEnabled = true;
+                ConnectButton.IsEnabled = true;
                 ConnectButton.Content = "Disconnect";
             }
 
@@ -550,7 +559,19 @@ namespace EventDirector
                 ReaderLocation.IsEnabled = true;
                 ClockButton.IsEnabled = false;
                 SettingsButton.IsEnabled = false;
+                ConnectButton.IsEnabled = true;
                 ConnectButton.Content = "Connect";
+            }
+
+            private void SetWorking()
+            {
+                ReaderIP.IsEnabled = false;
+                ReaderPort.IsEnabled = false;
+                ReaderLocation.IsEnabled = false;
+                ClockButton.IsEnabled = false;
+                SettingsButton.IsEnabled = false;
+                ConnectButton.IsEnabled = false;
+                ConnectButton.Content = "Working...";
             }
 
             private void Settings(object sender, RoutedEventArgs e)
