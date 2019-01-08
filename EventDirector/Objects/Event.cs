@@ -12,7 +12,7 @@ namespace EventDirector
         private int common_age_groups = 1, common_start_finish = 1, division_specific_segments = 0, rank_by_gun = 1;
         private int allow_early_start = 0, early_start_difference = -1;
         private int finish_max_occurrences = 1, finish_ignore_within = 0, start_window = -1;
-        private string name, date, yearcode = "";
+        private string name, date, yearcode = "", timing_system = Constants.Settings.TIMING_RFID;
         private long start_seconds = -1;
         private int start_milliseconds;
 
@@ -73,7 +73,7 @@ namespace EventDirector
 
         public Event(int id, string n, string d, int ny, int so, int price, int age, int start, int seg,
             int gun, string yearcode, int early, int earlydiff, int maxOcc, int ignWith, int window,
-            long startsec, int startmill)
+            long startsec, int startmill, string system)
         {
             this.nextYear = ny;
             this.identifier = id;
@@ -93,6 +93,7 @@ namespace EventDirector
             this.start_window = window;
             this.start_seconds = startsec;
             this.start_milliseconds = startmill;
+            this.timing_system = system;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -113,6 +114,7 @@ namespace EventDirector
         public int FinishIgnoreWithin { get => finish_ignore_within; set => finish_ignore_within = value; }
         public long StartSeconds { get => start_seconds; set => start_seconds = value; }
         public int StartMilliseconds { get => start_milliseconds; set => start_milliseconds = value; }
+        public string TimingSystem { get => timing_system; set => timing_system = value; }
 
         public int CompareTo(Event other)
         {

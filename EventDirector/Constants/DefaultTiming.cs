@@ -13,5 +13,12 @@ namespace EventDirector.Constants
         public static readonly int SEGMENT_FINISH = -1;
 
         public static readonly int DEFAULT_BIB_GROUP = -1;
+
+        public static readonly Dictionary<string, string> SYSTEM_NAMES = new Dictionary<string, string>()
+        {
+            { Constants.Settings.TIMING_MANUAL, "Manual" },
+            { Constants.Settings.TIMING_RFID, "Chip: RFID" },
+            { Constants.Settings.TIMING_IPICO, "Chip: Ipico" }
+        };
     }
 }

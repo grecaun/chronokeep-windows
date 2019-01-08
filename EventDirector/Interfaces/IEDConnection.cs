@@ -9,7 +9,5 @@ namespace EventDirector
     interface IEDConnection
     {
         void Accept();
-
-
     }
 }

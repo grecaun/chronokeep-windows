@@ -202,10 +202,11 @@
     <Compile Include="Constants\Distances.cs" />
     <Compile Include="Constants\JsonOptions.cs" />
     <Compile Include="Constants\Settings.cs" />
-    <Compile Include="Interfaces\IDataExporter.cs" />
-    <Compile Include="Interfaces\IMainPage.cs" />
-    <Compile Include="Interfaces\INewMainWindow.cs" />
-    <Compile Include="Interfaces\IWindowCallback.cs" />
+    <Compile Include="Interfaces\IO\IDataExporter.cs" />
+    <Compile Include="Interfaces\Timing\ITimingSystemInterface.cs" />
+    <Compile Include="Interfaces\UI\IMainPage.cs" />
+    <Compile Include="Interfaces\UI\INewMainWindow.cs" />
+    <Compile Include="Interfaces\UI\IWindowCallback.cs" />
     <Compile Include="Objects\AgeGroup.cs" />
     <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
@@ -300,14 +301,14 @@
     <Compile Include="UI\Export\ExportParticipants.xaml.cs">
       <DependentUpon>ExportParticipants.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IChangeUpdater.cs" />
-    <Compile Include="Interfaces\IDataImporter.cs" />
+    <Compile Include="Interfaces\UI\IChangeUpdater.cs" />
+    <Compile Include="Interfaces\IO\IDataImporter.cs" />
     <Compile Include="Database\IDBInterface.cs" />
     <Compile Include="Objects\Division.cs" />
     <Compile Include="Objects\Event.cs" />
     <Compile Include="Objects\EventSpecific.cs" />
     <Compile Include="Interfaces\IEDConnection.cs" />
-    <Compile Include="Interfaces\IMainWindow.cs" />
+    <Compile Include="Interfaces\UI\IMainWindow.cs" />
     <Compile Include="IO\ImportData.cs" />
     <Compile Include="UI\Import\ImportFilePage1.xaml.cs">
       <DependentUpon>ImportFilePage1.xaml</DependentUpon>

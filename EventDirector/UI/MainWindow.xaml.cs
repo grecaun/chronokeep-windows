@@ -356,10 +356,13 @@ namespace EventDirector.UI
 
         public void UpdateTimingWindow()
         {
-            if (StaticEvent.timingWindow != null)
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
-                ((TimingWindow)StaticEvent.timingWindow).UpdateAll();
-            }
+                if (StaticEvent.timingWindow != null)
+                {
+                    ((TimingWindow)StaticEvent.timingWindow).UpdateAll();
+                }
+            }));
         }
 
         public void AddWindow(Window w)

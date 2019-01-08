@@ -12,7 +12,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 24;
+        private readonly int version = 25;
         SQLiteConnection connection;
         readonly string connectionInfo;
 
@@ -74,11 +74,12 @@ namespace EventDirector
                     "event_common_age_groups INTEGER DEFAULT 1," +
                     "event_common_start_finish INTEGER DEFAULT 1," +
                     "event_division_specific_segments INTEGER DEFAULT 0," +
-                    "event_start_time_seconds INTEGER NOT NULL DEFAULT 1," +
+                    "event_start_time_seconds INTEGER NOT NULL DEFAULT -1," +
                     "event_start_time_milliseconds INTEGER NOT NULL DEFAULT 0," +
                     "event_finish_max_occurances INTEGER NOT NULL DEFAULT 1," +
                     "event_finish_ignore_within INTEGER NOT NULL DEFAULT 0," +
                     "event_start_window INTEGER NOT NULL DEFAULT -1," +
+                    "event_timing_system VARCHAR NOT NULL DEFAULT 'RFID'," +
                     "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                     ")");
                 queries.Add("CREATE TABLE IF NOT EXISTS dayof_participant (" +
@@ -852,6 +853,14 @@ namespace EventDirector
                             "end_age INTEGER NOT NULL);" +
                             "UPDATE settings SET version=24 WHERE version=23;";
                         command.ExecuteNonQuery();
+                        goto case 24;
+                    case 24:
+                        Log.D("Upgrading from version 24.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "UPDATE events SET event_start_time_seconds=-1 WHERE event_start_time_seconds=0;" +
+                            "ALTER TABLE events ADD event_timing_system VARCHAR NOT NULL DEFAULT 'RFID';" +
+                            "UPDATE settings SET version=25 WHERE version=24;";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();
@@ -1034,8 +1043,8 @@ namespace EventDirector
             command.CommandText = "INSERT INTO events(event_name, event_date, event_shirt_optional, event_shirt_price," +
                 "event_common_age_groups, event_common_start_finish, event_rank_by_gun, event_division_specific_segments, event_yearcode, " +
                 "event_next_year_event_id, event_allow_early_start, event_early_start_difference, event_start_time_seconds, " +
-                "event_start_time_milliseconds)" +
-                " values(@name,@date,@so,@price,@age,@start,@gun,@sepseg,@yearcode,@ny,@early,@diff,@startsec,@startmill)";
+                "event_start_time_milliseconds, event_timing_system)" +
+                " values(@name,@date,@so,@price,@age,@start,@gun,@sepseg,@yearcode,@ny,@early,@diff,@startsec,@startmill,@system)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
@@ -1050,7 +1059,9 @@ namespace EventDirector
                 new SQLiteParameter("@early", anEvent.AllowEarlyStart),
                 new SQLiteParameter("@diff", anEvent.EarlyStartDifference),
                 new SQLiteParameter("@startsec", anEvent.StartSeconds),
-                new SQLiteParameter("@startmill", anEvent.StartMilliseconds) });
+                new SQLiteParameter("@startmill", anEvent.StartMilliseconds),
+                new SQLiteParameter("@system", anEvent.TimingSystem)
+            });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
         }
@@ -1084,7 +1095,8 @@ namespace EventDirector
             command.CommandText = "UPDATE events SET event_name=@name, event_date=@date, event_next_year_event_id=@ny, event_shirt_optional=@so," +
                 "event_shirt_price=@price, event_common_age_groups=@age, event_common_start_finish=@start, event_rank_by_gun=@gun, " +
                 "event_division_specific_segments=@seg, event_yearcode=@yearcode, event_allow_early_start=@early, " +
-                "event_early_start_difference=@diff, event_start_time_seconds=@startsec, event_start_time_milliseconds=@startmill WHERE event_id=@id";
+                "event_early_start_difference=@diff, event_start_time_seconds=@startsec, event_start_time_milliseconds=@startmill, " +
+                "event_timing_system=@system WHERE event_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@id", anEvent.Identifier),
                 new SQLiteParameter("@name", anEvent.Name),
@@ -1100,7 +1112,9 @@ namespace EventDirector
                 new SQLiteParameter("@early", anEvent.AllowEarlyStart),
                 new SQLiteParameter("@diff", anEvent.EarlyStartDifference),
                 new SQLiteParameter("@startsec", anEvent.StartSeconds),
-                new SQLiteParameter("@startmill", anEvent.StartMilliseconds) });
+                new SQLiteParameter("@startmill", anEvent.StartMilliseconds),
+                new SQLiteParameter("@system", anEvent.TimingSystem)
+            });
             command.ExecuteNonQuery();
         }
 
@@ -1118,7 +1132,8 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString(), Convert.ToInt32(reader["event_allow_early_start"]),
                     Convert.ToInt32(reader["event_early_start_difference"]), Convert.ToInt32(reader["event_finish_max_occurances"]),
                     Convert.ToInt32(reader["event_finish_ignore_within"]), Convert.ToInt32(reader["event_start_window"]),
-                    Convert.ToInt64(reader["event_start_time_seconds"]), Convert.ToInt32(reader["event_start_time_milliseconds"])
+                    Convert.ToInt64(reader["event_start_time_seconds"]), Convert.ToInt32(reader["event_start_time_milliseconds"]),
+                    reader["event_timing_system"].ToString()
                     ));
             }
             return output;
@@ -1171,7 +1186,8 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString(), Convert.ToInt32(reader["event_allow_early_start"]),
                     Convert.ToInt32(reader["event_early_start_difference"]), Convert.ToInt32(reader["event_finish_max_occurances"]),
                     Convert.ToInt32(reader["event_finish_ignore_within"]), Convert.ToInt32(reader["event_start_window"]),
-                    Convert.ToInt64(reader["event_start_time_seconds"]), Convert.ToInt32(reader["event_start_time_milliseconds"])
+                    Convert.ToInt64(reader["event_start_time_seconds"]), Convert.ToInt32(reader["event_start_time_milliseconds"]),
+                    reader["event_timing_system"].ToString()
                     );
             }
             return output;

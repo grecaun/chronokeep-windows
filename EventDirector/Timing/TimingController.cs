@@ -1,4 +1,5 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.Interfaces.Timing;
 using EventDirector.Objects;
 using System;
 using System.Collections.Generic;
@@ -64,7 +65,7 @@ namespace EventDirector.Timing
             {
                 Log.D("Connected to " + system.IPAddress);
                 TimingSystemSockets.Add(sock);
-                system.Status = SYSTEM_STATUS.CONNECTED;
+                TimingSystemDict[sock].SetTime();
             }
             else
             {
@@ -98,7 +99,7 @@ namespace EventDirector.Timing
             {
                 readList.Clear();
                 readList.AddRange(TimingSystemSockets);
-                Socket.Select(readList, null, null, 60000000);
+                Socket.Select(readList, null, null, 3000000);
                 foreach (Socket sock in readList)
                 {
                     byte[] recvd = new byte[2056];
@@ -117,7 +118,38 @@ namespace EventDirector.Timing
                         {
                             String msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
                             Log.D("Timing System - Message is :" + msg);
-                            // process the message
+                            HashSet<MessageType> messageTypes = TimingSystemDict[sock].SystemInterface.ParseMessages(msg);
+                            foreach (MessageType type in messageTypes)
+                            {
+                                switch (type)
+                                {
+                                    case MessageType.CONNECTED:
+                                        Log.D("Timing system successfully connected.");
+                                        TimingSystemDict[sock].Status = SYSTEM_STATUS.CONNECTED;
+                                        break;
+                                    case MessageType.SETTINGCHANGE:
+                                        Log.D("Setting value changed.");
+                                        break;
+                                    case MessageType.SETTINGVALUE:
+                                        Log.D("Setting value given.");
+                                        break;
+                                    case MessageType.VOLTAGENORMAL:
+                                        Log.D("System voltage normal.");
+                                        break;
+                                    case MessageType.VOLTAGELOW:
+                                        Log.D("System voltage low.");
+                                        break;
+                                    case MessageType.TIME:
+                                        Log.D("Time value received.");
+                                        break;
+                                    case MessageType.STATUS:
+                                        Log.D("Status message received.");
+                                        break;
+                                    case MessageType.ERROR:
+                                        Log.D("Error from timing system.");
+                                        break;
+                                }
+                            }
                         }
                     }
                     catch
@@ -129,6 +161,27 @@ namespace EventDirector.Timing
                         mainWindow.TimingSystemDisconnected(disconnected);
                     }
                 }
+                // Check Sockets we've started to connect to and verify that they've successfully connected.
+                List<Socket> toRemove = new List<Socket>();
+                foreach (Socket sock in TimingSystemSockets)
+                {
+                    TimingSystem sys = TimingSystemDict[sock];
+                    if (sys != null)
+                    {
+                        if (sys.Status != SYSTEM_STATUS.CONNECTED && sys.TimedOut()) // Not connected & Timed out.
+                        {
+                            sys.Status = SYSTEM_STATUS.DISCONNECTED;
+                            mainWindow.UpdateTimingWindow();
+                            TimingSystemDict.Remove(sock);
+                            toRemove.Add(sock);
+                        }
+                    }
+                    else // Socket not found in dictionary.
+                    {
+                        toRemove.Add(sock);
+                    }
+                }
+                TimingSystemSockets.RemoveAll(i => toRemove.Contains(i));
             }
             if (mut.WaitOne(6000))
             {

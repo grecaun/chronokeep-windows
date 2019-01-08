@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EventDirector.Interfaces.Timing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -8,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    class RFIDUltraInterface
+    class RFIDUltraInterface : ITimingSystemInterface
     {
         IDBInterface database;
+        StringBuilder buffer = new StringBuilder();
         Socket sock;
 
         private static readonly Regex voltage = new Regex(@"^V=.*");
@@ -20,6 +22,7 @@ namespace EventDirector
         private static readonly Regex settingconfirmation = new Regex(@"^u.*");
         private static readonly Regex time = new Regex(@"^\d{2}:\d{2}:\d{2} \d{2}-\d{2}-\d{4}");
         private static readonly Regex status = new Regex(@"^S=.*");
+        private static readonly Regex msg = new Regex(@"^[^\n]*\n");
 
         public RFIDUltraInterface(IDBInterface database)
         {
@@ -32,94 +35,107 @@ namespace EventDirector
             this.sock = sock;
         }
 
-        public RFIDMessage ParseMessage(String message)
+        public HashSet<MessageType> ParseMessages(string inMessage)
         {
-            // all incoming messages are terminated by a linefeed character (0x0A)
-            // If "0,[...]" Chip read
-            if (chipread.IsMatch(message))
+            HashSet<MessageType> output = new HashSet<MessageType>();
+            buffer.Append(inMessage);
+            Match m = msg.Match(buffer.ToString());
+            while (m.Success)
             {
-                string[] chipVals = message.Split(',');
-                ChipRead chipRead = new ChipRead
+                buffer.Remove(m.Index, m.Length);
+                string message = m.Value;
+                // all incoming messages are terminated by a linefeed character (0x0A)
+                // If "0,[...]" Chip read
+                if (chipread.IsMatch(message))
                 {
-                    EventId = 0, // UPDATE LATER
-                    Status = 0,
-                    LocationID = 0,
-                    ChipNumber = long.Parse(chipVals[1]),
-                    Seconds = long.Parse(chipVals[2]),
-                    Milliseconds = int.Parse(chipVals[3]),
-                    Antenna = int.Parse(chipVals[4]),
-                    RSSI = chipVals[5],
-                    IsRewind = int.Parse(chipVals[6]),
-                    Reader = chipVals[7],
-                    Box = chipVals[8],
-                    ReaderTime = chipVals[9],
-                    StartTime = long.Parse(chipVals[10]),
-                    LogId = int.Parse(chipVals[11])
-                };
-                chipRead.SetTime();
-                database.AddChipRead(chipRead);
-                return RFIDMessage.CHIPREAD;
-            }
-            // If "V=" then it's a voltage status.
-            if (voltage.IsMatch(message))
-            {
-                try
-                {
-                    double voltVal = Double.Parse(message.Substring(2));
+                    string[] chipVals = message.Split(',');
+                    ChipRead chipRead = new ChipRead
+                    {
+                        EventId = 0, // UPDATE LATER
+                        Status = 0,
+                        LocationID = 0,
+                        ChipNumber = long.Parse(chipVals[1]),
+                        Seconds = long.Parse(chipVals[2]),
+                        Milliseconds = int.Parse(chipVals[3]),
+                        Antenna = int.Parse(chipVals[4]),
+                        RSSI = chipVals[5],
+                        IsRewind = int.Parse(chipVals[6]),
+                        Reader = chipVals[7],
+                        Box = chipVals[8],
+                        ReaderTime = chipVals[9],
+                        StartTime = long.Parse(chipVals[10]),
+                        LogId = int.Parse(chipVals[11])
+                    };
+                    chipRead.SetTime();
+                    database.AddChipRead(chipRead);
+                    output.Add(MessageType.CHIPREAD);
                 }
-                catch
+                // If "V=" then it's a voltage status.
+                else if (voltage.IsMatch(message))
                 {
-                    return RFIDMessage.ERROR;
+                    try
+                    {
+                        double voltVal = Double.Parse(message.Substring(2));
+                    }
+                    catch
+                    {
+                        output.Add(MessageType.ERROR);
+                    }
+                    output.Add(MessageType.VOLTAGENORMAL);
                 }
-                return RFIDMessage.VOLTAGENORMAL;
-            }
-            // If "U[...]" Setting information
-            if (settinginfo.IsMatch(message))
-            {
-                char settingID = message[1];
-                switch (settingID)
+                // If "U[...]" Setting information
+                else if (settinginfo.IsMatch(message))
                 {
-                    default:
-                        break;
+                    char settingID = message[1];
+                    switch (settingID)
+                    {
+                        default:
+                            break;
+                    }
+                    output.Add(MessageType.SETTINGVALUE);
                 }
-                return RFIDMessage.SETTINGVALUE;
-            }
-            // If "u[...]" setting changed
-            if (settingconfirmation.IsMatch(message))
-            {
-                char settingID = message[1];
-                switch (settingID)
+                // If "u[...]" setting changed
+                else if (settingconfirmation.IsMatch(message))
                 {
-                    default:
-                        break;
+                    char settingID = message[1];
+                    switch (settingID)
+                    {
+                        default:
+                            break;
+                    }
+                    output.Add(MessageType.SETTINGCHANGE);
                 }
-                return RFIDMessage.SETTINGCHANGE;
-            }
-            // If "HH:MM:SS DD-MM-YYYY" then it's a time message
-            if (time.IsMatch(message))
-            {
-                try
+                // If "HH:MM:SS DD-MM-YYYY" then it's a time message
+                else if (time.IsMatch(message))
                 {
-                    DateTime now = DateTime.Now;
-                    DateTime ultra = DateTime.ParseExact(message, "HH:mm:ss dd-MM-yyyy", null);
+                    try
+                    {
+                        DateTime now = DateTime.Now;
+                        DateTime ultra = DateTime.ParseExact(message, "HH:mm:ss dd-MM-yyyy", null);
+                    }
+                    catch
+                    {
+                        output.Add(MessageType.ERROR);
+                    }
+                    output.Add(MessageType.TIME);
                 }
-                catch
+                // If "S=[...]" then status
+                else if (status.IsMatch(message))
                 {
-                    return RFIDMessage.ERROR;
+                    output.Add(MessageType.STATUS);
                 }
-                return RFIDMessage.TIME;
+                // If "Connected,[LastTimeSent]" that's a connection successful message.
+                else if (connected.IsMatch(message))
+                {
+                    output.Add(MessageType.CONNECTED);
+                }
+                else
+                {
+                    output.Add(MessageType.UNKNOWN);
+                }
+                m = msg.Match(buffer.ToString());
             }
-            // If "S=[...]" then status
-            if (status.IsMatch(message))
-            {
-                return RFIDMessage.STATUS;
-            }
-            // If "Connected,[LastTimeSent]" that's a connection successful message.
-            if (connected.IsMatch(message))
-            {
-                return RFIDMessage.CONNECTED;
-            }
-            return RFIDMessage.UNKNOWN;
+            return output;
         }
 
         public void StartReading()
@@ -580,6 +596,21 @@ namespace EventDirector
         public static DateTime EpochToDate(long date)
         {
             return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(date * TimeSpan.TicksPerSecond);
+        }
+
+        public void SettingsWindow()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClockWindow()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Rewind(int from)
+        {
+            throw new NotImplementedException();
         }
 
         public enum RFIDMessage

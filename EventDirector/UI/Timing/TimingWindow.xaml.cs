@@ -103,6 +103,31 @@ namespace EventDirector
                 }
             }
 
+            // Setup timing systems.
+            TimingType.Items.Clear();
+            ComboBoxItem current, selected = null;
+            foreach (string key in Constants.DefaultTiming.SYSTEM_NAMES.Keys)
+            {
+                current = new ComboBoxItem()
+                {
+                    Content = Constants.DefaultTiming.SYSTEM_NAMES[key],
+                    Uid = key
+                };
+                TimingType.Items.Add(current);
+                if (key == theEvent.TimingSystem)
+                {
+                    selected = current;
+                }
+            }
+            if (selected != null)
+            {
+                TimingType.SelectedItem = selected;
+            }
+            else
+            {
+                TimingType.SelectedIndex = 0;
+            }
+
             // Check if we've already started the event.  Show a clock if we have.
             if (theEvent != null && theEvent.StartSeconds >= 0)
             {
@@ -130,25 +155,25 @@ namespace EventDirector
                 Log.D(systems.Count + " systems found.");
                 for (int i=0; i < 3-numSystems; i++)
                 {
-                    systems.Add(new TimingSystem()
-                    {
-                        IPAddress = String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
-                        Port = 22
-                    });
+                    systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid, database));
                 }
             }
-            systems.Add(new TimingSystem()
-            {
-                IPAddress = String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
-                Port = 22
-            });
+            systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid, database));
             connected = 0;
             foreach (TimingSystem sys in systems) {
                 ReadersBox.Items.Add(new AReaderBox(this, sys, locations));
-                if (sys.Status == SYSTEM_STATUS.CONNECTED)
+                if (sys.Status == SYSTEM_STATUS.CONNECTED || sys.Status == SYSTEM_STATUS.WORKING)
                 {
                     connected++;
                 }
+            }
+            if (connected > 0)
+            {
+                TimingTypeButton.IsEnabled = false;
+            }
+            else
+            {
+                TimingTypeButton.IsEnabled = true;
             }
             total = ReadersBox.Items.Count;
         }
@@ -162,6 +187,16 @@ namespace EventDirector
                 UpdateStartTime();
             }
 
+            // Ensure we've still got the right timing system.
+            foreach (ComboBoxItem item in TimingType.Items)
+            {
+                if (item.Uid == theEvent.TimingSystem)
+                {
+                    TimingType.SelectedItem = item;
+                    break;
+                }
+            }
+
             // Get updated list of locations
             locations = database.GetTimingLocations(theEvent.Identifier);
             if (theEvent.CommonStartFinish != 1)
@@ -173,11 +208,40 @@ namespace EventDirector
             {
                 locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
+
             // Update locations in the list of readers
+            connected = 0; total = ReadersBox.Items.Count;
             foreach (AReaderBox read in ReadersBox.Items)
             {
                 read.UpdateLocations(locations);
                 read.UpdateStatus();
+                read.UpdateSystemType(((ComboBoxItem)TimingType.SelectedItem).Uid, database);
+                connected = read.reader.Status == SYSTEM_STATUS.DISCONNECTED ? connected : connected + 1;
+            }
+
+            if (total > 4 && connected < total - 1)
+            {
+                AReaderBox removeMe = null;
+                foreach (AReaderBox aReader in ReadersBox.Items)
+                {
+                    if (aReader.reader.Status == SYSTEM_STATUS.DISCONNECTED)
+                    {
+                        removeMe = aReader;
+                        break;
+                    }
+                }
+                ReadersBox.Items.Remove(removeMe);
+                total = ReadersBox.Items.Count;
+            }
+
+            // Ensure no editing allowed if we're connected.
+            if (connected > 0)
+            {
+                TimingTypeButton.IsEnabled = false;
+            }
+            else
+            {
+                TimingTypeButton.IsEnabled = true;
             }
         }
 
@@ -282,21 +346,32 @@ namespace EventDirector
 
         internal bool ConnectSystem(TimingSystem sys)
         {
+            if (!TimingTypeButton.IsEnabled)
+            {
+                MessageBox.Show("Please select a timing method before attempting to connect.");
+                sys.Status = SYSTEM_STATUS.DISCONNECTED;
+                return false;
+            }
             mWindow.ConnectTimingSystem(sys);
-            if (sys.Status == SYSTEM_STATUS.CONNECTED)
+            if (sys.Status == SYSTEM_STATUS.CONNECTED || sys.Status == SYSTEM_STATUS.WORKING)
             {
                 connected++;
             }
+            Log.D(connected + " systems connected or trying to connect.");
+            if (connected > 0)
+            {
+                TimingTypeButton.IsEnabled = false;
+            }
+            else
+            {
+                TimingTypeButton.IsEnabled = true;
+            }
             if (connected >= total)
             {
-                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem()
-                {
-                    IPAddress = String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
-                    Port = 22
-                }, locations));
+                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid, database), locations));
                 total = ReadersBox.Items.Count;
             }
-            return sys.Status == SYSTEM_STATUS.CONNECTED;
+            return sys.Status != SYSTEM_STATUS.DISCONNECTED;
         }
 
         internal bool DisconnectSystem(TimingSystem sys)
@@ -305,6 +380,15 @@ namespace EventDirector
             if (sys.Status == SYSTEM_STATUS.DISCONNECTED)
             {
                 connected--;
+            }
+            Log.D(connected + " systems connected or trying to connect.");
+            if (connected > 0)
+            {
+                TimingTypeButton.IsEnabled = false;
+            }
+            else
+            {
+                TimingTypeButton.IsEnabled = true;
             }
             if (total > 4 && connected < total - 1)
             {
@@ -321,6 +405,28 @@ namespace EventDirector
                 total = ReadersBox.Items.Count;
             }
             return sys.Status == SYSTEM_STATUS.DISCONNECTED;
+        }
+
+        private void TimingTypeButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("User wants to change the connected system type.");
+            if (TimingTypeButton.Content.ToString() == "Edit")
+            {
+                if (connected == 0)
+                {
+                    TimingType.IsEnabled = true;
+                    TimingTypeButton.Content = "Save";
+                }
+            }
+            else if (TimingTypeButton.Content.ToString() == "Save") 
+            {
+                TimingType.IsEnabled = false;
+                TimingTypeButton.Content = "Edit";
+                theEvent = database.GetCurrentEvent();
+                theEvent.TimingSystem = ((ComboBoxItem)TimingType.SelectedItem).Uid;
+                database.UpdateEvent(theEvent);
+                UpdateAll();
+            }
         }
 
         private class AReaderBox : ListBoxItem
@@ -347,10 +453,11 @@ namespace EventDirector
                 this.reader = sys;
                 Grid thePanel = new Grid()
                 {
-                    MaxWidth = 605
+                    MaxWidth = 600,
+                    Width = 600
                 };
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(70) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
@@ -411,10 +518,8 @@ namespace EventDirector
                 ClockButton = new Button()
                 {
                     Content = "Clock",
-                    FontSize = 14,
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
-                    Height = 25,
                     IsEnabled = false
                 };
                 ClockButton.Click += new RoutedEventHandler(this.Clock);
@@ -423,10 +528,8 @@ namespace EventDirector
                 SettingsButton = new Button()
                 {
                     Content = "Settings",
-                    FontSize = 14,
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
-                    Height = 25,
                     IsEnabled = false
                 };
                 SettingsButton.Click += new RoutedEventHandler(this.Settings);
@@ -435,10 +538,8 @@ namespace EventDirector
                 ConnectButton = new Button()
                 {
                     Content = "Connect",
-                    FontSize = 14,
                     Margin = new Thickness(5, 5, 5, 5),
-                    VerticalContentAlignment = VerticalAlignment.Center,
-                    Height = 25
+                    VerticalContentAlignment = VerticalAlignment.Center
                 };
                 ConnectButton.Click += new RoutedEventHandler(this.Connect);
                 thePanel.Children.Add(ConnectButton);
@@ -530,13 +631,13 @@ namespace EventDirector
                 reader.LocationName = ((ComboBoxItem)ReaderLocation.SelectedItem).Content.ToString();
                 if ("Connect" == (String)ConnectButton.Content)
                 {
-                    window.ConnectSystem(reader);
                     reader.Status = SYSTEM_STATUS.WORKING;
+                    window.ConnectSystem(reader);
                 }
                 else
                 {
-                    window.DisconnectSystem(reader);
                     reader.Status = SYSTEM_STATUS.WORKING;
+                    window.DisconnectSystem(reader);
                 }
                 UpdateStatus();
             }
@@ -582,6 +683,12 @@ namespace EventDirector
             private void Clock(object sender, RoutedEventArgs e)
             {
                 Log.D("Clock button pressed. IP is " + ReaderIP.Text);
+            }
+
+            internal void UpdateSystemType(string type, IDBInterface database)
+            {
+                reader.UpdateSystemType(type, database);
+                this.ReaderPort.Text = reader.Port.ToString();
             }
         }
     }
