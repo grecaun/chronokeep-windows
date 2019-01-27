@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,7 +20,10 @@ namespace EventDirector.Interfaces.Timing
         void StartSending();
         void StopSending();
         void Rewind(DateTime start, DateTime end);
-        void Rewind(int from);
+        void Rewind(int from, int to);
+        void Rewind();
+        void SetMainSocket(Socket sock);
+        void SetSettingsSocket(Socket sock);
     }
 
     public enum MessageType { CONNECTED, VOLTAGENORMAL, VOLTAGELOW, CHIPREAD, TIME, SETTINGVALUE, SETTINGCHANGE, STATUS, UNKNOWN, ERROR, NONE }

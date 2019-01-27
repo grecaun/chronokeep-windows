@@ -15,7 +15,7 @@ namespace EventDirector.Objects
         public int LocationID { get; set; } = -1;
         public string LocationName { get; set; } = "Unknown";
         public SYSTEM_STATUS Status { get; set; } = SYSTEM_STATUS.DISCONNECTED;
-        public Socket Socket { get; set; }
+        public Socket Socket { get; private set; }
         public ITimingSystemInterface SystemInterface;
         private DateTime ConnectedAt;
 
@@ -40,7 +40,7 @@ namespace EventDirector.Objects
             if (type == Constants.Settings.TIMING_RFID)
             {
                 this.Port = 23;
-                SystemInterface = new RFIDUltraInterface(database);
+                SystemInterface = new RFIDUltraInterface(database, Socket);
             }
             else if (type == Constants.Settings.TIMING_IPICO)
             {
@@ -48,6 +48,12 @@ namespace EventDirector.Objects
                 this.Port = 10000;
                 SystemInterface = null;
             }
+        }
+
+        public void SetSocket(Socket sock)
+        {
+            this.Socket = sock;
+            SystemInterface.SetMainSocket(sock);
         }
 
         public void SetTime()

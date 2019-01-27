@@ -60,7 +60,7 @@ namespace EventDirector.Timing
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
                 return;
             }
-            system.Socket = sock;
+            system.SetSocket(sock);
             if (sock.Connected)
             {
                 Log.D("Connected to " + system.IPAddress);
@@ -117,7 +117,7 @@ namespace EventDirector.Timing
                         else
                         {
                             String msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
-                            Log.D("Timing System - Message is :" + msg);
+                            Log.D("Timing System - Message is :" + msg.Trim());
                             HashSet<MessageType> messageTypes = TimingSystemDict[sock].SystemInterface.ParseMessages(msg);
                             foreach (MessageType type in messageTypes)
                             {
@@ -126,6 +126,7 @@ namespace EventDirector.Timing
                                     case MessageType.CONNECTED:
                                         Log.D("Timing system successfully connected.");
                                         TimingSystemDict[sock].Status = SYSTEM_STATUS.CONNECTED;
+                                        mainWindow.UpdateTimingWindow();
                                         break;
                                     case MessageType.SETTINGCHANGE:
                                         Log.D("Setting value changed.");
@@ -154,11 +155,17 @@ namespace EventDirector.Timing
                     }
                     catch
                     {
-                        Log.D("Socket errored on us.");
-                        TimingSystem disconnected = TimingSystemDict[sock];
-                        TimingSystemSockets.Remove(sock);
-                        TimingSystemDict.Remove(sock);
-                        mainWindow.TimingSystemDisconnected(disconnected);
+                        if (TimingSystemDict.ContainsKey(sock))
+                        {
+                            Log.D("Socket errored on us.");
+                            TimingSystemSockets.Remove(sock);
+                            TimingSystem disconnected = TimingSystemDict[sock];
+                            TimingSystemDict.Remove(sock);
+                            mainWindow.TimingSystemDisconnected(disconnected);
+                        } else
+                        {
+                            Log.D("Successful disconnect.");
+                        }
                     }
                 }
                 // Check Sockets we've started to connect to and verify that they've successfully connected.

@@ -58,7 +58,7 @@
             </Expander>
         </StackPanel>
         <StackPanel Grid.Column="0">
-            <Expander MaxHeight="200" Margin="5,0,5,5" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Header="Readers" IsExpanded="False" ExpandDirection="Down">
+            <Expander MaxHeight="200" Margin="5,0,5,5" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Header="Readers" IsExpanded="True" ExpandDirection="Down">
                 <ListBox Name="ReadersBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">

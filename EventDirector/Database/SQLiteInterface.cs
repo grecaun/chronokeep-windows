@@ -2619,7 +2619,9 @@ namespace EventDirector
 
         public void AddChipRead(ChipRead read)
         {
-            throw new NotImplementedException();
+            Log.D("Database - Add chip read.");
+            Log.D("Box " + read.Box + " Antenna " + read.Antenna + " Chip " + read.ChipNumber +
+                " Time " + read.Time.ToLongTimeString() + " " + read.Time.ToLongDateString());
         }
 
         public List<ChipRead> GetChipReads()

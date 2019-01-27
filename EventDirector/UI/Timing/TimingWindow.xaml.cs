@@ -381,7 +381,7 @@ namespace EventDirector
             {
                 connected--;
             }
-            Log.D(connected + " systems connected or trying to connect.");
+            Log.D(connected + " systems connected or trying to connect/disconnect.");
             if (connected > 0)
             {
                 TimingTypeButton.IsEnabled = false;
@@ -610,6 +610,14 @@ namespace EventDirector
 
             private void Connect(object sender, RoutedEventArgs e)
             {
+                if ("Connect" != (String) ConnectButton.Content)
+                {
+                    Log.D("Disconnect pressed.");
+                    reader.Status = SYSTEM_STATUS.WORKING;
+                    window.DisconnectSystem(reader);
+                    UpdateStatus();
+                    return;
+                }
                 Log.D("Connect button pressed. IP is " + ReaderIP.Text);
                 // Check if IP is a valid IP address
                 if (!Regex.IsMatch(ReaderIP.Text.Trim(), IPPattern))
@@ -629,16 +637,8 @@ namespace EventDirector
                 reader.Port = portNo;
                 reader.LocationID = Convert.ToInt32(((ComboBoxItem)ReaderLocation.SelectedItem).Uid);
                 reader.LocationName = ((ComboBoxItem)ReaderLocation.SelectedItem).Content.ToString();
-                if ("Connect" == (String)ConnectButton.Content)
-                {
-                    reader.Status = SYSTEM_STATUS.WORKING;
-                    window.ConnectSystem(reader);
-                }
-                else
-                {
-                    reader.Status = SYSTEM_STATUS.WORKING;
-                    window.DisconnectSystem(reader);
-                }
+                reader.Status = SYSTEM_STATUS.WORKING;
+                window.ConnectSystem(reader);
                 UpdateStatus();
             }
 
@@ -678,11 +678,13 @@ namespace EventDirector
             private void Settings(object sender, RoutedEventArgs e)
             {
                 Log.D("Settings button pressed. IP is " + ReaderIP.Text);
+                reader.SystemInterface.Rewind(0, 50);
             }
 
             private void Clock(object sender, RoutedEventArgs e)
             {
                 Log.D("Clock button pressed. IP is " + ReaderIP.Text);
+                reader.SystemInterface.SetTime(DateTime.Now);
             }
 
             internal void UpdateSystemType(string type, IDBInterface database)

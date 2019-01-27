@@ -20,7 +20,7 @@ namespace EventDirector
         private static readonly Regex chipread = new Regex(@"^0,.*");
         private static readonly Regex settinginfo = new Regex(@"^U.*");
         private static readonly Regex settingconfirmation = new Regex(@"^u.*");
-        private static readonly Regex time = new Regex(@"^\d{2}:\d{2}:\d{2} \d{2}-\d{2}-\d{4}");
+        private static readonly Regex time = new Regex(@"^\d{2}:\d{2}:\d{2} \d{2}-\d{2}-\d{4} \(\d*\)");
         private static readonly Regex status = new Regex(@"^S=.*");
         private static readonly Regex msg = new Regex(@"^[^\n]*\n");
 
@@ -108,10 +108,17 @@ namespace EventDirector
                 // If "HH:MM:SS DD-MM-YYYY" then it's a time message
                 else if (time.IsMatch(message))
                 {
+                    string time = message.Substring(0, 19);
+                    string seconds = message.Substring(19);
+                    seconds = seconds.Trim().Replace("(", "").Replace(")","");
                     try
                     {
                         DateTime now = DateTime.Now;
-                        DateTime ultra = DateTime.ParseExact(message, "HH:mm:ss dd-MM-yyyy", null);
+                        DateTime ultra = DateTime.ParseExact(time, "HH:mm:ss dd-MM-yyyy", null);
+                        DateTime epochUlt = EpochToDate(Convert.ToInt64(seconds));
+                        Log.D("Now " + now.ToLongTimeString() + " " + now.ToLongDateString() + 
+                            " Ultra " + ultra.ToLongTimeString() + " " + ultra.ToLongDateString());
+                        Log.D("We believe this to be equal to " + epochUlt.ToLongTimeString() + " " + epochUlt.ToLongDateString());
                     }
                     catch
                     {
@@ -589,13 +596,13 @@ namespace EventDirector
 
         public static long DateToEpoch(DateTime date)
         {
-            var ticks = date.Ticks - new DateTime(1970,1,1,0,0,0,DateTimeKind.Utc).Ticks;
+            var ticks = date.Ticks - new DateTime(1980,1,1,0,0,0,DateTimeKind.Utc).Ticks;
             return ticks / TimeSpan.TicksPerSecond;
         }
 
         public static DateTime EpochToDate(long date)
         {
-            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(date * TimeSpan.TicksPerSecond);
+            return new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(date * TimeSpan.TicksPerSecond);
         }
 
         public void SettingsWindow()
@@ -608,9 +615,14 @@ namespace EventDirector
             throw new NotImplementedException();
         }
 
-        public void Rewind(int from)
+        public void SetMainSocket(Socket sock)
         {
-            throw new NotImplementedException();
+            this.sock = sock;
+        }
+
+        public void SetSettingsSocket(Socket sock)
+        {
+            return;
         }
 
         public enum RFIDMessage
