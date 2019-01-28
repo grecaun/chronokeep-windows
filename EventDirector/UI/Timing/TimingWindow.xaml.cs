@@ -1,6 +1,7 @@
 ﻿using EventDirector.Interfaces;
 using EventDirector.Objects;
 using EventDirector.UI.EventWindows;
+using EventDirector.UI.Timing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -294,9 +295,15 @@ namespace EventDirector
             Log.D("Edit Selected");
         }
 
-        private void Overrides(object sender, RoutedEventArgs e)
+        private void ManualEntry(object sender, RoutedEventArgs e)
         {
-            Log.D("Overrides selected.");
+            Log.D("Manual Entry selected.");
+            ManualEntryWindow manualEntryWindow = ManualEntryWindow.NewWindow(mWindow, database, locations);
+            if (manualEntryWindow != null)
+            {
+                mWindow.AddWindow(manualEntryWindow);
+                manualEntryWindow.Show();
+            }
         }
 
         private void Search(object sender, RoutedEventArgs e)

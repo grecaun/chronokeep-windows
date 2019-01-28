@@ -3,6 +3,7 @@ using EventDirector.Objects;
 using EventDirector.Timing;
 using EventDirector.UI.EventWindows;
 using EventDirector.UI.MainPages;
+using EventDirector.UI.Timing;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -361,6 +362,25 @@ namespace EventDirector.UI
                 if (StaticEvent.timingWindow != null)
                 {
                     ((TimingWindow)StaticEvent.timingWindow).UpdateAll();
+                }
+                if (StaticEvent.manualEntryWindow != null)
+                {
+                    Event theEvent = database.GetCurrentEvent();
+                    if (theEvent == null)
+                    {
+                        return;
+                    }
+                    List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
+                    if (theEvent.CommonStartFinish != 1)
+                    {
+                        locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                        locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+                    }
+                    else
+                    {
+                        locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                    }
+                    ((ManualEntryWindow)StaticEvent.manualEntryWindow).UpdateLocations(locations);
                 }
             }));
         }

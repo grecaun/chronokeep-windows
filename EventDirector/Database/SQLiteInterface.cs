@@ -922,6 +922,7 @@ namespace EventDirector
                         command.CommandText = "ALTER TABLE chipreads ADD read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + ";" +
                             "ALTER TABLE chipreads ADD read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + ";" +
                             "UPDATE settings SET version=27 WHERE version=26;";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();
