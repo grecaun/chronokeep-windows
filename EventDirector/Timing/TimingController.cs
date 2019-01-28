@@ -50,7 +50,6 @@ namespace EventDirector.Timing
         {
             Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Log.D("Attempting to connect to " + system.IPAddress);
-            TimingSystemDict[sock] = system;
             try
             {
                 sock.Connect(system.IPAddress, system.Port);
@@ -61,7 +60,8 @@ namespace EventDirector.Timing
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
                 return;
             }
-            system.SetSocket(sock);
+            system.CreateTimingSystemInterface(database, sock);
+            TimingSystemDict[sock] = system;
             if (sock.Connected)
             {
                 Log.D("Connected to " + system.IPAddress);
@@ -98,8 +98,9 @@ namespace EventDirector.Timing
             Log.D("Timing Controller is now running.");
             if (mut.WaitOne(3000))
             {
-                if (Running != true)
+                if (Running == true)
                 {
+                    Log.D("Timing Controller Thread already running.");
                     mut.ReleaseMutex();
                     return;
                 }
@@ -108,6 +109,7 @@ namespace EventDirector.Timing
             }
             else
             {
+                Log.D("Unable to aquire mutex.");
                 return;
             }
             while (TimingSystemSockets.Count > 0)
