@@ -18,6 +18,7 @@ namespace EventDirector.Interfaces
         void ConnectTimingSystem(TimingSystem system);
         void DisconnectTimingSystem(TimingSystem system);
         void TimingSystemDisconnected(TimingSystem system);
+        void ShutdownTimingController();
         List<TimingSystem> GetConnectedSystems();
         void UpdateTimingWindow();
     }

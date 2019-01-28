@@ -404,6 +404,7 @@ namespace EventDirector.UI
 
         public async void ConnectTimingSystem(TimingSystem system)
         {
+            system.CreateTimingSystemInterface(database);
             await Task.Run(() =>
             {
                 TimingController.ConnectTimingSystem(system);
@@ -428,9 +429,24 @@ namespace EventDirector.UI
             UpdateTimingWindow();
         }
 
+        public void ShutdownTimingController()
+        {
+            TimingController.Shutdown();
+        }
+
         public List<TimingSystem> GetConnectedSystems()
         {
-            return TimingController.GetConnectedSystems();
+            List<TimingSystem> connected = TimingController.GetConnectedSystems();
+            List<TimingSystem> saved = database.GetTimingSystems();
+            foreach (TimingSystem sys in saved)
+            {
+                if (connected.Contains(sys))
+                {
+                    saved.Remove(sys);
+                }
+            }
+            saved.InsertRange(0, connected);
+            return saved;
         }
 
         public void TimingSystemDisconnected(TimingSystem system)

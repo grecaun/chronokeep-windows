@@ -127,17 +127,17 @@ CREATE TABLE IF NOT EXISTS segments
       distance_cumulative DECIMAL (10,2) DEFAULT 0.0,
       distance_unit INTEGER DEFAULT 0,
       UNIQUE (event_id, division_id, location_id, occurance) ON CONFLICT IGNORE,
-CREATE TABLE IF NOT EXISTS time_results
+CREATE TABLE IF NOT EXISTS time_results (`
       event_id INTEGER NOT NULL REFERENCES events(event_id),
       eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id),
+      read_id INTEGER NOT NULL REFERENCES chipreads(read_id),
       location_id INTEGER NOT NULL,
       timeresult_time INTEGER NOT NULL,
       segment_id INTEGER NOT NULL DEFAULT -3,
       timeresult_occurance INTEGER NOT NULL,
       UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance) ON CONFLICT IGNORE
-      ););
-CREATE TABLE IF NOT EXISTS chipreads
-      read_id INTEGER NOT NULL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS chipreads (
+      read_id INTEGER PRIMARY KEY,
       event_id INTEGER NOT NULL REFERENCES events(event_id),
       read_status INTEGER NOT NULL DEFAULT 0,
       location_id INTEGER NOT NULL REFERENCES timing_locations(location_id),
@@ -152,7 +152,8 @@ CREATE TABLE IF NOT EXISTS chipreads
       read_isrewind INTEGER NOT NULL,
       read_readertime TEXT NOT NULL,
       read_starttime INTEGER NOT NULL,
-      UNIQUE (read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE
+      read_time TEXT NOT NULL,
+      UNIQUE (event_id, read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE
 CREATE TABLE IF NOT EXISTS changes
       change_id INTEGER PRIMARY KEY,
       old_participant_id INTEGER NOT NULL,
@@ -228,3 +229,10 @@ CREATE TABLE IF NOT EXISTS available_bibs
       bib_group_number INTEGER NOT NULL DEFAULT -1,
       bib INTEGER NOT NULL,
       UNIQUE (event_id, bib) ON CONFLICT REPLACE
+CREATE TABLE IF NOT EXISTS timing_systems (
+      ts_identifier INTEGER PRIMARY KEY,
+      ts_ip TEXT NOT NULL,
+      ts_port INTEGER NOT NULL,
+      ts_location INTEGER NOT NULL REFERENCES timing_locations(location_id),
+      ts_type TEXT NOT NULL,
+      UNIQUE (ts_ip, ts_location) ON CONFLICT REPLACE

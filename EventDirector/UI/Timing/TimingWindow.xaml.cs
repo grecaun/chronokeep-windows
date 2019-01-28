@@ -155,10 +155,10 @@ namespace EventDirector
                 Log.D(systems.Count + " systems found.");
                 for (int i=0; i < 3-numSystems; i++)
                 {
-                    systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid, database));
+                    systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid));
                 }
             }
-            systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid, database));
+            systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid));
             connected = 0;
             foreach (TimingSystem sys in systems) {
                 ReadersBox.Items.Add(new AReaderBox(this, sys, locations));
@@ -273,6 +273,17 @@ namespace EventDirector
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            List<TimingSystem> systems = new List<TimingSystem>();
+            foreach (AReaderBox aReader in ReadersBox.Items)
+            {
+                aReader.UpdateReader();
+                if (!aReader.reader.IPAddress.Equals(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]))
+                    && !aReader.reader.IPAddress.Trim().Equals("") && aReader.reader.Port != -1)
+                {
+                    systems.Add(aReader.reader);
+                }
+            }
+            database.SetTimingSystems(systems);
             if (mainWindow != null) mainWindow.WindowClosed(this);
             if (mWindow != null) mWindow.WindowFinalize(this);
             StaticEvent.timingWindow = null;
@@ -368,7 +379,7 @@ namespace EventDirector
             }
             if (connected >= total)
             {
-                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid, database), locations));
+                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid), locations));
                 total = ReadersBox.Items.Count;
             }
             return sys.Status != SYSTEM_STATUS.DISCONNECTED;
@@ -608,6 +619,29 @@ namespace EventDirector
                 e.Handled = Regex.IsMatch(e.Text, allowedNums);
             }
 
+            public void UpdateReader()
+            {
+                // Check if IP is a valid IP address
+                if (!Regex.IsMatch(ReaderIP.Text.Trim(), IPPattern))
+                {
+                    reader.IPAddress = "";
+                }
+                else
+                {
+                    reader.IPAddress = ReaderIP.Text.Trim();
+                }
+                // Check if Port is valid.
+                int portNo = -1;
+                int.TryParse(ReaderPort.Text.Trim(), out portNo);
+                if (portNo > 65535)
+                {
+                    portNo = -1;
+                }
+                reader.Port = portNo;
+                reader.LocationID = Convert.ToInt32(((ComboBoxItem)ReaderLocation.SelectedItem).Uid);
+                reader.LocationName = ((ComboBoxItem)ReaderLocation.SelectedItem).Content.ToString();
+            }
+
             private void Connect(object sender, RoutedEventArgs e)
             {
                 if ("Connect" != (String) ConnectButton.Content)
@@ -689,7 +723,7 @@ namespace EventDirector
 
             internal void UpdateSystemType(string type, IDBInterface database)
             {
-                reader.UpdateSystemType(type, database);
+                reader.UpdateSystemType(type);
                 this.ReaderPort.Text = reader.Port.ToString();
             }
         }

@@ -87,7 +87,7 @@ namespace EventDirector
                     {
                         output.Add(MessageType.ERROR);
                     }
-                    if (voltVal > 0 && voltVal < 23)
+                    if (voltVal != 0 && voltVal < 23)
                     {
                         output.Add(MessageType.VOLTAGELOW);
                     }
@@ -129,15 +129,15 @@ namespace EventDirector
                         DateTime now = DateTime.Now;
                         DateTime ultra = DateTime.ParseExact(time, "HH:mm:ss dd-MM-yyyy", null);
                         DateTime epochUlt = EpochToDate(Convert.ToInt64(seconds));
-                        Log.D("Now " + now.ToLongTimeString() + " " + now.ToLongDateString() + 
-                            " Ultra " + ultra.ToLongTimeString() + " " + ultra.ToLongDateString());
-                        Log.D("We believe this to be equal to " + epochUlt.ToLongTimeString() + " " + epochUlt.ToLongDateString());
+                        Log.D("Now " + now.ToLongTimeString() + " " + now.ToLongDateString() +
+                            " Ultra " + ultra.ToLongTimeString() + " " + ultra.ToLongDateString() +
+                            " (Extra) " + epochUlt.ToLongTimeString() + " " + epochUlt.ToLongDateString());
+                        output.Add(MessageType.TIME);
                     }
                     catch
                     {
                         output.Add(MessageType.ERROR);
                     }
-                    output.Add(MessageType.TIME);
                 }
                 // If "S=[...]" then status
                 else if (status.IsMatch(message))

@@ -8,7 +8,7 @@ namespace EventDirector
 {
     public class ChipRead
     {
-        public int Identifier { get; set; }
+        public int ReadId { get; set; }
         public int EventId { get; set; }
         public int Status { get; set; }
         public int LocationID { get; set; }
@@ -45,6 +45,33 @@ namespace EventDirector
             this.LogId = logid;
             Time = RFIDUltraInterface.EpochToDate(Seconds);
             Time.AddMilliseconds(Milliseconds);
+        }
+
+        public ChipRead(int readId, int eventId, int status, int locationId, long chipNumber, long seconds, int millisec,
+           int antenna, string rssi, int isRewind, string reader, string box, string readertime, long starttime,
+           int logid, DateTime time)
+        {
+            this.ReadId = readId;
+            this.EventId = eventId;
+            this.Status = status;
+            this.LocationID = locationId;
+            this.ChipNumber = chipNumber;
+            this.Seconds = seconds;
+            this.Milliseconds = millisec;
+            this.Antenna = antenna;
+            this.RSSI = rssi;
+            this.IsRewind = IsRewind;
+            this.Reader = reader;
+            this.Box = box;
+            this.ReaderTime = readertime;
+            this.StartTime = starttime;
+            this.LogId = logid;
+            this.Time = time;
+        }
+
+        public string TimeString()
+        {
+            return Time.ToString("yyyy-MM-dd HH:mm:ss.fff");
         }
     }
 }

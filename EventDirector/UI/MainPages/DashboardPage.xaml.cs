@@ -1,4 +1,5 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.Timing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -366,6 +367,19 @@ namespace EventDirector.UI.MainPages
         private void NewEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("New event clicked.");
+            if (TimingController.IsRunning())
+            {
+                MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and create a new event?",
+                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    mWindow.ShutdownTimingController();
+                }
+                else
+                {
+                    return;
+                }
+            }
             NewEventWindow newEventWindow = NewEventWindow.NewWindow(mWindow, database);
             if (newEventWindow != null)
             {
@@ -382,6 +396,19 @@ namespace EventDirector.UI.MainPages
         private void ChangeEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Change event clicked.");
+            if (TimingController.IsRunning())
+            {
+                MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and change the viewed event?",
+                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    mWindow.ShutdownTimingController();
+                }
+                else
+                {
+                    return;
+                }
+            }
             ChangeEventWindow changeEventWindow = ChangeEventWindow.NewWindow(mWindow, database);
             if (changeEventWindow != null)
             {
@@ -393,6 +420,19 @@ namespace EventDirector.UI.MainPages
         private void DeleteEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Delete event clicked.");
+            if (TimingController.IsRunning())
+            {
+                MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and delete this event?",
+                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    mWindow.ShutdownTimingController();
+                }
+                else
+                {
+                    return;
+                }
+            }
             try
             {
                 Log.D("Attempting to delete.");

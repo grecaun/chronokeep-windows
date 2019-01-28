@@ -13,10 +13,11 @@ namespace EventDirector.Timing
 {
     class TimingController
     {
-        private static Mutex mut = new Mutex();
-        bool Running = false;
         List<Socket> TimingSystemSockets = new List<Socket>(), readList = new List<Socket>();
         Dictionary<Socket, TimingSystem> TimingSystemDict = new Dictionary<Socket, TimingSystem>();
+
+        private static Mutex mut = new Mutex();
+        private static bool Running = false;
 
         IDBInterface database;
         INewMainWindow mainWindow;
@@ -27,12 +28,12 @@ namespace EventDirector.Timing
             this.mainWindow = mainWindow;
         }
 
-        public bool IsRunning()
+        public static bool IsRunning()
         {
             bool output = false;
             if (mut.WaitOne(6000))
             {
-                output = this.Running;
+                output = Running;
                 mut.ReleaseMutex();
             }
             return output;
@@ -75,6 +76,15 @@ namespace EventDirector.Timing
             }
         }
 
+        public void Shutdown()
+        {
+            foreach (Socket sock in TimingSystemSockets)
+            {
+                sock.Close();
+                TimingSystemDict.Remove(sock);
+            }
+        }
+
         public void DisconnectTimingSystem(TimingSystem system)
         {
             system.Socket.Disconnect(false);
@@ -86,9 +96,14 @@ namespace EventDirector.Timing
         public void Run()
         {
             Log.D("Timing Controller is now running.");
-            if (mut.WaitOne(6000))
+            if (mut.WaitOne(3000))
             {
-                this.Running = true;
+                if (Running != true)
+                {
+                    mut.ReleaseMutex();
+                    return;
+                }
+                Running = true;
                 mut.ReleaseMutex();
             }
             else
@@ -192,7 +207,7 @@ namespace EventDirector.Timing
             }
             if (mut.WaitOne(6000))
             {
-                this.Running = false;
+                Running = false;
                 mut.ReleaseMutex();
             }
         }

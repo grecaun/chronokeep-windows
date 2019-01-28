@@ -61,10 +61,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>D70477C01C3BE3B09E3C1C2FB4C526CEC8BCB0B7</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>7E845AD0B0249645E015F1386B1DFD7046FCBE22</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>EventDirector_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>EventDirector_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>

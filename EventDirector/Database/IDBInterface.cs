@@ -129,8 +129,11 @@ namespace EventDirector
         // Chip Read Functions
         void AddChipRead(ChipRead read);
         void AddChipReads(List<ChipRead> reads);
+        void UpdateChipRead(ChipRead read);
+        void SetChipReadStatus(ChipRead read);
         List<ChipRead> GetChipReads();
         List<ChipRead> GetChipReads(int eventId);
+        List<ChipRead> GetUsefulChipReads(int eventId);
 
         // Age Group Functions
         void AddAgeGroup(AgeGroup group);
@@ -139,5 +142,13 @@ namespace EventDirector
         void RemoveAgeGroup(AgeGroup group);
         void RemoveAgeGroups(int eventId, int divisionId);
         List<AgeGroup> GetAgeGroups(int eventId);
+
+        // Timing Systems
+        void AddTimingSystem(TimingSystem system);
+        void UpdateTimingSystem(TimingSystem system);
+        void SetTimingSystems(List<TimingSystem> systems);
+        void RemoveTimingSystem(TimingSystem system);
+        void RemoveTimingSystem(int systemId);
+        List<TimingSystem> GetTimingSystems();
     }
 }
