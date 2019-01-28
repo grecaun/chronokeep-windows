@@ -40,7 +40,7 @@ namespace EventDirector.Objects
             if (type == Constants.Settings.TIMING_RFID)
             {
                 this.Port = 23;
-                SystemInterface = new RFIDUltraInterface(database, Socket);
+                SystemInterface = new RFIDUltraInterface(database, Socket, LocationID);
             }
             else if (type == Constants.Settings.TIMING_IPICO)
             {

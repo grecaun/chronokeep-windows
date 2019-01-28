@@ -2619,9 +2619,16 @@ namespace EventDirector
 
         public void AddChipRead(ChipRead read)
         {
-            Log.D("Database - Add chip read.");
-            Log.D("Box " + read.Box + " Antenna " + read.Antenna + " Chip " + read.ChipNumber +
-                " Time " + read.Time.ToLongTimeString() + " " + read.Time.ToLongDateString());
+            Log.D("Database - Add chip read. Box " + read.Box + " Antenna " + read.Antenna + " Chip " + read.ChipNumber
+                + " LogId " + read.LogId);
+        }
+
+        public void AddChipReads(List<ChipRead> reads)
+        {
+            foreach (ChipRead read in reads)
+            {
+                AddChipRead(read);
+            }
         }
 
         public List<ChipRead> GetChipReads()

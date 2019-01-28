@@ -12,7 +12,7 @@ namespace EventDirector.Objects
         {
             this.EventId = eventId;
             this.Name = "Default";
-            this.Number = Constants.DefaultTiming.DEFAULT_BIB_GROUP;
+            this.Number = Constants.Timing.DEFAULT_BIB_GROUP;
         }
 
         public BibGroup() { }

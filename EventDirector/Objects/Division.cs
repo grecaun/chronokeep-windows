@@ -11,7 +11,7 @@ namespace EventDirector
         private String name;
         private int identifier, eventIdentifier, cost;
         private double distance;
-        private int distance_unit = Constants.Distances.MILES, finish_location = Constants.DefaultTiming.LOCATION_FINISH, finish_occurrence = 1, start_location = Constants.DefaultTiming.LOCATION_START, start_within = 5;
+        private int distance_unit = Constants.Distances.MILES, finish_location = Constants.Timing.LOCATION_FINISH, finish_occurrence = 1, start_location = Constants.Timing.LOCATION_START, start_within = 5;
         private int wave = 1, bib_group_number = -1, start_offset_seconds = 0, start_offset_milliseconds = 0;
 
         public Division() { }

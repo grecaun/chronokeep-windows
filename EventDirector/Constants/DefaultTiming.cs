@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace EventDirector.Constants
 {
-    public class DefaultTiming
+    public class Timing
     {
         public static readonly int LOCATION_FINISH = -2;
         public static readonly int LOCATION_START = -1;
         public static readonly int SEGMENT_FINISH = -1;
+
+        public static readonly int CHIPREAD_STATUS_NONE = 0;
+        public static readonly int CHIPREAD_STATUS_TOUCHED = 1;
+        public static readonly int CHIPREAD_STATUS_IGNORE = 2;
 
         public static readonly int DEFAULT_BIB_GROUP = -1;
 

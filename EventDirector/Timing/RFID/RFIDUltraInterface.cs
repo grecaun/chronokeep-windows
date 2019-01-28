@@ -12,6 +12,8 @@ namespace EventDirector
     class RFIDUltraInterface : ITimingSystemInterface
     {
         IDBInterface database;
+        Event theEvent;
+        int locationId;
         StringBuilder buffer = new StringBuilder();
         Socket sock;
 
@@ -24,15 +26,19 @@ namespace EventDirector
         private static readonly Regex status = new Regex(@"^S=.*");
         private static readonly Regex msg = new Regex(@"^[^\n]*\n");
 
-        public RFIDUltraInterface(IDBInterface database)
+        public RFIDUltraInterface(IDBInterface database, int locationId)
         {
             this.database = database;
+            this.theEvent = database.GetCurrentEvent();
+            this.locationId = locationId;
         }
 
-        public RFIDUltraInterface(IDBInterface database, Socket sock)
+        public RFIDUltraInterface(IDBInterface database, Socket sock, int locationId)
         {
             this.database = database;
+            this.theEvent = database.GetCurrentEvent();
             this.sock = sock;
+            this.locationId = locationId;
         }
 
         public HashSet<MessageType> ParseMessages(string inMessage)
@@ -40,6 +46,7 @@ namespace EventDirector
             HashSet<MessageType> output = new HashSet<MessageType>();
             buffer.Append(inMessage);
             Match m = msg.Match(buffer.ToString());
+            List<ChipRead> chipReads = new List<ChipRead>();
             while (m.Success)
             {
                 buffer.Remove(m.Index, m.Length);
@@ -49,39 +56,45 @@ namespace EventDirector
                 if (chipread.IsMatch(message))
                 {
                     string[] chipVals = message.Split(',');
-                    ChipRead chipRead = new ChipRead
-                    {
-                        EventId = 0, // UPDATE LATER
-                        Status = 0,
-                        LocationID = 0,
-                        ChipNumber = long.Parse(chipVals[1]),
-                        Seconds = long.Parse(chipVals[2]),
-                        Milliseconds = int.Parse(chipVals[3]),
-                        Antenna = int.Parse(chipVals[4]),
-                        RSSI = chipVals[5],
-                        IsRewind = int.Parse(chipVals[6]),
-                        Reader = chipVals[7],
-                        Box = chipVals[8],
-                        ReaderTime = chipVals[9],
-                        StartTime = long.Parse(chipVals[10]),
-                        LogId = int.Parse(chipVals[11])
-                    };
-                    chipRead.SetTime();
-                    database.AddChipRead(chipRead);
+                    ChipRead chipRead = new ChipRead(
+                        theEvent.Identifier, // UPDATE LATER
+                        Constants.Timing.CHIPREAD_STATUS_NONE,
+                        locationId,
+                        long.Parse(chipVals[1]),
+                        long.Parse(chipVals[2]),
+                        int.Parse(chipVals[3]),
+                        int.Parse(chipVals[4]),
+                        chipVals[5],
+                        int.Parse(chipVals[6]),
+                        chipVals[7],
+                        chipVals[8],
+                        chipVals[9],
+                        long.Parse(chipVals[10]),
+                        int.Parse(chipVals[11])
+                    );
+                    chipReads.Add(chipRead);
                     output.Add(MessageType.CHIPREAD);
                 }
                 // If "V=" then it's a voltage status.
                 else if (voltage.IsMatch(message))
                 {
+                    double voltVal = 0;
                     try
                     {
-                        double voltVal = Double.Parse(message.Substring(2));
+                        voltVal = Double.Parse(message.Substring(2));
                     }
                     catch
                     {
                         output.Add(MessageType.ERROR);
                     }
-                    output.Add(MessageType.VOLTAGENORMAL);
+                    if (voltVal > 0 && voltVal < 23)
+                    {
+                        output.Add(MessageType.VOLTAGELOW);
+                    }
+                    else
+                    {
+                        output.Add(MessageType.VOLTAGENORMAL);
+                    }
                 }
                 // If "U[...]" Setting information
                 else if (settinginfo.IsMatch(message))
@@ -142,6 +155,7 @@ namespace EventDirector
                 }
                 m = msg.Match(buffer.ToString());
             }
+            database.AddChipReads(chipReads);
             return output;
         }
 
@@ -167,6 +181,10 @@ namespace EventDirector
 
         public void Rewind(int start, int end)
         {
+            if (start < 1)
+            {
+                start = 1;
+            }
             SendMessage("600" + start.ToString() + RFIDUltraCodes.RewindDelimiter + end.ToString());
         }
 

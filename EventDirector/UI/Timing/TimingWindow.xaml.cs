@@ -106,11 +106,11 @@ namespace EventDirector
             // Setup timing systems.
             TimingType.Items.Clear();
             ComboBoxItem current, selected = null;
-            foreach (string key in Constants.DefaultTiming.SYSTEM_NAMES.Keys)
+            foreach (string key in Constants.Timing.SYSTEM_NAMES.Keys)
             {
                 current = new ComboBoxItem()
                 {
-                    Content = Constants.DefaultTiming.SYSTEM_NAMES[key],
+                    Content = Constants.Timing.SYSTEM_NAMES[key],
                     Uid = key
                 };
                 TimingType.Items.Add(current);
@@ -141,12 +141,12 @@ namespace EventDirector
             locations = database.GetTimingLocations(theEvent.Identifier);
             if (theEvent.CommonStartFinish != 1)
             {
-                locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
             }
             else
             {
-                locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
             List<TimingSystem> systems = mWindow.GetConnectedSystems();
             int numSystems = systems.Count;
@@ -201,12 +201,12 @@ namespace EventDirector
             locations = database.GetTimingLocations(theEvent.Identifier);
             if (theEvent.CommonStartFinish != 1)
             {
-                locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
             }
             else
             {
-                locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
 
             // Update locations in the list of readers
@@ -678,7 +678,7 @@ namespace EventDirector
             private void Settings(object sender, RoutedEventArgs e)
             {
                 Log.D("Settings button pressed. IP is " + ReaderIP.Text);
-                reader.SystemInterface.Rewind(0, 50);
+                reader.SystemInterface.Rewind(1, 50);
             }
 
             private void Clock(object sender, RoutedEventArgs e)

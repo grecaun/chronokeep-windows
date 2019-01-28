@@ -128,6 +128,7 @@ namespace EventDirector
 
         // Chip Read Functions
         void AddChipRead(ChipRead read);
+        void AddChipReads(List<ChipRead> reads);
         List<ChipRead> GetChipReads();
         List<ChipRead> GetChipReads(int eventId);
 

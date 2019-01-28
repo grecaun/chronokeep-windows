@@ -19,7 +19,7 @@ namespace EventDirector.Objects
             GroupNumber = groupNumber;
             GroupName = groupName;
             Bib = bib;
-            if (GroupNumber == Constants.DefaultTiming.DEFAULT_BIB_GROUP)
+            if (GroupNumber == Constants.Timing.DEFAULT_BIB_GROUP)
             {
                 GroupName = "Default";
             }

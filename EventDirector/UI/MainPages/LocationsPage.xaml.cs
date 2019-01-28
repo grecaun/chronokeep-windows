@@ -44,8 +44,8 @@ namespace EventDirector.UI.MainPages
                 return;
             }
             LocationsBox.Items.Clear();
-            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.DefaultTiming.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow)));
-            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin)));
+            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow)));
+            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin)));
             List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
             LocationCount = 1;
             locations.Sort();
@@ -75,7 +75,7 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
-            if (location.Identifier == Constants.DefaultTiming.LOCATION_FINISH || location.Identifier == Constants.DefaultTiming.LOCATION_START)
+            if (location.Identifier == Constants.Timing.LOCATION_FINISH || location.Identifier == Constants.Timing.LOCATION_START)
             {
                 Log.E("Somehow they told us to delete the start/finish location.");
             }
@@ -98,13 +98,13 @@ namespace EventDirector.UI.MainPages
             foreach (ALocation locItem in LocationsBox.Items)
             {
                 locItem.UpdateLocation();
-                if (locItem.myLocation.Identifier == Constants.DefaultTiming.LOCATION_FINISH)
+                if (locItem.myLocation.Identifier == Constants.Timing.LOCATION_FINISH)
                 {
                     theEvent.FinishMaxOccurrences = locItem.myLocation.MaxOccurrences;
                     theEvent.FinishIgnoreWithin = locItem.myLocation.IgnoreWithin;
                     database.SetFinishOptions(theEvent);
                 }
-                else if (locItem.myLocation.Identifier == Constants.DefaultTiming.LOCATION_START)
+                else if (locItem.myLocation.Identifier == Constants.Timing.LOCATION_START)
                 {
                     theEvent.StartWindow = locItem.myLocation.IgnoreWithin;
                     database.SetStartWindow(theEvent);
@@ -203,12 +203,12 @@ namespace EventDirector.UI.MainPages
                 occPanel.Children.Add(MaxOccurrences);
                 settingsGrid.Children.Add(occPanel);
                 Grid.SetColumn(occPanel, 0);
-                if (myLocation.Identifier == Constants.DefaultTiming.LOCATION_START)
+                if (myLocation.Identifier == Constants.Timing.LOCATION_START)
                 {
                     occPanel.Visibility = Visibility.Collapsed;
                 }
                 DockPanel ignPanel = new DockPanel();
-                string labelLabel = myLocation.Identifier == Constants.DefaultTiming.LOCATION_START ? "Start Window" : "Ignore Within";
+                string labelLabel = myLocation.Identifier == Constants.Timing.LOCATION_START ? "Start Window" : "Ignore Within";
                 ignPanel.Children.Add(new Label()
                 {
                     Content = labelLabel,
@@ -230,7 +230,7 @@ namespace EventDirector.UI.MainPages
                 IgnoreWithin.GotFocus += new RoutedEventHandler(this.SelectAll);
                 ignPanel.Children.Add(IgnoreWithin);
                 settingsGrid.Children.Add(ignPanel);
-                if (myLocation.Identifier != Constants.DefaultTiming.LOCATION_START)
+                if (myLocation.Identifier != Constants.Timing.LOCATION_START)
                 {
                     Grid.SetColumn(ignPanel, 1);
                 }
@@ -247,8 +247,8 @@ namespace EventDirector.UI.MainPages
                     Width = 150,
                     Margin = new Thickness(10,10,10,10)
                 };
-                if (myLocation.Identifier == Constants.DefaultTiming.LOCATION_FINISH 
-                    || myLocation.Identifier == Constants.DefaultTiming.LOCATION_START)
+                if (myLocation.Identifier == Constants.Timing.LOCATION_FINISH 
+                    || myLocation.Identifier == Constants.Timing.LOCATION_START)
                 {
                     LocationName.IsEnabled = false;
                     Remove.IsEnabled = false;

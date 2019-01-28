@@ -41,12 +41,12 @@ namespace EventDirector.UI.MainPages
                 locations = database.GetTimingLocations(theEvent.Identifier);
                 if (theEvent.CommonStartFinish == 1)
                 {
-                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 }
                 else
                 {
-                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                    locations.Insert(0, new TimingLocation(Constants.DefaultTiming.LOCATION_START, theEvent.Identifier, "Start", 1, theEvent.StartWindow));
+                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 1, theEvent.StartWindow));
                 }
             }
             UpdateDivisionsBox();
@@ -75,7 +75,7 @@ namespace EventDirector.UI.MainPages
             foreach (Segment s in segments)
             {
                 SegmentsBox.Items.Add(new ASegment(this, s, locations));
-                if (s.LocationId == Constants.DefaultTiming.LOCATION_FINISH || s.LocationId == Constants.DefaultTiming.LOCATION_START)
+                if (s.LocationId == Constants.Timing.LOCATION_FINISH || s.LocationId == Constants.Timing.LOCATION_START)
                 {
                     finish_occurrences = s.Occurrence > finish_occurrences ? s.Occurrence : finish_occurrences;
                 }
@@ -116,7 +116,7 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
-            database.AddSegment(new Segment(theEvent.Identifier, divId, Constants.DefaultTiming.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
+            database.AddSegment(new Segment(theEvent.Identifier, divId, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
             UpdateView();
         }
 
