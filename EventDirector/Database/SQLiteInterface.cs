@@ -3254,7 +3254,8 @@ namespace EventDirector
             SQLiteDataReader reader= command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new TimingSystem(Convert.ToInt32(reader["ts_identifier"]), reader["ts_ip"].ToString(), Convert.ToInt32(reader["ts_port"]), reader["ts_type"].ToString()));
+                output.Add(new TimingSystem(Convert.ToInt32(reader["ts_identifier"]), reader["ts_ip"].ToString(),
+                    Convert.ToInt32(reader["ts_port"]), Convert.ToInt32(reader["ts_location"]), reader["ts_type"].ToString()));
             }
             return output;
         }

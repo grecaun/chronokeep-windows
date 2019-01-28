@@ -13,7 +13,7 @@ namespace EventDirector.Objects
         public int SystemIdentifier { get; set; } = -1;
         public string IPAddress { get; set; }
         public int Port { get; set; }
-        public int LocationID { get; set; } = -1;
+        public int LocationID { get; set; } = Constants.Timing.LOCATION_FINISH;
         public string LocationName { get; set; } = "Unknown";
         public string Type { get; set; } = Constants.Settings.TIMING_RFID;
         public SYSTEM_STATUS Status { get; set; } = SYSTEM_STATUS.DISCONNECTED;
@@ -45,12 +45,13 @@ namespace EventDirector.Objects
             this.Type = type;
         }
 
-        public TimingSystem(int sysId, string ip, int port, string type)
+        public TimingSystem(int sysId, string ip, int port, int location, string type)
         {
             this.SystemIdentifier = sysId;
             this.IPAddress = ip;
             this.Port = port;
             this.Type = type;
+            this.LocationID = location;
             this.Status = SYSTEM_STATUS.DISCONNECTED;
         }
 
@@ -66,11 +67,13 @@ namespace EventDirector.Objects
             }
         }
 
-        public void CreateTimingSystemInterface(IDBInterface database)
+        public void CreateTimingSystemInterface(IDBInterface database, Socket sock)
         {
+            this.Socket = sock;
             if (this.Type == Constants.Settings.TIMING_RFID)
             {
-                SystemInterface = new RFIDUltraInterface(database, Socket, LocationID);
+                Log.D("System interface is RFID.");
+                SystemInterface = new RFIDUltraInterface(database, sock, LocationID);
             }
             else if (this.Type == Constants.Settings.TIMING_IPICO)
             {
