@@ -12,7 +12,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 26;
+        private readonly int version = 27;
         SQLiteConnection connection;
         readonly string connectionInfo;
 
@@ -216,6 +216,8 @@ namespace EventDirector
                     "read_readertime TEXT NOT NULL," +
                     "read_starttime INTEGER NOT NULL," +
                     "read_time TEXT NOT NULL," +
+                    "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
+                    "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
                     "UNIQUE (event_id, read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS settings (version INTEGER NOT NULL, name VARCHAR NOT NULL," +
@@ -911,8 +913,15 @@ namespace EventDirector
                                 "ts_location INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
                                 "ts_type TEXT NOT NULL," +
                                 "UNIQUE (ts_ip, ts_location) ON CONFLICT REPLACE);" +
-                            "UPDATE settings SET version=25 WHERE version=24;";
+                            "UPDATE settings SET version=26 WHERE version=25;";
                         command.ExecuteNonQuery();
+                        goto case 26;
+                    case 26:
+                        Log.D("Upgrading from version 26.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE chipreads ADD read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + ";" +
+                            "ALTER TABLE chipreads ADD read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + ";" +
+                            "UPDATE settings SET version=27 WHERE version=26;";
                         break;
                 }
                 transaction.Commit();
@@ -2675,8 +2684,9 @@ namespace EventDirector
                 + " LogId " + read.LogId + " Time Given " + read.TimeString());
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO chipreads (event_id, read_status, location_id, read_chipnumber, read_seconds," +
-                "read_milliseconds, read_antenna, read_reader, read_box, read_logindex, read_rssi, read_isrewind, read_readertime, read_starttime, read_time)" +
-                " VALUES (@event, @status, @loc, @chip, @sec, @milli, @ant, @reader, @box, @logix, @rssi, @rewind, @readertime, @starttime, @time);";
+                "read_milliseconds, read_antenna, read_reader, read_box, read_logindex, read_rssi, read_isrewind, read_readertime, read_starttime, read_time," +
+                "read_bib, read_type)" +
+                " VALUES (@event, @status, @loc, @chip, @sec, @milli, @ant, @reader, @box, @logix, @rssi, @rewind, @readertime, @starttime, @time, @bib, @type);";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", read.EventId),
@@ -2693,7 +2703,9 @@ namespace EventDirector
                 new SQLiteParameter("@rewind", read.IsRewind),
                 new SQLiteParameter("@readertime", read.ReaderTime),
                 new SQLiteParameter("@starttime", read.StartTime),
-                new SQLiteParameter("@time", read.TimeString())
+                new SQLiteParameter("@time", read.TimeString()),
+                new SQLiteParameter("@bib", read.Bib),
+                new SQLiteParameter("@type", read.Type)
             });
             command.ExecuteNonQuery();
         }
@@ -2745,77 +2757,38 @@ namespace EventDirector
 
         public List<ChipRead> GetChipReads()
         {
-            List<ChipRead> output = new List<ChipRead>();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads;";
             SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                output.Add(new ChipRead(
-                    Convert.ToInt32(reader["read_id"]),
-                    Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["read_status"]),
-                    Convert.ToInt32(reader["location_id"]),
-                    Convert.ToInt64(reader["read_chipnumber"]),
-                    Convert.ToInt64(reader["read_seconds"]),
-                    Convert.ToInt32(reader["read_milliseconds"]),
-                    Convert.ToInt32(reader["read_antenna"]),
-                    reader["read_rssi"].ToString(),
-                    Convert.ToInt32(reader["read_isrewind"]),
-                    reader["read_reader"].ToString(),
-                    reader["read_box"].ToString(),
-                    reader["read_readertime"].ToString(),
-                    Convert.ToInt32(reader["read_starttime"]),
-                    Convert.ToInt32(reader["read_"]),
-                    DateTime.ParseExact(reader["read_time"].ToString(), "yyyy-MM-dd HH:mm:ss.fff", null)
-                    ));
-            }
-            return output;
+            return GetChipReadsWorker(reader);
         }
 
         public List<ChipRead> GetChipReads(int eventId)
         {
-            List<ChipRead> output = new List<ChipRead>();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads WHERE event_id=@event;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                output.Add(new ChipRead(
-                    Convert.ToInt32(reader["read_id"]),
-                    Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["read_status"]),
-                    Convert.ToInt32(reader["location_id"]),
-                    Convert.ToInt64(reader["read_chipnumber"]),
-                    Convert.ToInt64(reader["read_seconds"]),
-                    Convert.ToInt32(reader["read_milliseconds"]),
-                    Convert.ToInt32(reader["read_antenna"]),
-                    reader["read_rssi"].ToString(),
-                    Convert.ToInt32(reader["read_isrewind"]),
-                    reader["read_reader"].ToString(),
-                    reader["read_box"].ToString(),
-                    reader["read_readertime"].ToString(),
-                    Convert.ToInt32(reader["read_starttime"]),
-                    Convert.ToInt32(reader["read_"]),
-                    DateTime.ParseExact(reader["read_time"].ToString(), "yyyy-MM-dd HH:mm:ss.fff", null)
-                    ));
-            }
-            return output;
+            return GetChipReadsWorker(reader);
         }
 
         public List<ChipRead> GetUsefulChipReads(int eventId)
         {
-            List<ChipRead> output = new List<ChipRead>();
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM chipreads c WHERE event_id=@event AND (read_status=@status OR EXISTS (SELECT * FROM time_results r WHERE c.read_id=r.read_id));";
+            command.CommandText = "SELECT * FROM chipreads c WHERE event_id=@event AND " +
+                "(read_status=@status OR EXISTS (SELECT * FROM time_results r WHERE c.read_id=r.read_id));";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
                 new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_IGNORE)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
+            return GetChipReadsWorker(reader);
+        }
+
+        private List<ChipRead> GetChipReadsWorker(SQLiteDataReader reader)
+        {
+            List<ChipRead> output = new List<ChipRead>(); while (reader.Read())
             {
                 output.Add(new ChipRead(
                     Convert.ToInt32(reader["read_id"]),
@@ -2833,7 +2806,9 @@ namespace EventDirector
                     reader["read_readertime"].ToString(),
                     Convert.ToInt32(reader["read_starttime"]),
                     Convert.ToInt32(reader["read_"]),
-                    DateTime.ParseExact(reader["read_time"].ToString(), "yyyy-MM-dd HH:mm:ss.fff", null)
+                    DateTime.ParseExact(reader["read_time"].ToString(), "yyyy-MM-dd HH:mm:ss.fff", null),
+                    Convert.ToInt32(reader["read_bib"]),
+                    Convert.ToInt32(reader["read_type"])
                     ));
             }
             return output;

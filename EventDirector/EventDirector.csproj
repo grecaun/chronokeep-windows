@@ -198,7 +198,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Constants\DashboardLabels.cs" />
-    <Compile Include="Constants\DefaultTiming.cs" />
+    <Compile Include="Constants\Timing.cs" />
     <Compile Include="Constants\Distances.cs" />
     <Compile Include="Constants\JsonOptions.cs" />
     <Compile Include="Constants\Settings.cs" />

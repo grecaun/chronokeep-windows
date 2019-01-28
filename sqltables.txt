@@ -153,6 +153,8 @@ CREATE TABLE IF NOT EXISTS chipreads (
       read_readertime TEXT NOT NULL,
       read_starttime INTEGER NOT NULL,
       read_time TEXT NOT NULL,
+      read_bib INTEGER NOT NULL DEFAULT Constants.Timing.CHIPREAD_DUMMYBIB,
+      read_type INTEGER NOT NULL DEFAULT Constants.Timing.CHIPREAD_TYPE_CHIP,
       UNIQUE (event_id, read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE
 CREATE TABLE IF NOT EXISTS changes
       change_id INTEGER PRIMARY KEY,
