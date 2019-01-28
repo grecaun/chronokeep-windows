@@ -147,67 +147,67 @@ namespace EventDirector
 
         public void StartReading()
         {
-            sock.Send(Encoding.ASCII.GetBytes("R"));
+            SendMessage("R");
         }
 
         public void StopReading()
         {
-            sock.Send(Encoding.ASCII.GetBytes("S"));
+            SendMessage("S");
         }
 
         public void Rewind(DateTime start, DateTime end)
         {
-            sock.Send(Encoding.ASCII.GetBytes("800" + DateToEpoch(start).ToString() + RFIDUltraCodes.RewindDelimiter + DateToEpoch(end).ToString()));
+            SendMessage("800" + DateToEpoch(start).ToString() + RFIDUltraCodes.RewindDelimiter + DateToEpoch(end).ToString());
         }
 
         public void Rewind()
         {
-            sock.Send(Encoding.ASCII.GetBytes("8000" + RFIDUltraCodes.RewindDelimiter + "0"));
+            SendMessage("8000" + RFIDUltraCodes.RewindDelimiter + "0");
         }
 
         public void Rewind(int start, int end)
         {
-            sock.Send(Encoding.ASCII.GetBytes("600" + start.ToString() + RFIDUltraCodes.RewindDelimiter + end.ToString()));
+            SendMessage("600" + start.ToString() + RFIDUltraCodes.RewindDelimiter + end.ToString());
         }
 
         public void StopRewind()
         {
-            sock.Send(Encoding.ASCII.GetBytes("9"));
+            SendMessage("9");
         }
 
         public void SetTime(DateTime date)
         {
-            sock.Send(Encoding.ASCII.GetBytes("t" + RFIDUltraCodes.SetTime + date.ToString("HH:mm:ss dd-MM-yyyy")));
+            SendMessage("t" + RFIDUltraCodes.SetTime + date.ToString("HH:mm:ss dd-MM-yyyy"));
         }
 
         public void SetTime()
         {
-            sock.Send(Encoding.ASCII.GetBytes("t" + RFIDUltraCodes.SetTime + DateTime.Now.ToString("HH:mm:ss dd-MM-yyyy")));
+            SendMessage("t" + RFIDUltraCodes.SetTime + DateTime.Now.ToString("HH:mm:ss dd-MM-yyyy"));
         }
 
         public void GetTime()
         {
-            sock.Send(Encoding.ASCII.GetBytes("r"));
+            SendMessage("r");
         }
 
         public void GetStatus()
         {
-            sock.Send(Encoding.ASCII.GetBytes("?"));
+            SendMessage("?");
         }
 
         public void StartSending()
         {
-            sock.Send(Encoding.ASCII.GetBytes("700"));
+            SendMessage("700");
         }
 
         public void StartSending(DateTime date)
         {
-            sock.Send(Encoding.ASCII.GetBytes("700" + DateToEpoch(date)));
+            SendMessage("700" + DateToEpoch(date));
         }
 
         public void StopSending()
         {
-            sock.Send(Encoding.ASCII.GetBytes("s"));
+            SendMessage("s");
         }
 
         /**
@@ -215,7 +215,7 @@ namespace EventDirector
          */
         public void SetGPRS(bool turnOn)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.GPRS + (turnOn ? "1" : "0") + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.GPRS + (turnOn ? "1" : "0") + RFIDUltraCodes.SettingsTerm);
         }
 
         public void SetGPRSIp(string address)
@@ -230,27 +230,27 @@ namespace EventDirector
             {
                 vals[i] = (char) int.Parse(nums[i]);
             }
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.GPRSIp + vals[0] + vals[1] + vals[2] + vals[3] + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.GPRSIp + vals[0] + vals[1] + vals[2] + vals[3] + RFIDUltraCodes.SettingsTerm);
         }
 
         public void SetGPRSPort(int port)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.GPRSPort + port.ToString() + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.GPRSPort + port.ToString() + RFIDUltraCodes.SettingsTerm);
         }
 
         public void SetAPNName(string name)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.APNName + name + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.APNName + name + RFIDUltraCodes.SettingsTerm);
         }
 
         public void SetAPNUserName(string name)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.APNUser + name + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.APNUser + name + RFIDUltraCodes.SettingsTerm);
         }
 
         public void SetAPNPassword(string name)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.APNPass + name + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.APNPass + name + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -268,7 +268,7 @@ namespace EventDirector
          */
         public void SetRegion(char regionCode)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.Region + "" + regionCode + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.Region + "" + regionCode + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -277,7 +277,7 @@ namespace EventDirector
          */
         public void SetComProtocol(char protocol)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.ComProto + "" + protocol + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.ComProto + "" + protocol + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -286,7 +286,7 @@ namespace EventDirector
          */
         public void SetChipOutputType(char type)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.ChipOutType + "" + type + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.ChipOutType + "" + type + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -340,7 +340,7 @@ namespace EventDirector
             {
                 return;
             }
-            sock.Send(Encoding.ASCII.GetBytes("u" + code + status + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + code + status + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -365,7 +365,7 @@ namespace EventDirector
             {
                 return;
             }
-            sock.Send(Encoding.ASCII.GetBytes("u" + code + mode + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + code + mode + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -389,7 +389,7 @@ namespace EventDirector
             {
                 return;
             }
-            sock.Send(Encoding.ASCII.GetBytes("u" + code + session + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + code + session + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -410,7 +410,7 @@ namespace EventDirector
             {
                 return;
             }
-            sock.Send(Encoding.ASCII.GetBytes("u" + code + power.ToString() + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + code + power.ToString() + RFIDUltraCodes.SettingsTerm);
         }
 
         public void SetReaderIp(int readerNo, string address)
@@ -438,7 +438,7 @@ namespace EventDirector
             {
                 return;
             }
-            sock.Send(Encoding.ASCII.GetBytes("u" + code + vals[0] + vals[1] + vals[2] + vals[3] + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + code + vals[0] + vals[1] + vals[2] + vals[3] + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -448,7 +448,7 @@ namespace EventDirector
          */
         public void SetGatingMode(char mode)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.GatingMode + mode + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.GatingMode + mode + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -456,7 +456,7 @@ namespace EventDirector
          */
         public void SetGatingInterval(int seconds)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.GatingInterval + seconds.ToString() + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.GatingInterval + seconds.ToString() + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -466,7 +466,7 @@ namespace EventDirector
          */
         public void SetChannelNumber(char number)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.GatingInterval + number + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.GatingInterval + number + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -476,7 +476,7 @@ namespace EventDirector
          */
         public void SetBeeperVolume(char vol)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.BeeperVolume + vol + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.BeeperVolume + vol + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -486,7 +486,7 @@ namespace EventDirector
          */
         public void SetAutoGPSTime(char gps)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.AutoSetGPS + gps + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.AutoSetGPS + gps + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -498,7 +498,7 @@ namespace EventDirector
             {
                 return;
             }
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.TimeZone + zone + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.TimeZone + zone + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -507,7 +507,7 @@ namespace EventDirector
          */
         public void SetDataSending(char value)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.DataSending + value + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.DataSending + value + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -515,7 +515,7 @@ namespace EventDirector
          */
         public void SetUltraId(int id)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.UltraId + id + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.UltraId + id + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -537,7 +537,7 @@ namespace EventDirector
             {
                 return;
             }
-            sock.Send(Encoding.ASCII.GetBytes("u" + code + (value ? 0x01 : 0x00) + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + code + (value ? 0x01 : 0x00) + RFIDUltraCodes.SettingsTerm);
         }
 
         /**
@@ -546,12 +546,12 @@ namespace EventDirector
          */
         public void SetWhenToBeep(char value)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.WhenBeep + value + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.WhenBeep + value + RFIDUltraCodes.SettingsTerm);
         }
         
         public void SetUploadURL(string url)
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.UploadURL + url + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.UploadURL + url + RFIDUltraCodes.SettingsTerm);
         }
 
         public void SetGateway(string gateway)
@@ -566,7 +566,7 @@ namespace EventDirector
             {
                 vals[i] = (char)int.Parse(nums[i]);
             }
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.Gateway + vals[0] + vals[1] + vals[2] + vals[3] + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.Gateway + vals[0] + vals[1] + vals[2] + vals[3] + RFIDUltraCodes.SettingsTerm);
         }
 
         public void SetDNSServer(string server)
@@ -581,17 +581,23 @@ namespace EventDirector
             {
                 vals[i] = (char)int.Parse(nums[i]);
             }
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.DNSServer + vals[0] + vals[1] + vals[2] + vals[3] + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.DNSServer + vals[0] + vals[1] + vals[2] + vals[3] + RFIDUltraCodes.SettingsTerm);
         }
 
         public void SaveSettings()
         {
-            sock.Send(Encoding.ASCII.GetBytes("u" + RFIDUltraCodes.SettingsTerm));
+            SendMessage("u" + RFIDUltraCodes.SettingsTerm);
         }
 
         public void QuerySettings()
         {
-            sock.Send(Encoding.ASCII.GetBytes("U"));
+            SendMessage("U");
+        }
+
+        private void SendMessage(string msg)
+        {
+            Log.D("Sending message '" + msg + "'");
+            sock.Send(Encoding.ASCII.GetBytes(msg + "\n"));
         }
 
         public static long DateToEpoch(DateTime date)
