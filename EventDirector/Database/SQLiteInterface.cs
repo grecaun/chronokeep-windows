@@ -12,7 +12,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 27;
+        private readonly int version = 28;
         SQLiteConnection connection;
         readonly string connectionInfo;
 
@@ -208,8 +208,8 @@ namespace EventDirector
                     "read_seconds INTEGER NOT NULL," +
                     "read_milliseconds INTEGER NOT NULL," +
                     "read_antenna INTEGER NOT NULL," +
-                    "read_reader INTEGER NOT NULL," +
-                    "read_box INTEGER NOT NULL," +
+                    "read_reader TEXT NOT NULL," +
+                    "read_box TEXT NOT NULL," +
                     "read_logindex INTEGER NOT NULL," +
                     "read_rssi INTEGER NOT NULL," +
                     "read_isrewind INTEGER NOT NULL," +
@@ -922,6 +922,33 @@ namespace EventDirector
                         command.CommandText = "ALTER TABLE chipreads ADD read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + ";" +
                             "ALTER TABLE chipreads ADD read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + ";" +
                             "UPDATE settings SET version=27 WHERE version=26;";
+                        command.ExecuteNonQuery();
+                        goto case 27;
+                    case 27:
+                        Log.D("Upgrading from version 27.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "DROP TABLE chipreads;" +
+                            "CREATE TABLE IF NOT EXISTS chipreads (" +
+                                "read_id INTEGER PRIMARY KEY," +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "read_status INTEGER NOT NULL DEFAULT 0," +
+                                "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                                "read_chipnumber INTEGER NOT NULL," +
+                                "read_seconds INTEGER NOT NULL," +
+                                "read_milliseconds INTEGER NOT NULL," +
+                                "read_antenna INTEGER NOT NULL," +
+                                "read_reader TEXT NOT NULL," +
+                                "read_box TEXT NOT NULL," +
+                                "read_logindex INTEGER NOT NULL," +
+                                "read_rssi INTEGER NOT NULL," +
+                                "read_isrewind INTEGER NOT NULL," +
+                                "read_readertime TEXT NOT NULL," +
+                                "read_starttime INTEGER NOT NULL," +
+                                "read_time TEXT NOT NULL," +
+                                "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
+                                "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
+                                "UNIQUE (event_id, read_chipnumber, read_bib, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
+                                "); UPDATE settings SET version=28 WHERE version=27;";
                         command.ExecuteNonQuery();
                         break;
                 }
@@ -2682,7 +2709,7 @@ namespace EventDirector
         public void AddChipRead(ChipRead read)
         {
             Log.D("Database - Add chip read. Box " + read.Box + " Antenna " + read.Antenna + " Chip " + read.ChipNumber
-                + " LogId " + read.LogId + " Time Given " + read.TimeString());
+                + " LogId " + read.LogId + " Time Given " + read.TimeString);
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO chipreads (event_id, read_status, location_id, read_chipnumber, read_seconds," +
                 "read_milliseconds, read_antenna, read_reader, read_box, read_logindex, read_rssi, read_isrewind, read_readertime, read_starttime, read_time," +
@@ -2704,8 +2731,8 @@ namespace EventDirector
                 new SQLiteParameter("@rewind", read.IsRewind),
                 new SQLiteParameter("@readertime", read.ReaderTime),
                 new SQLiteParameter("@starttime", read.StartTime),
-                new SQLiteParameter("@time", read.TimeString()),
-                new SQLiteParameter("@bib", read.Bib),
+                new SQLiteParameter("@time", read.TimeString),
+                new SQLiteParameter("@bib", read.ReadBib),
                 new SQLiteParameter("@type", read.Type)
             });
             command.ExecuteNonQuery();
@@ -2733,7 +2760,7 @@ namespace EventDirector
                 {
                     new SQLiteParameter("@status", read.Status),
                     new SQLiteParameter("@id", read.ReadId),
-                    new SQLiteParameter("@time", read.TimeString())
+                    new SQLiteParameter("@time", read.TimeString)
                 });
                 command.ExecuteNonQuery();
                 transaction.Commit();
@@ -2759,24 +2786,46 @@ namespace EventDirector
         public List<ChipRead> GetChipReads()
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM chipreads;";
+            command.CommandText = "SELECT * FROM chipreads c JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
+                "LEFT JOIN eventspecific e ON (e.eventspecific_bib=b.bib AND e.event_id=c.event_id) " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id;";
             SQLiteDataReader reader = command.ExecuteReader();
-            return GetChipReadsWorker(reader);
+            List<ChipRead> output = GetChipReadsWorker(reader);
+            reader.Close();
+            command.CommandText = "SELECT * FROM chipreads c LEFT OUTER JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
+                "LEFT JOIN eventspecific e ON (e.eventspecific_bib=c.read_bib AND e.event_id=c.event_id) " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id;";
+            output.AddRange(GetChipReadsWorker(reader));
+            return output;
         }
 
         public List<ChipRead> GetChipReads(int eventId)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM chipreads WHERE event_id=@event;";
+            command.CommandText = "SELECT * FROM chipreads c JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
+                "LEFT JOIN eventspecific e ON (e.eventspecific_bib=b.bib AND e.event_id=c.event_id) " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id " +
+                "WHERE c.event_id=@event;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            return GetChipReadsWorker(reader);
+            List<ChipRead> output = GetChipReadsWorker(reader);
+            reader.Close();
+            command.CommandText = "SELECT * FROM chipreads c LEFT OUTER JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
+                "LEFT JOIN eventspecific e ON (e.eventspecific_bib=c.read_bib AND e.event_id=c.event_id) " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id " +
+                "WHERE c.event_id=@event;";
+            command.Parameters.Add(new SQLiteParameter("@event", eventId));
+            reader = command.ExecuteReader();
+            output.AddRange(GetChipReadsWorker(reader));
+            return output;
         }
 
         public List<ChipRead> GetUsefulChipReads(int eventId)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM chipreads c WHERE event_id=@event AND " +
+            command.CommandText = "SELECT * FROM chipreads c JOIN bib_chip_assoc b on c.read_chipnumber=b.chip " +
+                "LEFT JOIN eventspecific e ON (e.eventspecific_bib=b.bib AND e.event_id=c.event_id) " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE event_id=@event AND " +
                 "(read_status=@status OR EXISTS (SELECT * FROM time_results r WHERE c.read_id=r.read_id));";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
@@ -2784,18 +2833,51 @@ namespace EventDirector
                 new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_IGNORE)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            return GetChipReadsWorker(reader);
+            List<ChipRead> output = GetChipReadsWorker(reader);
+            reader.Close();
+            command.CommandText = "SELECT * FROM chipreads c LEFT OUTER JOIN bib_chip_assoc b on c.read_chipnumber=b.chip " +
+                "LEFT JOIN eventspecific e ON (e.eventspecific_bib=c.read_bib AND e.event_id=c.event_id) " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE event_id=@event AND " +
+                "(read_status=@status OR EXISTS (SELECT * FROM time_results r WHERE c.read_id=r.read_id));";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_IGNORE)
+            });
+            reader = command.ExecuteReader();
+            output.AddRange(GetChipReadsWorker(reader));
+            return output;
         }
 
         private List<ChipRead> GetChipReadsWorker(SQLiteDataReader reader)
         {
-            List<ChipRead> output = new List<ChipRead>(); while (reader.Read())
+            Event theEvent = GetCurrentEvent();
+            DateTime start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
+            List<TimingLocation> locations = GetTimingLocations(theEvent.Identifier);
+            if (theEvent.CommonStartFinish != 1)
             {
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+            }
+            else
+            {
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+            }
+            Dictionary<int, string> locDict = new Dictionary<int, string>();
+            foreach (TimingLocation loc in locations)
+            {
+                locDict[loc.Identifier] = loc.Name;
+            }
+            List<ChipRead> output = new List<ChipRead>();
+            while (reader.Read())
+            {
+                int locationId = Convert.ToInt32(reader["location_id"]);
+                Log.D("Reader is '" + reader["read_reader"] + "' Box is '" + reader["read_box"]);
                 output.Add(new ChipRead(
                     Convert.ToInt32(reader["read_id"]),
                     Convert.ToInt32(reader["event_id"]),
                     Convert.ToInt32(reader["read_status"]),
-                    Convert.ToInt32(reader["location_id"]),
+                    locationId,
                     Convert.ToInt64(reader["read_chipnumber"]),
                     Convert.ToInt64(reader["read_seconds"]),
                     Convert.ToInt32(reader["read_milliseconds"]),
@@ -2806,10 +2888,15 @@ namespace EventDirector
                     reader["read_box"].ToString(),
                     reader["read_readertime"].ToString(),
                     Convert.ToInt32(reader["read_starttime"]),
-                    Convert.ToInt32(reader["read_"]),
+                    Convert.ToInt32(reader["read_logindex"]),
                     DateTime.ParseExact(reader["read_time"].ToString(), "yyyy-MM-dd HH:mm:ss.fff", null),
                     Convert.ToInt32(reader["read_bib"]),
-                    Convert.ToInt32(reader["read_type"])
+                    Convert.ToInt32(reader["read_type"]),
+                    reader["bib"] == DBNull.Value ? 0 : Convert.ToInt32(reader["bib"]),
+                    reader["participant_first"] == DBNull.Value ? "" : reader["participant_first"].ToString(),
+                    reader["participant_last"] == DBNull.Value ? "" : reader["participant_last"].ToString(),
+                    start,
+                    locDict[locationId]
                     ));
             }
             return output;

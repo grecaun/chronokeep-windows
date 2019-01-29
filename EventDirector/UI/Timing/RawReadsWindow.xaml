@@ -5,25 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EventDirector"
         mc:Ignorable="d"
-        Title="RawReadsWindow" Height="450" Width="780" MinWidth="780" MinHeight="450">
+        Title="Raw Reads" Height="450" Width="850" MinWidth="850" MinHeight="450" Closing="Window_Closing">
     <Grid>
-        <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
+        <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" Grid.Row="0" FontSize="12">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Box" Width="40" DisplayMemberBinding="{Binding Box}" />
-                    <GridViewColumn Header="R#" Width="40" DisplayMemberBinding="{Binding Reader}" />
-                    <GridViewColumn Header="Ant" Width="40" DisplayMemberBinding="{Binding Ant}" />
-                    <GridViewColumn Header="RSSI" Width="40" DisplayMemberBinding="{Binding RSSI}" />
-                    <GridViewColumn Header="Where" Width="80" DisplayMemberBinding="{Binding TimingPoint}" />
-                    <GridViewColumn Header="Chip" Width="100" DisplayMemberBinding="{Binding Chip}" />
+                    <GridViewColumn Header="Where" Width="80" DisplayMemberBinding="{Binding LocationName}" />
+                    <GridViewColumn Header="Chip" Width="80" DisplayMemberBinding="{Binding ChipNumber}" />
                     <GridViewColumn Header="Bib" Width="60" DisplayMemberBinding="{Binding Bib}" />
                     <GridViewColumn Header="Name" Width="160" DisplayMemberBinding="{Binding Name}" />
-                    <GridViewColumn Header="Time" Width="60" DisplayMemberBinding="{Binding Time}" />
-                    <GridViewColumn Header="Status" Width="60" DisplayMemberBinding="{Binding Status}" />
-                    <GridViewColumn Header="L/R" Width="40" DisplayMemberBinding="{Binding LocalOrRemote}" />
-                    <GridViewColumn Header="Rew" Width="40" DisplayMemberBinding="{Binding Rewind}" />
+                    <GridViewColumn Header="Clock" Width="160" DisplayMemberBinding="{Binding TimeString}" />
+                    <GridViewColumn Header="Net Time" Width="100" DisplayMemberBinding="{Binding NetTime}" />
+                    <GridViewColumn Header="Status" Width="60" DisplayMemberBinding="{Binding StatusName}" />
+                    <GridViewColumn Header="Type" Width="60" DisplayMemberBinding="{Binding TypeName}" />
                 </GridView>
             </ListView.View>
         </ListView>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button HorizontalAlignment="Right" Name="IgnoreButton" Content="Ignore Reads" Height="35" FontSize="16" Width="150" Margin="5,5,5,5" Grid.Column="0" Click="IgnoreButton_Click"/>
+            <Button HorizontalAlignment="Left" Name="DoneButton" Content="Done" Height="35" FontSize="16" Width="150" Margin="5,5,5,5" Grid.Column="1" Click="DoneButton_Click"/>
+        </Grid>
     </Grid>
 </Window>

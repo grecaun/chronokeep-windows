@@ -22,13 +22,13 @@ namespace EventDirector.UI.Timing
     /// </summary>
     public partial class ManualEntryWindow : Window
     {
-        IWindowCallback window;
+        INewMainWindow window;
         IDBInterface database;
         Event theEvent;
         
         private const string allowedNums = "[^0-9]";
 
-        private ManualEntryWindow(IWindowCallback window, IDBInterface database, List<TimingLocation> locations)
+        private ManualEntryWindow(INewMainWindow window, IDBInterface database, List<TimingLocation> locations)
         {
             InitializeComponent();
             this.window = window;
@@ -78,7 +78,7 @@ namespace EventDirector.UI.Timing
             }
         }
 
-        public static ManualEntryWindow NewWindow(IWindowCallback window, IDBInterface database, List<TimingLocation> locations)
+        public static ManualEntryWindow NewWindow(INewMainWindow window, IDBInterface database, List<TimingLocation> locations)
         {
             if (StaticEvent.changeMainEventWindow != null || StaticEvent.manualEntryWindow != null)
             {
@@ -145,8 +145,9 @@ namespace EventDirector.UI.Timing
             time = time.AddSeconds(seconds);
             time = time.AddMilliseconds(milliseconds);
             ChipRead newEntry = new ChipRead(theEvent.Identifier, Constants.Timing.CHIPREAD_STATUS_NONE, locationId, bib, time);
-            Log.D("Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString());
+            Log.D("Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
             database.AddChipRead(newEntry);
+            window.UpdateTimingWindow();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

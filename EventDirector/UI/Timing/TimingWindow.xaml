@@ -38,7 +38,7 @@
                 <ComboBox Name="TimingType" FontSize="16" Margin="10,0,5,0" Grid.Column="0" IsEnabled="false" VerticalContentAlignment="Center"/>
                 <Button Name="TimingTypeButton" Margin="5,0,10,0" Grid.Column="1" Content="Edit" VerticalContentAlignment="Center" Click="TimingTypeButton_Click"/>
             </Grid>
-            <Expander Name="extraExpander" Header="More" Margin="5,15,5,0">
+            <Expander Name="extraExpander" Header="More" Margin="5,15,5,0" IsExpanded="True">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
@@ -51,7 +51,7 @@
                     </StackPanel>
                     <StackPanel Grid.Column="1">
                         <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
-                        <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
+                        <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="RawReads_Click"/>
                         <Button Content="DNS/DNF List" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
                     </StackPanel>
                 </Grid>

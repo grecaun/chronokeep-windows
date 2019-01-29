@@ -382,6 +382,10 @@ namespace EventDirector.UI
                     }
                     ((ManualEntryWindow)StaticEvent.manualEntryWindow).UpdateLocations(locations);
                 }
+                if (StaticEvent.rawReadsWindow != null)
+                {
+                    ((RawReadsWindow)StaticEvent.rawReadsWindow).Update();
+                }
             }));
         }
 

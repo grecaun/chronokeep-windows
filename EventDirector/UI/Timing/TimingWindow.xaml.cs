@@ -447,6 +447,17 @@ namespace EventDirector
             }
         }
 
+        private void RawReads_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Raw Reads selected.");
+            RawReadsWindow rawReadsWindow = RawReadsWindow.NewWindow(mWindow, database);
+            if (rawReadsWindow != null)
+            {
+                mWindow.AddWindow(rawReadsWindow);
+                rawReadsWindow.Show();
+            }
+        }
+
         private class AReaderBox : ListBoxItem
         {
             public TextBox ReaderIP { get; private set; }
