@@ -14,8 +14,8 @@ namespace EventDirector
         Regex regex = new Regex("\"[^\"]*\",|[^,]*,|[^,]*$");
 
         public ImportData Data { get; private set; }
-        string FilePath;
-        StreamReader file;
+        protected readonly string FilePath;
+        protected StreamReader file;
 
         public CSVImporter(string filePath)
         {
@@ -27,13 +27,17 @@ namespace EventDirector
         public void FetchHeaders()
         {
             Log.D("Getting headers from file.");
-            string headerLine = file.ReadLine();
-            MatchCollection matches = regex.Matches(headerLine);
+            ProcessFirstLine(file.ReadLine());
+        }
+
+        protected void ProcessFirstLine(string line)
+        {
+            MatchCollection matches = regex.Matches(line);
             string[] headers = new string[matches.Count];
             int counter = 0;
             foreach (Match m in matches)
             {
-                headers[counter++] = m.Value.Replace('"',' ').TrimEnd(',').Trim();
+                headers[counter++] = m.Value.Replace('"', ' ').TrimEnd(',').Trim();
             }
             Data = new ImportData(headers, FilePath, ImportData.FileType.CSV);
         }

@@ -25,7 +25,7 @@ namespace EventDirector
             InitializeComponent();
             foreach (string div in divisions)
             {
-                DListBoxItem newBox = new DListBoxItem(div, 7000);
+                DivisionListBoxItem newBox = new DivisionListBoxItem(div, 7000);
                 divisionListBox.Items.Add(newBox);
             }
         }
@@ -33,7 +33,7 @@ namespace EventDirector
         public List<Division> GetDivisions()
         {
             List<Division> output = new List<Division>();
-            foreach (DListBoxItem divItem in divisionListBox.Items)
+            foreach (DivisionListBoxItem divItem in divisionListBox.Items)
             {
                 output.Add(new Division(divItem.DivName(), -1, divItem.Cost()));
             }

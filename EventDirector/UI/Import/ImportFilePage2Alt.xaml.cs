@@ -25,14 +25,14 @@ namespace EventDirector.UI.Import
             InitializeComponent();
             foreach (string div in fileDivisions)
             {
-                divisionListBox.Items.Add(new DListBoxItemAlt(div, dbDivisions));
+                divisionListBox.Items.Add(new DivisionListBoxItemAlternate(div, dbDivisions));
             }
         }
 
         public List<ImportDivision> GetDivisions()
         {
             List<ImportDivision> output = new List<ImportDivision>();
-            foreach (DListBoxItemAlt divItem in divisionListBox.Items)
+            foreach (DivisionListBoxItemAlternate divItem in divisionListBox.Items)
             {
                 output.Add(new ImportDivision()
                 {

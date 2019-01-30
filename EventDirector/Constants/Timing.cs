@@ -10,6 +10,7 @@ namespace EventDirector.Constants
     {
         public static readonly int LOCATION_FINISH = -2;
         public static readonly int LOCATION_START = -1;
+        public static readonly int LOCATION_DUMMY = -12;
         public static readonly int SEGMENT_FINISH = -1;
 
         public static readonly int CHIPREAD_STATUS_NONE = 0;// If this value changes, SQLiteInterface version must be updated to reflect said change.

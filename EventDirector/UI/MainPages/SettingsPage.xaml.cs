@@ -31,13 +31,6 @@ namespace EventDirector.UI.MainPages
             InitializeComponent();
             this.mWindow = mainWindow;
             this.database = database;
-            UpdateView();
-        }
-
-        public void UpdateView()
-        {
-            AppSetting setting = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
-            CompanyNameBox.Text = setting.value;
             DefaultTimingBox.Items.Clear();
             DefaultTimingBox.Items.Add(new ComboBoxItem()
             {
@@ -59,7 +52,12 @@ namespace EventDirector.UI.MainPages
                 Content = "Ipico",
                 Uid = Constants.Settings.TIMING_IPICO
             });
-            setting = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
+            UpdateView();
+        }
+
+        public void UpdateView()
+        {
+            AppSetting setting = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
             if (setting.value == Constants.Settings.TIMING_MANUAL)
             {
                 DefaultTimingBox.SelectedIndex = 1;
@@ -76,12 +74,11 @@ namespace EventDirector.UI.MainPages
             {
                 DefaultTimingBox.SelectedIndex = 0;
             }
-            setting = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
-            DefaultExportDirBox.Text = setting.value;
-            setting = database.GetAppSetting(Constants.Settings.DEFAULT_WAIVER);
-            DefaultWaiverBox.Text = setting.value;
-            setting = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
-            UpdatePage.IsChecked = setting.value == Constants.Settings.SETTING_TRUE;
+            CompanyNameBox.Text = database.GetAppSetting(Constants.Settings.COMPANY_NAME).value;
+            DefaultExportDirBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value;
+            DefaultWaiverBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_WAIVER).value;
+            UpdatePage.IsChecked = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE;
+            ExitNoPrompt.IsChecked = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_TRUE;
             mWindow.UpdateTimingWindow();
         }
 
@@ -131,6 +128,7 @@ namespace EventDirector.UI.MainPages
             database.SetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR, DefaultExportDirBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.DEFAULT_WAIVER, DefaultWaiverBox.Text);
             database.SetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE, UpdatePage.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
+            database.SetAppSetting(Constants.Settings.EXIT_NO_PROMPT, ExitNoPrompt.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             UpdateView();
         }
 

@@ -17,8 +17,6 @@ namespace EventDirector
         IDBInterface database;
         IDataExporter exporter;
         MainWindow mainWindow;
-        String programDir = "EventDirector";
-        String exportDir = "Exports";
         String changeDir = "Changes";
         Utils.FileType fileType = Utils.FileType.CSV;
 

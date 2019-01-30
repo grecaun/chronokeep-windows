@@ -12,8 +12,8 @@ namespace EventDirector
     class RFIDUltraInterface : ITimingSystemInterface
     {
         IDBInterface database;
+        readonly int locationId;
         Event theEvent;
-        int locationId;
         StringBuilder buffer = new StringBuilder();
         Socket sock;
 
@@ -57,8 +57,7 @@ namespace EventDirector
                 {
                     string[] chipVals = message.Split(',');
                     ChipRead chipRead = new ChipRead(
-                        theEvent.Identifier, // UPDATE LATER
-                        Constants.Timing.CHIPREAD_STATUS_NONE,
+                        theEvent.Identifier,
                         locationId,
                         long.Parse(chipVals[1]),
                         long.Parse(chipVals[2]),

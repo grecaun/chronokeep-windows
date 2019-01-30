@@ -59,6 +59,7 @@ namespace EventDirector
         public void Update()
         {
             List<ChipRead> reads = database.GetChipReads(theEvent.Identifier);
+            reads.Sort();
             updateListView.ItemsSource = reads;
         }
 

@@ -44,7 +44,7 @@ namespace EventDirector
             }
             for (int i=1; i < importer.Data.GetNumHeaders(); i++)
             {
-                headerListBox.Items.Add(new H2ListBoxItem(importer.Data.Headers[i], i));
+                headerListBox.Items.Add(new BibChipHeaderListBoxItem(importer.Data.Headers[i], i));
             }
             List<Event> eventList = database.GetEvents();
             events.Items.Clear();
@@ -78,7 +78,7 @@ namespace EventDirector
             }
             for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
             {
-                headerListBox.Items.Add(new H2ListBoxItem(importer.Data.Headers[i], i));
+                headerListBox.Items.Add(new BibChipHeaderListBoxItem(importer.Data.Headers[i], i));
             }
             EventHolder.Visibility = Visibility.Collapsed;
             TopRow.Height = new GridLength(0);
@@ -103,12 +103,12 @@ namespace EventDirector
             List<String> output = new List<String>();
             foreach (ListBoxItem item in headerListBox.Items)
             {
-                int val = ((H2ListBoxItem)item).HeaderBox.SelectedIndex;
+                int val = ((BibChipHeaderListBoxItem)item).HeaderBox.SelectedIndex;
                 if (val > 0)
                 {
                     if (check[val] > 0)
                     {
-                        output.Add(((H2ListBoxItem)item).HeaderBox.SelectedItem.ToString());
+                        output.Add(((BibChipHeaderListBoxItem)item).HeaderBox.SelectedItem.ToString());
                         repeat = true;
                     }
                     else
@@ -120,9 +120,9 @@ namespace EventDirector
             return repeat ? output : null;
         }
 
-        internal H2ListBoxItem[] GetListBoxItems()
+        internal BibChipHeaderListBoxItem[] GetListBoxItems()
         {
-            H2ListBoxItem[] output = new H2ListBoxItem[headerListBox.Items.Count];
+            BibChipHeaderListBoxItem[] output = new BibChipHeaderListBoxItem[headerListBox.Items.Count];
             headerListBox.Items.CopyTo(output, 0);
             return output;
         }
@@ -138,7 +138,7 @@ namespace EventDirector
             headerListBox.Items.Clear();
             for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
             {
-                headerListBox.Items.Add(new H2ListBoxItem(importer.Data.Headers[i], i));
+                headerListBox.Items.Add(new BibChipHeaderListBoxItem(importer.Data.Headers[i], i));
             }
         }
 
@@ -167,7 +167,7 @@ namespace EventDirector
             {
                 importer.FetchData();
                 keys = new int[3];
-                foreach (H2ListBoxItem item in headerListBox.Items)
+                foreach (BibChipHeaderListBoxItem item in headerListBox.Items)
                 {
                     if (item.HeaderBox.SelectedIndex != 0)
                     {

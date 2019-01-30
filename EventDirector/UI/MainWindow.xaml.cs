@@ -4,6 +4,7 @@ using EventDirector.Timing;
 using EventDirector.UI.EventWindows;
 using EventDirector.UI.MainPages;
 using EventDirector.UI.Timing;
+using EventDirector.UI.Timing.Import;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -251,8 +252,19 @@ namespace EventDirector.UI
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_FALSE &&
+                (StaticEvent.AreToolWindowsOpen() || TimingController.IsRunning()))
+            {
+                MessageBoxResult result = MessageBox.Show("Are you sure you wish to exit?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.No)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
             closing = true;
             StopNetworkServices();
+            StopTimingController();
             foreach (Window w in openWindows)
             {
                 try
@@ -330,6 +342,22 @@ namespace EventDirector.UI
             return true;
         }
 
+        public bool StopTimingController()
+        {
+            try
+            {
+                Log.D("Stopping Timing Controller.");
+                TimingController.Shutdown();
+                TimingControllerThread.Abort();
+                TimingControllerThread.Join();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
         public void UpdateChangesBox()
         {
         }
@@ -385,6 +413,10 @@ namespace EventDirector.UI
                 if (StaticEvent.rawReadsWindow != null)
                 {
                     ((RawReadsWindow)StaticEvent.rawReadsWindow).Update();
+                }
+                if (StaticEvent.importLogWindow != null)
+                {
+                    ((ImportLogWindow)StaticEvent.importLogWindow).Update();
                 }
             }));
         }

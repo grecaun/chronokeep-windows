@@ -207,6 +207,7 @@
     <Compile Include="Interfaces\UI\IMainPage.cs" />
     <Compile Include="Interfaces\UI\INewMainWindow.cs" />
     <Compile Include="Interfaces\UI\IWindowCallback.cs" />
+    <Compile Include="IO\LogImporter.cs" />
     <Compile Include="Objects\AgeGroup.cs" />
     <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
@@ -267,6 +268,15 @@
     </Compile>
     <Compile Include="UI\Participants\ModifyParticipantWindow.xaml.cs">
       <DependentUpon>ModifyParticipantWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Timing\Import\ImportLogPage1.xaml.cs">
+      <DependentUpon>ImportLogPage1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Timing\Import\ImportLogPage2.xaml.cs">
+      <DependentUpon>ImportLogPage2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Timing\Import\ImportLogWindow.xaml.cs">
+      <DependentUpon>ImportLogWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Timing\ManualEntryWindow.xaml.cs">
       <DependentUpon>ManualEntryWindow.xaml</DependentUpon>
@@ -461,6 +471,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Participants\ModifyParticipantWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Timing\Import\ImportLogPage1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Timing\Import\ImportLogPage2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Timing\Import\ImportLogWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

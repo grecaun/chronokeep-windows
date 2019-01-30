@@ -8,13 +8,13 @@ using System.Windows.Controls;
 
 namespace EventDirector
 {
-    internal class HListBoxItem : ListBoxItem
+    internal class HeaderListBoxItem : ListBoxItem
     {
         public Label HeaderLabel { get; private set; }
         public ComboBox HeaderBox { get; private set; }
         public int Index { get; private set; }
 
-        public HListBoxItem(String s, int ix)
+        public HeaderListBoxItem(String s, int ix)
         {
             this.IsTabStop = false;
             Index = ix;
@@ -38,7 +38,37 @@ namespace EventDirector
         }
     }
 
-    internal class H2ListBoxItem : ListBoxItem
+    internal class LogListBoxItem : ListBoxItem
+    {
+        public Label HeaderLabel { get; private set; }
+        public ComboBox HeaderBox { get; private set; }
+        public int Index { get; private set; }
+
+        public LogListBoxItem(String s, int ix, string[] human_fields, int selectedIx)
+        {
+            this.IsTabStop = false;
+            Index = ix;
+            Grid theGrid = new Grid();
+            this.Content = theGrid;
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(65) });
+            HeaderLabel = new Label
+            {
+                Content = s
+            };
+            theGrid.Children.Add(HeaderLabel);
+            Grid.SetColumn(HeaderLabel, 0);
+            HeaderBox = new ComboBox
+            {
+                ItemsSource = human_fields,
+                SelectedIndex = selectedIx,
+            };
+            theGrid.Children.Add(HeaderBox);
+            Grid.SetColumn(HeaderBox, 1);
+        }
+    }
+
+    internal class BibChipHeaderListBoxItem : ListBoxItem
     {
         public Label HeaderLabel { get; private set; }
         public ComboBox HeaderBox { get; private set; }
@@ -49,7 +79,7 @@ namespace EventDirector
             "Chip"
         };
 
-        public H2ListBoxItem(String s, int ix)
+        public BibChipHeaderListBoxItem(String s, int ix)
         {
             this.IsTabStop = false;
             Index = ix;
@@ -85,12 +115,12 @@ namespace EventDirector
         }
     }
 
-    internal class DListBoxItemAlt : ListBoxItem
+    internal class DivisionListBoxItemAlternate : ListBoxItem
     {
         public Label DivisionName { get; private set; }
         public ComboBox Divisions { get; private set; }
 
-        public DListBoxItemAlt(String name, List<Division> divisions)
+        public DivisionListBoxItemAlternate(String name, List<Division> divisions)
         {
             this.IsTabStop = false;
             Grid theGrid = new Grid();
@@ -135,12 +165,12 @@ namespace EventDirector
         }
     }
 
-    internal class DListBoxItem : ListBoxItem
+    internal class DivisionListBoxItem : ListBoxItem
     {
         public Label DivisionName { get; private set; }
         public TextBox DivisionCost { get; private set; }
 
-        public DListBoxItem(String name, int cost)
+        public DivisionListBoxItem(String name, int cost)
         {
             this.IsTabStop = false;
             Grid theGrid = new Grid();
@@ -194,12 +224,12 @@ namespace EventDirector
         }
     }
 
-    internal class D2ListBoxItem : ListBoxItem
+    internal class DivisionListBoxItem2 : ListBoxItem
     {
         public TextBox DivisionName { get; private set; }
         public TextBox DivisionCost { get; private set; }
 
-        public D2ListBoxItem(String name, int cost)
+        public DivisionListBoxItem2(String name, int cost)
         {
             this.IsTabStop = false;
             Grid theGrid = new Grid();

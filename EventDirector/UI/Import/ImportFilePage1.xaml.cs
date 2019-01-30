@@ -28,7 +28,7 @@ namespace EventDirector
             this.importer = importer;
             for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
             {
-                headerListBox.Items.Add(new HListBoxItem(importer.Data.Headers[i], i));
+                headerListBox.Items.Add(new HeaderListBoxItem(importer.Data.Headers[i], i));
             }
         }
 
@@ -40,12 +40,12 @@ namespace EventDirector
             List<String> output = new List<String>();
             foreach (ListBoxItem item in headerListBox.Items)
             {
-                int val = ((HListBoxItem)item).HeaderBox.SelectedIndex;
+                int val = ((HeaderListBoxItem)item).HeaderBox.SelectedIndex;
                 if (val > 0 && val != ImportFileWindow.APPARELITEM)
                 {
                     if (check[val] > 0)
                     {
-                        output.Add(((HListBoxItem)item).HeaderBox.SelectedItem.ToString());
+                        output.Add(((HeaderListBoxItem)item).HeaderBox.SelectedItem.ToString());
                         repeat = true;
                     }
                     else
@@ -57,9 +57,9 @@ namespace EventDirector
             return repeat == true ? output : null;
         }
 
-        internal HListBoxItem[] GetListBoxItems()
+        internal HeaderListBoxItem[] GetListBoxItems()
         {
-            HListBoxItem[] output = new HListBoxItem[headerListBox.Items.Count];
+            HeaderListBoxItem[] output = new HeaderListBoxItem[headerListBox.Items.Count];
             headerListBox.Items.CopyTo(output, 0);
             return output;
         }
@@ -72,7 +72,7 @@ namespace EventDirector
             headerListBox.Items.Clear();
             for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
             {
-                headerListBox.Items.Add(new HListBoxItem(importer.Data.Headers[i], i));
+                headerListBox.Items.Add(new HeaderListBoxItem(importer.Data.Headers[i], i));
             }
         }
     }

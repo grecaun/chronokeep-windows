@@ -144,7 +144,7 @@ namespace EventDirector.UI.Timing
             }
             time = time.AddSeconds(seconds);
             time = time.AddMilliseconds(milliseconds);
-            ChipRead newEntry = new ChipRead(theEvent.Identifier, Constants.Timing.CHIPREAD_STATUS_NONE, locationId, bib, time);
+            ChipRead newEntry = new ChipRead(theEvent.Identifier, locationId, bib, time);
             Log.D("Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
             database.AddChipRead(newEntry);
             window.UpdateTimingWindow();

@@ -199,7 +199,7 @@ namespace EventDirector
             }
         }
 
-        private void StartImport(HListBoxItem[] headerListBoxItems)
+        private void StartImport(HeaderListBoxItem[] headerListBoxItems)
         {
             importer.FetchData();
             keys = new int[human_fields.Length + 1];
@@ -207,7 +207,7 @@ namespace EventDirector
             {
                 keys[i] = 0;
             }
-            foreach (HListBoxItem item in headerListBoxItems)
+            foreach (HeaderListBoxItem item in headerListBoxItems)
             {
                 Log.D("Header is " + item.HeaderLabel.Content);
                 if (item.HeaderBox.SelectedIndex != 0)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventDirector
 {
-    public class ChipRead
+    public class ChipRead : IComparable<ChipRead>
     {
         public int ReadId { get; set; }
         public int EventId { get; set; }
@@ -39,12 +39,13 @@ namespace EventDirector
             }
         }
 
-        public ChipRead(int eventId, int status, int locationId, long chipNumber, long seconds, int millisec,
-            int antenna, string rssi, int isRewind, string reader, string box, string readertime, long starttime,
-            int logid)
+        // This constructor is used when receiving a read from a RFID Ultra 8
+        public ChipRead(int eventId, int locationId, long chipNumber, long seconds, int millisec,
+            int antenna, string rssi, int isRewind, string reader, string box, string readertime,
+            long starttime, int logid)
         {
             this.EventId = eventId;
-            this.Status = status;
+            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
             this.LocationID = locationId;
             this.ChipNumber = chipNumber;
             this.Seconds = seconds;
@@ -63,6 +64,7 @@ namespace EventDirector
             this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
         }
 
+        // This is the database' constructor.
         public ChipRead(int readId, int eventId, int status, int locationId, long chipNumber, long seconds,
            int millisec, int antenna, string rssi, int isRewind, string reader, string box, string readertime,
            long starttime, int logid, DateTime time, int readbib, int type, int chipbib, string first,
@@ -93,13 +95,14 @@ namespace EventDirector
             this.LocationName = locationName;
         }
 
-        public ChipRead(int eventId, int status, int locationId, int bib, DateTime time)
+        // Constructor used in manual entry.
+        public ChipRead(int eventId, int locationId, int bib, DateTime time)
         {
             this.ReadBib = bib;
             this.Time = time;
             this.Type = Constants.Timing.CHIPREAD_TYPE_MANUAL;
             this.EventId = eventId;
-            this.Status = status;
+            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
             this.LocationID = locationId;
             this.ChipNumber = Constants.Timing.CHIPREAD_DUMMYCHIP;
             this.Seconds = RFIDUltraInterface.DateToEpoch(time);
@@ -109,6 +112,28 @@ namespace EventDirector
             this.IsRewind = 0;
             this.Reader = "M";
             this.Box = "Man";
+            this.ReaderTime = "";
+            this.StartTime = 0;
+            this.LogId = 0;
+        }
+
+        // Constructor used when loading from a Log
+        public ChipRead(int eventId, int locationId, string chip, DateTime time)
+        {
+            this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+            this.Time = time;
+            this.Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
+            this.EventId = eventId;
+            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            this.LocationID = locationId;
+            this.ChipNumber = Convert.ToInt64(chip);
+            this.Seconds = RFIDUltraInterface.DateToEpoch(time);
+            this.Milliseconds = time.Millisecond;
+            this.Antenna = 0;
+            this.RSSI = "";
+            this.IsRewind = 0;
+            this.Reader = "L";
+            this.Box = "Log";
             this.ReaderTime = "";
             this.StartTime = 0;
             this.LogId = 0;
@@ -148,6 +173,12 @@ namespace EventDirector
             {
                 return Constants.Timing.CHIPREAD_STATUS_IGNORE == Status ? "Ignored" : Constants.Timing.CHIPREAD_STATUS_NONE == Status ? "Waiting" : "Processed";
             }
+        }
+
+        public int CompareTo(ChipRead other)
+        {
+            if (other == null) return this.CompareTo(other);
+            else return this.Time.CompareTo(other.Time);
         }
     }
 }

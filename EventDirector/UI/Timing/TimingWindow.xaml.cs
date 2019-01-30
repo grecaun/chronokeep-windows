@@ -1,7 +1,10 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.IO;
 using EventDirector.Objects;
 using EventDirector.UI.EventWindows;
 using EventDirector.UI.Timing;
+using EventDirector.UI.Timing.Import;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -303,6 +306,34 @@ namespace EventDirector
             {
                 mWindow.AddWindow(manualEntryWindow);
                 manualEntryWindow.Show();
+            }
+        }
+
+        private async void LoadLog(object sender, RoutedEventArgs e)
+        {
+            Log.D("Loading from log.");
+            OpenFileDialog csv_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv,*txt)|*.csv;*.txt|All Files|*" };
+            if (csv_dialog.ShowDialog() == true)
+            {
+                try
+                {
+                    LogImporter importer = new LogImporter(csv_dialog.FileName);
+                    await Task.Run(() =>
+                    {
+                        importer.FindType();
+                    });
+                    ImportLogWindow logWindow = ImportLogWindow.NewWindow(mWindow, importer, database);
+                    if (logWindow != null)
+                    {
+                        mWindow.AddWindow(logWindow);
+                        logWindow.Show();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.E("Something went wrong when trying to read the CSV file.");
+                    Log.E(ex.StackTrace);
+                }
             }
         }
 

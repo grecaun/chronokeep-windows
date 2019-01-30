@@ -22,7 +22,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="245"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0">
                 <DockPanel>
@@ -49,9 +49,8 @@
                 </DockPanel>
             </StackPanel>
             <StackPanel Grid.Column="1">
-                <DockPanel Grid.Column="1">
-                    <CheckBox Name="UpdatePage" Content="Auto-save changes?" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
-                </DockPanel>
+                <CheckBox Name="UpdatePage" Content="Auto-save changes?" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
+                <CheckBox Name="ExitNoPrompt" Content="Never prompt before exit?" FontSize="16" Margin="10,10,10,10" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
             </StackPanel>
         </Grid>
     </StackPanel>
