@@ -23,11 +23,11 @@ namespace EventDirector.UI.MainPages
     /// </summary>
     public partial class AgeGroupsPage : Page, IMainPage
     {
-        private INewMainWindow mWindow;
+        private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
 
-        public AgeGroupsPage(INewMainWindow mWindow, IDBInterface database)
+        public AgeGroupsPage(IMainWindow mWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mWindow = mWindow;
@@ -58,7 +58,7 @@ namespace EventDirector.UI.MainPages
                 DivisionRow.Height = new GridLength(55);
                 UpdateDivisionsBox();
             }
-            mWindow.UpdateTimingWindow();
+            mWindow.NonUIUpdate();
         }
 
         private void UpdateDivisionsBox()
@@ -230,6 +230,14 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_Z()
         {
             UpdateAgeGroupsList();
+        }
+
+        public void Closing()
+        {
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
         }
 
         private class ALabel : ListBoxItem

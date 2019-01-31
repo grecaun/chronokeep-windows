@@ -1,13 +1,14 @@
-﻿<Window x:Class="EventDirector.TimingWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+﻿<Page x:Class="EventDirector.UI.MainPages.TimingPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        xmlns:local="clr-namespace:EventDirector"
-        mc:Ignorable="d"
-        Title="TimingWindow" Height="590" Width="900" MinWidth="900" MinHeight="590" Closing="Window_Closing">
+      xmlns:local="clr-namespace:EventDirector.UI.MainPages"
+      mc:Ignorable="d" 
+      d:DesignHeight="650" d:DesignWidth="900"
+      Title="TimingPage">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -22,14 +23,14 @@
                 <Label Name="StartTimeLabel" Content="Start Time" Width="75" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Right" Margin="0,0,0,0" />
                 <xctk:MaskedTextBox Name="StartTime" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="80,0,0,0" FontWeight="Bold" FontSize="16" KeyDown="StartTimeKeyDown" LostFocus="StartTimeLostFocus"/>
             </Grid>
-            <Button Name="StartRace" Content="Start Race" Width="100" Height="25" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,8,0,0" Click="StartRaceClick" />
-            <Button Content="Edit Selected" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="EditSelected" IsEnabled="False"/>
-            <Button Content="Manual Entry" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="ManualEntry" IsEnabled="True"/>
-            <Button Content="Load Log" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="LoadLog" IsEnabled="True" />
-            <Grid Height="25" HorizontalAlignment="Center" Margin="0,15,0,0">
-                <TextBox Name="searchBox" Width="100" Height="25" HorizontalAlignment="Left" KeyDown="SearchKeyDown"/>
-                <Button Content="Go" Width="30" Height="25" HorizontalAlignment="Left" Margin="110,0,0,0" Click="Search"/>
-            </Grid>
+            <Button Name="StartRace" Content="Start Race" Width="150" Height="25" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,8,0,0" Click="StartRaceClick" />
+            <Button Name="EditSelectedButton" Content="Edit Selected" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="EditSelected" IsEnabled="False"/>
+            <Button Content="Manual Entry" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="ManualEntry" IsEnabled="True"/>
+            <Button Content="Load Log" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="LoadLog" IsEnabled="True" />
+            <DockPanel Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Width="150">
+                <TextBox Name="searchBox" Width="115" Height="25" HorizontalAlignment="Left" KeyDown="SearchKeyDown"/>
+                <Button Content="Go" Width="30" Height="25" HorizontalAlignment="Left" Margin="5,0,0,0" Click="Search"/>
+            </DockPanel>
             <Label Content="Timing Method" FontSize="16" HorizontalContentAlignment="Center" Margin="10,5,10,0" />
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -58,8 +59,12 @@
                 </Grid>
             </Expander>
         </StackPanel>
-        <StackPanel Grid.Column="0">
-            <Expander MaxHeight="200" Margin="5,0,5,5" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Header="Readers" IsExpanded="True" ExpandDirection="Down">
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Expander MaxHeight="200" Margin="5,0,5,5" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Header="Readers" IsExpanded="True" ExpandDirection="Down" Grid.Row="0">
                 <ListBox Name="ReadersBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -69,20 +74,7 @@
                     </ListBox.ItemContainerStyle>
                 </ListBox>
             </Expander>
-            <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Where" Width="60" DisplayMemberBinding="{Binding TimingPoint}" />
-                        <GridViewColumn Header="Occ" Width="40" DisplayMemberBinding="{Binding Occurrence}" />
-                        <GridViewColumn Header="Bib" Width="60" DisplayMemberBinding="{Binding Bib}" />
-                        <GridViewColumn Header="Name" Width="180" DisplayMemberBinding="{Binding Name}" />
-                        <GridViewColumn Header="Time" Width="90" DisplayMemberBinding="{Binding Time}" />
-                        <GridViewColumn Header="Fin" Width="40" DisplayMemberBinding="{Binding Finished}" />
-                        <GridViewColumn Header="Pl" Width="50" DisplayMemberBinding="{Binding Place}" />
-                        <GridViewColumn Header="AGPl" Width="50" DisplayMemberBinding="{Binding AGPlace}" />
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </StackPanel>
+            <Frame Name="TimingFrame" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" />
+        </Grid>
     </Grid>
-</Window>
+</Page>

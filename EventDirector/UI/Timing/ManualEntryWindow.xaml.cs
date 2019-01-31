@@ -1,19 +1,10 @@
 ﻿using EventDirector.Interfaces;
-using EventDirector.UI.EventWindows;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EventDirector.UI.Timing
 {
@@ -22,13 +13,13 @@ namespace EventDirector.UI.Timing
     /// </summary>
     public partial class ManualEntryWindow : Window
     {
-        INewMainWindow window;
+        IMainWindow window;
         IDBInterface database;
         Event theEvent;
         
         private const string allowedNums = "[^0-9]";
 
-        private ManualEntryWindow(INewMainWindow window, IDBInterface database, List<TimingLocation> locations)
+        private ManualEntryWindow(IMainWindow window, IDBInterface database, List<TimingLocation> locations)
         {
             InitializeComponent();
             this.window = window;
@@ -78,15 +69,9 @@ namespace EventDirector.UI.Timing
             }
         }
 
-        public static ManualEntryWindow NewWindow(INewMainWindow window, IDBInterface database, List<TimingLocation> locations)
+        public static ManualEntryWindow NewWindow(IMainWindow window, IDBInterface database, List<TimingLocation> locations)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.manualEntryWindow != null)
-            {
-                return null;
-            }
-            ManualEntryWindow output = new ManualEntryWindow(window, database, locations);
-            StaticEvent.manualEntryWindow = output;
-            return output;
+            return new ManualEntryWindow(window, database, locations);
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -147,13 +132,12 @@ namespace EventDirector.UI.Timing
             ChipRead newEntry = new ChipRead(theEvent.Identifier, locationId, bib, time);
             Log.D("Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
             database.AddChipRead(newEntry);
-            window.UpdateTimingWindow();
+            window.NonUIUpdate();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (window != null) window.WindowFinalize(this);
-            StaticEvent.manualEntryWindow = null;
         }
 
         private void NumberValidation(object sender, TextCompositionEventArgs e)

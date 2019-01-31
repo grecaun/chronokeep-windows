@@ -16,11 +16,11 @@ namespace EventDirector
     {
         IDBInterface database;
         IDataExporter exporter;
-        MainWindow mainWindow;
+        IMainWindow mainWindow;
         String changeDir = "Changes";
         Utils.FileType fileType = Utils.FileType.CSV;
 
-        public ExportChanges(IDBInterface database, MainWindow mainWindow)
+        public ExportChanges(IDBInterface database, IMainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
             this.database = database;
@@ -28,7 +28,7 @@ namespace EventDirector
             UpdateEventsList();
         }
 
-        public ExportChanges(IDBInterface database, MainWindow mainWindow, Utils.FileType fileType)
+        public ExportChanges(IDBInterface database, IMainWindow mainWindow, Utils.FileType fileType)
         {
             this.mainWindow = mainWindow;
             this.database = database;
@@ -125,11 +125,6 @@ namespace EventDirector
         {
             Log.D("Cancel clicked.");
             Close();
-        }
-
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            mainWindow.PartListClosed();
         }
     }
 }

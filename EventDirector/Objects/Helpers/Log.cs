@@ -12,18 +12,18 @@ namespace EventDirector
         public static void D(String msg)
         {
 #if DEBUG
-            Console.WriteLine(DateTime.Now.ToLongTimeString() + " LOGOUTPUT - d - " + msg);
+            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + " LOGOUTPUT - d - " + msg);
 #endif
         }
 
         public static void F(String msg)
         {
-            Console.WriteLine(DateTime.Now.ToLongTimeString() + " LOGOUTPUT - f - " + msg);
+            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + " LOGOUTPUT - f - " + msg);
         }
 
         public static void E(String msg)
         {
-            Console.WriteLine(DateTime.Now.ToLongTimeString() + " LOGOUTPUT - e - " + msg);
+            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + " LOGOUTPUT - e - " + msg);
         }
     }
 }

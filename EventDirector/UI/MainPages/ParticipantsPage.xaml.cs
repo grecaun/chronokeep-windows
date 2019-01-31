@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,21 +25,19 @@ namespace EventDirector.UI.MainPages
     /// </summary>
     public partial class ParticipantsPage : Page, IMainPage
     {
-        private INewMainWindow mWindow;
+        private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
 
-        public ParticipantsPage(INewMainWindow mainWindow, IDBInterface database)
+        public ParticipantsPage(IMainWindow mainWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mWindow = mainWindow;
             this.database = database;
-            UpdateDivisionsBox();
-            UpdateView();
             UpdateImportOptions();
         }
 
-        public void UpdateView()
+        public async void UpdateView()
         {
             Log.D("Updating Participants Page.");
             theEvent = database.GetCurrentEvent();
@@ -46,7 +45,6 @@ namespace EventDirector.UI.MainPages
             {
                 return;
             }
-            List<Participant> participants;
             int divisionId = -1;
             try
             {
@@ -56,21 +54,26 @@ namespace EventDirector.UI.MainPages
             {
                 divisionId = -1;
             }
-            if (divisionId == -1)
+            List<Participant> newParts = new List<Participant>();
+            await Task.Run(() =>
             {
-                participants = database.GetParticipants(theEvent.Identifier);
-            }
-            else
-            {
-                participants = database.GetParticipants(theEvent.Identifier, divisionId);
-            }
-            participants.Sort();
-            ParticipantsList.ItemsSource = participants;
+                if (divisionId == -1)
+                {
+                    newParts.AddRange(database.GetParticipants(theEvent.Identifier));
+                }
+                else
+                {
+                    newParts.AddRange(database.GetParticipants(theEvent.Identifier, divisionId));
+                }
+            });
             ParticipantsList.SelectedItems.Clear();
+            ParticipantsList.ItemsSource = newParts;
+            Log.D("Participants updated.");
         }
 
         public void UpdateDivisionsBox()
         {
+            Log.D("Updating divisions box.");
             theEvent = database.GetCurrentEvent();
             DivisionBox.Items.Clear();
             DivisionBox.Items.Add(new ComboBoxItem()
@@ -128,7 +131,7 @@ namespace EventDirector.UI.MainPages
                     if (excelImp != null)
                     {
                         mWindow.AddWindow(excelImp);
-                        excelImp.Show();
+                        excelImp.ShowDialog();
                     }
                 }
                 catch (Exception ex)
@@ -156,7 +159,7 @@ namespace EventDirector.UI.MainPages
                     if (excelImp != null)
                     {
                         mWindow.AddWindow(excelImp);
-                        excelImp.Show();
+                        excelImp.ShowDialog();
                     }
                 }
                 catch (Exception ex)
@@ -174,7 +177,7 @@ namespace EventDirector.UI.MainPages
             if (addParticipant != null)
             {
                 mWindow.AddWindow(addParticipant);
-                addParticipant.Show();
+                addParticipant.ShowDialog();
             }
         }
 
@@ -198,7 +201,7 @@ namespace EventDirector.UI.MainPages
             if (modifyParticipant != null)
             {
                 mWindow.AddWindow(modifyParticipant);
-                modifyParticipant.Show();
+                modifyParticipant.ShowDialog();
             }
         }
 
@@ -227,7 +230,7 @@ namespace EventDirector.UI.MainPages
             if (exportParticipants != null)
             {
                 mWindow.AddWindow(exportParticipants);
-                exportParticipants.Show();
+                exportParticipants.ShowDialog();
             }
         }
 
@@ -241,5 +244,24 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_S() { }
 
         public void Keyboard_Ctrl_Z() { }
+
+        public void Closing()
+        {
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            Log.D("Page loaded.");
+        }
+
+        private void ParticipantsList_Loaded(object sender, RoutedEventArgs e)
+        {
+            Log.D("Participant list loaded.");
+            UpdateDivisionsBox();
+        }
     }
 }

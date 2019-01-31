@@ -1,18 +1,9 @@
 ﻿using EventDirector.Interfaces;
-using EventDirector.UI.EventWindows;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EventDirector
 {
@@ -31,21 +22,6 @@ namespace EventDirector
             InitializeComponent();
             datePicker.SelectedDate = DateTime.Today;
             this.mainWindow = mainWindow;
-            CopyLabel.Visibility = Visibility.Collapsed;
-            oldEvent.Visibility = Visibility.Collapsed;
-            this.Height = 310;
-        }
-
-        public NewEventWindow(MainWindow mW, Event e)
-        {
-            InitializeComponent();
-            nameBox.Text = e.Name;
-            yearCodeBox.Text = e.YearCode;
-            datePicker.SelectedDate = DateTime.Parse(e.Date);
-            this.mainWindow = mW;
-            this.theEvent = e;
-            shirtOptional.IsChecked = e.ShirtOptional == 1 ? true : false;
-            shirtPriceBox.Text = String.Format("{0}.{1:D2}", e.ShirtPrice / 100, e.ShirtPrice % 100);
             CopyLabel.Visibility = Visibility.Collapsed;
             oldEvent.Visibility = Visibility.Collapsed;
             this.Height = 310;
@@ -77,17 +53,7 @@ namespace EventDirector
 
         public static NewEventWindow NewWindow(IWindowCallback window, IDBInterface database)
         {
-            if (StaticEvent.changeMainEventWindow != null)
-            {
-                return null;
-            }
-            if (StaticEvent.AreToolWindowsOpen())
-            {
-                return null;
-            }
-            NewEventWindow output = new NewEventWindow(window, database);
-            StaticEvent.changeMainEventWindow = output;
-            return output;
+            return new NewEventWindow(window, database);
         }
 
         private void Submit_Click(object sender, RoutedEventArgs e)
@@ -187,9 +153,7 @@ namespace EventDirector
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (mainWindow != null) mainWindow.WindowClosed(this);
             if (window != null) window.WindowFinalize(this);
-            StaticEvent.changeMainEventWindow = null;
         }
     }
 }

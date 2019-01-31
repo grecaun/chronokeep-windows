@@ -22,11 +22,11 @@ namespace EventDirector.UI.MainPages
     /// </summary>
     public partial class DashboardPage : Page, IMainPage
     {
-        private INewMainWindow mWindow;
+        private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
 
-        public DashboardPage(INewMainWindow mainWindow, IDBInterface db)
+        public DashboardPage(IMainWindow mainWindow, IDBInterface db)
         {
             InitializeComponent();
             this.mWindow = mainWindow;
@@ -262,7 +262,7 @@ namespace EventDirector.UI.MainPages
                 if (kiosk != null)
                 {
                     mWindow.AddWindow(kiosk);
-                    kiosk.Show();
+                    kiosk.ShowDialog();
                 }
             }
             else if (setupKiosk.Content.ToString() == Constants.DashboardLabels.CANCEL_KIOSK)
@@ -353,7 +353,7 @@ namespace EventDirector.UI.MainPages
                 if (nysetup != null)
                 {
                     mWindow.AddWindow(nysetup);
-                    nysetup.Show();
+                    nysetup.ShowDialog();
                 }
             }
             else if (setupNextYear.Content.ToString() == Constants.DashboardLabels.CANCEL_NEXT_YEAR)
@@ -384,7 +384,7 @@ namespace EventDirector.UI.MainPages
             if (newEventWindow != null)
             {
                 mWindow.AddWindow(newEventWindow);
-                newEventWindow.Show();
+                newEventWindow.ShowDialog();
             }
         }
 
@@ -413,7 +413,7 @@ namespace EventDirector.UI.MainPages
             if (changeEventWindow != null)
             {
                 mWindow.AddWindow(changeEventWindow);
-                changeEventWindow.Show();
+                changeEventWindow.ShowDialog();
             }
         }
 
@@ -474,11 +474,6 @@ namespace EventDirector.UI.MainPages
             cancelButton.Visibility = Visibility.Collapsed;
         }
 
-        private void AnnouncerButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Announcer clicked.");
-        }
-
         private void TagTesterButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Tag Tester clicked.");
@@ -486,18 +481,7 @@ namespace EventDirector.UI.MainPages
             if (crWindow != null)
             {
                 mWindow.AddWindow(crWindow);
-                crWindow.Show();
-            }
-        }
-
-        private void TimingButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Timing clicked.");
-            TimingWindow tWindow = TimingWindow.NewWindow(mWindow, database);
-            if (tWindow != null)
-            {
-                mWindow.AddWindow(tWindow);
-                tWindow.Show();
+                crWindow.ShowDialog();
             }
         }
 
@@ -508,5 +492,13 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_S() { }
 
         public void Keyboard_Ctrl_Z() { }
+
+        public void Closing()
+        {
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+        }
     }
 }

@@ -6,12 +6,10 @@
       xmlns:local="clr-namespace:EventDirector.UI.MainPages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ParticipantsPage">
+      Title="ParticipantsPage" Loaded="Page_Loaded">
 
     <Grid>
-        <Label Name="nothing" Content="Event not set. Please choose an event before selecting this option." Visibility="Collapsed"/>
-        <Grid Name="everything">
-            <Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
@@ -20,33 +18,33 @@
                 <Button Name="ImportExcel" Content="Import" FontSize="16" Height="35" Margin="10,10,10,10" Click="ImportExcel_Click"  Visibility="Collapsed"/>
                 <Button Name="Export" Content="Export" FontSize="16" Height="35" Margin="10,10,10,10" Click="Export_Click" />
                 <Label Content="View only" FontSize="16" Margin="10,10,10,0" HorizontalContentAlignment="Center"/>
+                <DockPanel Name="DivisionBoxHolder" />
                 <ComboBox Name="DivisionBox" FontSize="16" Margin="10,0,10,10" SelectionChanged="DivisionBox_SelectionChanged" />
                 <Button Name="Add" Content="Add" FontSize="16" Height="35" Margin="10,10,10,10" Click="Add_Click"/>
                 <Button Name="Modify" Content="Modify" FontSize="16" Height="35" Margin="10,10,10,10" Click="Modify_Click"/>
                 <Button Name="Remove" Content="Remove" FontSize="16" Height="35" Margin="10,10,10,10" Click="Remove_Click"/>
             </StackPanel>
-            <ListView Name="ParticipantsList" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SelectionMode="Extended" Grid.Column="0">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Bib" DisplayMemberBinding="{Binding Bib}" />
-                        <GridViewColumn Header="Division" DisplayMemberBinding="{Binding Division}" />
-                        <GridViewColumn Header="First" DisplayMemberBinding="{Binding FirstName}" />
-                        <GridViewColumn Header="Last" DisplayMemberBinding="{Binding LastName}" />
-                        <GridViewColumn Header="Gender" DisplayMemberBinding="{Binding Gender}" />
-                        <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding Birthdate}" />
-                        <GridViewColumn Header="Parent" DisplayMemberBinding="{Binding Parent}" />
-                        <GridViewColumn Header="Mobile" DisplayMemberBinding="{Binding Mobile}" />
-                        <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}" />
-                        <GridViewColumn Header="Check" DisplayMemberBinding="{Binding CheckedIn}" />
-                        <GridViewColumn Header="Early" DisplayMemberBinding="{Binding EarlyStart}" />
-                        <GridViewColumn Header="EC Name" DisplayMemberBinding="{Binding ECName}" />
-                        <GridViewColumn Header="EC Phone" DisplayMemberBinding="{Binding ECPhone}" />
-                        <GridViewColumn Header="Comments" DisplayMemberBinding="{Binding Comments}" />
-                        <GridViewColumn Header="Other" DisplayMemberBinding="{Binding Other}" />
-                        <GridViewColumn Header="Owes" DisplayMemberBinding="{Binding Owes}" />
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </Grid>
+        <ListView Name="ParticipantsList" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SelectionMode="Extended" Grid.Column="0" Loaded="ParticipantsList_Loaded">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Bib" DisplayMemberBinding="{Binding Bib}" />
+                    <GridViewColumn Header="Division" DisplayMemberBinding="{Binding Division}" />
+                    <GridViewColumn Header="First" DisplayMemberBinding="{Binding FirstName}" />
+                    <GridViewColumn Header="Last" DisplayMemberBinding="{Binding LastName}" />
+                    <GridViewColumn Header="Gender" DisplayMemberBinding="{Binding Gender}" />
+                    <GridViewColumn Header="Birthday" DisplayMemberBinding="{Binding Birthdate}" />
+                    <GridViewColumn Header="Parent" DisplayMemberBinding="{Binding Parent}" />
+                    <GridViewColumn Header="Mobile" DisplayMemberBinding="{Binding Mobile}" />
+                    <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}" />
+                    <GridViewColumn Header="Check" DisplayMemberBinding="{Binding CheckedIn}" />
+                    <GridViewColumn Header="Early" DisplayMemberBinding="{Binding EarlyStart}" />
+                    <GridViewColumn Header="EC Name" DisplayMemberBinding="{Binding ECName}" />
+                    <GridViewColumn Header="EC Phone" DisplayMemberBinding="{Binding ECPhone}" />
+                    <GridViewColumn Header="Comments" DisplayMemberBinding="{Binding Comments}" />
+                    <GridViewColumn Header="Other" DisplayMemberBinding="{Binding Other}" />
+                    <GridViewColumn Header="Owes" DisplayMemberBinding="{Binding Owes}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Page>

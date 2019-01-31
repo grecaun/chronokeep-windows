@@ -24,16 +24,15 @@ namespace EventDirector.UI.MainPages
     /// </summary>
     public partial class ChipAssigmentPage : Page, IMainPage
     {
-        private INewMainWindow mWindow;
+        private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
 
-        public ChipAssigmentPage(INewMainWindow mWindow, IDBInterface database)
+        public ChipAssigmentPage(IMainWindow mWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
-            UpdateView();
             UpdateImportOptions();
         }
 
@@ -59,8 +58,8 @@ namespace EventDirector.UI.MainPages
             await Task.Run(() =>
             {
                 list = database.GetBibChips(theEvent.Identifier);
+                list.Sort();
             });
-            list.Sort();
             bibChipList.ItemsSource = list;
             int maxChip = 0;
             foreach (BibChipAssociation b in list)
@@ -74,8 +73,8 @@ namespace EventDirector.UI.MainPages
             await Task.Run(() =>
             {
                 events = database.GetEvents();
+                events.Sort();
             });
-            events.Sort();
             previousEvents.Items.Clear();
             ComboBoxItem boxItem = new ComboBoxItem
             {
@@ -98,7 +97,6 @@ namespace EventDirector.UI.MainPages
                 }
             }
             previousEvents.SelectedIndex = 0;
-            mWindow.UpdateTimingWindow();
         }
 
         private void SaveSingleButton_Click(object sender, RoutedEventArgs e)
@@ -118,7 +116,7 @@ namespace EventDirector.UI.MainPages
                 }
             };
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
-            UpdateView();
+            mWindow.Update();
         }
 
         private void SaveRangeButton_Click(object sender, RoutedEventArgs e)
@@ -140,7 +138,7 @@ namespace EventDirector.UI.MainPages
                 });
             }
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
-            UpdateView();
+            mWindow.Update();
         }
 
         private async void FileImport_Click(object sender, RoutedEventArgs e)
@@ -159,7 +157,7 @@ namespace EventDirector.UI.MainPages
                     if (bcWindow != null)
                     {
                         mWindow.AddWindow(bcWindow);
-                        bcWindow.Show();
+                        bcWindow.ShowDialog();
                     }
                 }
                 catch (Exception ex)
@@ -179,7 +177,7 @@ namespace EventDirector.UI.MainPages
             {
                 List<BibChipAssociation> assocs = database.GetBibChips(oldEventId);
                 database.AddBibChipAssociation(theEvent.Identifier, assocs);
-                UpdateView();
+                mWindow.Update();
             }
         }
 
@@ -194,7 +192,7 @@ namespace EventDirector.UI.MainPages
                 items.Add(b);
             }
             database.RemoveBibChipAssociations(items);
-            UpdateView();
+            mWindow.Update();
         }
 
         private void UseTool_Click(object sender, RoutedEventArgs e)
@@ -204,7 +202,7 @@ namespace EventDirector.UI.MainPages
             if (chipTool != null)
             {
                 mWindow.AddWindow(chipTool);
-                chipTool.Show();
+                chipTool.ShowDialog();
             }
         }
 
@@ -246,7 +244,7 @@ namespace EventDirector.UI.MainPages
                     if (bcWindow != null)
                     {
                         mWindow.AddWindow(bcWindow);
-                        bcWindow.Show();
+                        bcWindow.ShowDialog();
                     }
                 }
                 catch (Exception ex)
@@ -281,7 +279,7 @@ namespace EventDirector.UI.MainPages
             {
                 List<BibChipAssociation> list = (List<BibChipAssociation>) bibChipList.ItemsSource;
                 database.RemoveBibChipAssociations(list);
-                UpdateView();
+                mWindow.Update();
             }
         }
 
@@ -292,7 +290,7 @@ namespace EventDirector.UI.MainPages
             if (exportBibChip != null)
             {
                 mWindow.AddWindow(exportBibChip);
-                exportBibChip.Show();
+                exportBibChip.ShowDialog();
             }
         }
 
@@ -309,5 +307,18 @@ namespace EventDirector.UI.MainPages
         }
 
         public void Keyboard_Ctrl_Z() { }
+
+        public void Closing()
+        {
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateView();
+        }
     }
 }

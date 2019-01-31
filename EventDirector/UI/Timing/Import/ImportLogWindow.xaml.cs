@@ -1,20 +1,11 @@
 ﻿using EventDirector.Interfaces;
 using EventDirector.IO;
-using EventDirector.UI.EventWindows;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EventDirector.UI.Timing.Import
 {
@@ -23,7 +14,7 @@ namespace EventDirector.UI.Timing.Import
     /// </summary>
     public partial class ImportLogWindow : Window
     {
-        INewMainWindow window;
+        IMainWindow window;
         IDBInterface database;
         LogImporter importer;
 
@@ -32,7 +23,7 @@ namespace EventDirector.UI.Timing.Import
 
         Regex DateRegex = new Regex("\\d{4}-\\d{2}-\\d{2}");
 
-        private ImportLogWindow(INewMainWindow window, LogImporter importer, IDBInterface database)
+        private ImportLogWindow(IMainWindow window, LogImporter importer, IDBInterface database)
         {
             InitializeComponent();
             this.window = window;
@@ -71,15 +62,9 @@ namespace EventDirector.UI.Timing.Import
             }
         }
 
-        public static ImportLogWindow NewWindow(INewMainWindow window, LogImporter importer, IDBInterface database)
+        public static ImportLogWindow NewWindow(IMainWindow window, LogImporter importer, IDBInterface database)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.importLogWindow != null)
-            {
-                return null;
-            }
-            ImportLogWindow output = new ImportLogWindow(window, importer, database);
-            StaticEvent.importLogWindow = output;
-            return output;
+            return new ImportLogWindow(window, importer, database);
         }
 
         public void Cancel()
@@ -143,14 +128,13 @@ namespace EventDirector.UI.Timing.Import
                 }
                 database.AddChipReads(chipreads);
             });
-            window.UpdateTimingWindow();
+            window.NonUIUpdate();
             this.Close();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (window != null) window.WindowFinalize(this);
-            StaticEvent.importLogWindow = null;
         }
     }
 }

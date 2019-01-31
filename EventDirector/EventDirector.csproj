@@ -203,9 +203,10 @@
     <Compile Include="Constants\JsonOptions.cs" />
     <Compile Include="Constants\Settings.cs" />
     <Compile Include="Interfaces\IO\IDataExporter.cs" />
+    <Compile Include="Interfaces\UI\ISubPage.cs" />
     <Compile Include="Interfaces\Timing\ITimingSystemInterface.cs" />
     <Compile Include="Interfaces\UI\IMainPage.cs" />
-    <Compile Include="Interfaces\UI\INewMainWindow.cs" />
+    <Compile Include="Interfaces\UI\IMainWindow.cs" />
     <Compile Include="Interfaces\UI\IWindowCallback.cs" />
     <Compile Include="IO\LogImporter.cs" />
     <Compile Include="Objects\AgeGroup.cs" />
@@ -227,7 +228,6 @@
     <Compile Include="UI\EventWindows\ChangeEventWindow.xaml.cs">
       <DependentUpon>ChangeEventWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\EventWindows\StaticEvent.cs" />
     <Compile Include="IO\CSVExporter.cs" />
     <Compile Include="IO\ExcelExporter.cs" />
     <Compile Include="UI\Import\ImportFilePage2Alt.xaml.cs">
@@ -260,6 +260,9 @@
     <Compile Include="UI\MainPages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\MainPages\TimingPage.xaml.cs">
+      <DependentUpon>TimingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -281,16 +284,16 @@
     <Compile Include="UI\Timing\ManualEntryWindow.xaml.cs">
       <DependentUpon>ManualEntryWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\About.xaml.cs">
-      <DependentUpon>About.xaml</DependentUpon>
+    <Compile Include="UI\Timing\TimingRawReadsPage.xaml.cs">
+      <DependentUpon>TimingRawReadsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Timing\TimingResultsPage.xaml.cs">
+      <DependentUpon>TimingResultsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\UIObjects\AListBoxItem.cs" />
     <Compile Include="Objects\BibChipAssociation.cs" />
     <Compile Include="UI\ChipAssignment\BibChipAssociationWindow.xaml.cs">
       <DependentUpon>BibChipAssociationWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI_Old\BibChipViewer.xaml.cs">
-      <DependentUpon>BibChipViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Objects\ChangeParticipant.cs" />
     <Compile Include="UI\UHF RFID Reader\ChipPersonWindow.xaml.cs">
@@ -301,9 +304,6 @@
     </Compile>
     <Compile Include="IO\CSVImporter.cs" />
     <Compile Include="Objects\DayOfParticipant.cs" />
-    <Compile Include="UI_Old\DayOfParticipantsList.xaml.cs">
-      <DependentUpon>DayOfParticipantsList.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\Kiosk\ExampleLiabilityWaiver.xaml.cs">
       <DependentUpon>ExampleLiabilityWaiver.xaml</DependentUpon>
     </Compile>
@@ -321,13 +321,9 @@
     <Compile Include="Objects\Event.cs" />
     <Compile Include="Objects\EventSpecific.cs" />
     <Compile Include="Interfaces\IEDConnection.cs" />
-    <Compile Include="Interfaces\UI\IMainWindow.cs" />
     <Compile Include="IO\ImportData.cs" />
     <Compile Include="UI\Import\ImportFilePage1.xaml.cs">
       <DependentUpon>ImportFilePage1.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Import\ImportFilePage2.xaml.cs">
-      <DependentUpon>ImportFilePage2.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Import\ImportFileWindow.xaml.cs">
       <DependentUpon>ImportFileWindow.xaml</DependentUpon>
@@ -356,11 +352,8 @@
     <Compile Include="UI\Kiosk\KioskSetupPage4.xaml.cs">
       <DependentUpon>KioskSetupPage4.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Objects\Log.cs" />
+    <Compile Include="Objects\Helpers\Log.cs" />
     <Compile Include="Network\NetCore.cs" />
-    <Compile Include="UI_Old\NewDivisionWindow.xaml.cs">
-      <DependentUpon>NewDivisionWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\EventWindows\NewEventWindow.xaml.cs">
       <DependentUpon>NewEventWindow.xaml</DependentUpon>
     </Compile>
@@ -374,18 +367,12 @@
     <Compile Include="UI\NextYear\NextYearSetupPage3.xaml.cs">
       <DependentUpon>NextYearSetupPage3.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI_Old\ParticipantsList.xaml.cs">
-      <DependentUpon>ParticipantsList.xaml</DependentUpon>
-    </Compile>
     <Compile Include="IO\Printerface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\FileVersion.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>FileVersion.tt</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\RawReadsWindow.xaml.cs">
-      <DependentUpon>RawReadsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Timing\RFID\RFIDSettings.xaml.cs">
       <DependentUpon>RFIDSettings.xaml</DependentUpon>
@@ -399,15 +386,6 @@
     <Compile Include="Network\TCPServer.cs" />
     <Compile Include="Objects\TimeResult.cs" />
     <Compile Include="Objects\TimingLocation.cs" />
-    <Compile Include="UI_Old\Settings.xaml.cs">
-      <DependentUpon>Settings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\TimingRawReads.xaml.cs">
-      <DependentUpon>TimingRawReads.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\TimingWindow.xaml.cs">
-      <DependentUpon>TimingWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Objects\Helpers\Utils.cs" />
     <Compile Include="Network\ZeroConf.cs" />
     <Page Include="UI\ChipAssignment\ChipTool.xaml">
@@ -462,6 +440,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\MainPages\TimingPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -490,15 +472,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\About.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\ChipAssignment\BibChipAssociationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\BibChipViewer.xaml">
+    <Page Include="UI\Timing\TimingRawReadsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Timing\TimingResultsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -507,10 +489,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\UHF RFID Reader\ChipReaderWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI_Old\DayOfParticipantsList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -527,10 +505,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Import\ImportFilePage1.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Import\ImportFilePage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -566,27 +540,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI_Old\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="UI_Old\NewDivisionWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\EventWindows\NewEventWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI_Old\NewTimingPointWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -602,14 +560,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\ParticipantsList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\RawReadsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\Timing\RFID\RFIDSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -618,23 +568,8 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI_Old\Settings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\TimingRawReads.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\TimingWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI_Old\NewTimingPointWindow.xaml.cs">
-      <DependentUpon>NewTimingPointWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Objects\Participant.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

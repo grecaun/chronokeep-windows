@@ -23,10 +23,10 @@ namespace EventDirector.UI.MainPages
     /// </summary>
     public partial class SettingsPage : Page, IMainPage
     {
-        INewMainWindow mWindow;
+        IMainWindow mWindow;
         IDBInterface database;
 
-        public SettingsPage(INewMainWindow mainWindow, IDBInterface database)
+        public SettingsPage(IMainWindow mainWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mWindow = mainWindow;
@@ -79,7 +79,7 @@ namespace EventDirector.UI.MainPages
             DefaultWaiverBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_WAIVER).value;
             UpdatePage.IsChecked = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE;
             ExitNoPrompt.IsChecked = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_TRUE;
-            mWindow.UpdateTimingWindow();
+            mWindow.NonUIUpdate();
         }
 
         private async void ResetDB_Click(object sender, RoutedEventArgs e)
@@ -176,6 +176,10 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_Z()
         {
             UpdateView();
+        }
+
+        public void Closing()
+        {
         }
     }
 }

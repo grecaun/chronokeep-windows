@@ -1,18 +1,8 @@
 ﻿using EventDirector.Interfaces;
-using EventDirector.UI.EventWindows;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EventDirector.UI
 {
@@ -34,17 +24,7 @@ namespace EventDirector.UI
 
         public static ChangeEventWindow NewWindow(IWindowCallback window, IDBInterface database)
         {
-            if (StaticEvent.changeMainEventWindow != null)
-            {
-                return null;
-            }
-            if (StaticEvent.AreToolWindowsOpen())
-            {
-                return null;
-            }
-            ChangeEventWindow output = new ChangeEventWindow(window, database);
-            StaticEvent.changeMainEventWindow = output;
-            return output;
+            return new ChangeEventWindow(window, database);
         }
 
         internal async void UpdateEventBox()
@@ -99,7 +79,6 @@ namespace EventDirector.UI
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             window.WindowFinalize(this);
-            StaticEvent.changeMainEventWindow = null;
         }
     }
 }

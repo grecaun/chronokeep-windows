@@ -20,9 +20,9 @@ namespace EventDirector.Timing
         private static bool Running = false;
 
         IDBInterface database;
-        INewMainWindow mainWindow;
+        IMainWindow mainWindow;
 
-        public TimingController(IDBInterface database, INewMainWindow mainWindow)
+        public TimingController(IDBInterface database, IMainWindow mainWindow)
         {
             this.database = database;
             this.mainWindow = mainWindow;
@@ -143,7 +143,7 @@ namespace EventDirector.Timing
                                     case MessageType.CONNECTED:
                                         Log.D("Timing system successfully connected.");
                                         TimingSystemDict[sock].Status = SYSTEM_STATUS.CONNECTED;
-                                        mainWindow.UpdateTimingWindow();
+                                        mainWindow.NonUIUpdate();
                                         break;
                                     case MessageType.SETTINGCHANGE:
                                         Log.D("Setting value changed.");
@@ -195,7 +195,7 @@ namespace EventDirector.Timing
                         if (sys.Status != SYSTEM_STATUS.CONNECTED && sys.TimedOut()) // Not connected & Timed out.
                         {
                             sys.Status = SYSTEM_STATUS.DISCONNECTED;
-                            mainWindow.UpdateTimingWindow();
+                            mainWindow.NonUIUpdate();
                             TimingSystemDict.Remove(sock);
                             toRemove.Add(sock);
                         }

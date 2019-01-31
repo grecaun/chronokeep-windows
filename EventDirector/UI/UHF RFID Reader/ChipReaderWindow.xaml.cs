@@ -1,20 +1,9 @@
 ﻿using EventDirector.Interfaces;
-using EventDirector.UI.EventWindows;
 using System;
-using System.Collections.Generic;
 using System.IO.Ports;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EventDirector
 {
@@ -30,29 +19,8 @@ namespace EventDirector
         RFIDSerial serial;
         private static ChipPersonWindow personWindow;
         private IDBInterface database;
-        private IMainWindow mainWindow = null;
         private IWindowCallback window = null;
         int eventId = -1;
-        
-        public ChipReaderWindow(IDBInterface database, IMainWindow mWindow)
-        {
-            InitializeComponent();
-            InstantiateSerialPortList();
-            reader = new NewReader(600, this);
-            this.database = database;
-            this.mainWindow = mWindow;
-            List<Event> events = database.GetEvents();
-            eventCB.Items.Clear();
-            foreach (Event e in events)
-            {
-                eventCB.Items.Add(new ComboBoxItem()
-                {
-                    Content = e.Name,
-                    Uid = e.Identifier.ToString()
-                });
-            }
-            eventCB.SelectedIndex = 0;
-        }
 
         private ChipReaderWindow(IWindowCallback window, IDBInterface database)
         {
@@ -60,7 +28,6 @@ namespace EventDirector
             InstantiateSerialPortList();
             reader = new NewReader(600, this);
             this.database = database;
-            this.mainWindow = null;
             eventId = Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value);
             EventPickerHolder.Visibility = Visibility.Hidden;
             EventNameHolder.Visibility = Visibility.Visible;
@@ -69,13 +36,7 @@ namespace EventDirector
 
         public static ChipReaderWindow NewWindow(IWindowCallback window, IDBInterface database)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.chipReaderWindow != null)
-            {
-                return null;
-            }
-            ChipReaderWindow output = new ChipReaderWindow(window, database);
-            StaticEvent.chipReaderWindow = output;
-            return output;
+            return new ChipReaderWindow(window, database);
         }
 
         internal void PersonWindowClosing()
@@ -191,9 +152,7 @@ namespace EventDirector
             {
                 Log.E("Things are already closed.");
             }
-            if (mainWindow != null) mainWindow.WindowClosed(this);
             if (window != null) window.WindowFinalize(this);
-            StaticEvent.chipReaderWindow = null;
         }
     }
 }

@@ -1,19 +1,10 @@
 ﻿using EventDirector.Interfaces;
 using EventDirector.Objects;
-using EventDirector.UI.EventWindows;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EventDirector.UI.ChipAssignment
 {
@@ -41,13 +32,7 @@ namespace EventDirector.UI.ChipAssignment
 
         public static ChipTool NewWindow(IWindowCallback window, IDBInterface database)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.chipAssigmentWindow != null)
-            {
-                return null;
-            }
-            ChipTool output = new ChipTool(window, database);
-            StaticEvent.chipAssigmentWindow = output;
-            return output;
+            return new ChipTool(window, database);
         }
 
         private class ATagRange : ListBoxItem
@@ -290,7 +275,6 @@ namespace EventDirector.UI.ChipAssignment
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (window != null) window.WindowFinalize(this);
-            StaticEvent.chipAssigmentWindow = null;
         }
     }
 }
