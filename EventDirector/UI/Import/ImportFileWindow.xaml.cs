@@ -462,7 +462,6 @@ namespace EventDirector
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            if (page1 != null) { importer.Finish(); }
             Log.D("Import - Cancel button clicked.");
             this.Close();
         }
@@ -579,6 +578,7 @@ namespace EventDirector
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            importer.Finish();
             if (mainWindow != null) mainWindow.WindowClosed(this);
             if (window != null) window.WindowFinalize(this);
             StaticEvent.participantWindow = null;

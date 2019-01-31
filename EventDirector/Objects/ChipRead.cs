@@ -70,7 +70,6 @@ namespace EventDirector
            long starttime, int logid, DateTime time, int readbib, int type, int chipbib, string first,
            string last, DateTime start, string locationName)
         {
-            Log.D("Reader is '" + reader + "' Box is '" + box + "'");
             this.ReadId = readId;
             this.EventId = eventId;
             this.Status = status;

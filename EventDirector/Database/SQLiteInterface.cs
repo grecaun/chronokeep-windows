@@ -2825,24 +2825,24 @@ namespace EventDirector
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c JOIN bib_chip_assoc b on c.read_chipnumber=b.chip " +
                 "LEFT JOIN eventspecific e ON (e.eventspecific_bib=b.bib AND e.event_id=c.event_id) " +
-                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE event_id=@event AND " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND " +
                 "(read_status=@status OR EXISTS (SELECT * FROM time_results r WHERE c.read_id=r.read_id));";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
-                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_IGNORE)
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE)
             });
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
             reader.Close();
             command.CommandText = "SELECT * FROM chipreads c LEFT OUTER JOIN bib_chip_assoc b on c.read_chipnumber=b.chip " +
                 "LEFT JOIN eventspecific e ON (e.eventspecific_bib=c.read_bib AND e.event_id=c.event_id) " +
-                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE event_id=@event AND " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND " +
                 "(read_status=@status OR EXISTS (SELECT * FROM time_results r WHERE c.read_id=r.read_id));";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
-                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_IGNORE)
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE)
             });
             reader = command.ExecuteReader();
             output.AddRange(GetChipReadsWorker(reader));
@@ -2872,7 +2872,6 @@ namespace EventDirector
             while (reader.Read())
             {
                 int locationId = Convert.ToInt32(reader["location_id"]);
-                Log.D("Reader is '" + reader["read_reader"] + "' Box is '" + reader["read_box"]);
                 output.Add(new ChipRead(
                     Convert.ToInt32(reader["read_id"]),
                     Convert.ToInt32(reader["event_id"]),
@@ -2892,7 +2891,7 @@ namespace EventDirector
                     DateTime.ParseExact(reader["read_time"].ToString(), "yyyy-MM-dd HH:mm:ss.fff", null),
                     Convert.ToInt32(reader["read_bib"]),
                     Convert.ToInt32(reader["read_type"]),
-                    reader["bib"] == DBNull.Value ? 0 : Convert.ToInt32(reader["bib"]),
+                    reader["bib"] == DBNull.Value ? Constants.Timing.CHIPREAD_DUMMYBIB : Convert.ToInt32(reader["bib"]),
                     reader["participant_first"] == DBNull.Value ? "" : reader["participant_first"].ToString(),
                     reader["participant_last"] == DBNull.Value ? "" : reader["participant_last"].ToString(),
                     start,

@@ -218,6 +218,7 @@
     <Compile Include="Objects\Segment.cs" />
     <Compile Include="Objects\TimingSystem.cs" />
     <Compile Include="Timing\TimingController.cs" />
+    <Compile Include="Timing\TimingWorker.cs" />
     <Compile Include="UI\ChipAssignment\ChipTool.xaml.cs">
       <DependentUpon>ChipTool.xaml</DependentUpon>
     </Compile>

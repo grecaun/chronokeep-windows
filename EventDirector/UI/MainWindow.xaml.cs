@@ -35,13 +35,17 @@ namespace EventDirector.UI
         bool closing = false;
         bool excelEnabled = false;
 
+        // Network objects
         Thread tcpServerThread = null;
         TCPServer tcpServer = null;
         Thread zeroConfThread = null;
         ZeroConf zeroConf = null;
 
+        // Timing objects.
         Thread TimingControllerThread = null;
         TimingController TimingController = null;
+        Thread TimingWorkerThread = null;
+        TimingWorker TimingWorker = null;
 
         List<Window> openWindows = new List<Window>();
 
@@ -70,7 +74,11 @@ namespace EventDirector.UI
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
 
-            TimingController = new TimingController(database, this);
+            TimingController = new TimingController(this, database);
+            TimingWorker = TimingWorker.NewWorker(this, database);
+            TimingWorkerThread = new Thread(new ThreadStart(TimingWorker.Run));
+            TimingWorkerThread.Start();
+            TimingWorker.Notify();
         }
 
         private async void UpdateImportOptions()
@@ -265,6 +273,7 @@ namespace EventDirector.UI
             closing = true;
             StopNetworkServices();
             StopTimingController();
+            StopTimingWorker();
             foreach (Window w in openWindows)
             {
                 try
@@ -280,6 +289,22 @@ namespace EventDirector.UI
             {
                 page.UpdateDatabase();
             }
+        }
+
+        private bool StopTimingWorker()
+        {
+            try
+            {
+                Log.D("Stopping Timing Worker.");
+                TimingWorker.Shutdown();
+                TimingWorker.Notify();
+                if (TimingWorkerThread != null) TimingWorkerThread.Join();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
 
         public void WindowClosed(Window window)
@@ -327,13 +352,13 @@ namespace EventDirector.UI
             try
             {
                 Log.D("Stopping TCP server thread.");
-                tcpServer.Stop();
-                tcpServerThread.Abort();
-                tcpServerThread.Join();
+                if (tcpServer != null) tcpServer.Stop();
+                if (tcpServerThread != null) tcpServerThread.Abort();
+                if (tcpServerThread != null) tcpServerThread.Join();
                 Log.D("Stopping zero configuration thread.");
-                zeroConf.Stop();
-                zeroConfThread.Abort();
-                zeroConfThread.Join();
+                if (zeroConf != null) zeroConf.Stop();
+                if (zeroConfThread != null) zeroConfThread.Abort();
+                if (zeroConfThread != null) zeroConfThread.Join();
             }
             catch
             {
@@ -347,9 +372,9 @@ namespace EventDirector.UI
             try
             {
                 Log.D("Stopping Timing Controller.");
-                TimingController.Shutdown();
-                TimingControllerThread.Abort();
-                TimingControllerThread.Join();
+                if (TimingController != null) TimingController.Shutdown();
+                if (TimingControllerThread != null) TimingControllerThread.Abort();
+                if (TimingControllerThread != null) TimingControllerThread.Join();
             }
             catch
             {

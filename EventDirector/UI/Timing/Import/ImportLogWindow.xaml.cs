@@ -149,6 +149,7 @@ namespace EventDirector.UI.Timing.Import
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            importer.Finish();
             if (window != null) window.WindowFinalize(this);
             StaticEvent.importLogWindow = null;
         }
