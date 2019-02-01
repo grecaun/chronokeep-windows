@@ -69,7 +69,33 @@ namespace EventDirector.Timing
                 Event theEvent = database.GetCurrentEvent();
                 if (theEvent != null && theEvent.Identifier != -1)
                 {
-                    string startTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                    // Pre-process information we'll need to fully process chip reads
+                    // Locations for checking if we're past the maximum number of occurances
+                    // Stored in a dictionary based upon the location ID for easier access.
+                    Dictionary<int, TimingLocation> locationDictionary = new Dictionary<int, TimingLocation>();
+                    foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
+                    {
+                        if (locationDictionary.ContainsKey(loc.Identifier))
+                        {
+                            Log.E("Multiples of a location found in location set.");
+                        }
+                        locationDictionary[loc.Identifier] = loc;
+                    }
+                    // Segments so we can give a result a segment ID if it's at the right location
+                    // and occurance. Stored in a dictionary for obvious reasons.
+                    Dictionary<(int, int), Segment> segmentDictionary = new Dictionary<(int, int), Segment>();
+                    foreach (Segment seg in database.GetSegments(theEvent.Identifier))
+                    {
+                        if (segmentDictionary.ContainsKey((seg.LocationId, seg.Occurrence)))
+                        {
+                            Log.E("Multiples of a segment found in segment set.");
+                        }
+                        segmentDictionary[(seg.LocationId, seg.Occurrence)] = seg;
+                    }
+                    // Get all of the Chip Reads we find useful (Unprocessed, and those used as a result.)
+                    // and then sort them into groups based upon Bib, Chip, or put them in the ignore pile if
+                    // they have no bib or chip.
+                    string startTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff   ");
                     Dictionary<int, List<ChipRead>> bibReadPairs = new Dictionary<int, List<ChipRead>>();
                     Dictionary<string, List<ChipRead>> chipReadPairs = new Dictionary<string, List<ChipRead>>();
                     List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
@@ -105,30 +131,36 @@ namespace EventDirector.Timing
                             setIgnore.Add(read);
                         }
                     }
+                    // Go through each chip read for a single person, they *should* be ordered in 
+                    // order of occurance. Make sure we keep track of the last occurance for a person
+                    // at a specific location.
+                    // (Bib, Location), Last Chip Read - (Chip, Location), Last Chip Read
+                    Dictionary<(int, int), ChipRead> bibLastReadDictionary = new Dictionary<(int, int), ChipRead>();
+                    Dictionary<(int, int), ChipRead> chipLastReadDictionary = new Dictionary<(int, int), ChipRead>();
+                    // Write to log test information.
                     string endTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                     string outfilepath = System.IO.Path.Combine(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value, "TimingWorkerTestFile.txt");
                     List<string> messages = new List<string>();
-                    messages.Add(String.Format("{0,30}-{1,30}", startTime, endTime));
+                    messages.Add(String.Format("{0} - {1} : {2}", startTime, endTime, allChipReads.Count));
                     foreach (int BibKey in bibReadPairs.Keys)
                     {
                         foreach (ChipRead read in bibReadPairs[BibKey])
                         {
-                            messages.Add(String.Format(" {4,5} {0,10} - {3,30} - Time {1,25} - Status {2,10}", BibKey, read.Time.ToString("YYYY-MM-dd HH:mm:ss.fff"), read.StatusName, read.Name, "Bib"));
+                            messages.Add(String.Format(" {4,5} {0,10} - {3,30} - Time {1,25} - Status {2,10}", BibKey, read.Time.ToString("yyyy-MM-dd HH:mm:ss.fff"), read.StatusName, read.Name, "Bib"));
                         }
                     }
                     foreach (string ChipKey in chipReadPairs.Keys)
                     {
                         foreach (ChipRead read in chipReadPairs[ChipKey])
                         {
-                            messages.Add(String.Format(" {4,5} {0,10} - {3,30} - Time {1,25} - Status {2,10}", ChipKey, read.Time.ToString("YYYY-MM-dd HH:mm:ss.fff"), read.StatusName, read.Name, "Chip"));
+                            messages.Add(String.Format(" {4,5} {0,10} - {3,30} - Time {1,25} - Status {2,10}", ChipKey, read.Time.ToString("yyyy-MM-dd HH:mm:ss.fff"), read.StatusName, read.Name, "Chip"));
                         }
                     }
                     foreach (ChipRead read in setIgnore)
                     {
-                        messages.Add(String.Format(" {4,5} {0,10} - {3,30} - Time {1,25} - Status {2,10}", "", read.Time.ToString("YYYY-MM-dd HH:mm:ss.fff"), read.StatusName, read.Name, "Bib"));
+                        messages.Add(String.Format(" {4,5} {0,10} - {3,30} - Time {1,25} - Status {2,10}", "", read.Time.ToString("yyyy-MM-dd HH:mm:ss.fff"), read.StatusName, read.Name, "Bib"));
                     }
-                    Log.WriteFile(outfilepath, messages.ToArray());
-                    // process all untouched chipreads
+                    Log.WriteFile(outfilepath, messages.ToArray()); //*/
                 }
             } while (true);
         }

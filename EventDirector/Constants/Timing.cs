@@ -20,7 +20,7 @@ namespace EventDirector.Constants
         public static readonly int CHIPREAD_TYPE_MANUAL = 1;
         public static readonly int CHIPREAD_TYPE_CHIP = 0;  // If this value changes, SQLiteInterface version must be updated to reflect said change.
 
-        public static readonly int CHIPREAD_DUMMYCHIP = 0;
+        public static readonly int CHIPREAD_DUMMYCHIP = -1;
         public static readonly int CHIPREAD_DUMMYBIB = -1;  // If this value changes, SQLiteInterface version must be updated to reflect said change.
 
         public static readonly int DEFAULT_BIB_GROUP = -1;
