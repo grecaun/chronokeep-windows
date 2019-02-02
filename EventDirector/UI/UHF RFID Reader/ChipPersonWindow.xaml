@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="ChipPersonWindow" Height="800" Width="800"
         WindowState="Maximized" WindowStyle="None"
-        Closing="Window_Closing"
+        Closing="Window_Closing" KeyUp="Window_KeyUp"
         >
     <Grid>
         <Grid.ColumnDefinitions>
@@ -22,6 +22,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
+        <Button Content="Exit" Name="Exit" Click="Exit_Click" Width="50" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="0" Margin="5,5,5,5"/>
         <Label FontSize="20" Name="Bib" HorizontalAlignment="Center" Grid.Column="0" Grid.Row="1"/>
         <Label FontSize="20" Name="Chip" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="1"/>
         <Label FontSize="60" Name="First" HorizontalAlignment="Center" Grid.Column="0" Grid.Row="2"/>

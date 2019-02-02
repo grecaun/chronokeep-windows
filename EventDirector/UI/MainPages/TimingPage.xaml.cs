@@ -1,14 +1,12 @@
 ﻿using EventDirector.Interfaces;
 using EventDirector.IO;
 using EventDirector.Objects;
-using EventDirector.UI.EventWindows;
 using EventDirector.UI.Timing;
 using EventDirector.UI.Timing.Import;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -20,21 +18,22 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace EventDirector
+namespace EventDirector.UI.MainPages
 {
     /// <summary>
-    /// Interaction logic for TimingWindow.xaml
+    /// Interaction logic for TimingPage.xaml
     /// </summary>
-    public partial class TimingWindow : Window
+    public partial class TimingPage : IMainPage
     {
+        private IMainWindow mWindow;
         private IDBInterface database;
-        private INewMainWindow mWindow = null;
-        private IMainWindow mainWindow = null;
+        private ISubPage subPage;
 
-        Event theEvent;
+        private Event theEvent;
         List<TimingLocation> locations;
         List<TimeResult> results = new List<TimeResult>();
 
@@ -47,22 +46,11 @@ namespace EventDirector
         private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
         private int[] baseIP = { 0, 0, 0, 0 };
 
-        public TimingWindow(IDBInterface database, IMainWindow mainWindow)
-        {
-            InitializeComponent();
-            this.database = database;
-            this.mWindow = null;
-            this.mainWindow = mainWindow;
-            Timer.Tick += new EventHandler(Timer_Click);
-            Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
-        }
-
-        public TimingWindow(INewMainWindow window, IDBInterface database)
+        public TimingPage(IMainWindow window, IDBInterface database)
         {
             InitializeComponent();
             this.database = database;
             this.mWindow = window;
-            this.mainWindow = null;
             theEvent = database.GetCurrentEvent();
 
             // Setup the running clock.
@@ -158,14 +146,15 @@ namespace EventDirector
             if (numSystems < 3)
             {
                 Log.D(systems.Count + " systems found.");
-                for (int i=0; i < 3-numSystems; i++)
+                for (int i = 0; i < 3 - numSystems; i++)
                 {
                     systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid));
                 }
             }
             systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid));
             connected = 0;
-            foreach (TimingSystem sys in systems) {
+            foreach (TimingSystem sys in systems)
+            {
                 ReadersBox.Items.Add(new AReaderBox(this, sys, locations));
                 if (sys.Status == SYSTEM_STATUS.CONNECTED || sys.Status == SYSTEM_STATUS.WORKING)
                 {
@@ -181,11 +170,8 @@ namespace EventDirector
                 TimingTypeButton.IsEnabled = true;
             }
             total = ReadersBox.Items.Count;
-
-            TimeResult.SetupStaticVariables(database);
-            results = database.GetTimingResults(theEvent.Identifier);
-            results.Sort(TimeResult.CompareByTime);
-            updateListView.ItemsSource = results;
+            subPage = new TimingResultsPage(this, database);
+            TimingFrame.Content = subPage;
         }
 
         public void UpdateAll()
@@ -261,15 +247,25 @@ namespace EventDirector
             updateListView.Items.Refresh();
         }
 
-        public static TimingWindow NewWindow(INewMainWindow window, IDBInterface database)
+        public void Keyboard_Ctrl_A() { }
+
+        public void Keyboard_Ctrl_S() { }
+
+        public void Keyboard_Ctrl_Z() { }
+
+        public void UpdateDatabase() { }
+
+        public void Closing() { }
+
+        public void UpdateView()
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.timingWindow != null)
+            theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier == -1)
             {
-                return null;
+                // Something went wrong and this shouldn't be visible.
+                mWindow.UpdateStatus();
+                return;
             }
-            TimingWindow output = new TimingWindow(window, database);
-            StaticEvent.timingWindow = output;
-            return output;
         }
 
         private void Timer_Click(object sender, EventArgs e)
@@ -287,24 +283,6 @@ namespace EventDirector
             StartTimeChanged();
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            List<TimingSystem> systems = new List<TimingSystem>();
-            foreach (AReaderBox aReader in ReadersBox.Items)
-            {
-                aReader.UpdateReader();
-                if (!aReader.reader.IPAddress.Equals(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]))
-                    && !aReader.reader.IPAddress.Trim().Equals("") && aReader.reader.Port != -1)
-                {
-                    systems.Add(aReader.reader);
-                }
-            }
-            database.SetTimingSystems(systems);
-            if (mainWindow != null) mainWindow.WindowClosed(this);
-            if (mWindow != null) mWindow.WindowFinalize(this);
-            StaticEvent.timingWindow = null;
-        }
-
         private void EditSelected(object sender, RoutedEventArgs e)
         {
             Log.D("Edit Selected");
@@ -317,7 +295,7 @@ namespace EventDirector
             if (manualEntryWindow != null)
             {
                 mWindow.AddWindow(manualEntryWindow);
-                manualEntryWindow.Show();
+                manualEntryWindow.ShowDialog();
             }
         }
 
@@ -338,7 +316,7 @@ namespace EventDirector
                     if (logWindow != null)
                     {
                         mWindow.AddWindow(logWindow);
-                        logWindow.Show();
+                        logWindow.ShowDialog();
                     }
                 }
                 catch (Exception ex)
@@ -479,7 +457,7 @@ namespace EventDirector
                     TimingTypeButton.Content = "Save";
                 }
             }
-            else if (TimingTypeButton.Content.ToString() == "Save") 
+            else if (TimingTypeButton.Content.ToString() == "Save")
             {
                 TimingType.IsEnabled = false;
                 TimingTypeButton.Content = "Edit";
@@ -493,12 +471,17 @@ namespace EventDirector
         private void RawReads_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Raw Reads selected.");
-            RawReadsWindow rawReadsWindow = RawReadsWindow.NewWindow(mWindow, database);
-            if (rawReadsWindow != null)
-            {
-                mWindow.AddWindow(rawReadsWindow);
-                rawReadsWindow.Show();
-            }
+            subPage = new TimingRawReadsPage(this, database);
+            TimingFrame.NavigationService.RemoveBackEntry();
+            TimingFrame.Content = subPage;
+        }
+
+        public void LoadMainDisplay()
+        {
+            Log.D("Going back to main display.");
+            subPage = new TimingResultsPage(this, database);
+            TimingFrame.NavigationService.RemoveBackEntry();
+            TimingFrame.Content = subPage;
         }
 
         private void Recalculate_Click(object sender, RoutedEventArgs e)
@@ -517,7 +500,7 @@ namespace EventDirector
             public Button ClockButton { get; private set; }
             public Button SettingsButton { get; private set; }
 
-            readonly TimingWindow window;
+            readonly TimingPage parent;
             private List<TimingLocation> locations;
             public TimingSystem reader;
 
@@ -525,9 +508,9 @@ namespace EventDirector
             private const string allowedChars = "[^0-9.]";
             private const string allowedNums = "[^0-9]";
 
-            public AReaderBox(TimingWindow window, TimingSystem sys, List<TimingLocation> locations)
+            public AReaderBox(TimingPage window, TimingSystem sys, List<TimingLocation> locations)
             {
-                this.window = window;
+                this.parent = window;
                 this.locations = locations;
                 this.reader = sys;
                 Grid thePanel = new Grid()
@@ -547,7 +530,7 @@ namespace EventDirector
                     Text = reader.IPAddress,
                     FontSize = 14,
                     VerticalContentAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(5,5,5,5)
+                    Margin = new Thickness(5, 5, 5, 5)
                 };
                 ReaderIP.GotFocus += new RoutedEventHandler(this.SelectAll);
                 ReaderIP.PreviewTextInput += new TextCompositionEventHandler(this.IPValidation);
@@ -712,11 +695,11 @@ namespace EventDirector
 
             private void Connect(object sender, RoutedEventArgs e)
             {
-                if ("Connect" != (String) ConnectButton.Content)
+                if ("Connect" != (String)ConnectButton.Content)
                 {
                     Log.D("Disconnect pressed.");
                     reader.Status = SYSTEM_STATUS.WORKING;
-                    window.DisconnectSystem(reader);
+                    parent.DisconnectSystem(reader);
                     UpdateStatus();
                     return;
                 }
@@ -740,7 +723,7 @@ namespace EventDirector
                 reader.LocationID = Convert.ToInt32(((ComboBoxItem)ReaderLocation.SelectedItem).Uid);
                 reader.LocationName = ((ComboBoxItem)ReaderLocation.SelectedItem).Content.ToString();
                 reader.Status = SYSTEM_STATUS.WORKING;
-                window.ConnectSystem(reader);
+                parent.ConnectSystem(reader);
                 UpdateStatus();
             }
 

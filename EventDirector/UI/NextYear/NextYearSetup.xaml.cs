@@ -1,19 +1,6 @@
 ﻿using EventDirector.Interfaces;
-using EventDirector.UI.EventWindows;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EventDirector
 {
@@ -22,24 +9,13 @@ namespace EventDirector
     /// </summary>
     public partial class NextYearSetup : Window
     {
-        MainWindow mainWindow;
         IWindowCallback callback = null;
         IDBInterface database;
         Event oldEvent = null, newEvent;
 
-        public NextYearSetup(MainWindow mainWindow, IDBInterface database)
-        {
-            InitializeComponent();
-            this.mainWindow = mainWindow;
-            this.database = database;
-            Log.D("Showing first page.");
-            NYFrame.Content = new NextYearSetupPage0(this);
-        }
-
         public NextYearSetup(IWindowCallback nextYearCallBack, IDBInterface database, Event oldEvent)
         {
             InitializeComponent();
-            this.mainWindow = null;
             this.callback = nextYearCallBack;
             this.database = database;
             Log.D("Showing first page.");
@@ -49,13 +25,7 @@ namespace EventDirector
 
         public static NextYearSetup NewWindow(IWindowCallback nextYearCallBack, IDBInterface database, Event oldEvent)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.nextYearWindow != null)
-            {
-                return null;
-            }
-            NextYearSetup output = new NextYearSetup(nextYearCallBack, database, oldEvent);
-            StaticEvent.nextYearWindow = output;
-            return output;
+            return new NextYearSetup(nextYearCallBack, database, oldEvent);
         }
 
         public void GotoPage1()
@@ -117,15 +87,12 @@ namespace EventDirector
             // Update old event with new information.
             oldEvent.NextYear = newEvent.Identifier;
             database.UpdateEvent(oldEvent);
-            if (mainWindow != null) mainWindow.NextYearSetupFinalize(oldEvent.Identifier);
             this.Close();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (callback != null) callback.WindowFinalize(this);
-            if (mainWindow != null) mainWindow.WindowClosed(this);
-            StaticEvent.nextYearWindow = null;
         }
     }
 }

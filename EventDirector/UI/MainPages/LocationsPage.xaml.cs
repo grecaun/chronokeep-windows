@@ -23,12 +23,12 @@ namespace EventDirector.UI.MainPages
     /// </summary>
     public partial class LocationsPage : Page, IMainPage
     {
-        private INewMainWindow mWindow;
+        private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
         private int LocationCount = 1;
 
-        public LocationsPage(INewMainWindow mWindow, IDBInterface database)
+        public LocationsPage(IMainWindow mWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mWindow = mWindow;
@@ -54,7 +54,7 @@ namespace EventDirector.UI.MainPages
                 LocationsBox.Items.Add(new ALocation(this, loc));
                 LocationCount = loc.Identifier > LocationCount - 1 ? loc.Identifier + 1 : LocationCount;
             }
-            mWindow.UpdateTimingWindow();
+            mWindow.NonUIUpdate();
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -308,6 +308,14 @@ namespace EventDirector.UI.MainPages
         private void ResetBtn_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        public void Closing()
+        {
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
         }
     }
 }

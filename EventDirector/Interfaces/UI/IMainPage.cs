@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EventDirector.Interfaces
+﻿namespace EventDirector.Interfaces
 {
-    interface IMainPage
+    public interface IMainPage
     {
         void UpdateView();
+        void Closing();
         void UpdateDatabase();
         void Keyboard_Ctrl_A();
         void Keyboard_Ctrl_S();

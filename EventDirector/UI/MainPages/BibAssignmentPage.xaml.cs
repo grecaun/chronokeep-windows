@@ -23,17 +23,16 @@ namespace EventDirector.UI.MainPages
     /// </summary>
     public partial class BibAssignmentPage : Page, IMainPage
     {
-        private INewMainWindow mWindow;
+        private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
 
-        public BibAssignmentPage(INewMainWindow mWindow, IDBInterface database)
+        public BibAssignmentPage(IMainWindow mWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
-            UpdateView();
         }
 
         private void BibList_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -102,7 +101,7 @@ namespace EventDirector.UI.MainPages
                 {
                     UpdateDatabase();
                 }
-                UpdateView();
+                mWindow.Update();
             }
         }
 
@@ -129,7 +128,7 @@ namespace EventDirector.UI.MainPages
                 Name = "New Group " + groupNum.ToString(),
                 Number = groupNum
             });
-            UpdateView();
+            mWindow.Update();
         }
 
         internal void RemoveGroup(BibGroup group)
@@ -139,7 +138,7 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.RemoveBibGroup(group);
-            UpdateView();
+            mWindow.Update();
         }
 
         internal void AddBibRange(int group, int start, int end)
@@ -159,7 +158,7 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
-            UpdateView();
+            mWindow.Update();
         }
 
         internal void AddBib(int group, int bib)
@@ -174,7 +173,7 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
-            UpdateView();
+            mWindow.Update();
         }
 
         public void UpdateDatabase()
@@ -201,7 +200,7 @@ namespace EventDirector.UI.MainPages
 
         public void Keyboard_Ctrl_Z()
         {
-            UpdateView();
+            mWindow.Update();
         }
 
         private class ABibGroup : ListBoxItem
@@ -214,7 +213,7 @@ namespace EventDirector.UI.MainPages
             public Button AddRange { get; private set; }
             public Button Remove { get; private set; }
 
-            BibAssignmentPage page;
+            readonly BibAssignmentPage page;
             BibGroup myGroup;
 
             public ABibGroup(BibAssignmentPage page, BibGroup bg, int basebib)
@@ -456,6 +455,19 @@ namespace EventDirector.UI.MainPages
         }
 
         private void ResetBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mWindow.Update();
+        }
+
+        public void Closing()
+        {
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateView();
         }

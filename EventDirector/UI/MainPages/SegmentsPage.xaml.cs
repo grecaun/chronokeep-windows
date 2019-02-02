@@ -22,7 +22,7 @@ namespace EventDirector.UI.MainPages
     /// </summary>
     public partial class SegmentsPage : Page, IMainPage
     {
-        private INewMainWindow mWindow;
+        private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
         private List<TimingLocation> locations;
@@ -30,7 +30,7 @@ namespace EventDirector.UI.MainPages
 
         private static int selectedDiv = -1;
 
-        public SegmentsPage(INewMainWindow mWindow, IDBInterface database)
+        public SegmentsPage(IMainWindow mWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mWindow = mWindow;
@@ -81,7 +81,7 @@ namespace EventDirector.UI.MainPages
                 }
             }
             finish_occurrences++;
-            mWindow.UpdateTimingWindow();
+            mWindow.NonUIUpdate();
         }
 
         private static bool NotInDiv(Segment s)
@@ -179,6 +179,14 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_Z()
         {
             UpdateView();
+        }
+
+        public void Closing()
+        {
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
         }
 
         private class ASegment : ListBoxItem

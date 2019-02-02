@@ -24,14 +24,14 @@ namespace EventDirector.UI.MainPages
     /// </summary>
     public partial class DivisionsPage : Page, IMainPage
     {
-        private INewMainWindow mWindow;
+        private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
         private List<TimingLocation> locations;
         private List<BibGroup> bibGroups;
         private int DivisionCount = 1;
 
-        public DivisionsPage(INewMainWindow mWindow, IDBInterface database)
+        public DivisionsPage(IMainWindow mWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mWindow = mWindow;
@@ -70,7 +70,7 @@ namespace EventDirector.UI.MainPages
                 DivisionsBox.Items.Add(new ADivision(this, div, locations, bibGroups));
                 DivisionCount = div.Identifier > DivisionCount - 1 ? div.Identifier + 1 : DivisionCount;
             }
-            mWindow.UpdateTimingWindow();
+            mWindow.NonUIUpdate();
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -133,6 +133,14 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_Z()
         {
             UpdateView();
+        }
+
+        public void Closing()
+        {
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
         }
 
         private class ADivision : ListBoxItem

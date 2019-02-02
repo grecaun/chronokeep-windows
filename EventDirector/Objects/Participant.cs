@@ -80,19 +80,19 @@ namespace EventDirector
             birthdate = birthdate.Trim();
             firstName = firstName.Trim();
             lastName = lastName.Trim();
-            street = street.Trim();
-            street2 = street2.Trim();
-            city = city.Trim();
-            state = state.Trim();
-            zip = zip.Trim();
+            street = (street ?? "").Trim();
+            street2 = (street2 ?? "").Trim();
+            city = (city ?? "").Trim();
+            state = (state ?? "").Trim();
+            zip = (zip ?? "").Trim();
             eventSpecific.Trim();
-            email = email.Trim();
-            mobile = mobile.Trim();
-            parent = parent.Trim();
-            country = country.Trim();
-            gender = gender.Trim();
-            emergencyName = emergencyName.Trim();
-            emergencyPhone = emergencyPhone.Trim();
+            email = (email ?? "").Trim();
+            mobile = (mobile ?? "").Trim();
+            parent = (parent ?? "").Trim();
+            country = (country ?? "").Trim();
+            gender = (gender ?? "").Trim();
+            emergencyName = (emergencyName ?? "").Trim();
+            emergencyPhone = (emergencyPhone ?? "").Trim();
         }
 
         internal void FormatData()

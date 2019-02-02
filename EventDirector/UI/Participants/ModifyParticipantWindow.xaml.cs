@@ -1,18 +1,9 @@
 ﻿using EventDirector.Interfaces;
-using EventDirector.UI.EventWindows;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EventDirector.UI.Participants
 {
@@ -51,24 +42,12 @@ namespace EventDirector.UI.Participants
 
         public static ModifyParticipantWindow NewWindow(IWindowCallback window, IDBInterface database)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.participantWindow != null)
-            {
-                return null;
-            }
-            ModifyParticipantWindow output = new ModifyParticipantWindow(window, database);
-            StaticEvent.participantWindow = output;
-            return output;
+            return new ModifyParticipantWindow(window, database);
         }
 
         public static ModifyParticipantWindow NewWindow(IWindowCallback window, IDBInterface database, Participant person)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.participantWindow != null)
-            {
-                return null;
-            }
-            ModifyParticipantWindow output = new ModifyParticipantWindow(window, database, person);
-            StaticEvent.participantWindow = output;
-            return output;
+            return new ModifyParticipantWindow(window, database, person);
         }
 
         private void UpdateDivisions()
@@ -255,7 +234,6 @@ namespace EventDirector.UI.Participants
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            StaticEvent.participantWindow = null;
             window.WindowFinalize(this);
         }
 

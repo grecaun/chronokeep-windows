@@ -1,7 +1,6 @@
 ﻿using EventDirector.Interfaces;
 using EventDirector.Objects;
 using EventDirector.Timing;
-using EventDirector.UI.EventWindows;
 using EventDirector.UI.MainPages;
 using EventDirector.UI.Timing;
 using EventDirector.UI.Timing.Import;
@@ -9,25 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EventDirector.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INewMainWindow, IChangeUpdater
+    public partial class MainWindow : Window, IMainWindow, IChangeUpdater
     {
         IDBInterface database;
         IMainPage page;
@@ -91,13 +81,7 @@ namespace EventDirector.UI
                 Log.D("Dashboard page already displayed.");
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                page.UpdateDatabase();
-            }
-            TheFrame.NavigationService.RemoveBackEntry();
-            page = new DashboardPage(this, database);
-            TheFrame.Content = page;
+            SwitchPage(new DashboardPage(this, database), true);
         }
 
         private void ReportsButton_Click(object sender, RoutedEventArgs e)
@@ -108,13 +92,7 @@ namespace EventDirector.UI
                 Log.D("Reports page already displayed");
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                page.UpdateDatabase();
-            }
-            //TheFrame.NavigationService.RemoveBackEntry();
-            //page = new ReportsPage(this, database);
-            //TheFrame.Content = page;
+            //SwitchPage(new ReportsPage(this, database), true);
         }
 
         private void ParticipantsButton_Click(object sender, RoutedEventArgs e)
@@ -125,13 +103,7 @@ namespace EventDirector.UI
                 Log.D("Participants page already displayed.");
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                page.UpdateDatabase();
-            }
-            TheFrame.NavigationService.RemoveBackEntry();
-            page = new ParticipantsPage(this, database);
-            TheFrame.Content = page;
+            SwitchPage(new ParticipantsPage(this, database), true);
         }
 
         private void BibsButton_Click(object sender, RoutedEventArgs e)
@@ -142,13 +114,7 @@ namespace EventDirector.UI
                 Log.D("Bib page already displayed.");
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                page.UpdateDatabase();
-            }
-            TheFrame.NavigationService.RemoveBackEntry();
-            page = new BibAssignmentPage(this, database);
-            TheFrame.Content = page;
+            SwitchPage(new BibAssignmentPage(this, database), true);
         }
 
         private void ChipsButton_Click(object sender, RoutedEventArgs e)
@@ -159,13 +125,7 @@ namespace EventDirector.UI
                 Log.D("Chips page already displayed.");
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                page.UpdateDatabase();
-            }
-            TheFrame.NavigationService.RemoveBackEntry();
-            page = new ChipAssigmentPage(this, database);
-            TheFrame.Content = page;
+            SwitchPage(new ChipAssigmentPage(this, database), true);
         }
 
         private void DivisionsButton_Click(object sender, RoutedEventArgs e)
@@ -175,13 +135,7 @@ namespace EventDirector.UI
             {
                 Log.D("Divisions page already displayed.");
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                page.UpdateDatabase();
-            }
-            TheFrame.NavigationService.RemoveBackEntry();
-            page = new DivisionsPage(this, database);
-            TheFrame.Content = page;
+            SwitchPage(new DivisionsPage(this, database), true);
         }
 
         private void LocationsButton_Click(object sender, RoutedEventArgs e)
@@ -192,13 +146,7 @@ namespace EventDirector.UI
                 Log.D("Locations page already displayed.");
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                page.UpdateDatabase();
-            }
-            TheFrame.NavigationService.RemoveBackEntry();
-            page = new LocationsPage(this, database);
-            TheFrame.Content = page;
+            SwitchPage(new LocationsPage(this, database), true);
         }
 
         private void SegmentsButton_Click(object sender, RoutedEventArgs e)
@@ -209,13 +157,7 @@ namespace EventDirector.UI
                 Log.D("Segments page already displayed.");
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                page.UpdateDatabase();
-            }
-            TheFrame.NavigationService.RemoveBackEntry();
-            page = new SegmentsPage(this, database);
-            TheFrame.Content = page;
+            SwitchPage(new SegmentsPage(this, database), true);
         }
 
         private void AgegroupsButton_Click(object sender, RoutedEventArgs e)
@@ -226,13 +168,7 @@ namespace EventDirector.UI
                 Log.D("Age groups page already displayed.");
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                page.UpdateDatabase();
-            }
-            TheFrame.NavigationService.RemoveBackEntry();
-            page = new AgeGroupsPage(this, database);
-            TheFrame.Content = page;
+            SwitchPage(new AgeGroupsPage(this, database), true);
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -243,19 +179,24 @@ namespace EventDirector.UI
                 Log.D("Settings page already displayed.");
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            SwitchPage(new SettingsPage(this, database), true);
+        }
+
+        private void TimingButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Timing button clicked.");
+            if (page is TimingPage)
             {
-                page.UpdateDatabase();
+                Log.D("Timing page already displayed.");
+                return;
             }
-            TheFrame.NavigationService.RemoveBackEntry();
-            page = new SettingsPage(this, database);
-            TheFrame.Content = page;
+            SwitchPage(new TimingPage(this, database), true);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_FALSE &&
-                (StaticEvent.AreToolWindowsOpen() || TimingController.IsRunning()))
+                TimingController.IsRunning())
             {
                 MessageBoxResult result = MessageBox.Show("Are you sure you wish to exit?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.No)
@@ -313,10 +254,7 @@ namespace EventDirector.UI
             {
                 tcpServer.UpdateEvent(identifier);
             }
-            if (StaticEvent.timingWindow != null)
-            {
-                ((TimingWindow)StaticEvent.timingWindow).UpdateAll();
-            }
+            // *TODO* Update Timing Controller
         }
 
         public void AddEvent(string nameString, long dateVal, int shirtOptionalVal, int shirtPrice) { }
@@ -402,41 +340,11 @@ namespace EventDirector.UI
             page.UpdateView();
         }
 
-        public void UpdateTimingWindow()
+        public void NonUIUpdate()
         {
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
-                if (StaticEvent.timingWindow != null)
-                {
-                    ((TimingWindow)StaticEvent.timingWindow).UpdateAll();
-                }
-                if (StaticEvent.manualEntryWindow != null)
-                {
-                    Event theEvent = database.GetCurrentEvent();
-                    if (theEvent == null)
-                    {
-                        return;
-                    }
-                    List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
-                    if (theEvent.CommonStartFinish != 1)
-                    {
-                        locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                        locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
-                    }
-                    else
-                    {
-                        locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                    }
-                    ((ManualEntryWindow)StaticEvent.manualEntryWindow).UpdateLocations(locations);
-                }
-                if (StaticEvent.rawReadsWindow != null)
-                {
-                    ((RawReadsWindow)StaticEvent.rawReadsWindow).Update();
-                }
-                if (StaticEvent.importLogWindow != null)
-                {
-                    ((ImportLogWindow)StaticEvent.importLogWindow).Update();
-                }
+                page.UpdateView();
             }));
         }
 
@@ -483,7 +391,7 @@ namespace EventDirector.UI
             {
                 TimingController.ConnectTimingSystem(system);
             });
-            UpdateTimingWindow();
+            NonUIUpdate();
             await Task.Run(() =>
             {
                 if (!TimingController.IsRunning())
@@ -500,7 +408,7 @@ namespace EventDirector.UI
             {
                 TimingController.DisconnectTimingSystem(system);
             });
-            UpdateTimingWindow();
+            NonUIUpdate();
         }
 
         public void ShutdownTimingController()
@@ -523,7 +431,7 @@ namespace EventDirector.UI
             {
                 MessageBox.Show("Reader at " + system.LocationName + " has unexpectedly disconnected. IP Address was " + system.IPAddress + ".");
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
-                UpdateTimingWindow();
+                NonUIUpdate();
             }));
         }
 
@@ -540,6 +448,27 @@ namespace EventDirector.UI
             TimingWorkerThread = new Thread(new ThreadStart(TimingWorker.Run));
             TimingWorkerThread.Start();
             TimingWorker.Notify();
+        }
+
+        public void SwitchPage(IMainPage iPage, bool IsMainPage)
+        {
+            if (iPage is TimingPage)
+            {
+                timingChildren.Visibility = Visibility.Visible;
+            }
+            else if (IsMainPage)
+            {
+                timingChildren.Visibility = Visibility.Collapsed;
+            }
+            page.Closing();
+            page = iPage;
+            TheFrame.NavigationService.RemoveBackEntry();
+            TheFrame.Content = iPage;
+        }
+
+        private void ManualEntry_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

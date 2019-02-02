@@ -44,7 +44,7 @@ namespace EventDirector
         {
             if (kioskWin.ExampleWaiverWindowOpen()) return;
             example = new ExampleLiabilityWaiver(kioskWin);
-            example.Show();
+            example.ShowDialog();
         }
     }
 }

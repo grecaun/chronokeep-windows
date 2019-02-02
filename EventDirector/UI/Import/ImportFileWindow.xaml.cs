@@ -1,20 +1,12 @@
 ﻿using EventDirector.Interfaces;
-using EventDirector.UI.EventWindows;
 using EventDirector.UI.Import;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using static EventDirector.UI.Import.ImportFilePage2Alt;
 
 namespace EventDirector
@@ -25,8 +17,7 @@ namespace EventDirector
     public partial class ImportFileWindow : Window
     {
         IDataImporter importer;
-        MainWindow mainWindow;
-        INewMainWindow window = null;
+        IMainWindow window = null;
         IDBInterface database;
         Boolean init = true;
         internal static string[] human_fields = new string[] {
@@ -82,31 +73,10 @@ namespace EventDirector
         Page page2 = null;
         int[] keys;
 
-        public ImportFileWindow(MainWindow mainWindow, IDataImporter importer, IDBInterface database)
+        private ImportFileWindow(IMainWindow window, IDataImporter importer, IDBInterface database)
         {
             InitializeComponent();
             this.importer = importer;
-            this.mainWindow = mainWindow;
-            this.database = database;
-            date.SelectedDate = DateTime.Today;
-            eventLabel.Text = importer.Data.FileName;
-            shirtPriceBox.Text = "20.00";
-            if (importer.Data.Type == ImportData.FileType.EXCEL)
-            {
-                SheetsBox.Visibility = Visibility.Visible;
-                SheetsBox.ItemsSource = ((ExcelImporter)importer).SheetNames;
-                SheetsBox.SelectedIndex = 0;
-                init = false;
-            }
-            page1 = new ImportFilePage1(importer);
-            Frame.Content = page1;
-        }
-
-        private ImportFileWindow(INewMainWindow window, IDataImporter importer, IDBInterface database)
-        {
-            InitializeComponent();
-            this.importer = importer;
-            this.mainWindow = null;
             this.window = window;
             this.database = database;
             Header.Height = new GridLength(55);
@@ -150,15 +120,9 @@ namespace EventDirector
             Frame.Content = page1;
         }
 
-        public static ImportFileWindow NewWindow(INewMainWindow window, IDataImporter importer, IDBInterface database)
+        public static ImportFileWindow NewWindow(IMainWindow window, IDataImporter importer, IDBInterface database)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.participantWindow != null)
-            {
-                return null;
-            }
-            ImportFileWindow output = new ImportFileWindow(window, importer, database);
-            StaticEvent.participantWindow = output;
-            return output;
+            return new ImportFileWindow(window, importer, database);
         }
 
         private void Done_Click(object sender, RoutedEventArgs e)
@@ -184,14 +148,7 @@ namespace EventDirector
             }
             else if (page2 != null)
             {
-                if (mainWindow != null)
-                {
-                    ImportWork(((ImportFilePage2)page2).GetDivisions());
-                }
-                else
-                {
-                    NewImportWork(((ImportFilePage2Alt)page2).GetDivisions());
-                }
+                NewImportWork(((ImportFilePage2Alt)page2).GetDivisions());
             }
             else
             {
@@ -230,18 +187,14 @@ namespace EventDirector
             }
             Log.D(sb.ToString());
             page1 = null;
-            if (mainWindow != null) page2 = new ImportFilePage2(divisionsFromFile);
-            else
+            Event theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier < 0)
             {
-                Event theEvent = database.GetCurrentEvent();
-                if (theEvent == null || theEvent.Identifier < 0)
-                {
-                    Log.E("No event selected.");
-                    this.Close();
-                }
-                List<Division> divisionsFromDatabase = database.GetDivisions(theEvent.Identifier);
-                page2 = new ImportFilePage2Alt(divisionsFromFile, divisionsFromDatabase);
+                Log.E("No event selected.");
+                this.Close();
             }
+            List<Division> divisionsFromDatabase = database.GetDivisions(theEvent.Identifier);
+            page2 = new ImportFilePage2Alt(divisionsFromFile, divisionsFromDatabase);
             SheetsBox.Visibility = Visibility.Collapsed;
             eventLabel.Width = 460;
             Done.Content = "Done";
@@ -353,7 +306,6 @@ namespace EventDirector
             if (valid)
             {
                 Log.D("All done with the import.");
-                if (mainWindow != null) mainWindow.UpdateEventBox();
                 this.Close();
             }
         }
@@ -455,7 +407,6 @@ namespace EventDirector
             if (valid)
             {
                 Log.D("All done with the import.");
-                if (mainWindow != null) mainWindow.UpdateEventBox();
                 this.Close();
             }
         }
@@ -578,10 +529,7 @@ namespace EventDirector
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            importer.Finish();
-            if (mainWindow != null) mainWindow.WindowClosed(this);
             if (window != null) window.WindowFinalize(this);
-            StaticEvent.participantWindow = null;
         }
 
         private void SheetsBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

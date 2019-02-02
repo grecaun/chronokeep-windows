@@ -1663,24 +1663,28 @@ namespace EventDirector
         public List<Participant> GetParticipants()
         {
             Log.D("Getting all participants for all events.");
-            return GetParticipantsWorker("SELECT * FROM participants AS p, eventspecific as s, divisions AS d WHERE " +
-                "p.participant_id=s.participant_id AND d.division_id=s.division_id", -1, -1);
+            return GetParticipantsWorker("SELECT * FROM participants p " +
+                "JOIN eventspecific s ON p.participant_id = s.participant_id " +
+                "JOIN divisions d ON s.division_id = d.division_id ORDER BY p.participant_last ASC, p.participant_first ASC", -1, -1);
         }
 
         public List<Participant> GetParticipants(int eventId)
         {
             Log.D("Getting all participants for event with id of " + eventId);
-            return GetParticipantsWorker("SELECT * FROM participants AS p, eventspecific AS s, divisions AS d WHERE " +
-                "p.participant_id=s.participant_id AND s.event_id=@event AND d.division_id=s.division_id", eventId, -1);
+            return GetParticipantsWorker("SELECT * FROM participants p " +
+                "JOIN eventspecific s ON p.participant_id = s.participant_id " +
+                "JOIN divisions d ON s.division_id = d.division_id " +
+                "WHERE s.event_id=@event ORDER BY p.participant_last ASC, p.participant_first ASC", eventId, -1);
         }
 
 
         public List<Participant> GetParticipants(int eventId, int divisionId)
         {
             Log.D("Getting all participants for event with id of " + eventId);
-            return GetParticipantsWorker("SELECT * FROM participants AS p, eventspecific AS s, divisions AS d WHERE " +
-                "p.participant_id=s.participant_id AND s.event_id=@event AND d.division_id=s.division_id AND" +
-                " d.division_id=@division", eventId, divisionId);
+            return GetParticipantsWorker("SELECT * FROM participants p " +
+                "JOIN eventspecific s ON p.participant_id = s.participant_id " +
+                "JOIN divisions d ON s.division_id = d.division_id " +
+                "WHERE s.event_id=@event AND d.division_id=@division ORDER BY p.participant_last ASC, p.participant_first ASC", eventId, divisionId);
         }
 
         public List<Participant> GetParticipantsWorker(string query, int eventId, int divisionId)

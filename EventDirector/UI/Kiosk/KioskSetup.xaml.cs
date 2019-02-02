@@ -1,19 +1,8 @@
 ﻿using EventDirector.Interfaces;
-using EventDirector.UI.EventWindows;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace EventDirector
 {
@@ -22,7 +11,6 @@ namespace EventDirector
     /// </summary>
     public partial class KioskSetup : Window
     {
-        MainWindow mainWindow = null;
         IWindowCallback window = null;
         IDBInterface database;
 
@@ -31,19 +19,9 @@ namespace EventDirector
         int eventId = -1;
         int print = 0;
 
-        public KioskSetup(MainWindow mainWindow, IDBInterface database)
-        {
-            InitializeComponent();
-            this.mainWindow = mainWindow;
-            this.database = database;
-            Log.D("Showing first page.");
-            KioskFrame.Content = new KioskSetupPage1(this);
-        }
-
         private KioskSetup(IWindowCallback window, IDBInterface database)
         {
             InitializeComponent();
-            this.mainWindow = null;
             this.window = window;
             this.database = database;
             eventId = Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value);
@@ -53,13 +31,7 @@ namespace EventDirector
 
         public static KioskSetup NewWindow(IWindowCallback window, IDBInterface database)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.kioskWindow != null)
-            {
-                return null;
-            }
-            KioskSetup output = new KioskSetup(window, database);
-            StaticEvent.kioskWindow = output;
-            return output;
+            return new KioskSetup(window, database);
         }
 
         public void GotoPage2()
@@ -120,7 +92,6 @@ namespace EventDirector
                 }
             }
             database.SetEventOptions(eventId, list);
-            if (mainWindow != null) mainWindow.EnableKiosk(eventId);
             this.Close();
         }
 
@@ -149,8 +120,6 @@ namespace EventDirector
                 }
                 catch { }
             }
-            StaticEvent.kioskWindow = null;
-            if (mainWindow != null) mainWindow.WindowClosed(this);
             if (window != null) window.WindowFinalize(this);
         }
     }

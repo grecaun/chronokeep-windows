@@ -1,21 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.IO;
-using Microsoft.Office.Interop.Excel;
 using EventDirector.Interfaces;
 using EventDirector.UI.IO;
-using EventDirector.UI.EventWindows;
 
 namespace EventDirector
 {
@@ -27,35 +17,14 @@ namespace EventDirector
         IDBInterface database;
         IDataExporter exporter;
         IWindowCallback window = null;
-        MainWindow mainWindow;
         Utils.FileType fileType = Utils.FileType.CSV;
         Event theEvent = null;
-
-        public ExportParticipants(IDBInterface database, MainWindow mainWindow)
-        {
-            this.mainWindow = mainWindow;
-            this.database = database;
-            InitializeComponent();
-            eventList.Visibility = Visibility.Visible;
-            UpdateEventsList();
-        }
-
-        public ExportParticipants(IDBInterface database, MainWindow mainWindow, Utils.FileType fileType)
-        {
-            this.mainWindow = mainWindow;
-            this.database = database;
-            this.fileType = fileType;
-            InitializeComponent();
-            eventList.Visibility = Visibility.Visible;
-            UpdateEventsList();
-        }
 
         private ExportParticipants(IWindowCallback window, IDBInterface database, bool ExcelAllowed)
         {
             InitializeComponent();
             this.window = window;
             this.database = database;
-            this.mainWindow = null;
             eventList.Visibility = Visibility.Collapsed;
             ExportAs.Visibility = Visibility.Visible;
             this.Height = 180;
@@ -72,13 +41,7 @@ namespace EventDirector
 
         public static ExportParticipants NewWindow(IWindowCallback window, IDBInterface database, bool ExcelAllowed)
         {
-            if (StaticEvent.changeMainEventWindow != null || StaticEvent.participantWindow != null)
-            {
-                return null;
-            }
-            ExportParticipants output = new ExportParticipants(window, database, ExcelAllowed);
-            StaticEvent.participantWindow = output;
-            return output;
+            return new ExportParticipants(window, database, ExcelAllowed);
         }
 
         private async void UpdateEventsList()
@@ -177,15 +140,9 @@ namespace EventDirector
             Close();
         }
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            if (mainWindow != null) mainWindow.PartListClosed();
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (window != null) window.WindowFinalize(this);
-            StaticEvent.participantWindow = null;
         }
     }
 }

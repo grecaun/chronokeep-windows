@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:EventDirector.UI.MainPages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ChipAssigmentPage">
+      Title="ChipAssigmentPage" Loaded="Page_Loaded">
 
     <Grid>
         <Label Name="nothing" Content="Event not set. Please choose an event before selecting this option." Visibility="Collapsed" />
