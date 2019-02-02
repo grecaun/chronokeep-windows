@@ -12,7 +12,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 28;
+        private readonly int version = 31;
         SQLiteConnection connection;
         readonly string connectionInfo;
 
@@ -194,10 +194,11 @@ namespace EventDirector
                     "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
                     "read_id INTEGER NOT NULL REFERENCES chipreads(read_id)," +
                     "location_id INTEGER NOT NULL," +
-                    "timeresult_time INTEGER NOT NULL," +
-                    "segment_id INTEGER NOT NULL DEFAULT -3," +
+                    "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
                     "timeresult_occurance INTEGER NOT NULL," +
-                    "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance) ON CONFLICT IGNORE" +
+                    "timeresult_time TEXT NOT NULL," +
+                    "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
+                    "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS chipreads (" +
                     "read_id INTEGER PRIMARY KEY," +
@@ -313,6 +314,7 @@ namespace EventDirector
                     "ts_location INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
                     "ts_type TEXT NOT NULL," +
                     "UNIQUE (ts_ip, ts_location) ON CONFLICT REPLACE);");
+                queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
 
                 using (var transaction = connection.BeginTransaction())
                 {
@@ -949,6 +951,46 @@ namespace EventDirector
                                 "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
                                 "UNIQUE (event_id, read_chipnumber, read_bib, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
                                 "); UPDATE settings SET version=28 WHERE version=27;";
+                        command.ExecuteNonQuery();
+                        goto case 28;
+                    case 28:
+                        Log.D("Upgrading from version 28.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "DROP TABLE time_results;" +
+                            "CREATE TABLE IF NOT EXISTS time_results (" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
+                                "read_id INTEGER NOT NULL REFERENCES chipreads(read_id)," +
+                                "location_id INTEGER NOT NULL," +
+                                "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
+                                "timeresult_occurance INTEGER NOT NULL," +
+                                "timeresult_time TEXT NOT NULL," +
+                                "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance) ON CONFLICT REPLACE" +
+                                "); UPDATE settings SET version=29 WHERE version=28;";
+                        command.ExecuteNonQuery();
+                        goto case 29;
+                    case 29:
+                        Log.D("Upgrading from version 29.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "DROP TABLE time_results;" +
+                            "CREATE TABLE IF NOT EXISTS time_results (" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
+                                "read_id INTEGER NOT NULL REFERENCES chipreads(read_id)," +
+                                "location_id INTEGER NOT NULL," +
+                                "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
+                                "timeresult_occurance INTEGER NOT NULL," +
+                                "timeresult_time TEXT NOT NULL," +
+                                "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
+                                "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
+                                "); UPDATE settings SET version=30 WHERE version=29;";
+                        command.ExecuteNonQuery();
+                        goto case 30;
+                    case 30:
+                        Log.D("Upgrading from version 30.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);" +
+                            "UPDATE settings SET version=31 WHERE version=30;";
                         command.ExecuteNonQuery();
                         break;
                 }
@@ -2007,6 +2049,20 @@ namespace EventDirector
             return output;
         }
 
+        public void ResetSegments(int eventId)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandType = System.Data.CommandType.Text;
+                command.CommandText = "DELETE FROM segments WHERE event_id=@id";
+                command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@id", eventId) });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
         /*
          * Timing Results
          */
@@ -2015,16 +2071,31 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO time_results (event_id, eventspecific_id, location_id, segment_id, timeresult_time, timeresult_occurance)" +
-                " VALUES (@event,@specific,@location,@segment,@time,@occ)";
+            command.CommandText = "INSERT INTO time_results (event_id, eventspecific_id, location_id, segment_id, " +
+                "timeresult_occurance, timeresult_time, timeresult_unknown_id, read_id)" +
+                " VALUES (@event,@specific,@location,@segment,@occ,@time,@unknown,@read)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tr.EventIdentifier),
                 new SQLiteParameter("@specific", tr.EventSpecificId),
                 new SQLiteParameter("@location", tr.LocationId),
                 new SQLiteParameter("@segment", tr.SegmentId),
+                new SQLiteParameter("@occ", tr.Occurrence),
                 new SQLiteParameter("@time", tr.Time),
-                new SQLiteParameter("@occ", tr.Occurrence) } );
+                new SQLiteParameter("@unknown", tr.UnknownId),
+                new SQLiteParameter("@read", tr.ReadId) } );
             command.ExecuteNonQuery();
+        }
+
+        public void AddTimingResults(List<TimeResult> results)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (TimeResult result in results)
+                {
+                    AddTimingResult(result);
+                }
+                transaction.Commit();
+            }
         }
 
         public void RemoveTimingResult(TimeResult tr)
@@ -2046,21 +2117,66 @@ namespace EventDirector
             Log.D("Getting timing results for event id of " + eventId);
             List<TimeResult> output = new List<TimeResult>();
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM time_results WHERE event_id=@eventid";
+            command.CommandText = "SELECT * FROM time_results r " +
+                "LEFT JOIN (eventspecific e " +
+                "JOIN participants p ON p.participant_id=e.participant_id " +
+                "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "WHERE r.event_id=@eventid;";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 output.Add(new TimeResult(
                     Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["eventspecific_id"]),
+                    reader["eventspecific_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_id"]),
                     Convert.ToInt32(reader["location_id"]),
                     Convert.ToInt32(reader["segment_id"]),
                     reader["timeresult_time"].ToString(),
-                    Convert.ToInt32(reader["timeresult_occurance"])
+                    Convert.ToInt32(reader["timeresult_occurance"]),
+                    reader["participant_first"] == DBNull.Value ? "" : reader["participant_first"].ToString(),
+                    reader["participant_last"] == DBNull.Value ? "" : reader["participant_last"].ToString(),
+                    reader["division_name"] == DBNull.Value ? "" : reader["division_name"].ToString(),
+                    reader["eventspecific_bib"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_bib"]),
+                    Convert.ToInt32(reader["read_id"]),
+                    reader["timeresult_unknown_id"].ToString()
                     ));
             }
             return output;
+        }
+
+        public void ResetTimingResults(int eventId)
+        {
+            Log.D("Resetting timing results for event " + eventId);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM time_results WHERE event_id=@event;" +
+                "UPDATE chipreads SET read_status=@status WHERE event_id=@event AND read_status<>@ignore;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
+                new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE)
+            });
+            command.ExecuteNonQuery();
+        }
+
+        public void ResetTimingResults(int eventId, int bib)
+        {
+            Log.D("Resetting timing results for bib " + bib + " and event " + eventId);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM time_results r WHERE r.event_id=@event AND" +
+                " EXISTS (SELECT * FROM eventspecific s WHERE s.eventspecific_id=r.eventspecific_id" +
+                " AND s.eventspecific_bib=@bib);" +
+                "UPDATE chipreads r SET r.read_status=@status WHERE r.event_id=@event AND" +
+                " (r.read_bib=@bib OR EXISTS (SELECT * FROM bib_chip_assoc c WHERE r.read_chip=c.chip" +
+                " AND c.bib=@bib)) AND read_status<>@ignore;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
+                new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE),
+                new SQLiteParameter("@bib", bib)
+            });
+            command.ExecuteNonQuery();
         }
 
         public void UpdateTimingResult(TimeResult oldResult, String newTime)
@@ -2750,35 +2866,69 @@ namespace EventDirector
             }
         }
 
+        private void UpdateChipReadNoTransaction(ChipRead read)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE chipreads SET read_status=@status, read_time=@time WHERE read_id=@id;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                    new SQLiteParameter("@status", read.Status),
+                    new SQLiteParameter("@id", read.ReadId),
+                    new SQLiteParameter("@time", read.TimeString)
+            });
+            command.ExecuteNonQuery();
+        }
+
         public void UpdateChipRead(ChipRead read)
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "UPDATE chipreads SET read_status=@status, read_time=@time WHERE read_id=@id;";
-                command.Parameters.AddRange(new SQLiteParameter[]
-                {
-                    new SQLiteParameter("@status", read.Status),
-                    new SQLiteParameter("@id", read.ReadId),
-                    new SQLiteParameter("@time", read.TimeString)
-                });
-                command.ExecuteNonQuery();
+                UpdateChipReadNoTransaction(read);
                 transaction.Commit();
             }
+        }
+        
+        public void UpdateChipReads(List<ChipRead> reads)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (ChipRead read in reads)
+                {
+                    UpdateChipReadNoTransaction(read);
+                }
+                transaction.Commit();
+            }
+        }
+
+        private void SetChipReadStatusNoTransaction(ChipRead read)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE chipreads SET read_status=@status WHERE read_id=@id;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                    new SQLiteParameter("@status", read.Status),
+                    new SQLiteParameter("@id", read.ReadId)
+            });
+            command.ExecuteNonQuery();
         }
 
         public void SetChipReadStatus(ChipRead read)
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "UPDATE chipreads SET read_status=@status WHERE read_id=@id;";
-                command.Parameters.AddRange(new SQLiteParameter[]
+                SetChipReadStatusNoTransaction(read);
+                transaction.Commit();
+            }
+        }
+
+        public void SetChipReadStatuses(List<ChipRead> reads)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (ChipRead read in reads)
                 {
-                    new SQLiteParameter("@status", read.Status),
-                    new SQLiteParameter("@id", read.ReadId)
-                });
-                command.ExecuteNonQuery();
+                    SetChipReadStatusNoTransaction(read);
+                }
                 transaction.Commit();
             }
         }

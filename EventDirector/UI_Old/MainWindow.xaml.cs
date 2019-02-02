@@ -879,5 +879,10 @@ namespace EventDirector
         {
             this.AddEvent(nameString, dateVal, shirtOptionalVal, shirtPrice);
         }
+
+        public void NotifyTimingWorker()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

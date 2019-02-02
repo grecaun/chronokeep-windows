@@ -59,6 +59,7 @@ namespace EventDirector
         void UpdateSegment(Segment seg);
         int GetSegmentId(Segment seg);
         List<Segment> GetSegments(int eventId);
+        void ResetSegments(int eventId);
 
         // Participant Functions
         void AddParticipant(Participant person);
@@ -105,10 +106,13 @@ namespace EventDirector
 
         // Timing Result Functions
         void AddTimingResult(TimeResult tr);
+        void AddTimingResults(List<TimeResult> results);
         void RemoveTimingResult(TimeResult tr);
-        void UpdateTimingResult(TimeResult oldResult, string newTime);
-
         List<TimeResult> GetTimingResults(int eventId);
+
+        // Reset functions for ChipReads/TimeResults
+        void ResetTimingResults(int eventId);
+        void ResetTimingResults(int eventId, int bib);
 
         // Day of Participant / Kiosk Functions
         void AddDayOfParticipant(DayOfParticipant part);
@@ -130,7 +134,9 @@ namespace EventDirector
         void AddChipRead(ChipRead read);
         void AddChipReads(List<ChipRead> reads);
         void UpdateChipRead(ChipRead read);
+        void UpdateChipReads(List<ChipRead> reads);
         void SetChipReadStatus(ChipRead read);
+        void SetChipReadStatuses(List<ChipRead> reads);
         List<ChipRead> GetChipReads();
         List<ChipRead> GetChipReads(int eventId);
         List<ChipRead> GetUsefulChipReads(int eventId);

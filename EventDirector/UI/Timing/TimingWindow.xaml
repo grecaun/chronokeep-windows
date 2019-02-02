@@ -48,7 +48,7 @@
                     <StackPanel Grid.Column="0">
                         <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
                         <Button Content="Export Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
-                        <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
+                        <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="True" Click="Recalculate_Click"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1">
                         <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
@@ -58,7 +58,7 @@
                 </Grid>
             </Expander>
         </StackPanel>
-        <StackPanel Grid.Column="0">
+        <StackPanel Grid.Column="0" VerticalAlignment="Stretch">
             <Expander MaxHeight="200" Margin="5,0,5,5" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" Header="Readers" IsExpanded="True" ExpandDirection="Down">
                 <ListBox Name="ReadersBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue">
                     <ListBox.ItemContainerStyle>
@@ -69,17 +69,15 @@
                     </ListBox.ItemContainerStyle>
                 </ListBox>
             </Expander>
-            <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single">
+            <ListView x:Name="updateListView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Where" Width="60" DisplayMemberBinding="{Binding TimingPoint}" />
+                        <GridViewColumn Header="Location" Width="80" DisplayMemberBinding="{Binding LocationName}" />
                         <GridViewColumn Header="Occ" Width="40" DisplayMemberBinding="{Binding Occurrence}" />
-                        <GridViewColumn Header="Bib" Width="60" DisplayMemberBinding="{Binding Bib}" />
-                        <GridViewColumn Header="Name" Width="180" DisplayMemberBinding="{Binding Name}" />
-                        <GridViewColumn Header="Time" Width="90" DisplayMemberBinding="{Binding Time}" />
-                        <GridViewColumn Header="Fin" Width="40" DisplayMemberBinding="{Binding Finished}" />
-                        <GridViewColumn Header="Pl" Width="50" DisplayMemberBinding="{Binding Place}" />
-                        <GridViewColumn Header="AGPl" Width="50" DisplayMemberBinding="{Binding AGPlace}" />
+                        <GridViewColumn Header="ID" Width="60" DisplayMemberBinding="{Binding Identifier}" />
+                        <GridViewColumn Header="Name" Width="180" DisplayMemberBinding="{Binding ParticipantName}" />
+                        <GridViewColumn Header="Time" Width="100" DisplayMemberBinding="{Binding Time}" />
+                        <GridViewColumn Header="Segment" Width="100" DisplayMemberBinding="{Binding SegmentName}" />
                     </GridView>
                 </ListView.View>
             </ListView>

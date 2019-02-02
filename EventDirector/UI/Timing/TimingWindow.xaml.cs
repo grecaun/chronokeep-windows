@@ -36,6 +36,7 @@ namespace EventDirector
 
         Event theEvent;
         List<TimingLocation> locations;
+        List<TimeResult> results = new List<TimeResult>();
 
         private DateTime startTime;
         DispatcherTimer Timer = new DispatcherTimer();
@@ -180,6 +181,11 @@ namespace EventDirector
                 TimingTypeButton.IsEnabled = true;
             }
             total = ReadersBox.Items.Count;
+
+            TimeResult.SetupStaticVariables(database);
+            results = database.GetTimingResults(theEvent.Identifier);
+            results.Sort(TimeResult.CompareByTime);
+            updateListView.ItemsSource = results;
         }
 
         public void UpdateAll()
@@ -247,6 +253,12 @@ namespace EventDirector
             {
                 TimingTypeButton.IsEnabled = true;
             }
+
+            // Update list of reads
+            results = database.GetTimingResults(theEvent.Identifier);
+            results.Sort(TimeResult.CompareByTime);
+            updateListView.ItemsSource = results;
+            updateListView.Items.Refresh();
         }
 
         public static TimingWindow NewWindow(INewMainWindow window, IDBInterface database)
@@ -487,6 +499,13 @@ namespace EventDirector
                 mWindow.AddWindow(rawReadsWindow);
                 rawReadsWindow.Show();
             }
+        }
+
+        private void Recalculate_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Recalculate results clicked.");
+            database.ResetTimingResults(theEvent.Identifier);
+            mWindow.NotifyTimingWorker();
         }
 
         private class AReaderBox : ListBoxItem

@@ -146,6 +146,13 @@ namespace EventDirector.UI.MainPages
                     theEvent.EarlyStartDifference = (Convert.ToInt32(nums[0]) * 3600) + (Convert.ToInt32(nums[1]) * 60) + Convert.ToInt32(nums[2]);
                 }
                 Log.D("Updating database.");
+                // Check if we've changed the segment option
+                Event oldEvent = database.GetCurrentEvent();
+                if (oldEvent.DivisionSpecificSegments != theEvent.DivisionSpecificSegments)
+                {
+                    Log.D("Division Specific Segments value has changed.");
+                    database.ResetSegments(theEvent.Identifier);
+                }
                 database.UpdateEvent(theEvent);
                 try
                 {

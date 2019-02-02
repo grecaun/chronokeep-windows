@@ -73,12 +73,6 @@ namespace EventDirector.UI
 
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
-
-            TimingController = new TimingController(this, database);
-            TimingWorker = TimingWorker.NewWorker(this, database);
-            TimingWorkerThread = new Thread(new ThreadStart(TimingWorker.Run));
-            TimingWorkerThread.Start();
-            TimingWorker.Notify();
         }
 
         private async void UpdateImportOptions()
@@ -531,6 +525,21 @@ namespace EventDirector.UI
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
                 UpdateTimingWindow();
             }));
+        }
+
+        public void NotifyTimingWorker()
+        {
+            Log.D("MainWindow notifying timer.");
+            TimingWorker.Notify();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            TimingController = new TimingController(this, database);
+            TimingWorker = TimingWorker.NewWorker(this, database);
+            TimingWorkerThread = new Thread(new ThreadStart(TimingWorker.Run));
+            TimingWorkerThread.Start();
+            TimingWorker.Notify();
         }
     }
 }

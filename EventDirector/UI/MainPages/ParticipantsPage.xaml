@@ -21,6 +21,12 @@
                 <Button Name="Export" Content="Export" FontSize="16" Height="35" Margin="10,10,10,10" Click="Export_Click" />
                 <Label Content="View only" FontSize="16" Margin="10,10,10,0" HorizontalContentAlignment="Center"/>
                 <ComboBox Name="DivisionBox" FontSize="16" Margin="10,0,10,10" SelectionChanged="DivisionBox_SelectionChanged" />
+                <Label Content="Sort By" FontSize="16" Margin="10,0,10,0" HorizontalContentAlignment="Center"/>
+                <ComboBox Name="SortBox" FontSize="16" Margin="10,0,10,10" SelectionChanged="SortBox_SelectionChanged" SelectedIndex="0">
+                    <ComboBoxItem Content="Division" />
+                    <ComboBoxItem Content="Name" />
+                    <ComboBoxItem Content="Bib" />
+                </ComboBox>
                 <Button Name="Add" Content="Add" FontSize="16" Height="35" Margin="10,10,10,10" Click="Add_Click"/>
                 <Button Name="Modify" Content="Modify" FontSize="16" Height="35" Margin="10,10,10,10" Click="Modify_Click"/>
                 <Button Name="Remove" Content="Remove" FontSize="16" Height="35" Margin="10,10,10,10" Click="Remove_Click"/>

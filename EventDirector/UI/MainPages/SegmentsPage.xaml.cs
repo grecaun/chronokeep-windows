@@ -111,7 +111,11 @@ namespace EventDirector.UI.MainPages
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Add segment clicked.");
-            int divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
+            int divId = Constants.Timing.COMMON_SEGMENTS_DIVISIONID;
+            if (theEvent.DivisionSpecificSegments == 1)
+            {
+                divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
+            }
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();

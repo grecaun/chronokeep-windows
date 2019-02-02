@@ -518,8 +518,12 @@ namespace EventDirector
         public int CompareTo(Participant other)
         {
             if (other == null) return 1;
-            else if (this.EventSpecific.DivisionIdentifier == other.EventSpecific.DivisionIdentifier)
+            if (this.EventSpecific.DivisionIdentifier == other.EventSpecific.DivisionIdentifier)
             {
+                if (this.LastName == other.LastName)
+                {
+                    return this.FirstName.CompareTo(other.FirstName);
+                }
                 return this.LastName.CompareTo(other.LastName);
             }
             return this.EventSpecific.DivisionName.CompareTo(other.EventSpecific.DivisionName);
@@ -541,6 +545,28 @@ namespace EventDirector
                 numYears--;
             }
             return Convert.ToString(numYears);
+        }
+
+        public static int CompareByDivision(Participant one, Participant two)
+        {
+            if (two == null || one == null) return 1;
+            return one.CompareTo(two);
+        }
+
+        public static int CompareByBib(Participant one, Participant two)
+        {
+            if (two == null || one == null) return 1;
+            return one.Bib.CompareTo(two.Bib);
+        }
+
+        public static int CompareByName(Participant one, Participant two)
+        {
+            if (two == null || one == null) return 1;
+            if (one.LastName == two.LastName)
+            {
+                return one.FirstName.CompareTo(two.FirstName);
+            }
+            return one.LastName.CompareTo(two.LastName);
         }
     }
 }

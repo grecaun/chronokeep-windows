@@ -89,7 +89,7 @@ namespace EventDirector
             this.ReadBib = readbib;
             this.Type = type;
             this.ChipBib = chipbib;
-            this.Name = String.Format("{1}, {0}", first == "" ? "Unknown" : first, last == "" ? "Unknownson" : last);
+            this.Name = String.Format("{0} {1}", first, last).Trim();
             this.Start = start;
             this.LocationName = locationName;
         }
@@ -170,7 +170,35 @@ namespace EventDirector
         {
             get
             {
-                return Constants.Timing.CHIPREAD_STATUS_IGNORE == Status ? "Ignored" : Constants.Timing.CHIPREAD_STATUS_NONE == Status ? "Waiting" : "Processed";
+                if (Constants.Timing.CHIPREAD_STATUS_NONE == Status)
+                {
+                    return "Unprocessed";
+                }
+                if (Constants.Timing.CHIPREAD_STATUS_PRESTART == Status)
+                {
+                    return "Before Start";
+                }
+                if (Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART == Status)
+                {
+                    return "Unused Start";
+                }
+                if (Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE == Status)
+                {
+                    return "Deleted";
+                }
+                if (Constants.Timing.CHIPREAD_STATUS_USED == Status)
+                {
+                    return "Used";
+                }
+                if (Constants.Timing.CHIPREAD_STATUS_WITHINIGN == Status)
+                {
+                    return "In Ignore Window";
+                }
+                if (Constants.Timing.CHIPREAD_STATUS_OVERMAX == Status)
+                {
+                    return "Over Max Occurrences";
+                }
+                return "Unknown";
             }
         }
 

@@ -28,6 +28,8 @@ namespace EventDirector.UI.MainPages
         private IDBInterface database;
         private Event theEvent;
 
+        List<Participant> participants = new List<Participant>();
+
         public ParticipantsPage(INewMainWindow mainWindow, IDBInterface database)
         {
             InitializeComponent();
@@ -46,7 +48,6 @@ namespace EventDirector.UI.MainPages
             {
                 return;
             }
-            List<Participant> participants;
             int divisionId = -1;
             try
             {
@@ -64,9 +65,21 @@ namespace EventDirector.UI.MainPages
             {
                 participants = database.GetParticipants(theEvent.Identifier, divisionId);
             }
-            participants.Sort();
+            switch (((ComboBoxItem)SortBox.SelectedItem).Content)
+            {
+                case "Name":
+                    participants.Sort(Participant.CompareByName);
+                    break;
+                case "Bib":
+                    participants.Sort(Participant.CompareByBib);
+                    break;
+                default:
+                    participants.Sort();
+                    break;
+            }
             ParticipantsList.ItemsSource = participants;
             ParticipantsList.SelectedItems.Clear();
+            ParticipantsList.Items.Refresh();
         }
 
         public void UpdateDivisionsBox()
@@ -241,5 +254,32 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_S() { }
 
         public void Keyboard_Ctrl_Z() { }
+
+        private void SortBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Log.D("Sort style changed.");
+            if (participants != null)
+            {
+                switch (((ComboBoxItem)SortBox.SelectedItem).Content)
+                {
+                    case "Name":
+                        participants.Sort(Participant.CompareByName);
+                        break;
+                    case "Bib":
+                        participants.Sort(Participant.CompareByBib);
+                        break;
+                    default:
+                        participants.Sort();
+                        break;
+                }
+                if (ParticipantsList != null)
+                {
+                    ParticipantsList.ItemsSource = participants;
+                    ParticipantsList.SelectedItems.Clear();
+                    ParticipantsList.Items.Refresh();
+                }
+            }
+            Log.D("Done");
+        }
     }
 }
