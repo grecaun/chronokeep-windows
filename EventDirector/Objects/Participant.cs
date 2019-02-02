@@ -490,12 +490,12 @@ namespace EventDirector
         public int Bib { get => eventSpecific.Bib; }
         public string Division { get => eventSpecific.DivisionName; }
         public string CheckedIn { get => eventSpecific.CheckedIn == 0 ? "No" : "Yes"; }
-        public bool IsCheckedIn { get => EventSpecific.CheckedIn == 0; }
+        public bool IsCheckedIn { get => EventSpecific.CheckedIn == 1; }
         public string Owes { get => eventSpecific.Owes; }
         public string Other { get => eventSpecific.Other; }
         public string Comments { get => eventSpecific.Comments; }
         public string EarlyStart { get => eventSpecific.EarlyStart == 0 ? "No" : "Yes"; }
-        public bool IsEarlyStart { get => EventSpecific.EarlyStart == 0; }
+        public bool IsEarlyStart { get => EventSpecific.EarlyStart == 1; }
         public string NextYear { get => eventSpecific.NextYear == 0 ? "No" : "Yes"; }
 
         // Emergency Contact binding stuffs

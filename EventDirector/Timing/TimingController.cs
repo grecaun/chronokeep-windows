@@ -22,7 +22,7 @@ namespace EventDirector.Timing
         IDBInterface database;
         IMainWindow mainWindow;
 
-        public TimingController(IDBInterface database, IMainWindow mainWindow)
+        public TimingController(IMainWindow mainWindow, IDBInterface database)
         {
             this.database = database;
             this.mainWindow = mainWindow;

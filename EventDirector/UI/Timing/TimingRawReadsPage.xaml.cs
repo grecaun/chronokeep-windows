@@ -15,6 +15,8 @@ namespace EventDirector.UI.Timing
         TimingPage parent;
         Event theEvent;
 
+        List<ChipRead> chipReads = new List<ChipRead>();
+
         public TimingRawReadsPage(TimingPage parent, IDBInterface database)
         {
             InitializeComponent();
@@ -31,18 +33,33 @@ namespace EventDirector.UI.Timing
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Done Button clicked.");
+            parent.LoadMainDisplay();
         }
 
         public async void UpdateView()
         {
             List<ChipRead> reads = new List<ChipRead>();
+            SortType sortType = parent.GetSortType();
             await Task.Run(() =>
             {
                 reads.AddRange(database.GetChipReads(theEvent.Identifier));
-                reads.Sort();
+            });
+            chipReads.Clear();
+            chipReads.AddRange(reads);
+            await Task.Run(() =>
+            {
+                if (sortType == SortType.BIB)
+                {
+                    reads.Sort(ChipRead.CompareByBib);
+                }
+                else
+                {
+                    reads.Sort();
+                }
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
+            updateListView.Items.Refresh();
         }
 
         public void Closing() { }
@@ -62,6 +79,27 @@ namespace EventDirector.UI.Timing
         private void UpdateListView_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateView();
+        }
+
+        public void Show(PeopleType type) { }
+
+        public async void SortBy(SortType sortType)
+        {
+            List<ChipRead> reads = new List<ChipRead>(chipReads);
+            await Task.Run(() =>
+            {
+                if (sortType == SortType.BIB)
+                {
+                    reads.Sort(ChipRead.CompareByBib);
+                }
+                else
+                {
+                    reads.Sort();
+                }
+            });
+            updateListView.SelectedItems.Clear();
+            updateListView.ItemsSource = reads;
+            updateListView.Items.Refresh();
         }
     }
 }

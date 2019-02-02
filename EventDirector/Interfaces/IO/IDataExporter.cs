@@ -10,6 +10,6 @@ namespace EventDirector.Interfaces
     {
         Utils.FileType FileType();
         void SetData(string[] headers, List<object[]> data);
-        void ExportData(string Path);
+        void ExportData(string Path, string Name = "");
     }
 }

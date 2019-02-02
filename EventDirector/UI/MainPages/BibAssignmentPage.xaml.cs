@@ -101,7 +101,7 @@ namespace EventDirector.UI.MainPages
                 {
                     UpdateDatabase();
                 }
-                mWindow.Update();
+                UpdateView();
             }
         }
 
@@ -128,7 +128,7 @@ namespace EventDirector.UI.MainPages
                 Name = "New Group " + groupNum.ToString(),
                 Number = groupNum
             });
-            mWindow.Update();
+            UpdateView();
         }
 
         internal void RemoveGroup(BibGroup group)
@@ -138,7 +138,7 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.RemoveBibGroup(group);
-            mWindow.Update();
+            UpdateView();
         }
 
         internal void AddBibRange(int group, int start, int end)
@@ -158,7 +158,7 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
-            mWindow.Update();
+            UpdateView();
         }
 
         internal void AddBib(int group, int bib)
@@ -173,7 +173,7 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
-            mWindow.Update();
+            UpdateView();
         }
 
         public void UpdateDatabase()
@@ -196,11 +196,12 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_S()
         {
             UpdateDatabase();
+            UpdateView();
         }
 
         public void Keyboard_Ctrl_Z()
         {
-            mWindow.Update();
+            UpdateView();
         }
 
         private class ABibGroup : ListBoxItem
@@ -456,7 +457,7 @@ namespace EventDirector.UI.MainPages
 
         private void ResetBtn_Click(object sender, RoutedEventArgs e)
         {
-            mWindow.Update();
+            UpdateView();
         }
 
         public void Closing()

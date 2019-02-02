@@ -122,8 +122,17 @@ namespace EventDirector
             Log.D("Closing file.");
             try
             {
-                workBook.Close(0);
-                Marshal.ReleaseComObject(workBook);
+                if (currentSheet != null)
+                {
+                    while (Marshal.ReleaseComObject(currentSheet) > 0) ;
+                    currentSheet = null;
+                }
+                if (workBook != null)
+                {
+                    workBook.Close(0);
+                    while (Marshal.ReleaseComObject(workBook) > 0) ;
+                    workBook = null;
+                }
                 Utils.QuitExcel();
             }
             catch

@@ -530,6 +530,7 @@ namespace EventDirector
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (window != null) window.WindowFinalize(this);
+            importer.Finish();
         }
 
         private void SheetsBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

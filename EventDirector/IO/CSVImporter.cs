@@ -64,13 +64,18 @@ namespace EventDirector
 
         public void Finish()
         {
-            try
+            if (file != null)
             {
-                Log.D("Closing file.");
-                file.Close();
-            } catch
-            {
-                Log.D("Already closed.");
+                try
+                {
+                    Log.D("Closing file.");
+                    file.Close();
+                    file = null;
+                }
+                catch
+                {
+                    Log.D("Already closed.");
+                }
             }
         }
     }

@@ -174,10 +174,26 @@ namespace EventDirector.UI.MainPages
             TimingFrame.Content = subPage;
         }
 
-        public void UpdateAll()
+        public void Keyboard_Ctrl_A() { }
+
+        public void Keyboard_Ctrl_S() { }
+
+        public void Keyboard_Ctrl_Z() { }
+
+        public void UpdateDatabase() { }
+
+        public void Closing() { }
+
+        public void UpdateView()
         {
             Log.D("Updating timing information.");
             theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier == -1)
+            {
+                // Something went wrong and this shouldn't be visible.
+                mWindow.UpdateStatus();
+                return;
+            }
             if (TimerStarted)
             {
                 UpdateStartTime();
@@ -239,33 +255,7 @@ namespace EventDirector.UI.MainPages
             {
                 TimingTypeButton.IsEnabled = true;
             }
-
-            // Update list of reads
-            results = database.GetTimingResults(theEvent.Identifier);
-            results.Sort(TimeResult.CompareByTime);
-            updateListView.ItemsSource = results;
-            updateListView.Items.Refresh();
-        }
-
-        public void Keyboard_Ctrl_A() { }
-
-        public void Keyboard_Ctrl_S() { }
-
-        public void Keyboard_Ctrl_Z() { }
-
-        public void UpdateDatabase() { }
-
-        public void Closing() { }
-
-        public void UpdateView()
-        {
-            theEvent = database.GetCurrentEvent();
-            if (theEvent == null || theEvent.Identifier == -1)
-            {
-                // Something went wrong and this shouldn't be visible.
-                mWindow.UpdateStatus();
-                return;
-            }
+            subPage.UpdateView();
         }
 
         private void Timer_Click(object sender, EventArgs e)
@@ -464,7 +454,7 @@ namespace EventDirector.UI.MainPages
                 theEvent = database.GetCurrentEvent();
                 theEvent.TimingSystem = ((ComboBoxItem)TimingType.SelectedItem).Uid;
                 database.UpdateEvent(theEvent);
-                UpdateAll();
+                UpdateView();
             }
         }
 
@@ -489,6 +479,80 @@ namespace EventDirector.UI.MainPages
             Log.D("Recalculate results clicked.");
             database.ResetTimingResults(theEvent.Identifier);
             mWindow.NotifyTimingWorker();
+        }
+
+        private void ViewOnlyBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (subPage == null)
+            {
+                return;
+            }
+            switch (((ComboBoxItem)viewOnlyBox.SelectedItem).Content)
+            {
+                case "Show All":
+                    subPage.Show(PeopleType.ALL);
+                    break;
+                case "Show Only Starts":
+                    subPage.Show(PeopleType.ONLYSTART);
+                    break;
+                case "Show Only Finishes":
+                    subPage.Show(PeopleType.ONLYFINISH);
+                    break;
+                default:
+                    subPage.Show(PeopleType.KNOWN);
+                    break;
+            }
+        }
+
+        public PeopleType GetPeopleType()
+        {
+            switch (((ComboBoxItem)viewOnlyBox.SelectedItem).Content)
+            {
+                case "Show All":
+                    return PeopleType.ALL;
+                case "Show Only Starts":
+                    return PeopleType.ONLYSTART;
+                case "Show Only Finishes":
+                    return PeopleType.ONLYFINISH;
+            }
+            return PeopleType.KNOWN;
+        }
+
+        private void SortBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (subPage == null)
+            {
+                return;
+            }
+            switch (((ComboBoxItem)SortBy.SelectedItem).Content)
+            {
+                case "Gun Time":
+                    subPage.SortBy(SortType.GUNTIME);
+                    break;
+                case "Bib":
+                    subPage.SortBy(SortType.BIB);
+                    break;
+                case "Division":
+                    subPage.SortBy(SortType.DIVISION);
+                    break;
+                default:
+                    subPage.SortBy(SortType.SYSTIME);
+                    break;
+            }
+        }
+
+        public SortType GetSortType()
+        {
+            switch (((ComboBoxItem)SortBy.SelectedItem).Content)
+            {
+                case "Gun Time":
+                    return SortType.GUNTIME;
+                case "Bib":
+                    return SortType.BIB;
+                case "Division":
+                    return SortType.DIVISION;
+            }
+            return SortType.SYSTIME;
         }
 
         private class AReaderBox : ListBoxItem

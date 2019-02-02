@@ -11,15 +11,16 @@ namespace EventDirector
     {
         int eventId, eventspecificId, locationId, segmentId, occurrence, bib, readId;
         string time, locationName, segmentName, participantName, divisionName, unknownId;
+        DateTime dateTime;
 
         public static readonly Regex timeRegex = new Regex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})");
 
-        public static Dictionary<int, TimingLocation> locations = new Dictionary<int, TimingLocation>();
-        public static Dictionary<int, Segment> segments = new Dictionary<int, Segment>();
+        public static Dictionary<int, TimingLocation> locations = null;
+        public static Dictionary<int, Segment> segments = null;
 
         public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
             string time, int occurrence, string first, string last, string division, int bib,
-            int readId, string unknownId)
+            int readId, string unknownId, string chipTime)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -27,7 +28,7 @@ namespace EventDirector
             this.segmentId = segmentId;
             this.time = time;
             this.occurrence = occurrence;
-            this.locationName = locations.ContainsKey(this.locationId) ? locations[this.locationId].Name : "Unknown";
+            this.locationName = locations != null ? locations.ContainsKey(this.locationId) ? locations[this.locationId].Name : "Unknown" : "Unknown";
             if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
             {
                 this.segmentName = "Finish";
@@ -35,6 +36,10 @@ namespace EventDirector
             else if (Constants.Timing.SEGMENT_START == this.segmentId)
             {
                 this.segmentName = "Start";
+            }
+            else if (segments != null && segments.ContainsKey(this.segmentId))
+            {
+                this.segmentName = segments[this.segmentId].Name;
             }
             else
             {
@@ -45,6 +50,7 @@ namespace EventDirector
             this.bib = bib;
             this.unknownId = unknownId;
             this.readId = readId;
+            this.dateTime = DateTime.Parse(chipTime);
         }
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
@@ -62,6 +68,12 @@ namespace EventDirector
 
         public static void SetupStaticVariables(IDBInterface database)
         {
+            if (locations != null && segments != null)
+            {
+                return;
+            }
+            locations = new Dictionary<int, TimingLocation>();
+            segments = new Dictionary<int, Segment>();
             Event theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
@@ -111,7 +123,17 @@ namespace EventDirector
                 return bib.ToString();
             } }
 
-        public static int CompareByTime(TimeResult one, TimeResult two)
+        public DateTime DateTime { get => dateTime; set => dateTime = value; }
+
+        public string SysTime
+        {
+            get
+            {
+                return dateTime.ToString("MMM dd HH:mm:ss.fff");
+            }
+        }
+
+        public static int CompareByGunTime(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
             Match oneMatch = timeRegex.Match(one.Time);
@@ -124,6 +146,51 @@ namespace EventDirector
                 + (Convert.ToInt64(twoMatch.Groups[2].Value) * 60)
                 + Convert.ToInt64(twoMatch.Groups[3].Value);
             return oneTime.CompareTo(twoTime);
+        }
+
+        public static int CompareBySystemTime(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            return one.dateTime.CompareTo(two.dateTime);
+        }
+
+        public static int CompareByBib(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.Bib == two.Bib)
+            {
+                one.dateTime.CompareTo(two.dateTime);
+            }
+            return one.Bib.CompareTo(two.Bib);
+        }
+
+        public static int CompareByDivision(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.DivisionName.Equals(two.DivisionName))
+            {
+                if (one.Bib == two.Bib)
+                {
+                    return one.dateTime.CompareTo(two.dateTime);
+                }
+                return one.Bib.CompareTo(two.Bib);
+            }
+            return one.DivisionName.CompareTo(two.DivisionName);
+        }
+
+        public static bool IsNotKnown(TimeResult one)
+        {
+            return one.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON;
+        }
+
+        public static bool IsNotStart(TimeResult one)
+        {
+            return one.SegmentId != Constants.Timing.SEGMENT_START;
+        }
+
+        public static bool IsNotFinish(TimeResult one)
+        {
+            return one.SegmentId != Constants.Timing.SEGMENT_FINISH;
         }
     }
 }

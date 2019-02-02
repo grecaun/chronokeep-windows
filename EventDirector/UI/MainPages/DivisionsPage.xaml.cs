@@ -81,20 +81,20 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.AddDivision(new Division("New Division " + DivisionCount, theEvent.Identifier, 0));
-            UpdateView();
+            mWindow.Update();
         }
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Update clicked.");
             UpdateDatabase();
-            UpdateView();
+            mWindow.Update();
         }
 
         private void Revert_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Revert clicked.");
-            UpdateView();
+            mWindow.Update();
         }
 
         internal void RemoveDivision(Division division)
@@ -105,7 +105,7 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.RemoveDivision(division);
-            UpdateView();
+            mWindow.Update();
         }
 
         public void UpdateDatabase()
@@ -127,12 +127,12 @@ namespace EventDirector.UI.MainPages
         {
             Log.D("Ctrl + S Passed to this page.");
             UpdateDatabase();
-            UpdateView();
+            mWindow.Update();
         }
 
         public void Keyboard_Ctrl_Z()
         {
-            UpdateView();
+            mWindow.Update();
         }
 
         public void Closing()

@@ -24,6 +24,7 @@ namespace EventDirector.Constants
         public static readonly int CHIPREAD_STATUS_WITHINIGN = 5;  // Within the ignore period
         public static readonly int CHIPREAD_STATUS_OVERMAX = 6; // over max occurrences
         public static readonly int CHIPREAD_STATUS_UNKNOWN = 7; // Unknown chip read
+        public static readonly int CHIPREAD_STATUS_STARTTIME = 8;
 
         public static readonly int CHIPREAD_TYPE_MANUAL = 1;
         public static readonly int CHIPREAD_TYPE_CHIP = 0;  // If this value changes, SQLiteInterface version must be updated to reflect said change.

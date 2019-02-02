@@ -28,6 +28,7 @@ namespace EventDirector.UI.MainPages
         private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
+        List<Participant> participants = new List<Participant>();
 
         public ParticipantsPage(IMainWindow mainWindow, IDBInterface database)
         {
@@ -66,20 +67,21 @@ namespace EventDirector.UI.MainPages
                     newParts.AddRange(database.GetParticipants(theEvent.Identifier, divisionId));
                 }
             });
+            participants = newParts;
             switch (((ComboBoxItem)SortBox.SelectedItem).Content)
             {
                 case "Name":
-                    newParts.Sort(Participant.CompareByName);
+                    participants.Sort(Participant.CompareByName);
                     break;
                 case "Bib":
-                    newParts.Sort(Participant.CompareByBib);
+                    participants.Sort(Participant.CompareByBib);
                     break;
                 default:
-                    newParts.Sort();
+                    participants.Sort();
                     break;
             }
             ParticipantsList.SelectedItems.Clear();
-            ParticipantsList.ItemsSource = newParts;
+            ParticipantsList.ItemsSource = participants;
             ParticipantsList.Items.Refresh();
             Log.D("Participants updated.");
         }
@@ -228,12 +230,12 @@ namespace EventDirector.UI.MainPages
                 parts.Add(p);
             }
             database.RemoveEntries(parts);
-            UpdateView();
+            mWindow.Update();
         }
 
         private void DivisionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateView();
+            mWindow.Update();
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)

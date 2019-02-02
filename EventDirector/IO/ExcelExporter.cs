@@ -14,10 +14,10 @@ namespace EventDirector.UI.IO
         string[] headers = { };
         List<object[]> data;
 
-        public void ExportData(string Path)
+        public void ExportData(string Path, string Name = "")
         {
             Application excel = Utils.GetExcelApp();
-            Workbook wBook = excel.Workbooks.Add("");
+            Workbook wBook = excel.Workbooks.Add(Name);
             Worksheet wSheet = wBook.ActiveSheet;
             List<object[]> localData = new List<object[]>
             {
@@ -43,7 +43,10 @@ namespace EventDirector.UI.IO
             wBook.SaveAs(Path, XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing, false, false, XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
             wBook.Close();
             excel.ScreenUpdating = true;
-            Marshal.ReleaseComObject(wBook);
+            while (Marshal.ReleaseComObject(wSheet) > 0) ;
+            wSheet = null;
+            while (Marshal.ReleaseComObject(wBook) > 0) ;
+            wBook = null;
             Utils.QuitExcel();
         }
 

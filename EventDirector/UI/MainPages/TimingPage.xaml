@@ -15,50 +15,61 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="254" />
+            <ColumnDefinition Width="274" />
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="1">
-            <Label Name="EllapsedTime" Content="00:00:00" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,0" FontWeight="Bold" FontSize="40"/>
-            <Grid Height="40" HorizontalAlignment="Center">
-                <Label Name="StartTimeLabel" Content="Start Time" Width="75" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Right" Margin="0,0,0,0" />
-                <xctk:MaskedTextBox Name="StartTime" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="80,0,0,0" FontWeight="Bold" FontSize="16" KeyDown="StartTimeKeyDown" LostFocus="StartTimeLostFocus"/>
-            </Grid>
-            <Button Name="StartRace" Content="Start Race" Width="150" Height="25" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,8,0,0" Click="StartRaceClick" />
-            <Button Name="EditSelectedButton" Content="Edit Selected" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="EditSelected" IsEnabled="False"/>
-            <Button Content="Manual Entry" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="ManualEntry" IsEnabled="True"/>
-            <Button Content="Load Log" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="LoadLog" IsEnabled="True" />
-            <DockPanel Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Width="150">
-                <TextBox Name="searchBox" Width="115" Height="25" HorizontalAlignment="Left" KeyDown="SearchKeyDown"/>
-                <Button Content="Go" Width="30" Height="25" HorizontalAlignment="Left" Margin="5,0,0,0" Click="Search"/>
-            </DockPanel>
-            <Label Content="Timing Method" FontSize="16" HorizontalContentAlignment="Center" Margin="10,5,10,0" />
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <ComboBox Name="TimingType" FontSize="16" Margin="10,0,5,0" Grid.Column="0" IsEnabled="false" VerticalContentAlignment="Center"/>
-                <Button Name="TimingTypeButton" Margin="5,0,10,0" Grid.Column="1" Content="Edit" VerticalContentAlignment="Center" Click="TimingTypeButton_Click"/>
-            </Grid>
-            <Expander Name="extraExpander" Header="More" Margin="5,15,5,0" IsExpanded="True">
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Label Name="EllapsedTime" Content="00:00:00" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,0" FontWeight="Bold" FontSize="40"/>
+                <Grid Height="40" HorizontalAlignment="Center">
+                    <Label Name="StartTimeLabel" Content="Start Time" Width="75" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Right" Margin="0,0,0,0" />
+                    <xctk:MaskedTextBox Name="StartTime" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="80,0,0,0" FontWeight="Bold" FontSize="16" KeyDown="StartTimeKeyDown" LostFocus="StartTimeLostFocus"/>
+                </Grid>
+                <Button Name="StartRace" Content="Start Race" Width="150" Height="25" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,8,0,0" Click="StartRaceClick" />
+                <Button Name="EditSelectedButton" Content="Edit Selected" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="EditSelected" IsEnabled="False"/>
+                <Button Content="Manual Entry" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="ManualEntry" IsEnabled="True"/>
+                <Button Content="Load Log" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="LoadLog" IsEnabled="True" />
+                <TextBox Name="searchBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" KeyDown="SearchKeyDown" LostFocus="Search"/>
+                <ComboBox Name="viewOnlyBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" SelectionChanged="ViewOnlyBox_SelectionChanged">
+                    <ComboBoxItem Content="Hide Unknown" IsSelected="True"/>
+                    <ComboBoxItem Content="Show All" />
+                    <ComboBoxItem Content="Show Only Starts" />
+                    <ComboBoxItem Content="Show Only Finishes" />
+                </ComboBox>
+                <ComboBox Name="SortBy" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" SelectionChanged="SortBy_SelectionChanged">
+                    <ComboBoxItem Content="System Time" IsSelected="True" />
+                    <ComboBoxItem Content="Gun Time" />
+                    <ComboBoxItem Content="Bib"/>
+                    <ComboBoxItem Content="Division"/>
+                </ComboBox>
+                <Label Content="Timing Method" FontSize="16" HorizontalContentAlignment="Center" Margin="10,5,10,0" />
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
-                        <Button Content="Export Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
-                        <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="True" Click="Recalculate_Click"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1">
-                        <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
-                        <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="RawReads_Click"/>
-                        <Button Content="DNS/DNF List" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
-                    </StackPanel>
+                    <ComboBox Name="TimingType" FontSize="16" Margin="10,0,5,0" Grid.Column="0" IsEnabled="false" VerticalContentAlignment="Center"/>
+                    <Button Name="TimingTypeButton" Margin="5,0,10,0" Grid.Column="1" Content="Edit" VerticalContentAlignment="Center" Click="TimingTypeButton_Click"/>
                 </Grid>
-            </Expander>
-        </StackPanel>
+                <Expander Name="extraExpander" Header="More" Margin="5,15,5,0" IsExpanded="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
+                            <Button Content="Export Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
+                            <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="True" Click="Recalculate_Click"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
+                            <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="RawReads_Click"/>
+                            <Button Content="DNS/DNF List" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
+                        </StackPanel>
+                    </Grid>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

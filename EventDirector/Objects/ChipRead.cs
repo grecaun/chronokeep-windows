@@ -192,11 +192,15 @@ namespace EventDirector
                 }
                 if (Constants.Timing.CHIPREAD_STATUS_WITHINIGN == Status)
                 {
-                    return "In Ignore Window";
+                    return "Too Soon";
                 }
                 if (Constants.Timing.CHIPREAD_STATUS_OVERMAX == Status)
                 {
-                    return "Over Max Occurrences";
+                    return "Extra";
+                }
+                if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == Status)
+                {
+                    return "Start";
                 }
                 return "Unknown";
             }
@@ -205,7 +209,22 @@ namespace EventDirector
         public int CompareTo(ChipRead other)
         {
             if (other == null) return this.CompareTo(other);
-            else return this.Time.CompareTo(other.Time);
+            return this.Time.CompareTo(other.Time);
+        }
+
+        public static int CompareByBib(ChipRead one, ChipRead two)
+        {
+            if (one == null || two == null) return 1;
+            // Check if they're the same bib
+            // Make sure they're not the dummy bib numer, then compare them.
+            if ( (Constants.Timing.CHIPREAD_DUMMYBIB != one.ReadBib && (one.ReadBib == two.ReadBib || one.ReadBib == two.ChipBib)) ||
+                 (Constants.Timing.CHIPREAD_DUMMYBIB != one.ChipBib && (one.ChipBib == two.ChipBib || one.ChipBib == two.ReadBib)) )
+            {
+                return one.Time.CompareTo(two.Time);
+            }
+            int oneBib = one.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? one.ChipBib : one.ReadBib;
+            int twoBib = two.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? two.ChipBib : two.ReadBib;
+            return oneBib.CompareTo(twoBib);
         }
     }
 }

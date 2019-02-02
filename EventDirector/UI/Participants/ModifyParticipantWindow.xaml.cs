@@ -184,14 +184,14 @@ namespace EventDirector.UI.Participants
             {
                 gender = ((ComboBoxItem)GenderBox.SelectedItem).Content.ToString();
             }
-            int earlystart = 1, checkedin = 1;
+            int earlystart = 0, checkedin = 0;
             if (CheckedInBox.IsChecked ?? false)
             {
-                checkedin = 0;
+                checkedin = 1;
             }
             if (EarlyStartBox.IsChecked ?? false)
             {
-                earlystart = 0;
+                earlystart = 1;
             }
             Participant output = new Participant(
                 participantId,

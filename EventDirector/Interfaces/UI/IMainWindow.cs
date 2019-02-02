@@ -22,7 +22,6 @@ namespace EventDirector.Interfaces
 
         // Event related calls.
         void UpdateEvent(int identifier, string nameString, long dateVal, int nextYear, int shirtOptionalVal, int shirtPrice);
-        void AddEvent(string nameString, long dateVal, int shirtOptionalVal, int shirtPrice);
 
         // Timing System related calls.
         void ConnectTimingSystem(TimingSystem system);

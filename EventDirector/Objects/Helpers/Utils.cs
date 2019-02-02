@@ -1,4 +1,5 @@
 ﻿using Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace EventDirector
@@ -24,6 +25,8 @@ namespace EventDirector
             {
                 ExcelApp = new Application();
                 ExcelApp.Quit();
+                while (Marshal.ReleaseComObject(ExcelApp) > 0);
+                ExcelApp = null;
             }
             catch
             {
@@ -53,6 +56,8 @@ namespace EventDirector
             if (ExcelApp != null)
             {
                 ExcelApp.Quit();
+                while (Marshal.ReleaseComObject(ExcelApp) > 0) ;
+                ExcelApp = null;
             }
         }
 

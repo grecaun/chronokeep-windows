@@ -33,7 +33,6 @@ namespace EventDirector.UI.MainPages
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
-            UpdateImportOptions();
         }
 
         private void BibChipList_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -144,7 +143,7 @@ namespace EventDirector.UI.MainPages
         private async void FileImport_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import from file clicked.");
-            OpenFileDialog bib_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv)|*.csv|All files|*" };
+            OpenFileDialog bib_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv,*.txt)|*.csv;*.txt|All files|*" };
             if (bib_dialog.ShowDialog() == true) {
                 try
                 {
@@ -227,50 +226,6 @@ namespace EventDirector.UI.MainPages
             if (startBib > -1 && endBib > -1 && startChip > -1) RangeEndChipLabel.Content = endChip.ToString();
         }
 
-        private async void ExcelImport_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Import from file clicked.");
-            OpenFileDialog bib_excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.csv)|*.xlsx;*.csv|All files|*" };
-            if (bib_excel_dialog.ShowDialog() == true)
-            {
-                try
-                {
-                    ExcelImporter excel = new ExcelImporter(bib_excel_dialog.FileName);
-                    await Task.Run(() =>
-                    {
-                        excel.FetchHeaders();
-                    });
-                    BibChipAssociationWindow bcWindow = BibChipAssociationWindow.NewWindow(mWindow, excel, database);
-                    if (bcWindow != null)
-                    {
-                        mWindow.AddWindow(bcWindow);
-                        bcWindow.ShowDialog();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.E("Something went wrong when trying to read the CSV file.");
-                    Log.E(ex.StackTrace);
-                }
-            }
-        }
-
-        private void UpdateImportOptions()
-        {
-            if (mWindow.ExcelEnabled())
-            {
-                Log.D("Excel is allowed.");
-                ExcelImport.Visibility = Visibility.Visible;
-                FileImport.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                Log.D("Excel is not allowed.");
-                ExcelImport.Visibility = Visibility.Collapsed;
-                FileImport.Visibility = Visibility.Visible;
-            }
-        }
-
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = MessageBox.Show("Are you sure you want to delete everything? This cannot be undone.",
@@ -279,7 +234,7 @@ namespace EventDirector.UI.MainPages
             {
                 List<BibChipAssociation> list = (List<BibChipAssociation>) bibChipList.ItemsSource;
                 database.RemoveBibChipAssociations(list);
-                mWindow.Update();
+                UpdateView();
             }
         }
 

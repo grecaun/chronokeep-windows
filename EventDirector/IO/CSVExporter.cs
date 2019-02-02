@@ -19,7 +19,7 @@ namespace EventDirector.UI.IO
             this.format = format;
         }
 
-        public void ExportData(string Path)
+        public void ExportData(string Path, string Name = "")
         {
             using (var outFile = File.Create(Path))
             {

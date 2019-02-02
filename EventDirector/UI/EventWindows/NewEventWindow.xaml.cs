@@ -12,8 +12,6 @@ namespace EventDirector
     /// </summary>
     public partial class NewEventWindow : Window
     {
-        IMainWindow mainWindow = null;
-        Event theEvent = null;
         IDBInterface database = null;
         IWindowCallback window = null;
 
@@ -21,7 +19,6 @@ namespace EventDirector
         {
             InitializeComponent();
             datePicker.SelectedDate = DateTime.Today;
-            this.mainWindow = mainWindow;
             CopyLabel.Visibility = Visibility.Collapsed;
             oldEvent.Visibility = Visibility.Collapsed;
             this.Height = 310;
@@ -89,17 +86,6 @@ namespace EventDirector
             {
                 MessageBox.Show("Please input a value in the name box.");
                 return;
-            }
-            if (mainWindow != null)
-            {
-                if (theEvent == null)
-                {
-                    mainWindow.AddEvent(nameString, dateVal, shirtOptionalVal, shirtPrice);
-                }
-                else
-                {
-                    mainWindow.UpdateEvent(theEvent.Identifier, nameString, dateVal, theEvent.NextYear, shirtOptionalVal, shirtPrice);
-                }
             }
             else
             {

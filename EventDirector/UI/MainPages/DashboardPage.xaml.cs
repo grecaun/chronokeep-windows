@@ -163,7 +163,7 @@ namespace EventDirector.UI.MainPages
                     Log.D("Unable to update event with mainwindow. TCP Server error or wrong main window.");
                 }
                 Log.D("Updating view.");
-                UpdateView();
+                mWindow.Update();
             }
             else
             {
@@ -283,7 +283,7 @@ namespace EventDirector.UI.MainPages
                     }
                 }
                 database.SetEventOptions(theEvent.Identifier, list);
-                UpdateView();
+                mWindow.Update();
             }
         }
 
@@ -367,7 +367,7 @@ namespace EventDirector.UI.MainPages
             {
                 theEvent.NextYear = -1;
                 database.UpdateEvent(theEvent);
-                UpdateView();
+                mWindow.Update();
             }
         }
 
@@ -449,7 +449,7 @@ namespace EventDirector.UI.MainPages
                 {
                     database.RemoveEvent(theEvent.Identifier);
                     database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
-                    UpdateView();
+                    mWindow.Update();
                 }
             }
             catch
@@ -476,7 +476,7 @@ namespace EventDirector.UI.MainPages
         {
             Log.D("Cancel clicked.");
             DisableEditableFields();
-            UpdateView();
+            mWindow.Update();
             editButton.Content = Constants.DashboardLabels.EDIT;
             cancelButton.Visibility = Visibility.Collapsed;
         }

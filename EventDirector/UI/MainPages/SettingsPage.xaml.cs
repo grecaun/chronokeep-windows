@@ -96,7 +96,7 @@ namespace EventDirector.UI.MainPages
                     database.ResetDatabase();
                     Constants.Settings.SetupSettings(database);
                 });
-                UpdateView();
+                mWindow.Update();
                 ResetDB.IsEnabled = true;
             }
         }
@@ -115,7 +115,7 @@ namespace EventDirector.UI.MainPages
                     database.HardResetDatabase();
                     Constants.Settings.SetupSettings(database);
                 });
-                UpdateView();
+                mWindow.Update();
                 RebuildDB.IsEnabled = true;
             }
         }
@@ -129,7 +129,7 @@ namespace EventDirector.UI.MainPages
             database.SetAppSetting(Constants.Settings.DEFAULT_WAIVER, DefaultWaiverBox.Text);
             database.SetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE, UpdatePage.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.EXIT_NO_PROMPT, ExitNoPrompt.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
-            UpdateView();
+            mWindow.Update();
         }
 
         private void ChangeExport_Click(object sender, RoutedEventArgs e)
@@ -175,7 +175,7 @@ namespace EventDirector.UI.MainPages
 
         public void Keyboard_Ctrl_Z()
         {
-            UpdateView();
+            mWindow.Update();
         }
 
         public void Closing()

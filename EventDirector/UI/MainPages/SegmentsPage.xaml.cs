@@ -121,18 +121,18 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.AddSegment(new Segment(theEvent.Identifier, divId, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
-            UpdateView();
+            mWindow.Update();
         }
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
             UpdateDatabase();
-            UpdateView();
+            mWindow.Update();
         }
 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
-            UpdateView();
+            mWindow.Update();
         }
 
         private void RemoveSegment(Segment mySegment)
@@ -143,7 +143,7 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.RemoveSegment(mySegment);
-            UpdateView();
+            mWindow.Update();
         }
 
         private void Divisions_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -153,7 +153,7 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
-            UpdateView();
+            mWindow.Update();
         }
 
         public void UpdateDatabase()
@@ -173,12 +173,12 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_S()
         {
             UpdateDatabase();
-            UpdateView();
+            mWindow.Update();
         }
 
         public void Keyboard_Ctrl_Z()
         {
-            UpdateView();
+            mWindow.Update();
         }
 
         public void Closing()

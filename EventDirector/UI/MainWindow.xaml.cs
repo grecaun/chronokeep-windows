@@ -70,6 +70,7 @@ namespace EventDirector.UI
             await Task.Run(() =>
             {
                 excelEnabled = Utils.ExcelEnabled();
+                Utils.QuitExcel();
             });
         }
 
@@ -256,8 +257,6 @@ namespace EventDirector.UI
             }
             // *TODO* Update Timing Controller
         }
-
-        public void AddEvent(string nameString, long dateVal, int shirtOptionalVal, int shirtPrice) { }
 
         public bool StartNetworkServices()
         {
@@ -466,7 +465,7 @@ namespace EventDirector.UI
             TheFrame.Content = iPage;
         }
 
-        private void ManualEntry_Click(object sender, RoutedEventArgs e)
+        private void Announcer_Click(object sender, RoutedEventArgs e)
         {
 
         }

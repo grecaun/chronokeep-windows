@@ -9,17 +9,17 @@
       Title="TimingResultsPage">
 
     <Grid>
-        <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single">
+        <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" Loaded="UpdateListView_Loaded" HorizontalContentAlignment="Center">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Where" Width="60" DisplayMemberBinding="{Binding TimingPoint}" />
-                    <GridViewColumn Header="Occ" Width="40" DisplayMemberBinding="{Binding Occurrence}" />
-                    <GridViewColumn Header="Bib" Width="60" DisplayMemberBinding="{Binding Bib}" />
-                    <GridViewColumn Header="Name" Width="180" DisplayMemberBinding="{Binding Name}" />
+                    <GridViewColumn Header="Loc" Width="80" DisplayMemberBinding="{Binding LocationName}" />
+                    <GridViewColumn Header="Occ" Width="30" DisplayMemberBinding="{Binding Occurrence}"/>
+                    <GridViewColumn Header="ID" Width="95" DisplayMemberBinding="{Binding Identifier}" />
+                    <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding ParticipantName}" />
+                    <GridViewColumn Header="System Time" Width="130" DisplayMemberBinding="{Binding SysTime}" />
                     <GridViewColumn Header="Time" Width="90" DisplayMemberBinding="{Binding Time}" />
-                    <GridViewColumn Header="Fin" Width="40" DisplayMemberBinding="{Binding Finished}" />
-                    <GridViewColumn Header="Pl" Width="50" DisplayMemberBinding="{Binding Place}" />
-                    <GridViewColumn Header="AGPl" Width="50" DisplayMemberBinding="{Binding AGPlace}" />
+                    <GridViewColumn Header="Segment" Width="80" DisplayMemberBinding="{Binding SegmentName}" />
+                    <GridViewColumn Header="Division" Width="80" DisplayMemberBinding="{Binding DivisionName}" />
                 </GridView>
             </ListView.View>
         </ListView>
