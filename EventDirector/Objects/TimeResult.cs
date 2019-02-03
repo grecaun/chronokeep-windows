@@ -192,5 +192,11 @@ namespace EventDirector
         {
             return one.SegmentId != Constants.Timing.SEGMENT_FINISH;
         }
+
+        public bool IsNotMatch(string value)
+        {
+            return this.Bib.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1 &&
+                this.ParticipantName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
+        }
     }
 }

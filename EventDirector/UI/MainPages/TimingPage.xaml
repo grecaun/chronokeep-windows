@@ -28,7 +28,7 @@
                 <Button Name="EditSelectedButton" Content="Edit Selected" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="EditSelected" IsEnabled="False"/>
                 <Button Content="Manual Entry" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="ManualEntry" IsEnabled="True"/>
                 <Button Content="Load Log" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="LoadLog" IsEnabled="True" />
-                <TextBox Name="searchBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" KeyDown="SearchKeyDown" LostFocus="Search"/>
+                <TextBox Name="searchBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="SearchBox_TextChanged"/>
                 <ComboBox Name="viewOnlyBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" SelectionChanged="ViewOnlyBox_SelectionChanged">
                     <ComboBoxItem Content="Hide Unknown" IsSelected="True"/>
                     <ComboBoxItem Content="Show All" />

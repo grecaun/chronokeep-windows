@@ -46,16 +46,10 @@ namespace EventDirector.UI.Timing
             });
             chipReads.Clear();
             chipReads.AddRange(reads);
+            string search = parent.GetSearchValue();
             await Task.Run(() =>
             {
-                if (sortType == SortType.BIB)
-                {
-                    reads.Sort(ChipRead.CompareByBib);
-                }
-                else
-                {
-                    reads.Sort();
-                }
+                SortWorker(reads, sortType, search);
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
@@ -72,7 +66,19 @@ namespace EventDirector.UI.Timing
 
         public void Keyboard_Ctrl_Z() { }
 
-        public void Search(string value) { }
+        public async void Search(string value)
+        {
+            List<ChipRead> reads = new List<ChipRead>(chipReads);
+            SortType sortType = parent.GetSortType();
+            string search = parent.GetSearchValue();
+            await Task.Run(() =>
+            {
+                SortWorker(reads, sortType, search);
+            });
+            updateListView.SelectedItems.Clear();
+            updateListView.ItemsSource = reads;
+            updateListView.Items.Refresh();
+        }
 
         public void EditSelected() { }
 
@@ -81,21 +87,28 @@ namespace EventDirector.UI.Timing
             UpdateView();
         }
 
+        private void SortWorker(List<ChipRead> reads, SortType sortType, string search)
+        {
+            reads.RemoveAll(read => read.IsNotMatch(search));
+            if (sortType == SortType.BIB)
+            {
+                reads.Sort(ChipRead.CompareByBib);
+            }
+            else
+            {
+                reads.Sort();
+            }
+        }
+
         public void Show(PeopleType type) { }
 
         public async void SortBy(SortType sortType)
         {
             List<ChipRead> reads = new List<ChipRead>(chipReads);
+            string search = parent.GetSearchValue();
             await Task.Run(() =>
             {
-                if (sortType == SortType.BIB)
-                {
-                    reads.Sort(ChipRead.CompareByBib);
-                }
-                else
-                {
-                    reads.Sort();
-                }
+                SortWorker(reads, sortType, search);
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;

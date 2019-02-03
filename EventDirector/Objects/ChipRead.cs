@@ -226,5 +226,11 @@ namespace EventDirector
             int twoBib = two.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? two.ChipBib : two.ReadBib;
             return oneBib.CompareTo(twoBib);
         }
+
+        public bool IsNotMatch(string value)
+        {
+            return this.Bib.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
+                && this.Name.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
+        }
     }
 }

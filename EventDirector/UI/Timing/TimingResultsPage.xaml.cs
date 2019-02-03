@@ -35,9 +35,21 @@ namespace EventDirector.UI.Timing
 
         public void Keyboard_Ctrl_Z() { }
 
-        public void Search(string value) { }
+        public async void Search(string value)
+        {
+            List<TimeResult> newResults = new List<TimeResult>(results);
+            PeopleType peopleType = parent.GetPeopleType();
+            SortType sortType = parent.GetSortType();
+            await Task.Run(() =>
+            {
+                Customize(sortType, peopleType, newResults, value);
+            });
+            updateListView.ItemsSource = newResults;
+            updateListView.Items.Refresh();
+        }
 
-        private void Customize(SortType sortType, PeopleType peopleType, List<TimeResult> newResults)
+        private void Customize(SortType sortType, PeopleType peopleType,
+            List<TimeResult> newResults, string search = "")
         {
             if (peopleType == PeopleType.KNOWN)
             {
@@ -51,6 +63,7 @@ namespace EventDirector.UI.Timing
             {
                 newResults.RemoveAll(TimeResult.IsNotStart);
             }
+            newResults.RemoveAll(result => result.IsNotMatch(search));
             if (sortType == SortType.BIB)
             {
                 newResults.Sort(TimeResult.CompareByBib);
@@ -73,9 +86,10 @@ namespace EventDirector.UI.Timing
         {
             List<TimeResult> newResults = new List<TimeResult>(results);
             PeopleType peopleType = parent.GetPeopleType();
+            string search = parent.GetSearchValue();
             await Task.Run(() =>
             {
-                Customize(sortType, peopleType, newResults);
+                Customize(sortType, peopleType, newResults, search);
             });
             updateListView.ItemsSource = newResults;
             updateListView.Items.Refresh();
@@ -88,6 +102,7 @@ namespace EventDirector.UI.Timing
             List<TimeResult> newResults = null;
             SortType sortType = parent.GetSortType();
             PeopleType peopleType = parent.GetPeopleType();
+            string search = parent.GetSearchValue();
             await Task.Run(() =>
             {
                 newResults = database.GetTimingResults(theEvent.Identifier);
@@ -96,7 +111,7 @@ namespace EventDirector.UI.Timing
             results.AddRange(newResults);
             await Task.Run(() =>
             {
-                Customize(sortType, peopleType, newResults);
+                Customize(sortType, peopleType, newResults, search);
             });
             updateListView.ItemsSource = newResults;
             updateListView.Items.Refresh();
@@ -106,9 +121,10 @@ namespace EventDirector.UI.Timing
         {
             List<TimeResult> newResults = new List<TimeResult>(results);
             SortType sortType = parent.GetSortType();
+            string search = parent.GetSearchValue();
             await Task.Run(() =>
             {
-                Customize(sortType, peopleType, newResults);
+                Customize(sortType, peopleType, newResults, search);
             });
             updateListView.ItemsSource = newResults;
             updateListView.Items.Refresh();

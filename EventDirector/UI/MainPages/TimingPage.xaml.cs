@@ -317,22 +317,10 @@ namespace EventDirector.UI.MainPages
             }
         }
 
-        private void Search(object sender, RoutedEventArgs e)
-        {
-            Search();
-        }
-
-        private void SearchKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Return)
-            {
-                Search();
-            }
-        }
-
         private void Search()
         {
             Log.D("Searching");
+            subPage.Search(searchBox.Text.Trim());
         }
 
         private void StartTimeKeyDown(object sender, KeyEventArgs e)
@@ -553,6 +541,16 @@ namespace EventDirector.UI.MainPages
                     return SortType.DIVISION;
             }
             return SortType.SYSTIME;
+        }
+
+        public string GetSearchValue()
+        {
+            return searchBox.Text.Trim();
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Search();
         }
 
         private class AReaderBox : ListBoxItem
