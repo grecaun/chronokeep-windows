@@ -95,16 +95,23 @@ namespace EventDirector.UI.MainPages
                 return;
             }
             Divisions.Items.Clear();
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
-            foreach (Division d in divisions)
+            if (theEvent.DivisionSpecificSegments == 1)
             {
-                Divisions.Items.Add(new ComboBoxItem()
+                List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+                foreach (Division d in divisions)
                 {
-                    Content = d.Name,
-                    Uid = d.Identifier.ToString()
-                });
+                    Divisions.Items.Add(new ComboBoxItem()
+                    {
+                        Content = d.Name,
+                        Uid = d.Identifier.ToString()
+                    });
+                }
+                Divisions.SelectedIndex = 0;
             }
-            Divisions.SelectedIndex = 0;
+            else
+            {
+                UpdateView();
+            }
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
