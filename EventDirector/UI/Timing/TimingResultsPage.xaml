@@ -9,16 +9,17 @@
       Title="TimingResultsPage">
 
     <Grid>
-        <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" Loaded="UpdateListView_Loaded" HorizontalContentAlignment="Center">
+        <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" Loaded="UpdateListView_Loaded" HorizontalContentAlignment="Center" FontSize="12">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Loc" Width="80" DisplayMemberBinding="{Binding LocationName}" />
-                    <GridViewColumn Header="Occ" Width="30" DisplayMemberBinding="{Binding Occurrence}"/>
-                    <GridViewColumn Header="ID" Width="95" DisplayMemberBinding="{Binding Identifier}" />
-                    <GridViewColumn Header="Name" Width="150" DisplayMemberBinding="{Binding ParticipantName}" />
+                    <GridViewColumn Header="Loc" Width="70" DisplayMemberBinding="{Binding LocationName}" />
+                    <GridViewColumn Header="Occ" Width="25" DisplayMemberBinding="{Binding Occurrence}"/>
+                    <GridViewColumn Header="ID" Width="80" DisplayMemberBinding="{Binding Identifier}" />
+                    <GridViewColumn Header="Name" Width="130" DisplayMemberBinding="{Binding ParticipantName}" />
                     <GridViewColumn Header="System Time" Width="130" DisplayMemberBinding="{Binding SysTime}" />
                     <GridViewColumn Header="Time" Width="90" DisplayMemberBinding="{Binding Time}" />
-                    <GridViewColumn Header="Segment" Width="80" DisplayMemberBinding="{Binding SegmentName}" />
+                    <GridViewColumn Header="ChipTime" Width="90" DisplayMemberBinding="{Binding ChipTime}" />
+                    <GridViewColumn Header="Segment" Width="70" DisplayMemberBinding="{Binding SegmentName}" />
                     <GridViewColumn Header="Division" Width="80" DisplayMemberBinding="{Binding DivisionName}" />
                 </GridView>
             </ListView.View>

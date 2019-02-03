@@ -109,6 +109,7 @@ namespace EventDirector
         void AddTimingResults(List<TimeResult> results);
         void RemoveTimingResult(TimeResult tr);
         List<TimeResult> GetTimingResults(int eventId);
+        List<TimeResult> GetStartTimes(int eventId);
 
         // Reset functions for ChipReads/TimeResults
         void ResetTimingResults(int eventId);

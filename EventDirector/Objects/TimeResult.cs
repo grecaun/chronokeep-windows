@@ -9,9 +9,11 @@ namespace EventDirector
 {
     public class TimeResult
     {
-        int eventId, eventspecificId, locationId, segmentId, occurrence, bib, readId;
-        string time, locationName, segmentName, participantName, divisionName, unknownId;
-        DateTime dateTime;
+        int eventId, eventspecificId, locationId, segmentId,
+            occurrence, bib, readId;
+        string time, locationName, segmentName, participantName,
+            divisionName, unknownId, chipTime;
+        DateTime systemTime;
 
         public static readonly Regex timeRegex = new Regex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})");
 
@@ -20,7 +22,7 @@ namespace EventDirector
 
         public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
             string time, int occurrence, string first, string last, string division, int bib,
-            int readId, string unknownId, string chipTime)
+            int readId, string unknownId, string systemTime, string chipTime)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -28,7 +30,8 @@ namespace EventDirector
             this.segmentId = segmentId;
             this.time = time;
             this.occurrence = occurrence;
-            this.locationName = locations != null ? locations.ContainsKey(this.locationId) ? locations[this.locationId].Name : "Unknown" : "Unknown";
+            this.locationName = locations != null ? locations.ContainsKey(this.locationId) ?
+                locations[this.locationId].Name : "Unknown" : "Unknown";
             if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
             {
                 this.segmentName = "Finish";
@@ -50,11 +53,13 @@ namespace EventDirector
             this.bib = bib;
             this.unknownId = unknownId;
             this.readId = readId;
-            this.dateTime = DateTime.Parse(chipTime);
+            this.systemTime = DateTime.Parse(systemTime);
+            this.chipTime = chipTime;
         }
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
-            int segmentId, int occurrence, string time, string unknownId)
+            int segmentId, int occurrence, string time, string unknownId, string chipTime,
+            DateTime systemTime, int bib)
         {
             this.eventId = eventId;
             this.readId = readId;
@@ -64,6 +69,9 @@ namespace EventDirector
             this.occurrence = occurrence;
             this.time = time;
             this.unknownId = unknownId;
+            this.chipTime = chipTime;
+            this.systemTime = systemTime;
+            this.bib = bib;
         }
 
         public static void SetupStaticVariables(IDBInterface database)
@@ -121,17 +129,20 @@ namespace EventDirector
                     return unknownId;
                 }
                 return bib.ToString();
-            } }
+            }
+        }
 
-        public DateTime DateTime { get => dateTime; set => dateTime = value; }
+        public DateTime SystemTime { get => systemTime; set => systemTime = value; }
 
         public string SysTime
         {
             get
             {
-                return dateTime.ToString("MMM dd HH:mm:ss.fff");
+                return systemTime.ToString("MMM dd HH:mm:ss.fff");
             }
         }
+
+        public string ChipTime { get => chipTime; set => chipTime = value; }
 
         public static int CompareByGunTime(TimeResult one, TimeResult two)
         {
@@ -151,7 +162,7 @@ namespace EventDirector
         public static int CompareBySystemTime(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
-            return one.dateTime.CompareTo(two.dateTime);
+            return one.systemTime.CompareTo(two.systemTime);
         }
 
         public static int CompareByBib(TimeResult one, TimeResult two)
@@ -159,7 +170,7 @@ namespace EventDirector
             if (one == null || two == null) return 1;
             if (one.Bib == two.Bib)
             {
-                one.dateTime.CompareTo(two.dateTime);
+                one.systemTime.CompareTo(two.systemTime);
             }
             return one.Bib.CompareTo(two.Bib);
         }
@@ -169,7 +180,7 @@ namespace EventDirector
             if (one == null || two == null) return 1;
             if (one.DivisionName.Equals(two.DivisionName))
             {
-                return one.dateTime.CompareTo(two.dateTime);
+                return one.systemTime.CompareTo(two.systemTime);
             }
             return one.DivisionName.CompareTo(two.DivisionName);
         }

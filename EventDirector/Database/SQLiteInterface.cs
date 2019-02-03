@@ -12,7 +12,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 31;
+        private readonly int version = 32;
         SQLiteConnection connection;
         readonly string connectionInfo;
 
@@ -197,6 +197,7 @@ namespace EventDirector
                     "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
                     "timeresult_occurance INTEGER NOT NULL," +
                     "timeresult_time TEXT NOT NULL," +
+                    "timeresult_chiptime TEXT NOT NULL," +
                     "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
                     "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
                     ");");
@@ -982,7 +983,8 @@ namespace EventDirector
                                 "timeresult_occurance INTEGER NOT NULL," +
                                 "timeresult_time TEXT NOT NULL," +
                                 "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
-                                "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
+                                "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, " +
+                                "timeresult_unknown_id) ON CONFLICT REPLACE" +
                                 "); UPDATE settings SET version=30 WHERE version=29;";
                         command.ExecuteNonQuery();
                         goto case 30;
@@ -991,6 +993,26 @@ namespace EventDirector
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);" +
                             "UPDATE settings SET version=31 WHERE version=30;";
+                        command.ExecuteNonQuery();
+                        goto case 31;
+                    case 31:
+                        Log.D("Upgrading from version 31.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "DROP TABLE time_results; UPDATE chipreads SET read_status=" +
+                            Constants.Timing.CHIPREAD_STATUS_NONE + " WHERE read_status<>" +
+                            Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE + ";" +
+                            "CREATE TABLE IF NOT EXISTS time_results (" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
+                                "read_id INTEGER NOT NULL REFERENCES chipreads(read_id)," +
+                                "location_id INTEGER NOT NULL," +
+                                "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
+                                "timeresult_occurance INTEGER NOT NULL," +
+                                "timeresult_time TEXT NOT NULL," +
+                                "timeresult_chiptime TEXT NOT NULL," +
+                                "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
+                                "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
+                                "); UPDATE settings SET version=32 WHERE version=31;";
                         command.ExecuteNonQuery();
                         break;
                 }
@@ -2076,8 +2098,8 @@ namespace EventDirector
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO time_results (event_id, eventspecific_id, location_id, segment_id, " +
-                "timeresult_occurance, timeresult_time, timeresult_unknown_id, read_id)" +
-                " VALUES (@event,@specific,@location,@segment,@occ,@time,@unknown,@read)";
+                "timeresult_occurance, timeresult_time, timeresult_unknown_id, read_id, timeresult_chiptime)" +
+                " VALUES (@event,@specific,@location,@segment,@occ,@time,@unknown,@read,@chip)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tr.EventIdentifier),
                 new SQLiteParameter("@specific", tr.EventSpecificId),
@@ -2086,7 +2108,8 @@ namespace EventDirector
                 new SQLiteParameter("@occ", tr.Occurrence),
                 new SQLiteParameter("@time", tr.Time),
                 new SQLiteParameter("@unknown", tr.UnknownId),
-                new SQLiteParameter("@read", tr.ReadId) } );
+                new SQLiteParameter("@read", tr.ReadId),
+                new SQLiteParameter("@chip", tr.ChipTime) } );
             command.ExecuteNonQuery();
         }
 
@@ -2116,19 +2139,9 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
-        public List<TimeResult> GetTimingResults(int eventId)
+        private List<TimeResult> GetResults(SQLiteDataReader reader)
         {
-            Log.D("Getting timing results for event id of " + eventId);
             List<TimeResult> output = new List<TimeResult>();
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM time_results r " +
-                "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN (eventspecific e " +
-                "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
-                "WHERE r.event_id=@eventid;";
-            command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
-            SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 output.Add(new TimeResult(
@@ -2144,10 +2157,45 @@ namespace EventDirector
                     reader["eventspecific_bib"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_bib"]),
                     Convert.ToInt32(reader["read_id"]),
                     reader["timeresult_unknown_id"].ToString(),
-                    reader["read_time"].ToString()
+                    reader["read_time"].ToString(),
+                    reader["timeresult_chiptime"].ToString()
                     ));
             }
             return output;
+        }
+
+        public List<TimeResult> GetTimingResults(int eventId)
+        {
+            Log.D("Getting timing results for event id of " + eventId);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM time_results r " +
+                "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN (eventspecific e " +
+                "JOIN participants p ON p.participant_id=e.participant_id " +
+                "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "WHERE r.event_id=@eventid;";
+            command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            return GetResults(reader);
+        }
+
+        public List<TimeResult> GetStartTimes(int eventId)
+        {
+            Log.D("Getting start times for event id of " + eventId);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM time_results r " +
+                "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN (eventspecific e " +
+                "JOIN participants p ON p.participant_id=e.participant_id " +
+                "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@eventid", eventId),
+                new SQLiteParameter("@segment", Constants.Timing.SEGMENT_START)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            return GetResults(reader);
         }
 
         public void ResetTimingResults(int eventId)

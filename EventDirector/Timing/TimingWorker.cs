@@ -104,10 +104,12 @@ namespace EventDirector.Timing
                         participantDictionary[part.Bib] = part;
                     }
                     // Get the start time for the event. (Net time of 0:00:00.000)
-                    Dictionary<int, DateTime> divisionStartDict = new Dictionary<int, DateTime>();
-                    divisionStartDict[0] = DateTime.Parse(theEvent.Date)
+                    Dictionary<int, DateTime> divisionStartDict = new Dictionary<int, DateTime>
+                    {
+                        [0] = DateTime.Parse(theEvent.Date)
                                                     .AddSeconds(theEvent.StartSeconds)
-                                                    .AddMilliseconds(theEvent.StartMilliseconds);
+                                                    .AddMilliseconds(theEvent.StartMilliseconds)
+                    };
                     // Divisions so we can get their start offset.
                     Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
                     foreach (Division div in database.GetDivisions(theEvent.Identifier))
@@ -119,6 +121,12 @@ namespace EventDirector.Timing
                         divisionDictionary[div.Identifier] = div;
                         Log.D("Division " + div.Name + " offsets are " + div.StartOffsetSeconds + " " + div.StartOffsetMilliseconds);
                         divisionStartDict[div.Identifier] = divisionStartDict[0].AddSeconds(div.StartOffsetSeconds).AddMilliseconds(div.StartOffsetMilliseconds);
+                    }
+                    // Get start TimeResults
+                    Dictionary<string, TimeResult> startTimes = new Dictionary<string, TimeResult>();
+                    foreach (TimeResult result in database.GetStartTimes(theEvent.Identifier))
+                    {
+                        startTimes[result.Identifier] = result;
                     }
                     // Get all of the Chip Reads we find useful (Unprocessed, and those used as a result.)
                     // and then sort them into groups based upon Bib, Chip, or put them in the ignore pile if
@@ -227,9 +235,13 @@ namespace EventDirector.Timing
                                             part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                                             read.LocationID,
                                             Constants.Timing.SEGMENT_START,
-                                            0,  // occurrence, start time isn't an occurance, and 1 will overwrite the first occurance at finish if combined start/finish
+                                            0, // start reads are not an occurrence at the start line
                                             String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", netTime.Days * 24 + netTime.Hours, netTime.Minutes, netTime.Seconds, netTime.Milliseconds),
-                                            part == null ? "Bib:" + bib.ToString() : "");
+                                            part == null ? "Bib:" + bib.ToString() : "",
+                                            "0:00:00.000",
+                                            read.Time,
+                                            bib);
+                                        startTimes[startResult.Identifier] = startResult;
                                         newResults.Add(startResult);
                                         // Finally, set the chipread status to STARTTIME.
                                         read.Status = Constants.Timing.CHIPREAD_STATUS_STARTTIME;
@@ -275,7 +287,10 @@ namespace EventDirector.Timing
                                             minTime = lastReadDictionary[(bib, read.LocationID)].Read.Time.AddSeconds(occursWithin);
                                         }
                                         // Check if we're past the max occurances allowed for this spot.
-                                        if (occurrence > maxOccurrences)
+                                        // Also check if we've passed the finish occurrence for the finish line and that division
+                                        // which requires an active division and the person's information
+                                        if (occurrence > maxOccurrences ||
+                                            (div != null && Constants.Timing.LOCATION_FINISH == read.LocationID && occurrence > div.FinishOccurrence))
                                         {
                                             read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
                                         }
@@ -306,8 +321,10 @@ namespace EventDirector.Timing
                                             {
                                                 segId = Constants.Timing.SEGMENT_FINISH;
                                             }
+                                            string identifier = part == null ? "Bib:" + bib.ToString() : bib.ToString();
                                             // Create a result for the start value.
                                             TimeSpan netTime = read.Time - start;
+                                            TimeSpan chipTime = read.Time - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime : start);
                                             newResults.Add(new TimeResult(theEvent.Identifier,
                                                 read.ReadId,
                                                 part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
@@ -315,7 +332,10 @@ namespace EventDirector.Timing
                                                 segId,
                                                 occurrence,
                                                 String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", netTime.Days * 24 + netTime.Hours, netTime.Minutes, netTime.Seconds, netTime.Milliseconds),
-                                                part == null ? "Bib:" + bib.ToString() : ""));
+                                                part == null ? "Bib:" + bib.ToString() : "",
+                                                String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipTime.Days * 24 + chipTime.Hours, chipTime.Minutes, chipTime.Seconds, chipTime.Milliseconds),
+                                                read.Time,
+                                                bib));
                                             read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                         }
                                     }
@@ -385,6 +405,7 @@ namespace EventDirector.Timing
                                             // Remove it if so.
                                             newResults.Remove(startResult);
                                         }
+                                        string unknownId = "Chip:" + chip.ToString();
                                         // Create a result for the start value.
                                         TimeSpan netTime = read.Time - start;
                                         startResult = new TimeResult(theEvent.Identifier,
@@ -392,10 +413,14 @@ namespace EventDirector.Timing
                                             Constants.Timing.TIMERESULT_DUMMYPERSON,
                                             read.LocationID,
                                             Constants.Timing.SEGMENT_START,
-                                            0,  // occurrence, start time isn't an occurance, and 1 will overwrite the first occurance at finish if combined start/finish
+                                            0, // start reads are not an occurrence at the start line
                                             String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", netTime.Days * 24 + netTime.Hours, netTime.Minutes, netTime.Seconds, netTime.Milliseconds),
-                                            "Chip:" + chip.ToString());
+                                            unknownId,
+                                            "0:00:00.000",
+                                            read.Time,
+                                            read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib);
                                         newResults.Add(startResult);
+                                        startTimes[startResult.Identifier] = startResult;
                                         // Finally, set the chipread status to USED.
                                         read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                     }
@@ -461,8 +486,10 @@ namespace EventDirector.Timing
                                             {
                                                 segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)].Identifier;
                                             }
+                                            string unknownId = "Chip:" + chip.ToString();
                                             // Create a result for the start value.
                                             TimeSpan netTime = read.Time - start;
+                                            TimeSpan chipTime = read.Time - (startTimes.ContainsKey(unknownId) ? startTimes[unknownId].SystemTime : start);
                                             newResults.Add(new TimeResult(theEvent.Identifier,
                                                 read.ReadId,
                                                 Constants.Timing.TIMERESULT_DUMMYPERSON,
@@ -470,7 +497,10 @@ namespace EventDirector.Timing
                                                 segId,
                                                 occurrence,
                                                 String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", netTime.Days * 24 + netTime.Hours, netTime.Minutes, netTime.Seconds, netTime.Milliseconds),
-                                                "Chip:" + chip.ToString()));
+                                                unknownId,
+                                                String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipTime.Days * 24 + chipTime.Hours, chipTime.Minutes, chipTime.Seconds, chipTime.Milliseconds),
+                                                read.Time,
+                                                read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib));
                                             read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                         }
                                     }
