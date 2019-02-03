@@ -70,7 +70,6 @@ namespace EventDirector.UI.MainPages
                 DivisionsBox.Items.Add(new ADivision(this, div, locations, bibGroups));
                 DivisionCount = div.Identifier > DivisionCount - 1 ? div.Identifier + 1 : DivisionCount;
             }
-            mWindow.NonUIUpdate();
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)

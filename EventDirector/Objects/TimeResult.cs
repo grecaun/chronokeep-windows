@@ -169,11 +169,7 @@ namespace EventDirector
             if (one == null || two == null) return 1;
             if (one.DivisionName.Equals(two.DivisionName))
             {
-                if (one.Bib == two.Bib)
-                {
-                    return one.dateTime.CompareTo(two.dateTime);
-                }
-                return one.Bib.CompareTo(two.Bib);
+                return one.dateTime.CompareTo(two.dateTime);
             }
             return one.DivisionName.CompareTo(two.DivisionName);
         }
