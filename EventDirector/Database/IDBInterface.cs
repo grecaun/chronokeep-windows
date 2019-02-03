@@ -110,10 +110,13 @@ namespace EventDirector
         void RemoveTimingResult(TimeResult tr);
         List<TimeResult> GetTimingResults(int eventId);
         List<TimeResult> GetStartTimes(int eventId);
+        List<TimeResult> GetFinishTimes(int eventId);
 
         // Reset functions for ChipReads/TimeResults
-        void ResetTimingResults(int eventId);
-        void ResetTimingResults(int eventId, int bib);
+        void ResetTimingResultsEvent(int eventId);                      // event based reset
+        void ResetTimingResultsBib(int eventId, int bib);               // bib based reset
+        void ResetTimingResultsChip(int eventId, string chip);          // chip based reset
+        void ResetTimingResultsDivision(int eventId, int divisionId);   // Division based reset
 
         // Day of Participant / Kiosk Functions
         void AddDayOfParticipant(DayOfParticipant part);

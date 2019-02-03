@@ -2198,7 +2198,44 @@ namespace EventDirector
             return GetResults(reader);
         }
 
-        public void ResetTimingResults(int eventId)
+        public List<TimeResult> GetFinishTimes(int eventId)
+        {
+            Log.D("Getting finish times for event id of " + eventId);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM time_results r " +
+                "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN (eventspecific e " +
+                "JOIN participants p ON p.participant_id=e.participant_id " +
+                "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@eventid", eventId),
+                new SQLiteParameter("@segment", Constants.Timing.SEGMENT_FINISH)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            return GetResults(reader);
+        }
+
+        public void UpdateTimingResult(TimeResult oldResult, String newTime)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "UPDATE time_results SET timeresult_time=@time WHERE event_id=@event AND eventspecific_id=@eventspecific AND location_id=@location AND timeresult_occurance=@occurance";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@time", newTime),
+                new SQLiteParameter("@event", oldResult.EventIdentifier),
+                new SQLiteParameter("@eventspecific", oldResult.EventSpecificId),
+                new SQLiteParameter("@location", oldResult.LocationId),
+                new SQLiteParameter("@occurance", oldResult.Occurrence)});
+            command.ExecuteNonQuery();
+        }
+
+        /*
+         * Reset options for time_results and chipreads
+         */
+
+        public void ResetTimingResultsEvent(int eventId)
         {
             Log.D("Resetting timing results for event " + eventId);
             SQLiteCommand command = connection.CreateCommand();
@@ -2213,7 +2250,7 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
-        public void ResetTimingResults(int eventId, int bib)
+        public void ResetTimingResultsBib(int eventId, int bib)
         {
             Log.D("Resetting timing results for bib " + bib + " and event " + eventId);
             SQLiteCommand command = connection.CreateCommand();
@@ -2233,17 +2270,45 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
-        public void UpdateTimingResult(TimeResult oldResult, String newTime)
+        public void ResetTimingResultsChip(int eventId, string chip)
         {
+            Log.D("Resetting timing results for chip " + chip + " and event " + eventId);
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE time_results SET timeresult_time=@time WHERE event_id=@event AND eventspecific_id=@eventspecific AND location_id=@location AND timeresult_occurance=@occurance";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                new SQLiteParameter("@time", newTime),
-                new SQLiteParameter("@event", oldResult.EventIdentifier),
-                new SQLiteParameter("@eventspecific", oldResult.EventSpecificId),
-                new SQLiteParameter("@location", oldResult.LocationId),
-                new SQLiteParameter("@occurance", oldResult.Occurrence)} );
+            command.CommandText = "DELETE FROM time_results r WHERE r.event_id=@event AND" +
+                " EXISTS (SELECT * FROM eventspecific s JOIN bib_chip_assoc b ON b.bib=s.eventspecific_bib " +
+                " WHERE s.eventspecific_id=r.eventspecific_id" +
+                " AND b.chip=@chip);" +
+                "UPDATE chipreads r SET r.read_status=@status WHERE r.event_id=@event AND" +
+                " r.read_chipnumber=@chip AND read_status<>@ignore;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
+                new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE),
+                new SQLiteParameter("chip", chip)
+            });
+            command.ExecuteNonQuery();
+        }
+
+        public void ResetTimingResultsDivision(int eventId, int divisionId)
+        {
+            Log.D("Resetting timing results for division " + divisionId + " and event " + eventId);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM time_results r WHERE r.event_id=@event AND" +
+                " EXISTS (SELECT * FROM eventspecific s WHERE s.eventspecific_id=r.eventspecific_id" +
+                " AND s.division_id=@div);" +
+                "UPDATE chipreads r SET r.read_status=@status WHERE r.event_id=@event AND" +
+                " EXISTS (SELECT * FROM divisions d JOIN eventspecific s ON s.division_id=d.division_id " +
+                " JOIN bib_chip_assoc b on b.bib=s.eventspecific_bib " +
+                " WHERE d.event_id=@event AND d.division_id=@div AND (r.read_bib=b.bib OR r.read_chipnumber=b.chip)" +
+                " ) AND read_status<>@ignore;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
+                new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE),
+                new SQLiteParameter("@div", divisionId)
+            });
             command.ExecuteNonQuery();
         }
 

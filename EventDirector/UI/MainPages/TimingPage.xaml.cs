@@ -465,7 +465,8 @@ namespace EventDirector.UI.MainPages
         private void Recalculate_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Recalculate results clicked.");
-            database.ResetTimingResults(theEvent.Identifier);
+            database.ResetTimingResultsEvent(theEvent.Identifier);
+            UpdateView();
             mWindow.NotifyTimingWorker();
         }
 
