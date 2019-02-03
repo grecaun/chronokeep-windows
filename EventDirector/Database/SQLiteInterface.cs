@@ -2943,7 +2943,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
-                "LEFT JOIN eventspecific e ON (e.eventspecific_bib=b.bib AND e.event_id=c.event_id) " +
+                "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id) " +
                 "LEFT JOIN participants p ON p.participant_id=e.participant_id;";
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
@@ -2954,7 +2954,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
-                "LEFT JOIN eventspecific e ON (e.eventspecific_bib=b.bib AND e.event_id=c.event_id) " +
+                "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id) " +
                 "LEFT JOIN participants p ON p.participant_id=e.participant_id " +
                 "WHERE c.event_id=@event;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
@@ -2967,7 +2967,7 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on c.read_chipnumber=b.chip " +
-                "LEFT JOIN eventspecific e ON (e.eventspecific_bib=b.bib AND e.event_id=c.event_id) " +
+                "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id) " +
                 "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND " +
                 "(read_status=@status OR EXISTS (SELECT * FROM time_results r WHERE c.read_id=r.read_id));";
             command.Parameters.AddRange(new SQLiteParameter[]

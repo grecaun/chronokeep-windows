@@ -104,19 +104,40 @@ namespace EventDirector.UI.Timing
                 MessageBox.Show("Invalid bib value given.");
                 return;
             }
+            List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+            // Store the offset start values for each division by division ID
+            Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
+            // Store participants by their bib number
+            Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
+            foreach (Division div in divisions)
+            {
+                divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
+            }
+            foreach (Participant part in participants)
+            {
+                participantsDictionary[part.EventSpecific.Bib] = part;
+            }
+            (int seconds, int milliseconds) startOffset = (0, 0);
+            // Check if the bib corresponds to a person, then if that person has a valid division ID
+            if (participantsDictionary.ContainsKey(bib) && divisionStartOffsetDictionary
+                .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
+            {
+                startOffset = divisionStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
+            }
             String timeVal = TimeBox.Text.Replace('_', '0');
             int locationId = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem).Uid);
             DateTime time;
             long hours, minutes, seconds, milliseconds;
-            hours = Convert.ToInt32(timeVal.Substring(0, 3));
-            minutes = Convert.ToInt32(timeVal.Substring(4, 2));
-            seconds = Convert.ToInt32(timeVal.Substring(7, 2));
-            milliseconds = Convert.ToInt32(timeVal.Substring(10, 3));
+            hours = Convert.ToInt32(timeVal.Substring(0, 2));
+            minutes = Convert.ToInt32(timeVal.Substring(3, 2));
+            seconds = Convert.ToInt32(timeVal.Substring(6, 2));
+            milliseconds = Convert.ToInt32(timeVal.Substring(9, 3));
             if (NetTimeButton.IsChecked == true)
             {
                 time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
-                milliseconds += theEvent.StartMilliseconds;
-                seconds += (minutes * 60) + (hours * 3600) + theEvent.StartSeconds;
+                milliseconds += theEvent.StartMilliseconds + startOffset.milliseconds;
+                seconds += (minutes * 60) + (hours * 3600) + theEvent.StartSeconds + startOffset.seconds;
             }
             else
             {
