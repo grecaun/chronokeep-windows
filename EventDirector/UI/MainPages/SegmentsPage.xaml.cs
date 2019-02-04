@@ -28,7 +28,9 @@ namespace EventDirector.UI.MainPages
         private List<TimingLocation> locations;
         private int finish_occurrences;
 
-        private static int selectedDiv = -1;
+        private static int selectedDiv = Constants.Timing.COMMON_SEGMENTS_DIVISIONID;
+        private static bool NotifyTimingWorker = false;
+        private static HashSet<int> DivisionsToReset = new HashSet<int>();
 
         public SegmentsPage(IMainWindow mWindow, IDBInterface database)
         {
@@ -117,16 +119,17 @@ namespace EventDirector.UI.MainPages
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Add segment clicked.");
-            int divId = Constants.Timing.COMMON_SEGMENTS_DIVISIONID;
+            selectedDiv = Constants.Timing.COMMON_SEGMENTS_DIVISIONID;
             if (theEvent.DivisionSpecificSegments == 1)
             {
-                divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
+                selectedDiv = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
             }
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
-            database.AddSegment(new Segment(theEvent.Identifier, divId, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
+            database.AddSegment(new Segment(theEvent.Identifier, selectedDiv, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
+            DivisionsToReset.Add(selectedDiv);
             mWindow.Update();
         }
 
@@ -149,6 +152,7 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.RemoveSegment(mySegment);
+            DivisionsToReset.Add(mySegment.DivisionId);
             mWindow.Update();
         }
 
@@ -164,10 +168,28 @@ namespace EventDirector.UI.MainPages
 
         public void UpdateDatabase()
         {
+            Dictionary<int, Segment> oldSegments = new Dictionary<int, Segment>();
+            foreach (Segment seg in database.GetSegments(theEvent.Identifier))
+            {
+                oldSegments[seg.Identifier] = seg;
+            }
             foreach (ASegment segItem in SegmentsBox.Items)
             {
                 segItem.UpdateSegment();
+                if (oldSegments.ContainsKey(segItem.mySegment.Identifier) &&
+                    oldSegments[segItem.mySegment.Identifier].Occurrence != segItem.mySegment.Occurrence)
+                {
+                    DivisionsToReset.Add(segItem.mySegment.DivisionId);
+                }
                 database.UpdateSegment(segItem.mySegment);
+            }
+            if (DivisionsToReset.Count > 0)
+            {
+                foreach (int identifier in DivisionsToReset)
+                {
+                    database.ResetTimingResultsDivision(theEvent.Identifier, identifier);
+                    NotifyTimingWorker = true;
+                }
             }
         }
 
@@ -192,6 +214,10 @@ namespace EventDirector.UI.MainPages
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
+            }
+            if (NotifyTimingWorker)
+            {
+                mWindow.NotifyTimingWorker();
             }
         }
 

@@ -111,6 +111,7 @@ namespace EventDirector
         List<TimeResult> GetTimingResults(int eventId);
         List<TimeResult> GetStartTimes(int eventId);
         List<TimeResult> GetFinishTimes(int eventId);
+        bool UnprocessedReadsExist(int eventId);
 
         // Reset functions for ChipReads/TimeResults
         void ResetTimingResultsEvent(int eventId);                      // event based reset

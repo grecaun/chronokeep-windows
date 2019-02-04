@@ -109,10 +109,28 @@ namespace EventDirector.UI.MainPages
 
         public void UpdateDatabase()
         {
+            bool NotifyTimingWorker = false;
+            Dictionary<int, Division> oldDivisions = new Dictionary<int, Division>();
+            foreach (Division division in database.GetDivisions(theEvent.Identifier))
+            {
+                oldDivisions[division.Identifier] = division;
+            }
             foreach (ADivision listDiv in DivisionsBox.Items)
             {
                 listDiv.UpdateDivision();
+                int divId = listDiv.theDivision.Identifier;
+                if (oldDivisions.ContainsKey(divId) &&
+                    (oldDivisions[divId].StartOffsetSeconds != listDiv.theDivision.StartOffsetSeconds ||
+                    oldDivisions[divId].StartOffsetMilliseconds != listDiv.theDivision.StartOffsetMilliseconds) )
+                {
+                    NotifyTimingWorker = true;
+                    database.ResetTimingResultsDivision(theEvent.Identifier, divId);
+                }
                 database.UpdateDivision(listDiv.theDivision);
+            }
+            if (NotifyTimingWorker)
+            {
+                mWindow.NotifyTimingWorker();
             }
         }
 
