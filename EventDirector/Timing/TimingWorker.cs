@@ -1,4 +1,5 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,9 @@ namespace EventDirector.Timing
 
         private static readonly Semaphore semaphore = new Semaphore(0, 2);
         private static readonly Mutex mutex = new Mutex();
+        private static readonly Mutex ageGroupMutex = new Mutex();
         private static bool QuittingTime = false;
+        private static bool RecalculateAgeGroupsBool = true;
 
         private TimingWorker(IMainWindow window, IDBInterface database)
         {
@@ -39,6 +42,15 @@ namespace EventDirector.Timing
             {
                 QuittingTime = true;
                 mutex.ReleaseMutex();
+            }
+        }
+
+        public static void RecalculateAgeGroups()
+        {
+            if (ageGroupMutex.WaitOne(3000))
+            {
+                RecalculateAgeGroupsBool = true;
+                ageGroupMutex.ReleaseMutex();
             }
         }
 
@@ -69,14 +81,36 @@ namespace EventDirector.Timing
                 Log.D("Entering loop " + counter++);
                 Event theEvent = database.GetCurrentEvent();
                 // ensure the event exists and we've got unprocessed reads
-                if (theEvent != null && theEvent.Identifier != -1 &&
-                    database.UnprocessedReadsExist(theEvent.Identifier))
+                if (theEvent != null && theEvent.Identifier != -1)
                 {
-                    // If RACETYPE is DISTANCE
-                    ProcessDistanceBasedRace(theEvent);
-                    // Else RACETYPE is TIME
-                    // ProcessTimeBasedRace(theEvent);
-                    ProcessPlacements(theEvent);
+                    if (database.UnprocessedReadsExist(theEvent.Identifier))
+                    {
+                        // If RACETYPE is DISTANCE
+                        ProcessDistanceBasedRace(theEvent);
+                        // Else RACETYPE is TIME
+                        // ProcessTimeBasedRace(theEvent);
+                    }
+                    if (database.UnprocessedResultsExist(theEvent.Identifier))
+                    {
+                        if (ageGroupMutex.WaitOne(3000))
+                        {
+                            if (RecalculateAgeGroupsBool)
+                            {
+                                Log.D("Updating Age Groups.");
+                                ageGroupMutex.ReleaseMutex();
+                                UpdateAgeGroups(theEvent);
+                            }
+                            else
+                            {
+                                ageGroupMutex.ReleaseMutex();
+                            }
+                        }
+                        // If RACETYPE if DISTANCE
+                        ProcessPlacementsDistance(theEvent);
+                        // Else RACETYPE is TIME
+                        // ProcessPlacementsTime(theEvent);
+                    }
+                    window.NonUIUpdate();
                 }
             } while (true);
         }
@@ -145,7 +179,6 @@ namespace EventDirector.Timing
             // Get all of the Chip Reads we find useful (Unprocessed, and those used as a result.)
             // and then sort them into groups based upon Bib, Chip, or put them in the ignore pile if
             // they have no bib or chip.
-            string startTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff   ");
             Dictionary<int, List<ChipRead>> bibReadPairs = new Dictionary<int, List<ChipRead>>();
             Dictionary<string, List<ChipRead>> chipReadPairs = new Dictionary<string, List<ChipRead>>();
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
@@ -547,36 +580,18 @@ namespace EventDirector.Timing
             }
             // Update database with information.
             database.AddTimingResults(newResults);
-            // Write to log test information.
-            string endTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            string outfilepath = System.IO.Path.Combine(database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value, "TimingWorkerTestFile.txt");
-            List<string> messages = new List<string>
-                {
-                    String.Format("{0} - {1} : {2}", startTime, endTime, allChipReads.Count)
-                };
             foreach (int BibKey in bibReadPairs.Keys)
             {
                 database.SetChipReadStatuses(bibReadPairs[BibKey]);
-                foreach (ChipRead read in bibReadPairs[BibKey])
-                {
-                    messages.Add(String.Format(" {4,5} {0,10} - {3,30} - Time {1,25} - Status {2,10}", BibKey, read.Time.ToString("yyyy-MM-dd HH:mm:ss.fff"), read.StatusName, read.Name, "Bib"));
-                }
             }
             foreach (string ChipKey in chipReadPairs.Keys)
             {
                 database.SetChipReadStatuses(chipReadPairs[ChipKey]);
-                foreach (ChipRead read in chipReadPairs[ChipKey])
-                {
-                    messages.Add(String.Format(" {4,5} {0,10} - {3,30} - Time {1,25} - Status {2,10}", ChipKey, read.Time.ToString("yyyy-MM-dd HH:mm:ss.fff"), read.StatusName, read.Name, "Chip"));
-                }
             }
             foreach (ChipRead read in setUnknown)
             {
                 database.SetChipReadStatuses(setUnknown);
-                messages.Add(String.Format(" {4,5} {0,10} - {3,30} - Time {1,25} - Status {2,10}", "", read.Time.ToString("yyyy-MM-dd HH:mm:ss.fff"), read.StatusName, read.Name, "Bib"));
             }
-            Log.WriteFile(outfilepath, messages.ToArray()); //*/
-            window.NonUIUpdate();
         }
 
         private void ProcessTimeBasedRace(Event theEvent)
@@ -584,9 +599,143 @@ namespace EventDirector.Timing
 
         }
 
-        private void ProcessPlacements(Event theEvent)
+        private void UpdateAgeGroups(Event theEvent)
         {
+            List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+            // Dictionary containing Age groups based upon their (Division, Age in Years)
+            Dictionary<(int, int), int> divisionAgeGroups = new Dictionary<(int, int), int>();
+            // process them into lists based upon divisions (in case there are division specific age groups)
+            foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
+            {
+                Log.D(String.Format("Age group {0} - Div {3} - {1} - {2}", group.GroupId, group.StartAge, group.EndAge, group.DivisionId));
+                for (int age = group.StartAge; age <= group.EndAge; age++)
+                {
+                    divisionAgeGroups[(group.DivisionId, age)] = group.GroupId;
+                }
+            }
+            int ageGroupDivisionId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
+            foreach (Participant part in participants)
+            {
+                if (theEvent.CommonAgeGroups != 1)
+                {
+                    ageGroupDivisionId = part.EventSpecific.DivisionIdentifier;
+                }
+                int age = part.GetAge(theEvent.Date);
+                if (divisionAgeGroups.ContainsKey((ageGroupDivisionId, age)))
+                {
+                    part.EventSpecific.AgeGroup = divisionAgeGroups[(ageGroupDivisionId, age)];
+                }
+            }
+            database.UpdateParticipants(participants);
+            if (ageGroupMutex.WaitOne(3000))
+            {
+                RecalculateAgeGroupsBool = false;
+                ageGroupMutex.ReleaseMutex();
+            }
+        }
 
+        private void ProcessPlacementsDistance(Event theEvent)
+        {
+            // Get participants
+            Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
+            List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+            foreach (Participant person in participants)
+            {
+                participantDictionary[person.EventSpecific.Identifier] = person;
+            }
+            // Dictionary containing Age groups based upon their (Division, Age in Years)
+            Dictionary<(int, int), int> divisionAgeGroups = new Dictionary<(int, int), int>();
+            // process them into lists based upon divisions (in case there are division specific age groups)
+            foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
+            {
+                Log.D(String.Format("Age group {0} - Div {3} - {1} - {2}", group.GroupId, group.StartAge, group.EndAge, group.DivisionId));
+                for (int age = group.StartAge; age <= group.EndAge; age++)
+                {
+                    divisionAgeGroups[(group.DivisionId, age)] = group.GroupId;
+                }
+            }
+            // Get a list of all segments
+            List<Segment> segments = database.GetSegments(theEvent.Identifier);
+            // process results based upon the segment they're in
+            foreach (Segment segment in segments)
+            {
+                List<TimeResult> segmentResults = database.GetSegmentTimes(theEvent.Identifier, segment.Identifier);
+                ProcessSegmentPlacements(theEvent, segmentResults, participantDictionary);
+            }
+            ProcessSegmentPlacements(theEvent, database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH), participantDictionary);
+        }
+
+        private void ProcessSegmentPlacements(Event theEvent,
+            List<TimeResult> segmentResults,
+            Dictionary<int, Participant> participantDictionary)
+        {
+            if (theEvent.RankByGun != 0)
+            {
+                segmentResults.Sort(TimeResult.CompareByDivision);
+            }
+            else
+            {
+                segmentResults.Sort(TimeResult.CompareByDivisionChip);
+            }
+            // Get Dictionaries for storing the last known place (age group, gender)
+            // The key is as follows: (Division ID, Age Group ID, int - Gender ID (M=1,F=2))
+            // The value stored is the last place given
+            Dictionary<(int, int, int), int> ageGroupPlaceDictionary = new Dictionary<(int, int, int), int>();
+            // The key is as follows: (Division ID, Gender ID (M=1, F=2))
+            // The value stored is the last place given
+            Dictionary<(int, int), int> genderPlaceDictionary = new Dictionary<(int, int), int>();
+            // The key is as follows: (Division ID)
+            // The value stored is the last place given
+            Dictionary<int, int> placeDictionary = new Dictionary<int, int>();
+            int ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+            int divisionId = -1;
+            int age = -1;
+            int gender = -1;
+            Participant person = null;
+            foreach (TimeResult result in segmentResults)
+            {
+                // Check if we know who the person is. Can't rank them if we don't know
+                // what division they're in, their age, or their gender
+                if (participantDictionary.ContainsKey(result.EventSpecificId))
+                {
+                    person = participantDictionary[result.EventSpecificId];
+                    // DivisionID is the person's actual DivisionId, whereas ageGroupDivisionID might
+                    // be the dummy divisionID because of common age groups
+                    divisionId = person.EventSpecific.DivisionIdentifier;
+                    age = person.GetAge(theEvent.Date);
+                    gender = Constants.Timing.TIMERESULT_GENDER_UNKNOWN;
+                    if (person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase)
+                        || person.Gender.Equals("Male", StringComparison.OrdinalIgnoreCase))
+                    {
+                        gender = Constants.Timing.TIMERESULT_GENDER_MALE;
+                    }
+                    else if (person.Gender.Equals("F", StringComparison.OrdinalIgnoreCase)
+                        || person.Gender.Equals("Female", StringComparison.OrdinalIgnoreCase))
+                    {
+                        gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
+                    }
+                    ageGroupId = person.EventSpecific.AgeGroup;
+                    // Since Results were sorted before we started, let's assume that the first item
+                    // is the fastest and if we can't find the key, add one starting at 0
+                    if (!placeDictionary.ContainsKey(divisionId))
+                    {
+                        placeDictionary[divisionId] = 0;
+                    }
+                    result.Place = ++(placeDictionary[divisionId]);
+                    if (!genderPlaceDictionary.ContainsKey((divisionId, gender)))
+                    {
+                        genderPlaceDictionary[(divisionId, gender)] = 0;
+                    }
+                    result.GenderPlace = ++(genderPlaceDictionary[(divisionId, gender)]);
+                    if (!ageGroupPlaceDictionary.ContainsKey((divisionId, ageGroupId, gender)))
+                    {
+                        ageGroupPlaceDictionary[(divisionId, ageGroupId, gender)] = 0;
+                    }
+                    result.AgePlace = ++(ageGroupPlaceDictionary[(divisionId, ageGroupId, gender)]);
+                    result.Status = Constants.Timing.CHIPREAD_STATUS_USED;
+                }
+            }
+            database.AddTimingResults(segmentResults);
         }
     }
 }

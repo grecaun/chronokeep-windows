@@ -27,6 +27,8 @@ namespace EventDirector.UI.MainPages
         private IDBInterface database;
         private Event theEvent;
 
+        private bool touched = false;
+
         public AgeGroupsPage(IMainWindow mWindow, IDBInterface database)
         {
             InitializeComponent();
@@ -99,7 +101,7 @@ namespace EventDirector.UI.MainPages
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Adding group.");
-            int divId = -1;
+            int divId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
             if (theEvent.CommonAgeGroups != 1)
             {
                 divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
@@ -110,7 +112,7 @@ namespace EventDirector.UI.MainPages
         private void AddDefault_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Add default age groups button clicked.");
-            int divId = -1;
+            int divId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
             if (theEvent.CommonAgeGroups != 1)
             {
                 divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
@@ -142,6 +144,7 @@ namespace EventDirector.UI.MainPages
                 database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 40, 59));
                 database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 60, 99));
             }
+            touched = true;
             UpdateAgeGroupsList();
         }
 
@@ -186,7 +189,7 @@ namespace EventDirector.UI.MainPages
                 return;
             }
             ageGroups.AddRange(toAdd);
-            int divId = -1;
+            int divId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
             if (theEvent.CommonAgeGroups != 1)
             {
                 divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
@@ -196,6 +199,7 @@ namespace EventDirector.UI.MainPages
             {
                 database.AddAgeGroup(age);
             }
+            touched = true;
             UpdateAgeGroupsList();
         }
 
@@ -236,6 +240,12 @@ namespace EventDirector.UI.MainPages
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
+            }
+            if (touched)
+            {
+                database.ResetTimingResultsPlacements(theEvent.Identifier);
+                mWindow.NotifyRecalculateAgeGroups();
+                mWindow.NotifyTimingWorker();
             }
         }
 

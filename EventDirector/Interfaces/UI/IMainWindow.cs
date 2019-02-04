@@ -31,5 +31,6 @@ namespace EventDirector.Interfaces
         List<TimingSystem> GetConnectedSystems();
         void NonUIUpdate();
         void NotifyTimingWorker();
+        void NotifyRecalculateAgeGroups();
     }
 }

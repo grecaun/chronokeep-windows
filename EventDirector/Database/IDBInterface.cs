@@ -71,6 +71,7 @@ namespace EventDirector
         void RemoveParticipantEntry(Participant person);
         void RemoveParticipantEntries(List<Participant> participants);
         void UpdateParticipant(Participant person);
+        void UpdateParticipants(List<Participant> participants);
         int GetParticipantID(Participant person);
         void CheckInParticipant(int eventId, int identifier, int checkedIn);
         void CheckInParticipant(Participant person);
@@ -110,14 +111,16 @@ namespace EventDirector
         void RemoveTimingResult(TimeResult tr);
         List<TimeResult> GetTimingResults(int eventId);
         List<TimeResult> GetStartTimes(int eventId);
-        List<TimeResult> GetFinishTimes(int eventId);
+        List<TimeResult> GetSegmentTimes(int eventId, int segmentId);
         bool UnprocessedReadsExist(int eventId);
+        bool UnprocessedResultsExist(int eventId);
 
         // Reset functions for ChipReads/TimeResults
         void ResetTimingResultsEvent(int eventId);                      // event based reset
         void ResetTimingResultsBib(int eventId, int bib);               // bib based reset
         void ResetTimingResultsChip(int eventId, string chip);          // chip based reset
         void ResetTimingResultsDivision(int eventId, int divisionId);   // Division based reset
+        void ResetTimingResultsPlacements(int eventId);
 
         // Day of Participant / Kiosk Functions
         void AddDayOfParticipant(DayOfParticipant part);

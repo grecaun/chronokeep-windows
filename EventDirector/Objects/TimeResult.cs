@@ -9,10 +9,12 @@ namespace EventDirector
 {
     public class TimeResult
     {
-        int eventId, eventspecificId, locationId, segmentId,
-            occurrence, bib, readId;
-        string time, locationName, segmentName, participantName,
-            divisionName, unknownId, chipTime;
+        private int eventId, eventspecificId, locationId, segmentId,
+            occurrence, bib, readId, place, agePlace, genderPlace,
+            ageGroupId, chipMilliseconds, status;
+        private long chipSeconds;
+        private string time, locationName, segmentName, participantName,
+            divisionName, unknownId, chipTime, gender, ageGroupName;
         DateTime systemTime;
 
         public static readonly Regex timeRegex = new Regex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})");
@@ -22,7 +24,9 @@ namespace EventDirector
 
         public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
             string time, int occurrence, string first, string last, string division, int bib,
-            int readId, string unknownId, string systemTime, string chipTime)
+            int readId, string unknownId, string systemTime, string chipTime, int place,
+            int agePlace, int genderPlace, string gender, int ageGroupId, string ageStart, string ageEnd,
+            int status)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -55,6 +59,23 @@ namespace EventDirector
             this.readId = readId;
             this.systemTime = DateTime.Parse(systemTime);
             this.chipTime = chipTime;
+            this.place = place;
+            this.agePlace = agePlace;
+            this.genderPlace = genderPlace;
+            this.gender = gender;
+            this.ageGroupId = ageGroupId;
+            this.ageGroupName = String.Format("{0}-{1}", ageStart, ageEnd);
+            Match chipTimeMatch = timeRegex.Match(chipTime);
+            chipSeconds = 0;
+            chipMilliseconds = 0;
+            if (chipTimeMatch != null)
+            {
+                chipSeconds = (Convert.ToInt64(chipTimeMatch.Groups[1].Value) * 3600)
+                   + (Convert.ToInt64(chipTimeMatch.Groups[2].Value) * 60)
+                   + Convert.ToInt64(chipTimeMatch.Groups[3].Value);
+                chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
+            }
+            this.status = status;
         }
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
@@ -72,6 +93,10 @@ namespace EventDirector
             this.chipTime = chipTime;
             this.systemTime = systemTime;
             this.bib = bib;
+            place = Constants.Timing.TIMERESULT_DUMMYPLACE;
+            agePlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
+            genderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
+            status = Constants.Timing.CHIPREAD_STATUS_NONE;
         }
 
         public static void SetupStaticVariables(IDBInterface database)
@@ -118,9 +143,13 @@ namespace EventDirector
         public string DivisionName { get => divisionName; set => divisionName = value; }
         public int Bib { get => bib; set => bib = value; }
         public string UnknownId { get => unknownId; set => unknownId = value; }
-        public int EventId { get => eventId; set => eventId = value; }
-        public int EventspecificId { get => eventspecificId; set => eventspecificId = value; }
         public int ReadId { get => readId; set => readId = value; }
+        public int Place { get => place; set => place = value; }
+        public string PlaceStr { get => place < 1 ? "" : place.ToString(); }
+        public int AgePlace { get => agePlace; set => agePlace = value; }
+        public string AgePlaceStr { get => agePlace < 1 ? "" : agePlace.ToString(); }
+        public int GenderPlace { get => genderPlace; set => genderPlace = value; }
+        public string GenderPlaceStr { get => genderPlace < 1 ? "" : genderPlace.ToString(); }
         public string Identifier {
             get
             {
@@ -143,6 +172,10 @@ namespace EventDirector
         }
 
         public string ChipTime { get => chipTime; set => chipTime = value; }
+        public string Gender { get => gender; set => gender = value; }
+        public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
+        public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
+        public int Status { get => status; set => status = value; }
 
         public static int CompareByGunTime(TimeResult one, TimeResult two)
         {
@@ -181,6 +214,20 @@ namespace EventDirector
             if (one.DivisionName.Equals(two.DivisionName))
             {
                 return one.systemTime.CompareTo(two.systemTime);
+            }
+            return one.DivisionName.CompareTo(two.DivisionName);
+        }
+
+        public static int CompareByDivisionChip(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.DivisionName.Equals(two.DivisionName))
+            {
+                if (one.chipSeconds == two.chipSeconds)
+                {
+                    return one.chipMilliseconds.CompareTo(two.chipMilliseconds);
+                }
+                return one.chipSeconds.CompareTo(two.chipSeconds);
             }
             return one.DivisionName.CompareTo(two.DivisionName);
         }

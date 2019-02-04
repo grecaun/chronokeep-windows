@@ -439,6 +439,21 @@ namespace EventDirector
                     this.gender = gender.Substring(0, 1);
                 }
                 this.gender = gender.ToUpper();
+                if (!gender.Equals("M") && !gender.Equals("F"))
+                {
+                    if (gender.Equals("W"))
+                    {
+                        this.gender = "F";
+                    }
+                    else
+                    {
+                        this.gender = "U";
+                    }
+                }
+            }
+            else
+            {
+                this.gender = "U";
             }
             try
             {
@@ -545,6 +560,18 @@ namespace EventDirector
                 numYears--;
             }
             return Convert.ToString(numYears);
+        }
+
+        public int GetAge(String eventDate)
+        {
+            DateTime eventDateTime = Convert.ToDateTime(eventDate);
+            DateTime myDateTime = Convert.ToDateTime(birthdate);
+            int numYears = eventDateTime.Year - myDateTime.Year;
+            if (eventDateTime.Month < myDateTime.Month || (eventDateTime.Month == myDateTime.Month && eventDateTime.Day < myDateTime.Day))
+            {
+                numYears--;
+            }
+            return numYears;
         }
 
         public static int CompareByDivision(Participant one, Participant two)

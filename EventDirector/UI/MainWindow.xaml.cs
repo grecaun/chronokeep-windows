@@ -469,5 +469,10 @@ namespace EventDirector.UI
         {
 
         }
+
+        public void NotifyRecalculateAgeGroups()
+        {
+            TimingWorker.RecalculateAgeGroups();
+        }
     }
 }

@@ -169,6 +169,7 @@ namespace EventDirector
                     "eventspecific_earlystart INTEGER DEFAULT 0," +
                     "eventspecific_next_year INTEGER DEFAULT 0," +
                     "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
+                    "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
                     "UNIQUE (participant_id, event_id, division_id) ON CONFLICT REPLACE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS eventspecific_apparel (" +
@@ -199,6 +200,10 @@ namespace EventDirector
                     "timeresult_time TEXT NOT NULL," +
                     "timeresult_chiptime TEXT NOT NULL," +
                     "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
+                    "timeresult_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                    "timeresult_age_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                    "timeresult_gender_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                    "timeresult_status INT NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_STATUS_NONE + "," +
                     "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS chipreads (" +
@@ -1011,8 +1016,14 @@ namespace EventDirector
                                 "timeresult_time TEXT NOT NULL," +
                                 "timeresult_chiptime TEXT NOT NULL," +
                                 "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
+                                "timeresult_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                                "timeresult_age_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                                "timeresult_gender_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                                "timeresult_status INT NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_STATUS_NONE + "," +
                                 "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
-                                "); UPDATE settings SET version=32 WHERE version=31;";
+                                ");" +
+                            "ALTER TABLE eventspecific ADD eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + ";" +
+                            "UPDATE settings SET version=32 WHERE version=31;";
                         command.ExecuteNonQuery();
                         break;
                 }
@@ -1593,19 +1604,16 @@ namespace EventDirector
             }
         }
 
-        public void UpdateParticipant(Participant person)
+        private void UpdateParticipantNoTran(Participant person)
         {
-            person.FormatData();
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandType = System.Data.CommandType.Text;
-                Log.D("Updating participant values.");
-                command.CommandText = "UPDATE participants SET participant_first=@first, participant_last=@last, participant_street=@street," +
-                    " participant_city=@city, participant_state=@state, participant_zip=@zip, participant_birthday=@birthdate," +
-                    " emergencycontact_name=@ecname, emergencycontact_phone=@ecphone, participant_email=@email, participant_mobile=@mobile," +
-                    " participant_parent=@parent, participant_country=@country, participant_street2=@street2, participant_gender=@gender WHERE participant_id=@participantid";
-                command.Parameters.AddRange(new SQLiteParameter[] {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            Log.D("Updating participant values.");
+            command.CommandText = "UPDATE participants SET participant_first=@first, participant_last=@last, participant_street=@street," +
+                " participant_city=@city, participant_state=@state, participant_zip=@zip, participant_birthday=@birthdate," +
+                " emergencycontact_name=@ecname, emergencycontact_phone=@ecphone, participant_email=@email, participant_mobile=@mobile," +
+                " participant_parent=@parent, participant_country=@country, participant_street2=@street2, participant_gender=@gender WHERE participant_id=@participantid";
+            command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@first", person.FirstName),
                     new SQLiteParameter("@last", person.LastName),
                     new SQLiteParameter("@street", person.Street),
@@ -1622,15 +1630,15 @@ namespace EventDirector
                     new SQLiteParameter("@country", person.Country),
                     new SQLiteParameter("@street2", person.Street2),
                     new SQLiteParameter("@gender", person.Gender) });
-                command.ExecuteNonQuery();
-                command = connection.CreateCommand();
-                command.CommandType = System.Data.CommandType.Text;
-                Log.D("Updating event specific.... bib is " + person.EventSpecific.Bib);
-                command.CommandText = "UPDATE eventspecific SET division_id=@divid, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
-                    "eventspecific_owes=@owes, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_next_year=@nextYear," +
-                    "eventspecific_comments=@comments " +
-                    "WHERE eventspecific_id=@eventspecid";
-                command.Parameters.AddRange(new SQLiteParameter[] {
+            command.ExecuteNonQuery();
+            command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            Log.D("Updating event specific.... bib is " + person.EventSpecific.Bib);
+            command.CommandText = "UPDATE eventspecific SET division_id=@divid, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
+                "eventspecific_owes=@owes, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_next_year=@nextYear," +
+                "eventspecific_comments=@comments, eventspecific_age_group_id=@agegroup " +
+                "WHERE eventspecific_id=@eventspecid";
+            command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@divid", person.EventSpecific.DivisionIdentifier),
                     new SQLiteParameter("@bib", person.EventSpecific.Bib),
                     new SQLiteParameter("@checkedin", person.EventSpecific.CheckedIn),
@@ -1639,9 +1647,31 @@ namespace EventDirector
                     new SQLiteParameter("@other", person.EventSpecific.Other),
                     new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart),
                     new SQLiteParameter("@nextYear", person.EventSpecific.NextYear),
-                    new SQLiteParameter("@comments", person.EventSpecific.Comments)
+                    new SQLiteParameter("@comments", person.EventSpecific.Comments),
+                    new SQLiteParameter("@agegroup", person.EventSpecific.AgeGroup)
                 });
-                command.ExecuteNonQuery();
+            command.ExecuteNonQuery();
+        }
+
+        public void UpdateParticipant(Participant person)
+        {
+            person.FormatData();
+            using (var transaction = connection.BeginTransaction())
+            {
+                UpdateParticipantNoTran(person);
+                transaction.Commit();
+            }
+        }
+
+        public void UpdateParticipants(List<Participant> participants)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (Participant person in participants)
+                {
+                    person.FormatData();
+                    UpdateParticipantNoTran(person);
+                }
                 transaction.Commit();
             }
         }
@@ -1745,7 +1775,8 @@ namespace EventDirector
                         reader["eventspecific_owes"].ToString(),
                         reader["eventspecific_other"].ToString(),
                         Convert.ToInt32(reader["eventspecific_earlystart"]),
-                        Convert.ToInt32(reader["eventspecific_next_year"])
+                        Convert.ToInt32(reader["eventspecific_next_year"]),
+                        Convert.ToInt32(reader["eventspecific_age_group_id"])
                         ),
                     reader["participant_email"].ToString(),
                     reader["participant_mobile"].ToString(),
@@ -1790,7 +1821,8 @@ namespace EventDirector
                         reader["eventspecific_owes"].ToString(),
                         reader["eventspecific_other"].ToString(),
                         Convert.ToInt32(reader["eventspecific_earlystart"]),
-                        Convert.ToInt32(reader["eventspecific_next_year"])
+                        Convert.ToInt32(reader["eventspecific_next_year"]),
+                        Convert.ToInt32(reader["eventspecific_age_group_id"])
                         ),
                     reader["participant_email"].ToString(),
                     reader["participant_mobile"].ToString(),
@@ -1858,7 +1890,8 @@ namespace EventDirector
                         reader["eventspecific_owes"].ToString(),
                         reader["eventspecific_other"].ToString(),
                         Convert.ToInt32(reader["eventspecific_earlystart"]),
-                        Convert.ToInt32(reader["eventspecific_next_year"])
+                        Convert.ToInt32(reader["eventspecific_next_year"]),
+                        Convert.ToInt32(reader["eventspecific_age_group_id"])
                         ),
                     reader["participant_email"].ToString(),
                     reader["participant_mobile"].ToString(),
@@ -2098,8 +2131,11 @@ namespace EventDirector
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO time_results (event_id, eventspecific_id, location_id, segment_id, " +
-                "timeresult_occurance, timeresult_time, timeresult_unknown_id, read_id, timeresult_chiptime)" +
-                " VALUES (@event,@specific,@location,@segment,@occ,@time,@unknown,@read,@chip)";
+                "timeresult_occurance, timeresult_time, timeresult_unknown_id, read_id, timeresult_chiptime," +
+                "timeresult_place, timeresult_age_place, timeresult_gender_place," +
+                "timeresult_status)" +
+                " VALUES (@event,@specific,@location,@segment,@occ,@time,@unknown,@read,@chip,@place,@agplace," +
+                "@gendplace,@status)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tr.EventIdentifier),
                 new SQLiteParameter("@specific", tr.EventSpecificId),
@@ -2109,7 +2145,11 @@ namespace EventDirector
                 new SQLiteParameter("@time", tr.Time),
                 new SQLiteParameter("@unknown", tr.UnknownId),
                 new SQLiteParameter("@read", tr.ReadId),
-                new SQLiteParameter("@chip", tr.ChipTime) } );
+                new SQLiteParameter("@chip", tr.ChipTime),
+                new SQLiteParameter("@place", tr.Place),
+                new SQLiteParameter("@agplace", tr.AgePlace),
+                new SQLiteParameter("@gendplace", tr.GenderPlace),
+                new SQLiteParameter("@status", tr.Status) } );
             command.ExecuteNonQuery();
         }
 
@@ -2158,7 +2198,15 @@ namespace EventDirector
                     Convert.ToInt32(reader["read_id"]),
                     reader["timeresult_unknown_id"].ToString(),
                     reader["read_time"].ToString(),
-                    reader["timeresult_chiptime"].ToString()
+                    reader["timeresult_chiptime"].ToString(),
+                    Convert.ToInt32(reader["timeresult_place"]),
+                    Convert.ToInt32(reader["timeresult_age_place"]),
+                    Convert.ToInt32(reader["timeresult_gender_place"]),
+                    reader["participant_gender"].ToString(),
+                    reader["eventspecific_age_group_id"] == DBNull.Value ? Constants.Timing.TIMERESULT_DUMMYAGEGROUP : Convert.ToInt32(reader["eventspecific_age_group_id"]),
+                    reader["start_age"] == DBNull.Value ? "0" : reader["start_age"].ToString(),
+                    reader["end_age"] == DBNull.Value ? "110" : reader["end_age"].ToString(),
+                    Convert.ToInt32(reader["timeresult_status"])
                     ));
             }
             return output;
@@ -2173,6 +2221,7 @@ namespace EventDirector
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "LEFT JOIN age_groups a ON e.eventspecific_age_group_id=a.group_id " +
                 "WHERE r.event_id=@eventid;";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
@@ -2188,6 +2237,7 @@ namespace EventDirector
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "LEFT JOIN age_groups a ON e.eventspecific_age_group_id=a.group_id " +
                 "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
@@ -2198,7 +2248,7 @@ namespace EventDirector
             return GetResults(reader);
         }
 
-        public List<TimeResult> GetFinishTimes(int eventId)
+        public List<TimeResult> GetSegmentTimes(int eventId, int segmentId)
         {
             Log.D("Getting finish times for event id of " + eventId);
             SQLiteCommand command = connection.CreateCommand();
@@ -2207,11 +2257,12 @@ namespace EventDirector
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "LEFT JOIN age_groups a ON e.eventspecific_age_group_id=a.group_id " +
                 "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@eventid", eventId),
-                new SQLiteParameter("@segment", Constants.Timing.SEGMENT_FINISH)
+                new SQLiteParameter("@segment", segmentId)
             });
             SQLiteDataReader reader = command.ExecuteReader();
             return GetResults(reader);
@@ -2229,6 +2280,40 @@ namespace EventDirector
                 new SQLiteParameter("@location", oldResult.LocationId),
                 new SQLiteParameter("@occurance", oldResult.Occurrence)});
             command.ExecuteNonQuery();
+        }
+
+        public bool UnprocessedReadsExist(int eventId)
+        {
+            Log.D("Checking for unprocessed reads.");
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(1) FROM chipreads WHERE event_id=@event AND read_status=@status;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            reader.Read();
+            return reader.GetInt64(0) != 0;
+        }
+
+        public bool UnprocessedResultsExist(int eventId)
+        {
+            Log.D("Checking for unprocessed results.");
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(1) FROM time_results " +
+                "WHERE event_id=@event AND timeresult_status=@status " +
+                "AND segment_id<>@start AND eventspecific_id<>@dummy;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
+                new SQLiteParameter("@start", Constants.Timing.CHIPREAD_STATUS_NONE),
+                new SQLiteParameter("@dummy", Constants.Timing.CHIPREAD_STATUS_NONE)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            reader.Read();
+            return reader.GetInt64(0) != 0;
         }
 
         /*
@@ -2312,19 +2397,17 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
-        public bool UnprocessedReadsExist(int eventId)
+        public void ResetTimingResultsPlacements(int eventId)
         {
-            Log.D("Checking for unprocessed reads.");
+            Log.D("Resetting timing result placements for event " + eventId);
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT COUNT(1) FROM chipreads WHERE event_id=@event AND read_status=@status;";
+            command.CommandText = "UPDATE time_results SET timeresult_status=@status WHERE event_id=@event;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
                 new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE)
             });
-            SQLiteDataReader reader = command.ExecuteReader();
-            reader.Read();
-            return reader.GetInt64(0) != 0;
+            command.ExecuteNonQuery();
         }
 
         /*
@@ -2510,7 +2593,8 @@ namespace EventDirector
                             reader["new_owes"].ToString(),
                             reader["new_other"].ToString(),
                             Convert.ToInt32(reader["new_earlystart"]),
-                            Convert.ToInt32(reader["new_next_year"])
+                            Convert.ToInt32(reader["new_next_year"]),
+                            Constants.Timing.TIMERESULT_DUMMYAGEGROUP
                             ),
                         reader["new_email"].ToString(),
                         reader["new_mobile"].ToString(),
@@ -2541,7 +2625,8 @@ namespace EventDirector
                             reader["old_owes"].ToString(),
                             reader["old_other"].ToString(),
                             Convert.ToInt32(reader["old_earlystart"]),
-                            Convert.ToInt32(reader["old_next_year"])
+                            Convert.ToInt32(reader["old_next_year"]),
+                            Constants.Timing.TIMERESULT_DUMMYAGEGROUP
                             ),
                         reader["old_email"].ToString(),
                         reader["old_mobile"].ToString(),

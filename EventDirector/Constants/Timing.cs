@@ -33,10 +33,16 @@ namespace EventDirector.Constants
         public static readonly int CHIPREAD_DUMMYBIB = -1;  // If this value changes, SQLiteInterface version must be updated to reflect said change.
 
         public static readonly int TIMERESULT_DUMMYPERSON = -1;
+        public static readonly int TIMERESULT_DUMMYPLACE = -1;
+        public static readonly int TIMERESULT_GENDER_MALE = 1;
+        public static readonly int TIMERESULT_GENDER_FEMALE = 2;
+        public static readonly int TIMERESULT_GENDER_UNKNOWN = 3;
+        public static readonly int TIMERESULT_DUMMYAGEGROUP = -1;
 
         public static readonly int DEFAULT_BIB_GROUP = -1;
 
         public static readonly int COMMON_SEGMENTS_DIVISIONID = -1;
+        public static readonly int COMMON_AGEGROUPS_DIVISIONID = -1;
 
         public static readonly Dictionary<string, string> SYSTEM_NAMES = new Dictionary<string, string>()
         {

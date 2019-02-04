@@ -8,12 +8,15 @@ namespace EventDirector
 {
     public class EventSpecific
     {
-        private int identifier, eventIdentifier, divisionIdentifier, bib, checkedIn = 0, earlystart = 0, nextyear = 0, chip = -1;
+        private int identifier, eventIdentifier, divisionIdentifier, bib,
+            checkedIn = 0, earlystart = 0, nextyear = 0, chip = -1,
+            ageGroup = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
         private String comments, divisionName, owes, other;
         private List<Apparel> apparel;
 
         public EventSpecific() { }
 
+        // Constructor to be used when adding to db
         public EventSpecific(
             int eid,
             int did,
@@ -40,6 +43,7 @@ namespace EventDirector
             this.apparel = new List<Apparel>();
         }
 
+        // Constructor the database uses
         public EventSpecific(
             int id,
             int eid,
@@ -51,7 +55,8 @@ namespace EventDirector
             string owes,
             string other,
             int earlystart,
-            int nextyear
+            int nextyear,
+            int ageGroup
             )
         {
             this.identifier = id;
@@ -66,6 +71,7 @@ namespace EventDirector
             this.earlystart = earlystart != 0 ? 1 : 0;
             this.nextyear = nextyear;
             this.apparel = new List<Apparel>();
+            this.ageGroup = ageGroup;
         }
 
         public EventSpecific(
@@ -80,7 +86,8 @@ namespace EventDirector
             string owes,
             string other,
             int earlystart,
-            int nextyear
+            int nextyear,
+            int ageGroup
             )
         {
             this.identifier = id;
@@ -96,6 +103,7 @@ namespace EventDirector
             this.earlystart = earlystart != 0 ? 1 : 0;
             this.nextyear = nextyear;
             this.apparel = new List<Apparel>();
+            this.ageGroup = ageGroup;
         }
 
         public EventSpecific(EventSpecific that)
@@ -124,7 +132,7 @@ namespace EventDirector
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, 0);
+            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, 0, Constants.Timing.TIMERESULT_DUMMYAGEGROUP);
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -140,6 +148,7 @@ namespace EventDirector
         public int EarlyStart { get => earlystart; set => earlystart = value; }
         public int NextYear { get => nextyear; set => nextyear = value; }
         public int NumApparel { get => apparel.Count; }
+        public int AgeGroup { get => ageGroup; set => ageGroup = value; }
 
         public void SetApparel(List<Apparel> incoming)
         {
