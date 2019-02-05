@@ -40,6 +40,8 @@
                     <ComboBoxItem Content="Gun Time" />
                     <ComboBoxItem Content="Bib"/>
                     <ComboBoxItem Content="Division"/>
+                    <ComboBoxItem Content="Age Group"/>
+                    <ComboBoxItem Content="Gender"/>
                 </ComboBox>
                 <Label Content="Timing Method" FontSize="16" HorizontalContentAlignment="Center" Margin="10,5,10,0" />
                 <Grid>

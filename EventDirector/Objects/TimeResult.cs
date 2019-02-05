@@ -192,6 +192,53 @@ namespace EventDirector
             return oneTime.CompareTo(twoTime);
         }
 
+        public static int CompareByNetTime(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            Match oneMatch = timeRegex.Match(one.chipTime);
+            Match twoMatch = timeRegex.Match(two.chipTime);
+            if (oneMatch == null || twoMatch == null) return 1;
+            long oneTime = (Convert.ToInt64(oneMatch.Groups[1].Value) * 3600)
+                + (Convert.ToInt64(oneMatch.Groups[2].Value) * 60)
+                + Convert.ToInt64(oneMatch.Groups[3].Value);
+            long twoTime = (Convert.ToInt64(twoMatch.Groups[1].Value) * 3600)
+                + (Convert.ToInt64(twoMatch.Groups[2].Value) * 60)
+                + Convert.ToInt64(twoMatch.Groups[3].Value);
+            return oneTime.CompareTo(twoTime);
+        }
+
+        public static int CompareByAgeGroup(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.DivisionName.Equals(two.DivisionName))
+            {
+                if (one.AgeGroupId == two.AgeGroupId)
+                {
+                    if (one.Gender.Equals(two.Gender))
+                    {
+                        return one.systemTime.CompareTo(two.systemTime);
+                    }
+                    return one.Gender.CompareTo(two.Gender);
+                }
+                return one.AgeGroupId.CompareTo(two.AgeGroupId);
+            }
+            return one.DivisionName.CompareTo(two.DivisionName);
+        }
+
+        public static int CompareByGender(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.DivisionName.Equals(two.DivisionName))
+            {
+                if (one.Gender.Equals(two.Gender))
+                {
+                    return one.systemTime.CompareTo(two.systemTime);
+                }
+                return one.Gender.CompareTo(two.Gender);
+            }
+            return one.DivisionName.CompareTo(two.DivisionName);
+        }
+
         public static int CompareBySystemTime(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;

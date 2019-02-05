@@ -514,21 +514,7 @@ namespace EventDirector.UI.MainPages
             {
                 return;
             }
-            switch (((ComboBoxItem)SortBy.SelectedItem).Content)
-            {
-                case "Gun Time":
-                    subPage.SortBy(SortType.GUNTIME);
-                    break;
-                case "Bib":
-                    subPage.SortBy(SortType.BIB);
-                    break;
-                case "Division":
-                    subPage.SortBy(SortType.DIVISION);
-                    break;
-                default:
-                    subPage.SortBy(SortType.SYSTIME);
-                    break;
-            }
+            subPage.SortBy(GetSortType());
         }
 
         public SortType GetSortType()
@@ -541,6 +527,10 @@ namespace EventDirector.UI.MainPages
                     return SortType.BIB;
                 case "Division":
                     return SortType.DIVISION;
+                case "Age Group":
+                    return SortType.AGEGROUP;
+                case "Gender":
+                    return SortType.GENDER;
             }
             return SortType.SYSTIME;
         }

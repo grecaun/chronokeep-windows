@@ -76,6 +76,14 @@ namespace EventDirector.UI.Timing
             {
                 newResults.Sort(TimeResult.CompareByDivision);
             }
+            else if (sortType == SortType.AGEGROUP)
+            {
+                newResults.Sort(TimeResult.CompareByAgeGroup);
+            }
+            else if (sortType == SortType.GENDER)
+            {
+                newResults.Sort(TimeResult.CompareByGender);
+            }
             else
             {
                 newResults.Sort(TimeResult.CompareBySystemTime);
