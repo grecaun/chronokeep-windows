@@ -51,7 +51,11 @@ namespace EventDirector.UI.Timing
         private void Customize(SortType sortType, PeopleType peopleType,
             List<TimeResult> newResults, string search = "")
         {
-            if (peopleType == PeopleType.KNOWN)
+            if (peopleType == PeopleType.DEFAULT)
+            {
+                newResults.RemoveAll(TimeResult.StartTimes);
+            }
+            else if (peopleType == PeopleType.KNOWN)
             {
                 newResults.RemoveAll(TimeResult.IsNotKnown);
             }
@@ -123,6 +127,9 @@ namespace EventDirector.UI.Timing
             });
             updateListView.ItemsSource = newResults;
             updateListView.Items.Refresh();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
+            updateListView.SelectedItem = null;
         }
 
         public async void Show(PeopleType peopleType)

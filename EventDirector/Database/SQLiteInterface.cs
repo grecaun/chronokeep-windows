@@ -2250,7 +2250,7 @@ namespace EventDirector
 
         public List<TimeResult> GetSegmentTimes(int eventId, int segmentId)
         {
-            Log.D("Getting finish times for event id of " + eventId);
+            Log.D("Getting segment times for event id of " + eventId);
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
@@ -2303,13 +2303,15 @@ namespace EventDirector
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT COUNT(1) FROM time_results " +
                 "WHERE event_id=@event AND timeresult_status=@status " +
-                "AND segment_id<>@start AND eventspecific_id<>@dummy;";
+                "AND segment_id<>@start AND segment_id<>@none " +
+                "AND eventspecific_id<>@dummy;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
                 new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
-                new SQLiteParameter("@start", Constants.Timing.CHIPREAD_STATUS_NONE),
-                new SQLiteParameter("@dummy", Constants.Timing.CHIPREAD_STATUS_NONE)
+                new SQLiteParameter("@start", Constants.Timing.SEGMENT_START),
+                new SQLiteParameter("@dummy", Constants.Timing.TIMERESULT_DUMMYPERSON),
+                new SQLiteParameter("@none", Constants.Timing.SEGMENT_NONE)
             });
             SQLiteDataReader reader = command.ExecuteReader();
             reader.Read();

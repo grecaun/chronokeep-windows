@@ -27,8 +27,10 @@ namespace EventDirector.UI.MainPages
         private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
-        private List<TimingLocation> locations;
         private List<BibGroup> bibGroups;
+        private List<Division> divisions;
+        private Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
+        private HashSet<int> divisionsChanged = new HashSet<int>();
         private int DivisionCount = 1;
 
         public DivisionsPage(IMainWindow mWindow, IDBInterface database)
@@ -39,16 +41,6 @@ namespace EventDirector.UI.MainPages
             this.theEvent = database.GetCurrentEvent();
             if (theEvent != null)
             {
-                locations = database.GetTimingLocations(theEvent.Identifier);
-                if (theEvent.CommonStartFinish == 1)
-                {
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                }
-                else
-                {
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 1, theEvent.StartWindow));
-                }
                 bibGroups = database.GetBibGroups(theEvent.Identifier);
                 bibGroups.Insert(0, new BibGroup(theEvent.Identifier));
             }
@@ -62,12 +54,14 @@ namespace EventDirector.UI.MainPages
                 return;
             }
             DivisionsBox.Items.Clear();
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+            divisions = database.GetDivisions(theEvent.Identifier);
             DivisionCount = 1;
             divisions.Sort();
+            divisionDictionary.Clear();
             foreach (Division div in divisions)
             {
-                DivisionsBox.Items.Add(new ADivision(this, div, locations, bibGroups));
+                divisionDictionary[div.Identifier] = div;
+                DivisionsBox.Items.Add(new ADivision(this, div, theEvent.FinishMaxOccurrences, bibGroups, divisions, divisionDictionary));
                 DivisionCount = div.Identifier > DivisionCount - 1 ? div.Identifier + 1 : DivisionCount;
             }
         }
@@ -109,7 +103,6 @@ namespace EventDirector.UI.MainPages
 
         public void UpdateDatabase()
         {
-            bool NotifyTimingWorker = false;
             Dictionary<int, Division> oldDivisions = new Dictionary<int, Division>();
             foreach (Division division in database.GetDivisions(theEvent.Identifier))
             {
@@ -120,17 +113,13 @@ namespace EventDirector.UI.MainPages
                 listDiv.UpdateDivision();
                 int divId = listDiv.theDivision.Identifier;
                 if (oldDivisions.ContainsKey(divId) &&
-                    (oldDivisions[divId].StartOffsetSeconds != listDiv.theDivision.StartOffsetSeconds ||
-                    oldDivisions[divId].StartOffsetMilliseconds != listDiv.theDivision.StartOffsetMilliseconds) )
+                    (oldDivisions[divId].StartOffsetSeconds != listDiv.theDivision.StartOffsetSeconds
+                    || oldDivisions[divId].StartOffsetMilliseconds != listDiv.theDivision.StartOffsetMilliseconds
+                    || oldDivisions[divId].FinishOccurrence != listDiv.theDivision.FinishOccurrence) )
                 {
-                    NotifyTimingWorker = true;
-                    database.ResetTimingResultsDivision(theEvent.Identifier, divId);
+                    divisionsChanged.Add(divId);
                 }
                 database.UpdateDivision(listDiv.theDivision);
-            }
-            if (NotifyTimingWorker)
-            {
-                mWindow.NotifyTimingWorker();
             }
         }
 
@@ -158,17 +147,38 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
+            if (divisionsChanged.Count > 0)
+            {
+                foreach (int divId in divisionsChanged)
+                {
+                    database.ResetTimingResultsDivision(theEvent.Identifier, divId);
+                }
+                mWindow.NotifyTimingWorker();
+            }
+        }
+
+        public void UpdateDivision(Division division)
+        {
+            int divId = division.Identifier;
+            Division oldDiv = database.GetDivision(divId);
+            if (oldDiv.StartOffsetSeconds != division.StartOffsetSeconds ||
+                oldDiv.StartOffsetMilliseconds != division.StartOffsetMilliseconds
+                || oldDiv.FinishOccurrence != division.FinishOccurrence)
+            {
+                divisionsChanged.Add(divId);
+            }
+            database.UpdateDivision(division);
+            UpdateView();
         }
 
         private class ADivision : ListBoxItem
         {
             public TextBox DivisionName { get; private set; }
+            public ComboBox CopyFromBox { get; private set; }
             public TextBox Cost { get; private set; }
             public TextBox Distance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
-            public ComboBox FinishLocation { get; private set; }
             public ComboBox FinishOccurrence { get; private set; }
-            public ComboBox StartLocation { get; private set; }
             public TextBox Wave { get; private set; }
             public ComboBox BibGroupNumber { get; private set; }
             public MaskedTextBox StartOffset { get; private set; }
@@ -177,16 +187,19 @@ namespace EventDirector.UI.MainPages
             private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
             readonly DivisionsPage page;
             public Division theDivision;
-            private Dictionary<string, int> locationDictionary; // TimingLocation Identifier (Stored as UID, therefore string works best), MaxOccurances
+            private Dictionary<int, Division> divisionDictionary;
 
             private readonly Regex allowedWithDot = new Regex("[^0-9.]");
             private readonly Regex allowedChars = new Regex("[^0-9]");
 
-            public ADivision(DivisionsPage page, Division division, List<TimingLocation> locations, List<BibGroup> bibGroups)
+            public ADivision(DivisionsPage page, Division division, int maxOccurrences, List<BibGroup> bibGroups,
+                List<Division> divisions, Dictionary<int, Division> divisionDictionary)
             {
+                List<Division> otherDivisions = new List<Division>(divisions);
+                this.divisionDictionary = divisionDictionary;
+                otherDivisions.Remove(division);
                 this.page = page;
                 this.theDivision = division;
-                locationDictionary = new Dictionary<string, int>();
                 StackPanel thePanel = new StackPanel()
                 {
                     MaxWidth = 600
@@ -194,12 +207,16 @@ namespace EventDirector.UI.MainPages
                 this.Content = thePanel;
                 this.IsTabStop = false;
 
+                // Name Grid (Name NameBox -- Copy From DivisionsBox)
+                Grid nameGrid = new Grid();
+                nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+                nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
                 // Name information.
                 DockPanel namePanel = new DockPanel();
                 namePanel.Children.Add(new Label()
                 {
                     Content = "Name",
-                    Width = 75,
+                    Width = 55,
                     FontSize = 16,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
@@ -209,23 +226,61 @@ namespace EventDirector.UI.MainPages
                 {
                     Text = theDivision.Name,
                     FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
+                    Margin = new Thickness(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 DivisionName.GotFocus += new RoutedEventHandler(this.SelectAll);
                 namePanel.Children.Add(DivisionName);
-                thePanel.Children.Add(namePanel);
+                nameGrid.Children.Add(namePanel);
+                Grid.SetColumn(namePanel, 0);
+                DockPanel copyPanel = new DockPanel();
+                copyPanel.Children.Add(new Label()
+                {
+                    Content = "Copy From",
+                    Width = 90,
+                    FontSize = 16,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Right
+                });
+                CopyFromBox = new ComboBox()
+                {
+                    FontSize = 16,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
 
-                // Cost - Distance - DistanceUnit
+                CopyFromBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "",
+                    Uid = "-1"
+                });
+                foreach (Division div in otherDivisions)
+                {
+                    CopyFromBox.Items.Add(new ComboBoxItem()
+                    {
+                        Content = div.Name,
+                        Uid = div.Identifier.ToString()
+                    });
+                }
+                CopyFromBox.SelectedIndex = 0;
+                CopyFromBox.SelectionChanged += new SelectionChangedEventHandler(this.CopyFromBox_SelectionChanged);
+                copyPanel.Children.Add(CopyFromBox);
+                nameGrid.Children.Add(copyPanel);
+                Grid.SetColumn(copyPanel, 1);
+                thePanel.Children.Add(nameGrid);
+
+                // Cost - Distance - DistanceUnit - Occurrence
                 Grid settingsGrid = new Grid();
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(125) });
+                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 DockPanel costPanel = new DockPanel();
                 costPanel.Children.Add(new Label()
                 {
                     Content = "Price",
-                    Width = 75,
+                    Width = 55,
                     FontSize = 16,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
@@ -236,7 +291,7 @@ namespace EventDirector.UI.MainPages
                 {
                     Text = costStr,
                     FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
+                    Margin = new Thickness(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 Cost.GotFocus += new RoutedEventHandler(this.SelectAll);
@@ -258,7 +313,7 @@ namespace EventDirector.UI.MainPages
                 {
                     Text = theDivision.Distance.ToString(),
                     FontSize = 16,
-                    Margin = new Thickness(0, 10, 10, 10),
+                    Margin = new Thickness(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 Distance.GotFocus += new RoutedEventHandler(this.SelectAll);
@@ -266,10 +321,11 @@ namespace EventDirector.UI.MainPages
                 distPanel.Children.Add(Distance);
                 settingsGrid.Children.Add(distPanel);
                 Grid.SetColumn(distPanel, 1);
+                // Distance Unit
                 DistanceUnit = new ComboBox()
                 {
                     FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
+                    Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center
                 };
                 DistanceUnit.Items.Add(new ComboBoxItem()
@@ -328,97 +384,7 @@ namespace EventDirector.UI.MainPages
                 }
                 settingsGrid.Children.Add(DistanceUnit);
                 Grid.SetColumn(DistanceUnit, 2);
-                thePanel.Children.Add(settingsGrid);
-
-                // Start Location - Finish Location - Occurrence
-                Grid locGrid = new Grid();
-                locGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                locGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                locGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                DockPanel startPanel = new DockPanel();
-                startPanel.Children.Add(new Label()
-                {
-                    Content = "Start",
-                    FontSize = 16,
-                    Width = 75,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalContentAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
-                });
-                StartLocation = new ComboBox()
-                {
-                    FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
-                    VerticalContentAlignment = VerticalAlignment.Center
-                };
-                ComboBoxItem selected = null, current;
-                foreach (TimingLocation loc in locations)
-                {
-                    current = new ComboBoxItem()
-                    {
-                        Content = loc.Name,
-                        Uid = loc.Identifier.ToString()
-                    };
-                    StartLocation.Items.Add(current);
-                    if (theDivision.StartLocation == loc.Identifier)
-                    {
-                        selected = current;
-                    }
-                }
-                if (selected != null)
-                {
-                    StartLocation.SelectedItem = selected;
-                }
-                else
-                {
-                    StartLocation.SelectedIndex = 0;
-                }
-                startPanel.Children.Add(StartLocation);
-                locGrid.Children.Add(startPanel);
-                Grid.SetColumn(startPanel, 0);
-                DockPanel finPanel = new DockPanel();
-                finPanel.Children.Add(new Label()
-                {
-                    Content = "Finish",
-                    FontSize = 16,
-                    Width = 75,
-                    Margin = new Thickness(0, 10, 0, 10),
-                    VerticalContentAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
-                });
-                FinishLocation = new ComboBox()
-                {
-                    FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
-                    VerticalContentAlignment = VerticalAlignment.Center
-                };
-                selected = null;
-                foreach (TimingLocation loc in locations)
-                {
-                    locationDictionary[loc.Identifier.ToString()] = loc.MaxOccurrences;
-                    current = new ComboBoxItem()
-                    {
-                        Content = loc.Name,
-                        Uid = loc.Identifier.ToString()
-                    };
-                    FinishLocation.Items.Add(current);
-                    if (theDivision.FinishLocation == loc.Identifier)
-                    {
-                        selected = current;
-                    }
-                }
-                if (selected != null)
-                {
-                    FinishLocation.SelectedItem = selected;
-                }
-                else
-                {
-                    FinishLocation.SelectedIndex = 0;
-                }
-                FinishLocation.SelectionChanged += new SelectionChangedEventHandler(this.FinishLocation_Changed);
-                finPanel.Children.Add(FinishLocation);
-                locGrid.Children.Add(finPanel);
-                Grid.SetColumn(finPanel, 1);
+                // Occurence
                 DockPanel occPanel = new DockPanel();
                 occPanel.Children.Add(new Label()
                 {
@@ -432,15 +398,11 @@ namespace EventDirector.UI.MainPages
                 FinishOccurrence = new ComboBox()
                 {
                     FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
+                    Margin = new Thickness(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                if (FinishLocation.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)FinishLocation.SelectedItem).Uid, out int maxOccurrences))
-                {
-                    maxOccurrences = 1;
-                }
-                selected = null;
-                for (int i=1; i<=maxOccurrences; i++)
+                ComboBoxItem selected = null, current;
+                for (int i = 1; i <= maxOccurrences; i++)
                 {
                     current = new ComboBoxItem()
                     {
@@ -462,20 +424,19 @@ namespace EventDirector.UI.MainPages
                     FinishOccurrence.SelectedIndex = 0;
                 }
                 occPanel.Children.Add(FinishOccurrence);
-                locGrid.Children.Add(occPanel);
-                Grid.SetColumn(occPanel, 2);
-                thePanel.Children.Add(locGrid);
+                settingsGrid.Children.Add(occPanel);
+                Grid.SetColumn(occPanel, 3);
+                thePanel.Children.Add(settingsGrid);
 
-                // Wave #, Bib Group #, Start Offset
+                // Wave #, Start Offset, Bib Group #, Remove Button
                 Grid numGrid = new Grid();
-                numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 DockPanel wavePanel = new DockPanel();
                 wavePanel.Children.Add(new Label()
                 {
                     Content = "Wave",
-                    Width = 75,
+                    Width = 55,
                     FontSize = 16,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
@@ -485,14 +446,40 @@ namespace EventDirector.UI.MainPages
                 {
                     Text = theDivision.Wave.ToString(),
                     FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
+                    Width = 50,
+                    Margin = new Thickness(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 Wave.GotFocus += new RoutedEventHandler(this.SelectAll);
                 Wave.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
                 wavePanel.Children.Add(Wave);
+                wavePanel.Children.Add(new Label()
+                {
+                    Content = "Start",
+                    Width = 55,
+                    FontSize = 16,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Right
+                });
+                string sOffset = string.Format(TimeFormat, theDivision.StartOffsetSeconds / 3600,
+                    (theDivision.StartOffsetSeconds % 3600) / 60, theDivision.StartOffsetSeconds % 60,
+                    theDivision.StartOffsetMilliseconds);
+                StartOffset = new MaskedTextBox()
+                {
+                    Text = sOffset,
+                    Mask = "00:00:00.000",
+                    FontSize = 16,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                StartOffset.GotFocus += new RoutedEventHandler(this.SelectAll);
+                wavePanel.Children.Add(StartOffset);
                 numGrid.Children.Add(wavePanel);
                 Grid.SetColumn(wavePanel, 0);
+                Grid secondGrid = new Grid();
+                secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(110) });
                 DockPanel bibPanel = new DockPanel();
                 bibPanel.Children.Add(new Label()
                 {
@@ -506,7 +493,7 @@ namespace EventDirector.UI.MainPages
                 BibGroupNumber = new ComboBox()
                 {
                     FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
+                    Margin = new Thickness(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 selected = null;
@@ -532,70 +519,29 @@ namespace EventDirector.UI.MainPages
                     BibGroupNumber.SelectedIndex = 0;
                 }
                 bibPanel.Children.Add(BibGroupNumber);
-                numGrid.Children.Add(bibPanel);
-                Grid.SetColumn(bibPanel, 2);
-                DockPanel offsetPanel = new DockPanel();
-                offsetPanel.Children.Add(new Label()
-                {
-                    Content = "Start",
-                    Width = 75,
-                    FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
-                });
-                string sOffset = string.Format(TimeFormat, theDivision.StartOffsetSeconds / 3600,
-                    (theDivision.StartOffsetSeconds % 3600) / 60, theDivision.StartOffsetSeconds % 60,
-                    theDivision.StartOffsetMilliseconds);
-                StartOffset = new MaskedTextBox()
-                {
-                    Text = sOffset,
-                    Mask = "00:00:00.000",
-                    FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
-                    VerticalContentAlignment = VerticalAlignment.Center
-                };
-                StartOffset.GotFocus += new RoutedEventHandler(this.SelectAll);
-                offsetPanel.Children.Add(StartOffset);
-                numGrid.Children.Add(offsetPanel);
-                Grid.SetColumn(offsetPanel, 1);
-                thePanel.Children.Add(numGrid);
-
+                secondGrid.Children.Add(bibPanel);
+                Grid.SetColumn(bibPanel, 0);
                 Remove = new Button()
                 {
                     Content = "Remove",
-                    FontSize = 16,
-                    Height = 35,
-                    Width = 140,
-                    Margin = new Thickness(10, 10, 10, 10),
-                    HorizontalAlignment = HorizontalAlignment.Center
+                    FontSize = 14,
+                    Width = 100,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
                 };
                 Remove.Click += new RoutedEventHandler(this.Remove_Click);
-                thePanel.Children.Add(Remove);
+                secondGrid.Children.Add(Remove);
+                Grid.SetColumn(Remove, 1);
+                numGrid.Children.Add(secondGrid);
+                Grid.SetColumn(secondGrid, 1);
+                thePanel.Children.Add(numGrid);
             }
 
             private void Remove_Click(object sender, RoutedEventArgs e)
             {
                 Log.D("Removing division.");
                 this.page.RemoveDivision(theDivision);
-            }
-
-            private void FinishLocation_Changed(object sender, SelectionChangedEventArgs e)
-            {
-                FinishOccurrence.Items.Clear();
-                if (FinishLocation.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)FinishLocation.SelectedItem).Uid, out int maxOccurrences))
-                {
-                    maxOccurrences = 1;
-                }
-                for (int i = 1; i <= maxOccurrences; i++)
-                {
-                    FinishOccurrence.Items.Add(new ComboBoxItem()
-                    {
-                        Content = i.ToString(),
-                        Uid = i.ToString()
-                    });
-                }
-                FinishOccurrence.SelectedIndex = 0;
             }
 
             public void UpdateDivision()
@@ -634,8 +580,6 @@ namespace EventDirector.UI.MainPages
                     theDivision.Distance = dist;
                 }
                 theDivision.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
-                theDivision.FinishLocation = Convert.ToInt32(((ComboBoxItem)FinishLocation.SelectedItem).Uid);
-                theDivision.StartLocation = Convert.ToInt32(((ComboBoxItem)StartLocation.SelectedItem).Uid);
                 if (FinishOccurrence.SelectedItem != null)
                 {
                     theDivision.FinishOccurrence = Convert.ToInt32(((ComboBoxItem)FinishOccurrence.SelectedItem).Uid);
@@ -666,6 +610,29 @@ namespace EventDirector.UI.MainPages
             {
                 TextBox src = (TextBox)e.OriginalSource;
                 src.SelectAll();
+            }
+
+            private void CopyFromBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+            {
+                Log.D("Attempting to copy from a different division! Here we go!");
+                // Ensure we've got something selected, it has a parseable UID,
+                // and there's a division related to it
+                if (CopyFromBox.SelectedItem != null
+                    && int.TryParse(((ComboBoxItem)CopyFromBox.SelectedItem).Uid, out int newDivId)
+                    && divisionDictionary.ContainsKey(newDivId))
+                {
+                    Division newDiv = divisionDictionary[newDivId];
+                    theDivision.Name = DivisionName.Text;
+                    theDivision.BibGroupNumber = newDiv.BibGroupNumber;
+                    theDivision.Cost = newDiv.Cost;
+                    theDivision.Distance = newDiv.Distance;
+                    theDivision.DistanceUnit = newDiv.DistanceUnit;
+                    theDivision.FinishOccurrence = newDiv.FinishOccurrence;
+                    theDivision.Wave = newDiv.Wave;
+                    theDivision.StartOffsetSeconds = newDiv.StartOffsetSeconds;
+                    theDivision.StartOffsetMilliseconds = newDiv.StartOffsetMilliseconds;
+                    page.UpdateDivision(theDivision);
+                }
             }
 
             private void DotValidation(object sender, TextCompositionEventArgs e)

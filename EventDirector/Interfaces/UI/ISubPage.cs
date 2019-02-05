@@ -8,6 +8,6 @@
         void EditSelected();
     }
 
-    public enum PeopleType { KNOWN, ALL, ONLYSTART, ONLYFINISH }
+    public enum PeopleType { KNOWN, ALL, ONLYSTART, ONLYFINISH, DEFAULT }
     public enum SortType { SYSTIME, GUNTIME, BIB, DIVISION, AGEGROUP, GENDER }
 }

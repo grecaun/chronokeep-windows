@@ -659,9 +659,11 @@ namespace EventDirector.Timing
             // process results based upon the segment they're in
             foreach (Segment segment in segments)
             {
+                Log.D("Processing segment " + segment.Name);
                 List<TimeResult> segmentResults = database.GetSegmentTimes(theEvent.Identifier, segment.Identifier);
                 ProcessSegmentPlacements(theEvent, segmentResults, participantDictionary);
             }
+            Log.D("Processing finish results");
             ProcessSegmentPlacements(theEvent, database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH), participantDictionary);
         }
 

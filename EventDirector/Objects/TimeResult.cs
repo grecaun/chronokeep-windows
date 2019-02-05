@@ -101,10 +101,6 @@ namespace EventDirector
 
         public static void SetupStaticVariables(IDBInterface database)
         {
-            if (locations != null && segments != null)
-            {
-                return;
-            }
             locations = new Dictionary<int, TimingLocation>();
             segments = new Dictionary<int, Segment>();
             Event theEvent = database.GetCurrentEvent();
@@ -282,6 +278,11 @@ namespace EventDirector
         public static bool IsNotKnown(TimeResult one)
         {
             return one.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON;
+        }
+
+        public static bool StartTimes(TimeResult one)
+        {
+            return one.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON || one.SegmentId == Constants.Timing.SEGMENT_START;
         }
 
         public static bool IsNotStart(TimeResult one)
