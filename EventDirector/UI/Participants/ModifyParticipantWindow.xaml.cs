@@ -12,12 +12,15 @@ namespace EventDirector.UI.Participants
     /// </summary>
     public partial class ModifyParticipantWindow : Window
     {
-        IWindowCallback window;
+        IMainWindow window;
         IDBInterface database;
         Event theEvent;
         Participant person;
 
-        public ModifyParticipantWindow(IWindowCallback window, IDBInterface database, Participant person)
+        private bool ParticipantChanged = false;
+        private HashSet<int> bibsChanged = new HashSet<int>();
+
+        public ModifyParticipantWindow(IMainWindow window, IDBInterface database, Participant person)
         {
             InitializeComponent();
             this.window = window;
@@ -36,7 +39,7 @@ namespace EventDirector.UI.Participants
             BibBox.Focus();
         }
 
-        public static ModifyParticipantWindow NewWindow(IWindowCallback window, IDBInterface database, Participant person = null)
+        public static ModifyParticipantWindow NewWindow(IMainWindow window, IDBInterface database, Participant person = null)
         {
             return new ModifyParticipantWindow(window, database, person);
         }
@@ -134,10 +137,20 @@ namespace EventDirector.UI.Participants
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Add clicked.");
+            if (person != null && person.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+            {
+                bibsChanged.Add(person.Bib);
+                ParticipantChanged = true;
+            }
             Participant newPart = FromFields();
             if (newPart != null)
             {
                 database.AddParticipant(newPart);
+                if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                {
+                    bibsChanged.Add(newPart.Bib);
+                    ParticipantChanged = true;
+                }
             }
             Clear();
             BibBox.Focus();
@@ -146,10 +159,20 @@ namespace EventDirector.UI.Participants
         private void Modify_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Modify clicked.");
+            if (person != null && person.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+            {
+                bibsChanged.Add(person.Bib);
+                ParticipantChanged = true;
+            }
             Participant oldPart = FromFields();
             if (oldPart != null)
             {
                 database.UpdateParticipant(oldPart);
+                if (oldPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                {
+                    bibsChanged.Add(oldPart.Bib);
+                    ParticipantChanged = true;
+                }
                 this.Close();
             }
         }
@@ -167,7 +190,7 @@ namespace EventDirector.UI.Participants
                 participantId = person.Identifier;
                 nextYear = person.EventSpecific.NextYear;
             }
-            int bib = -1;
+            int bib = Constants.Timing.CHIPREAD_DUMMYBIB;
             int.TryParse(BibBox.Text, out bib);
             string gender = "Male";
             if (GenderBox.SelectedItem != null)
@@ -224,6 +247,16 @@ namespace EventDirector.UI.Participants
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            foreach (int bib in bibsChanged)
+            {
+                database.ResetTimingResultsBib(theEvent.Identifier, bib);
+            }
+            if (ParticipantChanged)
+            {
+                database.ResetTimingResultsPlacements(theEvent.Identifier);
+                window.NotifyRecalculateAgeGroups();
+                window.NotifyTimingWorker();
+            }
             window.WindowFinalize(this);
         }
 

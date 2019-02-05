@@ -71,17 +71,19 @@ namespace EventDirector.UI.MainPages
             switch (((ComboBoxItem)SortBox.SelectedItem).Content)
             {
                 case "Name":
-                    participants.Sort(Participant.CompareByName);
+                    newParts.Sort(Participant.CompareByName);
                     break;
                 case "Bib":
-                    participants.Sort(Participant.CompareByBib);
+                    newParts.Sort(Participant.CompareByBib);
                     break;
                 default:
-                    participants.Sort();
+                    newParts.Sort();
                     break;
             }
+            string search = SearchBox != null ? SearchBox.Text.Trim() : "";
+            newParts.RemoveAll(x => x.IsNotMatch(search));
             ParticipantsList.SelectedItems.Clear();
-            ParticipantsList.ItemsSource = participants;
+            ParticipantsList.ItemsSource = newParts;
             ParticipantsList.Items.Refresh();
             Log.D("Participants updated.");
         }
@@ -304,6 +306,39 @@ namespace EventDirector.UI.MainPages
         {
             Log.D("Participant list loaded.");
             UpdateDivisionsBox();
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            List<Participant> newParts = new List<Participant>(participants);
+            switch (((ComboBoxItem)SortBox.SelectedItem).Content)
+            {
+                case "Name":
+                    newParts.Sort(Participant.CompareByName);
+                    break;
+                case "Bib":
+                    newParts.Sort(Participant.CompareByBib);
+                    break;
+                default:
+                    newParts.Sort();
+                    break;
+            }
+            string search = SearchBox != null ? SearchBox.Text.Trim() : "";
+            newParts.RemoveAll(x => x.IsNotMatch(search));
+            ParticipantsList.SelectedItems.Clear();
+            ParticipantsList.ItemsSource = newParts;
+            ParticipantsList.Items.Refresh();
+        }
+
+        private void ParticipantsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ParticipantsList.SelectedItem == null) return;
+            ModifyParticipantWindow modifyParticipant = ModifyParticipantWindow.NewWindow(mWindow, database, (Participant)ParticipantsList.SelectedItem);
+            if (modifyParticipant != null)
+            {
+                mWindow.AddWindow(modifyParticipant);
+                modifyParticipant.ShowDialog();
+            }
         }
     }
 }

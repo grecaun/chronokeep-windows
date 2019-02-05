@@ -148,7 +148,7 @@ namespace EventDirector
             }
             else if (page2 != null)
             {
-                NewImportWork(((ImportFilePage2Alt)page2).GetDivisions());
+                ImportWork(((ImportFilePage2Alt)page2).GetDivisions());
             }
             else
             {
@@ -201,13 +201,13 @@ namespace EventDirector
             Frame.Content = page2;
         }
 
-        private async void NewImportWork(List<ImportDivision> fileDivisions)
+        private async void ImportWork(List<ImportDivision> fileDivisions)
         {
             bool valid = true;
+            Event theEvent = database.GetCurrentEvent();
             await Task.Run(() =>
             {
                 ImportData data = importer.Data;
-                Event theEvent = database.GetCurrentEvent();
                 int thisYear = DateTime.Parse(theEvent.Date).Year;
                 Hashtable divHashName = new Hashtable(500);
                 Hashtable divHashId = new Hashtable(500);
@@ -306,107 +306,9 @@ namespace EventDirector
             if (valid)
             {
                 Log.D("All done with the import.");
-                this.Close();
-            }
-        }
-
-        private async void ImportWork(List<Division> divisions)
-        {
-            Log.D("Starting the import.");
-            // Keys is an array of integers representing which field in the row of incoming data
-            // represents a specific field in the database.  These fields are defined by the array
-            // from which the user can select.
-            string[] shirtVals = shirtPriceBox.Text.Split('.');
-            int shirtPrice = 20;
-            if (shirtVals.Length > 0)
-            {
-                int.TryParse(shirtVals[0].Trim(), out shirtPrice);
-            }
-            shirtPrice = shirtPrice * 100;
-            int cents = 0;
-            if (shirtVals.Length > 1)
-            {
-                int.TryParse(shirtVals[1].Trim(), out cents);
-            }
-            while (cents > 100)
-            {
-                cents = cents / 100;
-            }
-            shirtPrice += cents;
-            int shirtOption = shirtOptionalBox.IsChecked == true ? 1 : 0;
-            Event anEvent = new Event(eventLabel.Text.Trim(), date.SelectedDate.Value.Ticks, shirtOption, shirtPrice);
-            bool valid = true;
-            int thisYear = date.SelectedDate.Value.Year;
-            date.Visibility = Visibility.Hidden;
-            await Task.Run(() =>
-            {
-                ImportData data = importer.Data;
-                database.AddEvent(anEvent);
-                anEvent.Identifier = database.GetEventID(anEvent);
-                Hashtable divHash = new Hashtable(500);
-                foreach (Division div in divisions)
-                {
-                    div.EventIdentifier = anEvent.Identifier;
-                    database.AddDivision(div);
-                    div.Identifier = database.GetDivisionID(div);
-                    divHash.Add(div.Name, div);
-                    Log.D("Div name is " + div.Name);
-                }
-                int numEntries = data.Data.Count;
-                List<Participant> participants = new List<Participant>();
-                for (int counter = 0; counter < numEntries; counter++)
-                {
-                    if (data.Data[counter][keys[DIVISION]] != null && data.Data[counter][keys[DIVISION]].Length > 0)
-                    {
-                        Log.D("Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[DIVISION]].ToLower()));
-                        Division thisDiv = (Division)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DIVISION]].Trim().ToLower())];
-                        string birthday = "01/01/1900";
-                        if (keys[BIRTHDAY] == 0 && keys[AGE] != 0) // birthday not set but age is
-                        {
-                            Log.D(String.Format("Counter is {0} and keys[AGE] is {1}", counter, keys[AGE]));
-                            Log.D("Age of participant is " + data.Data[counter][keys[AGE]]);
-                            int age = Convert.ToInt32(data.Data[counter][keys[AGE]]);
-                            birthday = String.Format("01/01/{0,4}", thisYear - age);
-                        } else if (keys[BIRTHDAY] != 0)
-                        {
-                            birthday = data.Data[counter][keys[BIRTHDAY]]; // birthday
-                        }
-                        participants.Add(new Participant(
-                            data.Data[counter][keys[FIRST]], // First Name
-                            data.Data[counter][keys[LAST]], // Last Name
-                            data.Data[counter][keys[STREET]], // Street
-                            data.Data[counter][keys[CITY]], // City
-                            data.Data[counter][keys[STATE]], // State
-                            data.Data[counter][keys[ZIP]], // Zip
-                            birthday, // Birthday
-                            new EventSpecific(
-                                anEvent.Identifier,
-                                thisDiv.Identifier,
-                                thisDiv.Name,
-                                data.Data[counter][keys[BIB]], // Bib number
-                                0,                            // checked in
-                                data.Data[counter][keys[COMMENTS]], // comments
-                                data.Data[counter][keys[OWES]], // owes
-                                data.Data[counter][keys[OTHER]], // other
-                                0,                            // early start
-                                0                             // used next year registration option
-                                ),
-                            data.Data[counter][keys[EMAIL]], // email
-                            data.Data[counter][keys[MOBILE]], // mobile
-                            data.Data[counter][keys[PARENT]], // parent
-                            data.Data[counter][keys[COUNTRY]], // country
-                            data.Data[counter][keys[STREET2]],  // street2
-                            data.Data[counter][keys[GENDER]],  // gender
-                            data.Data[counter][keys[EMERGENCYNAME]], // Emergency Name
-                            data.Data[counter][keys[EMERGENCYPHONE]]  // Emergency Phone
-                            ));
-                    }
-                }
-                database.AddParticipants(participants);
-            });
-            if (valid)
-            {
-                Log.D("All done with the import.");
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                window.NotifyRecalculateAgeGroups();
+                window.NotifyTimingWorker();
                 this.Close();
             }
         }

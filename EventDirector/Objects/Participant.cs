@@ -9,7 +9,9 @@ namespace EventDirector
     public class Participant : IEquatable<Participant>, IComparable<Participant>
     {
         private int identifier;
-        private string firstName, lastName, street, city, state, zip, email, mobile, parent, country, street2, gender, birthdate, emergencyName, emergencyPhone;
+        private string firstName, lastName, street, city, state, zip, email,
+            mobile, parent, country, street2, gender, birthdate, emergencyName,
+            emergencyPhone;
         private EventSpecific eventSpecific;
 
         public Participant()
@@ -594,6 +596,13 @@ namespace EventDirector
                 return one.FirstName.CompareTo(two.FirstName);
             }
             return one.LastName.CompareTo(two.LastName);
+        }
+
+        public bool IsNotMatch(string value)
+        {
+            return this.EventSpecific.Bib.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
+                && this.FirstName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
+                && this.LastName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
         }
     }
 }
