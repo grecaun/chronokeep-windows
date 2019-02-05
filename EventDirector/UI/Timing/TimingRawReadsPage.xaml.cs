@@ -16,6 +16,8 @@ namespace EventDirector.UI.Timing
         Event theEvent;
 
         List<ChipRead> chipReads = new List<ChipRead>();
+        HashSet<int> bibsToReset = new HashSet<int>();
+        HashSet<long> chipsToReset = new HashSet<long>();
 
         public TimingRawReadsPage(TimingPage parent, IDBInterface database)
         {
@@ -28,12 +30,53 @@ namespace EventDirector.UI.Timing
         private void IgnoreButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Ignore Button clicked.");
+            List<ChipRead> newChipReads = new List<ChipRead>();
+            foreach (ChipRead read in updateListView.SelectedItems)
+            {
+                if (read.Status == Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE)
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+                }
+                else
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE;
+                }
+                newChipReads.Add(read);
+                if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                {
+                    bibsToReset.Add(read.ChipBib);
+                }
+                else if (read.ReadBib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                {
+                    bibsToReset.Add(read.ReadBib);
+                }
+                else
+                {
+                    chipsToReset.Add(read.ChipNumber);
+                }
+            }
+            database.SetChipReadStatuses(newChipReads);
+            foreach (int bib in bibsToReset)
+            {
+                database.ResetTimingResultsBib(theEvent.Identifier, bib);
+            }
+            foreach (long chip in chipsToReset)
+            {
+                database.ResetTimingResultsChip(theEvent.Identifier, chip.ToString());
+            }
+            UpdateView();
+            parent.NotifyTimingWorker();
         }
 
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Done Button clicked.");
             parent.LoadMainDisplay();
+        }
+
+        private void Shift_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Shift button clicked.");
         }
 
         public async void UpdateView()

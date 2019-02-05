@@ -321,6 +321,11 @@ namespace EventDirector.UI.MainPages
             }
         }
 
+        public void NotifyTimingWorker()
+        {
+            mWindow.NotifyTimingWorker();
+        }
+
         private void Search()
         {
             Log.D("Searching");

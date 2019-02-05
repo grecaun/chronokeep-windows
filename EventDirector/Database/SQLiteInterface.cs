@@ -2343,7 +2343,7 @@ namespace EventDirector
                 " EXISTS (SELECT * FROM eventspecific s WHERE s.eventspecific_id=time_results.eventspecific_id" +
                 " AND s.eventspecific_bib=@bib);" +
                 "UPDATE chipreads SET read_status=@status WHERE chipreads.event_id=@event AND" +
-                " (chipreads.read_bib=@bib OR EXISTS (SELECT * FROM bib_chip_assoc c WHERE chipreads.read_chip=c.chip" +
+                " (chipreads.read_bib=@bib OR EXISTS (SELECT * FROM bib_chip_assoc c WHERE chipreads.read_chipnumber=c.chip" +
                 " AND c.bib=@bib)) AND chipreads.read_status<>@ignore;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
@@ -2370,7 +2370,7 @@ namespace EventDirector
                 new SQLiteParameter("@event", eventId),
                 new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
                 new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE),
-                new SQLiteParameter("chip", chip)
+                new SQLiteParameter("@chip", chip)
             });
             command.ExecuteNonQuery();
         }
