@@ -230,12 +230,12 @@ namespace EventDirector.UI.MainPages
                 parts.Add(p);
             }
             database.RemoveEntries(parts);
-            mWindow.Update();
+            UpdateView();
         }
 
         private void DivisionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mWindow.Update();
+            UpdateView();
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)

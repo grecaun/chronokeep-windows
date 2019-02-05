@@ -80,8 +80,12 @@ namespace EventDirector
                 cents = cents / 100;
             }
             shirtPrice += cents;
-            long dateVal = datePicker.SelectedDate.Value.Date.Ticks;
-            Log.D("Name given for event: '" + nameString + "' Date Given: " + datePicker.SelectedDate.Value.Date.ToShortDateString() + " Date Value: " + dateVal);
+            long dateVal = DateTime.Now.Date.Ticks;
+            if (datePicker.SelectedDate != null)
+            {
+                dateVal = datePicker.SelectedDate.Value.Date.Ticks;
+            }
+            Log.D("Name given for event: '" + nameString + "' Date Given: " + dateVal + " Date Value: " + dateVal);
             if (nameString == "")
             {
                 MessageBox.Show("Please input a value in the name box.");

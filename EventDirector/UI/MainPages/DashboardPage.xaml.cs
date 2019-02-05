@@ -41,7 +41,6 @@ namespace EventDirector.UI.MainPages
             {
                 LeftPanel.Visibility = Visibility.Hidden;
                 RightPanel.Visibility = Visibility.Hidden;
-                mWindow.UpdateStatus();
                 return;
             }
             LeftPanel.Visibility = Visibility.Visible;
@@ -163,7 +162,7 @@ namespace EventDirector.UI.MainPages
                     Log.D("Unable to update event with mainwindow. TCP Server error or wrong main window.");
                 }
                 Log.D("Updating view.");
-                mWindow.Update();
+                UpdateView();
             }
             else
             {
@@ -283,7 +282,7 @@ namespace EventDirector.UI.MainPages
                     }
                 }
                 database.SetEventOptions(theEvent.Identifier, list);
-                mWindow.Update();
+                UpdateView();
             }
         }
 
@@ -367,7 +366,7 @@ namespace EventDirector.UI.MainPages
             {
                 theEvent.NextYear = -1;
                 database.UpdateEvent(theEvent);
-                mWindow.Update();
+                UpdateView();
             }
         }
 
@@ -449,7 +448,8 @@ namespace EventDirector.UI.MainPages
                 {
                     database.RemoveEvent(theEvent.Identifier);
                     database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
-                    mWindow.Update();
+                    UpdateView();
+                    mWindow.UpdateStatus();
                 }
             }
             catch
@@ -476,7 +476,7 @@ namespace EventDirector.UI.MainPages
         {
             Log.D("Cancel clicked.");
             DisableEditableFields();
-            mWindow.Update();
+            UpdateView();
             editButton.Content = Constants.DashboardLabels.EDIT;
             cancelButton.Visibility = Visibility.Collapsed;
         }

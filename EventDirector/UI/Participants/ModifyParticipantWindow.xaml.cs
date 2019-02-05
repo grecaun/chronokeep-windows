@@ -17,17 +17,6 @@ namespace EventDirector.UI.Participants
         Event theEvent;
         Participant person;
 
-        public ModifyParticipantWindow(IWindowCallback window, IDBInterface database)
-        {
-            InitializeComponent();
-            this.window = window;
-            this.database = database;
-            theEvent = database.GetCurrentEvent();
-            Add.Click += new RoutedEventHandler(this.Add_Click);
-            UpdateDivisions();
-            BibBox.Focus();
-        }
-
         public ModifyParticipantWindow(IWindowCallback window, IDBInterface database, Participant person)
         {
             InitializeComponent();
@@ -35,17 +24,19 @@ namespace EventDirector.UI.Participants
             this.database = database;
             this.person = person;
             theEvent = database.GetCurrentEvent();
-            Add.Click += new RoutedEventHandler(this.Modify_Click);
+            if (person == null)
+            {
+                Add.Click += new RoutedEventHandler(this.Add_Click);
+            }
+            else
+            {
+                Add.Click += new RoutedEventHandler(this.Modify_Click);
+            }
             UpdateAllFields();
             BibBox.Focus();
         }
 
-        public static ModifyParticipantWindow NewWindow(IWindowCallback window, IDBInterface database)
-        {
-            return new ModifyParticipantWindow(window, database);
-        }
-
-        public static ModifyParticipantWindow NewWindow(IWindowCallback window, IDBInterface database, Participant person)
+        public static ModifyParticipantWindow NewWindow(IWindowCallback window, IDBInterface database, Participant person = null)
         {
             return new ModifyParticipantWindow(window, database, person);
         }
@@ -147,7 +138,6 @@ namespace EventDirector.UI.Participants
             if (newPart != null)
             {
                 database.AddParticipant(newPart);
-                window.Update();
             }
             Clear();
             BibBox.Focus();

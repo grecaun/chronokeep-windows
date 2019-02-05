@@ -115,7 +115,7 @@ namespace EventDirector.UI.MainPages
                 }
             };
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
-            mWindow.Update();
+            UpdateView();
         }
 
         private void SaveRangeButton_Click(object sender, RoutedEventArgs e)
@@ -137,7 +137,7 @@ namespace EventDirector.UI.MainPages
                 });
             }
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
-            mWindow.Update();
+            UpdateView();
         }
 
         private async void FileImport_Click(object sender, RoutedEventArgs e)
@@ -176,7 +176,7 @@ namespace EventDirector.UI.MainPages
             {
                 List<BibChipAssociation> assocs = database.GetBibChips(oldEventId);
                 database.AddBibChipAssociation(theEvent.Identifier, assocs);
-                mWindow.Update();
+                UpdateView();
             }
         }
 
@@ -191,7 +191,7 @@ namespace EventDirector.UI.MainPages
                 items.Add(b);
             }
             database.RemoveBibChipAssociations(items);
-            mWindow.Update();
+            UpdateView();
         }
 
         private void UseTool_Click(object sender, RoutedEventArgs e)

@@ -64,7 +64,7 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.AddTimingLocation(new TimingLocation(theEvent.Identifier, "Location " + LocationCount));
-            mWindow.Update();
+            UpdateView();
         }
 
         internal void RemoveLocation(TimingLocation location)
@@ -82,14 +82,14 @@ namespace EventDirector.UI.MainPages
             {
                 database.RemoveTimingLocation(location);
             }
-            mWindow.Update();
+            UpdateView();
         }
 
         public void Update_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Update all clicked.");
             UpdateDatabase();
-            mWindow.Update();
+            UpdateView();
         }
 
         public void UpdateDatabase()
@@ -123,12 +123,12 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_S()
         {
             UpdateDatabase();
-            mWindow.Update();
+            UpdateView();
         }
 
         public void Keyboard_Ctrl_Z()
         {
-            mWindow.Update();
+            UpdateView();
         }
 
         private class ALocation : ListBoxItem

@@ -29,7 +29,6 @@ namespace EventDirector.UI.MainPages
         private int finish_occurrences;
 
         private static int selectedDiv = Constants.Timing.COMMON_SEGMENTS_DIVISIONID;
-        private static bool NotifyTimingWorker = false;
         private static HashSet<int> DivisionsToReset = new HashSet<int>();
 
         public SegmentsPage(IMainWindow mWindow, IDBInterface database)
@@ -130,18 +129,18 @@ namespace EventDirector.UI.MainPages
             }
             database.AddSegment(new Segment(theEvent.Identifier, selectedDiv, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
             DivisionsToReset.Add(selectedDiv);
-            mWindow.Update();
+            UpdateView();
         }
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
             UpdateDatabase();
-            mWindow.Update();
+            UpdateView();
         }
 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
-            mWindow.Update();
+            UpdateView();
         }
 
         private void RemoveSegment(Segment mySegment)
@@ -153,7 +152,7 @@ namespace EventDirector.UI.MainPages
             }
             database.RemoveSegment(mySegment);
             DivisionsToReset.Add(mySegment.DivisionId);
-            mWindow.Update();
+            UpdateView();
         }
 
         private void Divisions_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -163,7 +162,7 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
-            mWindow.Update();
+            UpdateView();
         }
 
         public void UpdateDatabase()
@@ -183,14 +182,6 @@ namespace EventDirector.UI.MainPages
                 }
                 database.UpdateSegment(segItem.mySegment);
             }
-            if (DivisionsToReset.Count > 0)
-            {
-                foreach (int identifier in DivisionsToReset)
-                {
-                    database.ResetTimingResultsDivision(theEvent.Identifier, identifier);
-                    NotifyTimingWorker = true;
-                }
-            }
         }
 
         public void Keyboard_Ctrl_A()
@@ -201,12 +192,12 @@ namespace EventDirector.UI.MainPages
         public void Keyboard_Ctrl_S()
         {
             UpdateDatabase();
-            mWindow.Update();
+            UpdateView();
         }
 
         public void Keyboard_Ctrl_Z()
         {
-            mWindow.Update();
+            UpdateView();
         }
 
         public void Closing()
@@ -215,8 +206,12 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
-            if (NotifyTimingWorker)
+            if (DivisionsToReset.Count > 0)
             {
+                foreach (int identifier in DivisionsToReset)
+                {
+                    database.ResetTimingResultsDivision(theEvent.Identifier, identifier);
+                }
                 mWindow.NotifyTimingWorker();
             }
         }

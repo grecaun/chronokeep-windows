@@ -60,6 +60,7 @@ namespace EventDirector.UI
 
             UpdateImportOptions();
             Constants.Settings.SetupSettings(database);
+            UpdateStatus();
 
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
@@ -334,11 +335,6 @@ namespace EventDirector.UI
             UpdateStatus();
         }
 
-        public void Update()
-        {
-            page.UpdateView();
-        }
-
         public void NonUIUpdate()
         {
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
@@ -365,6 +361,7 @@ namespace EventDirector.UI
                 locationsButton.IsEnabled = false;
                 segmentsButton.IsEnabled = false;
                 agegroupsButton.IsEnabled = false;
+                timingButton.IsEnabled = false;
             }
             else
             {
@@ -376,6 +373,7 @@ namespace EventDirector.UI
                 locationsButton.IsEnabled = true;
                 segmentsButton.IsEnabled = true;
                 agegroupsButton.IsEnabled = true;
+                timingButton.IsEnabled = true;
             }
         }
 

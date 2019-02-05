@@ -53,6 +53,11 @@ namespace EventDirector.UI.MainPages
             this.mWindow = window;
             theEvent = database.GetCurrentEvent();
 
+            if (theEvent == null || theEvent.Identifier == -1)
+            {
+                return;
+            }
+
             // Setup the running clock.
             Timer.Tick += new EventHandler(Timer_Click);
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
@@ -191,7 +196,6 @@ namespace EventDirector.UI.MainPages
             if (theEvent == null || theEvent.Identifier == -1)
             {
                 // Something went wrong and this shouldn't be visible.
-                mWindow.UpdateStatus();
                 return;
             }
             if (TimerStarted)

@@ -2339,12 +2339,12 @@ namespace EventDirector
         {
             Log.D("Resetting timing results for bib " + bib + " and event " + eventId);
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM time_results r WHERE r.event_id=@event AND" +
-                " EXISTS (SELECT * FROM eventspecific s WHERE s.eventspecific_id=r.eventspecific_id" +
+            command.CommandText = "DELETE FROM time_results WHERE event_id=@event AND" +
+                " EXISTS (SELECT * FROM eventspecific s WHERE s.eventspecific_id=time_results.eventspecific_id" +
                 " AND s.eventspecific_bib=@bib);" +
-                "UPDATE chipreads r SET r.read_status=@status WHERE r.event_id=@event AND" +
-                " (r.read_bib=@bib OR EXISTS (SELECT * FROM bib_chip_assoc c WHERE r.read_chip=c.chip" +
-                " AND c.bib=@bib)) AND read_status<>@ignore;";
+                "UPDATE chipreads SET read_status=@status WHERE chipreads.event_id=@event AND" +
+                " (chipreads.read_bib=@bib OR EXISTS (SELECT * FROM bib_chip_assoc c WHERE chipreads.read_chip=c.chip" +
+                " AND c.bib=@bib)) AND chipreads.read_status<>@ignore;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
@@ -2359,12 +2359,12 @@ namespace EventDirector
         {
             Log.D("Resetting timing results for chip " + chip + " and event " + eventId);
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM time_results r WHERE r.event_id=@event AND" +
+            command.CommandText = "DELETE FROM time_results WHERE event_id=@event AND" +
                 " EXISTS (SELECT * FROM eventspecific s JOIN bib_chip_assoc b ON b.bib=s.eventspecific_bib " +
-                " WHERE s.eventspecific_id=r.eventspecific_id" +
+                " WHERE s.eventspecific_id=time_results.eventspecific_id" +
                 " AND b.chip=@chip);" +
-                "UPDATE chipreads r SET r.read_status=@status WHERE r.event_id=@event AND" +
-                " r.read_chipnumber=@chip AND read_status<>@ignore;";
+                "UPDATE chipreads  SET read_status=@status WHERE event_id=@event AND" +
+                " read_chipnumber=@chip AND read_status<>@ignore;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
@@ -2379,14 +2379,14 @@ namespace EventDirector
         {
             Log.D("Resetting timing results for division " + divisionId + " and event " + eventId);
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM time_results r WHERE r.event_id=@event AND" +
-                " EXISTS (SELECT * FROM eventspecific s WHERE s.eventspecific_id=r.eventspecific_id" +
+            command.CommandText = "DELETE FROM time_results WHERE time_results.event_id=@event AND" +
+                " EXISTS (SELECT * FROM eventspecific s WHERE s.eventspecific_id=time_results.eventspecific_id" +
                 " AND s.division_id=@div);" +
-                "UPDATE chipreads r SET r.read_status=@status WHERE r.event_id=@event AND" +
+                "UPDATE chipreads SET read_status=@status WHERE chipreads.event_id=@event AND" +
                 " EXISTS (SELECT * FROM divisions d JOIN eventspecific s ON s.division_id=d.division_id " +
                 " JOIN bib_chip_assoc b on b.bib=s.eventspecific_bib " +
-                " WHERE d.event_id=@event AND d.division_id=@div AND (r.read_bib=b.bib OR r.read_chipnumber=b.chip)" +
-                " ) AND read_status<>@ignore;";
+                " WHERE d.event_id=@event AND d.division_id=@div AND (chipreads.read_bib=b.bib OR chipreads.read_chipnumber=b.chip)" +
+                " ) AND chipreads.read_status<>@ignore;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
@@ -2650,10 +2650,11 @@ namespace EventDirector
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = new SQLiteCommand("DROP TABLE bib_chip_assoc; DROP TABLE events; DROP TABLE dayof_participant; DROP TABLE kiosk; " +
-                    "DROP TABLE divisions; DROP TABLE timing_locations; DROP TABLE participants; DROP TABLE eventspecific;" +
-                    "DROP TABLE eventspecific_apparel; DROP TABLE segments; DROP TABLE time_results; DROP TABLE chipreads;" +
-                    "DROP TABLE changes; DROP TABLE app_settings; DROP TABLE settings;", connection);
+                SQLiteCommand command = new SQLiteCommand("DROP TABLE timing_systems; DROP TABLE age_groups; DROP TABLE available_bibs;" +
+                    "DROP TABLE bib_group; DROP TABLE settings; DROP TABLE app_settings; DROP TABLE changes; DROP TABLE chipreads;" +
+                    "DROP TABLE time_results; DROP TABLE segments; DROP TABLE eventspecific_apparel; DROP TABLE eventspecific;" +
+                    "DROP TABLE participants; DROP TABLE timing_locations; DROP TABLE divisions; DROP TABLE kiosk; DROP TABLE dayof_participant;" +
+                    "DROP TABLE events; DROP TABLE bib_chip_assoc;", connection);
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
@@ -2664,10 +2665,11 @@ namespace EventDirector
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = new SQLiteCommand("DELETE FROM bib_chip_assoc; DELETE FROM events; DELETE FROM dayof_participant; DELETE FROM kiosk;" +
-                    "DELETE FROM divisions; DELETE FROM timing_locations; DELETE FROM participants; DELETE FROM eventspecific;" +
-                    "DELETE FROM eventspecific_apparel; DELETE FROM segments; DELETE FROM time_results; DELETE FROM chipreads;" +
-                    "DELETE FROM changes; DELETE FROM app_settings; DELETE FROM settings;", connection);
+                SQLiteCommand command = new SQLiteCommand("DELETE FROM timing_systems; DELETE FROM age_groups; DELETE FROM available_bibs;" +
+                    "DELETE FROM bib_group; DELETE FROM settings; DELETE FROM app_settings; DELETE FROM changes; DELETE FROM chipreads;" +
+                    "DELETE FROM time_results; DELETE FROM segments; DELETE FROM eventspecific_apparel; DELETE FROM eventspecific;" +
+                    "DELETE FROM participants; DELETE FROM timing_locations; DELETE FROM divisions; DELETE FROM kiosk; DELETE FROM dayof_participant;" +
+                    "DELETE FROM events; DELETE FROM bib_chip_assoc;", connection);
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
