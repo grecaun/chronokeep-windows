@@ -230,7 +230,8 @@ namespace EventDirector
         public bool IsNotMatch(string value)
         {
             return this.Bib.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
-                && this.Name.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
+                && this.Name.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
+                && this.ChipNumber.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
         }
     }
 }
