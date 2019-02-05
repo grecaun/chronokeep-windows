@@ -8,9 +8,6 @@ namespace EventDirector.Interfaces
     {
         // Window related calls.
         void AddWindow(Window w);
-
-        // Page related calls.
-        void SwitchPage(IMainPage page, bool IsMainPage);
         
         // Networking services related calls.
         bool StartNetworkServices();
@@ -19,6 +16,8 @@ namespace EventDirector.Interfaces
         // Tools.
         void UpdateStatus();
         bool ExcelEnabled();
+        void UpdateTimingNotUI();
+        void UpdateTiming();
 
         // Event related calls.
         void UpdateEvent(int identifier, string nameString, long dateVal, int nextYear, int shirtOptionalVal, int shirtPrice);
@@ -29,7 +28,6 @@ namespace EventDirector.Interfaces
         void TimingSystemDisconnected(TimingSystem system);
         void ShutdownTimingController();
         List<TimingSystem> GetConnectedSystems();
-        void NonUIUpdate();
         void NotifyTimingWorker();
         void NotifyRecalculateAgeGroups();
     }

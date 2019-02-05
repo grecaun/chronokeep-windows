@@ -222,10 +222,7 @@ namespace EventDirector.UI
                     Log.D("Oh well!");
                 }
             }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                page.UpdateDatabase();
-            }
+            page.Closing();
         }
 
         private bool StopTimingWorker()
@@ -335,12 +332,23 @@ namespace EventDirector.UI
             UpdateStatus();
         }
 
-        public void NonUIUpdate()
+        public void UpdateTimingNotUI()
         {
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
-                page.UpdateView();
+                if (page is TimingPage)
+                {
+                    page.UpdateView();
+                }
             }));
+        }
+
+        public void UpdateTiming()
+        {
+            if (page is TimingPage)
+            {
+                page.UpdateView();
+            }
         }
 
         public void AddWindow(Window w)
@@ -388,7 +396,7 @@ namespace EventDirector.UI
             {
                 TimingController.ConnectTimingSystem(system);
             });
-            NonUIUpdate();
+            UpdateTiming();
             await Task.Run(() =>
             {
                 if (!TimingController.IsRunning())
@@ -405,7 +413,7 @@ namespace EventDirector.UI
             {
                 TimingController.DisconnectTimingSystem(system);
             });
-            NonUIUpdate();
+            UpdateTiming();
         }
 
         public void ShutdownTimingController()
@@ -428,7 +436,7 @@ namespace EventDirector.UI
             {
                 MessageBox.Show("Reader at " + system.LocationName + " has unexpectedly disconnected. IP Address was " + system.IPAddress + ".");
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
-                NonUIUpdate();
+                UpdateTiming();
             }));
         }
 

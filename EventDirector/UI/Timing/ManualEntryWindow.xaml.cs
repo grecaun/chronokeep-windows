@@ -16,6 +16,8 @@ namespace EventDirector.UI.Timing
         IMainWindow window;
         IDBInterface database;
         Event theEvent;
+
+        HashSet<int> bibsAdded = new HashSet<int>();
         
         private const string allowedNums = "[^0-9]";
 
@@ -104,6 +106,11 @@ namespace EventDirector.UI.Timing
                 MessageBox.Show("Invalid bib value given.");
                 return;
             }
+            if (bib < 0)
+            {
+                MessageBox.Show("Invalid bib value given.");
+                return;
+            }
             List<Participant> participants = database.GetParticipants(theEvent.Identifier);
             List<Division> divisions = database.GetDivisions(theEvent.Identifier);
             // Store the offset start values for each division by division ID
@@ -153,12 +160,20 @@ namespace EventDirector.UI.Timing
             ChipRead newEntry = new ChipRead(theEvent.Identifier, locationId, bib, time);
             Log.D("Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
             database.AddChipRead(newEntry);
-            window.NonUIUpdate();
+            bibsAdded.Add(bib);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (window != null) window.WindowFinalize(this);
+            if (bibsAdded.Count > 0)
+            {
+                foreach (int bib in bibsAdded)
+                {
+                    database.ResetTimingResultsBib(theEvent.Identifier, bib);
+                }
+                window.NotifyTimingWorker();
+            }
         }
 
         private void NumberValidation(object sender, TextCompositionEventArgs e)

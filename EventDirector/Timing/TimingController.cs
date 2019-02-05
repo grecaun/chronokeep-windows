@@ -143,7 +143,7 @@ namespace EventDirector.Timing
                                     case MessageType.CONNECTED:
                                         Log.D("Timing system successfully connected.");
                                         TimingSystemDict[sock].Status = SYSTEM_STATUS.CONNECTED;
-                                        mainWindow.NonUIUpdate();
+                                        mainWindow.UpdateTimingNotUI();
                                         break;
                                     case MessageType.SETTINGCHANGE:
                                         Log.D("Setting value changed.");
@@ -195,7 +195,7 @@ namespace EventDirector.Timing
                         if (sys.Status != SYSTEM_STATUS.CONNECTED && sys.TimedOut()) // Not connected & Timed out.
                         {
                             sys.Status = SYSTEM_STATUS.DISCONNECTED;
-                            mainWindow.NonUIUpdate();
+                            mainWindow.UpdateTimingNotUI();
                             TimingSystemDict.Remove(sock);
                             toRemove.Add(sock);
                         }
