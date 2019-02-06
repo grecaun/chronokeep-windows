@@ -10,6 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Name="mainPanel">
@@ -29,7 +30,11 @@
                 </ListBox>
             </StackPanel>
         </ScrollViewer>
-        <DockPanel LastChildFill="False" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel Grid.Row="1">
+            <RadioButton Name="NetTimeButton" Content="Net Time" Width="100" GroupName="TimeGroup" Margin="0,0,0,0" IsChecked="True" FontSize="14" VerticalContentAlignment="Center" Checked="NetTimeButton_Checked"/>
+            <RadioButton Name="TimeofDayButton" Content="Time of Day" Width="100" GroupName="TimeGroup" Margin="0,0,0,0" FontSize="14" VerticalContentAlignment="Center" Checked="TimeofDayButton_Checked"/>
+        </StackPanel>
+        <DockPanel LastChildFill="False" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Button Name="SetButton" Content="Set" Height="25" Width="75" FontSize="14" Margin="0,5,5,5" Click="SetButton_Click" />
             <Button Name="DoneButton" Content="Cancel" Height="25" Width="75" FontSize="14" Margin="5,5,0,5" Click="DoneButton_Click" />
         </DockPanel>

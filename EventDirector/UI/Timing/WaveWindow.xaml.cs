@@ -61,6 +61,21 @@ namespace EventDirector.UI.Timing
             foreach (AWave wave in WaveList.Items)
             {
                 (int waveNo, long seconds, int milliseconds) = wave.GetValues();
+                if (TimeofDayButton.IsChecked == true)
+                {
+                    seconds = seconds - theEvent.StartSeconds;
+                    milliseconds = milliseconds - theEvent.StartMilliseconds;
+                    if (milliseconds < 0)
+                    {
+                        seconds -= 1;
+                        milliseconds = 1000 - milliseconds;
+                    }
+                    if (seconds < 0)
+                    {
+                        seconds = 0;
+                        milliseconds = 0;
+                    }
+                }
                 database.SetWaveTimes(theEvent.Identifier, waveNo, seconds, milliseconds);
             }
             List<Division> newDivisions = database.GetDivisions(theEvent.Identifier);
@@ -94,7 +109,27 @@ namespace EventDirector.UI.Timing
             if (window != null) window.WindowFinalize(this);
         }
 
-        public class AWave : ListBoxItem
+        private void NetTimeButton_Checked(object sender, RoutedEventArgs e)
+        {
+            Log.D("Net Time Selected.");
+            foreach (AWave wave in WaveList.Items)
+            {
+                int waveId = wave.GetWave();
+                wave.SetTime(waveTimes[waveId].seconds, waveTimes[waveId].milliseconds);
+            }
+        }
+
+        private void TimeofDayButton_Checked(object sender, RoutedEventArgs e)
+        {
+            Log.D("Time of day selected.");
+            foreach (AWave wave in WaveList.Items)
+            {
+                int waveId = wave.GetWave();
+                wave.SetTime(waveTimes[waveId].seconds + theEvent.StartSeconds, waveTimes[waveId].milliseconds + theEvent.StartMilliseconds);
+            }
+        }
+
+        private class AWave : ListBoxItem
         {
             public MaskedTextBox StartOffset { get; private set; }
             private int Wave;
@@ -125,6 +160,18 @@ namespace EventDirector.UI.Timing
                 };
                 StartOffset.GotFocus += new RoutedEventHandler(this.SelectAll);
                 thePanel.Children.Add(StartOffset);
+            }
+
+            public void SetTime(long seconds, int milliseconds)
+            {
+                StartOffset.Text = string.Format(TimeFormat, seconds / 3600,
+                    (seconds % 3600) / 60, seconds % 60,
+                    milliseconds);
+            }
+
+            public int GetWave()
+            {
+                return Wave;
             }
 
             public (int, long, int) GetValues()
