@@ -24,7 +24,7 @@ namespace EventDirector.UI.MainPages
     {
         private IMainWindow mWindow;
         private IDBInterface database;
-        private Event theEvent;
+        private Event theEvent = null;
 
         public DashboardPage(IMainWindow mainWindow, IDBInterface db)
         {
@@ -36,7 +36,13 @@ namespace EventDirector.UI.MainPages
 
         public void UpdateView()
         {
+            int oldEventId = theEvent == null ? -1 : theEvent.Identifier;
             theEvent = database.GetCurrentEvent();
+            if (oldEventId != -1 && oldEventId != theEvent.Identifier)
+            {
+                mWindow.NotifyRecalculateAgeGroups();
+                mWindow.NotifyTimingWorker();
+            }
             if (theEvent == null || theEvent.Identifier == -1)
             {
                 LeftPanel.Visibility = Visibility.Hidden;
