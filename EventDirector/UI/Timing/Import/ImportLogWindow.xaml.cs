@@ -128,6 +128,7 @@ namespace EventDirector.UI.Timing.Import
                 }
                 database.AddChipReads(chipreads);
             });
+            window.NotifyTimingWorker();
             window.UpdateTiming();
             this.Close();
         }

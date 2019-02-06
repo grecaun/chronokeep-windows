@@ -270,7 +270,6 @@ namespace EventDirector.UI.MainPages
 
         private void StartRaceClick(object sender, RoutedEventArgs e)
         {
-
             Log.D("Starting race.");
             StartTime.Text = DateTime.Now.ToString("HH:mm:ss.fff");
             StartRace.IsEnabled = false;
@@ -353,9 +352,17 @@ namespace EventDirector.UI.MainPages
         private void StartTimeChanged()
         {
             UpdateStartTime();
+            long oldStartSeconds = theEvent.StartSeconds;
+            int oldStartMilliseconds = theEvent.StartMilliseconds;
             theEvent.StartSeconds = (startTime.Hour * 3600) + (startTime.Minute * 60) + startTime.Second;
             theEvent.StartMilliseconds = startTime.Millisecond;
-            database.UpdateEvent(theEvent);
+            if (oldStartSeconds != theEvent.StartSeconds || oldStartMilliseconds != theEvent.StartMilliseconds)
+            {
+                database.UpdateEvent(theEvent);
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                UpdateView();
+                mWindow.NotifyTimingWorker();
+            }
         }
 
         private void UpdateStartTime()
