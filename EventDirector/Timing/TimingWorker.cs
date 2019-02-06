@@ -181,43 +181,93 @@ namespace EventDirector.Timing
             // they have no bib or chip.
             Dictionary<int, List<ChipRead>> bibReadPairs = new Dictionary<int, List<ChipRead>>();
             Dictionary<string, List<ChipRead>> chipReadPairs = new Dictionary<string, List<ChipRead>>();
+            // Make sure we keep track of the
+            // last occurrence for a person at a specific location.
+            // (Bib, Location), Last Chip Read
+            Dictionary<(int, int), (ChipRead Read, int Occurrence)> lastReadDictionary = new Dictionary<(int, int), (ChipRead, int)>();
+            Dictionary<(string, int), (ChipRead Read, int Occurrence)> chipLastReadDictionary = new Dictionary<(string, int), (ChipRead Read, int Occurrence)>();
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
             List<ChipRead> setUnknown = new List<ChipRead>();
             foreach (ChipRead read in allChipReads)
             {
                 if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
-                    if (!bibReadPairs.ContainsKey(read.ChipBib))
+                    // if we process all the used reads before putting them in the list
+                    // we can ensure that all of the reads we process are STATUS_NONE
+                    // and then we can verify that we aren't inserting results BEFORE
+                    // results we've already calculated
+                    if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
-                        bibReadPairs[read.ChipBib] = new List<ChipRead>();
+                        Log.D("Read already processed.");
+                        if (!lastReadDictionary.ContainsKey((read.ChipBib, read.LocationID)))
+                        {
+                            lastReadDictionary[(read.ChipBib, read.LocationID)] = (read, 1);
+                        }
+                        else
+                        {
+                            lastReadDictionary[(read.ChipBib, read.LocationID)] = (read, lastReadDictionary[(read.ChipBib, read.LocationID)].Occurrence + 1);
+                        }
                     }
-                    bibReadPairs[read.ChipBib].Add(read);
+                    else
+                    {
+                        if (!bibReadPairs.ContainsKey(read.ChipBib))
+                        {
+                            bibReadPairs[read.ChipBib] = new List<ChipRead>();
+                        }
+                        bibReadPairs[read.ChipBib].Add(read);
+                    }
                 }
                 else if (read.ReadBib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
-                    if (!bibReadPairs.ContainsKey(read.ReadBib))
+                    if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
-                        bibReadPairs[read.ReadBib] = new List<ChipRead>();
+                        Log.D("Read already processed.");
+                        if (!lastReadDictionary.ContainsKey((read.ReadBib, read.LocationID)))
+                        {
+                            lastReadDictionary[(read.ReadBib, read.LocationID)] = (read, 1);
+                        }
+                        else
+                        {
+                            lastReadDictionary[(read.ReadBib, read.LocationID)] = (read, lastReadDictionary[(read.ReadBib, read.LocationID)].Occurrence + 1);
+                        }
                     }
-                    bibReadPairs[read.ReadBib].Add(read);
+                    else
+                    {
+                        if (!bibReadPairs.ContainsKey(read.ReadBib))
+                        {
+                            bibReadPairs[read.ReadBib] = new List<ChipRead>();
+                        }
+                        bibReadPairs[read.ReadBib].Add(read);
+                    }
                 }
                 else if (read.ChipNumber != Constants.Timing.CHIPREAD_DUMMYCHIP)
                 {
-                    if (!chipReadPairs.ContainsKey(read.ChipNumber.ToString()))
+                    if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
-                        chipReadPairs[read.ChipNumber.ToString()] = new List<ChipRead>();
+                        if (!chipLastReadDictionary.ContainsKey((read.ChipNumber.ToString(), read.LocationID)))
+                        {
+                            chipLastReadDictionary[(read.ChipNumber.ToString(), read.LocationID)] = (read, 1);
+                        }
+                        else
+                        {
+                            chipLastReadDictionary[(read.ChipNumber.ToString(), read.LocationID)] = (read, chipLastReadDictionary[(read.ChipNumber.ToString(), read.LocationID)].Occurrence + 1);
+                        }
                     }
-                    chipReadPairs[read.ChipNumber.ToString()].Add(read);
+                    else
+                    {
+                        if (!chipReadPairs.ContainsKey(read.ChipNumber.ToString()))
+                        {
+                            chipReadPairs[read.ChipNumber.ToString()] = new List<ChipRead>();
+                        }
+                        chipReadPairs[read.ChipNumber.ToString()].Add(read);
+                    }
                 }
                 else
                 {
                     setUnknown.Add(read);
                 }
             }
-            // Go through each chip read for a single person. Make sure we keep track of the
-            // last occurrence for a person at a specific location.
-            // (Bib, Location), Last Chip Read
-            Dictionary<(int, int), (ChipRead Read, int Occurrence)> lastReadDictionary = new Dictionary<(int, int), (ChipRead, int)>();
+            // Go through each chip read for a single person.
             //List<ChipRead> updateStatusReads = new List<ChipRead>();
             List<TimeResult> newResults = new List<TimeResult>();
             // process reads that have a bib
@@ -296,6 +346,7 @@ namespace EventDirector.Timing
                             // Possible reads at this point:
                             //      Start Location reads past the StartWindow (IGNORE)
                             //      Start/Finish Location reads past the StartWindow (Valid reads)
+                            //          These could be BEFORE or AFTER the last occurrence at this spot
                             //      Reads at any other location
                             else if (Constants.Timing.LOCATION_START != read.LocationID)
                             {
@@ -394,22 +445,9 @@ namespace EventDirector.Timing
                             }
                         }
                     }
-                    else // read was already processed
-                    {
-                        Log.D("Read already processed.");
-                        if (!lastReadDictionary.ContainsKey((bib, read.LocationID)))
-                        {
-                            lastReadDictionary[(bib, read.LocationID)] = (read, 1);
-                        }
-                        else
-                        {
-                            lastReadDictionary[(bib, read.LocationID)] = (read, lastReadDictionary[(bib, read.LocationID)].Occurrence + 1);
-                        }
-                    }
                 }
             }
             // process reads that have a chip
-            Dictionary<(string, int), (ChipRead Read, int Occurrence)> chipLastReadDictionary = new Dictionary<(string, int), (ChipRead Read, int Occurrence)>();
             Dictionary<string, ChipRead> chipStartReadDictionary = new Dictionary<string, ChipRead>();
             foreach (string chip in chipReadPairs.Keys)
             {
@@ -557,18 +595,6 @@ namespace EventDirector.Timing
                             {
                                 read.Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
                             }
-                        }
-                    }
-                    else // read was already processed
-                    {
-                        Log.D("Read already processed.");
-                        if (!chipLastReadDictionary.ContainsKey((chip, read.LocationID)))
-                        {
-                            chipLastReadDictionary[(chip, read.LocationID)] = (read, 1);
-                        }
-                        else
-                        {
-                            chipLastReadDictionary[(chip, read.LocationID)] = (read, chipLastReadDictionary[(chip, read.LocationID)].Occurrence + 1);
                         }
                     }
                 }

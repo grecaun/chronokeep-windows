@@ -146,6 +146,7 @@ namespace EventDirector
         void UpdateChipReads(List<ChipRead> reads);
         void SetChipReadStatus(ChipRead read);
         void SetChipReadStatuses(List<ChipRead> reads);
+        void DeleteChipReads(List<ChipRead> reads);
         List<ChipRead> GetChipReads();
         List<ChipRead> GetChipReads(int eventId);
         List<ChipRead> GetUsefulChipReads(int eventId);

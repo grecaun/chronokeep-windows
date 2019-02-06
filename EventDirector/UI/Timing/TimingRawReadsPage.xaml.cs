@@ -157,5 +157,43 @@ namespace EventDirector.UI.Timing
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
         }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Delete clicked.");
+            if (MessageBoxResult.Yes == MessageBox.Show("Are you sure you wish to delete these records? They " +
+                "cannot be recovered if you have no other record of them.", "Confirmation",
+                MessageBoxButton.YesNo, MessageBoxImage.Hand))
+            {
+                List<ChipRead> readsToDelete = new List<ChipRead>();
+                foreach (ChipRead read in updateListView.SelectedItems)
+                {
+                    readsToDelete.Add(read);
+                    if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                    {
+                        bibsToReset.Add(read.ChipBib);
+                    }
+                    else if (read.ReadBib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                    {
+                        bibsToReset.Add(read.ReadBib);
+                    }
+                    else
+                    {
+                        chipsToReset.Add(read.ChipNumber);
+                    }
+                }
+                database.DeleteChipReads(readsToDelete);
+                foreach (int bib in bibsToReset)
+                {
+                    database.ResetTimingResultsBib(theEvent.Identifier, bib);
+                }
+                foreach (long chip in chipsToReset)
+                {
+                    database.ResetTimingResultsChip(theEvent.Identifier, chip.ToString());
+                }
+                UpdateView();
+                parent.NotifyTimingWorker();
+            }
+        }
     }
 }

@@ -3176,6 +3176,21 @@ namespace EventDirector
             }
         }
 
+        public void DeleteChipReads(List<ChipRead> reads)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (ChipRead read in reads)
+                {
+                    SQLiteCommand command = connection.CreateCommand();
+                    command.CommandText = "DELETE FROM chipreads WHERE read_id=@read;";
+                    command.Parameters.Add(new SQLiteParameter("@read", read.ReadId));
+                    command.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+        }
+
         public List<ChipRead> GetChipReads()
         {
             SQLiteCommand command = connection.CreateCommand();

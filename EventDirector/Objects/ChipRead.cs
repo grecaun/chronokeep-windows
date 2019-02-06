@@ -184,7 +184,7 @@ namespace EventDirector
                 }
                 if (Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE == Status)
                 {
-                    return "Deleted";
+                    return "Ignored";
                 }
                 if (Constants.Timing.CHIPREAD_STATUS_USED == Status)
                 {

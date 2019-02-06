@@ -28,9 +28,10 @@
             </ListView.View>
         </ListView>
         <DockPanel LastChildFill="False" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button Name="IgnoreButton" Content="Ignore Reads" Height="35" FontSize="16" Width="150" Margin="5,5,5,5" Click="IgnoreButton_Click"/>
-            <Button Name="Shift" Content="Edit" Height="35" FontSize="16" Width="150" Margin="5,5,5,5" Click="Shift_Click" />
-            <Button Name="DoneButton" Content="Done" Height="35" FontSize="16" Width="150" Margin="5,5,5,5" Click="DoneButton_Click"/>
+            <Button Name="DeleteButton" Content="Delete" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="DeleteButton_Click"/>
+            <Button Name="IgnoreButton" Content="Ignore" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="IgnoreButton_Click"/>
+            <Button Name="Shift" Content="Edit" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="Shift_Click" />
+            <Button Name="DoneButton" Content="Done" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="DoneButton_Click"/>
         </DockPanel>
     </Grid>
 </Page>
