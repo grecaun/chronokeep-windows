@@ -277,9 +277,12 @@ namespace EventDirector.UI.MainPages
             StartTimeChanged();
         }
 
-        private void EditSelected(object sender, RoutedEventArgs e)
+        private void ChangeWaves(object sender, RoutedEventArgs e)
         {
-            Log.D("Edit Selected");
+            Log.D("Set Wave Times clicked.");
+            WaveWindow waves = new WaveWindow(mWindow, database);
+            mWindow.AddWindow(waves);
+            waves.ShowDialog();
         }
 
         private void ManualEntry(object sender, RoutedEventArgs e)

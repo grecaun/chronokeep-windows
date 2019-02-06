@@ -291,6 +291,9 @@
     <Compile Include="UI\Timing\TimingResultsPage.xaml.cs">
       <DependentUpon>TimingResultsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Timing\WaveWindow.xaml.cs">
+      <DependentUpon>WaveWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\UIObjects\AListBoxItem.cs" />
     <Compile Include="Objects\BibChipAssociation.cs" />
     <Compile Include="UI\ChipAssignment\BibChipAssociationWindow.xaml.cs">
@@ -482,6 +485,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Timing\TimingResultsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Timing\WaveWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

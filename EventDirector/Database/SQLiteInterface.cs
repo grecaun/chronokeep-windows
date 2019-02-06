@@ -1196,6 +1196,26 @@ namespace EventDirector
             return output;
         }
 
+        public void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds)
+        {
+            Log.D(String.Format("Setting wave {0} for event {1}", wave, eventId));
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "UPDATE divisions SET division_start_offset_seconds=@seconds," +
+                    " division_start_offset_milliseconds=@milli WHERE event_id=@event AND division_wave=@wave;";
+                command.Parameters.AddRange(new SQLiteParameter[]
+                {
+                    new SQLiteParameter("@event", eventId),
+                    new SQLiteParameter("@wave", wave),
+                    new SQLiteParameter("@seconds", seconds),
+                    new SQLiteParameter("@milli", milliseconds)
+                });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
         /*
          * Events
          */

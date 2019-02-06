@@ -43,6 +43,7 @@ namespace EventDirector
         int GetDivisionID(Division div);
         List<Division> GetDivisions(int eventId);
         Division GetDivision(int divId);
+        void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds);
 
         // Timing Location Functions
         void AddTimingLocation(TimingLocation tp);
