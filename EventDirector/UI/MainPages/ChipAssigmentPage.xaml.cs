@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +28,10 @@ namespace EventDirector.UI.MainPages
         private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
+
+        private bool BibsChanged = false;
+        private readonly Regex allowedChars = new Regex("[^0-9]");
+        private readonly Regex allowedHexChars = new Regex("[^0-9a-fA-F]");
 
         public ChipAssigmentPage(IMainWindow mWindow, IDBInterface database)
         {
@@ -105,7 +110,11 @@ namespace EventDirector.UI.MainPages
             int.TryParse(SingleChipBox.Text, out chip);
             int.TryParse(SingleBibBox.Text, out bib);
             Log.D("Bib " + bib + " Chip " + chip);
-
+            if (chip == -1 || bib == -1)
+            {
+                MessageBox.Show("The bib or chip is not valid.");
+                return;
+            }
             List<BibChipAssociation> bibChips = new List<BibChipAssociation>
             {
                 new BibChipAssociation()
@@ -115,7 +124,10 @@ namespace EventDirector.UI.MainPages
                 }
             };
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
+            BibsChanged = true;
             UpdateView();
+            SingleBibBox.Text = (bib + 1).ToString();
+            SingleBibBox.Focus();
         }
 
         private void SaveRangeButton_Click(object sender, RoutedEventArgs e)
@@ -127,7 +139,11 @@ namespace EventDirector.UI.MainPages
             int.TryParse(RangeStartBibBox.Text, out startBib);
             int.TryParse(RangeEndBibBox.Text, out endBib);
             Log.D("StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
-
+            if (startChip == -1 || endChip == -1 || startBib == -1 || endBib == -1)
+            {
+                MessageBox.Show("One or more values is not valid.");
+                return;
+            }
             List<BibChipAssociation> bibChips = new List<BibChipAssociation>();
             for (int bib = startBib, tag = startChip; bib <= endBib && tag <= endChip; bib++, tag++)
             {
@@ -137,7 +153,11 @@ namespace EventDirector.UI.MainPages
                 });
             }
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
+            BibsChanged = true;
             UpdateView();
+            RangeStartBibBox.Text = (endBib + 1).ToString();
+            RangeEndBibBox.Text = (endBib + 1).ToString();
+            RangeStartBibBox.Focus();
         }
 
         private async void FileImport_Click(object sender, RoutedEventArgs e)
@@ -157,6 +177,10 @@ namespace EventDirector.UI.MainPages
                     {
                         mWindow.AddWindow(bcWindow);
                         bcWindow.ShowDialog();
+                        if (bcWindow.ImportComplete)
+                        {
+                            BibsChanged = true;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -176,6 +200,7 @@ namespace EventDirector.UI.MainPages
             {
                 List<BibChipAssociation> assocs = database.GetBibChips(oldEventId);
                 database.AddBibChipAssociation(theEvent.Identifier, assocs);
+                BibsChanged = true;
                 UpdateView();
             }
         }
@@ -191,6 +216,7 @@ namespace EventDirector.UI.MainPages
                 items.Add(b);
             }
             database.RemoveBibChipAssociations(items);
+            BibsChanged = true;
             UpdateView();
         }
 
@@ -202,17 +228,26 @@ namespace EventDirector.UI.MainPages
             {
                 mWindow.AddWindow(chipTool);
                 chipTool.ShowDialog();
+                if (chipTool.ImportComplete)
+                {
+                    BibsChanged = true;
+                }
             }
         }
 
-        private void KeyPressHandler(object sender, KeyEventArgs e)
+        private void KeyPressHandlerRange(object sender, KeyEventArgs e)
         {
-            if (e.Key >= Key.D0 && e.Key <= Key.D9) { }
-            else if (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) { }
-            else if (e.Key == Key.Tab) { }
-            else
+            if (e.Key == Key.Enter)
             {
-                e.Handled = true;
+                SaveRangeButton_Click(null, null);
+            }
+        }
+
+        private void KeyPressHandlerSingle(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SaveSingleButton_Click(null, null);
             }
         }
 
@@ -234,6 +269,7 @@ namespace EventDirector.UI.MainPages
             {
                 List<BibChipAssociation> list = (List<BibChipAssociation>) bibChipList.ItemsSource;
                 database.RemoveBibChipAssociations(list);
+                BibsChanged = true;
                 UpdateView();
             }
         }
@@ -269,11 +305,33 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
+            if (BibsChanged)
+            {
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                mWindow.NotifyTimingWorker();
+            }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateView();
+            SingleBibBox.Focus();
+        }
+
+        private void SelectAll(object sender, RoutedEventArgs e)
+        {
+            TextBox src = (TextBox)e.OriginalSource;
+            src.SelectAll();
+        }
+
+        private void BibValidation(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = allowedChars.IsMatch(e.Text);
+        }
+
+        private void ChipValidation(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = allowedChars.IsMatch(e.Text);
         }
     }
 }

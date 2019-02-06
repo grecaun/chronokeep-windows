@@ -16,6 +16,8 @@ namespace EventDirector.UI.ChipAssignment
         IWindowCallback window;
         IDBInterface database;
 
+        public bool ImportComplete = false;
+
         public ChipTool()
         {
             InitializeComponent();
@@ -264,11 +266,13 @@ namespace EventDirector.UI.ChipAssignment
             }
             Event theEvent = database.GetCurrentEvent();
             database.AddBibChipAssociation(theEvent.Identifier, list);
+            ImportComplete = true;
             this.Close();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            ImportComplete = false;
             this.Close();
         }
 

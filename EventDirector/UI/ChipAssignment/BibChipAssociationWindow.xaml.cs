@@ -26,6 +26,8 @@ namespace EventDirector
         Boolean init = true;
         int[] keys;
 
+        public bool ImportComplete = false;
+
         private BibChipAssociationWindow(IWindowCallback window, IDataImporter importer, IDBInterface database)
         {
             InitializeComponent();
@@ -109,7 +111,7 @@ namespace EventDirector
         {
             importer.Finish();
             Log.D("Bib Chip Association - Cancel Button clicked.");
-            this.Close();
+            ImportComplete = false;
         }
 
         private async void Done_Click(object sender, RoutedEventArgs e)
@@ -161,6 +163,7 @@ namespace EventDirector
                     database.AddBibChipAssociation(eventId, items);
                 });
                 Log.D("All done with bib chip associations.");
+                ImportComplete = true;
                 this.Close();
             }
             else
