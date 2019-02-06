@@ -2033,16 +2033,14 @@ namespace EventDirector
          * Segment
          */
 
-        public void AddSegment(Segment seg)
+        private void AddSegmentNoTransaction(Segment seg)
         {
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "INSERT INTO segments (event_id, division_id, location_id, location_occurance, name, distance_segment, " +
-                    "distance_cumulative, distance_unit) " +
-                    "VALUES (@event,@division,@location,@occurance,@name,@dseg,@dcum,@dunit)";
-                command.Parameters.AddRange(new SQLiteParameter[] {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "INSERT INTO segments (event_id, division_id, location_id, location_occurance, name, distance_segment, " +
+                "distance_cumulative, distance_unit) " +
+                "VALUES (@event,@division,@location,@occurance,@name,@dseg,@dcum,@dunit)";
+            command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event",seg.EventId),
                 new SQLiteParameter("@division",seg.DivisionId),
                 new SQLiteParameter("@location",seg.LocationId),
@@ -2051,9 +2049,38 @@ namespace EventDirector
                 new SQLiteParameter("@dseg",seg.SegmentDistance),
                 new SQLiteParameter("@dcum",seg.CumulativeDistance),
                 new SQLiteParameter("@dunit",seg.DistanceUnit) });
-                command.ExecuteNonQuery();
+            command.ExecuteNonQuery();
+        }
+
+        public void AddSegment(Segment seg)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                AddSegmentNoTransaction(seg);
                 transaction.Commit();
             }
+        }
+
+        public void AddSegments(List<Segment> segments)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (Segment seg in segments)
+                {
+                    AddSegmentNoTransaction(seg);
+                }
+                transaction.Commit();
+            }
+        }
+
+        private void RemoveSegmentNoTransaction(int identifier)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "DELETE FROM segments WHERE segment_id=@id";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@id", identifier) });
+            command.ExecuteNonQuery();
         }
 
         public void RemoveSegment(Segment seg)
@@ -2065,26 +2092,31 @@ namespace EventDirector
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "DELETE FROM segments WHERE segment_id=@id";
-                command.Parameters.AddRange(new SQLiteParameter[] {
-                    new SQLiteParameter("@id", identifier) });
-                command.ExecuteNonQuery();
+                RemoveSegmentNoTransaction(identifier);
                 transaction.Commit();
             }
         }
 
-        public void UpdateSegment(Segment seg)
+        public void RemoveSegments(List<Segment> segments)
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "UPDATE segments SET event_id=@event, division_id=@division, location_id=@location, " +
-                    "location_occurance=@occurance, name=@name, distance_segment=@dseg, distance_cumulative=@dcum, distance_unit=@dunit " +
-                    "WHERE segment_id=@id";
-                command.Parameters.AddRange(new SQLiteParameter[] {
+                foreach (Segment seg in segments)
+                {
+                    RemoveSegmentNoTransaction(seg.Identifier);
+                }
+                transaction.Commit();
+            }
+        }
+
+        private void UpdateSegmentNoTransaction(Segment seg)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "UPDATE segments SET event_id=@event, division_id=@division, location_id=@location, " +
+                "location_occurance=@occurance, name=@name, distance_segment=@dseg, distance_cumulative=@dcum, distance_unit=@dunit " +
+                "WHERE segment_id=@id";
+            command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event",seg.EventId),
                 new SQLiteParameter("@division",seg.DivisionId),
                 new SQLiteParameter("@location",seg.LocationId),
@@ -2094,7 +2126,25 @@ namespace EventDirector
                 new SQLiteParameter("@dcum",seg.CumulativeDistance),
                 new SQLiteParameter("@dunit",seg.DistanceUnit),
                 new SQLiteParameter("@id",seg.Identifier) });
-                command.ExecuteNonQuery();
+            command.ExecuteNonQuery();
+        }
+
+        public void UpdateSegment(Segment seg)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                UpdateSegmentNoTransaction(seg);
+                transaction.Commit();
+            }
+        }
+
+        public void UpdateSegments(List<Segment> segments)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (Segment seg in segments) {
+                    UpdateSegmentNoTransaction(seg);
+                }
                 transaction.Commit();
             }
         }

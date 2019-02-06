@@ -55,9 +55,12 @@ namespace EventDirector
 
         // Segment Functions
         void AddSegment(Segment seg);
+        void AddSegments(List<Segment> segments);
         void RemoveSegment(Segment seg);
         void RemoveSegment(int identifier);
+        void RemoveSegments(List<Segment> segments);
         void UpdateSegment(Segment seg);
+        void UpdateSegments(List<Segment> segments);
         int GetSegmentId(Segment seg);
         List<Segment> GetSegments(int eventId);
         void ResetSegments(int eventId);

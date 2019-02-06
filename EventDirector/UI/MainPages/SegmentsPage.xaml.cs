@@ -26,9 +26,8 @@ namespace EventDirector.UI.MainPages
         private IDBInterface database;
         private Event theEvent;
         private List<TimingLocation> locations;
-        private int finish_occurrences;
-
-        private static int selectedDiv = Constants.Timing.COMMON_SEGMENTS_DIVISIONID;
+        private List<Division> divisions;
+        
         private static HashSet<int> DivisionsToReset = new HashSet<int>();
 
         public SegmentsPage(IMainWindow mWindow, IDBInterface database)
@@ -49,8 +48,9 @@ namespace EventDirector.UI.MainPages
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 1, theEvent.StartWindow));
                 }
+                divisions = database.GetDivisions(theEvent.Identifier);
+                divisions.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
             }
-            UpdateDivisionsBox();
         }
 
         public void UpdateView()
@@ -61,75 +61,20 @@ namespace EventDirector.UI.MainPages
             }
             SegmentsBox.Items.Clear();
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
-            finish_occurrences = 0;
-            segments.Sort();
             if (theEvent.DivisionSpecificSegments == 1)
             {
-                selectedDiv = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
-                segments.RemoveAll(NotInDiv);
+                foreach (Division div in divisions)
+                {
+                    List<Segment> divSegments = new List<Segment>(segments);
+                    divSegments.RemoveAll(x => x.DivisionId != div.Identifier);
+                    SegmentsBox.Items.Add(new ADivisionSegmentHolder(this, div, divisions, divSegments, locations));
+                }
             }
             else
             {
-                DivisionRow.Height = new GridLength(0);
-                Divisions.IsEnabled = false;
+                segments.RemoveAll(x => x.DivisionId != Constants.Timing.COMMON_SEGMENTS_DIVISIONID);
+                SegmentsBox.Items.Add(new ADivisionSegmentHolder(this, null, divisions, segments, locations));
             }
-            foreach (Segment s in segments)
-            {
-                SegmentsBox.Items.Add(new ASegment(this, s, locations));
-                if (s.LocationId == Constants.Timing.LOCATION_FINISH || s.LocationId == Constants.Timing.LOCATION_START)
-                {
-                    finish_occurrences = s.Occurrence > finish_occurrences ? s.Occurrence : finish_occurrences;
-                }
-            }
-            finish_occurrences++;
-        }
-
-        private static bool NotInDiv(Segment s)
-        {
-            return s.DivisionId != selectedDiv;
-        }
-
-        public void UpdateDivisionsBox()
-        {
-            if (theEvent == null || theEvent.Identifier < 0)
-            {
-                return;
-            }
-            Divisions.Items.Clear();
-            if (theEvent.DivisionSpecificSegments == 1)
-            {
-                List<Division> divisions = database.GetDivisions(theEvent.Identifier);
-                foreach (Division d in divisions)
-                {
-                    Divisions.Items.Add(new ComboBoxItem()
-                    {
-                        Content = d.Name,
-                        Uid = d.Identifier.ToString()
-                    });
-                }
-                Divisions.SelectedIndex = 0;
-            }
-            else
-            {
-                UpdateView();
-            }
-        }
-
-        private void Add_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Add segment clicked.");
-            selectedDiv = Constants.Timing.COMMON_SEGMENTS_DIVISIONID;
-            if (theEvent.DivisionSpecificSegments == 1)
-            {
-                selectedDiv = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
-            }
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                UpdateDatabase();
-            }
-            database.AddSegment(new Segment(theEvent.Identifier, selectedDiv, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
-            DivisionsToReset.Add(selectedDiv);
-            UpdateView();
         }
 
         private void Update_Click(object sender, RoutedEventArgs e)
@@ -155,39 +100,21 @@ namespace EventDirector.UI.MainPages
             UpdateView();
         }
 
-        private void Divisions_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Log.D("Division changed.");
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                UpdateDatabase();
-            }
-            UpdateView();
-        }
-
         public void UpdateDatabase()
         {
-            Dictionary<int, Segment> oldSegments = new Dictionary<int, Segment>();
-            foreach (Segment seg in database.GetSegments(theEvent.Identifier))
+            List<Segment> segments = new List<Segment>();
+            foreach (ADivisionSegmentHolder divSegHolder in SegmentsBox.Items)
             {
-                oldSegments[seg.Identifier] = seg;
-            }
-            foreach (ASegment segItem in SegmentsBox.Items)
-            {
-                segItem.UpdateSegment();
-                if (oldSegments.ContainsKey(segItem.mySegment.Identifier) &&
-                    oldSegments[segItem.mySegment.Identifier].Occurrence != segItem.mySegment.Occurrence)
+                foreach (ASegment aSegment in divSegHolder.segmentHolder.Items)
                 {
-                    DivisionsToReset.Add(segItem.mySegment.DivisionId);
+                    aSegment.UpdateSegment();
+                    segments.Add(aSegment.mySegment);
                 }
-                database.UpdateSegment(segItem.mySegment);
             }
+            database.UpdateSegments(segments);
         }
 
-        public void Keyboard_Ctrl_A()
-        {
-            Add_Click(null, null);
-        }
+        public void Keyboard_Ctrl_A() { }
 
         public void Keyboard_Ctrl_S()
         {
@@ -210,9 +137,199 @@ namespace EventDirector.UI.MainPages
             {
                 foreach (int identifier in DivisionsToReset)
                 {
-                    database.ResetTimingResultsDivision(theEvent.Identifier, identifier);
+                    if (identifier == Constants.Timing.COMMON_SEGMENTS_DIVISIONID)
+                    {
+                        database.ResetTimingResultsEvent(theEvent.Identifier);
+                    }
+                    else
+                    {
+                        database.ResetTimingResultsDivision(theEvent.Identifier, identifier);
+                    }
                 }
                 mWindow.NotifyTimingWorker();
+            }
+        }
+
+        public void AddSegment(int divisionId, int finish_occurrences)
+        {
+            Log.D("Adding segment.");
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+            database.AddSegment(new Segment(theEvent.Identifier, divisionId, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
+            DivisionsToReset.Add(divisionId);
+            UpdateView();
+        }
+
+        public void CopyFromDivision(int intoDivision, int fromDivision)
+        {
+            Log.D("Copying segments.");
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+            List<Segment> oldSegments = database.GetSegments(theEvent.Identifier);
+            List<Segment> newSegments = new List<Segment>(oldSegments);
+            oldSegments.RemoveAll(x => x.DivisionId != intoDivision);
+            database.RemoveSegments(oldSegments);
+            newSegments.RemoveAll(x => x.DivisionId != fromDivision);
+            foreach (Segment seg in newSegments)
+            {
+                seg.DivisionId = intoDivision;
+            }
+            database.AddSegments(newSegments);
+            DivisionsToReset.Add(intoDivision);
+            UpdateView();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateView();
+        }
+
+        private class ADivisionSegmentHolder : ListBoxItem
+        {
+            private SegmentsPage page;
+            private ComboBox copyFromDivision = null;
+            private int finish_occurrences;
+            private List<Division> otherDivisions;
+
+            public ListBox segmentHolder;
+            public Division division;
+
+            public ADivisionSegmentHolder(SegmentsPage page, Division division,
+                List<Division> divisions, List<Segment> segments, List<TimingLocation> locations)
+            {
+                this.division = division;
+                this.page = page;
+                otherDivisions = new List<Division>(divisions);
+                otherDivisions.RemoveAll(x => x.Identifier == (division == null ? -1 : division.Identifier));
+                StackPanel thePanel = new StackPanel();
+                this.Content = thePanel;
+                Grid namePanel = new Grid();
+                namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(85) });
+                if (division != null)
+                {
+                    namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(250) });
+                }
+                Label divName = new Label()
+                {
+                    Content = division == null ? "All Divisions" : division.Name,
+                    FontSize = 20,
+                    Margin = new Thickness(10,5,0,5),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                namePanel.Children.Add(divName);
+                Grid.SetColumn(divName, 0);
+                Button addButton = new Button()
+                {
+                    Content = "Add",
+                    FontSize = 16,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Width = 75,
+                    Height = 25
+                };
+                addButton.Click += new RoutedEventHandler(this.AddClick);
+                namePanel.Children.Add(addButton);
+                Grid.SetColumn(addButton, 1);
+                if (division != null)
+                {
+                    DockPanel copyPanel = new DockPanel();
+                    copyPanel.Children.Add(new Label()
+                    {
+                        Content = "Copy from",
+                        FontSize = 14,
+                        VerticalContentAlignment = VerticalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                        Margin = new Thickness(10, 0, 2, 0)
+                    });
+                    copyFromDivision = new ComboBox()
+                    {
+                        FontSize = 14,
+                        Height = 25,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        VerticalContentAlignment = VerticalAlignment.Center,
+                        Margin = new Thickness(0,0,10,0)
+                    };
+                    copyFromDivision.Items.Add(new ComboBoxItem()
+                    {
+                        Content = "",
+                        Uid = "-1"
+                    });
+                    foreach (Division div in otherDivisions)
+                    {
+                        copyFromDivision.Items.Add(new ComboBoxItem()
+                        {
+                            Content = div.Name,
+                            Uid = div.Identifier.ToString()
+                        });
+                    }
+                    copyFromDivision.SelectedIndex = 0;
+                    copyFromDivision.SelectionChanged += new SelectionChangedEventHandler(this.CopyFromDivisionSelected);
+                    copyPanel.Children.Add(copyFromDivision);
+                    namePanel.Children.Add(copyPanel);
+                    Grid.SetColumn(copyPanel, 2);
+                }
+                thePanel.Children.Add(namePanel);
+                thePanel.Children.Add(new Rectangle()
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5,0,5,0),
+                    Height = 1,
+                    Fill = new SolidColorBrush(Colors.Gray)
+                });
+                segmentHolder = new ListBox()
+                {
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    BorderThickness = new Thickness(0)
+                };
+                thePanel.Children.Add(segmentHolder);
+                finish_occurrences = 0;
+                foreach (Segment s in segments)
+                {
+                    segmentHolder.Items.Add(new ASegment(page, s, locations));
+                    if (s.LocationId == Constants.Timing.LOCATION_FINISH || s.LocationId == Constants.Timing.LOCATION_START)
+                    {
+                        finish_occurrences = s.Occurrence > finish_occurrences ? s.Occurrence : finish_occurrences;
+                    }
+                }
+                finish_occurrences++;
+                thePanel.Children.Add(new Rectangle()
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5, 0, 5, 0),
+                    Height = 1,
+                    Fill = new SolidColorBrush(Colors.Gray)
+                });
+            }
+
+            private void AddClick(Object sender, RoutedEventArgs e)
+            {
+                Log.D("Add segment clicked.");
+                int selectedDiv = Constants.Timing.COMMON_SEGMENTS_DIVISIONID;
+                if (division != null)
+                {
+                    selectedDiv = division.Identifier;
+                }
+                page.AddSegment(selectedDiv, finish_occurrences);
+            }
+
+            private void CopyFromDivisionSelected(Object sender, SelectionChangedEventArgs e)
+            {
+                Log.D("Copy from division changed.");
+                if (division == null || copyFromDivision.SelectedIndex < 1)
+                {
+                    return;
+                }
+                page.CopyFromDivision(division.Identifier, Convert.ToInt32(((ComboBoxItem)copyFromDivision.SelectedItem).Uid));
             }
         }
 
