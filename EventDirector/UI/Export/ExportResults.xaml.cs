@@ -304,6 +304,12 @@ namespace EventDirector.UI.Export
                     IsChecked = true
                 };
                 this.Content = Include;
+                this.Selected += new RoutedEventHandler(this.This_Selected);
+            }
+
+            private void This_Selected(Object sender, RoutedEventArgs e)
+            {
+                Include.IsChecked = !Include.IsChecked;
             }
         }
 
