@@ -19,7 +19,7 @@ namespace EventDirector.UI.IO
             this.format = format;
         }
 
-        public void ExportData(string Path, string Name = "")
+        public void ExportData(string Path)
         {
             using (var outFile = File.Create(Path))
             {
@@ -28,7 +28,7 @@ namespace EventDirector.UI.IO
                     outWriter.WriteLine(String.Format(format, headers));
                     foreach (object[] line in data)
                     {
-                        outWriter.WriteLine(String.Format(format, line.Select(x => x.ToString()).ToArray()));
+                        outWriter.WriteLine(String.Format(format, line.Select(x => x != null ? x.ToString() : "").ToArray()));
                     }
                 }
             }

@@ -64,6 +64,7 @@ namespace EventDirector
         int GetSegmentId(Segment seg);
         List<Segment> GetSegments(int eventId);
         void ResetSegments(int eventId);
+        int GetMaxSegments(int eventId);
 
         // Participant Functions
         void AddParticipant(Participant person);

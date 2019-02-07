@@ -14,10 +14,10 @@ namespace EventDirector.UI.IO
         string[] headers = { };
         List<object[]> data;
 
-        public void ExportData(string Path, string Name = "")
+        public void ExportData(string Path)
         {
             Application excel = Utils.GetExcelApp();
-            Workbook wBook = excel.Workbooks.Add(Name);
+            Workbook wBook = excel.Workbooks.Add("");
             Worksheet wSheet = wBook.ActiveSheet;
             List<object[]> localData = new List<object[]>
             {

@@ -231,6 +231,9 @@
     </Compile>
     <Compile Include="IO\CSVExporter.cs" />
     <Compile Include="IO\ExcelExporter.cs" />
+    <Compile Include="UI\Export\ExportResults.xaml.cs">
+      <DependentUpon>ExportResults.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Import\ImportFilePage2Alt.xaml.cs">
       <DependentUpon>ImportFilePage2Alt.xaml</DependentUpon>
     </Compile>
@@ -401,6 +404,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\EventWindows\ChangeEventWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Export\ExportResults.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,26 @@
+﻿<Window x:Class="EventDirector.UI.Export.ExportResults"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EventDirector.UI.Export"
+        mc:Ignorable="d"
+        Title="Export Results" Height="450" Width="300" MaxWidth="300" MinWidth="300" Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Label Content="Content to Export" FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="0"/>
+        <ListBox Name="headersList" Margin="5,0,5,5" BorderThickness="0" Grid.Row="1"/>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="Done" Content="Submit" FontSize="16" Height="35" Margin="10,5,5,10" Click="Done_Click" Grid.Column="0" />
+            <Button x:Name="Cancel" Content="Cancel" FontSize="16" Height="35" Margin="5,5,10,10" Click="Cancel_Click" Grid.Column="1"/>
+        </Grid>
+    </Grid>
+</Window>

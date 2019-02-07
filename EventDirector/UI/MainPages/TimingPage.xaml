@@ -60,7 +60,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
-                            <Button Content="Export Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
+                            <Button Content="Export Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="Export_Click"/>
                             <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="True" Click="Recalculate_Click"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1">

@@ -2192,6 +2192,21 @@ namespace EventDirector
             }
         }
 
+        public int GetMaxSegments(int eventId)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT MAX(seg_count) max_segments FROM" +
+                " (SELECT COUNT(segment_id) seg_count, division_id FROM segments" +
+                " WHERE event_id=@event GROUP BY division_id);";
+            command.Parameters.Add(new SQLiteParameter("@event", eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            if (reader.Read() && reader["max_segments"] != DBNull.Value)
+            {
+                return Convert.ToInt32(reader["max_segments"]);
+            }
+            return 0;
+        }
+
         /*
          * Timing Results
          */

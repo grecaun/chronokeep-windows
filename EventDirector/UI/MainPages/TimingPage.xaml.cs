@@ -1,6 +1,7 @@
 ﻿using EventDirector.Interfaces;
 using EventDirector.IO;
 using EventDirector.Objects;
+using EventDirector.UI.Export;
 using EventDirector.UI.Timing;
 using EventDirector.UI.Timing.Import;
 using Microsoft.Win32;
@@ -562,6 +563,14 @@ namespace EventDirector.UI.MainPages
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             Search();
+        }
+
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Export clicked.");
+            ExportResults exportResults = new ExportResults(mWindow, database);
+            mWindow.AddWindow(exportResults);
+            exportResults.ShowDialog();
         }
 
         private class AReaderBox : ListBoxItem
