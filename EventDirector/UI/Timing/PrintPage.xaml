@@ -10,61 +10,41 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <StackPanel HorizontalAlignment="Center">
-            <Label Content="Finish Times Only" FontSize="20" Margin="20,5,0,0" />
-            <Rectangle Height="1" Margin="5,2,5,2" HorizontalAlignment="Stretch" Fill="Gray"/>
             <Grid Margin="5,5,5,5">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="90" />
-                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="80" />
                 </Grid.ColumnDefinitions>
-                <ComboBox Name="FinishOnlyDivisionsBox" FontSize="14" VerticalContentAlignment="Center" Grid.Column="0" Margin="5,5,5,5"/>
-                <ComboBox Name="FinishOnlyTypeBox" FontSize="14" VerticalContentAlignment="Center" Grid.Column="1" Margin="5,5,5,5">
-                    <ComboBoxItem Content="Overall" Uid="1" IsSelected="True"/>
-                    <ComboBoxItem Content="Gender" Uid="2"/>
-                    <ComboBoxItem Content="Age Group" Uid="3"/>
-                </ComboBox>
-                <Button Name="FinishOnlyPrint" Content="Print" FontSize="14" VerticalContentAlignment="Center" Grid.Column="2" Margin="5,5,5,5" Click="FinishOnlyPrint_Click"/>
-                <Button Name="FinishOnlySave" Content="Save" FontSize="14" VerticalContentAlignment="Center" Grid.Column="3" Margin="5,5,5,5" Click="FinishOnlySave_Click"/>
+                <Label Content="Times" FontSize="16" Grid.Column="0" HorizontalContentAlignment="Center"/>
+                <Label Content="Divisions" FontSize="16" Grid.Column="1" HorizontalContentAlignment="Center"/>
+                <Label Content="Type" FontSize="16" Grid.Column="2" HorizontalContentAlignment="Center"/>
             </Grid>
-            <Label Content="Start &amp; Finish Times" FontSize="20" Margin="20,5,0,0" />
-            <Rectangle Height="1" Margin="5,2,5,2" HorizontalAlignment="Stretch" Fill="Gray"/>
             <Grid Margin="5,5,5,5">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="90" />
-                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="80" />
                 </Grid.ColumnDefinitions>
-                <ComboBox Name="StartFinishDivisionsBox" FontSize="14" VerticalContentAlignment="Center" Grid.Column="0" Margin="5,5,5,5"/>
-                <ComboBox Name="StartFinishTypeBox" FontSize="14" VerticalContentAlignment="Center" Grid.Column="1" Margin="5,5,5,5">
-                    <ComboBoxItem Content="Overall" Uid="1" IsSelected="True"/>
-                    <ComboBoxItem Content="Gender" Uid="2"/>
-                    <ComboBoxItem Content="Age Group" Uid="3"/>
-                </ComboBox>
-                <Button Name="StartFinishPrint" Content="Print" FontSize="14" VerticalContentAlignment="Center" Grid.Column="2" Margin="5,5,5,5" Click="StartFinishPrint_Click"/>
-                <Button Name="StartFinishSave" Content="Save" FontSize="14" VerticalContentAlignment="Center" Grid.Column="3" Margin="5,5,5,5" Click="StartFinishSave_Click"/>
+                <ListBox Grid.Column="0" Name="ReportType" Height="104" FontSize="12" SelectionMode="Single">
+                    <ListBoxItem Content="Finish" IsSelected="True"/>
+                    <ListBoxItem Content="Start &amp; Finish"/>
+                    <ListBoxItem Content="All"/>
+                </ListBox>
+                <ListBox Grid.Column="1" Name="DivisionsBox" Height="104" FontSize="12" SelectionMode="Extended">
+                    <ListBoxItem Content="All" IsSelected="True"/>
+                </ListBox>
+                <ListBox Grid.Column="2" Name="PlacementType" Height="104" FontSize="12" SelectionMode="Single">
+                    <ListBoxItem Content="Overall" IsSelected="True"/>
+                    <ListBoxItem Content="Gender"/>
+                    <ListBoxItem Content="Age Group"/>
+                </ListBox>
             </Grid>
-            <Label Content="All Times" FontSize="20" Margin="20,5,0,0" />
-            <Rectangle Height="1" Margin="5,2,5,2" HorizontalAlignment="Stretch" Fill="Gray"/>
-            <Grid Margin="5,5,5,5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150" />
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="90" />
-                    <ColumnDefinition Width="90" />
-                </Grid.ColumnDefinitions>
-                <ComboBox Name="AllDivisionsBox" FontSize="14" VerticalContentAlignment="Center" Grid.Column="0" Margin="5,5,5,5"/>
-                <ComboBox Name="AllTypeBox" FontSize="14" VerticalContentAlignment="Center" Grid.Column="1" Margin="5,5,5,5">
-                    <ComboBoxItem Content="Overall" Uid="1" IsSelected="True"/>
-                    <ComboBoxItem Content="Gender" Uid="2"/>
-                    <ComboBoxItem Content="Age Group" Uid="3"/>
-                </ComboBox>
-                <Button Name="AllPrint" Content="Print" FontSize="14" VerticalContentAlignment="Center" Grid.Column="2" Margin="5,5,5,5" Click="AllPrint_Click"/>
-                <Button Name="AllSave" Content="Save" FontSize="14" VerticalContentAlignment="Center" Grid.Column="3" Margin="5,5,5,5" Click="AllSave_Click"/>
-            </Grid>
-            <Button Name="Done" Content="Done" FontSize="14" VerticalContentAlignment="Center" Click="Done_Click" Width="100" Margin="10,10,10,10"/>
+            <DockPanel LastChildFill="False" HorizontalAlignment="Center">
+                <Button Name="Print" Content="Print" FontSize="14" VerticalContentAlignment="Center" Click="Print_Click" Width="100" Margin="5,10,5,10"/>
+                <Button Name="Save" Content="Save" FontSize="14" VerticalContentAlignment="Center" Click="Save_Click" Width="100" Margin="5,10,5,10"/>
+                <Button Name="Done" Content="Done" FontSize="14" VerticalContentAlignment="Center" Click="Done_Click" Width="100" Margin="5,10,5,10"/>
+            </DockPanel>
         </StackPanel>
     </ScrollViewer>
 </Page>
