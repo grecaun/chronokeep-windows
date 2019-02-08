@@ -136,6 +136,7 @@ namespace EventDirector.UI
             if (page is DivisionsPage)
             {
                 Log.D("Divisions page already displayed.");
+                return;
             }
             SwitchPage(new DivisionsPage(this, database), true);
         }
@@ -190,6 +191,7 @@ namespace EventDirector.UI
             if (page is TimingPage)
             {
                 Log.D("Timing page already displayed.");
+                ((TimingPage)page).LoadMainDisplay();
                 return;
             }
             SwitchPage(new TimingPage(this, database), true);

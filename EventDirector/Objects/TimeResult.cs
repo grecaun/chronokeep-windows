@@ -275,6 +275,36 @@ namespace EventDirector
             return one.DivisionName.CompareTo(two.DivisionName);
         }
 
+        public static int CompareByDivisionPlace(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.DivisionName.Equals(two.DivisionName))
+            {
+                return one.Place.CompareTo(two.Place);
+            }
+            return one.DivisionName.CompareTo(two.DivisionName);
+        }
+
+        public static int CompareByDivisionGenderPlace(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.DivisionName.Equals(two.DivisionName))
+            {
+                return one.GenderPlace.CompareTo(two.GenderPlace);
+            }
+            return one.DivisionName.CompareTo(two.DivisionName);
+        }
+
+        public static int CompareByDivisionAgeGroupPlace(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.DivisionName.Equals(two.DivisionName))
+            {
+                return one.AgePlace.CompareTo(two.AgePlace);
+            }
+            return one.DivisionName.CompareTo(two.DivisionName);
+        }
+
         public static bool IsNotKnown(TimeResult one)
         {
             return one.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON;

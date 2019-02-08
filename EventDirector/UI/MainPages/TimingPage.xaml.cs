@@ -573,6 +573,14 @@ namespace EventDirector.UI.MainPages
             exportResults.ShowDialog();
         }
 
+        private void Print_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Print clicked.");
+            subPage = new PrintPage(this, database);
+            TimingFrame.NavigationService.RemoveBackEntry();
+            TimingFrame.Content = subPage;
+        }
+
         private class AReaderBox : ListBoxItem
         {
             public TextBox ReaderIP { get; private set; }

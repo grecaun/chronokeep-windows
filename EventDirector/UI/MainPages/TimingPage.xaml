@@ -59,7 +59,7 @@
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
-                            <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
+                            <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="Print_Click"/>
                             <Button Content="Export Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="Export_Click"/>
                             <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="True" Click="Recalculate_Click"/>
                         </StackPanel>
