@@ -1811,17 +1811,11 @@ namespace EventDirector
             return output;
         }
 
-        public Participant GetParticipant(int eventId, int identifier)
+        private Participant GetParticipantWorker(SQLiteDataReader reader)
         {
-            Participant output = null;
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM participants AS p, eventspecific AS s, divisions AS d WHERE p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id AND p.participant_id=@partId";
-            command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
-            command.Parameters.Add(new SQLiteParameter("@partId", identifier));
-            SQLiteDataReader reader = command.ExecuteReader();
             if (reader.Read())
             {
-                output = new Participant(
+                return new Participant(
                     Convert.ToInt32(reader["participant_id"]),
                     reader["participant_first"].ToString(),
                     reader["participant_last"].ToString(),
@@ -1854,16 +1848,41 @@ namespace EventDirector
                     reader["emergencycontact_phone"].ToString()
                     );
             }
-            return output;
+            return null;
+        }
+
+        public Participant GetParticipantEventSpecific(int eventId, int eventSpecificId)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM participants AS p JOIN eventspecific AS s ON p.participant_id=s.participant_id" +
+                " JOIN divisions AS d ON s.division_id=d.division_id WHERE s.event_id=@eventid " +
+                "AND s.eventspecific_id=@partId";
+            command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
+            command.Parameters.Add(new SQLiteParameter("@eventSpecId", eventSpecificId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            return GetParticipantWorker(reader);
+        }
+
+        public Participant GetParticipant(int eventId, int identifier)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM participants AS p, eventspecific AS s, divisions AS d WHERE " +
+                "p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id " +
+                "AND p.participant_id=@partId";
+            command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
+            command.Parameters.Add(new SQLiteParameter("@partId", identifier));
+            SQLiteDataReader reader = command.ExecuteReader();
+            return GetParticipantWorker(reader);
         }
 
         public Participant GetParticipant(int eventId, Participant unknown)
         {
-            Participant output = null;
             SQLiteCommand command = connection.CreateCommand();
             if (unknown.EventSpecific.Chip != -1)
             {
-                command.CommandText = "SELECT * FROM participants AS p, eventspecific AS s, divisions AS d, bib_chip_assoc as b WHERE p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id AND " +
+                command.CommandText = "SELECT * FROM participants AS p, eventspecific AS s, divisions AS d, " +
+                    "bib_chip_assoc as b WHERE p.participant_id=s.participant_id AND s.event_id=@eventid " +
+                    "AND d.division_id=s.division_id AND " +
                     "s.eventspecific_bib=b.bib AND b.chip=@chip AND b.event_id=s.event_id;";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@eventid", eventId),
@@ -1872,8 +1891,11 @@ namespace EventDirector
             }
             else
             {
-                command.CommandText = "SELECT * FROM participants AS p, eventspecific AS s, divisions AS d WHERE p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id AND " +
-                    "p.participant_first=@first AND p.participant_last=@last AND p.participant_street=@street AND p.participant_city=@city AND p.participant_state=@state AND p.participant_zip=@zip AND p.participant_birthday=@birthday";
+                command.CommandText = "SELECT * FROM participants AS p, eventspecific AS s, divisions AS d " +
+                    "WHERE p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id " +
+                    "AND p.participant_first=@first AND p.participant_last=@last AND p.participant_street=@street " +
+                    "AND p.participant_city=@city AND p.participant_state=@state AND p.participant_zip=@zip " +
+                    "AND p.participant_birthday=@birthday";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@eventid", eventId),
                     new SQLiteParameter("@first", unknown.FirstName),
@@ -1887,50 +1909,15 @@ namespace EventDirector
 
             }
             SQLiteDataReader reader = command.ExecuteReader();
-            if (reader.Read())
-            {
-                output = new Participant(
-                    Convert.ToInt32(reader["participant_id"]),
-                    reader["participant_first"].ToString(),
-                    reader["participant_last"].ToString(),
-                    reader["participant_street"].ToString(),
-                    reader["participant_city"].ToString(),
-                    reader["participant_state"].ToString(),
-                    reader["participant_zip"].ToString(),
-                    reader["participant_birthday"].ToString(),
-                    new EventSpecific(
-                        Convert.ToInt32(reader["eventspecific_id"]),
-                        Convert.ToInt32(reader["event_id"]),
-                        Convert.ToInt32(reader["division_id"]),
-                        reader["division_name"].ToString(),
-                        Convert.ToInt32(reader["eventspecific_bib"]),
-                        Convert.ToInt32(reader["chip"]),
-                        Convert.ToInt32(reader["eventspecific_checkedin"]),
-                        reader["eventspecific_comments"].ToString(),
-                        reader["eventspecific_owes"].ToString(),
-                        reader["eventspecific_other"].ToString(),
-                        Convert.ToInt32(reader["eventspecific_earlystart"]),
-                        Convert.ToInt32(reader["eventspecific_next_year"]),
-                        Convert.ToInt32(reader["eventspecific_age_group_id"])
-                        ),
-                    reader["participant_email"].ToString(),
-                    reader["participant_mobile"].ToString(),
-                    reader["participant_parent"].ToString(),
-                    reader["participant_country"].ToString(),
-                    reader["participant_street2"].ToString(),
-                    reader["participant_gender"].ToString(),
-                    reader["emergencycontact_name"].ToString(),
-                    reader["emergencycontact_phone"].ToString()
-                    );
-            }
-            return output;
+            return GetParticipantWorker(reader);
         }
 
         public int GetParticipantID(Participant person)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT participant_id FROM participants WHERE participant_first=@first AND participant_last=@last" +
-                " AND participant_street=@street AND participant_city=@city AND participant_state=@state AND participant_zip=@zip AND participant_birthday=@birthday";
+            command.CommandText = "SELECT participant_id FROM participants WHERE participant_first=@first AND" +
+                " participant_last=@last AND participant_street=@street AND participant_city=@city AND " +
+                "participant_state=@state AND participant_zip=@zip AND participant_birthday=@birthday";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@first", person.FirstName),

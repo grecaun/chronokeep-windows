@@ -1,4 +1,5 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.UI.MainPages;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -14,6 +15,7 @@ namespace EventDirector.UI.Participants
     {
         IMainWindow window;
         IDBInterface database;
+        TimingPage tPage;
         Event theEvent;
         Participant person;
 
@@ -24,6 +26,7 @@ namespace EventDirector.UI.Participants
         {
             InitializeComponent();
             this.window = window;
+            this.tPage = null;
             this.database = database;
             this.person = person;
             theEvent = database.GetCurrentEvent();
@@ -37,6 +40,27 @@ namespace EventDirector.UI.Participants
             }
             UpdateAllFields();
             BibBox.Focus();
+        }
+
+        public ModifyParticipantWindow(TimingPage tPage, IDBInterface database, int EventSpecificId, int Bib)
+        {
+            InitializeComponent();
+            this.window = null;
+            this.tPage = tPage;
+            this.database = database;
+            theEvent = database.GetCurrentEvent();
+            person = database.GetParticipant(theEvent.Identifier, EventSpecificId);
+            if (person == null)
+            {
+                BibBox.Text = Bib.ToString();
+                Add.Click += new RoutedEventHandler(this.Add_Click);
+            }
+            else
+            {
+                Add.Click += new RoutedEventHandler(this.Modify_Click);
+            }
+            UpdateAllFields();
+            BibBox.IsEnabled = false;
         }
 
         public static ModifyParticipantWindow NewWindow(IMainWindow window, IDBInterface database, Participant person = null)
@@ -254,10 +278,19 @@ namespace EventDirector.UI.Participants
             if (ParticipantChanged)
             {
                 database.ResetTimingResultsPlacements(theEvent.Identifier);
-                window.NotifyRecalculateAgeGroups();
-                window.NotifyTimingWorker();
+                if (window != null)
+                {
+                    window.NotifyRecalculateAgeGroups();
+                    window.NotifyTimingWorker();
+                }
+                if (tPage != null)
+                {
+                    tPage.UpdateView();
+                    tPage.NotifyRecalculateAgeGroups();
+                    tPage.NotifyTimingWorker();
+                }
             }
-            window.WindowFinalize(this);
+            if (window != null) window.WindowFinalize(this);
         }
 
         private void Box_KeyDown(object sender, KeyEventArgs e)

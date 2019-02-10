@@ -329,6 +329,11 @@ namespace EventDirector.UI.MainPages
             mWindow.NotifyTimingWorker();
         }
 
+        public void NotifyRecalculateAgeGroups()
+        {
+            mWindow.NotifyRecalculateAgeGroups();
+        }
+
         private void Search()
         {
             Log.D("Searching");

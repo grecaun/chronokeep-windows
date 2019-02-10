@@ -1,5 +1,6 @@
 ﻿using EventDirector.Interfaces;
 using EventDirector.UI.MainPages;
+using EventDirector.UI.Participants;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -148,6 +149,14 @@ namespace EventDirector.UI.Timing
         private void UpdateListView_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             UpdateView();
+        }
+
+        private void UpdateListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (updateListView.SelectedItem == null) return;
+            TimeResult selected = (TimeResult)updateListView.SelectedItem;
+            ModifyParticipantWindow modifyParticipant = new ModifyParticipantWindow(parent, database, selected.EventSpecificId, selected.Bib);
+            modifyParticipant.ShowDialog();
         }
     }
 }

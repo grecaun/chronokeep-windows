@@ -9,7 +9,7 @@
       Title="TimingResultsPage">
 
     <Grid>
-        <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" Loaded="UpdateListView_Loaded" HorizontalContentAlignment="Center" FontSize="12">
+        <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" Loaded="UpdateListView_Loaded" HorizontalContentAlignment="Center" FontSize="12" MouseDoubleClick="UpdateListView_MouseDoubleClick">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Loc" Width="70" DisplayMemberBinding="{Binding LocationName}" />

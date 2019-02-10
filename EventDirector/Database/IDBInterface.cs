@@ -87,6 +87,7 @@ namespace EventDirector
         List<Participant> GetParticipants(int eventId, int divisionId);
         Participant GetParticipant(int eventIdentifier, int identifier);
         Participant GetParticipant(int eventIdentifier, Participant unknown);
+        Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId);
 
         // Bib Chip Association Functions
         void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc);
