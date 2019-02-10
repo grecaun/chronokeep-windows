@@ -32,10 +32,10 @@ namespace EventDirector
         // RawReads window functions
         private DateTime Start { get; set; }
         public string LocationName { get; set; }
-        public string Bib {
+        public int Bib {
             get
             {
-                return Constants.Timing.CHIPREAD_TYPE_CHIP == Type ? ChipBib.ToString() : ReadBib.ToString();
+                return Constants.Timing.CHIPREAD_TYPE_CHIP == Type ? ChipBib : ReadBib;
             }
         }
 

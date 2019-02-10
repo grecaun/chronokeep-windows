@@ -77,6 +77,13 @@ namespace EventDirector.UI.Timing
         private void Shift_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Shift button clicked.");
+            List<ChipRead> localReads = new List<ChipRead>();
+            foreach (ChipRead read in updateListView.SelectedItems)
+            {
+                localReads.Add(read);
+            }
+            EditRawReadsWindow editRawReadsWindow = new EditRawReadsWindow(parent, database, localReads);
+            editRawReadsWindow.ShowDialog();
         }
 
         public async void UpdateView()

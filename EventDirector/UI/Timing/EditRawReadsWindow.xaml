@@ -1,0 +1,42 @@
+﻿<Window x:Class="EventDirector.UI.Timing.EditRawReadsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:s="clr-namespace:System;assembly=mscorlib"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EventDirector.UI.Timing"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="Edit" Height="200" Width="200" ResizeMode="NoResize">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="70"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label Content="Days" FontSize="14" Grid.Column="0" Grid.Row="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <Label Content="Time" FontSize="14" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <TextBox Name="DaysBox" FontSize="14" Grid.Column="0" Grid.Row="2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="5,5,5,5" KeyDown="Enter_KeyDown" PreviewTextInput="DaysBox_PreviewTextInput"/>
+        <xctk:MaskedTextBox Name="TimeBox" FontSize="14" Grid.Column="1" Grid.Row="2" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="5,5,5,5" KeyDown="Enter_KeyDown"/>
+        <Grid Grid.Row="3" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <RadioButton Content="Add" VerticalContentAlignment="Center" HorizontalAlignment="Center" Grid.Column="0" Grid.Row="0" Name="AddRadio" GroupName="RadioGroup" IsChecked="True" KeyDown="Enter_KeyDown"/>
+            <RadioButton Content="Subtract" VerticalContentAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="0" Name="SubRadio" GroupName="RadioGroup" KeyDown="Enter_KeyDown"/>
+            <Button Content="Submit" Name="Submit" Grid.Column="0" Grid.Row="1" Margin="5,5,5,5" Click="Submit_Click"/>
+            <Button Content="Cancel" Name="Cancel" Grid.Column="1" Grid.Row="1" Margin="5,5,5,5" Click="Cancel_Click"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -287,6 +287,9 @@
     <Compile Include="UI\Participants\ModifyParticipantWindow.xaml.cs">
       <DependentUpon>ModifyParticipantWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Timing\EditRawReadsWindow.xaml.cs">
+      <DependentUpon>EditRawReadsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Timing\Import\ImportLogPage1.xaml.cs">
       <DependentUpon>ImportLogPage1.xaml</DependentUpon>
     </Compile>
@@ -478,6 +481,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Participants\ModifyParticipantWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Timing\EditRawReadsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
