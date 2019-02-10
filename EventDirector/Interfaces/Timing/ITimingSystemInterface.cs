@@ -9,7 +9,7 @@ namespace EventDirector.Interfaces.Timing
 {
     public interface ITimingSystemInterface
     {
-        HashSet<MessageType> ParseMessages(string message);
+        Dictionary<MessageType, List<string>> ParseMessages(string message);
         void SettingsWindow();
         void ClockWindow();
         void StartReading();

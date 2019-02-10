@@ -16,7 +16,8 @@ namespace EventDirector.Interfaces
         // Tools.
         void UpdateStatus();
         bool ExcelEnabled();
-        void UpdateTimingNotUI();
+        void UpdateTimingFromWorker();
+        void UpdateTimingFromController();
         void UpdateTiming();
 
         // Event related calls.

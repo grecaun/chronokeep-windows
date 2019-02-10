@@ -41,9 +41,9 @@ namespace EventDirector
             this.locationId = locationId;
         }
 
-        public HashSet<MessageType> ParseMessages(string inMessage)
+        public Dictionary<MessageType, List<string>> ParseMessages(string inMessage)
         {
-            HashSet<MessageType> output = new HashSet<MessageType>();
+            Dictionary<MessageType, List<string>> output = new Dictionary<MessageType, List<string>>();
             buffer.Append(inMessage);
             Match m = msg.Match(buffer.ToString());
             List<ChipRead> chipReads = new List<ChipRead>();
@@ -72,7 +72,11 @@ namespace EventDirector
                         int.Parse(chipVals[11])
                     );
                     chipReads.Add(chipRead);
-                    output.Add(MessageType.CHIPREAD);
+                    // we don't need to do anything other than notify of a chipread
+                    if (!output.ContainsKey(MessageType.CHIPREAD))
+                    {
+                        output[MessageType.CHIPREAD] = null;
+                    }
                 }
                 // If "V=" then it's a voltage status.
                 else if (voltage.IsMatch(message))
@@ -84,15 +88,27 @@ namespace EventDirector
                     }
                     catch
                     {
-                        output.Add(MessageType.ERROR);
+                        if (!output.ContainsKey(MessageType.ERROR))
+                        {
+                            output[MessageType.ERROR] = new List<string>();
+                        }
+                        output[MessageType.ERROR].Add("Invalid voltage value given.");
                     }
                     if (voltVal != 0 && voltVal < 23)
                     {
-                        output.Add(MessageType.VOLTAGELOW);
+                        // Voltage low and normal don't require anything else.
+                        if (!output.ContainsKey(MessageType.VOLTAGELOW))
+                        {
+                            output[MessageType.VOLTAGELOW] = null;
+                        }
                     }
                     else
                     {
-                        output.Add(MessageType.VOLTAGENORMAL);
+                        // Voltage low and normal don't require anything else.
+                        if (!output.ContainsKey(MessageType.VOLTAGENORMAL))
+                        {
+                            output[MessageType.VOLTAGENORMAL] = null;
+                        }
                     }
                 }
                 // If "U[...]" Setting information
@@ -104,7 +120,12 @@ namespace EventDirector
                         default:
                             break;
                     }
-                    output.Add(MessageType.SETTINGVALUE);
+                    if (!output.ContainsKey(MessageType.SETTINGVALUE))
+                    {
+                        output[MessageType.SETTINGVALUE] = new List<string>();
+                    }
+                    // Add information to the settings values
+                    //output[MessageType.SETTINGVALUE].Add("");
                 }
                 // If "u[...]" setting changed
                 else if (settingconfirmation.IsMatch(message))
@@ -115,42 +136,60 @@ namespace EventDirector
                         default:
                             break;
                     }
-                    output.Add(MessageType.SETTINGCHANGE);
+                    if (!output.ContainsKey(MessageType.SETTINGCHANGE))
+                    {
+                        output[MessageType.SETTINGCHANGE] = new List<string>();
+                    }
+                    // Add information about the setting that changed.
+                    //output[MessageType.SETTINGCHANGE].Add("");
                 }
                 // If "HH:MM:SS DD-MM-YYYY" then it's a time message
                 else if (time.IsMatch(message))
                 {
                     string time = message.Substring(0, 19);
-                    string seconds = message.Substring(19);
-                    seconds = seconds.Trim().Replace("(", "").Replace(")","");
                     try
                     {
-                        DateTime now = DateTime.Now;
                         DateTime ultra = DateTime.ParseExact(time, "HH:mm:ss dd-MM-yyyy", null);
-                        DateTime epochUlt = EpochToDate(Convert.ToInt64(seconds));
-                        Log.D("Now " + now.ToLongTimeString() + " " + now.ToLongDateString() +
-                            " Ultra " + ultra.ToLongTimeString() + " " + ultra.ToLongDateString() +
-                            " (Extra) " + epochUlt.ToLongTimeString() + " " + epochUlt.ToLongDateString());
-                        output.Add(MessageType.TIME);
+                        if (!output.ContainsKey(MessageType.TIME))
+                        {
+                            output[MessageType.TIME] = new List<string>();
+                        }
+                        output[MessageType.TIME].Clear();
+                        output[MessageType.TIME].Add(time);
                     }
                     catch
                     {
-                        output.Add(MessageType.ERROR);
+                        if (!output.ContainsKey(MessageType.ERROR))
+                        {
+                            output[MessageType.ERROR] = new List<string>();
+                        }
+                        output[MessageType.ERROR].Add("Invalid time value given.");
                     }
                 }
                 // If "S=[...]" then status
                 else if (status.IsMatch(message))
                 {
-                    output.Add(MessageType.STATUS);
+                    if (!output.ContainsKey(MessageType.STATUS))
+                    {
+                        output[MessageType.STATUS] = new List<string>();
+                    }
+                    output[MessageType.STATUS].Add(message);
                 }
                 // If "Connected,[LastTimeSent]" that's a connection successful message.
                 else if (connected.IsMatch(message))
                 {
-                    output.Add(MessageType.CONNECTED);
+                    // Nothing other than connected care about for right now.
+                    if (!output.ContainsKey(MessageType.CONNECTED))
+                    {
+                        output[MessageType.CONNECTED] = null;
+                    }
                 }
                 else
                 {
-                    output.Add(MessageType.UNKNOWN);
+                    if (!output.ContainsKey(MessageType.UNKNOWN))
+                    {
+                        output[MessageType.UNKNOWN] = null;
+                    }
                 }
                 m = msg.Match(buffer.ToString());
             }

@@ -21,6 +21,9 @@ namespace EventDirector.Objects
         public ITimingSystemInterface SystemInterface;
         private DateTime ConnectedAt;
 
+        public string SystemTime { get; set; } = "";
+        public string SystemStatus { get; set; } = "";
+
         public TimingSystem(string ip, string type)
         {
             this.IPAddress = ip;
@@ -87,7 +90,7 @@ namespace EventDirector.Objects
             SystemInterface.SetMainSocket(sock);
         }
 
-        public void SetTime()
+        public void SetLastCommunicationTime()
         {
             this.ConnectedAt = DateTime.Now;
         }

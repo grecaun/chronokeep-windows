@@ -66,7 +66,7 @@ namespace EventDirector.Timing
             {
                 Log.D("Connected to " + system.IPAddress);
                 TimingSystemSockets.Add(sock);
-                TimingSystemDict[sock].SetTime();
+                TimingSystemDict[sock].SetLastCommunicationTime();
             }
             else
             {
@@ -135,15 +135,19 @@ namespace EventDirector.Timing
                         {
                             String msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
                             Log.D("Timing System - Message is :" + msg.Trim());
-                            HashSet<MessageType> messageTypes = TimingSystemDict[sock].SystemInterface.ParseMessages(msg);
-                            foreach (MessageType type in messageTypes)
+                            Dictionary<MessageType, List<string>> messageTypes = TimingSystemDict[sock].SystemInterface.ParseMessages(msg);
+                            foreach (MessageType type in messageTypes.Keys)
                             {
                                 switch (type)
                                 {
                                     case MessageType.CONNECTED:
                                         Log.D("Timing system successfully connected.");
                                         TimingSystemDict[sock].Status = SYSTEM_STATUS.CONNECTED;
-                                        mainWindow.UpdateTimingNotUI();
+                                        mainWindow.UpdateTimingFromController();
+                                        break;
+                                    case MessageType.CHIPREAD:
+                                        Log.D("Chipreads found");
+                                        mainWindow.UpdateTimingFromController();
                                         break;
                                     case MessageType.SETTINGCHANGE:
                                         Log.D("Setting value changed.");
@@ -159,9 +163,13 @@ namespace EventDirector.Timing
                                         break;
                                     case MessageType.TIME:
                                         Log.D("Time value received.");
+                                        TimingSystemDict[sock].SystemTime = messageTypes[MessageType.TIME].First<string>();
+                                        mainWindow.UpdateTimingFromController();
                                         break;
                                     case MessageType.STATUS:
                                         Log.D("Status message received.");
+                                        TimingSystemDict[sock].SystemStatus = messageTypes[MessageType.STATUS].Last<string>();
+                                        mainWindow.UpdateTimingFromController();
                                         break;
                                     case MessageType.ERROR:
                                         Log.D("Error from timing system.");
@@ -195,7 +203,7 @@ namespace EventDirector.Timing
                         if (sys.Status != SYSTEM_STATUS.CONNECTED && sys.TimedOut()) // Not connected & Timed out.
                         {
                             sys.Status = SYSTEM_STATUS.DISCONNECTED;
-                            mainWindow.UpdateTimingNotUI();
+                            mainWindow.UpdateTimingFromController();
                             TimingSystemDict.Remove(sock);
                             toRemove.Add(sock);
                         }

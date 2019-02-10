@@ -334,13 +334,26 @@ namespace EventDirector.UI
             UpdateStatus();
         }
 
-        public void UpdateTimingNotUI()
+        public void UpdateTimingFromWorker()
         {
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
                 if (page is TimingPage)
                 {
                     page.UpdateView();
+                }
+            }));
+        }
+
+        public void UpdateTimingFromController()
+        {
+            TimingWorker.Notify();
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            {
+                if (page is TimingPage)
+                {
+                    page.UpdateView();
+                    ((TimingPage)page).NewMessage();
                 }
             }));
         }

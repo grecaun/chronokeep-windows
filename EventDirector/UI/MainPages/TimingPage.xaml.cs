@@ -41,6 +41,7 @@ namespace EventDirector.UI.MainPages
         private DateTime startTime;
         DispatcherTimer Timer = new DispatcherTimer();
         private Boolean TimerStarted = false;
+        private SetTimeWindow timeWindow = null;
 
         int total = 4, connected = 0;
 
@@ -384,6 +385,38 @@ namespace EventDirector.UI.MainPages
             Log.D("Start time is " + startTimeValue);
             startTime = DateTime.ParseExact(startTimeValue + DateTime.Parse(theEvent.Date).ToString("ddMMyyyy"), "HH:mm:ss.fffddMMyyyy", null);
             Log.D("Start time is " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+        }
+
+        public void NewMessage()
+        {
+            if (timeWindow != null)
+            {
+                timeWindow.UpdateTime();
+            }
+        }
+
+        public void OpenTimeWindow(TimingSystem system)
+        {
+            Log.D("Opening Set Time Window.");
+            timeWindow = new SetTimeWindow(this, system);
+            timeWindow.ShowDialog();
+            timeWindow = null;
+        }
+
+        public void SetAllTimingSystemsToTime(DateTime time, bool now)
+        {
+            List<TimingSystem> systems = mWindow.GetConnectedSystems();
+            foreach (TimingSystem sys in systems)
+            {
+                if (now)
+                {
+                    sys.SystemInterface.SetTime(DateTime.Now);
+                }
+                else
+                {
+                    sys.SystemInterface.SetTime(time);
+                }
+            }
         }
 
         internal bool ConnectSystem(TimingSystem sys)
@@ -864,7 +897,7 @@ namespace EventDirector.UI.MainPages
             private void Clock(object sender, RoutedEventArgs e)
             {
                 Log.D("Clock button pressed. IP is " + ReaderIP.Text);
-                reader.SystemInterface.SetTime(DateTime.Now);
+                parent.OpenTimeWindow(reader);
             }
 
             internal void UpdateSystemType(string type, IDBInterface database)

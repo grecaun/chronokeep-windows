@@ -305,6 +305,9 @@
     <Compile Include="UI\Timing\PrintPage.xaml.cs">
       <DependentUpon>PrintPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Timing\SetTimeWindow.xaml.cs">
+      <DependentUpon>SetTimeWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Timing\TimingRawReadsPage.xaml.cs">
       <DependentUpon>TimingRawReadsPage.xaml</DependentUpon>
     </Compile>
@@ -509,6 +512,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Timing\PrintPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Timing\SetTimeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

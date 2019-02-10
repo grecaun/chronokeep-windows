@@ -110,7 +110,7 @@ namespace EventDirector.Timing
                         // Else RACETYPE is TIME
                         // ProcessPlacementsTime(theEvent);
                     }
-                    window.UpdateTimingNotUI();
+                    window.UpdateTimingFromWorker();
                 }
             } while (true);
         }
