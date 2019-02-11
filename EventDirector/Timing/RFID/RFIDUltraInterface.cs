@@ -1,6 +1,7 @@
 ﻿using EventDirector.Interfaces.Timing;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -22,7 +23,7 @@ namespace EventDirector
         private static readonly Regex chipread = new Regex(@"^0,.*");
         private static readonly Regex settinginfo = new Regex(@"^U.*");
         private static readonly Regex settingconfirmation = new Regex(@"^u.*");
-        private static readonly Regex time = new Regex(@"^\d{2}:\d{2}:\d{2} \d{2}-\d{2}-\d{4} \(\d*\)");
+        private static readonly Regex time = new Regex(@"^(\d{1,2}:\d{1,2}:\d{1,2} \d{1,2}-\d{1,2}-\d{4}) \(\d*\)");
         private static readonly Regex status = new Regex(@"^S=.*");
         private static readonly Regex msg = new Regex(@"^[^\n]*\n");
 
@@ -146,25 +147,15 @@ namespace EventDirector
                 // If "HH:MM:SS DD-MM-YYYY" then it's a time message
                 else if (time.IsMatch(message))
                 {
-                    string time = message.Substring(0, 19);
-                    try
+                    Log.D("It's a time message.");
+                    Match match = time.Match(message);
+                    if (!output.ContainsKey(MessageType.TIME))
                     {
-                        DateTime ultra = DateTime.ParseExact(time, "HH:mm:ss dd-MM-yyyy", null);
-                        if (!output.ContainsKey(MessageType.TIME))
-                        {
-                            output[MessageType.TIME] = new List<string>();
-                        }
-                        output[MessageType.TIME].Clear();
-                        output[MessageType.TIME].Add(time);
+                        output[MessageType.TIME] = new List<string>();
                     }
-                    catch
-                    {
-                        if (!output.ContainsKey(MessageType.ERROR))
-                        {
-                            output[MessageType.ERROR] = new List<string>();
-                        }
-                        output[MessageType.ERROR].Add("Invalid time value given.");
-                    }
+                    output[MessageType.TIME].Clear();
+                    DateTime timeDT = DateTime.ParseExact(match.Groups[1].Value, "H:m:s d-M-yyyy", CultureInfo.CurrentCulture);
+                    output[MessageType.TIME].Add(timeDT.ToString("dd MMM yyyy  HH:mm:ss"));
                 }
                 // If "S=[...]" then status
                 else if (status.IsMatch(message))

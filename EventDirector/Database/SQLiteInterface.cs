@@ -1106,8 +1106,8 @@ namespace EventDirector
         public List<Division> GetDivisions()
         {
             List<Division> output = new List<Division>();
-            String commandTxt = "SELECT * FROM divisions";
-            SQLiteCommand command = new SQLiteCommand(commandTxt, connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM divisions";
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -1138,7 +1138,8 @@ namespace EventDirector
             {
                 commandTxt = "SELECT * FROM divisions";
             }
-            SQLiteCommand command = new SQLiteCommand(commandTxt, connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = commandTxt;
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -1173,10 +1174,8 @@ namespace EventDirector
 
         public Division GetDivision(int divId)
         {
-            SQLiteCommand command = new SQLiteCommand
-            {
-                CommandText = "SELECT * FROM divisions WHERE division_id=@div"
-            };
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM divisions WHERE division_id=@div";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@div", divId)
@@ -1305,7 +1304,8 @@ namespace EventDirector
         public List<Event> GetEvents()
         {
             List<Event> output = new List<Event>();
-            SQLiteCommand command = new SQLiteCommand("SELECT * FROM events", connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM events";
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -1988,7 +1988,9 @@ namespace EventDirector
         public List<TimingLocation> GetTimingLocations(int eventId)
         {
             List<TimingLocation> output = new List<TimingLocation>();
-            SQLiteCommand command = new SQLiteCommand("SELECT * FROM timing_locations WHERE event_id=" + eventId, connection);
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM timing_locations WHERE event_id=@event;";
+            command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -2724,11 +2726,12 @@ namespace EventDirector
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = new SQLiteCommand("DROP TABLE timing_systems; DROP TABLE age_groups; DROP TABLE available_bibs;" +
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "DROP TABLE timing_systems; DROP TABLE age_groups; DROP TABLE available_bibs;" +
                     "DROP TABLE bib_group; DROP TABLE settings; DROP TABLE app_settings; DROP TABLE changes; DROP TABLE chipreads;" +
                     "DROP TABLE time_results; DROP TABLE segments; DROP TABLE eventspecific_apparel; DROP TABLE eventspecific;" +
                     "DROP TABLE participants; DROP TABLE timing_locations; DROP TABLE divisions; DROP TABLE kiosk; DROP TABLE dayof_participant;" +
-                    "DROP TABLE events; DROP TABLE bib_chip_assoc;", connection);
+                    "DROP TABLE events; DROP TABLE bib_chip_assoc;";
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
@@ -2739,11 +2742,12 @@ namespace EventDirector
         {
             using (var transaction = connection.BeginTransaction())
             {
-                SQLiteCommand command = new SQLiteCommand("DELETE FROM timing_systems; DELETE FROM age_groups; DELETE FROM available_bibs;" +
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM timing_systems; DELETE FROM age_groups; DELETE FROM available_bibs;" +
                     "DELETE FROM bib_group; DELETE FROM settings; DELETE FROM app_settings; DELETE FROM changes; DELETE FROM chipreads;" +
                     "DELETE FROM time_results; DELETE FROM segments; DELETE FROM eventspecific_apparel; DELETE FROM eventspecific;" +
                     "DELETE FROM participants; DELETE FROM timing_locations; DELETE FROM divisions; DELETE FROM kiosk; DELETE FROM dayof_participant;" +
-                    "DELETE FROM events; DELETE FROM bib_chip_assoc;", connection);
+                    "DELETE FROM events; DELETE FROM bib_chip_assoc;";
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
