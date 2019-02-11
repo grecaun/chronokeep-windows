@@ -43,6 +43,7 @@ namespace EventDirector
                     {
                         Log.D("Something went wrong when checking the version...");
                     }
+                    versionChecker.Close();
                 }
             }
             else
@@ -345,6 +346,7 @@ namespace EventDirector
                     {
                         Log.D("Something went wrong when checking the version...");
                     }
+                    versionChecker.Close();
                 }
             }
             reader.Close();
@@ -1134,6 +1136,7 @@ namespace EventDirector
                     Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
                     Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"])));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -1169,6 +1172,7 @@ namespace EventDirector
                     Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
                     Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"])));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -1190,6 +1194,7 @@ namespace EventDirector
             {
                 output = Convert.ToInt32(reader["division_id"]);
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -1216,6 +1221,7 @@ namespace EventDirector
                     Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
                     Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"]));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -1359,6 +1365,7 @@ namespace EventDirector
                     reader["event_timing_system"].ToString()
                     ));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -1380,6 +1387,7 @@ namespace EventDirector
             {
                 output = Convert.ToInt32(reader["event_id"]);
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -1419,6 +1427,7 @@ namespace EventDirector
                     reader["event_timing_system"].ToString()
                     );
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -1470,6 +1479,7 @@ namespace EventDirector
                     Value = val == 0 ? "false" : "true"
                 });
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -1614,6 +1624,7 @@ namespace EventDirector
             {
                 person.Identifier = Convert.ToInt32(reader["participant_id"]);
             }
+            reader.Close();
             command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, division_id, eventspecific_bib, " +
@@ -1908,6 +1919,7 @@ namespace EventDirector
                     reader["emergencycontact_phone"].ToString()
                     ));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -1964,6 +1976,7 @@ namespace EventDirector
             command.Parameters.Add(new SQLiteParameter("@eventSpecId", eventSpecificId));
             SQLiteDataReader reader = command.ExecuteReader();
             Participant output = GetParticipantWorker(reader);
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -1980,6 +1993,7 @@ namespace EventDirector
             command.Parameters.Add(new SQLiteParameter("@partId", identifier));
             SQLiteDataReader reader = command.ExecuteReader();
             Participant output = GetParticipantWorker(reader);
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -2021,6 +2035,7 @@ namespace EventDirector
             }
             SQLiteDataReader reader = command.ExecuteReader();
             Participant output = GetParticipantWorker(reader);
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -2049,6 +2064,7 @@ namespace EventDirector
             {
                 output = Convert.ToInt32(reader["participant_id"]);
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -2124,6 +2140,7 @@ namespace EventDirector
                 output.Add(new TimingLocation(Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["event_id"]),
                     reader["location_name"].ToString(), Convert.ToInt32(reader["location_max_occurances"]), Convert.ToInt32(reader["location_ignore_within"])));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -2145,6 +2162,7 @@ namespace EventDirector
             {
                 output = Convert.ToInt32(reader["location_id"]);
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -2302,6 +2320,7 @@ namespace EventDirector
             {
                 output = Convert.ToInt32(reader["segment_id"]);
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -2322,6 +2341,7 @@ namespace EventDirector
                     Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["location_occurance"]), Convert.ToDouble(reader["distance_segment"]),
                     Convert.ToDouble(reader["distance_cumulative"]), Convert.ToInt32(reader["distance_unit"]), reader["name"].ToString()));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -2358,6 +2378,7 @@ namespace EventDirector
             {
                 output = Convert.ToInt32(reader["max_segments"]);
             }
+            reader.Close();
             connection.Close();
             return 0;
         }
@@ -2467,6 +2488,7 @@ namespace EventDirector
                     Convert.ToInt32(reader["timeresult_status"])
                     ));
             }
+            reader.Close();
             return output;
         }
 
@@ -2570,6 +2592,7 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             reader.Read();
             long output = reader.GetInt64(0);
+            reader.Close();
             connection.Close();
             return output != 0;
         }
@@ -2595,6 +2618,7 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             reader.Read();
             long output = reader.GetInt64(0);
+            reader.Close();
             connection.Close();
             return output != 0;
         }
@@ -2942,6 +2966,7 @@ namespace EventDirector
                     )
                 ));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -3080,6 +3105,7 @@ namespace EventDirector
                     reader["dop_emergency_phone"].ToString()
                     ));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -3130,6 +3156,7 @@ namespace EventDirector
                             reader["dop_emergency_phone"].ToString()
                             );
                     }
+                    reader.Close();
                 }
             }
             if (newPart != null)
@@ -3189,6 +3216,7 @@ namespace EventDirector
             {
                 output = reader["kiosk_waiver_text"].ToString();
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -3237,6 +3265,7 @@ namespace EventDirector
                             reader["dop_emergency_phone"].ToString()
                             );
                     }
+                    reader.Close();
                 }
             }
             connection.Close();
@@ -3282,6 +3311,7 @@ namespace EventDirector
                     outval = 0;
                 }
             }
+            reader.Close();
             connection.Close();
             return outval;
         }
@@ -3331,6 +3361,7 @@ namespace EventDirector
                     Chip = Convert.ToInt32(reader["chip"])
                 });
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -3353,6 +3384,7 @@ namespace EventDirector
                     Chip = Convert.ToInt32(reader["chip"])
                 });
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -3665,6 +3697,7 @@ namespace EventDirector
                     locDict[locationId]
                     ));
             }
+            reader.Close();
             return output;
         }
 
@@ -3699,6 +3732,7 @@ namespace EventDirector
             {
                 output = reader["name"].ToString();
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -3720,6 +3754,7 @@ namespace EventDirector
                     value = Convert.ToString(reader["value"])
                 };
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -3797,6 +3832,7 @@ namespace EventDirector
                     Name = reader["bib_group_name"].ToString()
                 });
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -3892,6 +3928,7 @@ namespace EventDirector
                 output.Add(new AvailableBib(Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["bib_group_number"]),
                     reader["bib_group_name"].ToString(), Convert.ToInt32(reader["bib"])));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -3912,6 +3949,7 @@ namespace EventDirector
             {
                 if (!(reader["max_bib"] is DBNull)) largest = Convert.ToInt32(reader["max_bib"]);
             }
+            reader.Close();
             connection.Close();
             return largest;
         }
@@ -4073,6 +4111,7 @@ namespace EventDirector
                 output.Add(new AgeGroup(Convert.ToInt32(reader["group_id"]), Convert.ToInt32(reader["event_id"]),
                     Convert.ToInt32(reader["division_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"])));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
@@ -4174,6 +4213,7 @@ namespace EventDirector
                 output.Add(new TimingSystem(Convert.ToInt32(reader["ts_identifier"]), reader["ts_ip"].ToString(),
                     Convert.ToInt32(reader["ts_port"]), Convert.ToInt32(reader["ts_location"]), reader["ts_type"].ToString()));
             }
+            reader.Close();
             connection.Close();
             return output;
         }
