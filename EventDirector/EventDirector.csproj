@@ -305,6 +305,9 @@
     <Compile Include="UI\Timing\PrintPage.xaml.cs">
       <DependentUpon>PrintPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Timing\RewindWindow.xaml.cs">
+      <DependentUpon>RewindWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Timing\SetTimeWindow.xaml.cs">
       <DependentUpon>SetTimeWindow.xaml</DependentUpon>
     </Compile>
@@ -403,9 +406,6 @@
     </Compile>
     <Compile Include="UI\Timing\RFID\RFIDSettings.xaml.cs">
       <DependentUpon>RFIDSettings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\RFID\RFIDTime.xaml.cs">
-      <DependentUpon>RFIDTime.xaml</DependentUpon>
     </Compile>
     <Compile Include="Timing\RFID\RFIDUltraInterface.cs" />
     <Compile Include="UI\UHF RFID Reader\RFIDSerial.cs" />
@@ -515,6 +515,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Timing\RewindWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Timing\SetTimeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -608,10 +612,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Timing\RFID\RFIDSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\RFID\RFIDTime.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

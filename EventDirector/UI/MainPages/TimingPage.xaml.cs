@@ -891,7 +891,8 @@ namespace EventDirector.UI.MainPages
             private void Settings(object sender, RoutedEventArgs e)
             {
                 Log.D("Settings button pressed. IP is " + ReaderIP.Text);
-                reader.SystemInterface.Rewind(1, 50);
+                RewindWindow rewind = new RewindWindow(reader);
+                rewind.ShowDialog();
             }
 
             private void Clock(object sender, RoutedEventArgs e)
