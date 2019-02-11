@@ -56,7 +56,14 @@ namespace EventDirector.Timing
 
         public static void Notify()
         {
-            semaphore.Release();
+            try
+            {
+                semaphore.Release();
+            }
+            catch
+            {
+                Log.D("Unable to release, release is full.");
+            }
         }
 
         public void Run()

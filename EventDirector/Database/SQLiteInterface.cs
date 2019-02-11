@@ -13,25 +13,25 @@ namespace EventDirector
     class SQLiteInterface : IDBInterface
     {
         private readonly int version = 32;
-        SQLiteConnection connection;
         readonly string connectionInfo;
 
         public SQLiteInterface(String info)
         {
             connectionInfo = info;
-            connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
-            connection.Open();
         }
 
         public void Initialize()
         {
             ArrayList queries = new ArrayList();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'", connection);
             SQLiteDataReader reader = command.ExecuteReader();
             int oldVersion = -1;
             if (reader.Read())
             {
                 Log.D("Tables do not need to be made.");
+
                 command = new SQLiteCommand("SELECT version FROM settings;", connection);
                 using (SQLiteDataReader versionChecker = command.ExecuteReader())
                 {
@@ -348,6 +348,7 @@ namespace EventDirector
                 }
             }
             reader.Close();
+            connection.Close();
             if (oldVersion == -1) Log.D("Unable to get a version number. Something is terribly wrong.");
             else if (oldVersion < version) UpdateDatabase(oldVersion, version);
         }
@@ -355,6 +356,8 @@ namespace EventDirector
         private void UpdateDatabase(int oldversion, int newversion)
         {
             Log.D("Database is version " + oldversion + " but it needs to be upgraded to version " + newversion);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1028,6 +1031,7 @@ namespace EventDirector
                         break;
                 }
                 transaction.Commit();
+                connection.Close();
             }
         }
 
@@ -1037,6 +1041,8 @@ namespace EventDirector
 
         public void AddDivision(Division div)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO divisions (division_name, event_id, division_cost, division_distance, division_distance_unit," +
@@ -1060,16 +1066,20 @@ namespace EventDirector
             });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void RemoveDivision(int identifier)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = " DELETE FROM segments WHERE division_id=@id; DELETE FROM divisions WHERE division_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@id", identifier) });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void RemoveDivision(Division div)
@@ -1079,6 +1089,8 @@ namespace EventDirector
 
         public void UpdateDivision(Division div)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE divisions SET division_name=@name, event_id=@event, division_cost=@cost, division_distance=@distance," +
@@ -1101,11 +1113,14 @@ namespace EventDirector
                 new SQLiteParameter("@soffmill", div.StartOffsetMilliseconds),
                 new SQLiteParameter("@id", div.Identifier) });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public List<Division> GetDivisions()
         {
             List<Division> output = new List<Division>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM divisions";
             SQLiteDataReader reader = command.ExecuteReader();
@@ -1119,12 +1134,15 @@ namespace EventDirector
                     Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
                     Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"])));
             }
+            connection.Close();
             return output;
         }
 
         public List<Division> GetDivisions(int eventId)
         {
             List<Division> output = new List<Division>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             if (eventId < 0)
             {
                 return output;
@@ -1151,11 +1169,14 @@ namespace EventDirector
                     Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
                     Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"])));
             }
+            connection.Close();
             return output;
         }
 
         public int GetDivisionID(Division div)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT division_id FROM divisions WHERE division_name=@name AND event_id=@eventid";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -1169,11 +1190,14 @@ namespace EventDirector
             {
                 output = Convert.ToInt32(reader["division_id"]);
             }
+            connection.Close();
             return output;
         }
 
         public Division GetDivision(int divId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM divisions WHERE division_id=@div";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -1192,12 +1216,15 @@ namespace EventDirector
                     Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
                     Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"]));
             }
+            connection.Close();
             return output;
         }
 
         public void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds)
         {
             Log.D(String.Format("Setting wave {0} for event {1}", wave, eventId));
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -1213,6 +1240,7 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         /*
@@ -1221,6 +1249,8 @@ namespace EventDirector
 
         public void AddEvent(Event anEvent)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO events(event_name, event_date, event_shirt_optional, event_shirt_price," +
@@ -1247,6 +1277,7 @@ namespace EventDirector
             });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void RemoveEvent(Event anEvent)
@@ -1256,6 +1287,8 @@ namespace EventDirector
 
         public void RemoveEvent(int identifier)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -1269,10 +1302,13 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void UpdateEvent(Event anEvent)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE events SET event_name=@name, event_date=@date, event_next_year_event_id=@ny, event_shirt_optional=@so," +
@@ -1299,11 +1335,14 @@ namespace EventDirector
                 new SQLiteParameter("@system", anEvent.TimingSystem)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public List<Event> GetEvents()
         {
             List<Event> output = new List<Event>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM events";
             SQLiteDataReader reader = command.ExecuteReader();
@@ -1320,11 +1359,14 @@ namespace EventDirector
                     reader["event_timing_system"].ToString()
                     ));
             }
+            connection.Close();
             return output;
         }
 
         public int GetEventID(Event anEvent)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT event_id FROM events WHERE event_name=@name AND event_date=@date";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -1338,6 +1380,7 @@ namespace EventDirector
             {
                 output = Convert.ToInt32(reader["event_id"]);
             }
+            connection.Close();
             return output;
         }
 
@@ -1356,6 +1399,8 @@ namespace EventDirector
             {
                 return null;
             }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM events WHERE event_id=@id";
             command.Parameters.Add(new SQLiteParameter("@id", id));
@@ -1374,12 +1419,15 @@ namespace EventDirector
                     reader["event_timing_system"].ToString()
                     );
             }
+            connection.Close();
             return output;
         }
 
         public List<JsonOption> GetEventOptions(int eventId)
         {
             List<JsonOption> output = new List<JsonOption>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM events WHERE event_id=@id";
             command.Parameters.Add(new SQLiteParameter("@id", eventId));
@@ -1422,12 +1470,15 @@ namespace EventDirector
                     Value = val == 0 ? "false" : "true"
                 });
             }
+            connection.Close();
             return output;
         }
 
         public void SetEventOptions(int eventId, List<JsonOption> options)
         {
             List<JsonOption> output = new List<JsonOption>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE events SET event_allow_early_start=@es, event_announce_available=@announce, event_results_open=@results, event_registration_open=@registration, event_kiosk=@kiosk WHERE event_id=@id";
             int es = 0, results = 0, registration = 0, announce = 0, kiosk = 0;
@@ -1463,10 +1514,13 @@ namespace EventDirector
                 new SQLiteParameter("@kiosk", kiosk)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void SetStartWindow(Event anEvent)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE events SET event_start_window=@window WHERE event_id=@event;";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -1475,10 +1529,13 @@ namespace EventDirector
                 new SQLiteParameter("@event", anEvent.Identifier)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void SetFinishOptions(Event anEvent)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE events SET event_finish_max_occurances=@occ, event_finish_ignore_within=@ignore WHERE event_id=@event;";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -1488,6 +1545,7 @@ namespace EventDirector
                 new SQLiteParameter("@event", anEvent.Identifier)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         /*
@@ -1496,26 +1554,32 @@ namespace EventDirector
 
         public void AddParticipant(Participant person)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                AddParticipantNoTransaction(person);
+                AddParticipantNoTransaction(person, connection);
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void AddParticipants(List<Participant> people)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (Participant person in people)
                 {
-                    AddParticipantNoTransaction(person);
+                    AddParticipantNoTransaction(person, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
-        private void AddParticipantNoTransaction(Participant person)
+        private void AddParticipantNoTransaction(Participant person, SQLiteConnection connection)
         {
             person.FormatData();
             SQLiteCommand command = connection.CreateCommand();
@@ -1571,13 +1635,21 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
-        public void RemoveParticipant(int identifier)
+        private void RemoveParticipantInternal(int identifier, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@0; DELETE FROM participant WHERE participant_id=@0";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
             command.ExecuteNonQuery();
+        }
+
+        public void RemoveParticipant(int identifier)
+        {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            RemoveParticipantInternal(identifier, connection);
+            connection.Close();
         }
 
         public void RemoveParticipantEntry(Participant person)
@@ -1587,17 +1659,20 @@ namespace EventDirector
 
         public void RemoveParticipantEntries(List<Participant> participants)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (Participant p in participants)
                 {
-                    RemoveParticipant(p.Identifier);
+                    RemoveParticipantInternal(p.Identifier, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
-        public void RemoveEntry(int eventId, int participantId)
+        private void RemoveEntryInternal(int eventId, int participantId, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@participant AND event_id=@event;";
@@ -1607,6 +1682,14 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
+        public void RemoveEntry(int eventId, int participantId)
+        {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            RemoveEntryInternal(eventId, participantId, connection);
+            connection.Close();
+        }
+
         public void RemoveEntry(Participant person)
         {
             RemoveEntry(person.EventIdentifier, person.Identifier);
@@ -1614,17 +1697,20 @@ namespace EventDirector
 
         public void RemoveEntries(List<Participant> people)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (Participant p in people)
                 {
-                    RemoveEntry(p.EventIdentifier, p.Identifier);
+                    RemoveEntryInternal(p.EventIdentifier, p.Identifier, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
-        private void UpdateParticipantNoTran(Participant person)
+        private void UpdateParticipantNoTran(Participant person, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -1676,28 +1762,36 @@ namespace EventDirector
         public void UpdateParticipant(Participant person)
         {
             person.FormatData();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                UpdateParticipantNoTran(person);
+                UpdateParticipantNoTran(person, connection);
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void UpdateParticipants(List<Participant> participants)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (Participant person in participants)
                 {
                     person.FormatData();
-                    UpdateParticipantNoTran(person);
+                    UpdateParticipantNoTran(person, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void CheckInParticipant(int eventId, int identifier, int checkedIn)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE eventspecific SET eventspecific_checkedin=@0 WHERE participant_id=@id AND event_id=@eventId";
@@ -1707,6 +1801,7 @@ namespace EventDirector
                 new SQLiteParameter("@eventId", eventId)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void CheckInParticipant(Participant person)
@@ -1716,6 +1811,8 @@ namespace EventDirector
 
         public void SetEarlyStartParticipant(int eventId, int identifier, int earlystart)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE eventspecific SET eventspecific_earlystart=@earlystart WHERE event_id=@eventid AND participant_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -1725,6 +1822,7 @@ namespace EventDirector
                 new SQLiteParameter("@eventid", eventId)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void SetEarlyStartParticipant(Participant person)
@@ -1761,6 +1859,8 @@ namespace EventDirector
 
         public List<Participant> GetParticipantsWorker(string query, int eventId, int divisionId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             List<Participant> output = new List<Participant>();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = query;
@@ -1808,6 +1908,7 @@ namespace EventDirector
                     reader["emergencycontact_phone"].ToString()
                     ));
             }
+            connection.Close();
             return output;
         }
 
@@ -1853,6 +1954,8 @@ namespace EventDirector
 
         public Participant GetParticipantEventSpecific(int eventId, int eventSpecificId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM participants AS p JOIN eventspecific AS s ON p.participant_id=s.participant_id" +
                 " JOIN divisions AS d ON s.division_id=d.division_id WHERE s.event_id=@eventid " +
@@ -1860,11 +1963,15 @@ namespace EventDirector
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             command.Parameters.Add(new SQLiteParameter("@eventSpecId", eventSpecificId));
             SQLiteDataReader reader = command.ExecuteReader();
-            return GetParticipantWorker(reader);
+            Participant output = GetParticipantWorker(reader);
+            connection.Close();
+            return output;
         }
 
         public Participant GetParticipant(int eventId, int identifier)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM participants AS p, eventspecific AS s, divisions AS d WHERE " +
                 "p.participant_id=s.participant_id AND s.event_id=@eventid AND d.division_id=s.division_id " +
@@ -1872,11 +1979,15 @@ namespace EventDirector
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             command.Parameters.Add(new SQLiteParameter("@partId", identifier));
             SQLiteDataReader reader = command.ExecuteReader();
-            return GetParticipantWorker(reader);
+            Participant output = GetParticipantWorker(reader);
+            connection.Close();
+            return output;
         }
 
         public Participant GetParticipant(int eventId, Participant unknown)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             if (unknown.EventSpecific.Chip != -1)
             {
@@ -1909,11 +2020,15 @@ namespace EventDirector
 
             }
             SQLiteDataReader reader = command.ExecuteReader();
-            return GetParticipantWorker(reader);
+            Participant output = GetParticipantWorker(reader);
+            connection.Close();
+            return output;
         }
 
         public int GetParticipantID(Participant person)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT participant_id FROM participants WHERE participant_first=@first AND" +
                 " participant_last=@last AND participant_street=@street AND participant_city=@city AND " +
@@ -1934,6 +2049,7 @@ namespace EventDirector
             {
                 output = Convert.ToInt32(reader["participant_id"]);
             }
+            connection.Close();
             return output;
         }
 
@@ -1943,6 +2059,8 @@ namespace EventDirector
 
         public void AddTimingLocation(TimingLocation tl)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO timing_locations (event_id, location_name, location_max_occurances, location_ignore_within) " +
@@ -1953,6 +2071,7 @@ namespace EventDirector
                 new SQLiteParameter("@max", tl.MaxOccurrences),
                 new SQLiteParameter("@ignore", tl.IgnoreWithin) } );
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void RemoveTimingLocation(TimingLocation tl)
@@ -1962,16 +2081,21 @@ namespace EventDirector
 
         public void RemoveTimingLocation(int identifier)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "DELETE FROM timing_locations WHERE location_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@id", identifier) });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void UpdateTimingLocation(TimingLocation tl)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE timing_locations SET event_id=@event, location_name=@name, location_max_occurances=@max, " +
@@ -1983,11 +2107,14 @@ namespace EventDirector
                 new SQLiteParameter("@ignore", tl.IgnoreWithin),
                 new SQLiteParameter("@id", tl.Identifier) });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public List<TimingLocation> GetTimingLocations(int eventId)
         {
             List<TimingLocation> output = new List<TimingLocation>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM timing_locations WHERE event_id=@event;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
@@ -1997,11 +2124,14 @@ namespace EventDirector
                 output.Add(new TimingLocation(Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["event_id"]),
                     reader["location_name"].ToString(), Convert.ToInt32(reader["location_max_occurances"]), Convert.ToInt32(reader["location_ignore_within"])));
             }
+            connection.Close();
             return output;
         }
 
         public int GetTimingLocationID(TimingLocation tl)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT timingpoint_id FROM timing_locations WHERE event_id=@eventid, location_name=@name";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -2015,6 +2145,7 @@ namespace EventDirector
             {
                 output = Convert.ToInt32(reader["location_id"]);
             }
+            connection.Close();
             return output;
         }
 
@@ -2022,7 +2153,7 @@ namespace EventDirector
          * Segment
          */
 
-        private void AddSegmentNoTransaction(Segment seg)
+        private void AddSegmentNoTransaction(Segment seg, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -2043,26 +2174,32 @@ namespace EventDirector
 
         public void AddSegment(Segment seg)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                AddSegmentNoTransaction(seg);
+                AddSegmentNoTransaction(seg, connection);
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void AddSegments(List<Segment> segments)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (Segment seg in segments)
                 {
-                    AddSegmentNoTransaction(seg);
+                    AddSegmentNoTransaction(seg, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
-        private void RemoveSegmentNoTransaction(int identifier)
+        private void RemoveSegmentNoTransaction(int identifier, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -2074,31 +2211,40 @@ namespace EventDirector
 
         public void RemoveSegment(Segment seg)
         {
-            RemoveSegment(seg.Identifier);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            RemoveSegmentNoTransaction(seg.Identifier, connection);
+            connection.Close();
         }
 
         public void RemoveSegment(int identifier)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                RemoveSegmentNoTransaction(identifier);
+                RemoveSegmentNoTransaction(identifier, connection);
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void RemoveSegments(List<Segment> segments)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (Segment seg in segments)
                 {
-                    RemoveSegmentNoTransaction(seg.Identifier);
+                    RemoveSegmentNoTransaction(seg.Identifier, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
-        private void UpdateSegmentNoTransaction(Segment seg)
+        private void UpdateSegmentNoTransaction(Segment seg, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -2120,39 +2266,51 @@ namespace EventDirector
 
         public void UpdateSegment(Segment seg)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                UpdateSegmentNoTransaction(seg);
+                UpdateSegmentNoTransaction(seg, connection);
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void UpdateSegments(List<Segment> segments)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (Segment seg in segments) {
-                    UpdateSegmentNoTransaction(seg);
+                    UpdateSegmentNoTransaction(seg, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public int GetSegmentId(Segment seg)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM segments WHERE event_id=@event, division_id=@division, location_id=@location, occurance=@occurance;";
             SQLiteDataReader reader = command.ExecuteReader();
+            int output = -1;
             if (reader.Read())
             {
-                return Convert.ToInt32(reader["segment_id"]);
+                output = Convert.ToInt32(reader["segment_id"]);
             }
-            return -1;
+            connection.Close();
+            return output;
         }
 
         public List<Segment> GetSegments(int eventId)
         {
             List<Segment> output = new List<Segment>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM segments WHERE event_id=@event";
             command.Parameters.AddRange(new SQLiteParameter[] {
@@ -2164,11 +2322,14 @@ namespace EventDirector
                     Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["location_occurance"]), Convert.ToDouble(reader["distance_segment"]),
                     Convert.ToDouble(reader["distance_cumulative"]), Convert.ToInt32(reader["distance_unit"]), reader["name"].ToString()));
             }
+            connection.Close();
             return output;
         }
 
         public void ResetSegments(int eventId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -2179,20 +2340,25 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public int GetMaxSegments(int eventId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT MAX(seg_count) max_segments FROM" +
                 " (SELECT COUNT(segment_id) seg_count, division_id FROM segments" +
                 " WHERE event_id=@event GROUP BY division_id);";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
+            int output = 0;
             if (reader.Read() && reader["max_segments"] != DBNull.Value)
             {
-                return Convert.ToInt32(reader["max_segments"]);
+                output = Convert.ToInt32(reader["max_segments"]);
             }
+            connection.Close();
             return 0;
         }
 
@@ -2200,7 +2366,7 @@ namespace EventDirector
          * Timing Results
          */
 
-        public void AddTimingResult(TimeResult tr)
+        private void AddTimingResultInternal(TimeResult tr, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -2223,24 +2389,41 @@ namespace EventDirector
                 new SQLiteParameter("@place", tr.Place),
                 new SQLiteParameter("@agplace", tr.AgePlace),
                 new SQLiteParameter("@gendplace", tr.GenderPlace),
-                new SQLiteParameter("@status", tr.Status) } );
+                new SQLiteParameter("@status", tr.Status) });
             command.ExecuteNonQuery();
+        }
+
+        public void AddTimingResult(TimeResult tr)
+        {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            AddTimingResultInternal(tr, connection);
+            connection.Close();
         }
 
         public void AddTimingResults(List<TimeResult> results)
         {
+            if (results.Count < 1)
+            {
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (TimeResult result in results)
                 {
-                    AddTimingResult(result);
+                    AddTimingResultInternal(result, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void RemoveTimingResult(TimeResult tr)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "DELETE FROM time_results WHERE eventspecific_id=@event AND location_id=@location AND " +
@@ -2251,6 +2434,7 @@ namespace EventDirector
                 new SQLiteParameter("@occurance", tr.Occurrence),
                 new SQLiteParameter("@location", tr.LocationId) } );
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         private List<TimeResult> GetResults(SQLiteDataReader reader)
@@ -2289,6 +2473,8 @@ namespace EventDirector
         public List<TimeResult> GetTimingResults(int eventId)
         {
             Log.D("Getting timing results for event id of " + eventId);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
@@ -2299,12 +2485,16 @@ namespace EventDirector
                 "WHERE r.event_id=@eventid;";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            return GetResults(reader);
+            List<TimeResult> output = GetResults(reader);
+            connection.Close();
+            return output;
         }
 
         public List<TimeResult> GetStartTimes(int eventId)
         {
             Log.D("Getting start times for event id of " + eventId);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
@@ -2319,12 +2509,16 @@ namespace EventDirector
                 new SQLiteParameter("@segment", Constants.Timing.SEGMENT_START)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            return GetResults(reader);
+            List<TimeResult> output = GetResults(reader);
+            connection.Close();
+            return output;
         }
 
         public List<TimeResult> GetSegmentTimes(int eventId, int segmentId)
         {
             Log.D("Getting segment times for event id of " + eventId);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
@@ -2339,11 +2533,15 @@ namespace EventDirector
                 new SQLiteParameter("@segment", segmentId)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            return GetResults(reader);
+            List<TimeResult> output = GetResults(reader);
+            connection.Close();
+            return output;
         }
 
         public void UpdateTimingResult(TimeResult oldResult, String newTime)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE time_results SET timeresult_time=@time WHERE event_id=@event AND eventspecific_id=@eventspecific AND location_id=@location AND timeresult_occurance=@occurance";
@@ -2354,11 +2552,14 @@ namespace EventDirector
                 new SQLiteParameter("@location", oldResult.LocationId),
                 new SQLiteParameter("@occurance", oldResult.Occurrence)});
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public bool UnprocessedReadsExist(int eventId)
         {
             Log.D("Checking for unprocessed reads.");
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT COUNT(1) FROM chipreads WHERE event_id=@event AND read_status=@status;";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -2368,12 +2569,16 @@ namespace EventDirector
             });
             SQLiteDataReader reader = command.ExecuteReader();
             reader.Read();
-            return reader.GetInt64(0) != 0;
+            long output = reader.GetInt64(0);
+            connection.Close();
+            return output != 0;
         }
 
         public bool UnprocessedResultsExist(int eventId)
         {
             Log.D("Checking for unprocessed results.");
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT COUNT(1) FROM time_results " +
                 "WHERE event_id=@event AND timeresult_status=@status " +
@@ -2389,7 +2594,9 @@ namespace EventDirector
             });
             SQLiteDataReader reader = command.ExecuteReader();
             reader.Read();
-            return reader.GetInt64(0) != 0;
+            long output = reader.GetInt64(0);
+            connection.Close();
+            return output != 0;
         }
 
         /*
@@ -2399,6 +2606,8 @@ namespace EventDirector
         public void ResetTimingResultsEvent(int eventId)
         {
             Log.D("Resetting timing results for event " + eventId);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM time_results WHERE event_id=@event;" +
                 "UPDATE chipreads SET read_status=@status WHERE event_id=@event AND read_status<>@ignore;";
@@ -2409,11 +2618,14 @@ namespace EventDirector
                 new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void ResetTimingResultsBib(int eventId, int bib)
         {
             Log.D("Resetting timing results for bib " + bib + " and event " + eventId);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM time_results WHERE event_id=@event AND" +
                 " EXISTS (SELECT * FROM eventspecific s WHERE s.eventspecific_id=time_results.eventspecific_id" +
@@ -2429,11 +2641,14 @@ namespace EventDirector
                 new SQLiteParameter("@bib", bib)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void ResetTimingResultsChip(int eventId, string chip)
         {
             Log.D("Resetting timing results for chip " + chip + " and event " + eventId);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM time_results WHERE event_id=@event AND" +
                 " EXISTS (SELECT * FROM eventspecific s JOIN bib_chip_assoc b ON b.bib=s.eventspecific_bib " +
@@ -2449,11 +2664,14 @@ namespace EventDirector
                 new SQLiteParameter("@chip", chip)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void ResetTimingResultsDivision(int eventId, int divisionId)
         {
             Log.D("Resetting timing results for division " + divisionId + " and event " + eventId);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM time_results WHERE time_results.event_id=@event AND" +
                 " EXISTS (SELECT * FROM eventspecific s WHERE s.eventspecific_id=time_results.eventspecific_id" +
@@ -2471,11 +2689,14 @@ namespace EventDirector
                 new SQLiteParameter("@div", divisionId)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         public void ResetTimingResultsPlacements(int eventId)
         {
             Log.D("Resetting timing result placements for event " + eventId);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE time_results SET timeresult_status=@status WHERE event_id=@event;";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -2484,6 +2705,7 @@ namespace EventDirector
                 new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         /*
@@ -2492,6 +2714,8 @@ namespace EventDirector
 
         public void AddChange(Participant newParticipant, Participant oldParticipant)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             Log.D("Adding change - new participant id is " + newParticipant.Identifier + " old participant id is" + (oldParticipant == null ? -1 : oldParticipant.Identifier));
             if (oldParticipant == null)
@@ -2628,6 +2852,7 @@ namespace EventDirector
                 });
                 command.ExecuteNonQuery();
             }
+            connection.Close();
         }
 
         public List<Change> GetChanges()
@@ -2640,6 +2865,8 @@ namespace EventDirector
             {
                 divisions.Add(d.Identifier, d.Name);
             }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM changes";
             SQLiteDataReader reader = command.ExecuteReader();
@@ -2715,6 +2942,7 @@ namespace EventDirector
                     )
                 ));
             }
+            connection.Close();
             return output;
         }
 
@@ -2724,6 +2952,8 @@ namespace EventDirector
 
         public void HardResetDatabase()
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -2735,11 +2965,14 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
             Initialize();
         }
 
         public void ResetDatabase()
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -2751,6 +2984,7 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         /*
@@ -2759,6 +2993,8 @@ namespace EventDirector
 
         public void AddDayOfParticipant(DayOfParticipant part)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -2793,6 +3029,7 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public List<DayOfParticipant> GetDayOfParticipants(int eventId)
@@ -2808,6 +3045,8 @@ namespace EventDirector
         private List<DayOfParticipant> InternalGetDayOfParticipants(String query, int eventId)
         {
             List<DayOfParticipant> output = new List<DayOfParticipant>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = query;
             if (eventId != -1)
@@ -2841,12 +3080,15 @@ namespace EventDirector
                     reader["dop_emergency_phone"].ToString()
                     ));
             }
+            connection.Close();
             return output;
         }
 
         public bool ApproveDayOfParticipant(int eventId, int identifier, int bib, int earlystart)
         {
             Participant newPart = null;
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (SQLiteCommand command = connection.CreateCommand())
             {
                 command.CommandText = "SELECT * FROM dayof_participant AS dop, divisions AS d WHERE dop.dop_id=@id AND dop.dop_division_id=d.division_id;";
@@ -2903,8 +3145,10 @@ namespace EventDirector
                     }
                     transaction.Commit();
                 }
+                connection.Close();
                 return true;
             }
+            connection.Close();
             return false;
         }
 
@@ -2915,6 +3159,8 @@ namespace EventDirector
 
         public void SetLiabilityWaiver(int eventId, string waiver)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -2927,11 +3173,14 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public string GetLiabilityWaiver(int eventId)
         {
             String output = "";
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM kiosk WHERE event_id=@eventId;";
             command.Parameters.Add(new SQLiteParameter("@eventId", eventId));
@@ -2940,12 +3189,15 @@ namespace EventDirector
             {
                 output = reader["kiosk_waiver_text"].ToString();
             }
+            connection.Close();
             return output;
         }
 
         public DayOfParticipant GetDayOfParticipant(DayOfParticipant part)
         {
             DayOfParticipant output = null;
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (SQLiteCommand command = connection.CreateCommand())
             {
                 command.CommandText = "SELECT * FROM dayof_participant WHERE dop_first=@first AND dop_last=@last AND dop_street=@street AND dop_city=@city AND dop_state=@state AND dop_zip=@zip AND dop_birthday=@birthday";
@@ -2987,11 +3239,14 @@ namespace EventDirector
                     }
                 }
             }
+            connection.Close();
             return output;
         }
 
         public void SetPrintOption(int eventId, int print)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3004,10 +3259,13 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public int GetPrintOption(int eventId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM kiosk WHERE event_id=@eventId";
             command.Parameters.Add(new SQLiteParameter("eventId", eventId));
@@ -3024,6 +3282,7 @@ namespace EventDirector
                     outval = 0;
                 }
             }
+            connection.Close();
             return outval;
         }
 
@@ -3033,6 +3292,8 @@ namespace EventDirector
 
         public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3050,11 +3311,14 @@ namespace EventDirector
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public List<BibChipAssociation> GetBibChips()
         {
             List<BibChipAssociation> output = new List<BibChipAssociation>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM bib_chip_assoc";
             SQLiteDataReader reader = command.ExecuteReader();
@@ -3067,12 +3331,15 @@ namespace EventDirector
                     Chip = Convert.ToInt32(reader["chip"])
                 });
             }
+            connection.Close();
             return output;
         }
 
         public List<BibChipAssociation> GetBibChips(int eventId)
         {
             List<BibChipAssociation> output = new List<BibChipAssociation>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM bib_chip_assoc WHERE event_id=@eventId";
             command.Parameters.Add(new SQLiteParameter("@eventId", eventId));
@@ -3086,10 +3353,11 @@ namespace EventDirector
                     Chip = Convert.ToInt32(reader["chip"])
                 });
             }
+            connection.Close();
             return output;
         }
 
-        public void RemoveBibChipAssociation(int eventId, int chip)
+        private void RemoveBibChipAssociationInternal(int eventId, int chip, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -3100,31 +3368,48 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
+        public void RemoveBibChipAssociation(int eventId, int chip)
+        {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            RemoveBibChipAssociationInternal(eventId, chip, connection);
+            connection.Close();
+        }
+
+        private void RemoveBibChipAssociationInternal(BibChipAssociation assoc, SQLiteConnection connection)
+        {
+            if (assoc != null) RemoveBibChipAssociationInternal(assoc.EventId, assoc.Chip, connection);
+        }
+
         public void RemoveBibChipAssociation(BibChipAssociation assoc)
         {
-            if (assoc != null) RemoveBibChipAssociation(assoc.EventId, assoc.Chip);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            if (assoc != null) RemoveBibChipAssociationInternal(assoc.EventId, assoc.Chip, connection);
+            connection.Close();
         }
 
         public void RemoveBibChipAssociations(List<BibChipAssociation> assocs)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (BibChipAssociation b in assocs)
                 {
-                    RemoveBibChipAssociation(b);
+                    RemoveBibChipAssociationInternal(b, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         /*
          * Chip Reads
          */
 
-        public void AddChipRead(ChipRead read)
+        private void AddChipReadInternal(ChipRead read, SQLiteConnection connection)
         {
-            Log.D("Database - Add chip read. Box " + read.Box + " Antenna " + read.Antenna + " Chip " + read.ChipNumber
-                + " LogId " + read.LogId + " Time Given " + read.TimeString);
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO chipreads (event_id, read_status, location_id, read_chipnumber, read_seconds," +
                 "read_milliseconds, read_antenna, read_reader, read_box, read_logindex, read_rssi, read_isrewind, read_readertime, read_starttime, read_time," +
@@ -3153,19 +3438,32 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
+        public void AddChipRead(ChipRead read)
+        {
+            Log.D("Database - Add chip read. Box " + read.Box + " Antenna " + read.Antenna + " Chip " + read.ChipNumber
+                + " LogId " + read.LogId + " Time Given " + read.TimeString);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            AddChipReadInternal(read, connection);
+            connection.Close();
+        }
+
         public void AddChipReads(List<ChipRead> reads)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (ChipRead read in reads)
                 {
-                    AddChipRead(read);
+                    AddChipReadInternal(read, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
-        private void UpdateChipReadNoTransaction(ChipRead read)
+        private void UpdateChipReadNoTransaction(ChipRead read, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE chipreads SET read_status=@status, read_time=@time WHERE read_id=@id;";
@@ -3176,30 +3474,37 @@ namespace EventDirector
                     new SQLiteParameter("@time", read.TimeString)
             });
             command.ExecuteNonQuery();
+
         }
 
         public void UpdateChipRead(ChipRead read)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                UpdateChipReadNoTransaction(read);
+                UpdateChipReadNoTransaction(read, connection);
                 transaction.Commit();
             }
+            connection.Close();
         }
         
         public void UpdateChipReads(List<ChipRead> reads)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (ChipRead read in reads)
                 {
-                    UpdateChipReadNoTransaction(read);
+                    UpdateChipReadNoTransaction(read, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
-        private void SetChipReadStatusNoTransaction(ChipRead read)
+        private void SetChipReadStatusNoTransaction(ChipRead read, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE chipreads SET read_status=@status WHERE read_id=@id;";
@@ -3213,27 +3518,40 @@ namespace EventDirector
 
         public void SetChipReadStatus(ChipRead read)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                SetChipReadStatusNoTransaction(read);
+                SetChipReadStatusNoTransaction(read, connection);
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void SetChipReadStatuses(List<ChipRead> reads)
         {
+            if (reads.Count < 1)
+            {
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (ChipRead read in reads)
                 {
-                    SetChipReadStatusNoTransaction(read);
+                    SetChipReadStatusNoTransaction(read, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void DeleteChipReads(List<ChipRead> reads)
         {
+            if (reads.Count < 1) return;
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (ChipRead read in reads)
@@ -3245,21 +3563,27 @@ namespace EventDirector
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public List<ChipRead> GetChipReads()
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id) " +
                 "LEFT JOIN participants p ON p.participant_id=e.participant_id;";
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
+            connection.Close();
             return output;
         }
 
         public List<ChipRead> GetChipReads(int eventId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id) " +
@@ -3268,11 +3592,14 @@ namespace EventDirector
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
+            connection.Close();
             return output;
         }
 
         public List<ChipRead> GetUsefulChipReads(int eventId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on c.read_chipnumber=b.chip " +
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id) " +
@@ -3285,6 +3612,7 @@ namespace EventDirector
             });
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
+            connection.Close();
             return output;
         }
 
@@ -3346,6 +3674,8 @@ namespace EventDirector
 
         public void SetServerName(string name)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3354,11 +3684,14 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public string GetServerName()
         {
             String output = "Northwest Endurance Events";
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT name FROM settings;";
             SQLiteDataReader reader = command.ExecuteReader();
@@ -3366,12 +3699,15 @@ namespace EventDirector
             {
                 output = reader["name"].ToString();
             }
+            connection.Close();
             return output;
         }
 
         public AppSetting GetAppSetting(string name)
         {
             AppSetting output = null;
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM app_settings WHERE setting=@name";
             command.Parameters.Add(new SQLiteParameter("@name", name));
@@ -3384,6 +3720,7 @@ namespace EventDirector
                     value = Convert.ToString(reader["value"])
                 };
             }
+            connection.Close();
             return output;
         }
 
@@ -3399,6 +3736,8 @@ namespace EventDirector
 
         public void SetAppSetting(AppSetting setting)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3410,6 +3749,7 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         /*
@@ -3417,6 +3757,8 @@ namespace EventDirector
          */
         public void AddBibGroup(int eventId, BibGroup group)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3431,10 +3773,13 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public List<BibGroup> GetBibGroups(int eventId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM bib_group WHERE event_id=@event;";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -3452,11 +3797,14 @@ namespace EventDirector
                     Name = reader["bib_group_name"].ToString()
                 });
             }
+            connection.Close();
             return output;
         }
 
         public void RemoveBibGroup(BibGroup group)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM available_bibs WHERE event_id=@event AND bib_group_number=@number;" +
                 "DELETE FROM bib_group WHERE event_id=@event AND bib_group_number=@number;";
@@ -3466,6 +3814,7 @@ namespace EventDirector
                 new SQLiteParameter("@number", group.Number)
             });
             command.ExecuteNonQuery();
+            connection.Close();
         }
 
         /*
@@ -3473,29 +3822,43 @@ namespace EventDirector
          */
         public void AddBibs(int eventId, int group, List<int> bibs)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (int bib in bibs)
                 {
-                    AddBib(eventId, group, bib);
+                    AddBib(eventId, group, bib, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void AddBibs(int eventId, List<AvailableBib> bibs)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (AvailableBib bib in bibs)
                 {
-                    AddBib(eventId, bib.GroupNumber, bib.Bib);
+                    AddBib(eventId, bib.GroupNumber, bib.Bib, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void AddBib(int eventId, int group, int bib)
+        {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            AddBib(eventId, group, bib, connection);
+            connection.Close();
+        }
+
+        private void AddBib(int eventId, int group, int bib, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO available_bibs (event_id, bib_group_number, bib) " +
@@ -3511,6 +3874,8 @@ namespace EventDirector
 
         public List<AvailableBib> GetBibs(int eventId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT a.bib_group_number as bib_group_number, a.event_id as event_id," +
                 " a.bib as bib, b.bib_group_name as bib_group_name" +
@@ -3527,11 +3892,14 @@ namespace EventDirector
                 output.Add(new AvailableBib(Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["bib_group_number"]),
                     reader["bib_group_name"].ToString(), Convert.ToInt32(reader["bib"])));
             }
+            connection.Close();
             return output;
         }
 
         public int LargestBib(int eventId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT MAX(bib) as max_bib FROM available_bibs WHERE event_id=@event;";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -3544,10 +3912,11 @@ namespace EventDirector
             {
                 if (!(reader["max_bib"] is DBNull)) largest = Convert.ToInt32(reader["max_bib"]);
             }
+            connection.Close();
             return largest;
         }
 
-        public void RemoveBib(int eventId, int bib)
+        private void RemoveBibInternal(int eventId, int bib, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM available_bibs WHERE event_id=@event AND bib=@bib;";
@@ -3559,16 +3928,27 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
+        public void RemoveBib(int eventId, int bib)
+        {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            RemoveBibInternal(eventId, bib, connection);
+            connection.Close();
+        }
+
         public void RemoveBibs(List<AvailableBib> bibs)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (AvailableBib bib in bibs)
                 {
-                    RemoveBib(bib.EventId, bib.Bib);
+                    RemoveBibInternal(bib.EventId, bib.Bib, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         /*
@@ -3576,26 +3956,32 @@ namespace EventDirector
          */
         public void AddAgeGroup(AgeGroup group)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                AddAgeGroupInternal(group);
+                AddAgeGroupInternal(group, connection);
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void AddAgeGroups(List<AgeGroup> groups)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (AgeGroup group in groups)
                 {
-                    AddAgeGroupInternal(group);
+                    AddAgeGroupInternal(group, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
-        private void AddAgeGroupInternal(AgeGroup group)
+        private void AddAgeGroupInternal(AgeGroup group, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO age_groups (event_id, division_id, start_age, end_age)" +
@@ -3612,6 +3998,8 @@ namespace EventDirector
 
         public void UpdateAgeGroup(AgeGroup group)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3628,10 +4016,13 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void RemoveAgeGroup(AgeGroup group)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3643,11 +4034,13 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void RemoveAgeGroups(int eventId, int divisionId)
         {
-
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3660,10 +4053,13 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public List<AgeGroup> GetAgeGroups(int eventId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM age_groups WHERE event_id=@event;";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -3677,12 +4073,12 @@ namespace EventDirector
                 output.Add(new AgeGroup(Convert.ToInt32(reader["group_id"]), Convert.ToInt32(reader["event_id"]),
                     Convert.ToInt32(reader["division_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"])));
             }
+            connection.Close();
             return output;
         }
 
-        public void AddTimingSystem(TimingSystem system)
+        private void AddTimingSystemInternal(TimingSystem system, SQLiteConnection connection)
         {
-            Log.D("Database - Add Timing System");
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO timing_systems (ts_ip, ts_port, ts_location, ts_type)" +
                 " VALUES (@ip, @port, @location, @type);";
@@ -3696,8 +4092,19 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
+        public void AddTimingSystem(TimingSystem system)
+        {
+            Log.D("Database - Add Timing System");
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            AddTimingSystemInternal(system, connection);
+            connection.Close();
+        }
+
         public void UpdateTimingSystem(TimingSystem system)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3712,11 +4119,14 @@ namespace EventDirector
                 });
                 command.ExecuteNonQuery();
                 transaction.Commit();
-            } 
+            }
+            connection.Close();
         }
 
         public void SetTimingSystems(List<TimingSystem> systems)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3724,10 +4134,11 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 foreach (TimingSystem sys in systems)
                 {
-                    AddTimingSystem(sys);
+                    AddTimingSystemInternal(sys, connection);
                 }
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public void RemoveTimingSystem(TimingSystem system)
@@ -3737,6 +4148,8 @@ namespace EventDirector
 
         public void RemoveTimingSystem(int systemId)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -3745,11 +4158,14 @@ namespace EventDirector
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            connection.Close();
         }
 
         public List<TimingSystem> GetTimingSystems()
         {
             List<TimingSystem> output = new List<TimingSystem>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM timing_systems;";
             SQLiteDataReader reader= command.ExecuteReader();
@@ -3758,6 +4174,7 @@ namespace EventDirector
                 output.Add(new TimingSystem(Convert.ToInt32(reader["ts_identifier"]), reader["ts_ip"].ToString(),
                     Convert.ToInt32(reader["ts_port"]), Convert.ToInt32(reader["ts_location"]), reader["ts_type"].ToString()));
             }
+            connection.Close();
             return output;
         }
     }
