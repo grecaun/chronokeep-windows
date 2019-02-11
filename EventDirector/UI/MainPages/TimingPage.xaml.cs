@@ -626,7 +626,7 @@ namespace EventDirector.UI.MainPages
             public ComboBox ReaderLocation { get; private set; }
             public Button ConnectButton { get; private set; }
             public Button ClockButton { get; private set; }
-            public Button SettingsButton { get; private set; }
+            public Button RewindButton { get; private set; }
 
             readonly TimingPage parent;
             private List<TimingLocation> locations;
@@ -649,8 +649,8 @@ namespace EventDirector.UI.MainPages
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(70) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(65) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(65) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
                 this.Content = thePanel;
                 ReaderIP = new TextBox()
@@ -715,16 +715,16 @@ namespace EventDirector.UI.MainPages
                 ClockButton.Click += new RoutedEventHandler(this.Clock);
                 thePanel.Children.Add(ClockButton);
                 Grid.SetColumn(ClockButton, 3);
-                SettingsButton = new Button()
+                RewindButton = new Button()
                 {
-                    Content = "Settings",
+                    Content = "Rewind",
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     IsEnabled = false
                 };
-                SettingsButton.Click += new RoutedEventHandler(this.Settings);
-                thePanel.Children.Add(SettingsButton);
-                Grid.SetColumn(SettingsButton, 4);
+                RewindButton.Click += new RoutedEventHandler(this.Rewind);
+                thePanel.Children.Add(RewindButton);
+                Grid.SetColumn(RewindButton, 4);
                 ConnectButton = new Button()
                 {
                     Content = "Connect",
@@ -861,7 +861,7 @@ namespace EventDirector.UI.MainPages
                 ReaderPort.IsEnabled = false;
                 ReaderLocation.IsEnabled = false;
                 ClockButton.IsEnabled = true;
-                SettingsButton.IsEnabled = true;
+                RewindButton.IsEnabled = true;
                 ConnectButton.IsEnabled = true;
                 ConnectButton.Content = "Disconnect";
             }
@@ -872,7 +872,7 @@ namespace EventDirector.UI.MainPages
                 ReaderPort.IsEnabled = true;
                 ReaderLocation.IsEnabled = true;
                 ClockButton.IsEnabled = false;
-                SettingsButton.IsEnabled = false;
+                RewindButton.IsEnabled = false;
                 ConnectButton.IsEnabled = true;
                 ConnectButton.Content = "Connect";
             }
@@ -883,12 +883,12 @@ namespace EventDirector.UI.MainPages
                 ReaderPort.IsEnabled = false;
                 ReaderLocation.IsEnabled = false;
                 ClockButton.IsEnabled = false;
-                SettingsButton.IsEnabled = false;
+                RewindButton.IsEnabled = false;
                 ConnectButton.IsEnabled = false;
                 ConnectButton.Content = "Working...";
             }
 
-            private void Settings(object sender, RoutedEventArgs e)
+            private void Rewind(object sender, RoutedEventArgs e)
             {
                 Log.D("Settings button pressed. IP is " + ReaderIP.Text);
                 RewindWindow rewind = new RewindWindow(reader);

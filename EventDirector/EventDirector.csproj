@@ -658,15 +658,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\Gear.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\Plus.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\Rubbish.png" />
-  </ItemGroup>
-  <ItemGroup>
     <COMReference Include="Microsoft.Office.Core">
       <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
       <VersionMajor>2</VersionMajor>
@@ -694,30 +685,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\Bolt.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\Broadcast.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\Lock.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\check-8x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\clock-8x.png" />
-    <Resource Include="Icons\cog-8x.png" />
-    <Resource Include="Icons\flag-8x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\plus-8x.png" />
-    <Resource Include="Icons\trash-8x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\tablet-8x.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="UI\BibAssignment\" />
