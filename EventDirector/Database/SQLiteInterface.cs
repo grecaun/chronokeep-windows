@@ -1964,7 +1964,7 @@ namespace EventDirector
             return null;
         }
 
-        public Participant GetParticipantEventSpecific(int eventId, int eventSpecificId)
+        public Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId)
         {
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -1972,8 +1972,25 @@ namespace EventDirector
             command.CommandText = "SELECT * FROM participants AS p JOIN eventspecific AS s ON p.participant_id=s.participant_id" +
                 " JOIN divisions AS d ON s.division_id=d.division_id WHERE s.event_id=@eventid " +
                 "AND s.eventspecific_id=@partId";
-            command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
+            command.Parameters.Add(new SQLiteParameter("@eventid", eventIdentifier));
             command.Parameters.Add(new SQLiteParameter("@eventSpecId", eventSpecificId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            Participant output = GetParticipantWorker(reader);
+            reader.Close();
+            connection.Close();
+            return output;
+        }
+
+        public Participant GetParticipantBib(int eventIdentifier, int bib)
+        {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM participants AS p JOIN eventspecific AS s ON p.participant_id=s.participant_id" +
+                " JOIN divisions AS d ON s.division_id=d.division_id WHERE s.event_id=@eventid " +
+                "AND s.eventspecific_bib=@bib";
+            command.Parameters.Add(new SQLiteParameter("@eventid", eventIdentifier));
+            command.Parameters.Add(new SQLiteParameter("@bib", bib));
             SQLiteDataReader reader = command.ExecuteReader();
             Participant output = GetParticipantWorker(reader);
             reader.Close();

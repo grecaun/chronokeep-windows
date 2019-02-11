@@ -167,6 +167,25 @@ namespace EventDirector.UI.Participants
                 ParticipantChanged = true;
             }
             Participant newPart = FromFields();
+            Participant offendingBib = null;
+            if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+            {
+                offendingBib = database.GetParticipantBib(theEvent.Identifier, newPart.Bib);
+            }
+            if (offendingBib != null)
+            {
+                // bib is taken
+                MessageBoxResult result = MessageBox.Show("This bib is already taken. Assign no bib to the previous bib owner?", "", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (MessageBoxResult.Yes == result)
+                {
+                    offendingBib.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                    database.UpdateParticipant(offendingBib);
+                }
+                else if (MessageBoxResult.No == result)
+                {
+                    return;
+                }
+            }
             if (newPart != null)
             {
                 database.AddParticipant(newPart);
@@ -188,13 +207,35 @@ namespace EventDirector.UI.Participants
                 bibsChanged.Add(person.Bib);
                 ParticipantChanged = true;
             }
-            Participant oldPart = FromFields();
-            if (oldPart != null)
+            Participant newPart = FromFields();
+            Participant offendingBib = null;
+            if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
             {
-                database.UpdateParticipant(oldPart);
-                if (oldPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                offendingBib = database.GetParticipantBib(theEvent.Identifier, newPart.Bib);
+            }
+            if (offendingBib != null && newPart.Identifier != offendingBib.Identifier)
+            {
+                // bib is taken
+                Participant oldPart = database.GetParticipant(theEvent.Identifier, newPart.Identifier);
+                MessageBoxResult result = MessageBox.Show("This bib is already taken. Swap bibs?", "", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (MessageBoxResult.Yes == result)
                 {
-                    bibsChanged.Add(oldPart.Bib);
+                    offendingBib.EventSpecific.Bib = oldPart.EventSpecific.Bib;
+                    database.UpdateParticipant(offendingBib);
+                    bibsChanged.Add(offendingBib.Bib);
+                }
+                else if (MessageBoxResult.No == result)
+                {
+                    BibBox.Text = oldPart.Bib.ToString();
+                    return;
+                }
+            }
+            if (newPart != null)
+            {
+                database.UpdateParticipant(newPart);
+                if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                {
+                    bibsChanged.Add(newPart.Bib);
                     ParticipantChanged = true;
                 }
                 this.Close();
