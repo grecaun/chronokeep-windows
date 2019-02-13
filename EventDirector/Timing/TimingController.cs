@@ -180,6 +180,7 @@ namespace EventDirector.Timing
                         }
                         if (UpdateTiming && !sock.Poll(100, SelectMode.SelectRead))
                         {
+                            UpdateTiming = false;
                             mainWindow.UpdateTimingFromController();
                         }
                     }
