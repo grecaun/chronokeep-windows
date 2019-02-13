@@ -112,6 +112,7 @@ namespace EventDirector.Timing
                 Log.D("Unable to aquire mutex.");
                 return;
             }
+            bool UpdateTiming = false;
             while (TimingSystemSockets.Count > 0)
             {
                 readList.Clear();
@@ -119,7 +120,7 @@ namespace EventDirector.Timing
                 Socket.Select(readList, null, null, 3000000);
                 foreach (Socket sock in readList)
                 {
-                    byte[] recvd = new byte[2056];
+                    byte[] recvd = new byte[4112];
                     try
                     {
                         int num_recvd = sock.Receive(recvd);
@@ -143,11 +144,11 @@ namespace EventDirector.Timing
                                     case MessageType.CONNECTED:
                                         Log.D("Timing system successfully connected.");
                                         TimingSystemDict[sock].Status = SYSTEM_STATUS.CONNECTED;
-                                        mainWindow.UpdateTimingFromController();
+                                        UpdateTiming = true;
                                         break;
                                     case MessageType.CHIPREAD:
                                         Log.D("Chipreads found");
-                                        mainWindow.UpdateTimingFromController();
+                                        UpdateTiming = true;
                                         break;
                                     case MessageType.SETTINGCHANGE:
                                         Log.D("Setting value changed.");
@@ -164,18 +165,22 @@ namespace EventDirector.Timing
                                     case MessageType.TIME:
                                         Log.D("Time value received.");
                                         TimingSystemDict[sock].SystemTime = messageTypes[MessageType.TIME].First<string>();
-                                        mainWindow.UpdateTimingFromController();
+                                        UpdateTiming = true;
                                         break;
                                     case MessageType.STATUS:
                                         Log.D("Status message received.");
                                         TimingSystemDict[sock].SystemStatus = messageTypes[MessageType.STATUS].Last<string>();
-                                        mainWindow.UpdateTimingFromController();
+                                        UpdateTiming = true;
                                         break;
                                     case MessageType.ERROR:
                                         Log.D("Error from timing system.");
                                         break;
                                 }
                             }
+                        }
+                        if (UpdateTiming && !sock.Poll(100, SelectMode.SelectRead))
+                        {
+                            mainWindow.UpdateTimingFromController();
                         }
                     }
                     catch
