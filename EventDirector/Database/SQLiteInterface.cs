@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using EventDirector.Objects;
 
@@ -14,6 +15,7 @@ namespace EventDirector
     {
         private readonly int version = 32;
         readonly string connectionInfo;
+        readonly Mutex mutex = new Mutex();
 
         public SQLiteInterface(String info)
         {
@@ -1043,6 +1045,11 @@ namespace EventDirector
 
         public void AddDivision(Division div)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 1");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1069,10 +1076,16 @@ namespace EventDirector
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveDivision(int identifier)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 2");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1082,6 +1095,7 @@ namespace EventDirector
                 new SQLiteParameter("@id", identifier) });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveDivision(Division div)
@@ -1091,6 +1105,11 @@ namespace EventDirector
 
         public void UpdateDivision(Division div)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 3");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1116,10 +1135,16 @@ namespace EventDirector
                 new SQLiteParameter("@id", div.Identifier) });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<Division> GetDivisions()
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 4");
+                return new List<Division>();
+            }
             List<Division> output = new List<Division>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -1138,11 +1163,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public List<Division> GetDivisions(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 5");
+                return new List<Division>();
+            }
             List<Division> output = new List<Division>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -1174,11 +1205,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public int GetDivisionID(Division div)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 6");
+                return -1;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1196,11 +1233,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public Division GetDivision(int divId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 7");
+                return null;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1223,11 +1266,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 8");
+                return;
+            }
             Log.D(String.Format("Setting wave {0} for event {1}", wave, eventId));
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -1247,6 +1296,7 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         /*
@@ -1255,6 +1305,11 @@ namespace EventDirector
 
         public void AddEvent(Event anEvent)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 9");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1284,6 +1339,7 @@ namespace EventDirector
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveEvent(Event anEvent)
@@ -1293,6 +1349,11 @@ namespace EventDirector
 
         public void RemoveEvent(int identifier)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 10");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -1309,10 +1370,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void UpdateEvent(Event anEvent)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 11");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1342,10 +1409,16 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<Event> GetEvents()
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 12");
+                return new List<Event>();
+            }
             List<Event> output = new List<Event>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -1367,11 +1440,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public int GetEventID(Event anEvent)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 13");
+                return -1;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1389,6 +1468,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
@@ -1405,6 +1485,11 @@ namespace EventDirector
         {
             if (id < 0)
             {
+                return null;
+            }
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 14");
                 return null;
             }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
@@ -1429,11 +1514,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public List<JsonOption> GetEventOptions(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 15");
+                return new List<JsonOption>();
+            }
             List<JsonOption> output = new List<JsonOption>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -1481,11 +1572,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public void SetEventOptions(int eventId, List<JsonOption> options)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 16");
+                return;
+            }
             List<JsonOption> output = new List<JsonOption>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -1525,10 +1622,16 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void SetStartWindow(Event anEvent)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 17");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1540,10 +1643,16 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void SetFinishOptions(Event anEvent)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 18");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1556,6 +1665,7 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         /*
@@ -1564,32 +1674,44 @@ namespace EventDirector
 
         public void AddParticipant(Participant person)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 19");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                AddParticipantNoTransaction(person, connection);
+                AddParticipantInternal(person, connection);
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void AddParticipants(List<Participant> people)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 20");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (Participant person in people)
                 {
-                    AddParticipantNoTransaction(person, connection);
+                    AddParticipantInternal(person, connection);
                 }
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
-        private void AddParticipantNoTransaction(Participant person, SQLiteConnection connection)
+        private void AddParticipantInternal(Participant person, SQLiteConnection connection)
         {
             person.FormatData();
             SQLiteCommand command = connection.CreateCommand();
@@ -1617,7 +1739,7 @@ namespace EventDirector
                 new SQLiteParameter("@street2", person.Street2),
                 new SQLiteParameter("@ecname", person.ECName),
                 new SQLiteParameter("@ecphone", person.ECPhone),
-                new SQLiteParameter("@gender", person.Gender) } );
+                new SQLiteParameter("@gender", person.Gender) });
             Log.D("SQL query: '" + command.CommandText + "'");
             SQLiteDataReader reader = command.ExecuteReader();
             if (reader.Read())
@@ -1641,7 +1763,7 @@ namespace EventDirector
                 new SQLiteParameter("@owes", person.EventSpecific.Owes),
                 new SQLiteParameter("@other", person.EventSpecific.Other),
                 new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart),
-                new SQLiteParameter("@nextYear", person.EventSpecific.NextYear) } );
+                new SQLiteParameter("@nextYear", person.EventSpecific.NextYear) });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
         }
@@ -1657,10 +1779,16 @@ namespace EventDirector
 
         public void RemoveParticipant(int identifier)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 21");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             RemoveParticipantInternal(identifier, connection);
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveParticipantEntry(Participant person)
@@ -1670,6 +1798,11 @@ namespace EventDirector
 
         public void RemoveParticipantEntries(List<Participant> participants)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 22");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -1681,6 +1814,7 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         private void RemoveEntryInternal(int eventId, int participantId, SQLiteConnection connection)
@@ -1695,10 +1829,16 @@ namespace EventDirector
 
         public void RemoveEntry(int eventId, int participantId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 23");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             RemoveEntryInternal(eventId, participantId, connection);
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveEntry(Participant person)
@@ -1708,6 +1848,11 @@ namespace EventDirector
 
         public void RemoveEntries(List<Participant> people)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 24");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -1719,9 +1864,10 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
-        private void UpdateParticipantNoTran(Participant person, SQLiteConnection connection)
+        private void UpdateParticipantInternal(Participant person, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -1772,19 +1918,30 @@ namespace EventDirector
 
         public void UpdateParticipant(Participant person)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 25");
+                return;
+            }
             person.FormatData();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                UpdateParticipantNoTran(person, connection);
+                UpdateParticipantInternal(person, connection);
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void UpdateParticipants(List<Participant> participants)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 26");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -1792,15 +1949,21 @@ namespace EventDirector
                 foreach (Participant person in participants)
                 {
                     person.FormatData();
-                    UpdateParticipantNoTran(person, connection);
+                    UpdateParticipantInternal(person, connection);
                 }
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void CheckInParticipant(int eventId, int identifier, int checkedIn)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 27");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1813,6 +1976,7 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void CheckInParticipant(Participant person)
@@ -1822,6 +1986,11 @@ namespace EventDirector
 
         public void SetEarlyStartParticipant(int eventId, int identifier, int earlystart)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 28");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1834,6 +2003,7 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void SetEarlyStartParticipant(Participant person)
@@ -1870,6 +2040,11 @@ namespace EventDirector
 
         public List<Participant> GetParticipantsWorker(string query, int eventId, int divisionId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 29");
+                return new List<Participant>();
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<Participant> output = new List<Participant>();
@@ -1921,6 +2096,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
@@ -1966,6 +2142,11 @@ namespace EventDirector
 
         public Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 30");
+                return null;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1978,11 +2159,17 @@ namespace EventDirector
             Participant output = GetParticipantWorker(reader);
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public Participant GetParticipantBib(int eventIdentifier, int bib)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 31");
+                return null;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -1995,11 +2182,17 @@ namespace EventDirector
             Participant output = GetParticipantWorker(reader);
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public Participant GetParticipant(int eventId, int identifier)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 32");
+                return null;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2012,11 +2205,17 @@ namespace EventDirector
             Participant output = GetParticipantWorker(reader);
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public Participant GetParticipant(int eventId, Participant unknown)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 33");
+                return null;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2054,11 +2253,17 @@ namespace EventDirector
             Participant output = GetParticipantWorker(reader);
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public int GetParticipantID(Participant person)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 34");
+                return -1;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2083,6 +2288,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
@@ -2092,6 +2298,11 @@ namespace EventDirector
 
         public void AddTimingLocation(TimingLocation tl)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 35");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2102,9 +2313,10 @@ namespace EventDirector
                 new SQLiteParameter("@event", tl.EventIdentifier),
                 new SQLiteParameter("@name", tl.Name),
                 new SQLiteParameter("@max", tl.MaxOccurrences),
-                new SQLiteParameter("@ignore", tl.IgnoreWithin) } );
+                new SQLiteParameter("@ignore", tl.IgnoreWithin) });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveTimingLocation(TimingLocation tl)
@@ -2114,6 +2326,11 @@ namespace EventDirector
 
         public void RemoveTimingLocation(int identifier)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 36");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2123,10 +2340,16 @@ namespace EventDirector
                     new SQLiteParameter("@id", identifier) });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void UpdateTimingLocation(TimingLocation tl)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 37");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2141,10 +2364,16 @@ namespace EventDirector
                 new SQLiteParameter("@id", tl.Identifier) });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<TimingLocation> GetTimingLocations(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 38");
+                return new List<TimingLocation>();
+            }
             List<TimingLocation> output = new List<TimingLocation>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2159,11 +2388,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public int GetTimingLocationID(TimingLocation tl)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 39");
+                return -1;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2181,6 +2416,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
@@ -2188,7 +2424,7 @@ namespace EventDirector
          * Segment
          */
 
-        private void AddSegmentNoTransaction(Segment seg, SQLiteConnection connection)
+        private void AddSegmentInternal(Segment seg, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -2209,32 +2445,44 @@ namespace EventDirector
 
         public void AddSegment(Segment seg)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 40");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                AddSegmentNoTransaction(seg, connection);
+                AddSegmentInternal(seg, connection);
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void AddSegments(List<Segment> segments)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 41");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (Segment seg in segments)
                 {
-                    AddSegmentNoTransaction(seg, connection);
+                    AddSegmentInternal(seg, connection);
                 }
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
-        private void RemoveSegmentNoTransaction(int identifier, SQLiteConnection connection)
+        private void RemoveSegmentInternal(int identifier, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -2246,40 +2494,58 @@ namespace EventDirector
 
         public void RemoveSegment(Segment seg)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 42");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            RemoveSegmentNoTransaction(seg.Identifier, connection);
+            RemoveSegmentInternal(seg.Identifier, connection);
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveSegment(int identifier)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 43");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                RemoveSegmentNoTransaction(identifier, connection);
+                RemoveSegmentInternal(identifier, connection);
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveSegments(List<Segment> segments)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 44");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (Segment seg in segments)
                 {
-                    RemoveSegmentNoTransaction(seg.Identifier, connection);
+                    RemoveSegmentInternal(seg.Identifier, connection);
                 }
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
-        private void UpdateSegmentNoTransaction(Segment seg, SQLiteConnection connection)
+        private void UpdateSegmentInternal(Segment seg, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -2301,32 +2567,50 @@ namespace EventDirector
 
         public void UpdateSegment(Segment seg)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 45");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                UpdateSegmentNoTransaction(seg, connection);
+                UpdateSegmentInternal(seg, connection);
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void UpdateSegments(List<Segment> segments)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 46");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                foreach (Segment seg in segments) {
-                    UpdateSegmentNoTransaction(seg, connection);
+                foreach (Segment seg in segments)
+                {
+                    UpdateSegmentInternal(seg, connection);
                 }
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public int GetSegmentId(Segment seg)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 47");
+                return -1;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2339,11 +2623,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public List<Segment> GetSegments(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 48");
+                return new List<Segment>();
+            }
             List<Segment> output = new List<Segment>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2360,11 +2650,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public void ResetSegments(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 49");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -2378,10 +2674,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public int GetMaxSegments(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 50");
+                return 0;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2397,7 +2699,8 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
-            return 0;
+            mutex.ReleaseMutex();
+            return output;
         }
 
         /*
@@ -2433,16 +2736,27 @@ namespace EventDirector
 
         public void AddTimingResult(TimeResult tr)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 51");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             AddTimingResultInternal(tr, connection);
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void AddTimingResults(List<TimeResult> results)
         {
             if (results.Count < 1)
             {
+                return;
+            }
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 52");
                 return;
             }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
@@ -2456,10 +2770,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveTimingResult(TimeResult tr)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 53");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2470,12 +2790,13 @@ namespace EventDirector
                 new SQLiteParameter("@event", tr.EventSpecificId),
                 new SQLiteParameter("@segment", tr.SegmentId),
                 new SQLiteParameter("@occurance", tr.Occurrence),
-                new SQLiteParameter("@location", tr.LocationId) } );
+                new SQLiteParameter("@location", tr.LocationId) });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
-        private List<TimeResult> GetResults(SQLiteDataReader reader)
+        private List<TimeResult> GetResultsInternal(SQLiteDataReader reader)
         {
             List<TimeResult> output = new List<TimeResult>();
             while (reader.Read())
@@ -2511,6 +2832,11 @@ namespace EventDirector
 
         public List<TimeResult> GetTimingResults(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 54");
+                return new List<TimeResult>();
+            }
             Log.D("Getting timing results for event id of " + eventId);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2524,13 +2850,19 @@ namespace EventDirector
                 "WHERE r.event_id=@eventid;";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            List<TimeResult> output = GetResults(reader);
+            List<TimeResult> output = GetResultsInternal(reader);
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public List<TimeResult> GetStartTimes(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 55");
+                return new List<TimeResult>();
+            }
             Log.D("Getting start times for event id of " + eventId);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2548,13 +2880,19 @@ namespace EventDirector
                 new SQLiteParameter("@segment", Constants.Timing.SEGMENT_START)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            List<TimeResult> output = GetResults(reader);
+            List<TimeResult> output = GetResultsInternal(reader);
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public List<TimeResult> GetSegmentTimes(int eventId, int segmentId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 56");
+                return new List<TimeResult>();
+            }
             Log.D("Getting segment times for event id of " + eventId);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2572,13 +2910,19 @@ namespace EventDirector
                 new SQLiteParameter("@segment", segmentId)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            List<TimeResult> output = GetResults(reader);
+            List<TimeResult> output = GetResultsInternal(reader);
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public void UpdateTimingResult(TimeResult oldResult, String newTime)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 57");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2592,10 +2936,16 @@ namespace EventDirector
                 new SQLiteParameter("@occurance", oldResult.Occurrence)});
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public bool UnprocessedReadsExist(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 58");
+                return false;
+            }
             Log.D("Checking for unprocessed reads.");
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2611,11 +2961,17 @@ namespace EventDirector
             long output = reader.GetInt64(0);
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output != 0;
         }
 
         public bool UnprocessedResultsExist(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 59");
+                return false;
+            }
             Log.D("Checking for unprocessed results.");
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2637,6 +2993,7 @@ namespace EventDirector
             long output = reader.GetInt64(0);
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output != 0;
         }
 
@@ -2646,6 +3003,11 @@ namespace EventDirector
 
         public void ResetTimingResultsEvent(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 60");
+                return;
+            }
             Log.D("Resetting timing results for event " + eventId);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2660,10 +3022,16 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void ResetTimingResultsBib(int eventId, int bib)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 61");
+                return;
+            }
             Log.D("Resetting timing results for bib " + bib + " and event " + eventId);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2683,10 +3051,16 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void ResetTimingResultsChip(int eventId, string chip)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 62");
+                return;
+            }
             Log.D("Resetting timing results for chip " + chip + " and event " + eventId);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2706,10 +3080,16 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void ResetTimingResultsDivision(int eventId, int divisionId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 63");
+                return;
+            }
             Log.D("Resetting timing results for division " + divisionId + " and event " + eventId);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2731,10 +3111,16 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void ResetTimingResultsPlacements(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 64");
+                return;
+            }
             Log.D("Resetting timing result placements for event " + eventId);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2747,6 +3133,7 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         /*
@@ -2755,6 +3142,11 @@ namespace EventDirector
 
         public void AddChange(Participant newParticipant, Participant oldParticipant)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 65");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -2894,10 +3286,16 @@ namespace EventDirector
                 command.ExecuteNonQuery();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<Change> GetChanges()
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 66");
+                return new List<Change>();
+            }
             Log.D("Getting changes.");
             List<Change> output = new List<Change>();
             Hashtable divisions = new Hashtable();
@@ -2985,6 +3383,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
@@ -2994,6 +3393,11 @@ namespace EventDirector
 
         public void HardResetDatabase()
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 67");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3008,11 +3412,17 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
             Initialize();
         }
 
         public void ResetDatabase()
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 68");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3027,6 +3437,7 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         /*
@@ -3035,6 +3446,11 @@ namespace EventDirector
 
         public void AddDayOfParticipant(DayOfParticipant part)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 69");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3072,6 +3488,7 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<DayOfParticipant> GetDayOfParticipants(int eventId)
@@ -3086,6 +3503,11 @@ namespace EventDirector
 
         private List<DayOfParticipant> InternalGetDayOfParticipants(String query, int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 70");
+                return new List<DayOfParticipant>();
+            }
             List<DayOfParticipant> output = new List<DayOfParticipant>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -3124,11 +3546,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public bool ApproveDayOfParticipant(int eventId, int identifier, int bib, int earlystart)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 71");
+                return false;
+            }
             Participant newPart = null;
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -3190,9 +3618,11 @@ namespace EventDirector
                     transaction.Commit();
                 }
                 connection.Close();
+                mutex.ReleaseMutex();
                 return true;
             }
             connection.Close();
+            mutex.ReleaseMutex();
             return false;
         }
 
@@ -3203,6 +3633,11 @@ namespace EventDirector
 
         public void SetLiabilityWaiver(int eventId, string waiver)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 72");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3218,10 +3653,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public string GetLiabilityWaiver(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 73");
+                return "";
+            }
             String output = "";
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -3235,11 +3676,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public DayOfParticipant GetDayOfParticipant(DayOfParticipant part)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 74");
+                return null;
+            }
             DayOfParticipant output = null;
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -3286,11 +3733,17 @@ namespace EventDirector
                 }
             }
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public void SetPrintOption(int eventId, int print)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 75");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3306,10 +3759,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public int GetPrintOption(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 76");
+                return 0;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -3330,6 +3789,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return outval;
         }
 
@@ -3339,6 +3799,11 @@ namespace EventDirector
 
         public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 77");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3359,10 +3824,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<BibChipAssociation> GetBibChips()
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 78");
+                return new List<BibChipAssociation>();
+            }
             List<BibChipAssociation> output = new List<BibChipAssociation>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -3380,11 +3851,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public List<BibChipAssociation> GetBibChips(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 79");
+                return new List<BibChipAssociation>();
+            }
             List<BibChipAssociation> output = new List<BibChipAssociation>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -3403,6 +3880,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
@@ -3419,10 +3897,16 @@ namespace EventDirector
 
         public void RemoveBibChipAssociation(int eventId, int chip)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 80");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             RemoveBibChipAssociationInternal(eventId, chip, connection);
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         private void RemoveBibChipAssociationInternal(BibChipAssociation assoc, SQLiteConnection connection)
@@ -3432,14 +3916,25 @@ namespace EventDirector
 
         public void RemoveBibChipAssociation(BibChipAssociation assoc)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 81");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             if (assoc != null) RemoveBibChipAssociationInternal(assoc.EventId, assoc.Chip, connection);
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveBibChipAssociations(List<BibChipAssociation> assocs)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 82");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3451,6 +3946,7 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         /*
@@ -3489,16 +3985,27 @@ namespace EventDirector
 
         public void AddChipRead(ChipRead read)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 83");
+                return;
+            }
             Log.D("Database - Add chip read. Box " + read.Box + " Antenna " + read.Antenna + " Chip " + read.ChipNumber
                 + " LogId " + read.LogId + " Time Given " + read.TimeString);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             AddChipReadInternal(read, connection);
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void AddChipReads(List<ChipRead> reads)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 84");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3510,9 +4017,10 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
-        private void UpdateChipReadNoTransaction(ChipRead read, SQLiteConnection connection)
+        private void UpdateChipReadInternal(ChipRead read, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE chipreads SET read_status=@status, read_time=@time WHERE read_id=@id;";
@@ -3528,32 +4036,44 @@ namespace EventDirector
 
         public void UpdateChipRead(ChipRead read)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 85");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                UpdateChipReadNoTransaction(read, connection);
+                UpdateChipReadInternal(read, connection);
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
-        
+
         public void UpdateChipReads(List<ChipRead> reads)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 86");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (ChipRead read in reads)
                 {
-                    UpdateChipReadNoTransaction(read, connection);
+                    UpdateChipReadInternal(read, connection);
                 }
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
-        private void SetChipReadStatusNoTransaction(ChipRead read, SQLiteConnection connection)
+        private void SetChipReadStatusInternal(ChipRead read, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE chipreads SET read_status=@status WHERE read_id=@id;";
@@ -3567,14 +4087,20 @@ namespace EventDirector
 
         public void SetChipReadStatus(ChipRead read)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 87");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                SetChipReadStatusNoTransaction(read, connection);
+                SetChipReadStatusInternal(read, connection);
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void SetChipReadStatuses(List<ChipRead> reads)
@@ -3583,21 +4109,32 @@ namespace EventDirector
             {
                 return;
             }
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 88");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
                 foreach (ChipRead read in reads)
                 {
-                    SetChipReadStatusNoTransaction(read, connection);
+                    SetChipReadStatusInternal(read, connection);
                 }
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void DeleteChipReads(List<ChipRead> reads)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 89");
+                return;
+            }
             if (reads.Count < 1) return;
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -3613,10 +4150,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<ChipRead> GetChipReads()
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 90");
+                return new List<ChipRead>();
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -3626,11 +4169,17 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public List<ChipRead> GetChipReads(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 91");
+                return new List<ChipRead>();
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -3642,11 +4191,17 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public List<ChipRead> GetUsefulChipReads(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 92");
+                return new List<ChipRead>();
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -3662,6 +4217,7 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
@@ -3724,6 +4280,11 @@ namespace EventDirector
 
         public void SetServerName(string name)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 93");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3735,10 +4296,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public string GetServerName()
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 94");
+                return "";
+            }
             String output = "Northwest Endurance Events";
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -3751,11 +4318,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public AppSetting GetAppSetting(string name)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 95");
+                return null;
+            }
             AppSetting output = null;
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -3773,6 +4346,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
@@ -3788,6 +4362,11 @@ namespace EventDirector
 
         public void SetAppSetting(AppSetting setting)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 96");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3802,6 +4381,7 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         /*
@@ -3809,6 +4389,11 @@ namespace EventDirector
          */
         public void AddBibGroup(int eventId, BibGroup group)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 97");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3826,10 +4411,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<BibGroup> GetBibGroups(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 98");
+                return new List<BibGroup>();
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -3851,11 +4442,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public void RemoveBibGroup(BibGroup group)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 99");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -3868,6 +4465,7 @@ namespace EventDirector
             });
             command.ExecuteNonQuery();
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         /*
@@ -3875,6 +4473,11 @@ namespace EventDirector
          */
         public void AddBibs(int eventId, int group, List<int> bibs)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 100");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3886,10 +4489,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void AddBibs(int eventId, List<AvailableBib> bibs)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 101");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -3901,14 +4510,21 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void AddBib(int eventId, int group, int bib)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 102");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             AddBib(eventId, group, bib, connection);
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         private void AddBib(int eventId, int group, int bib, SQLiteConnection connection)
@@ -3927,6 +4543,11 @@ namespace EventDirector
 
         public List<AvailableBib> GetBibs(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 103");
+                return new List<AvailableBib>();
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -3947,11 +4568,17 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
         public int LargestBib(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 104");
+                return -1;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -3968,6 +4595,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return largest;
         }
 
@@ -3985,14 +4613,25 @@ namespace EventDirector
 
         public void RemoveBib(int eventId, int bib)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 105");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             RemoveBibInternal(eventId, bib, connection);
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveBibs(List<AvailableBib> bibs)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 106");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -4004,6 +4643,7 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         /*
@@ -4011,6 +4651,11 @@ namespace EventDirector
          */
         public void AddAgeGroup(AgeGroup group)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 107");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -4019,10 +4664,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void AddAgeGroups(List<AgeGroup> groups)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 108");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -4034,6 +4685,7 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         private void AddAgeGroupInternal(AgeGroup group, SQLiteConnection connection)
@@ -4053,6 +4705,11 @@ namespace EventDirector
 
         public void UpdateAgeGroup(AgeGroup group)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 109");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -4072,10 +4729,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveAgeGroup(AgeGroup group)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 110");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -4090,10 +4753,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveAgeGroups(int eventId, int divisionId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 111");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -4109,10 +4778,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<AgeGroup> GetAgeGroups(int eventId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 112");
+                return new List<AgeGroup>();
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -4130,6 +4805,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
 
@@ -4150,15 +4826,26 @@ namespace EventDirector
 
         public void AddTimingSystem(TimingSystem system)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 113");
+                return;
+            }
             Log.D("Database - Add Timing System");
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             AddTimingSystemInternal(system, connection);
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void UpdateTimingSystem(TimingSystem system)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 114");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -4177,10 +4864,16 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void SetTimingSystems(List<TimingSystem> systems)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 115");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -4195,6 +4888,7 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveTimingSystem(TimingSystem system)
@@ -4204,6 +4898,11 @@ namespace EventDirector
 
         public void RemoveTimingSystem(int systemId)
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 116");
+                return;
+            }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
@@ -4215,16 +4914,22 @@ namespace EventDirector
                 transaction.Commit();
             }
             connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<TimingSystem> GetTimingSystems()
         {
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 117");
+                return new List<TimingSystem>();
+            }
             List<TimingSystem> output = new List<TimingSystem>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM timing_systems;";
-            SQLiteDataReader reader= command.ExecuteReader();
+            SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
                 output.Add(new TimingSystem(Convert.ToInt32(reader["ts_identifier"]), reader["ts_ip"].ToString(),
@@ -4232,6 +4937,7 @@ namespace EventDirector
             }
             reader.Close();
             connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
     }
