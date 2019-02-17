@@ -33,12 +33,13 @@ namespace EventDirector.UI.Participants
             if (person == null)
             {
                 Add.Click += new RoutedEventHandler(this.Add_Click);
+                UpdateDivisions();
             }
             else
             {
                 Add.Click += new RoutedEventHandler(this.Modify_Click);
+                UpdateAllFields();
             }
-            UpdateAllFields();
             BibBox.Focus();
         }
 
@@ -54,12 +55,13 @@ namespace EventDirector.UI.Participants
             {
                 BibBox.Text = Bib.ToString();
                 Add.Click += new RoutedEventHandler(this.Add_Click);
+                UpdateDivisions();
             }
             else
             {
                 Add.Click += new RoutedEventHandler(this.Modify_Click);
+                UpdateAllFields();
             }
-            UpdateAllFields();
             BibBox.IsEnabled = false;
         }
 

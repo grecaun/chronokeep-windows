@@ -58,8 +58,7 @@ namespace EventDirector
             this.ReaderTime = readertime;
             this.StartTime = starttime;
             this.LogId = logid;
-            Time = RFIDUltraInterface.EpochToDate(Seconds);
-            Time.AddMilliseconds(Milliseconds);
+            Time = RFIDUltraInterface.EpochToDate(Seconds).AddMilliseconds(this.Milliseconds);
             this.Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
             this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
         }
