@@ -629,5 +629,20 @@ namespace EventDirector.UI.MainPages
                 e.Handled = allowedNums.IsMatch(e.Text);
             }
         }
+
+        private void SegmentsBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Utils.GetScrollViewer(sender as DependencyObject) is ScrollViewer scrollViewer)
+            {
+                if (e.Delta < 0)
+                {
+                    scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 35);
+                }
+                else if (e.Delta > 0)
+                {
+                    scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 35);
+                }
+            }
+        }
     }
 }

@@ -21,7 +21,7 @@
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
             <ComboBox Name="Divisions" FontSize="16" Margin="10,10,10,10" Height="35" Width="250" SelectionChanged="Divisions_SelectionChanged" VerticalContentAlignment="Center"/>
-            <ListBox Name="AgeGroupsBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" Grid.Row="1">
+            <ListBox Name="AgeGroupsBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" Grid.Row="1" ScrollViewer.CanContentScroll="False" PreviewMouseWheel="AgeGroupsBox_PreviewMouseWheel">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

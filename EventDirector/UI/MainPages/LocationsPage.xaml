@@ -15,7 +15,7 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
-            <ListBox Name="LocationsBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" Grid.Row="0">
+            <ListBox Name="LocationsBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" Grid.Row="0" ScrollViewer.CanContentScroll="False" PreviewMouseWheel="LocationsBox_PreviewMouseWheel">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

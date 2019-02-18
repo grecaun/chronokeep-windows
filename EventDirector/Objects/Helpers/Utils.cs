@@ -1,6 +1,10 @@
 ﻿using Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using Application = Microsoft.Office.Interop.Excel.Application;
 
 namespace EventDirector
 {
@@ -59,6 +63,23 @@ namespace EventDirector
                 while (Marshal.ReleaseComObject(ExcelApp) > 0) ;
                 ExcelApp = null;
             }
+        }
+
+        public static DependencyObject GetScrollViewer(DependencyObject o)
+        {
+            if (o is ScrollViewer)
+                return o;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(o); i++)
+            {
+                var child = VisualTreeHelper.GetChild(o, i);
+                var result = GetScrollViewer(child);
+                if (result == null)
+                    continue;
+                else
+                    return result;
+            }
+            return null;
         }
 
         public enum FileType { CSV, EXCEL }

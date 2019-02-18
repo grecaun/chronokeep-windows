@@ -369,5 +369,20 @@ namespace EventDirector.UI.MainPages
                 src.SelectAll();
             }
         }
+
+        private void AgeGroupsBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Utils.GetScrollViewer(sender as DependencyObject) is ScrollViewer scrollViewer)
+            {
+                if (e.Delta < 0)
+                {
+                    scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset + 35);
+                }
+                else if (e.Delta > 0)
+                {
+                    scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 35);
+                }
+            }
+        }
     }
 }
