@@ -67,7 +67,8 @@ namespace EventDirector.UI.MainPages
                     newParts.AddRange(database.GetParticipants(theEvent.Identifier, divisionId));
                 }
             });
-            participants = newParts;
+            participants.Clear();
+            participants.AddRange(newParts);
             switch (((ComboBoxItem)SortBox.SelectedItem).Content)
             {
                 case "Name":
@@ -131,7 +132,7 @@ namespace EventDirector.UI.MainPages
             }
         }
 
-        private async void ImportExcel_Click(object sender, RoutedEventArgs e)
+        private void ImportExcel_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import Excel clicked.");
             OpenFileDialog excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.csv)|*.xlsx;*.csv|All files|*" };
@@ -140,10 +141,7 @@ namespace EventDirector.UI.MainPages
                 try
                 {
                     ExcelImporter excel = new ExcelImporter(excel_dialog.FileName);
-                    await Task.Run(() =>
-                    {
-                        excel.FetchHeaders();
-                    });
+                    excel.FetchHeaders();
                     ImportFileWindow excelImp = ImportFileWindow.NewWindow(mWindow, excel, database);
                     if (excelImp != null)
                     {
@@ -153,13 +151,14 @@ namespace EventDirector.UI.MainPages
                 }
                 catch (Exception ex)
                 {
+                    MessageBox.Show("There was a problem importing the file.");
                     Log.E("Something went wrong when trying to read the Excel file.");
                     Log.E(ex.StackTrace);
                 }
             }
         }
 
-        private async void ImportCSV_Click(object sender, RoutedEventArgs e)
+        private void ImportCSV_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import CSV clicked.");
             OpenFileDialog csv_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv)|*.csv|All files|*" };
@@ -168,10 +167,7 @@ namespace EventDirector.UI.MainPages
                 try
                 {
                     CSVImporter importer = new CSVImporter(csv_dialog.FileName);
-                    await Task.Run(() =>
-                    {
-                        importer.FetchHeaders();
-                    });
+                    importer.FetchHeaders();
                     ImportFileWindow excelImp = ImportFileWindow.NewWindow(mWindow, importer, database);
                     if (excelImp != null)
                     {
@@ -181,6 +177,7 @@ namespace EventDirector.UI.MainPages
                 }
                 catch (Exception ex)
                 {
+                    MessageBox.Show("There was a problem importing the file.");
                     Log.E("Something went wrong when trying to read the CSV file.");
                     Log.E(ex.StackTrace);
                 }
