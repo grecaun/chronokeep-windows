@@ -2152,7 +2152,7 @@ namespace EventDirector
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM participants AS p JOIN eventspecific AS s ON p.participant_id=s.participant_id" +
                 " JOIN divisions AS d ON s.division_id=d.division_id WHERE s.event_id=@eventid " +
-                "AND s.eventspecific_id=@partId";
+                "AND s.eventspecific_id=@eventSpecId";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventIdentifier));
             command.Parameters.Add(new SQLiteParameter("@eventSpecId", eventSpecificId));
             SQLiteDataReader reader = command.ExecuteReader();

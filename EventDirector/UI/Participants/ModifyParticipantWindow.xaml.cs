@@ -50,7 +50,7 @@ namespace EventDirector.UI.Participants
             this.tPage = tPage;
             this.database = database;
             theEvent = database.GetCurrentEvent();
-            person = database.GetParticipant(theEvent.Identifier, EventSpecificId);
+            person = database.GetParticipantEventSpecific(theEvent.Identifier, EventSpecificId);
             if (person == null)
             {
                 BibBox.Text = Bib.ToString();
