@@ -334,17 +334,6 @@ namespace EventDirector.UI
             UpdateStatus();
         }
 
-        public void UpdateTimingFromWorker()
-        {
-            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
-            {
-                if (page is TimingPage)
-                {
-                    page.UpdateView();
-                }
-            }));
-        }
-
         public void UpdateTimingFromController()
         {
             TimingWorker.Notify();
@@ -403,6 +392,14 @@ namespace EventDirector.UI
         public bool ExcelEnabled()
         {
             return excelEnabled;
+        }
+
+        public bool NewTimingInfo()
+        {
+            bool output = (TimingWorker.NewResultsExist() || TimingController.NewReadsExist());
+            TimingWorker.ResetNewResults();
+            TimingController.ResetNewReads();
+            return output;
         }
 
         public async void ConnectTimingSystem(TimingSystem system)

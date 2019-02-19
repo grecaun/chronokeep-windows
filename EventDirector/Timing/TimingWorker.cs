@@ -18,8 +18,10 @@ namespace EventDirector.Timing
         private static readonly Semaphore semaphore = new Semaphore(0, 2);
         private static readonly Mutex mutex = new Mutex();
         private static readonly Mutex ageGroupMutex = new Mutex();
+        private static readonly Mutex ResultsMutex = new Mutex();
         private static bool QuittingTime = false;
         private static bool RecalculateAgeGroupsBool = true;
+        private static bool NewResults = false;
 
         private TimingWorker(IMainWindow window, IDBInterface database)
         {
@@ -42,6 +44,26 @@ namespace EventDirector.Timing
             {
                 QuittingTime = true;
                 mutex.ReleaseMutex();
+            }
+        }
+
+        public static bool NewResultsExist()
+        {
+            bool output = false;
+            if (ResultsMutex.WaitOne(3000))
+            {
+                output = NewResults;
+                ResultsMutex.ReleaseMutex();
+            }
+            return output;
+        }
+
+        public static void ResetNewResults()
+        {
+            if (ResultsMutex.WaitOne(3000))
+            {
+                NewResults = false;
+                ResultsMutex.ReleaseMutex();
             }
         }
 
@@ -90,12 +112,14 @@ namespace EventDirector.Timing
                 // ensure the event exists and we've got unprocessed reads
                 if (theEvent != null && theEvent.Identifier != -1)
                 {
+                    bool touched = false;
                     if (database.UnprocessedReadsExist(theEvent.Identifier))
                     {
                         // If RACETYPE is DISTANCE
                         ProcessDistanceBasedRace(theEvent);
                         // Else RACETYPE is TIME
                         // ProcessTimeBasedRace(theEvent);
+                        touched = true;
                     }
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
                     {
@@ -116,8 +140,16 @@ namespace EventDirector.Timing
                         ProcessPlacementsDistance(theEvent);
                         // Else RACETYPE is TIME
                         // ProcessPlacementsTime(theEvent);
+                        touched = true;
                     }
-                    window.UpdateTimingFromWorker();
+                    if (touched)
+                    {
+                        if (ResultsMutex.WaitOne(3000))
+                        {
+                            NewResults = true;
+                            ResultsMutex.ReleaseMutex();
+                        }
+                    }
                 }
             } while (true);
         }

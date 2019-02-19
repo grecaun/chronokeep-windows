@@ -16,8 +16,10 @@ namespace EventDirector.Timing
         List<Socket> TimingSystemSockets = new List<Socket>(), readList = new List<Socket>();
         Dictionary<Socket, TimingSystem> TimingSystemDict = new Dictionary<Socket, TimingSystem>();
 
-        private static Mutex mut = new Mutex();
+        private static readonly Mutex mut = new Mutex();
+        private static readonly Mutex ReadsMutex = new Mutex();
         private static bool Running = false;
+        private static bool NewReads = false;
 
         IDBInterface database;
         IMainWindow mainWindow;
@@ -37,6 +39,26 @@ namespace EventDirector.Timing
                 mut.ReleaseMutex();
             }
             return output;
+        }
+
+        public static bool NewReadsExist()
+        {
+            bool output = false;
+            if (ReadsMutex.WaitOne(3000))
+            {
+                output = NewReads;
+                ReadsMutex.ReleaseMutex();
+            }
+            return output;
+        }
+
+        public static void ResetNewReads()
+        {
+            if (ReadsMutex.WaitOne(3000))
+            {
+                NewReads = false;
+                ReadsMutex.ReleaseMutex();
+            }
         }
 
         public List<TimingSystem> GetConnectedSystems()
@@ -113,6 +135,7 @@ namespace EventDirector.Timing
                 return;
             }
             bool UpdateTiming = false;
+            bool ChipRead = false;
             while (TimingSystemSockets.Count > 0)
             {
                 readList.Clear();
@@ -148,7 +171,7 @@ namespace EventDirector.Timing
                                         break;
                                     case MessageType.CHIPREAD:
                                         Log.D("Chipreads found");
-                                        UpdateTiming = true;
+                                        ChipRead = true;
                                         break;
                                     case MessageType.SETTINGCHANGE:
                                         Log.D("Setting value changed.");
@@ -182,6 +205,11 @@ namespace EventDirector.Timing
                         {
                             UpdateTiming = false;
                             mainWindow.UpdateTimingFromController();
+                        }
+                        if (ChipRead && ReadsMutex.WaitOne(3000))
+                        {
+                            NewReads = true;
+                            ReadsMutex.ReleaseMutex();
                         }
                     }
                     catch

@@ -8,7 +8,7 @@
       xmlns:local="clr-namespace:EventDirector.UI.MainPages"
       mc:Ignorable="d" 
       d:DesignHeight="650" d:DesignWidth="900"
-      Title="TimingPage">
+      Title="TimingPage" Loaded="Page_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

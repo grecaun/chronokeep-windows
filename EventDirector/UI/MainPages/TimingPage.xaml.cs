@@ -40,6 +40,7 @@ namespace EventDirector.UI.MainPages
 
         private DateTime startTime;
         DispatcherTimer Timer = new DispatcherTimer();
+        DispatcherTimer ViewUpdateTimer = new DispatcherTimer();
         private Boolean TimerStarted = false;
         private SetTimeWindow timeWindow = null;
 
@@ -63,6 +64,10 @@ namespace EventDirector.UI.MainPages
             // Setup the running clock.
             Timer.Tick += new EventHandler(Timer_Click);
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
+
+            // Setup a timer for updating the view
+            ViewUpdateTimer.Tick += new EventHandler(ViewUpdateTimer_Click);
+            ViewUpdateTimer.Interval = new TimeSpan(0, 0, 1);
 
             // Check for default IP address to give to our reader boxes for connections
             foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces())
@@ -262,6 +267,19 @@ namespace EventDirector.UI.MainPages
                 TimingTypeButton.IsEnabled = true;
             }
             subPage.UpdateView();
+        }
+
+        private async void ViewUpdateTimer_Click(object sender, EventArgs e)
+        {
+            bool updates = false;
+            await Task.Run(() =>
+            {
+                updates = mWindow.NewTimingInfo();
+            });
+            if (updates)
+            {
+                UpdateView();
+            }
         }
 
         private void Timer_Click(object sender, EventArgs e)
@@ -617,6 +635,11 @@ namespace EventDirector.UI.MainPages
             subPage = new PrintPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewUpdateTimer.Start();
         }
 
         private class AReaderBox : ListBoxItem
