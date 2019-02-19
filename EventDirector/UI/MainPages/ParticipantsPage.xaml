@@ -14,9 +14,9 @@
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1">
-                <Button Name="ImportCSV" Content="Import" FontSize="16" Height="35" Margin="10,10,10,10" Click="ImportCSV_Click"/>
-                <Button Name="ImportExcel" Content="Import" FontSize="16" Height="35" Margin="10,10,10,10" Click="ImportExcel_Click"  Visibility="Collapsed"/>
-                <Button Name="Export" Content="Export" FontSize="16" Height="35" Margin="10,10,10,10" Click="Export_Click" />
+                <Button Name="ImportCSV" Content="Import" FontSize="14" Height="30" Margin="10,10,10,5" Click="ImportCSV_Click"/>
+                <Button Name="ImportExcel" Content="Import" FontSize="14" Height="30" Margin="10,5,10,5" Click="ImportExcel_Click"  Visibility="Collapsed"/>
+                <Button Name="Export" Content="Export" FontSize="14" Height="30" Margin="10,5,10,5" Click="Export_Click" />
                 <Label Content="View only" FontSize="16" Margin="10,0,10,0" HorizontalContentAlignment="Center"/>
                 <DockPanel Name="DivisionBoxHolder" />
                 <ComboBox Name="DivisionBox" FontSize="16" Margin="10,0,10,0" SelectionChanged="DivisionBox_SelectionChanged" />
@@ -26,10 +26,10 @@
                     <ComboBoxItem Content="Name" />
                     <ComboBoxItem Content="Bib" />
                 </ComboBox>
-            <TextBox Name="SearchBox" Margin="10,0,10,0" TextChanged="SearchBox_TextChanged" FontSize="16" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
-            <Button Name="Add" Content="Add" FontSize="16" Height="35" Margin="10,10,10,10" Click="Add_Click"/>
-                <Button Name="Modify" Content="Modify" FontSize="16" Height="35" Margin="10,10,10,10" Click="Modify_Click"/>
-                <Button Name="Remove" Content="Remove" FontSize="16" Height="35" Margin="10,10,10,10" Click="Remove_Click"/>
+                <TextBox Name="SearchBox" Margin="10,0,10,0" TextChanged="SearchBox_TextChanged" FontSize="16" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                <Button Name="Add" Content="Add" FontSize="14" Height="30" Margin="10,10,10,5" Click="Add_Click"/>
+                <Button Name="Modify" Content="Modify" FontSize="14" Height="30" Margin="10,5,10,5" Click="Modify_Click"/>
+                <Button Name="Remove" Content="Remove" FontSize="14" Height="30" Margin="10,5,10,5" Click="Remove_Click"/>
             </StackPanel>
         <ListView Name="ParticipantsList" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SelectionMode="Extended" Grid.Column="0" Loaded="ParticipantsList_Loaded" MouseDoubleClick="ParticipantsList_MouseDoubleClick">
             <ListView.View>

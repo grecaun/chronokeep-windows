@@ -284,6 +284,9 @@
     <Compile Include="UI\MainPages\DashboardPage.xaml.cs">
       <DependentUpon>DashboardPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Participants\ChangeMultiParticipantWindow.xaml.cs">
+      <DependentUpon>ChangeMultiParticipantWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Participants\ModifyParticipantWindow.xaml.cs">
       <DependentUpon>ModifyParticipantWindow.xaml</DependentUpon>
     </Compile>
@@ -480,6 +483,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\MainPages\DashboardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Participants\ChangeMultiParticipantWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

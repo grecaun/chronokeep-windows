@@ -198,11 +198,17 @@ namespace EventDirector.UI.MainPages
         private void Modify_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Modify clicked.");
-            IList selected = ParticipantsList.SelectedItems;
+            List<Participant> selected = new List<Participant>();
+            foreach (Participant p in ParticipantsList.SelectedItems)
+            {
+                selected.Add(p);
+            }
             Log.D(selected.Count + " participants selected.");
             if (selected.Count > 1)
             {
-                MessageBox.Show("You may only modify a single participant at a time.");
+                ChangeMultiParticipantWindow changeMultiParticipantWindow = new ChangeMultiParticipantWindow(mWindow, database, selected);
+                mWindow.AddWindow(changeMultiParticipantWindow);
+                changeMultiParticipantWindow.ShowDialog();
                 return;
             }
             Participant part = null;
