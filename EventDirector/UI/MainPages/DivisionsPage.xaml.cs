@@ -479,7 +479,7 @@ namespace EventDirector.UI.MainPages
                 Grid.SetColumn(wavePanel, 0);
                 Grid secondGrid = new Grid();
                 secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(110) });
+                /*secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(110) });
                 DockPanel bibPanel = new DockPanel();
                 bibPanel.Children.Add(new Label()
                 {
@@ -520,12 +520,13 @@ namespace EventDirector.UI.MainPages
                 }
                 bibPanel.Children.Add(BibGroupNumber);
                 secondGrid.Children.Add(bibPanel);
-                Grid.SetColumn(bibPanel, 0);
+                Grid.SetColumn(bibPanel, 0); //*/
                 Remove = new Button()
                 {
                     Content = "Remove",
                     FontSize = 14,
                     Width = 100,
+                    Height = 30,
                     Margin = new Thickness(0, 5, 0, 5),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
@@ -590,7 +591,8 @@ namespace EventDirector.UI.MainPages
                 {
                     theDivision.Wave = wave;
                 }
-                theDivision.BibGroupNumber = Convert.ToInt32(((ComboBoxItem)BibGroupNumber.SelectedItem).Uid);
+                //theDivision.BibGroupNumber = Convert.ToInt32(((ComboBoxItem)BibGroupNumber.SelectedItem).Uid);
+                theDivision.BibGroupNumber = Constants.Timing.DEFAULT_BIB_GROUP;
                 string[] firstparts = StartOffset.Text.Replace('_', '0').Split(':');
                 string[] secondparts = firstparts[2].Split('.');
                 try
