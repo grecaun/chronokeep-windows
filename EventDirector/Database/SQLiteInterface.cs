@@ -2823,7 +2823,8 @@ namespace EventDirector
                     reader["eventspecific_age_group_id"] == DBNull.Value ? Constants.Timing.TIMERESULT_DUMMYAGEGROUP : Convert.ToInt32(reader["eventspecific_age_group_id"]),
                     reader["start_age"] == DBNull.Value ? "0" : reader["start_age"].ToString(),
                     reader["end_age"] == DBNull.Value ? "110" : reader["end_age"].ToString(),
-                    Convert.ToInt32(reader["timeresult_status"])
+                    Convert.ToInt32(reader["timeresult_status"]),
+                    reader["eventspecific_earlystart"] == DBNull.Value ? 0 : Convert.ToInt32(reader["eventspecific_earlystart"])
                     ));
             }
             reader.Close();

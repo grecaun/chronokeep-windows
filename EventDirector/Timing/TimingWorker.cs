@@ -110,6 +110,7 @@ namespace EventDirector.Timing
                 Log.D("Entering loop " + counter++);
                 Event theEvent = database.GetCurrentEvent();
                 // ensure the event exists and we've got unprocessed reads
+                Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
                 if (theEvent != null && theEvent.Identifier != -1)
                 {
                     bool touched = false;
@@ -181,14 +182,14 @@ namespace EventDirector.Timing
                 segmentDictionary[(seg.DivisionId, seg.LocationId, seg.Occurrence)] = seg;
             }
             // Participants so we can check their Division.
-            Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
+            Dictionary<int, Participant> participantBibDictionary = new Dictionary<int, Participant>();
             foreach (Participant part in database.GetParticipants(theEvent.Identifier))
             {
-                if (participantDictionary.ContainsKey(part.Bib))
+                if (participantBibDictionary.ContainsKey(part.Bib))
                 {
                     Log.E("Multiples of a Bib found in participants set. " + part.Bib);
                 }
-                participantDictionary[part.Bib] = part;
+                participantBibDictionary[part.Bib] = part;
             }
             // Get the start time for the event. (Net time of 0:00:00.000)
             Dictionary<int, DateTime> divisionStartDict = new Dictionary<int, DateTime>
@@ -313,11 +314,11 @@ namespace EventDirector.Timing
             foreach (int bib in bibReadPairs.Keys)
             {
                 bibReadPairs[bib].Sort();
-                Participant part = participantDictionary.ContainsKey(bib) ?
-                    participantDictionary[bib] :
+                Participant part = participantBibDictionary.ContainsKey(bib) ?
+                    participantBibDictionary[bib] :
                     null;
-                Division div = participantDictionary.ContainsKey(bib) ?
-                    divisionDictionary[participantDictionary[bib].EventSpecific.DivisionIdentifier] :
+                Division div = participantBibDictionary.ContainsKey(bib) ?
+                    divisionDictionary[participantBibDictionary[bib].EventSpecific.DivisionIdentifier] :
                     null;
                 DateTime start, maxStart;
                 TimeResult startResult = null;
@@ -328,6 +329,10 @@ namespace EventDirector.Timing
                 else
                 {
                     start = divisionStartDict[div.Identifier];
+                }
+                if (part.EventSpecific.EarlyStart == 1)
+                {
+                    start = start.AddSeconds(0 - theEvent.EarlyStartDifference);
                 }
                 maxStart = start.AddSeconds(theEvent.StartWindow);
                 foreach (ChipRead read in bibReadPairs[bib])
@@ -702,11 +707,11 @@ namespace EventDirector.Timing
         private void ProcessPlacementsDistance(Event theEvent)
         {
             // Get participants
-            Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
+            Dictionary<int, Participant> participantEventSpecificDictionary = new Dictionary<int, Participant>();
             List<Participant> participants = database.GetParticipants(theEvent.Identifier);
             foreach (Participant person in participants)
             {
-                participantDictionary[person.EventSpecific.Identifier] = person;
+                participantEventSpecificDictionary[person.EventSpecific.Identifier] = person;
             }
             // Dictionary containing Age groups based upon their (Division, Age in Years)
             Dictionary<(int, int), int> divisionAgeGroups = new Dictionary<(int, int), int>();
@@ -726,23 +731,49 @@ namespace EventDirector.Timing
             {
                 Log.D("Processing segment " + segment.Name);
                 List<TimeResult> segmentResults = database.GetSegmentTimes(theEvent.Identifier, segment.Identifier);
-                ProcessSegmentPlacements(theEvent, segmentResults, participantDictionary);
+                ProcessSegmentPlacements(theEvent, segmentResults, participantEventSpecificDictionary);
             }
             Log.D("Processing finish results");
-            ProcessSegmentPlacements(theEvent, database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH), participantDictionary);
+            ProcessSegmentPlacements(theEvent, database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH), participantEventSpecificDictionary);
         }
 
         private void ProcessSegmentPlacements(Event theEvent,
             List<TimeResult> segmentResults,
-            Dictionary<int, Participant> participantDictionary)
+            Dictionary<int, Participant> participantEventSpecificDictionary)
         {
             if (theEvent.RankByGun != 0)
             {
-                segmentResults.Sort(TimeResult.CompareByDivision);
+                //segmentResults.Sort(TimeResult.CompareByDivision);
+                segmentResults.Sort((x1, x2) =>
+                {
+                    if (x1 == null || x2 == null) return 1;
+                    if (x1.DivisionName.Equals(x2.DivisionName))
+                    {
+                        if (participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
+                        {
+                            return x1.SystemTime.CompareTo(x2.SystemTime);
+                        }
+                        return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
+                    }
+                    return x1.DivisionName.CompareTo(x2.DivisionName);
+                });
             }
             else
             {
-                segmentResults.Sort(TimeResult.CompareByDivisionChip);
+                //segmentResults.Sort(TimeResult.CompareByDivisionChip);
+                segmentResults.Sort((x1, x2) =>
+                {
+                    if (x1 == null || x2 == null) return 1;
+                    if (x1.DivisionName.Equals(x2.DivisionName))
+                    {
+                        if (participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
+                        {
+                            return x1.CompareChip(x2);
+                        }
+                        return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
+                    }
+                    return x1.DivisionName.CompareTo(x2.DivisionName);
+                });
             }
             // Get Dictionaries for storing the last known place (age group, gender)
             // The key is as follows: (Division ID, Age Group ID, int - Gender ID (M=1,F=2))
@@ -763,9 +794,9 @@ namespace EventDirector.Timing
             {
                 // Check if we know who the person is. Can't rank them if we don't know
                 // what division they're in, their age, or their gender
-                if (participantDictionary.ContainsKey(result.EventSpecificId))
+                if (participantEventSpecificDictionary.ContainsKey(result.EventSpecificId))
                 {
-                    person = participantDictionary[result.EventSpecificId];
+                    person = participantEventSpecificDictionary[result.EventSpecificId];
                     // DivisionID is the person's actual DivisionId, whereas ageGroupDivisionID might
                     // be the dummy divisionID because of common age groups
                     divisionId = person.EventSpecific.DivisionIdentifier;

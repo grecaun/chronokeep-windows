@@ -11,7 +11,7 @@ namespace EventDirector
     {
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, bib, readId, place, agePlace, genderPlace,
-            ageGroupId, chipMilliseconds, status;
+            ageGroupId, chipMilliseconds, status, early;
         private long chipSeconds;
         private string time, locationName, segmentName, participantName,
             divisionName, unknownId, chipTime, gender, ageGroupName;
@@ -26,7 +26,7 @@ namespace EventDirector
             string time, int occurrence, string first, string last, string division, int bib,
             int readId, string unknownId, string systemTime, string chipTime, int place,
             int agePlace, int genderPlace, string gender, int ageGroupId, string ageStart, string ageEnd,
-            int status)
+            int status, int early)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -76,6 +76,7 @@ namespace EventDirector
                 chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
             }
             this.status = status;
+            this.early = early;
         }
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
@@ -137,6 +138,7 @@ namespace EventDirector
         public string SegmentName { get => segmentName; set => segmentName = value; }
         public string ParticipantName { get => participantName; set => participantName = value; }
         public string DivisionName { get => divisionName; set => divisionName = value; }
+        public string DivisionNameWithEarly { get => divisionName + (early == 1 ? " Early" : ""); }
         public int Bib { get => bib; set => bib = value; }
         public string UnknownId { get => unknownId; set => unknownId = value; }
         public int ReadId { get => readId; set => readId = value; }
@@ -172,6 +174,7 @@ namespace EventDirector
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
         public int Status { get => status; set => status = value; }
+        public int Early { get => early; set => early = value; }
 
         public static int CompareByGunTime(TimeResult one, TimeResult two)
         {
@@ -259,6 +262,16 @@ namespace EventDirector
                 return one.systemTime.CompareTo(two.systemTime);
             }
             return one.DivisionName.CompareTo(two.DivisionName);
+        }
+
+        public int CompareChip(TimeResult other)
+        {
+            if (other == null) return 1;
+            if (this.chipSeconds == other.chipSeconds)
+            {
+                return this.chipMilliseconds.CompareTo(other.chipMilliseconds);
+            }
+            return this.chipSeconds.CompareTo(other.chipSeconds);
         }
 
         public static int CompareByDivisionChip(TimeResult one, TimeResult two)
