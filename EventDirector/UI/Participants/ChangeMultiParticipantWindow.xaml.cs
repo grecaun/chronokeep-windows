@@ -43,6 +43,15 @@ namespace EventDirector.UI.Participants
             }
             DivisionBox.SelectedIndex = 0;
             DivisionBox.Focus();
+            if (theEvent.AllowEarlyStart == 1)
+            {
+                EarlyStartHolder.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                EarlyStartHolder.Visibility = Visibility.Collapsed;
+                EarlyStart.IsChecked = false;
+            }
         }
 
         private void Change_Click(object sender, RoutedEventArgs e)

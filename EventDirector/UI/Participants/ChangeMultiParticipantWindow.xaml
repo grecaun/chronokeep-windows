@@ -9,15 +9,17 @@
     <StackPanel VerticalAlignment="Center">
         <CheckBox Name="SwitchDivision" Content="Switch Participants to" FontSize="14" VerticalContentAlignment="Center" Width="210"/>
         <ComboBox Name="DivisionBox" Width="210" FontSize="16" Margin="10,5,10,5"/>
-        <CheckBox Name="EarlyStart" Content="Set Early Start to" FontSize="14" VerticalContentAlignment="Center" Width="210" Margin="5,5,5,5"/>
+        <StackPanel Name="EarlyStartHolder">
+            <CheckBox Name="EarlyStart" Content="Set Early Start to" FontSize="14" VerticalContentAlignment="Center" Width="210" Margin="5,5,5,5"/>
+            <DockPanel LastChildFill="False" HorizontalAlignment="Center">
+                <RadioButton Name="EarlyStartTrue" Content="True" GroupName="ESVal" IsChecked="True" Margin="5,0,15,5"/>
+                <RadioButton Content="False" GroupName="ESVal" Margin="15,0,5,5"/>
+            </DockPanel>
+        </StackPanel>
+        <CheckBox Name="CheckIn" Content="Set Checked In to" FontSize="14" VerticalContentAlignment="Center" Width="210" Margin="5,5,5,5"/>
         <DockPanel LastChildFill="False" HorizontalAlignment="Center">
-            <RadioButton Name="EarlyStartTrue" Content="True" GroupName="ESVal" IsChecked="True" Margin="5,0,15,5"/>
-            <RadioButton Content="False" GroupName="ESVal" Margin="15,0,5,5"/>
-        </DockPanel>
-        <CheckBox Name="CheckIn" Content="Set Checked In to" FontSize="14" VerticalContentAlignment="Center" Width="210"/>
-        <DockPanel LastChildFill="False" HorizontalAlignment="Center">
-            <RadioButton Name="CheckedInTrue" Content="True" GroupName="CIVal" IsChecked="True" Margin="5,5,15,5"/>
-            <RadioButton Content="False" GroupName="CIVal" Margin="15,5,5,5"/>
+            <RadioButton Name="CheckedInTrue" Content="True" GroupName="CIVal" IsChecked="True" Margin="5,0,15,5"/>
+            <RadioButton Content="False" GroupName="CIVal" Margin="15,0,5,5"/>
         </DockPanel>
         <Grid>
             <Grid.ColumnDefinitions>

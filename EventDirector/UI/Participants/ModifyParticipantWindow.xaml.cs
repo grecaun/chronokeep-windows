@@ -41,6 +41,15 @@ namespace EventDirector.UI.Participants
                 UpdateAllFields();
             }
             BibBox.Focus();
+            if (theEvent.AllowEarlyStart == 1)
+            {
+                EarlyStartBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                EarlyStartBox.Visibility = Visibility.Collapsed;
+                EarlyStartBox.IsChecked = false;
+            }
         }
 
         public ModifyParticipantWindow(TimingPage tPage, IDBInterface database, int EventSpecificId, int Bib)
@@ -63,6 +72,15 @@ namespace EventDirector.UI.Participants
                 UpdateAllFields();
             }
             BibBox.IsEnabled = false;
+            if (theEvent.AllowEarlyStart == 1)
+            {
+                EarlyStartBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                EarlyStartBox.Visibility = Visibility.Collapsed;
+                EarlyStartBox.IsChecked = false;
+            }
         }
 
         public static ModifyParticipantWindow NewWindow(IMainWindow window, IDBInterface database, Participant person = null)
