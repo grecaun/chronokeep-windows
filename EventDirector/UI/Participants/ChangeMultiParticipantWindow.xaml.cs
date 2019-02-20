@@ -20,12 +20,12 @@ namespace EventDirector.UI.Participants
     /// </summary>
     public partial class ChangeMultiParticipantWindow : Window
     {
-        IWindowCallback window;
+        IMainWindow window;
         IDBInterface database;
         List<Participant> toChange;
         Event theEvent;
 
-        public ChangeMultiParticipantWindow(IWindowCallback window, IDBInterface database, List<Participant> toChange)
+        public ChangeMultiParticipantWindow(IMainWindow window, IDBInterface database, List<Participant> toChange)
         {
             InitializeComponent();
             this.window = window;
@@ -74,6 +74,7 @@ namespace EventDirector.UI.Participants
                 }
             }
             database.UpdateParticipants(toChange);
+            window.DatasetChanged();
             this.Close();
         }
 

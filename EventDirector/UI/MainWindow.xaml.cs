@@ -491,6 +491,12 @@ namespace EventDirector.UI
         public void NotifyRecalculateAgeGroups()
         {
             TimingWorker.RecalculateAgeGroups();
+            TimingWorker.ResetDictionaries();
+        }
+
+        public void DatasetChanged()
+        {
+            TimingWorker.ResetDictionaries();
         }
     }
 }

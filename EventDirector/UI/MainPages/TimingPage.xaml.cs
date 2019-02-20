@@ -194,7 +194,11 @@ namespace EventDirector.UI.MainPages
 
         public void UpdateDatabase() { }
 
-        public void Closing() { }
+        public void Closing()
+        {
+            Timer.Stop();
+            ViewUpdateTimer.Stop();
+        }
 
         public void UpdateView()
         {
@@ -271,6 +275,7 @@ namespace EventDirector.UI.MainPages
 
         private async void ViewUpdateTimer_Click(object sender, EventArgs e)
         {
+            Log.D("Checking for updates.");
             bool updates = false;
             await Task.Run(() =>
             {
@@ -278,8 +283,13 @@ namespace EventDirector.UI.MainPages
             });
             if (updates)
             {
-                UpdateView();
+                subPage.UpdateView();
             }
+        }
+
+        public void DatasetChanged()
+        {
+            mWindow.DatasetChanged();
         }
 
         private void Timer_Click(object sender, EventArgs e)
@@ -639,6 +649,7 @@ namespace EventDirector.UI.MainPages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            Log.D("Starting TimingPage Update Timer.");
             ViewUpdateTimer.Start();
         }
 

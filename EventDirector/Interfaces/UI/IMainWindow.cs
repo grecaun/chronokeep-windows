@@ -19,6 +19,7 @@ namespace EventDirector.Interfaces
         void UpdateTimingFromController();
         void UpdateTiming();
         bool NewTimingInfo();
+        void DatasetChanged();
 
         // Event related calls.
         void UpdateEvent(int identifier, string nameString, long dateVal, int nextYear, int shirtOptionalVal, int shirtPrice);

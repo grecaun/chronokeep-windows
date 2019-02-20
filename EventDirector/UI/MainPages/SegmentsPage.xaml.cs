@@ -29,6 +29,7 @@ namespace EventDirector.UI.MainPages
         private List<Division> divisions;
         
         private static HashSet<int> DivisionsToReset = new HashSet<int>();
+        private bool UpdateTimingWorker = false;
 
         public SegmentsPage(IMainWindow mWindow, IDBInterface database)
         {
@@ -97,6 +98,7 @@ namespace EventDirector.UI.MainPages
             }
             database.RemoveSegment(mySegment);
             DivisionsToReset.Add(mySegment.DivisionId);
+            UpdateTimingWorker = true;
             UpdateView();
         }
 
@@ -111,6 +113,7 @@ namespace EventDirector.UI.MainPages
                     segments.Add(aSegment.mySegment);
                 }
             }
+            UpdateTimingWorker = true;
             database.UpdateSegments(segments);
         }
 
@@ -132,6 +135,10 @@ namespace EventDirector.UI.MainPages
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
+            }
+            if (UpdateTimingWorker)
+            {
+                mWindow.DatasetChanged();
             }
             if (DivisionsToReset.Count > 0)
             {
@@ -159,6 +166,7 @@ namespace EventDirector.UI.MainPages
             }
             database.AddSegment(new Segment(theEvent.Identifier, divisionId, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
             DivisionsToReset.Add(divisionId);
+            UpdateTimingWorker = true;
             UpdateView();
         }
 
@@ -180,6 +188,7 @@ namespace EventDirector.UI.MainPages
             }
             database.AddSegments(newSegments);
             DivisionsToReset.Add(intoDivision);
+            UpdateTimingWorker = true;
             UpdateView();
         }
 

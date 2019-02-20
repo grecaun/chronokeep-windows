@@ -1896,7 +1896,6 @@ namespace EventDirector
             command.ExecuteNonQuery();
             command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            Log.D("Updating event specific.... bib is " + person.EventSpecific.Bib);
             command.CommandText = "UPDATE eventspecific SET division_id=@divid, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
                 "eventspecific_owes=@owes, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_next_year=@nextYear," +
                 "eventspecific_comments=@comments, eventspecific_age_group_id=@agegroup " +

@@ -31,6 +31,7 @@ namespace EventDirector.UI.MainPages
         private List<Division> divisions;
         private Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
         private HashSet<int> divisionsChanged = new HashSet<int>();
+        private bool UpdateTimingWorker = false;
         private int DivisionCount = 1;
 
         public DivisionsPage(IMainWindow mWindow, IDBInterface database)
@@ -74,6 +75,7 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.AddDivision(new Division("New Division " + DivisionCount, theEvent.Identifier, 0));
+            UpdateTimingWorker = true;
             UpdateView();
         }
 
@@ -98,6 +100,7 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.RemoveDivision(division);
+            UpdateTimingWorker = true;
             UpdateView();
         }
 
@@ -118,6 +121,7 @@ namespace EventDirector.UI.MainPages
                     || oldDivisions[divId].FinishOccurrence != listDiv.theDivision.FinishOccurrence) )
                 {
                     divisionsChanged.Add(divId);
+                    UpdateTimingWorker = true;
                 }
                 database.UpdateDivision(listDiv.theDivision);
             }
@@ -146,6 +150,10 @@ namespace EventDirector.UI.MainPages
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
+            }
+            if (UpdateTimingWorker)
+            {
+                mWindow.DatasetChanged();
             }
             if (divisionsChanged.Count > 0)
             {

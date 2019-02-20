@@ -40,6 +40,7 @@ namespace EventDirector.UI.MainPages
             theEvent = database.GetCurrentEvent();
             if (oldEventId != -1 && oldEventId != theEvent.Identifier)
             {
+                mWindow.DatasetChanged();
                 mWindow.NotifyRecalculateAgeGroups();
                 mWindow.NotifyTimingWorker();
             }
@@ -168,6 +169,7 @@ namespace EventDirector.UI.MainPages
                     Log.D("Unable to update event with mainwindow. TCP Server error or wrong main window.");
                 }
                 Log.D("Updating view.");
+                mWindow.DatasetChanged();
                 UpdateView();
             }
             else

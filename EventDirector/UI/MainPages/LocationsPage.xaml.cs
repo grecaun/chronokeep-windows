@@ -27,6 +27,7 @@ namespace EventDirector.UI.MainPages
         private IDBInterface database;
         private Event theEvent;
         private int LocationCount = 1;
+        private bool UpdateTimingWorker = false;
 
         public LocationsPage(IMainWindow mWindow, IDBInterface database)
         {
@@ -64,6 +65,7 @@ namespace EventDirector.UI.MainPages
                 UpdateDatabase();
             }
             database.AddTimingLocation(new TimingLocation(theEvent.Identifier, "Location " + LocationCount));
+            UpdateTimingWorker = true;
             UpdateView();
         }
 
@@ -82,6 +84,7 @@ namespace EventDirector.UI.MainPages
             {
                 database.RemoveTimingLocation(location);
             }
+            UpdateTimingWorker = true;
             UpdateView();
         }
 
@@ -113,6 +116,7 @@ namespace EventDirector.UI.MainPages
                     database.UpdateTimingLocation(locItem.myLocation);
                 }
             }
+            UpdateTimingWorker = true;
         }
 
         public void Keyboard_Ctrl_A()
@@ -314,6 +318,10 @@ namespace EventDirector.UI.MainPages
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
+            }
+            if (UpdateTimingWorker)
+            {
+                mWindow.DatasetChanged();
             }
         }
 

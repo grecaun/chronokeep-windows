@@ -465,7 +465,6 @@ namespace EventDirector
             {
                 birthdate = "01/01/0001";
             }
-            Log.D("New data should be First: " + firstName + " Last: " + lastName + " City: " + city + " Street: " + street + " Country: " + country + " Mobile: " + mobile + " Emergency Contact Phone: " + emergencyPhone + " Gender: " + gender);
         }
 
         internal Boolean AllCaps(string val)

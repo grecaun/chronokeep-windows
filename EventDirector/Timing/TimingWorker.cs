@@ -19,9 +19,24 @@ namespace EventDirector.Timing
         private static readonly Mutex mutex = new Mutex();
         private static readonly Mutex ageGroupMutex = new Mutex();
         private static readonly Mutex ResultsMutex = new Mutex();
+        private static readonly Mutex ResetDictionariesMutex = new Mutex();
         private static bool QuittingTime = false;
         private static bool RecalculateAgeGroupsBool = true;
         private static bool NewResults = false;
+        private static bool ResetDictionariesBool = true;
+
+        // Dictionaries for storing information about the race.
+        private Dictionary<int, TimingLocation> locationDictionary = new Dictionary<int, TimingLocation>();
+        // (DivisionId, LocationId, Occurrence)
+        private Dictionary<(int, int, int), Segment> segmentDictionary = new Dictionary<(int, int, int), Segment>();
+        // Participants are stored based upon BIB and EVENTSPECIFICIDENTIFIER because we use both
+        private Dictionary<int, Participant> participantBibDictionary = new Dictionary<int, Participant>();
+        private Dictionary<int, Participant> participantEventSpecificDictionary = new Dictionary<int, Participant>();
+        // Start times. Item at 0 should always be 00:00:00.000. Key is Division ID
+        private Dictionary<int, DateTime> divisionStartDict = new Dictionary<int, DateTime>();
+        private Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
+        // (DivisionId, Age)
+        private Dictionary<(int, int), int> divisionAgeGroups = new Dictionary<(int, int), int>();
 
         private TimingWorker(IMainWindow window, IDBInterface database)
         {
@@ -88,6 +103,83 @@ namespace EventDirector.Timing
             }
         }
 
+        public static void ResetDictionaries()
+        {
+            Log.D("Resetting dictionaries next go around.");
+            if (ResetDictionariesMutex.WaitOne(3000))
+            {
+                ResetDictionariesBool = true;
+                ResetDictionariesMutex.ReleaseMutex();
+            }
+        }
+
+        private void RecalculateDictionaries(Event theEvent)
+        {
+            Log.D("Recalculating dictionaries.");
+            // Locations for checking if we're past the maximum number of occurrences
+            // Stored in a dictionary based upon the location ID for easier access.
+            locationDictionary.Clear();
+            foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
+            {
+                if (locationDictionary.ContainsKey(loc.Identifier))
+                {
+                    Log.E("Multiples of a location found in location set.");
+                }
+                locationDictionary[loc.Identifier] = loc;
+            }
+            // Segments so we can give a result a segment ID if it's at the right location
+            // and occurrence. Stored in a dictionary for obvious reasons.
+            segmentDictionary.Clear();
+            foreach (Segment seg in database.GetSegments(theEvent.Identifier))
+            {
+                if (segmentDictionary.ContainsKey((seg.DivisionId, seg.LocationId, seg.Occurrence)))
+                {
+                    Log.E("Multiples of a segment found in segment set.");
+                }
+                segmentDictionary[(seg.DivisionId, seg.LocationId, seg.Occurrence)] = seg;
+            }
+            // Participants so we can check their Division.
+            participantBibDictionary.Clear();
+            participantEventSpecificDictionary.Clear();
+            foreach (Participant part in database.GetParticipants(theEvent.Identifier))
+            {
+                if (participantBibDictionary.ContainsKey(part.Bib))
+                {
+                    Log.E("Multiples of a Bib found in participants set. " + part.Bib);
+                }
+                participantBibDictionary[part.Bib] = part;
+                participantEventSpecificDictionary[part.EventSpecific.Identifier] = part;
+            }
+            // Get the start time for the event. (Net time of 0:00:00.000)
+            divisionStartDict.Clear();
+            divisionStartDict[0] = DateTime.Parse(theEvent.Date)
+                                        .AddSeconds(theEvent.StartSeconds)
+                                        .AddMilliseconds(theEvent.StartMilliseconds);
+            // Divisions so we can get their start offset.
+            divisionDictionary.Clear();
+            foreach (Division div in database.GetDivisions(theEvent.Identifier))
+            {
+                if (divisionDictionary.ContainsKey(div.Identifier))
+                {
+                    Log.E("Multiples of a Division found in divisions set.");
+                }
+                divisionDictionary[div.Identifier] = div;
+                Log.D("Division " + div.Name + " offsets are " + div.StartOffsetSeconds + " " + div.StartOffsetMilliseconds);
+                divisionStartDict[div.Identifier] = divisionStartDict[0].AddSeconds(div.StartOffsetSeconds).AddMilliseconds(div.StartOffsetMilliseconds);
+            }
+            // Dictionary containing Age groups based upon their (Division, Age in Years)
+            divisionAgeGroups.Clear();
+            // process them into lists based upon divisions (in case there are division specific age groups)
+            foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
+            {
+                Log.D(String.Format("Age group {0} - Div {3} - {1} - {2}", group.GroupId, group.StartAge, group.EndAge, group.DivisionId));
+                for (int age = group.StartAge; age <= group.EndAge; age++)
+                {
+                    divisionAgeGroups[(group.DivisionId, age)] = group.GroupId;
+                }
+            }
+        }
+
         public void Run()
         {
             int counter = 1;
@@ -113,6 +205,15 @@ namespace EventDirector.Timing
                 Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
                 if (theEvent != null && theEvent.Identifier != -1)
                 {
+                    if (ResetDictionariesMutex.WaitOne(3000))
+                    {
+                        if (ResetDictionariesBool)
+                        {
+                            RecalculateDictionaries(theEvent);
+                        }
+                        ResetDictionariesBool = false;
+                        ResetDictionariesMutex.ReleaseMutex();
+                    }
                     bool touched = false;
                     if (database.UnprocessedReadsExist(theEvent.Identifier))
                     {
@@ -157,59 +258,9 @@ namespace EventDirector.Timing
 
         private void ProcessDistanceBasedRace(Event theEvent)
         {
+            Log.D("Processing chip reads for a distance based event.");
             // Check if there's anything to process.
             // Pre-process information we'll need to fully process chip reads
-            // Locations for checking if we're past the maximum number of occurrences
-            // Stored in a dictionary based upon the location ID for easier access.
-            Dictionary<int, TimingLocation> locationDictionary = new Dictionary<int, TimingLocation>();
-            foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
-            {
-                if (locationDictionary.ContainsKey(loc.Identifier))
-                {
-                    Log.E("Multiples of a location found in location set.");
-                }
-                locationDictionary[loc.Identifier] = loc;
-            }
-            // Segments so we can give a result a segment ID if it's at the right location
-            // and occurrence. Stored in a dictionary for obvious reasons.
-            Dictionary<(int, int, int), Segment> segmentDictionary = new Dictionary<(int, int, int), Segment>();
-            foreach (Segment seg in database.GetSegments(theEvent.Identifier))
-            {
-                if (segmentDictionary.ContainsKey((seg.DivisionId, seg.LocationId, seg.Occurrence)))
-                {
-                    Log.E("Multiples of a segment found in segment set.");
-                }
-                segmentDictionary[(seg.DivisionId, seg.LocationId, seg.Occurrence)] = seg;
-            }
-            // Participants so we can check their Division.
-            Dictionary<int, Participant> participantBibDictionary = new Dictionary<int, Participant>();
-            foreach (Participant part in database.GetParticipants(theEvent.Identifier))
-            {
-                if (participantBibDictionary.ContainsKey(part.Bib))
-                {
-                    Log.E("Multiples of a Bib found in participants set. " + part.Bib);
-                }
-                participantBibDictionary[part.Bib] = part;
-            }
-            // Get the start time for the event. (Net time of 0:00:00.000)
-            Dictionary<int, DateTime> divisionStartDict = new Dictionary<int, DateTime>
-            {
-                [0] = DateTime.Parse(theEvent.Date)
-                                            .AddSeconds(theEvent.StartSeconds)
-                                            .AddMilliseconds(theEvent.StartMilliseconds)
-            };
-            // Divisions so we can get their start offset.
-            Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
-            foreach (Division div in database.GetDivisions(theEvent.Identifier))
-            {
-                if (divisionDictionary.ContainsKey(div.Identifier))
-                {
-                    Log.E("Multiples of a Division found in divisions set.");
-                }
-                divisionDictionary[div.Identifier] = div;
-                Log.D("Division " + div.Name + " offsets are " + div.StartOffsetSeconds + " " + div.StartOffsetMilliseconds);
-                divisionStartDict[div.Identifier] = divisionStartDict[0].AddSeconds(div.StartOffsetSeconds).AddMilliseconds(div.StartOffsetMilliseconds);
-            }
             // Get start TimeResults
             Dictionary<string, TimeResult> startTimes = new Dictionary<string, TimeResult>();
             foreach (TimeResult result in database.GetStartTimes(theEvent.Identifier))
@@ -238,7 +289,6 @@ namespace EventDirector.Timing
                     // results we've already calculated
                     if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
-                        Log.D("Read already processed.");
                         if (!lastReadDictionary.ContainsKey((read.ChipBib, read.LocationID)))
                         {
                             lastReadDictionary[(read.ChipBib, read.LocationID)] = (read, 1);
@@ -261,7 +311,6 @@ namespace EventDirector.Timing
                 {
                     if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
-                        Log.D("Read already processed.");
                         if (!lastReadDictionary.ContainsKey((read.ReadBib, read.LocationID)))
                         {
                             lastReadDictionary[(read.ReadBib, read.LocationID)] = (read, 1);
@@ -308,7 +357,7 @@ namespace EventDirector.Timing
                 }
             }
             // Go through each chip read for a single person.
-            //List<ChipRead> updateStatusReads = new List<ChipRead>();
+            // List<ChipRead> updateStatusReads = new List<ChipRead>();
             List<TimeResult> newResults = new List<TimeResult>();
             // process reads that have a bib
             foreach (int bib in bibReadPairs.Keys)
@@ -341,7 +390,6 @@ namespace EventDirector.Timing
                     // Check that we haven't processed the read yet
                     if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
                     {
-                        Log.D("Processing new chipread.");
                         // Check if we're before the start time.
                         if (read.Time < start)
                         {
@@ -506,7 +554,6 @@ namespace EventDirector.Timing
                     // Check that we haven't processed the read yet
                     if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
                     {
-                        Log.D("Processing new chipread.");
                         // Check if we're before the start time.
                         if (read.Time < start)
                         {
@@ -662,6 +709,7 @@ namespace EventDirector.Timing
             {
                 database.SetChipReadStatuses(setUnknown);
             }
+            Log.D("Done");
         }
 
         private void ProcessTimeBasedRace(Event theEvent)
@@ -677,7 +725,6 @@ namespace EventDirector.Timing
             // process them into lists based upon divisions (in case there are division specific age groups)
             foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
             {
-                Log.D(String.Format("Age group {0} - Div {3} - {1} - {2}", group.GroupId, group.StartAge, group.EndAge, group.DivisionId));
                 for (int age = group.StartAge; age <= group.EndAge; age++)
                 {
                     divisionAgeGroups[(group.DivisionId, age)] = group.GroupId;
@@ -706,24 +753,6 @@ namespace EventDirector.Timing
 
         private void ProcessPlacementsDistance(Event theEvent)
         {
-            // Get participants
-            Dictionary<int, Participant> participantEventSpecificDictionary = new Dictionary<int, Participant>();
-            List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-            foreach (Participant person in participants)
-            {
-                participantEventSpecificDictionary[person.EventSpecific.Identifier] = person;
-            }
-            // Dictionary containing Age groups based upon their (Division, Age in Years)
-            Dictionary<(int, int), int> divisionAgeGroups = new Dictionary<(int, int), int>();
-            // process them into lists based upon divisions (in case there are division specific age groups)
-            foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
-            {
-                Log.D(String.Format("Age group {0} - Div {3} - {1} - {2}", group.GroupId, group.StartAge, group.EndAge, group.DivisionId));
-                for (int age = group.StartAge; age <= group.EndAge; age++)
-                {
-                    divisionAgeGroups[(group.DivisionId, age)] = group.GroupId;
-                }
-            }
             // Get a list of all segments
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
             // process results based upon the segment they're in

@@ -341,11 +341,13 @@ namespace EventDirector.UI.Participants
                 database.ResetTimingResultsPlacements(theEvent.Identifier);
                 if (window != null)
                 {
+                    window.DatasetChanged();
                     window.NotifyRecalculateAgeGroups();
                     window.NotifyTimingWorker();
                 }
                 if (tPage != null)
                 {
+                    tPage.DatasetChanged();
                     tPage.UpdateView();
                     tPage.NotifyRecalculateAgeGroups();
                     tPage.NotifyTimingWorker();
