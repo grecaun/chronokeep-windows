@@ -44,6 +44,9 @@ namespace EventDirector.Constants
         public static readonly int COMMON_SEGMENTS_DIVISIONID = -1;
         public static readonly int COMMON_AGEGROUPS_DIVISIONID = -1;
 
+        public static readonly int EVENT_TYPE_DISTANCE = 0;
+        public static readonly int EVENT_TYPE_TIME = 1;
+
         public static readonly Dictionary<string, string> SYSTEM_NAMES = new Dictionary<string, string>()
         {
             { Constants.Settings.TIMING_MANUAL, "Manual" },

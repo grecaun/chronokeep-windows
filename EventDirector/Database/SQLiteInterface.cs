@@ -13,7 +13,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 32;
+        private readonly int version = 33;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -83,6 +83,7 @@ namespace EventDirector
                     "event_finish_ignore_within INTEGER NOT NULL DEFAULT 0," +
                     "event_start_window INTEGER NOT NULL DEFAULT -1," +
                     "event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Settings.TIMING_RFID + "'," +
+                    "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
                     "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS dayof_participant (" +
@@ -130,6 +131,7 @@ namespace EventDirector
                     "bib_group_number INTEGER NOT NULL DEFAULT -1," +
                     "division_start_offset_seconds INTEGER NOT NULL DEFAULT 0," +
                     "division_start_offset_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                    "division_end_offset_seconds INTEGER NOT NULL DEFAULT 0," +
                     "UNIQUE (division_name, event_id) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS timing_locations (" +
@@ -1032,6 +1034,15 @@ namespace EventDirector
                             "ALTER TABLE eventspecific ADD eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + ";" +
                             "UPDATE settings SET version=32 WHERE version=31;";
                         command.ExecuteNonQuery();
+                        goto case 32;
+                    case 32:
+                        Log.D("Upgrading from version 32.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events ADD " +
+                            "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + ";" +
+                            "ALTER TABLE divisions ADD division_end_offset_seconds INTEGER NOT NULL DEFAULT 0;" +
+                            "UPDATE settings SET version=33 WHERE version=32;";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();
@@ -1056,8 +1067,8 @@ namespace EventDirector
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO divisions (division_name, event_id, division_cost, division_distance, division_distance_unit," +
                 "division_start_location, division_start_within, division_finish_location, division_finish_occurance, division_wave, bib_group_number," +
-                "division_start_offset_seconds, division_start_offset_milliseconds) " +
-                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@bgn,@soffsec,@soffmill)";
+                "division_start_offset_seconds, division_start_offset_milliseconds, division_end_offset_seconds) " +
+                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@bgn,@soffsec,@soffmill,@endSec)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", div.Name),
                 new SQLiteParameter("@event_id", div.EventIdentifier),
@@ -1072,6 +1083,7 @@ namespace EventDirector
                 new SQLiteParameter("@bgn", div.BibGroupNumber),
                 new SQLiteParameter("@soffsec", div.StartOffsetSeconds),
                 new SQLiteParameter("@soffmill", div.StartOffsetMilliseconds),
+                new SQLiteParameter("@endSec", div.EndSeconds)
             });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
@@ -1117,7 +1129,7 @@ namespace EventDirector
             command.CommandText = "UPDATE divisions SET division_name=@name, event_id=@event, division_cost=@cost, division_distance=@distance," +
                 "division_distance_unit=@unit, division_start_location=@startloc, division_start_within=@within, division_finish_location=@finishloc," +
                 "division_finish_occurance=@occurance, division_wave=@wave, bib_group_number=@bgn, division_start_offset_seconds=@soffsec, " +
-                "division_start_offset_milliseconds=@soffmill WHERE division_id=@id";
+                "division_start_offset_milliseconds=@soffmill, division_end_offset_seconds=@endSec WHERE division_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", div.Name),
                 new SQLiteParameter("@event", div.EventIdentifier),
@@ -1132,7 +1144,9 @@ namespace EventDirector
                 new SQLiteParameter("@bgn", div.BibGroupNumber),
                 new SQLiteParameter("@soffsec", div.StartOffsetSeconds),
                 new SQLiteParameter("@soffmill", div.StartOffsetMilliseconds),
-                new SQLiteParameter("@id", div.Identifier) });
+                new SQLiteParameter("@id", div.Identifier),
+                new SQLiteParameter("@endSec", div.EndSeconds)
+            });
             command.ExecuteNonQuery();
             connection.Close();
             mutex.ReleaseMutex();
@@ -1153,13 +1167,22 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Division(Convert.ToInt32(reader["division_id"]), reader["division_name"].ToString(),
-                    Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_cost"]), Convert.ToDouble(reader["division_distance"]),
-                    Convert.ToInt32(reader["division_distance_unit"]), Convert.ToInt32(reader["division_finish_location"]),
-                    Convert.ToInt32(reader["division_finish_occurance"]), Convert.ToInt32(reader["division_start_location"]),
+                output.Add(new Division(Convert.ToInt32(reader["division_id"]),
+                    reader["division_name"].ToString(),
+                    Convert.ToInt32(reader["event_id"]),
+                    Convert.ToInt32(reader["division_cost"]),
+                    Convert.ToDouble(reader["division_distance"]),
+                    Convert.ToInt32(reader["division_distance_unit"]),
+                    Convert.ToInt32(reader["division_finish_location"]),
+                    Convert.ToInt32(reader["division_finish_occurance"]),
+                    Convert.ToInt32(reader["division_start_location"]),
                     Convert.ToInt32(reader["division_start_within"]),
-                    Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
-                    Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"])));
+                    Convert.ToInt32(reader["division_wave"]),
+                    Convert.ToInt32(reader["bib_group_number"]),
+                    Convert.ToInt32(reader["division_start_offset_seconds"]),
+                    Convert.ToInt32(reader["division_start_offset_milliseconds"]),
+                    Convert.ToInt32(reader["division_end_offset_seconds"])
+                    ));
             }
             reader.Close();
             connection.Close();
@@ -1195,13 +1218,22 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Division(Convert.ToInt32(reader["division_id"]), reader["division_name"].ToString(),
-                    Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_cost"]),
-                    Convert.ToDouble(reader["division_distance"]), Convert.ToInt32(reader["division_distance_unit"]),
-                    Convert.ToInt32(reader["division_finish_location"]), Convert.ToInt32(reader["division_finish_occurance"]),
-                    Convert.ToInt32(reader["division_start_location"]), Convert.ToInt32(reader["division_start_within"]),
-                    Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
-                    Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"])));
+                output.Add(new Division(Convert.ToInt32(reader["division_id"]),
+                    reader["division_name"].ToString(),
+                    Convert.ToInt32(reader["event_id"]),
+                    Convert.ToInt32(reader["division_cost"]),
+                    Convert.ToDouble(reader["division_distance"]),
+                    Convert.ToInt32(reader["division_distance_unit"]),
+                    Convert.ToInt32(reader["division_finish_location"]),
+                    Convert.ToInt32(reader["division_finish_occurance"]),
+                    Convert.ToInt32(reader["division_start_location"]),
+                    Convert.ToInt32(reader["division_start_within"]),
+                    Convert.ToInt32(reader["division_wave"]),
+                    Convert.ToInt32(reader["bib_group_number"]),
+                    Convert.ToInt32(reader["division_start_offset_seconds"]),
+                    Convert.ToInt32(reader["division_start_offset_milliseconds"]),
+                    Convert.ToInt32(reader["division_end_offset_seconds"])
+                    ));
             }
             reader.Close();
             connection.Close();
@@ -1256,13 +1288,22 @@ namespace EventDirector
             Division output = null;
             if (reader.Read())
             {
-                output = new Division(Convert.ToInt32(reader["division_id"]), reader["division_name"].ToString(),
-                    Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_cost"]),
-                    Convert.ToDouble(reader["division_distance"]), Convert.ToInt32(reader["division_distance_unit"]),
-                    Convert.ToInt32(reader["division_finish_location"]), Convert.ToInt32(reader["division_finish_occurance"]),
-                    Convert.ToInt32(reader["division_start_location"]), Convert.ToInt32(reader["division_start_within"]),
-                    Convert.ToInt32(reader["division_wave"]), Convert.ToInt32(reader["bib_group_number"]),
-                    Convert.ToInt32(reader["division_start_offset_seconds"]), Convert.ToInt32(reader["division_start_offset_milliseconds"]));
+                output = new Division(Convert.ToInt32(reader["division_id"]),
+                    reader["division_name"].ToString(),
+                    Convert.ToInt32(reader["event_id"]),
+                    Convert.ToInt32(reader["division_cost"]),
+                    Convert.ToDouble(reader["division_distance"]),
+                    Convert.ToInt32(reader["division_distance_unit"]),
+                    Convert.ToInt32(reader["division_finish_location"]),
+                    Convert.ToInt32(reader["division_finish_occurance"]),
+                    Convert.ToInt32(reader["division_start_location"]),
+                    Convert.ToInt32(reader["division_start_within"]),
+                    Convert.ToInt32(reader["division_wave"]),
+                    Convert.ToInt32(reader["bib_group_number"]),
+                    Convert.ToInt32(reader["division_start_offset_seconds"]),
+                    Convert.ToInt32(reader["division_start_offset_milliseconds"]),
+                    Convert.ToInt32(reader["division_end_offset_seconds"])
+                    );
             }
             reader.Close();
             connection.Close();
@@ -1317,8 +1358,9 @@ namespace EventDirector
             command.CommandText = "INSERT INTO events(event_name, event_date, event_shirt_optional, event_shirt_price," +
                 "event_common_age_groups, event_common_start_finish, event_rank_by_gun, event_division_specific_segments, event_yearcode, " +
                 "event_next_year_event_id, event_allow_early_start, event_early_start_difference, event_start_time_seconds, " +
-                "event_start_time_milliseconds, event_timing_system)" +
-                " values(@name,@date,@so,@price,@age,@start,@gun,@sepseg,@yearcode,@ny,@early,@diff,@startsec,@startmill,@system)";
+                "event_start_time_milliseconds, event_timing_system, event_type)" +
+                " values(@name,@date,@so,@price,@age,@start,@gun,@sepseg,@yearcode,@ny,@early,@diff,@startsec,@startmill,@system," +
+                "@type)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
@@ -1334,7 +1376,8 @@ namespace EventDirector
                 new SQLiteParameter("@diff", anEvent.EarlyStartDifference),
                 new SQLiteParameter("@startsec", anEvent.StartSeconds),
                 new SQLiteParameter("@startmill", anEvent.StartMilliseconds),
-                new SQLiteParameter("@system", anEvent.TimingSystem)
+                new SQLiteParameter("@system", anEvent.TimingSystem),
+                new SQLiteParameter("@type", anEvent.EventType)
             });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
@@ -1360,9 +1403,15 @@ namespace EventDirector
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "DELETE FROM segments WHERE event_id=@event; DELETE FROM kiosk WHERE event_id=@event;" +
-                    "DELETE FROM bib_chip_assoc WHERE event_id=@event; DELETE FROM timing_locations WHERE event_id=@event;" +
-                    "DELETE FROM divisions WHERE event_id=@event; DELETE FROM events WHERE event_id=@event;" +
+                command.CommandText = "DELETE FROM eventspecific_apparel a WHERE EXISTS " +
+                    "(SELECT * FROM eventspecific e WHERE a.eventspecific_id=e.eventspecific_id" +
+                    " AND e.event_id=@event); DELETE FROM day_of_part WHERE event_id=@event; DELETE FROM" +
+                    " kiosk WHERE event_id=@event; DELETE FROM time_results WHERE event_id=@event;" +
+                    "DELETE FROM bib_group WHERE event_id=@event; DELETE FROM bib_chip_assoc WHERE event_id=@event;" +
+                    "DELETE FROM segments WHERE event_id=@event; DELETE FROM chipreads WHERE event_id=@event;" +
+                    "DELETE FROM age_groups WHERE event_id=@event; DELETE FROM available_bibs WHERE event_id=@event;" +
+                    "DELETE FROM divisions WHERE event_id=@event; DELETE FROM timing_locations WHERE event_id=@event;" +
+                    "DELETE FROM eventspecific WHERE event_id=@event; DELETE FROM events WHERE event_id=@event;" +
                     "UPDATE events SET event_next_year_event_id='-1' WHERE event_next_year_event_id=@event";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@event", identifier) });
@@ -1388,7 +1437,7 @@ namespace EventDirector
                 "event_shirt_price=@price, event_common_age_groups=@age, event_common_start_finish=@start, event_rank_by_gun=@gun, " +
                 "event_division_specific_segments=@seg, event_yearcode=@yearcode, event_allow_early_start=@early, " +
                 "event_early_start_difference=@diff, event_start_time_seconds=@startsec, event_start_time_milliseconds=@startmill, " +
-                "event_timing_system=@system WHERE event_id=@id";
+                "event_timing_system=@system, event_type=@type WHERE event_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@id", anEvent.Identifier),
                 new SQLiteParameter("@name", anEvent.Name),
@@ -1405,7 +1454,8 @@ namespace EventDirector
                 new SQLiteParameter("@diff", anEvent.EarlyStartDifference),
                 new SQLiteParameter("@startsec", anEvent.StartSeconds),
                 new SQLiteParameter("@startmill", anEvent.StartMilliseconds),
-                new SQLiteParameter("@system", anEvent.TimingSystem)
+                new SQLiteParameter("@system", anEvent.TimingSystem),
+                new SQLiteParameter("@type", anEvent.EventType)
             });
             command.ExecuteNonQuery();
             connection.Close();
@@ -1427,15 +1477,25 @@ namespace EventDirector
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString(),
-                    Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"]),
-                    Convert.ToInt32(reader["event_shirt_price"]), Convert.ToInt32(reader["event_common_age_groups"]),
-                    Convert.ToInt32(reader["event_common_start_finish"]), Convert.ToInt32(reader["event_division_specific_segments"]),
-                    Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString(), Convert.ToInt32(reader["event_allow_early_start"]),
-                    Convert.ToInt32(reader["event_early_start_difference"]), Convert.ToInt32(reader["event_finish_max_occurances"]),
-                    Convert.ToInt32(reader["event_finish_ignore_within"]), Convert.ToInt32(reader["event_start_window"]),
-                    Convert.ToInt64(reader["event_start_time_seconds"]), Convert.ToInt32(reader["event_start_time_milliseconds"]),
-                    reader["event_timing_system"].ToString()
+                output.Add(new Event(Convert.ToInt32(reader["event_id"]),
+                    reader["event_name"].ToString(), reader["event_date"].ToString(),
+                    Convert.ToInt32(reader["event_next_year_event_id"]),
+                    Convert.ToInt32(reader["event_shirt_optional"]),
+                    Convert.ToInt32(reader["event_shirt_price"]),
+                    Convert.ToInt32(reader["event_common_age_groups"]),
+                    Convert.ToInt32(reader["event_common_start_finish"]),
+                    Convert.ToInt32(reader["event_division_specific_segments"]),
+                    Convert.ToInt32(reader["event_rank_by_gun"]),
+                    reader["event_yearcode"].ToString(),
+                    Convert.ToInt32(reader["event_allow_early_start"]),
+                    Convert.ToInt32(reader["event_early_start_difference"]),
+                    Convert.ToInt32(reader["event_finish_max_occurances"]),
+                    Convert.ToInt32(reader["event_finish_ignore_within"]),
+                    Convert.ToInt32(reader["event_start_window"]),
+                    Convert.ToInt64(reader["event_start_time_seconds"]),
+                    Convert.ToInt32(reader["event_start_time_milliseconds"]),
+                    reader["event_timing_system"].ToString(),
+                    Convert.ToInt32(reader["event_type"])
                     ));
             }
             reader.Close();
@@ -1501,15 +1561,25 @@ namespace EventDirector
             Event output = null;
             if (reader.Read())
             {
-                output = new Event(Convert.ToInt32(reader["event_id"]), reader["event_name"].ToString(), reader["event_date"].ToString(),
-                    Convert.ToInt32(reader["event_next_year_event_id"]), Convert.ToInt32(reader["event_shirt_optional"]),
-                    Convert.ToInt32(reader["event_shirt_price"]), Convert.ToInt32(reader["event_common_age_groups"]),
-                    Convert.ToInt32(reader["event_common_start_finish"]), Convert.ToInt32(reader["event_division_specific_segments"]),
-                    Convert.ToInt32(reader["event_rank_by_gun"]), reader["event_yearcode"].ToString(), Convert.ToInt32(reader["event_allow_early_start"]),
-                    Convert.ToInt32(reader["event_early_start_difference"]), Convert.ToInt32(reader["event_finish_max_occurances"]),
-                    Convert.ToInt32(reader["event_finish_ignore_within"]), Convert.ToInt32(reader["event_start_window"]),
-                    Convert.ToInt64(reader["event_start_time_seconds"]), Convert.ToInt32(reader["event_start_time_milliseconds"]),
-                    reader["event_timing_system"].ToString()
+                output = new Event(Convert.ToInt32(reader["event_id"]), 
+                    reader["event_name"].ToString(), reader["event_date"].ToString(),
+                    Convert.ToInt32(reader["event_next_year_event_id"]), 
+                    Convert.ToInt32(reader["event_shirt_optional"]),
+                    Convert.ToInt32(reader["event_shirt_price"]),
+                    Convert.ToInt32(reader["event_common_age_groups"]),
+                    Convert.ToInt32(reader["event_common_start_finish"]),
+                    Convert.ToInt32(reader["event_division_specific_segments"]),
+                    Convert.ToInt32(reader["event_rank_by_gun"]), 
+                    reader["event_yearcode"].ToString(),
+                    Convert.ToInt32(reader["event_allow_early_start"]),
+                    Convert.ToInt32(reader["event_early_start_difference"]), 
+                    Convert.ToInt32(reader["event_finish_max_occurances"]),
+                    Convert.ToInt32(reader["event_finish_ignore_within"]),
+                    Convert.ToInt32(reader["event_start_window"]),
+                    Convert.ToInt64(reader["event_start_time_seconds"]),
+                    Convert.ToInt32(reader["event_start_time_milliseconds"]),
+                    reader["event_timing_system"].ToString(),
+                    Convert.ToInt32(reader["event_type"])
                     );
             }
             reader.Close();

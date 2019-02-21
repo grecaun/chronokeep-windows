@@ -109,6 +109,22 @@ namespace EventDirector.UI.MainPages
                     }
                 }
             }
+            ComboBoxItem eventType = null;
+            foreach (ComboBoxItem item in TypeBox.Items)
+            {
+                if (item.Content.Equals(theEvent.EventTypeString))
+                {
+                    eventType = item;
+                }
+            }
+            if (eventType != null)
+            {
+                TypeBox.SelectedItem = eventType;
+            }
+            else
+            {
+                TypeBox.SelectedIndex = 0;
+            }
             if (theEvent.NextYear != -1)
             {
                 setupNextYear.Content = Constants.DashboardLabels.CANCEL_NEXT_YEAR;
@@ -145,6 +161,11 @@ namespace EventDirector.UI.MainPages
                 theEvent.CommonStartFinish = (commonStartCheckBox.IsChecked ?? false) ? 1 : 0;
                 theEvent.DivisionSpecificSegments = (segmentCheckBox.IsChecked ?? false) ? 1 : 0;
                 theEvent.AllowEarlyStart = (earlyCheckBox.IsChecked ?? false) ? 1 : 0;
+                theEvent.EventType = Constants.Timing.EVENT_TYPE_DISTANCE;
+                if (((ComboBoxItem)TypeBox.SelectedItem).Content.Equals("Time Based"))
+                {
+                    theEvent.EventType = Constants.Timing.EVENT_TYPE_TIME;
+                }
                 UpdateEarlyTimeTextBox();
                 string[] nums = earlyTimeTextBox.Text.Split(':');
                 if (nums.Length == 3)
@@ -189,6 +210,7 @@ namespace EventDirector.UI.MainPages
             segmentCheckBox.IsEnabled = false;
             earlyCheckBox.IsEnabled = false;
             earlyTimeTextBox.IsEnabled = false;
+            TypeBox.IsEnabled = false;
         }
 
         public void EnableEditableFields()
@@ -202,6 +224,7 @@ namespace EventDirector.UI.MainPages
             segmentCheckBox.IsEnabled = true;
             earlyCheckBox.IsEnabled = true;
             earlyTimeTextBox.IsEnabled = true;
+            TypeBox.IsEnabled = true;
         }
 
         private void UpdateEarlyTimeTextBox()

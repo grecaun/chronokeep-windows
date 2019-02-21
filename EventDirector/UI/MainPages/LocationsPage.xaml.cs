@@ -45,14 +45,14 @@ namespace EventDirector.UI.MainPages
                 return;
             }
             LocationsBox.Items.Clear();
-            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow)));
-            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin)));
+            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow), theEvent));
+            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin), theEvent));
             List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
             LocationCount = 1;
             locations.Sort();
             foreach (TimingLocation loc in locations)
             {
-                LocationsBox.Items.Add(new ALocation(this, loc));
+                LocationsBox.Items.Add(new ALocation(this, loc, theEvent));
                 LocationCount = loc.Identifier > LocationCount - 1 ? loc.Identifier + 1 : LocationCount;
             }
         }
@@ -148,7 +148,7 @@ namespace EventDirector.UI.MainPages
 
             private readonly Regex allowedChars = new Regex("[^0-9]+");
 
-            public ALocation(LocationsPage page, TimingLocation location)
+            public ALocation(LocationsPage page, TimingLocation location, Event theEvent)
             {
                 this.page = page;
                 this.myLocation = location;
@@ -206,7 +206,7 @@ namespace EventDirector.UI.MainPages
                 occPanel.Children.Add(MaxOccurrences);
                 settingsGrid.Children.Add(occPanel);
                 Grid.SetColumn(occPanel, 0);
-                if (myLocation.Identifier == Constants.Timing.LOCATION_START)
+                if (myLocation.Identifier == Constants.Timing.LOCATION_START || Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                 {
                     occPanel.Visibility = Visibility.Collapsed;
                 }
@@ -233,7 +233,7 @@ namespace EventDirector.UI.MainPages
                 IgnoreWithin.GotFocus += new RoutedEventHandler(this.SelectAll);
                 ignPanel.Children.Add(IgnoreWithin);
                 settingsGrid.Children.Add(ignPanel);
-                if (myLocation.Identifier != Constants.Timing.LOCATION_START)
+                if (myLocation.Identifier != Constants.Timing.LOCATION_START && Constants.Timing.EVENT_TYPE_TIME != theEvent.EventType)
                 {
                     Grid.SetColumn(ignPanel, 1);
                 }

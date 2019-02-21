@@ -553,6 +553,7 @@ namespace EventDirector.UI.MainPages
             Log.D("Recalculate results clicked.");
             database.ResetTimingResultsEvent(theEvent.Identifier);
             UpdateView();
+            mWindow.DatasetChanged();
             mWindow.NotifyRecalculateAgeGroups();
             mWindow.NotifyTimingWorker();
         }

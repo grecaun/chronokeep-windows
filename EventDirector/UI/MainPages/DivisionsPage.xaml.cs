@@ -62,7 +62,7 @@ namespace EventDirector.UI.MainPages
             foreach (Division div in divisions)
             {
                 divisionDictionary[div.Identifier] = div;
-                DivisionsBox.Items.Add(new ADivision(this, div, theEvent.FinishMaxOccurrences, bibGroups, divisions, divisionDictionary));
+                DivisionsBox.Items.Add(new ADivision(this, div, theEvent.FinishMaxOccurrences, bibGroups, divisions, divisionDictionary, theEvent));
                 DivisionCount = div.Identifier > DivisionCount - 1 ? div.Identifier + 1 : DivisionCount;
             }
         }
@@ -186,13 +186,15 @@ namespace EventDirector.UI.MainPages
             public TextBox Cost { get; private set; }
             public TextBox Distance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
-            public ComboBox FinishOccurrence { get; private set; }
+            public ComboBox FinishOccurrence { get; private set; } = null;
             public TextBox Wave { get; private set; }
             public ComboBox BibGroupNumber { get; private set; }
             public MaskedTextBox StartOffset { get; private set; }
+            public MaskedTextBox TimeLimit { get; private set; } = null;
             public Button Remove { get; private set; }
 
             private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
+            private const string LimitFormat = "{0:D2}:{1:D2}:{2:D2}";
             readonly DivisionsPage page;
             public Division theDivision;
             private Dictionary<int, Division> divisionDictionary;
@@ -201,7 +203,7 @@ namespace EventDirector.UI.MainPages
             private readonly Regex allowedChars = new Regex("[^0-9]");
 
             public ADivision(DivisionsPage page, Division division, int maxOccurrences, List<BibGroup> bibGroups,
-                List<Division> divisions, Dictionary<int, Division> divisionDictionary)
+                List<Division> divisions, Dictionary<int, Division> divisionDictionary, Event theEvent)
             {
                 List<Division> otherDivisions = new List<Division>(divisions);
                 this.divisionDictionary = divisionDictionary;
@@ -392,48 +394,78 @@ namespace EventDirector.UI.MainPages
                 }
                 settingsGrid.Children.Add(DistanceUnit);
                 Grid.SetColumn(DistanceUnit, 2);
-                // Occurence
-                DockPanel occPanel = new DockPanel();
-                occPanel.Children.Add(new Label()
+                if (Constants.Timing.EVENT_TYPE_TIME != theEvent.EventType)
                 {
-                    Content = "Occurrence",
-                    Width = 100,
-                    FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
-                });
-                FinishOccurrence = new ComboBox()
-                {
-                    FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
-                    VerticalContentAlignment = VerticalAlignment.Center
-                };
-                ComboBoxItem selected = null, current;
-                for (int i = 1; i <= maxOccurrences; i++)
-                {
-                    current = new ComboBoxItem()
+                    // Occurence
+                    DockPanel occPanel = new DockPanel();
+                    occPanel.Children.Add(new Label()
                     {
-                        Content = i.ToString(),
-                        Uid = i.ToString()
+                        Content = "Occurrence",
+                        Width = 100,
+                        FontSize = 16,
+                        Margin = new Thickness(0, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalContentAlignment = HorizontalAlignment.Right
+                    });
+                    FinishOccurrence = new ComboBox()
+                    {
+                        FontSize = 16,
+                        Margin = new Thickness(0, 5, 0, 5),
+                        VerticalContentAlignment = VerticalAlignment.Center
                     };
-                    if (i == theDivision.FinishOccurrence)
+                    ComboBoxItem selected = null, current;
+                    for (int i = 1; i <= maxOccurrences; i++)
                     {
-                        selected = current;
+                        current = new ComboBoxItem()
+                        {
+                            Content = i.ToString(),
+                            Uid = i.ToString()
+                        };
+                        if (i == theDivision.FinishOccurrence)
+                        {
+                            selected = current;
+                        }
+                        FinishOccurrence.Items.Add(current);
                     }
-                    FinishOccurrence.Items.Add(current);
-                }
-                if (selected != null)
-                {
-                    FinishOccurrence.SelectedItem = selected;
+                    if (selected != null)
+                    {
+                        FinishOccurrence.SelectedItem = selected;
+                    }
+                    else
+                    {
+                        FinishOccurrence.SelectedIndex = 0;
+                    }
+                    occPanel.Children.Add(FinishOccurrence);
+                    settingsGrid.Children.Add(occPanel);
+                    Grid.SetColumn(occPanel, 3);
                 }
                 else
                 {
-                    FinishOccurrence.SelectedIndex = 0;
+                    DockPanel limitPanel = new DockPanel();
+                    limitPanel.Children.Add(new Label()
+                    {
+                        Content = "Max Time",
+                        Width = 60,
+                        FontSize = 14,
+                        Margin = new Thickness(0, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalContentAlignment = HorizontalAlignment.Right
+                    });
+                    string limit = string.Format(LimitFormat, theDivision.EndSeconds / 3600,
+                        (theDivision.EndSeconds % 3600) / 60, theDivision.EndSeconds % 60);
+                    TimeLimit = new MaskedTextBox()
+                    {
+                        Text = limit,
+                        Mask = "00:00:00",
+                        FontSize = 16,
+                        Margin = new Thickness(0, 5, 0, 5),
+                        VerticalContentAlignment = VerticalAlignment.Center
+                    };
+                    TimeLimit.GotFocus += new RoutedEventHandler(this.SelectAll);
+                    limitPanel.Children.Add(TimeLimit);
+                    settingsGrid.Children.Add(limitPanel);
+                    Grid.SetColumn(limitPanel, 3);
                 }
-                occPanel.Children.Add(FinishOccurrence);
-                settingsGrid.Children.Add(occPanel);
-                Grid.SetColumn(occPanel, 3);
                 thePanel.Children.Add(settingsGrid);
 
                 // Wave #, Start Offset, Bib Group #, Remove Button
@@ -589,9 +621,17 @@ namespace EventDirector.UI.MainPages
                     theDivision.Distance = dist;
                 }
                 theDivision.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
-                if (FinishOccurrence.SelectedItem != null)
+                if (FinishOccurrence != null && FinishOccurrence.SelectedItem != null)
                 {
                     theDivision.FinishOccurrence = Convert.ToInt32(((ComboBoxItem)FinishOccurrence.SelectedItem).Uid);
+                }
+                theDivision.EndSeconds = 0;
+                if (TimeLimit != null)
+                {
+                    string[] limitParts = TimeLimit.Text.Replace('_', '0').Split(':');
+                    theDivision.EndSeconds = (Convert.ToInt32(limitParts[0]) * 3600)
+                        + (Convert.ToInt32(limitParts[1]) * 60)
+                        + Convert.ToInt32(limitParts[2]);
                 }
                 int wave = -1;
                 int.TryParse(Wave.Text, out wave);
@@ -605,10 +645,10 @@ namespace EventDirector.UI.MainPages
                 string[] secondparts = firstparts[2].Split('.');
                 try
                 {
-                    int hours = Convert.ToInt32(firstparts[0]), minutes = Convert.ToInt32(firstparts[1]),
-                        seconds = Convert.ToInt32(secondparts[0]), milliseconds = Convert.ToInt32(secondparts[1]);
-                    theDivision.StartOffsetSeconds = (hours * 3600) + (minutes * 60) + seconds;
-                    theDivision.StartOffsetMilliseconds = milliseconds;
+                    theDivision.StartOffsetSeconds = (Convert.ToInt32(firstparts[0]) * 3600)
+                        + (Convert.ToInt32(firstparts[1]) * 60)
+                        + Convert.ToInt32(secondparts[0]);
+                    theDivision.StartOffsetMilliseconds = Convert.ToInt32(secondparts[1]);
                 }
                 catch
                 {

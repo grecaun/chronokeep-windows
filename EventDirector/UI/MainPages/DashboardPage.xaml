@@ -50,9 +50,16 @@
             <CheckBox Name="commonStartCheckBox" Content="Common Start/Finish Location" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <CheckBox Name="segmentCheckBox" Content="Division Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <CheckBox Name="earlyCheckBox" Content="Allow Early Start" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False" Click="EarlyCheckBox_Click"/>
-            <DockPanel Name="earlyTimePanel" LastChildFill="True">
-                <Label Content="Early Start Amount" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center"/>
+            <DockPanel Name="earlyTimePanel" LastChildFill="True" Margin="10,0,10,0">
+                <Label Content="Early Start Amount" FontSize="16"  VerticalAlignment="Center"/>
                 <xctk:MaskedTextBox Name="earlyTimeTextBox" ValueDataType="{x:Type s:String}" Mask="00:00:00" VerticalAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="16" IsEnabled="False"/>
+            </DockPanel>
+            <DockPanel Margin="10,5,10,5">
+                <Label Content="Event Type" FontSize="16"/>
+                <ComboBox Name="TypeBox" Margin="10,0,0,0" VerticalContentAlignment="Center" IsEnabled="False">
+                    <ComboBoxItem Content="Distance Based" Uid="0" IsSelected="True"/>
+                    <ComboBoxItem Content="Time Based" Uid="1" />
+                </ComboBox>
             </DockPanel>
             <Separator Margin="5,5,5,5" />
             <Button Name="editButton" Content="Edit" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="10,5,10,5" Click="EditButton_Click"/>
