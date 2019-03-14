@@ -445,7 +445,7 @@ namespace EventDirector.UI.MainPages
                     limitPanel.Children.Add(new Label()
                     {
                         Content = "Max Time",
-                        Width = 60,
+                        Width = 80,
                         FontSize = 14,
                         Margin = new Thickness(0, 0, 0, 0),
                         VerticalAlignment = VerticalAlignment.Center,
