@@ -40,6 +40,7 @@
                     <ComboBoxItem Content="Gun Time" />
                     <ComboBoxItem Content="Bib"/>
                     <ComboBoxItem Content="Division"/>
+                    <ComboBoxItem Content="Place"/>
                     <ComboBoxItem Content="Age Group"/>
                     <ComboBoxItem Content="Gender"/>
                 </ComboBox>

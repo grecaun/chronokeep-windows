@@ -62,7 +62,23 @@ namespace EventDirector.UI.Timing
             }
             else if (peopleType == PeopleType.ONLYFINISH)
             {
-                newResults.RemoveAll(TimeResult.IsNotFinish);
+                if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+                {
+                    Log.D("Time based event.");
+                    Dictionary<int, TimeResult> validResults = new Dictionary<int, TimeResult>();
+                    foreach (TimeResult result in newResults)
+                    {
+                        if (Constants.Timing.TIMERESULT_DUMMYPERSON != result.EventSpecificId)
+                        {
+                            validResults[result.EventSpecificId] = result;
+                        }
+                    }
+                    newResults.RemoveAll(x => !validResults.ContainsValue(x));
+                }
+                else
+                {
+                    newResults.RemoveAll(TimeResult.IsNotFinish);
+                }
             }
             else if (peopleType == PeopleType.ONLYSTART)
             {
@@ -88,6 +104,10 @@ namespace EventDirector.UI.Timing
             else if (sortType == SortType.GENDER)
             {
                 newResults.Sort(TimeResult.CompareByGender);
+            }
+            else if (sortType == SortType.PLACE)
+            {
+                newResults.Sort(TimeResult.CompareByDivisionPlace);
             }
             else
             {

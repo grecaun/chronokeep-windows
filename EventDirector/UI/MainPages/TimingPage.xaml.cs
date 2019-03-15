@@ -618,6 +618,8 @@ namespace EventDirector.UI.MainPages
                     return SortType.AGEGROUP;
                 case "Gender":
                     return SortType.GENDER;
+                case "Place":
+                    return SortType.PLACE;
             }
             return SortType.SYSTIME;
         }

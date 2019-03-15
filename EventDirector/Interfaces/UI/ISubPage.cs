@@ -9,5 +9,5 @@
     }
 
     public enum PeopleType { KNOWN, ALL, ONLYSTART, ONLYFINISH, DEFAULT }
-    public enum SortType { SYSTIME, GUNTIME, BIB, DIVISION, AGEGROUP, GENDER }
+    public enum SortType { SYSTIME, GUNTIME, BIB, DIVISION, AGEGROUP, GENDER, PLACE }
 }

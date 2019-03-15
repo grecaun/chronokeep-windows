@@ -293,6 +293,10 @@ namespace EventDirector
             if (one == null || two == null) return 1;
             if (one.DivisionName.Equals(two.DivisionName))
             {
+                if (one.Place == two.Place)
+                {
+                    return one.SystemTime.CompareTo(two.SystemTime);
+                }
                 return one.Place.CompareTo(two.Place);
             }
             return one.DivisionName.CompareTo(two.DivisionName);
