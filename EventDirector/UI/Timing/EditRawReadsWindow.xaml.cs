@@ -86,7 +86,12 @@ namespace EventDirector.UI.Timing
                 if (read.TimeMilliseconds < 0)
                 {
                     read.TimeSeconds--;
-                    read.TimeMilliseconds = 1000 + read.TimeMilliseconds;
+                    read.TimeMilliseconds += 1000;
+                }
+                else if (read.TimeMilliseconds >= 1000)
+                {
+                    read.TimeSeconds++;
+                    read.TimeMilliseconds -= 1000;
                 }
             }
             database.UpdateChipReads(chipReads);
