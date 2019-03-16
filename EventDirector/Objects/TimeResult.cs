@@ -24,7 +24,7 @@ namespace EventDirector
 
         public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
             string time, int occurrence, string first, string last, string division, int bib,
-            int readId, string unknownId, string systemTime, string chipTime, int place,
+            int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
             int agePlace, int genderPlace, string gender, int ageGroupId, string ageStart, string ageEnd,
             int status, int early)
         {
@@ -57,7 +57,7 @@ namespace EventDirector
             this.bib = bib;
             this.unknownId = unknownId;
             this.readId = readId;
-            this.systemTime = DateTime.Parse(systemTime);
+            this.systemTime = RFIDUltraInterface.EpochToDate(systemTimeSec).AddMilliseconds(systemTimeMill);
             this.chipTime = chipTime;
             this.place = place;
             this.agePlace = agePlace;

@@ -81,7 +81,13 @@ namespace EventDirector.UI.Timing
                 {
                     bibsChanged.Add(read.Bib);
                 }
-                read.Time = read.Time.AddDays(days).AddSeconds(seconds).AddMilliseconds(milliseconds);
+                read.TimeSeconds = read.TimeSeconds + (86400 * days) + seconds;
+                read.TimeMilliseconds = read.TimeMilliseconds + milliseconds;
+                if (read.TimeMilliseconds < 0)
+                {
+                    read.TimeSeconds--;
+                    read.TimeMilliseconds = 1000 + read.TimeMilliseconds;
+                }
             }
             database.UpdateChipReads(chipReads);
             foreach (int bib in bibsChanged)

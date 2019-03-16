@@ -99,7 +99,6 @@ namespace EventDirector
 
         internal void FormatData()
         {
-            Log.D("Formatting data.");
             if (firstName != null && firstName.Length > 0)
             {
                 this.firstName = CapitalizeFirst(firstName);

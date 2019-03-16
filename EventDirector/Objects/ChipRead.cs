@@ -15,7 +15,8 @@ namespace EventDirector
         public long ChipNumber { get; set; }
         public long Seconds { get; set; }
         public int Milliseconds { get; set; }
-        public DateTime Time { get; set; }
+        public long TimeSeconds { get; set; }
+        public int TimeMilliseconds { get; set; }
         public int Antenna { get; set; }
         public string Reader { get; set; }
         public string Box { get; set; }
@@ -58,16 +59,16 @@ namespace EventDirector
             this.ReaderTime = readertime;
             this.StartTime = starttime;
             this.LogId = logid;
-            Time = RFIDUltraInterface.EpochToDate(Seconds).AddMilliseconds(this.Milliseconds);
+            this.TimeSeconds = seconds;
+            this.TimeMilliseconds = millisec;
             this.Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
             this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
         }
 
-        // This is the database' constructor.
+        // This is the OLD database' constructor.
         public ChipRead(int readId, int eventId, int status, int locationId, long chipNumber, long seconds,
            int millisec, int antenna, string rssi, int isRewind, string reader, string box, string readertime,
-           long starttime, int logid, DateTime time, int readbib, int type, int chipbib, string first,
-           string last, DateTime start, string locationName)
+           long starttime, int logid, DateTime time, int readbib, int type)
         {
             this.ReadId = readId;
             this.EventId = eventId;
@@ -84,7 +85,35 @@ namespace EventDirector
             this.ReaderTime = readertime;
             this.StartTime = starttime;
             this.LogId = logid;
-            this.Time = time;
+            this.TimeSeconds = RFIDUltraInterface.DateToEpoch(time);
+            this.TimeMilliseconds = time.Millisecond;
+            this.ReadBib = readbib;
+            this.Type = type;
+        }
+
+        // new database constructor
+        public ChipRead(int readId, int eventId, int status, int locationId, long chipNumber, long seconds,
+            int millisec, int antenna, string rssi, int isRewind, string reader, string box, string readertime,
+            long starttime, int logid, long time_seconds, int time_millisec, int readbib, int type, int chipbib,
+            string first, string last, DateTime start, string locationName)
+        {
+            this.ReadId = readId;
+            this.EventId = eventId;
+            this.Status = status;
+            this.LocationID = locationId;
+            this.ChipNumber = chipNumber;
+            this.Seconds = seconds;
+            this.Milliseconds = millisec;
+            this.Antenna = antenna;
+            this.RSSI = rssi;
+            this.IsRewind = IsRewind;
+            this.Reader = reader;
+            this.Box = box;
+            this.ReaderTime = readertime;
+            this.StartTime = starttime;
+            this.LogId = logid;
+            this.TimeSeconds = time_seconds;
+            this.TimeMilliseconds = time_millisec;
             this.ReadBib = readbib;
             this.Type = type;
             this.ChipBib = chipbib;
@@ -97,7 +126,8 @@ namespace EventDirector
         public ChipRead(int eventId, int locationId, int bib, DateTime time)
         {
             this.ReadBib = bib;
-            this.Time = time;
+            this.TimeSeconds = RFIDUltraInterface.DateToEpoch(time);
+            this.TimeMilliseconds = time.Millisecond;
             this.Type = Constants.Timing.CHIPREAD_TYPE_MANUAL;
             this.EventId = eventId;
             this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
@@ -119,7 +149,8 @@ namespace EventDirector
         public ChipRead(int eventId, int locationId, string chip, DateTime time)
         {
             this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
-            this.Time = time;
+            this.TimeSeconds = RFIDUltraInterface.DateToEpoch(time);
+            this.TimeMilliseconds = time.Millisecond;
             this.Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
             this.EventId = eventId;
             this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
@@ -156,6 +187,11 @@ namespace EventDirector
                     Math.Abs(ellapsed.Seconds),
                     Math.Abs(ellapsed.Milliseconds));
             }
+        }
+
+        public DateTime Time
+        {
+            get => RFIDUltraInterface.EpochToDate(TimeSeconds).AddMilliseconds(TimeMilliseconds);
         }
 
         public string TypeName

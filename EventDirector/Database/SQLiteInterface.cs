@@ -13,7 +13,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 33;
+        private readonly int version = 34;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -195,22 +195,6 @@ namespace EventDirector
                     "distance_unit INTEGER DEFAULT 0," +
                     "UNIQUE (event_id, division_id, location_id, location_occurance) ON CONFLICT IGNORE" +
                     ");");
-                queries.Add("CREATE TABLE IF NOT EXISTS time_results (" +
-                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
-                    "read_id INTEGER NOT NULL REFERENCES chipreads(read_id)," +
-                    "location_id INTEGER NOT NULL," +
-                    "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
-                    "timeresult_occurance INTEGER NOT NULL," +
-                    "timeresult_time TEXT NOT NULL," +
-                    "timeresult_chiptime TEXT NOT NULL," +
-                    "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
-                    "timeresult_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
-                    "timeresult_age_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
-                    "timeresult_gender_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
-                    "timeresult_status INT NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_STATUS_NONE + "," +
-                    "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
-                    ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS chipreads (" +
                     "read_id INTEGER PRIMARY KEY," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
@@ -227,10 +211,29 @@ namespace EventDirector
                     "read_isrewind INTEGER NOT NULL," +
                     "read_readertime TEXT NOT NULL," +
                     "read_starttime INTEGER NOT NULL," +
-                    "read_time TEXT NOT NULL," +
+                    "read_time_seconds INTEGER NOT NULL," +
+                    "read_time_milliseconds INTEGER NOT NULL," +
+                    "read_split_seconds INTEGER NOT NULL," +
+                    "read_split_milliseconds INTEGER NOT NULL," +
                     "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
                     "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
                     "UNIQUE (event_id, read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS time_results (" +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
+                    "read_id INTEGER NOT NULL REFERENCES chipreads(read_id)," +
+                    "location_id INTEGER NOT NULL," +
+                    "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
+                    "timeresult_occurance INTEGER NOT NULL," +
+                    "timeresult_time TEXT NOT NULL," +
+                    "timeresult_chiptime TEXT NOT NULL," +
+                    "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
+                    "timeresult_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                    "timeresult_age_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                    "timeresult_gender_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                    "timeresult_status INT NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_STATUS_NONE + "," +
+                    "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS settings (version INTEGER NOT NULL, name VARCHAR NOT NULL," +
                     " identifier VARCHAR NOT NULL); INSERT INTO settings (version, name, identifier) VALUES " +
@@ -1042,6 +1045,69 @@ namespace EventDirector
                             "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + ";" +
                             "ALTER TABLE divisions ADD division_end_offset_seconds INTEGER NOT NULL DEFAULT 0;" +
                             "UPDATE settings SET version=33 WHERE version=32;";
+                        command.ExecuteNonQuery();
+                        goto case 33;
+                    case 33:
+                        Log.D("Upgrading from version 33.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE chipreads RENAME TO chipreads_old;" +
+                            "CREATE TABLE IF NOT EXISTS chipreads (" +
+                            "read_id INTEGER PRIMARY KEY," +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                            "read_status INTEGER NOT NULL DEFAULT 0," +
+                            "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                            "read_chipnumber INTEGER NOT NULL," +
+                            "read_seconds INTEGER NOT NULL," +
+                            "read_milliseconds INTEGER NOT NULL," +
+                            "read_antenna INTEGER NOT NULL," +
+                            "read_reader TEXT NOT NULL," +
+                            "read_box TEXT NOT NULL," +
+                            "read_logindex INTEGER NOT NULL," +
+                            "read_rssi INTEGER NOT NULL," +
+                            "read_isrewind INTEGER NOT NULL," +
+                            "read_readertime TEXT NOT NULL," +
+                            "read_starttime INTEGER NOT NULL," +
+                            "read_time_seconds INTEGER NOT NULL," +
+                            "read_time_milliseconds INTEGER NOT NULL," +
+                            "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
+                            "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
+                            "UNIQUE (event_id, read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
+                            ");";
+                        command.ExecuteNonQuery();
+                        command = connection.CreateCommand();
+                        command.CommandText = "SELECT * FROM chipreads_old;";
+                        SQLiteDataReader reader = command.ExecuteReader();
+                        List<ChipRead> output = new List<ChipRead>();
+                        while (reader.Read())
+                        {
+                            output.Add(new ChipRead(
+                                Convert.ToInt32(reader["read_id"]),
+                                Convert.ToInt32(reader["event_id"]),
+                                Convert.ToInt32(reader["read_status"]),
+                                Convert.ToInt32(reader["location_id"]),
+                                Convert.ToInt64(reader["read_chipnumber"]),
+                                Convert.ToInt64(reader["read_seconds"]),
+                                Convert.ToInt32(reader["read_milliseconds"]),
+                                Convert.ToInt32(reader["read_antenna"]),
+                                reader["read_rssi"].ToString(),
+                                Convert.ToInt32(reader["read_isrewind"]),
+                                reader["read_reader"].ToString(),
+                                reader["read_box"].ToString(),
+                                reader["read_readertime"].ToString(),
+                                Convert.ToInt32(reader["read_starttime"]),
+                                Convert.ToInt32(reader["read_logindex"]),
+                                DateTime.ParseExact(reader["read_time"].ToString(), "yyyy-MM-dd HH:mm:ss.fff", null),
+                                Convert.ToInt32(reader["read_bib"]),
+                                Convert.ToInt32(reader["read_type"])
+                                ));
+                        }
+                        reader.Close();
+                        foreach (ChipRead read in output)
+                        {
+                            AddChipReadInternal(read, connection);
+                        }
+                        command = connection.CreateCommand();
+                        command.CommandText = "DROP TABLE chipreads_old; UPDATE settings SET version=34 WHERE version=33;";
                         command.ExecuteNonQuery();
                         break;
                 }
@@ -1941,7 +2007,6 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            Log.D("Updating participant values.");
             command.CommandText = "UPDATE participants SET participant_first=@first, participant_last=@last, participant_street=@street," +
                 " participant_city=@city, participant_state=@state, participant_zip=@zip, participant_birthday=@birthdate," +
                 " emergencycontact_name=@ecname, emergencycontact_phone=@ecphone, participant_email=@email, participant_mobile=@mobile," +
@@ -2883,7 +2948,8 @@ namespace EventDirector
                     reader["eventspecific_bib"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_bib"]),
                     Convert.ToInt32(reader["read_id"]),
                     reader["timeresult_unknown_id"].ToString(),
-                    reader["read_time"].ToString(),
+                    Convert.ToInt64(reader["read_time_seconds"]),
+                    Convert.ToInt32(reader["read_time_milliseconds"]),
                     reader["timeresult_chiptime"].ToString(),
                     Convert.ToInt32(reader["timeresult_place"]),
                     Convert.ToInt32(reader["timeresult_age_place"]),
@@ -4027,9 +4093,10 @@ namespace EventDirector
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO chipreads (event_id, read_status, location_id, read_chipnumber, read_seconds," +
-                "read_milliseconds, read_antenna, read_reader, read_box, read_logindex, read_rssi, read_isrewind, read_readertime, read_starttime, read_time," +
-                "read_bib, read_type)" +
-                " VALUES (@event, @status, @loc, @chip, @sec, @milli, @ant, @reader, @box, @logix, @rssi, @rewind, @readertime, @starttime, @time, @bib, @type);";
+                "read_milliseconds, read_antenna, read_reader, read_box, read_logindex, read_rssi, read_isrewind, read_readertime," +
+                "read_starttime, read_time_seconds, read_time_milliseconds, read_bib, read_type)" +
+                " VALUES (@event, @status, @loc, @chip, @sec, @milli, @ant, @reader, @box, @logix, @rssi, @rewind, @readertime, " +
+                "@starttime, @timesec, @timemill, @bib, @type);";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", read.EventId),
@@ -4046,7 +4113,8 @@ namespace EventDirector
                 new SQLiteParameter("@rewind", read.IsRewind),
                 new SQLiteParameter("@readertime", read.ReaderTime),
                 new SQLiteParameter("@starttime", read.StartTime),
-                new SQLiteParameter("@time", read.TimeString),
+                new SQLiteParameter("@timesec", read.TimeSeconds),
+                new SQLiteParameter("@timemill", read.TimeMilliseconds),
                 new SQLiteParameter("@bib", read.ReadBib),
                 new SQLiteParameter("@type", read.Type)
             });
@@ -4330,7 +4398,8 @@ namespace EventDirector
                     reader["read_readertime"].ToString(),
                     Convert.ToInt32(reader["read_starttime"]),
                     Convert.ToInt32(reader["read_logindex"]),
-                    DateTime.ParseExact(reader["read_time"].ToString(), "yyyy-MM-dd HH:mm:ss.fff", null),
+                    Convert.ToInt64(reader["read_time_seconds"]),
+                    Convert.ToInt32(reader["read_time_milliseconds"]),
                     Convert.ToInt32(reader["read_bib"]),
                     Convert.ToInt32(reader["read_type"]),
                     reader["bib"] == DBNull.Value ? Constants.Timing.CHIPREAD_DUMMYBIB : Convert.ToInt32(reader["bib"]),
