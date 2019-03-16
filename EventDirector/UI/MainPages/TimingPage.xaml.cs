@@ -67,7 +67,7 @@ namespace EventDirector.UI.MainPages
 
             // Setup a timer for updating the view
             ViewUpdateTimer.Tick += new EventHandler(ViewUpdateTimer_Click);
-            ViewUpdateTimer.Interval = new TimeSpan(0, 0, 1);
+            ViewUpdateTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
 
             // Check for default IP address to give to our reader boxes for connections
             foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces())
@@ -275,7 +275,6 @@ namespace EventDirector.UI.MainPages
 
         private async void ViewUpdateTimer_Click(object sender, EventArgs e)
         {
-            Log.D("Checking for updates.");
             bool updates = false;
             await Task.Run(() =>
             {
@@ -283,6 +282,7 @@ namespace EventDirector.UI.MainPages
             });
             if (updates)
             {
+                Log.D("Updates available.");
                 subPage.UpdateView();
             }
         }

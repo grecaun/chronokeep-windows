@@ -307,6 +307,7 @@ namespace EventDirector.Timing
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
             allChipReads.Sort();
             List<ChipRead> setUnknown = new List<ChipRead>();
+            DateTime start = DateTime.Now;
             foreach (ChipRead read in allChipReads)
             {
                 if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
@@ -384,6 +385,9 @@ namespace EventDirector.Timing
                     setUnknown.Add(read);
                 }
             }
+            DateTime end = DateTime.Now;
+            TimeSpan first = end - start;
+            start = DateTime.Now;
             // Go through each chip read for a single person.
             // List<ChipRead> updateStatusReads = new List<ChipRead>();
             List<TimeResult> newResults = new List<TimeResult>();
@@ -766,6 +770,9 @@ namespace EventDirector.Timing
                     }
                 }
             }
+            end = DateTime.Now;
+            TimeSpan second = end - start;
+            start = DateTime.Now;
             // process reads that need to be set to ignore
             foreach (ChipRead read in setUnknown)
             {
@@ -773,16 +780,10 @@ namespace EventDirector.Timing
             }
             // Update database with information.
             database.AddTimingResults(newResults);
-            foreach (int BibKey in bibReadPairs.Keys)
-            {
-                database.SetChipReadStatuses(bibReadPairs[BibKey]);
-            }
-            foreach (string ChipKey in chipReadPairs.Keys)
-            {
-                database.SetChipReadStatuses(chipReadPairs[ChipKey]);
-            }
-            database.SetChipReadStatuses(setUnknown);
-            Log.D("Done");
+            database.SetChipReadStatuses(allChipReads);
+            end = DateTime.Now;
+            TimeSpan third = end - start;
+            Log.D(String.Format("Done. Splitting into bib/chip: {0} - Creating Results: {1} - Putting Results in DB: {2}", first.ToString("c"), second.ToString("c"), third.ToString("c")));
         }
 
         private void ProcessTimeBasedRace(Event theEvent)
@@ -807,6 +808,7 @@ namespace EventDirector.Timing
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
             allChipReads.Sort();
             List<ChipRead> setUnknown = new List<ChipRead>();
+            DateTime start = DateTime.Now;
             foreach (ChipRead read in allChipReads)
             {
                 if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
@@ -861,6 +863,9 @@ namespace EventDirector.Timing
                     setUnknown.Add(read);
                 }
             }
+            DateTime end = DateTime.Now;
+            TimeSpan first = end - start;
+            start = DateTime.Now;
             // Go through all of the chipreads we've marked and create new results.
             List<TimeResult> newResults = new List<TimeResult>();
             // start with bibs
@@ -1187,6 +1192,9 @@ namespace EventDirector.Timing
                     }
                 }
             }
+            end = DateTime.Now;
+            TimeSpan second = end - start;
+            start = DateTime.Now;
             // process reads that need to be set to ignore
             foreach (ChipRead read in setUnknown)
             {
@@ -1194,16 +1202,10 @@ namespace EventDirector.Timing
             }
             // Update database with information.
             database.AddTimingResults(newResults);
-            foreach (int BibKey in bibReadPairs.Keys)
-            {
-                database.SetChipReadStatuses(bibReadPairs[BibKey]);
-            }
-            foreach (string ChipKey in chipReadPairs.Keys)
-            {
-                database.SetChipReadStatuses(chipReadPairs[ChipKey]);
-            }
-            database.SetChipReadStatuses(setUnknown);
-            Log.D("Done");
+            database.SetChipReadStatuses(allChipReads);
+            end = DateTime.Now;
+            TimeSpan third = end - start;
+            Log.D(String.Format("Done. Splitting into bib/chip: {0} - Creating Results: {1} - Putting Results in DB: {2}", first.ToString("c"), second.ToString("c"), third.ToString("c")));
         }
 
         private void UpdateAgeGroups(Event theEvent)
