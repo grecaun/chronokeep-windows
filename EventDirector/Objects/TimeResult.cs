@@ -149,14 +149,7 @@ namespace EventDirector
         public int GenderPlace { get => genderPlace; set => genderPlace = value; }
         public string GenderPlaceStr { get => genderPlace < 1 ? "" : genderPlace.ToString(); }
         public string Identifier {
-            get
-            {
-                if (eventspecificId == Constants.Timing.TIMERESULT_DUMMYPERSON)
-                {
-                    return unknownId;
-                }
-                return bib.ToString();
-            }
+            get => unknownId;
         }
 
         public DateTime SystemTime { get => systemTime; set => systemTime = value; }

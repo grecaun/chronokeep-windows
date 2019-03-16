@@ -515,11 +515,13 @@ namespace EventDirector.Timing
                                 }
                                 // Minimum Time Value required to actually create a result
                                 long minSeconds = startSeconds;
+                                int minMilliseconds = startMilliseconds;
                                 // Check if there's a previous read at this location.
                                 if (lastReadDictionary.ContainsKey((bib, read.LocationID)))
                                 {
                                     occurrence = lastReadDictionary[(bib, read.LocationID)].Occurrence + 1;
                                     minSeconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeSeconds + occursWithin;
+                                    minMilliseconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeMilliseconds;
                                 }
                                 // Check if we're past the max occurances allowed for this spot.
                                 // Also check if we've passed the finish occurrence for the finish line and that division
@@ -531,7 +533,7 @@ namespace EventDirector.Timing
                                 }
                                 // occurrence is in [1,maxOccurrences], but can't be used because it's in the
                                 // ignore period
-                                else if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds <= startMilliseconds))
+                                else if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds <= minMilliseconds))
                                 {
                                     read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
                                 }
@@ -702,11 +704,13 @@ namespace EventDirector.Timing
                                 }
                                 // Minimum Time Value required to actually create a result
                                 long minSeconds = startSeconds;
+                                int minMilliseconds = startMilliseconds;
                                 // Check if there's a previous read at this location.
                                 if (chipLastReadDictionary.ContainsKey((chip, read.LocationID)))
                                 {
                                     occurrence = chipLastReadDictionary[(chip, read.LocationID)].Occurrence + 1;
                                     minSeconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeSeconds + occursWithin;
+                                    minMilliseconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeMilliseconds;
                                 }
                                 // Check if we're past the max occurances allowed for this spot.
                                 if (occurrence > maxOccurrences)
@@ -715,7 +719,7 @@ namespace EventDirector.Timing
                                 }
                                 // occurrence is in [1,maxOccurrences], but can't be used because it's in the
                                 // ignore period
-                                else if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < startMilliseconds))
+                                else if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
                                 {
                                     read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
                                 }
@@ -972,13 +976,15 @@ namespace EventDirector.Timing
                                 }
                                 // Minimum time to create a result.
                                 long minSeconds = startSeconds;
+                                int minMilliseconds = startMilliseconds;
                                 if (lastReadDictionary.ContainsKey((bib, read.LocationID)))
                                 {
                                     occurrence = lastReadDictionary[(bib, read.LocationID)].Occurrence + 1;
                                     minSeconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeSeconds + occursWithin;
+                                    minMilliseconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeMilliseconds;
                                 }
                                 // Check if we're in the ignore within period.
-                                if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < startMilliseconds))
+                                if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
                                 {
                                     read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
                                 }
@@ -1129,13 +1135,15 @@ namespace EventDirector.Timing
                                 }
                                 // Minimum time to create a result.
                                 long minSeconds = startSeconds;
+                                int minMilliseconds = startMilliseconds;
                                 if (chipLastReadDictionary.ContainsKey((chip, read.LocationID)))
                                 {
                                     occurrence = chipLastReadDictionary[(chip, read.LocationID)].Occurrence + 1;
                                     minSeconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeSeconds + occursWithin;
+                                    minMilliseconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeMilliseconds;
                                 }
                                 // Check if we're in the ignore within period.
-                                if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < startMilliseconds))
+                                if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
                                 {
                                     read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
                                 }
