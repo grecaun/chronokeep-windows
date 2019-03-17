@@ -1321,7 +1321,7 @@ namespace EventDirector.Timing
             {
                 if (x1.Occurrence == x2.Occurrence)
                 {
-                    return x1.Time.CompareTo(x2.Time);
+                    return x1.SystemTime.CompareTo(x2.SystemTime);
                 }
                 return x2.Occurrence.CompareTo(x1.Occurrence);
             });
