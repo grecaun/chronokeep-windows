@@ -3,6 +3,7 @@ using EventDirector.UI.MainPages;
 using EventDirector.UI.Participants;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Data;
 
 namespace EventDirector.UI.Timing
 {
@@ -23,6 +24,11 @@ namespace EventDirector.UI.Timing
             this.parent = parent;
             this.database = database;
             theEvent = database.GetCurrentEvent();
+            if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+            {
+                ChipTimeHeader.Header = "Lap Time";
+                ChipTimeHeader.DisplayMemberBinding = new Binding("LapTime");
+            }
             TimeResult.SetupStaticVariables(database);
         }
 

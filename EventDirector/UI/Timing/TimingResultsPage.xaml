@@ -16,7 +16,7 @@
                     <GridViewColumn Header="Occ" Width="25" DisplayMemberBinding="{Binding Occurrence}"/>
                     <GridViewColumn Header="System Time" Width="130" DisplayMemberBinding="{Binding SysTime}" />
                     <GridViewColumn Header="Time" Width="90" DisplayMemberBinding="{Binding Time}" />
-                    <GridViewColumn Header="ChipTime" Width="90" DisplayMemberBinding="{Binding ChipTime}" />
+                    <GridViewColumn Header="ChipTime" Width="90" DisplayMemberBinding="{Binding ChipTime}" x:Name="ChipTimeHeader" />
                     <GridViewColumn Header="Name" Width="130" DisplayMemberBinding="{Binding ParticipantName}" />
                     <GridViewColumn Header="Pl" Width="25" DisplayMemberBinding="{Binding PlaceStr}"/>
                     <GridViewColumn Header="G" Width="25" DisplayMemberBinding="{Binding Gender}" />

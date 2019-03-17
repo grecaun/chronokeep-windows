@@ -264,6 +264,7 @@ namespace EventDirector.Timing
                         // Else RACETYPE is TIME
                         else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                         {
+                            TimeResult.SetupRaceResults(database);
                             ProcessPlacementsTime(theEvent);
                             touched = true;
                         }

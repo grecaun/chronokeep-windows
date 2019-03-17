@@ -21,6 +21,7 @@ namespace EventDirector
 
         public static Dictionary<int, TimingLocation> locations = null;
         public static Dictionary<int, Segment> segments = null;
+        public static Dictionary<(string, int), TimeResult> RaceResults = null;
 
         public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
             string time, int occurrence, string first, string last, string division, int bib,
@@ -59,6 +60,9 @@ namespace EventDirector
             this.readId = readId;
             this.systemTime = RFIDUltraInterface.EpochToDate(systemTimeSec).AddMilliseconds(systemTimeMill);
             this.chipTime = chipTime;
+            string[] chipParts = chipTime.Split(':');
+            this.chipSeconds = (Convert.ToInt32(chipParts[0]) * 3600) + (Convert.ToInt32(chipParts[1]) * 60) + Convert.ToInt32(chipParts[2].Substring(0, 2));
+            this.chipMilliseconds = Convert.ToInt32(chipParts[2].Substring(3));
             this.place = place;
             this.agePlace = agePlace;
             this.genderPlace = genderPlace;
@@ -128,6 +132,24 @@ namespace EventDirector
             }
         }
 
+        public static void SetupRaceResults(IDBInterface database)
+        {
+            RaceResults = new Dictionary<(string, int), TimeResult>();
+            Event theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                return;
+            }
+            foreach (TimeResult startTime in database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_START))
+            {
+                RaceResults[(startTime.Identifier, 0)] = startTime;
+            }
+            foreach (TimeResult lapTime in database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH))
+            {
+                RaceResults[(lapTime.Identifier, lapTime.Occurrence)] = lapTime;
+            }
+        }
+
         public int EventSpecificId { get => eventspecificId; set => eventspecificId = value; }
         public int LocationId { get => locationId; set => locationId = value; }
         public int EventIdentifier { get => eventId; set => eventId = value; }
@@ -168,6 +190,28 @@ namespace EventDirector
         public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
         public int Status { get => status; set => status = value; }
         public int Early { get => early; set => early = value; }
+
+        public string LapTime
+        {
+            get
+            {
+                long sec = 0;
+                int mill = 0;
+                if (RaceResults.ContainsKey((this.Identifier, this.Occurrence - 1)))
+                {
+                    sec = RaceResults[(this.Identifier, this.Occurrence - 1)].chipSeconds;
+                    mill = RaceResults[(this.Identifier, this.Occurrence - 1)].chipMilliseconds;
+                }
+                sec = chipSeconds - sec;
+                mill = chipMilliseconds - mill;
+                if (mill < 0)
+                {
+                    sec--;
+                    mill += 1000;
+                }
+                return String.Format("{0}:{1:D2}:{2:D2}.{3:D3}", sec / 3600, (sec % 3600) / 60, sec % 60, mill);
+            }
+        }
 
         public static int CompareByGunTime(TimeResult one, TimeResult two)
         {
