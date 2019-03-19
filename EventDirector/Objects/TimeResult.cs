@@ -14,7 +14,7 @@ namespace EventDirector
             ageGroupId, chipMilliseconds, status, early;
         private long chipSeconds;
         private string time, locationName, segmentName, participantName,
-            divisionName, unknownId, chipTime, gender, ageGroupName;
+            divisionName, unknownId, chipTime, gender, ageGroupName, splitTime = "";
         DateTime systemTime;
 
         public static readonly Regex timeRegex = new Regex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})");
@@ -23,11 +23,12 @@ namespace EventDirector
         public static Dictionary<int, Segment> segments = null;
         public static Dictionary<(string, int), TimeResult> RaceResults = null;
 
+        // database constructor
         public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
             string time, int occurrence, string first, string last, string division, int bib,
             int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
             int agePlace, int genderPlace, string gender, int ageGroupId, string ageStart, string ageEnd,
-            int status, int early)
+            int status, int early, string split)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -81,6 +82,7 @@ namespace EventDirector
             }
             this.status = status;
             this.early = early;
+            this.splitTime = split;
         }
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
@@ -102,6 +104,7 @@ namespace EventDirector
             agePlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             genderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            this.splitTime = "";
         }
 
         public static void SetupStaticVariables(IDBInterface database)
@@ -134,20 +137,6 @@ namespace EventDirector
 
         public static void SetupRaceResults(IDBInterface database)
         {
-            RaceResults = new Dictionary<(string, int), TimeResult>();
-            Event theEvent = database.GetCurrentEvent();
-            if (theEvent == null || theEvent.Identifier < 0)
-            {
-                return;
-            }
-            foreach (TimeResult startTime in database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_START))
-            {
-                RaceResults[(startTime.Identifier, 0)] = startTime;
-            }
-            foreach (TimeResult lapTime in database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH))
-            {
-                RaceResults[(lapTime.Identifier, lapTime.Occurrence)] = lapTime;
-            }
         }
 
         public int EventSpecificId { get => eventspecificId; set => eventspecificId = value; }
@@ -190,28 +179,9 @@ namespace EventDirector
         public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
         public int Status { get => status; set => status = value; }
         public int Early { get => early; set => early = value; }
-
-        public string LapTime
-        {
-            get
-            {
-                long sec = 0;
-                int mill = 0;
-                if (RaceResults.ContainsKey((this.Identifier, this.Occurrence - 1)))
-                {
-                    sec = RaceResults[(this.Identifier, this.Occurrence - 1)].chipSeconds;
-                    mill = RaceResults[(this.Identifier, this.Occurrence - 1)].chipMilliseconds;
-                }
-                sec = chipSeconds - sec;
-                mill = chipMilliseconds - mill;
-                if (mill < 0)
-                {
-                    sec--;
-                    mill += 1000;
-                }
-                return String.Format("{0}:{1:D2}:{2:D2}.{3:D3}", sec / 3600, (sec % 3600) / 60, sec % 60, mill);
-            }
-        }
+        public string LapTime { get => splitTime; set => splitTime = value; }
+        public long ChipSeconds { get => chipSeconds; set => chipSeconds = value; }
+        public int ChipMilliseconds { get => chipMilliseconds; set => chipMilliseconds = value; }
 
         public static int CompareByGunTime(TimeResult one, TimeResult two)
         {

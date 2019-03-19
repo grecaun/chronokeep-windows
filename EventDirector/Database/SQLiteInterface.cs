@@ -13,7 +13,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 34;
+        private readonly int version = 35;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -227,6 +227,7 @@ namespace EventDirector
                     "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
                     "timeresult_occurance INTEGER NOT NULL," +
                     "timeresult_time TEXT NOT NULL," +
+                    "timeresult_splittime TEXT NOT NULL DEFAULT ''," +
                     "timeresult_chiptime TEXT NOT NULL," +
                     "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
                     "timeresult_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
@@ -1108,6 +1109,14 @@ namespace EventDirector
                         }
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE chipreads_old; UPDATE settings SET version=34 WHERE version=33;";
+                        command.ExecuteNonQuery();
+                        goto case 34;
+                    case 34:
+                        Log.D("Upgrading from version 34.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE time_results ADD " +
+                            "timeresult_splittime TEXT NOT NULL DEFAULT '';" +
+                            "UPDATE settings SET version=35 WHERE version=34;";
                         command.ExecuteNonQuery();
                         break;
                 }
@@ -2848,9 +2857,9 @@ namespace EventDirector
             command.CommandText = "INSERT INTO time_results (event_id, eventspecific_id, location_id, segment_id, " +
                 "timeresult_occurance, timeresult_time, timeresult_unknown_id, read_id, timeresult_chiptime," +
                 "timeresult_place, timeresult_age_place, timeresult_gender_place," +
-                "timeresult_status)" +
+                "timeresult_status, timeresult_splittime)" +
                 " VALUES (@event,@specific,@location,@segment,@occ,@time,@unknown,@read,@chip,@place,@agplace," +
-                "@gendplace,@status)";
+                "@gendplace,@status,@split)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tr.EventIdentifier),
                 new SQLiteParameter("@specific", tr.EventSpecificId),
@@ -2864,7 +2873,8 @@ namespace EventDirector
                 new SQLiteParameter("@place", tr.Place),
                 new SQLiteParameter("@agplace", tr.AgePlace),
                 new SQLiteParameter("@gendplace", tr.GenderPlace),
-                new SQLiteParameter("@status", tr.Status) });
+                new SQLiteParameter("@status", tr.Status),
+                new SQLiteParameter("@split", tr.LapTime) });
             command.ExecuteNonQuery();
         }
 
@@ -2959,7 +2969,8 @@ namespace EventDirector
                     reader["start_age"] == DBNull.Value ? "0" : reader["start_age"].ToString(),
                     reader["end_age"] == DBNull.Value ? "110" : reader["end_age"].ToString(),
                     Convert.ToInt32(reader["timeresult_status"]),
-                    reader["eventspecific_earlystart"] == DBNull.Value ? 0 : Convert.ToInt32(reader["eventspecific_earlystart"])
+                    reader["eventspecific_earlystart"] == DBNull.Value ? 0 : Convert.ToInt32(reader["eventspecific_earlystart"]),
+                    reader["timeresult_splittime"].ToString()
                     ));
             }
             reader.Close();

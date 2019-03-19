@@ -264,7 +264,7 @@ namespace EventDirector.Timing
                         // Else RACETYPE is TIME
                         else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                         {
-                            TimeResult.SetupRaceResults(database);
+                            ProcessLapTimes(theEvent);
                             ProcessPlacementsTime(theEvent);
                             touched = true;
                         }
@@ -282,6 +282,44 @@ namespace EventDirector.Timing
                     }
                 }
             } while (true);
+        }
+
+        private void ProcessLapTimes(Event theEvent)
+        {
+            Dictionary<(string, int), TimeResult> RaceResults = new Dictionary<(string, int), TimeResult>();
+            foreach (TimeResult startTime in database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_START))
+            {
+                RaceResults[(startTime.Identifier, 0)] = startTime;
+            }
+            List<TimeResult> laps = database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH);
+            laps.Sort((x1, x2) =>
+            {
+                if (x1.Identifier.Equals(x2.Identifier))
+                {
+                    return x1.Occurrence.CompareTo(x2.Occurrence);
+                }
+                return x1.Identifier.CompareTo(x2.Identifier);
+            });
+            foreach (TimeResult currentLap in laps)
+            {
+                RaceResults[(currentLap.Identifier, currentLap.Occurrence)] = currentLap;
+                long sec = 0;
+                int mill = 0;
+                if (RaceResults.ContainsKey((currentLap.Identifier, currentLap.Occurrence - 1)))
+                {
+                    sec = RaceResults[(currentLap.Identifier, currentLap.Occurrence - 1)].ChipSeconds;
+                    mill = RaceResults[(currentLap.Identifier, currentLap.Occurrence - 1)].ChipMilliseconds;
+                }
+                sec = currentLap.ChipSeconds - sec;
+                mill = currentLap.ChipMilliseconds - mill;
+                if (mill < 0)
+                {
+                    sec--;
+                    mill += 1000;
+                }
+                currentLap.LapTime = String.Format("{0}:{1:D2}:{2:D2}.{3:D3}", sec / 3600, (sec % 3600) / 60, sec % 60, mill);
+            }
+            database.AddTimingResults(laps);
         }
 
         private void ProcessDistanceBasedRace(Event theEvent)
