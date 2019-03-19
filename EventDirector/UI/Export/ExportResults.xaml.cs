@@ -30,9 +30,17 @@ namespace EventDirector.UI.Export
         List<String> commonHeaders = new List<String>
         {
             "Bib", "Distance", "Checked In", "Early Start", "First", "Last", "Birthday",
-            "Age", "Gender", "Start", "Gun Finish", "Chip Finish", "Street", "Apartment",
+            "Age", "Gender", "Start", "Street", "Apartment",
             "City", "State", "Zip", "Country", "Mobile", "Email", "Parent", "Comments",
             "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone", "Division"
+        };
+        List<String> distanceHeaders = new List<string>
+        {
+            "Gun Finish", "Chip Finish"
+        };
+        List<String> timeHeaders = new List<string>
+        {
+            "Laps Completed", "Ellapsed Time (Gun)", "Ellapsed Time (Chip)"
         };
 
         public ExportResults(IMainWindow window, IDBInterface database)
@@ -46,22 +54,45 @@ namespace EventDirector.UI.Export
                 this.Close();
                 return;
             }
-            // Get the maximum number of segments.
-            // if greater than 0, add (SEGMENT 1...X GUN TIME, SEGMENT 1...X
-            // CHIP TIME and SEGMENT 1...X NAME) to the list of common headers
-            maxNumSegments = database.GetMaxSegments(theEvent.Identifier);
-            if (maxNumSegments > 0)
+            // Check if we're distance based or time based
+            if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
             {
-                // Go backwards so we don't have to recalculate where the insert is each loop
-                for (int i=maxNumSegments; i>0; i--)
+                commonHeaders.InsertRange(10, distanceHeaders);
+                // Get the maximum number of segments.
+                // if greater than 0, add (SEGMENT 1...X GUN TIME, SEGMENT 1...X
+                // CHIP TIME and SEGMENT 1...X NAME) to the list of common headers
+                maxNumSegments = database.GetMaxSegments(theEvent.Identifier);
+                if (maxNumSegments > 0)
                 {
-                    commonHeaders.Insert(10, String.Format("Segment {0} Chip Time", i));
-                    commonHeaders.Insert(10, String.Format("Segment {0} Gun Time", i));
+                    // Go backwards so we don't have to recalculate where the insert is each lap
+                    for (int i = maxNumSegments; i > 0; i--)
+                    {
+                        commonHeaders.Insert(10, String.Format("Segment {0} Chip Time", i));
+                        commonHeaders.Insert(10, String.Format("Segment {0} Gun Time", i));
+                    }
+                    // then do it again so we can add to the end in the right order
+                    for (int i = 1; i <= maxNumSegments; i++)
+                    {
+                        commonHeaders.Add(String.Format("Segment {0} Name", i));
+                    }
                 }
-                // then do it again so we can add to the end in the right order
-                for (int i=1; i<=maxNumSegments; i++)
+            }
+            else // Time based
+            {
+                commonHeaders.InsertRange(10, timeHeaders);
+                // Remove "Chip Finish" and "Gun Finish" from the headers list.
+                commonHeaders.Remove("Chip Finish");
+                commonHeaders.Remove("");
+                // Get the maximum number of laps a person completed.
+                // if greater than 0, add LAP 1...X to the list of common headers
+                maxNumSegments = 0;
+                foreach (TimeResult result in database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH))
                 {
-                    commonHeaders.Add(String.Format("Segment {0} Name", i));
+                    maxNumSegments = result.Occurrence > maxNumSegments ? result.Occurrence : maxNumSegments;
+                }
+                for (int i = maxNumSegments; i > 0; i--)
+                {
+                    commonHeaders.Insert(10, String.Format("Lap {0}", i));
                 }
             }
             foreach (String name in commonHeaders)
@@ -96,6 +127,9 @@ namespace EventDirector.UI.Export
                 results.RemoveAll(x => x.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON);
                 results.Sort(TimeResult.CompareBySystemTime);
                 Dictionary<int, List<TimeResult>> resultDictionary = new Dictionary<int, List<TimeResult>>();
+                // (EventSpecificID, Occurence) - for Time Based Race exporting.
+                Dictionary<(int, int), TimeResult> occurrenceResultDictionary = new Dictionary<(int, int), TimeResult>();
+                int maxLaps = 0;
                 foreach (TimeResult result in results)
                 {
                     if (!resultDictionary.ContainsKey(result.EventSpecificId))
@@ -103,6 +137,11 @@ namespace EventDirector.UI.Export
                         resultDictionary[result.EventSpecificId] = new List<TimeResult>();
                     }
                     resultDictionary[result.EventSpecificId].Add(result);
+                    if (result.SegmentId == Constants.Timing.SEGMENT_FINISH)
+                    {
+                        occurrenceResultDictionary[(result.EventSpecificId, result.Occurrence)] = result;
+                        maxLaps = result.Occurrence > maxLaps ? result.Occurrence : maxLaps;
+                    }
                 }
                 string[] headers = new string[headersToOutput.Count];
                 foreach (string header in headersToOutput)
@@ -210,46 +249,84 @@ namespace EventDirector.UI.Export
                     {
                         line[headerIndex["Division"]] = participant.Division + (participant.IsEarlyStart ? "Early" : "");
                     }
-                    if (resultDictionary.ContainsKey(participant.EventSpecific.Identifier))
+                    if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                     {
-                        int segmentNum = 1;
-                        foreach (TimeResult result in resultDictionary[participant.EventSpecific.Identifier])
+                        if (resultDictionary.ContainsKey(participant.EventSpecific.Identifier))
                         {
-                            if (Constants.Timing.SEGMENT_START == result.SegmentId)
+                            int segmentNum = 1;
+                            foreach (TimeResult result in resultDictionary[participant.EventSpecific.Identifier])
                             {
-                                if (headerIndex.ContainsKey("Start"))
+                                if (Constants.Timing.SEGMENT_START == result.SegmentId)
                                 {
-                                    line[headerIndex["Start"]] = result.Time;
+                                    if (headerIndex.ContainsKey("Start"))
+                                    {
+                                        line[headerIndex["Start"]] = result.Time;
+                                    }
+                                }
+                                else if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
+                                {
+                                    if (headerIndex.ContainsKey("Chip Finish"))
+                                    {
+                                        line[headerIndex["Chip Finish"]] = result.ChipTime;
+                                    }
+                                    if (headerIndex.ContainsKey("Gun Finish"))
+                                    {
+                                        line[headerIndex["Gun Finish"]] = result.Time;
+                                    }
+                                }
+                                else if (Constants.Timing.SEGMENT_NONE != result.SegmentId)
+                                {
+                                    string key = String.Format("Segment {0} Chip Time", segmentNum);
+                                    if (headerIndex.ContainsKey(key))
+                                    {
+                                        line[headerIndex[key]] = result.ChipTime;
+                                    }
+                                    key = String.Format("Segment {0} Gun Time", segmentNum);
+                                    if (headerIndex.ContainsKey(key))
+                                    {
+                                        line[headerIndex[key]] = result.Time;
+                                    }
+                                    key = String.Format("Segment {0} Name", segmentNum++);
+                                    if (headerIndex.ContainsKey(key))
+                                    {
+                                        line[headerIndex[key]] = result.SegmentName;
+                                    }
                                 }
                             }
-                            else if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
+                        }
+                    }
+                    else // Time Based
+                    {
+                        int finalLap = -1;
+                        if (headerIndex.ContainsKey("Start") && occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Identifier, 0)))
+                        {
+                            line[headerIndex["Start"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, 0)].Time;
+                        }
+                        for (int i=1; i<=maxLaps; i++)
+                        {
+                            string key = String.Format("Lap {0}", i);
+                            if (occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Identifier, i)))
                             {
-                                if (headerIndex.ContainsKey("Chip Finish"))
+                                finalLap = i;
+                                if (headerIndex.ContainsKey(key))
                                 {
-                                    line[headerIndex["Chip Finish"]] = result.ChipTime;
-                                }
-                                if (headerIndex.ContainsKey("Gun Finish"))
-                                {
-                                    line[headerIndex["Gun Finish"]] = result.Time;
+                                    line[headerIndex[key]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, i)].LapTime;
                                 }
                             }
-                            else if (Constants.Timing.SEGMENT_NONE != result.SegmentId)
+                        }
+                        if (occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Identifier, finalLap)))
+                        {
+                            if (headerIndex.ContainsKey("Laps Completed"))
                             {
-                                string key = String.Format("Segment {0} Chip Time", segmentNum);
-                                if (headerIndex.ContainsKey(key))
-                                {
-                                    line[headerIndex[key]] = result.ChipTime;
-                                }
-                                key = String.Format("Segment {0} Gun Time", segmentNum);
-                                if (headerIndex.ContainsKey(key))
-                                {
-                                    line[headerIndex[key]] = result.Time;
-                                }
-                                key = String.Format("Segment {0} Name", segmentNum++);
-                                if (headerIndex.ContainsKey(key))
-                                {
-                                    line[headerIndex[key]] = result.SegmentName;
-                                }
+                                line[headerIndex["Laps Completed"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].Occurrence;
+                            }
+                            if (headerIndex.ContainsKey("Ellapsed Time (Gun)"))
+                            {
+                                line[headerIndex["Ellapsed Time (Gun)"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].Time;
+                            }
+                            if (headerIndex.ContainsKey("Ellapsed Time (Chip)"))
+                            {
+                                line[headerIndex["Ellapsed Time (Chip)"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].ChipTime;
                             }
                         }
                     }
