@@ -75,7 +75,8 @@ namespace EventDirector
             {
                 Event = oneEvent,
                 Divisions = database.GetDivisions(oneEvent.Identifier),
-                TimingPoints = database.GetTimingLocations(oneEvent.Identifier),
+                TimingLocations = database.GetTimingLocations(oneEvent.Identifier),
+                Segments = database.GetSegments(oneEvent.Identifier),
                 EventOptions = eventOptions,
                 NextYear = database.GetEvent(oneEvent.NextYear),
                 NextYearDivisions = database.GetDivisions(oneEvent.NextYear)
@@ -197,7 +198,8 @@ namespace EventDirector
             {
                 Event = thisYear,
                 Divisions = database.GetDivisions(eventId),
-                TimingPoints = database.GetTimingLocations(eventId),
+                TimingLocations = database.GetTimingLocations(eventId),
+                Segments = database.GetSegments(eventId),
                 EventOptions = database.GetEventOptions(eventId),
                 NextYear = database.GetEvent(thisYear.NextYear),
                 NextYearDivisions = database.GetDivisions(thisYear.NextYear)
@@ -212,8 +214,11 @@ namespace EventDirector
             {
                 Event = e,
                 Divisions = database.GetDivisions(e.Identifier),
-                TimingPoints = database.GetTimingLocations(e.Identifier),
-                EventOptions = database.GetEventOptions(e.Identifier)
+                TimingLocations = database.GetTimingLocations(e.Identifier),
+                Segments = database.GetSegments(e.Identifier),
+                EventOptions = database.GetEventOptions(e.Identifier),
+                NextYear = database.GetEvent(e.NextYear),
+                NextYearDivisions = database.GetDivisions(e.NextYear)
             };
             return JsonConvert.SerializeObject(update);
         }
@@ -232,12 +237,16 @@ namespace EventDirector
         // JsonServerResultAdd
         public String GetJsonServerResultAdd(int id, TimeResult restult)
         {
-            JsonServerResultAdd update = new JsonServerResultAdd()
+            return JsonConvert.SerializeObject(new JsonServerResultAdd()
             {
                 EventId = id,
                 Result = restult
-            };
-            return JsonConvert.SerializeObject(update);
+            });
+        }
+
+        public String GetJsonServerConnected()
+        {
+            return JsonConvert.SerializeObject(new JsonServerConnected());
         }
     }
 }

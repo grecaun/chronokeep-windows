@@ -47,6 +47,7 @@ namespace EventDirector
                         Log.D("TCP Server - New incoming connection.");
                         Socket newSock = sock.Accept();
                         clients.Add(newSock);
+                        SendJson(jsonHandler.GetJsonServerConnected(), newSock);
                     }
                     else
                     {

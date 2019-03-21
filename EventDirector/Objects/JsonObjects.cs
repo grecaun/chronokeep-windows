@@ -126,7 +126,8 @@ namespace EventDirector
         public String Command = "server_event";
         public Event Event;
         public List<Division> Divisions { get; set; }
-        public List<TimingLocation> TimingPoints { get; set; }
+        public List<TimingLocation> TimingLocations { get; set; }
+        public List<Segment> Segments { get; set; }
         public List<JsonOption> EventOptions { get; set; }
         public Event NextYear { get; set; }
         public List<Division> NextYearDivisions { get; set; }
@@ -244,7 +245,8 @@ namespace EventDirector
         public String Command = "server_event_update";
         public Event Event { get; set; }
         public List<Division> Divisions { get; set; }
-        public List<TimingLocation> TimingPoints { get; set; }
+        public List<TimingLocation> TimingLocations { get; set; }
+        public List<Segment> Segments { get; set; }
         public List<JsonOption> EventOptions { get; set; }
         public Event NextYear { get; set; }
         public List<Division> NextYearDivisions { get; set; }
@@ -262,5 +264,10 @@ namespace EventDirector
         public String Command = "server_result_add";
         public int EventId { get; set; }
         public TimeResult Result { get; set; }
+    }
+
+    public class JsonServerConnected
+    {
+        public string Command = "server_connected";
     }
 }
