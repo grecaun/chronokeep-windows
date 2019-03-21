@@ -25,6 +25,9 @@ namespace EventDirector.UI
         bool closing = false;
         bool excelEnabled = false;
 
+        bool NetworkRunning = false;
+        Mutex NetworkRunningBoolMutex = new Mutex();
+
         // Network objects
         Thread tcpServerThread = null;
         TCPServer tcpServer = null;
@@ -273,7 +276,17 @@ namespace EventDirector.UI
             }
             catch
             {
+                if (NetworkRunningBoolMutex.WaitOne(3000))
+                {
+                    NetworkRunning = false;
+                    NetworkRunningBoolMutex.ReleaseMutex();
+                }
                 return false;
+            }
+            if (NetworkRunningBoolMutex.WaitOne(3000))
+            {
+                NetworkRunning = true;
+                NetworkRunningBoolMutex.ReleaseMutex();
             }
             return true;
         }
@@ -293,9 +306,58 @@ namespace EventDirector.UI
             }
             catch
             {
+                if (NetworkRunningBoolMutex.WaitOne(3000))
+                {
+                    NetworkRunning = false;
+                    NetworkRunningBoolMutex.ReleaseMutex();
+                }
                 return false;
             }
+            if (NetworkRunningBoolMutex.WaitOne(3000))
+            {
+                NetworkRunning = false;
+                NetworkRunningBoolMutex.ReleaseMutex();
+            }
             return true;
+        }
+
+        public bool NetworkServicesRunning()
+        {
+            bool output = false;
+            if (NetworkRunningBoolMutex.WaitOne(3000))
+            {
+                output = NetworkRunning;
+                NetworkRunningBoolMutex.ReleaseMutex();
+            }
+            return output;
+        }
+
+        public void NetworkServicesStopped()
+        {
+            try
+            {
+                Log.D("Stopping TCP server thread.");
+                if (tcpServer != null) tcpServer.Stop();
+                if (tcpServerThread != null) tcpServerThread.Abort();
+                if (tcpServerThread != null) tcpServerThread.Join();
+                Log.D("Stopping zero configuration thread.");
+                if (zeroConf != null) zeroConf.Stop();
+                if (zeroConfThread != null) zeroConfThread.Abort();
+                if (zeroConfThread != null) zeroConfThread.Join();
+            }
+            catch
+            {
+                if (NetworkRunningBoolMutex.WaitOne(3000))
+                {
+                    NetworkRunning = false;
+                    NetworkRunningBoolMutex.ReleaseMutex();
+                }
+            }
+            if (NetworkRunningBoolMutex.WaitOne(3000))
+            {
+                NetworkRunning = false;
+                NetworkRunningBoolMutex.ReleaseMutex();
+            }
         }
 
         public bool StopTimingController()

@@ -135,6 +135,14 @@ namespace EventDirector.UI.MainPages
             }
             editButton.Content = Constants.DashboardLabels.EDIT;
             cancelButton.Visibility = Visibility.Collapsed;
+            if (mWindow.NetworkServicesRunning())
+            {
+                SetNetworkWorking();
+            }
+            else
+            {
+                SetNetworkStopped();
+            }
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)

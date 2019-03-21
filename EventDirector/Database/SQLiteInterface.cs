@@ -1131,6 +1131,7 @@ namespace EventDirector
 
         public void AddDivision(Division div)
         {
+            Log.D("Attempting to grab Mutex: ID 1");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 1");
@@ -1168,6 +1169,7 @@ namespace EventDirector
 
         public void RemoveDivision(int identifier)
         {
+            Log.D("Attempting to grab Mutex: ID 2");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 2");
@@ -1192,6 +1194,7 @@ namespace EventDirector
 
         public void UpdateDivision(Division div)
         {
+            Log.D("Attempting to grab Mutex: ID 3");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 3");
@@ -1229,6 +1232,7 @@ namespace EventDirector
 
         public List<Division> GetDivisions()
         {
+            Log.D("Attempting to grab Mutex: ID 4");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 4");
@@ -1267,6 +1271,7 @@ namespace EventDirector
 
         public List<Division> GetDivisions(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 5");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 5");
@@ -1277,6 +1282,7 @@ namespace EventDirector
             connection.Open();
             if (eventId < 0)
             {
+                mutex.ReleaseMutex();
                 return output;
             }
             String commandTxt;
@@ -1318,6 +1324,7 @@ namespace EventDirector
 
         public int GetDivisionID(Division div)
         {
+            Log.D("Attempting to grab Mutex: ID 6");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 6");
@@ -1346,6 +1353,7 @@ namespace EventDirector
 
         public Division GetDivision(int divId)
         {
+            Log.D("Attempting to grab Mutex: ID 7");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 7");
@@ -1388,6 +1396,7 @@ namespace EventDirector
 
         public void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds)
         {
+            Log.D("Attempting to grab Mutex: ID 8");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 8");
@@ -1421,6 +1430,7 @@ namespace EventDirector
 
         public void AddEvent(Event anEvent)
         {
+            Log.D("Attempting to grab Mutex: ID 9");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 9");
@@ -1467,6 +1477,7 @@ namespace EventDirector
 
         public void RemoveEvent(int identifier)
         {
+            Log.D("Attempting to grab Mutex: ID 10");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 10");
@@ -1499,6 +1510,7 @@ namespace EventDirector
 
         public void UpdateEvent(Event anEvent)
         {
+            Log.D("Attempting to grab Mutex: ID 11");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 11");
@@ -1539,6 +1551,7 @@ namespace EventDirector
 
         public List<Event> GetEvents()
         {
+            Log.D("Attempting to grab Mutex: ID 12");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 12");
@@ -1581,6 +1594,7 @@ namespace EventDirector
 
         public int GetEventID(Event anEvent)
         {
+            Log.D("Attempting to grab Mutex: ID 13");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 13");
@@ -1622,6 +1636,7 @@ namespace EventDirector
             {
                 return null;
             }
+            Log.D("Attempting to grab Mutex: ID 14");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 14");
@@ -1636,18 +1651,18 @@ namespace EventDirector
             Event output = null;
             if (reader.Read())
             {
-                output = new Event(Convert.ToInt32(reader["event_id"]), 
+                output = new Event(Convert.ToInt32(reader["event_id"]),
                     reader["event_name"].ToString(), reader["event_date"].ToString(),
-                    Convert.ToInt32(reader["event_next_year_event_id"]), 
+                    Convert.ToInt32(reader["event_next_year_event_id"]),
                     Convert.ToInt32(reader["event_shirt_optional"]),
                     Convert.ToInt32(reader["event_shirt_price"]),
                     Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]),
                     Convert.ToInt32(reader["event_division_specific_segments"]),
-                    Convert.ToInt32(reader["event_rank_by_gun"]), 
+                    Convert.ToInt32(reader["event_rank_by_gun"]),
                     reader["event_yearcode"].ToString(),
                     Convert.ToInt32(reader["event_allow_early_start"]),
-                    Convert.ToInt32(reader["event_early_start_difference"]), 
+                    Convert.ToInt32(reader["event_early_start_difference"]),
                     Convert.ToInt32(reader["event_finish_max_occurances"]),
                     Convert.ToInt32(reader["event_finish_ignore_within"]),
                     Convert.ToInt32(reader["event_start_window"]),
@@ -1665,6 +1680,7 @@ namespace EventDirector
 
         public List<JsonOption> GetEventOptions(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 15");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 15");
@@ -1723,6 +1739,7 @@ namespace EventDirector
 
         public void SetEventOptions(int eventId, List<JsonOption> options)
         {
+            Log.D("Attempting to grab Mutex: ID 16");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 16");
@@ -1772,6 +1789,7 @@ namespace EventDirector
 
         public void SetStartWindow(Event anEvent)
         {
+            Log.D("Attempting to grab Mutex: ID 17");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 17");
@@ -1793,6 +1811,7 @@ namespace EventDirector
 
         public void SetFinishOptions(Event anEvent)
         {
+            Log.D("Attempting to grab Mutex: ID 18");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 18");
@@ -1819,6 +1838,7 @@ namespace EventDirector
 
         public void AddParticipant(Participant person)
         {
+            Log.D("Attempting to grab Mutex: ID 19");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 19");
@@ -1837,6 +1857,7 @@ namespace EventDirector
 
         public void AddParticipants(List<Participant> people)
         {
+            Log.D("Attempting to grab Mutex: ID 20");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 20");
@@ -1924,6 +1945,7 @@ namespace EventDirector
 
         public void RemoveParticipant(int identifier)
         {
+            Log.D("Attempting to grab Mutex: ID 21");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 21");
@@ -1943,6 +1965,7 @@ namespace EventDirector
 
         public void RemoveParticipantEntries(List<Participant> participants)
         {
+            Log.D("Attempting to grab Mutex: ID 22");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 22");
@@ -1974,6 +1997,7 @@ namespace EventDirector
 
         public void RemoveEntry(int eventId, int participantId)
         {
+            Log.D("Attempting to grab Mutex: ID 23");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 23");
@@ -1993,6 +2017,7 @@ namespace EventDirector
 
         public void RemoveEntries(List<Participant> people)
         {
+            Log.D("Attempting to grab Mutex: ID 24");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 24");
@@ -2061,6 +2086,7 @@ namespace EventDirector
 
         public void UpdateParticipant(Participant person)
         {
+            Log.D("Attempting to grab Mutex: ID 25");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 25");
@@ -2080,6 +2106,7 @@ namespace EventDirector
 
         public void UpdateParticipants(List<Participant> participants)
         {
+            Log.D("Attempting to grab Mutex: ID 26");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 26");
@@ -2102,6 +2129,7 @@ namespace EventDirector
 
         public void CheckInParticipant(int eventId, int identifier, int checkedIn)
         {
+            Log.D("Attempting to grab Mutex: ID 27");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 27");
@@ -2129,6 +2157,7 @@ namespace EventDirector
 
         public void SetEarlyStartParticipant(int eventId, int identifier, int earlystart)
         {
+            Log.D("Attempting to grab Mutex: ID 28");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 28");
@@ -2183,6 +2212,7 @@ namespace EventDirector
 
         public List<Participant> GetParticipantsWorker(string query, int eventId, int divisionId)
         {
+            Log.D("Attempting to grab Mutex: ID 29");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 29");
@@ -2285,6 +2315,7 @@ namespace EventDirector
 
         public Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId)
         {
+            Log.D("Attempting to grab Mutex: ID 30");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 30");
@@ -2308,6 +2339,7 @@ namespace EventDirector
 
         public Participant GetParticipantBib(int eventIdentifier, int bib)
         {
+            Log.D("Attempting to grab Mutex: ID 31");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 31");
@@ -2331,6 +2363,7 @@ namespace EventDirector
 
         public Participant GetParticipant(int eventId, int identifier)
         {
+            Log.D("Attempting to grab Mutex: ID 32");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 32");
@@ -2354,6 +2387,7 @@ namespace EventDirector
 
         public Participant GetParticipant(int eventId, Participant unknown)
         {
+            Log.D("Attempting to grab Mutex: ID 33");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 33");
@@ -2402,6 +2436,7 @@ namespace EventDirector
 
         public int GetParticipantID(Participant person)
         {
+            Log.D("Attempting to grab Mutex: ID 34");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 34");
@@ -2441,6 +2476,7 @@ namespace EventDirector
 
         public void AddTimingLocation(TimingLocation tl)
         {
+            Log.D("Attempting to grab Mutex: ID 35");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 35");
@@ -2469,6 +2505,7 @@ namespace EventDirector
 
         public void RemoveTimingLocation(int identifier)
         {
+            Log.D("Attempting to grab Mutex: ID 36");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 36");
@@ -2488,6 +2525,7 @@ namespace EventDirector
 
         public void UpdateTimingLocation(TimingLocation tl)
         {
+            Log.D("Attempting to grab Mutex: ID 37");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 37");
@@ -2512,6 +2550,7 @@ namespace EventDirector
 
         public List<TimingLocation> GetTimingLocations(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 38");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 38");
@@ -2537,6 +2576,7 @@ namespace EventDirector
 
         public int GetTimingLocationID(TimingLocation tl)
         {
+            Log.D("Attempting to grab Mutex: ID 39");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 39");
@@ -2588,6 +2628,7 @@ namespace EventDirector
 
         public void AddSegment(Segment seg)
         {
+            Log.D("Attempting to grab Mutex: ID 40");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 40");
@@ -2606,6 +2647,7 @@ namespace EventDirector
 
         public void AddSegments(List<Segment> segments)
         {
+            Log.D("Attempting to grab Mutex: ID 41");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 41");
@@ -2637,6 +2679,7 @@ namespace EventDirector
 
         public void RemoveSegment(Segment seg)
         {
+            Log.D("Attempting to grab Mutex: ID 42");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 42");
@@ -2651,6 +2694,7 @@ namespace EventDirector
 
         public void RemoveSegment(int identifier)
         {
+            Log.D("Attempting to grab Mutex: ID 43");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 43");
@@ -2669,6 +2713,7 @@ namespace EventDirector
 
         public void RemoveSegments(List<Segment> segments)
         {
+            Log.D("Attempting to grab Mutex: ID 44");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 44");
@@ -2710,6 +2755,7 @@ namespace EventDirector
 
         public void UpdateSegment(Segment seg)
         {
+            Log.D("Attempting to grab Mutex: ID 45");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 45");
@@ -2728,6 +2774,7 @@ namespace EventDirector
 
         public void UpdateSegments(List<Segment> segments)
         {
+            Log.D("Attempting to grab Mutex: ID 46");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 46");
@@ -2749,6 +2796,7 @@ namespace EventDirector
 
         public int GetSegmentId(Segment seg)
         {
+            Log.D("Attempting to grab Mutex: ID 47");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 47");
@@ -2772,6 +2820,7 @@ namespace EventDirector
 
         public List<Segment> GetSegments(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 48");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 48");
@@ -2799,6 +2848,7 @@ namespace EventDirector
 
         public void ResetSegments(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 49");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 49");
@@ -2822,6 +2872,7 @@ namespace EventDirector
 
         public int GetMaxSegments(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 50");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 50");
@@ -2880,6 +2931,7 @@ namespace EventDirector
 
         public void AddTimingResult(TimeResult tr)
         {
+            Log.D("Attempting to grab Mutex: ID 51");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 51");
@@ -2898,6 +2950,7 @@ namespace EventDirector
             {
                 return;
             }
+            Log.D("Attempting to grab Mutex: ID 52");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 52");
@@ -2919,6 +2972,7 @@ namespace EventDirector
 
         public void RemoveTimingResult(TimeResult tr)
         {
+            Log.D("Attempting to grab Mutex: ID 53");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 53");
@@ -2979,6 +3033,7 @@ namespace EventDirector
 
         public List<TimeResult> GetTimingResults(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 54");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 54");
@@ -3005,6 +3060,7 @@ namespace EventDirector
 
         public List<TimeResult> GetStartTimes(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 55");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 55");
@@ -3035,6 +3091,7 @@ namespace EventDirector
 
         public List<TimeResult> GetSegmentTimes(int eventId, int segmentId)
         {
+            Log.D("Attempting to grab Mutex: ID 56");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 56");
@@ -3065,6 +3122,7 @@ namespace EventDirector
 
         public void UpdateTimingResult(TimeResult oldResult, String newTime)
         {
+            Log.D("Attempting to grab Mutex: ID 57");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 57");
@@ -3088,6 +3146,7 @@ namespace EventDirector
 
         public bool UnprocessedReadsExist(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 58");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 58");
@@ -3114,6 +3173,7 @@ namespace EventDirector
 
         public bool UnprocessedResultsExist(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 59");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 59");
@@ -3150,6 +3210,7 @@ namespace EventDirector
 
         public void ResetTimingResultsEvent(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 60");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 60");
@@ -3174,6 +3235,7 @@ namespace EventDirector
 
         public void ResetTimingResultsBib(int eventId, int bib)
         {
+            Log.D("Attempting to grab Mutex: ID 61");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 61");
@@ -3203,6 +3265,7 @@ namespace EventDirector
 
         public void ResetTimingResultsChip(int eventId, string chip)
         {
+            Log.D("Attempting to grab Mutex: ID 62");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 62");
@@ -3232,6 +3295,7 @@ namespace EventDirector
 
         public void ResetTimingResultsDivision(int eventId, int divisionId)
         {
+            Log.D("Attempting to grab Mutex: ID 63");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 63");
@@ -3263,6 +3327,7 @@ namespace EventDirector
 
         public void ResetTimingResultsPlacements(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 64");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 64");
@@ -3289,6 +3354,7 @@ namespace EventDirector
 
         public void AddChange(Participant newParticipant, Participant oldParticipant)
         {
+            Log.D("Attempting to grab Mutex: ID 65");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 65");
@@ -3438,6 +3504,7 @@ namespace EventDirector
 
         public List<Change> GetChanges()
         {
+            Log.D("Attempting to grab Mutex: ID 66");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 66");
@@ -3540,6 +3607,7 @@ namespace EventDirector
 
         public void HardResetDatabase()
         {
+            Log.D("Attempting to grab Mutex: ID 67");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 67");
@@ -3565,6 +3633,7 @@ namespace EventDirector
 
         public void ResetDatabase()
         {
+            Log.D("Attempting to grab Mutex: ID 68");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 68");
@@ -3593,6 +3662,7 @@ namespace EventDirector
 
         public void AddDayOfParticipant(DayOfParticipant part)
         {
+            Log.D("Attempting to grab Mutex: ID 69");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 69");
@@ -3650,6 +3720,7 @@ namespace EventDirector
 
         private List<DayOfParticipant> InternalGetDayOfParticipants(String query, int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 70");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 70");
@@ -3699,6 +3770,7 @@ namespace EventDirector
 
         public bool ApproveDayOfParticipant(int eventId, int identifier, int bib, int earlystart)
         {
+            Log.D("Attempting to grab Mutex: ID 71");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 71");
@@ -3780,6 +3852,7 @@ namespace EventDirector
 
         public void SetLiabilityWaiver(int eventId, string waiver)
         {
+            Log.D("Attempting to grab Mutex: ID 72");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 72");
@@ -3805,6 +3878,7 @@ namespace EventDirector
 
         public string GetLiabilityWaiver(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 73");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 73");
@@ -3829,6 +3903,7 @@ namespace EventDirector
 
         public DayOfParticipant GetDayOfParticipant(DayOfParticipant part)
         {
+            Log.D("Attempting to grab Mutex: ID 74");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 74");
@@ -3886,6 +3961,7 @@ namespace EventDirector
 
         public void SetPrintOption(int eventId, int print)
         {
+            Log.D("Attempting to grab Mutex: ID 75");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 75");
@@ -3911,6 +3987,7 @@ namespace EventDirector
 
         public int GetPrintOption(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 76");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 76");
@@ -3946,6 +4023,7 @@ namespace EventDirector
 
         public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
         {
+            Log.D("Attempting to grab Mutex: ID 77");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 77");
@@ -3976,6 +4054,7 @@ namespace EventDirector
 
         public List<BibChipAssociation> GetBibChips()
         {
+            Log.D("Attempting to grab Mutex: ID 78");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 78");
@@ -4004,6 +4083,7 @@ namespace EventDirector
 
         public List<BibChipAssociation> GetBibChips(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 79");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 79");
@@ -4044,6 +4124,7 @@ namespace EventDirector
 
         public void RemoveBibChipAssociation(int eventId, int chip)
         {
+            Log.D("Attempting to grab Mutex: ID 80");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 80");
@@ -4063,6 +4144,7 @@ namespace EventDirector
 
         public void RemoveBibChipAssociation(BibChipAssociation assoc)
         {
+            Log.D("Attempting to grab Mutex: ID 81");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 81");
@@ -4077,6 +4159,7 @@ namespace EventDirector
 
         public void RemoveBibChipAssociations(List<BibChipAssociation> assocs)
         {
+            Log.D("Attempting to grab Mutex: ID 82");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 82");
@@ -4134,6 +4217,7 @@ namespace EventDirector
 
         public void AddChipRead(ChipRead read)
         {
+            Log.D("Attempting to grab Mutex: ID 83");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 83");
@@ -4150,6 +4234,7 @@ namespace EventDirector
 
         public void AddChipReads(List<ChipRead> reads)
         {
+            Log.D("Attempting to grab Mutex: ID 84");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 84");
@@ -4185,6 +4270,7 @@ namespace EventDirector
 
         public void UpdateChipRead(ChipRead read)
         {
+            Log.D("Attempting to grab Mutex: ID 85");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 85");
@@ -4203,6 +4289,7 @@ namespace EventDirector
 
         public void UpdateChipReads(List<ChipRead> reads)
         {
+            Log.D("Attempting to grab Mutex: ID 86");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 86");
@@ -4236,6 +4323,7 @@ namespace EventDirector
 
         public void SetChipReadStatus(ChipRead read)
         {
+            Log.D("Attempting to grab Mutex: ID 87");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 87");
@@ -4258,6 +4346,7 @@ namespace EventDirector
             {
                 return;
             }
+            Log.D("Attempting to grab Mutex: ID 88");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 88");
@@ -4279,6 +4368,7 @@ namespace EventDirector
 
         public void DeleteChipReads(List<ChipRead> reads)
         {
+            Log.D("Attempting to grab Mutex: ID 89");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 89");
@@ -4304,6 +4394,7 @@ namespace EventDirector
 
         public List<ChipRead> GetChipReads()
         {
+            Log.D("Attempting to grab Mutex: ID 90");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 90");
@@ -4324,6 +4415,7 @@ namespace EventDirector
 
         public List<ChipRead> GetChipReads(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 91");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 91");
@@ -4346,6 +4438,7 @@ namespace EventDirector
 
         public List<ChipRead> GetUsefulChipReads(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 92");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 92");
@@ -4430,6 +4523,7 @@ namespace EventDirector
 
         public void SetServerName(string name)
         {
+            Log.D("Attempting to grab Mutex: ID 93");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 93");
@@ -4451,6 +4545,7 @@ namespace EventDirector
 
         public string GetServerName()
         {
+            Log.D("Attempting to grab Mutex: ID 94");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 94");
@@ -4474,6 +4569,7 @@ namespace EventDirector
 
         public AppSetting GetAppSetting(string name)
         {
+            Log.D("Attempting to grab Mutex: ID 95");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 95");
@@ -4512,6 +4608,7 @@ namespace EventDirector
 
         public void SetAppSetting(AppSetting setting)
         {
+            Log.D("Attempting to grab Mutex: ID 96");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 96");
@@ -4539,6 +4636,7 @@ namespace EventDirector
          */
         public void AddBibGroup(int eventId, BibGroup group)
         {
+            Log.D("Attempting to grab Mutex: ID 97");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 97");
@@ -4566,6 +4664,7 @@ namespace EventDirector
 
         public List<BibGroup> GetBibGroups(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 98");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 98");
@@ -4598,6 +4697,7 @@ namespace EventDirector
 
         public void RemoveBibGroup(BibGroup group)
         {
+            Log.D("Attempting to grab Mutex: ID 99");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 99");
@@ -4623,6 +4723,7 @@ namespace EventDirector
          */
         public void AddBibs(int eventId, int group, List<int> bibs)
         {
+            Log.D("Attempting to grab Mutex: ID 100");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 100");
@@ -4644,6 +4745,7 @@ namespace EventDirector
 
         public void AddBibs(int eventId, List<AvailableBib> bibs)
         {
+            Log.D("Attempting to grab Mutex: ID 101");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 101");
@@ -4665,6 +4767,7 @@ namespace EventDirector
 
         public void AddBib(int eventId, int group, int bib)
         {
+            Log.D("Attempting to grab Mutex: ID 102");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 102");
@@ -4693,6 +4796,7 @@ namespace EventDirector
 
         public List<AvailableBib> GetBibs(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 103");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 103");
@@ -4724,6 +4828,7 @@ namespace EventDirector
 
         public int LargestBib(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 104");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 104");
@@ -4763,6 +4868,7 @@ namespace EventDirector
 
         public void RemoveBib(int eventId, int bib)
         {
+            Log.D("Attempting to grab Mutex: ID 105");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 105");
@@ -4777,6 +4883,7 @@ namespace EventDirector
 
         public void RemoveBibs(List<AvailableBib> bibs)
         {
+            Log.D("Attempting to grab Mutex: ID 106");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 106");
@@ -4801,6 +4908,7 @@ namespace EventDirector
          */
         public void AddAgeGroup(AgeGroup group)
         {
+            Log.D("Attempting to grab Mutex: ID 107");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 107");
@@ -4819,6 +4927,7 @@ namespace EventDirector
 
         public void AddAgeGroups(List<AgeGroup> groups)
         {
+            Log.D("Attempting to grab Mutex: ID 108");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 108");
@@ -4855,6 +4964,7 @@ namespace EventDirector
 
         public void UpdateAgeGroup(AgeGroup group)
         {
+            Log.D("Attempting to grab Mutex: ID 109");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 109");
@@ -4884,6 +4994,7 @@ namespace EventDirector
 
         public void RemoveAgeGroup(AgeGroup group)
         {
+            Log.D("Attempting to grab Mutex: ID 110");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 110");
@@ -4908,6 +5019,7 @@ namespace EventDirector
 
         public void RemoveAgeGroups(int eventId, int divisionId)
         {
+            Log.D("Attempting to grab Mutex: ID 111");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 111");
@@ -4933,6 +5045,7 @@ namespace EventDirector
 
         public List<AgeGroup> GetAgeGroups(int eventId)
         {
+            Log.D("Attempting to grab Mutex: ID 112");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 112");
@@ -4976,6 +5089,7 @@ namespace EventDirector
 
         public void AddTimingSystem(TimingSystem system)
         {
+            Log.D("Attempting to grab Mutex: ID 113");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 113");
@@ -4991,6 +5105,7 @@ namespace EventDirector
 
         public void UpdateTimingSystem(TimingSystem system)
         {
+            Log.D("Attempting to grab Mutex: ID 114");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 114");
@@ -5019,6 +5134,7 @@ namespace EventDirector
 
         public void SetTimingSystems(List<TimingSystem> systems)
         {
+            Log.D("Attempting to grab Mutex: ID 115");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 115");
@@ -5048,6 +5164,7 @@ namespace EventDirector
 
         public void RemoveTimingSystem(int systemId)
         {
+            Log.D("Attempting to grab Mutex: ID 116");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 116");
@@ -5069,6 +5186,7 @@ namespace EventDirector
 
         public List<TimingSystem> GetTimingSystems()
         {
+            Log.D("Attempting to grab Mutex: ID 117");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("Failed to grab Mutex: ID 117");

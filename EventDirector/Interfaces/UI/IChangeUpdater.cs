@@ -9,5 +9,6 @@ namespace EventDirector
     interface IChangeUpdater
     {
         void UpdateChangesBox();
+        void NetworkServicesStopped();
     }
 }

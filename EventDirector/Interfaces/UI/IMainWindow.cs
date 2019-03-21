@@ -12,6 +12,7 @@ namespace EventDirector.Interfaces
         // Networking services related calls.
         bool StartNetworkServices();
         bool StopNetworkServices();
+        bool NetworkServicesRunning();
 
         // Tools.
         void UpdateStatus();
