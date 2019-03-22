@@ -268,6 +268,21 @@ namespace EventDirector
             BroadcastJson(jsonHandler.GetJsonServerEventList());
         }
 
+        internal void AddResults(int EventId, List<TimeResult> Results)
+        {
+            BroadcastJson(jsonHandler.GetJsonServerResultAdd(EventId, Results));
+        }
+
+        internal void UpdateResults(int EventId, List<TimeResult> Results)
+        {
+            BroadcastJson(jsonHandler.GetJsonServerResultUpdate(EventId, Results));
+        }
+
+        internal void ClearResults(int EventId)
+        {
+            BroadcastJson(jsonHandler.GetJsonServerResultsClear(EventId));
+        }
+
         private void SendJson(String json, Socket sock)
         {
             Log.D("Message length is " + json.Length + " Content is '" + json + "'");

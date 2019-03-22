@@ -307,6 +307,7 @@ namespace EventDirector
             {
                 Log.D("All done with the import.");
                 database.ResetTimingResultsEvent(theEvent.Identifier);
+                window.NetworkClearResults(theEvent.Identifier);
                 window.NotifyRecalculateAgeGroups();
                 window.NotifyTimingWorker();
                 this.Close();

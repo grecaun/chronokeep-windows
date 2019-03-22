@@ -220,25 +220,31 @@ namespace EventDirector.Timing
                         ResetDictionariesMutex.ReleaseMutex();
                     }
                     bool touched = false;
+                    List<TimeResult> results = null;
                     if (database.UnprocessedReadsExist(theEvent.Identifier))
                     {
                         DateTime start = DateTime.Now;
                         // If RACETYPE is DISTANCE
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                         {
-                            ProcessDistanceBasedRace(theEvent);
+                            results = ProcessDistanceBasedRace(theEvent);
                             touched = true;
                         }
                         // Else RACETYPE is TIME
                         else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                         {
-                            ProcessTimeBasedRace(theEvent);
+                            results = ProcessTimeBasedRace(theEvent);
                             touched = true;
                         }
                         DateTime end = DateTime.Now;
                         TimeSpan time = end - start;
                         Log.D(String.Format("Time to process all chip reads was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
                     }
+                    if (results != null && results.Count > 0)
+                    {
+                        window.NetworkAddResults(theEvent.Identifier, results);
+                    }
+                    results = null;
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
                     {
                         if (ageGroupMutex.WaitOne(3000))
@@ -258,19 +264,23 @@ namespace EventDirector.Timing
                         // If RACETYPE if DISTANCE
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                         {
-                            ProcessPlacementsDistance(theEvent);
+                            results = ProcessPlacementsDistance(theEvent);
                             touched = true;
                         }
                         // Else RACETYPE is TIME
                         else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                         {
                             ProcessLapTimes(theEvent);
-                            ProcessPlacementsTime(theEvent);
+                            results = ProcessPlacementsTime(theEvent);
                             touched = true;
                         }
                         DateTime end = DateTime.Now;
                         TimeSpan time = end - start;
                         Log.D(String.Format("Time to process placements was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
+                    }
+                    if (results != null && results.Count > 0)
+                    {
+                        window.NetworkUpdateResults(theEvent.Identifier, results);
                     }
                     if (touched)
                     {
@@ -322,7 +332,7 @@ namespace EventDirector.Timing
             database.AddTimingResults(laps);
         }
 
-        private void ProcessDistanceBasedRace(Event theEvent)
+        private List<TimeResult> ProcessDistanceBasedRace(Event theEvent)
         {
             Log.D("Processing chip reads for a distance based event.");
             // Check if there's anything to process.
@@ -827,9 +837,10 @@ namespace EventDirector.Timing
             end = DateTime.Now;
             TimeSpan third = end - start;
             Log.D(String.Format("Done. Splitting into bib/chip: {0} - Creating Results: {1} - Putting Results in DB: {2}", first.ToString("c"), second.ToString("c"), third.ToString("c")));
+            return newResults;
         }
 
-        private void ProcessTimeBasedRace(Event theEvent)
+        private List<TimeResult> ProcessTimeBasedRace(Event theEvent)
         {
             Log.D("Processing chip reads for a time based event.");
             // Check if there's anything to process.
@@ -1253,6 +1264,7 @@ namespace EventDirector.Timing
             end = DateTime.Now;
             TimeSpan third = end - start;
             Log.D(String.Format("Done. Splitting into bib/chip: {0} - Creating Results: {1} - Putting Results in DB: {2}", first.ToString("c"), second.ToString("c"), third.ToString("c")));
+            return newResults;
         }
 
         private void UpdateAgeGroups(Event theEvent)
@@ -1289,8 +1301,9 @@ namespace EventDirector.Timing
             }
         }
 
-        private void ProcessPlacementsDistance(Event theEvent)
+        private List<TimeResult> ProcessPlacementsDistance(Event theEvent)
         {
+            List<TimeResult> output = new List<TimeResult>();
             // Get a list of all segments
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
             // process results based upon the segment they're in
@@ -1302,23 +1315,26 @@ namespace EventDirector.Timing
             }
             Log.D("Processing finish results");
             ProcessSegmentPlacementsDistance(theEvent, database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH), participantEventSpecificDictionary);
+            return output;
         }
 
-        private void ProcessPlacementsTime(Event theEvent)
+        private List<TimeResult> ProcessPlacementsTime(Event theEvent)
         {
+            List<TimeResult> output = new List<TimeResult>();
             // Get a list of all segments
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
             foreach (Segment segment in segments)
             {
                 Log.D("Processing segment " + segment.Name);
                 List<TimeResult> segmentResults = database.GetSegmentTimes(theEvent.Identifier, segment.Identifier);
-                ProcessSegmentPlacementsTime(theEvent, segmentResults, participantEventSpecificDictionary);
+                output.AddRange(ProcessSegmentPlacementsTime(theEvent, segmentResults, participantEventSpecificDictionary));
             }
             Log.D("Processing finish results");
-            ProcessSegmentPlacementsTime(theEvent, database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH), participantEventSpecificDictionary);
+            output.AddRange(ProcessSegmentPlacementsTime(theEvent, database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH), participantEventSpecificDictionary));
+            return output;
         }
 
-        private void ProcessSegmentPlacementsTime(Event theEvent,
+        private List<TimeResult> ProcessSegmentPlacementsTime(Event theEvent,
             List<TimeResult> segmentResults,
             Dictionary<int, Participant> participantEventSpecificDictionary)
         {
@@ -1409,9 +1425,10 @@ namespace EventDirector.Timing
                 }
             }
             database.AddTimingResults(segmentResults);
+            return segmentResults;
         }
 
-        private void ProcessSegmentPlacementsDistance(Event theEvent,
+        private List<TimeResult> ProcessSegmentPlacementsDistance(Event theEvent,
             List<TimeResult> segmentResults,
             Dictionary<int, Participant> participantEventSpecificDictionary)
         {
@@ -1505,6 +1522,7 @@ namespace EventDirector.Timing
                 }
             }
             database.AddTimingResults(segmentResults);
+            return segmentResults;
         }
     }
 }

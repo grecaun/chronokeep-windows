@@ -147,6 +147,7 @@ namespace EventDirector.UI.MainPages
                     if (identifier == Constants.Timing.COMMON_SEGMENTS_DIVISIONID)
                     {
                         database.ResetTimingResultsEvent(theEvent.Identifier);
+                        mWindow.NetworkClearResults(theEvent.Identifier);
                     }
                     else
                     {

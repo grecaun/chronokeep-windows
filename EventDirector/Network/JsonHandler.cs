@@ -69,6 +69,10 @@ namespace EventDirector
         public String GetJsonServerEvent(int eventId)
         {
             Log.D("Getting JsonServerEvent");
+            if (eventId < 0)
+            {
+                eventId = database.GetCurrentEvent().Identifier;
+            }
             Event oneEvent = database.GetEvent(eventId);
             List<JsonOption> eventOptions = database.GetEventOptions(eventId);
             JsonServerEvent serverEvent = new JsonServerEvent()
@@ -224,23 +228,32 @@ namespace EventDirector
         }
 
         // JsonServerResultUpdate
-        public String GetJsonServerResultUpdate(int id, TimeResult result)
+        public String GetJsonServerResultUpdate(int id, List<TimeResult> results)
         {
             JsonServerResultUpdate update = new JsonServerResultUpdate()
             {
                 EventId = id,
-                Result = result
+                Results = results
             };
             return JsonConvert.SerializeObject(update);
         }
 
         // JsonServerResultAdd
-        public String GetJsonServerResultAdd(int id, TimeResult restult)
+        public String GetJsonServerResultAdd(int id, List<TimeResult> restults)
         {
             return JsonConvert.SerializeObject(new JsonServerResultAdd()
             {
                 EventId = id,
-                Result = restult
+                Results = restults
+            });
+        }
+
+        // JsonServerResultsClear
+        public String GetJsonServerResultsClear(int id)
+        {
+            return JsonConvert.SerializeObject(new JsonServerResultsClear()
+            {
+                EventId = id
             });
         }
 

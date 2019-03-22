@@ -396,6 +396,7 @@ namespace EventDirector.UI.MainPages
                 database.UpdateEvent(theEvent);
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 UpdateView();
+                mWindow.NetworkClearResults(theEvent.Identifier);
                 mWindow.NotifyTimingWorker();
             }
         }
@@ -553,6 +554,7 @@ namespace EventDirector.UI.MainPages
             Log.D("Recalculate results clicked.");
             database.ResetTimingResultsEvent(theEvent.Identifier);
             UpdateView();
+            mWindow.NetworkClearResults(theEvent.Identifier);
             mWindow.DatasetChanged();
             mWindow.NotifyRecalculateAgeGroups();
             mWindow.NotifyTimingWorker();

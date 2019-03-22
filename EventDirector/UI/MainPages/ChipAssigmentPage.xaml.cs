@@ -308,6 +308,7 @@ namespace EventDirector.UI.MainPages
             if (BibsChanged)
             {
                 database.ResetTimingResultsEvent(theEvent.Identifier);
+                mWindow.NetworkClearResults(theEvent.Identifier);
                 mWindow.NotifyTimingWorker();
             }
         }

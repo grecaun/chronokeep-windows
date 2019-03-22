@@ -560,5 +560,25 @@ namespace EventDirector.UI
         {
             TimingWorker.ResetDictionaries();
         }
+
+        public void NetworkUpdateResults(int eventid, List<TimeResult> results)
+        {
+            if (tcpServer != null)
+            {
+                tcpServer.UpdateResults(eventid, results);
+            }
+        }
+
+        public void NetworkAddResults(int eventid, List<TimeResult> results)
+        {
+        }
+
+        public void NetworkClearResults(int eventid)
+        {
+            if (tcpServer != null)
+            {
+                tcpServer.ClearResults(eventid);
+            }
+        }
     }
 }

@@ -256,14 +256,20 @@ namespace EventDirector
     {
         public String Command = "server_result_update";
         public int EventId { get; set; }
-        public TimeResult Result { get; set; }
+        public List<TimeResult> Results { get; set; }
     }
 
     public class JsonServerResultAdd
     {
         public String Command = "server_result_add";
         public int EventId { get; set; }
-        public TimeResult Result { get; set; }
+        public List<TimeResult> Results { get; set; }
+    }
+
+    public class JsonServerResultsClear
+    {
+        public String Command = "server_results_clear";
+        public int EventId { get; set; }
     }
 
     public class JsonServerConnected

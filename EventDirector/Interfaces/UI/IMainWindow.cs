@@ -13,6 +13,9 @@ namespace EventDirector.Interfaces
         bool StartNetworkServices();
         bool StopNetworkServices();
         bool NetworkServicesRunning();
+        void NetworkUpdateResults(int eventid, List<TimeResult> results);
+        void NetworkAddResults(int eventid, List<TimeResult> results);
+        void NetworkClearResults(int eventid);
 
         // Tools.
         void UpdateStatus();
