@@ -248,6 +248,9 @@
     <Compile Include="UI\Import\ImportFilePage2Alt.xaml.cs">
       <DependentUpon>ImportFilePage2Alt.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\MainPages\AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\MainPages\AgeGroupsPage.xaml.cs">
       <DependentUpon>AgeGroupsPage.xaml</DependentUpon>
     </Compile>
@@ -435,6 +438,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Import\ImportFilePage2Alt.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainPages\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

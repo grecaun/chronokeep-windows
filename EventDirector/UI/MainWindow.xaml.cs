@@ -580,5 +580,16 @@ namespace EventDirector.UI
                 tcpServer.ClearResults(eventid);
             }
         }
+
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("About button clicked.");
+            if (page is AboutPage)
+            {
+                Log.D("About page already displayed.");
+                return;
+            }
+            SwitchPage(new AboutPage(this), true);
+        }
     }
 }
