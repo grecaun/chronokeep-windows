@@ -36,11 +36,13 @@ namespace EventDirector.UI.IO
                 }
             }
             Range startCell = wSheet.Cells[1, 1];
-            Range endCell = wSheet.Cells[data.Count, data[0].Length];
+            Range endCell = wSheet.Cells[localData.Count, data[0].Length];
             Range writeRange = wSheet.get_Range(startCell, endCell);
             writeRange.Value2 = outData;
             writeRange.EntireColumn.AutoFit();
+            excel.DisplayAlerts = false;
             wBook.SaveAs(Path, XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing, false, false, XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
+            excel.DisplayAlerts = true;
             wBook.Close();
             excel.ScreenUpdating = true;
             while (Marshal.ReleaseComObject(wSheet) > 0) ;

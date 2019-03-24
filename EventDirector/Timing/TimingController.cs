@@ -143,6 +143,8 @@ namespace EventDirector.Timing
                 Socket.Select(readList, null, null, 3000000);
                 foreach (Socket sock in readList)
                 {
+                    ChipRead = false;
+                    UpdateTiming = false;
                     byte[] recvd = new byte[4112];
                     try
                     {
@@ -208,6 +210,7 @@ namespace EventDirector.Timing
                         }
                         if (ChipRead && ReadsMutex.WaitOne(3000))
                         {
+                            mainWindow.NotifyTimingWorker();
                             NewReads = true;
                             ReadsMutex.ReleaseMutex();
                         }

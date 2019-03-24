@@ -256,7 +256,7 @@ namespace EventDirector
             if (one == null || two == null) return 1;
             if (one.Bib == two.Bib)
             {
-                one.systemTime.CompareTo(two.systemTime);
+                return one.systemTime.CompareTo(two.systemTime);
             }
             return one.Bib.CompareTo(two.Bib);
         }
@@ -351,7 +351,7 @@ namespace EventDirector
 
         public bool IsNotMatch(string value)
         {
-            return this.Bib.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1 &&
+            return !this.Bib.ToString().Equals(value.Trim(), StringComparison.OrdinalIgnoreCase) &&
                 this.ParticipantName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
         }
     }
