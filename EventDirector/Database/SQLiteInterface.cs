@@ -4405,7 +4405,7 @@ namespace EventDirector
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id) " +
-                "LEFT JOIN participants p ON p.participant_id=e.participant_id;";
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id AND c.event_id=b.event_id;";
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
             connection.Close();
@@ -4427,7 +4427,7 @@ namespace EventDirector
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id) " +
                 "LEFT JOIN participants p ON p.participant_id=e.participant_id " +
-                "WHERE c.event_id=@event;";
+                "WHERE c.event_id=@event AND c.event_id=b.event_id;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
@@ -4449,12 +4449,14 @@ namespace EventDirector
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on c.read_chipnumber=b.chip " +
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id) " +
-                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND " +
-                "(read_status=@status OR EXISTS (SELECT * FROM time_results r WHERE c.read_id=r.read_id));";
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND c.event_id=b.event_id AND " +
+                "(read_status=@status OR read_status=@used OR read_status=@start);";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
-                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE)
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
+                new SQLiteParameter("@used", Constants.Timing.CHIPREAD_STATUS_USED),
+                new SQLiteParameter("@start", Constants.Timing.CHIPREAD_STATUS_STARTTIME)
             });
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
