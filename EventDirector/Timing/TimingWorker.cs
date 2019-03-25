@@ -858,36 +858,44 @@ namespace EventDirector.Timing
             // Make sure we keep track of the last occurrence for a person at a location.
             // (Bib, Location), Last Chip Read
             Dictionary<(int, int), (ChipRead Read, int Occurrence)> lastReadDictionary = new Dictionary<(int, int), (ChipRead Read, int Occurrence)>();
+            Dictionary<int, ChipRead> startReadDictionary = new Dictionary<int, ChipRead>();
             Dictionary <(string, int), (ChipRead Read, int Occurrence)> chipLastReadDictionary = new Dictionary<(string, int), (ChipRead Read, int Occurrence)>();
+            Dictionary<string, ChipRead> chipStartReadDictionary = new Dictionary<string, ChipRead>();
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
             allChipReads.Sort();
             List<ChipRead> setUnknown = new List<ChipRead>();
             DateTime start = DateTime.Now;
             foreach (ChipRead read in allChipReads)
             {
-                if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
                     // if we process all the used reads before putting them in the list we can
                     // ensure that all of the reads we process are STATUS_NONE and then we can
                     // verify that we aren't inserting results BEFORE results we've already calculated.
                     if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
-                        if (!lastReadDictionary.ContainsKey((read.ChipBib, read.LocationID)))
+                        if (!lastReadDictionary.ContainsKey((read.Bib, read.LocationID)))
                         {
-                            lastReadDictionary[(read.ChipBib, read.LocationID)] = (read, 1);
+                            lastReadDictionary[(read.Bib, read.LocationID)] = (read, 1);
                         }
                         else
                         {
-                            lastReadDictionary[(read.ChipBib, read.LocationID)] = (read, lastReadDictionary[(read.ChipBib, read.LocationID)].Occurrence + 1);
+                            lastReadDictionary[(read.Bib, read.LocationID)] = (read, lastReadDictionary[(read.Bib, read.LocationID)].Occurrence + 1);
                         }
                     }
-                    else
+                    else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status && (
+                        Constants.Timing.LOCATION_START == read.LocationID ||
+                            (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
                     {
-                        if (!bibReadPairs.ContainsKey(read.ChipBib))
+                        startReadDictionary[read.Bib] = read;
+                    }
+                    else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                    {
+                        if (!bibReadPairs.ContainsKey(read.Bib))
                         {
-                            bibReadPairs[read.ChipBib] = new List<ChipRead>();
+                            bibReadPairs[read.Bib] = new List<ChipRead>();
                         }
-                        bibReadPairs[read.ChipBib].Add(read);
+                        bibReadPairs[read.Bib].Add(read);
                     }
                 }
                 else if (Constants.Timing.CHIPREAD_DUMMYCHIP != read.ChipNumber)
@@ -903,7 +911,13 @@ namespace EventDirector.Timing
                             chipLastReadDictionary[(read.ChipNumber.ToString(), read.LocationID)] = (read, chipLastReadDictionary[(read.ChipNumber.ToString(), read.LocationID)].Occurrence + 1);
                         }
                     }
-                    else
+                    else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status && (
+                        Constants.Timing.LOCATION_START == read.LocationID ||
+                            (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                    {
+                        chipStartReadDictionary[read.ChipNumber.ToString()] = read;
+                    }
+                    else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
                     {
                         if (!chipReadPairs.ContainsKey(read.ChipNumber.ToString()))
                         {
@@ -947,44 +961,108 @@ namespace EventDirector.Timing
                 maxStartSeconds = startSeconds + theEvent.StartWindow;
                 foreach (ChipRead read in bibReadPairs[bib])
                 {
-                    // Check for start chip read
-                    if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status)
+                    // pre-start
+                    if (read.TimeSeconds < startSeconds || (read.TimeSeconds == startSeconds && read.TimeMilliseconds < startMilliseconds))
                     {
-                        // Update what we perceive to be our start time
-                        lastReadDictionary[(bib, read.LocationID)] = (Read: read, Occurrence: 0);
+                        read.Status = Constants.Timing.CHIPREAD_STATUS_PRESTART;
                     }
-                    // Check that we haven't processed the read yet
-                    else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                    else if (read.TimeSeconds > endSeconds || (read.TimeSeconds == endSeconds && read.TimeMilliseconds > startMilliseconds))
                     {
-                        // pre-start
-                        if (read.TimeSeconds < startSeconds || (read.TimeSeconds == startSeconds && read.TimeMilliseconds < startMilliseconds))
+                        read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
+                    }
+                    else
+                    {
+                        // check if we're in the starting window and at the start line
+                        if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
+                            (Constants.Timing.LOCATION_START == read.LocationID ||
+                            (Constants.Timing.LOCATION_FINISH == read.LocationID
+                            && theEvent.CommonStartFinish == 1)))
                         {
-                            read.Status = Constants.Timing.CHIPREAD_STATUS_PRESTART;
-                        }
-                        else if (read.TimeSeconds > endSeconds || (read.TimeSeconds == endSeconds && read.TimeMilliseconds > startMilliseconds))
-                        {
-                            read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
-                        }
-                        else
-                        {
-                            // check if we're in the starting window and at the start line
-                            if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
-                                (Constants.Timing.LOCATION_START == read.LocationID ||
-                                (Constants.Timing.LOCATION_FINISH == read.LocationID
-                                && theEvent.CommonStartFinish == 1)))
+                            // check if we've stored a chipread as the start chipread, update it to unused if so
+                            if (startReadDictionary.ContainsKey(bib))
                             {
-                                // check if we've stored a chipread as the start chipread, update it to unused if so
-                                if (lastReadDictionary.ContainsKey((bib, read.LocationID)))
+                                startReadDictionary[bib].Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
+                            }
+                            // Update the last read we've seen at this location
+                            startReadDictionary[bib] = read;
+                            if (startResult != null && newResults.Contains(startResult))
+                            {
+                                newResults.Remove(startResult);
+                            }
+                            // Create a result for the start time.
+                            long secondsDiff = read.TimeSeconds - startSeconds;
+                            int millisecDiff = read.TimeMilliseconds - startMilliseconds;
+                            if (millisecDiff < 0)
+                            {
+                                secondsDiff--;
+                                millisecDiff += 1000;
+                            }
+                            startResult = new TimeResult(theEvent.Identifier,
+                                read.ReadId,
+                                part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
+                                read.LocationID,
+                                Constants.Timing.SEGMENT_START,
+                                0, // start reads are not an occurrence at the start line
+                                String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                "Bib:" + bib.ToString(),
+                                "0:00:00.000",
+                                read.Time,
+                                bib);
+                            startTimes[startResult.Identifier] = startResult;
+                            newResults.Add(startResult);
+                            read.Status = Constants.Timing.CHIPREAD_STATUS_STARTTIME;
+                        }
+                        // Possible reads at this point:
+                        //      Start Location reads past the StartWindow (IGNORE)
+                        //      Start/Finish Location reads past the StartWindow (valid reads)
+                        //          These could be BEFORE or AFTER the last occurrence at this spot
+                        //      Reads at any other location
+                        else if (Constants.Timing.LOCATION_START != read.LocationID)
+                        {
+                            int occurrence = 1;
+                            int occursWithin = 0;
+                            if (Constants.Timing.LOCATION_FINISH == read.LocationID)
+                            {
+                                occursWithin = theEvent.FinishIgnoreWithin;
+                            }
+                            else if (locationDictionary.ContainsKey(read.LocationID))
+                            {
+                                occursWithin = locationDictionary[read.LocationID].IgnoreWithin;
+                            }
+                            // Minimum time to create a result.
+                            long minSeconds = startSeconds;
+                            int minMilliseconds = startMilliseconds;
+                            if (lastReadDictionary.ContainsKey((bib, read.LocationID)))
+                            {
+                                occurrence = lastReadDictionary[(bib, read.LocationID)].Occurrence + 1;
+                                minSeconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeSeconds + occursWithin;
+                                minMilliseconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeMilliseconds;
+                            }
+                            // Check if we're in the ignore within period.
+                            if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
+                            {
+                                read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
+                            }
+                            else
+                            {
+                                lastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
+                                int segId = Constants.Timing.SEGMENT_NONE;
+                                // Check for Division specific segments (Occurrence is always 1 for time based)
+                                if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
                                 {
-                                    lastReadDictionary[(bib, read.LocationID)].Read.Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
+                                    segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
                                 }
-                                // Update the last read we've seen at this location
-                                lastReadDictionary[(bib, read.LocationID)] = (Read: read, Occurrence: 0);
-                                if (startResult != null && newResults.Contains(startResult))
+                                // Division specific segments
+                                else if (div != null & segmentDictionary.ContainsKey((div.Identifier, read.LocationID, 1)))
                                 {
-                                    newResults.Remove(startResult);
+                                    segId = segmentDictionary[(div.Identifier, read.LocationID, 1)].Identifier;
                                 }
-                                // Create a result for the start time.
+                                else if (Constants.Timing.LOCATION_FINISH == read.LocationID)
+                                {
+                                    segId = Constants.Timing.SEGMENT_FINISH;
+                                }
+                                string identifier = "Bib:" + bib.ToString();
+                                // Create a result for the start value
                                 long secondsDiff = read.TimeSeconds - startSeconds;
                                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
                                 if (millisecDiff < 0)
@@ -992,106 +1070,32 @@ namespace EventDirector.Timing
                                     secondsDiff--;
                                     millisecDiff += 1000;
                                 }
-                                startResult = new TimeResult(theEvent.Identifier,
+                                long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? RFIDUltraInterface.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
+                                int chipMillisecDiff = read.TimeMilliseconds - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime.Millisecond : startMilliseconds);
+                                if (chipMillisecDiff < 0)
+                                {
+                                    chipSecDiff--;
+                                    chipMillisecDiff += 1000;
+                                }
+                                newResults.Add(new TimeResult(theEvent.Identifier,
                                     read.ReadId,
                                     part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                                     read.LocationID,
-                                    Constants.Timing.SEGMENT_START,
-                                    0, // start reads are not an occurrence at the start line
+                                    segId,
+                                    occurrence,
                                     String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
-                                    "Bib:" + bib.ToString(),
-                                    "0:00:00.000",
+                                    identifier,
+                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
                                     read.Time,
-                                    bib);
-                                startTimes[startResult.Identifier] = startResult;
-                                newResults.Add(startResult);
-                                read.Status = Constants.Timing.CHIPREAD_STATUS_STARTTIME;
+                                    bib));
+                                read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                             }
-                            // Possible reads at this point:
-                            //      Start Location reads past the StartWindow (IGNORE)
-                            //      Start/Finish Location reads past the StartWindow (valid reads)
-                            //          These could be BEFORE or AFTER the last occurrence at this spot
-                            //      Reads at any other location
-                            else if (Constants.Timing.LOCATION_START != read.LocationID)
-                            {
-                                int occurrence = 1;
-                                int occursWithin = 0;
-                                if (Constants.Timing.LOCATION_FINISH == read.LocationID)
-                                {
-                                    occursWithin = theEvent.FinishIgnoreWithin;
-                                }
-                                else if (locationDictionary.ContainsKey(read.LocationID))
-                                {
-                                    occursWithin = locationDictionary[read.LocationID].IgnoreWithin;
-                                }
-                                // Minimum time to create a result.
-                                long minSeconds = startSeconds;
-                                int minMilliseconds = startMilliseconds;
-                                if (lastReadDictionary.ContainsKey((bib, read.LocationID)))
-                                {
-                                    occurrence = lastReadDictionary[(bib, read.LocationID)].Occurrence + 1;
-                                    minSeconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeSeconds + occursWithin;
-                                    minMilliseconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeMilliseconds;
-                                }
-                                // Check if we're in the ignore within period.
-                                if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
-                                {
-                                    read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
-                                }
-                                else
-                                {
-                                    lastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
-                                    int segId = Constants.Timing.SEGMENT_NONE;
-                                    // Check for Division specific segments (Occurrence is always 1 for time based)
-                                    if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
-                                    {
-                                        segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
-                                    }
-                                    // Division specific segments
-                                    else if (div != null & segmentDictionary.ContainsKey((div.Identifier, read.LocationID, 1)))
-                                    {
-                                        segId = segmentDictionary[(div.Identifier, read.LocationID, 1)].Identifier;
-                                    }
-                                    else if (Constants.Timing.LOCATION_FINISH == read.LocationID)
-                                    {
-                                        segId = Constants.Timing.SEGMENT_FINISH;
-                                    }
-                                    string identifier = "Bib:" + bib.ToString();
-                                    // Create a result for the start value
-                                    long secondsDiff = read.TimeSeconds - startSeconds;
-                                    int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                                    if (millisecDiff < 0)
-                                    {
-                                        secondsDiff--;
-                                        millisecDiff += 1000;
-                                    }
-                                    long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? RFIDUltraInterface.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
-                                    int chipMillisecDiff = read.TimeMilliseconds - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime.Millisecond : startMilliseconds);
-                                    if (chipMillisecDiff < 0)
-                                    {
-                                        chipSecDiff--;
-                                        chipMillisecDiff += 1000;
-                                    }
-                                    newResults.Add(new TimeResult(theEvent.Identifier,
-                                        read.ReadId,
-                                        part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
-                                        read.LocationID,
-                                        segId,
-                                        occurrence,
-                                        String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
-                                        identifier,
-                                        String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
-                                        read.Time,
-                                        bib));
-                                    read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
-                                }
-                            }
-                            // Possible reads at this point:
-                            //      Start Location reads past the StartWindow (set status to ignore)
-                            else
-                            {
-                                read.Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
-                            }
+                        }
+                        // Possible reads at this point:
+                        //      Start Location reads past the StartWindow (set status to ignore)
+                        else
+                        {
+                            read.Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
                         }
                     }
                 }
@@ -1106,44 +1110,103 @@ namespace EventDirector.Timing
                 TimeResult startResult = null;
                 foreach (ChipRead read in chipReadPairs[chip])
                 {
-                    // Check for start chip read
-                    if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status)
+                    // pre-start
+                    if (read.TimeSeconds < startSeconds || (read.TimeSeconds == startSeconds && read.TimeMilliseconds < startMilliseconds))
                     {
-                        // Update what we perceive to be our start time
-                        chipLastReadDictionary[(chip, read.LocationID)] = (Read: read, Occurrence: 0);
+                        read.Status = Constants.Timing.CHIPREAD_STATUS_PRESTART;
                     }
-                    // Check that we haven't processed the read yet
-                    else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                    else if (read.TimeSeconds > endSeconds || (read.TimeSeconds == endSeconds && read.TimeMilliseconds > startMilliseconds))
                     {
-                        // pre-start
-                        if (read.TimeSeconds < startSeconds || (read.TimeSeconds == startSeconds && read.TimeMilliseconds < startMilliseconds))
+                        read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
+                    }
+                    else
+                    {
+                        // check if we're in the starting window and at the start line
+                        if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
+                            (Constants.Timing.LOCATION_START == read.LocationID ||
+                            (Constants.Timing.LOCATION_FINISH == read.LocationID
+                            && theEvent.CommonStartFinish == 1)))
                         {
-                            read.Status = Constants.Timing.CHIPREAD_STATUS_PRESTART;
-                        }
-                        else if (read.TimeSeconds > endSeconds || (read.TimeSeconds == endSeconds && read.TimeMilliseconds > startMilliseconds))
-                        {
-                            read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
-                        }
-                        else
-                        {
-                            // check if we're in the starting window and at the start line
-                            if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
-                                (Constants.Timing.LOCATION_START == read.LocationID ||
-                                (Constants.Timing.LOCATION_FINISH == read.LocationID
-                                && theEvent.CommonStartFinish == 1)))
+                            // check if we've stored a chipread as the start chipread, update it to unused if so
+                            if (chipStartReadDictionary.ContainsKey(chip))
                             {
-                                // check if we've stored a chipread as the start chipread, update it to unused if so
-                                if (chipLastReadDictionary.ContainsKey((chip, read.LocationID)))
+                                chipStartReadDictionary[chip].Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
+                            }
+                            // Update the last read we've seen at this location
+                            chipStartReadDictionary[chip] = read;
+                            if (startResult != null && newResults.Contains(startResult))
+                            {
+                                newResults.Remove(startResult);
+                            }
+                            // Create a result for the start time.
+                            long secondsDiff = read.TimeSeconds - startSeconds;
+                            int millisecDiff = read.TimeMilliseconds - startMilliseconds;
+                            if (millisecDiff < 0)
+                            {
+                                secondsDiff--;
+                                millisecDiff += 1000;
+                            }
+                            startResult = new TimeResult(theEvent.Identifier,
+                                read.ReadId,
+                                Constants.Timing.TIMERESULT_DUMMYPERSON,
+                                read.LocationID,
+                                Constants.Timing.SEGMENT_START,
+                                0, // start reads are not an occurrence at the start line
+                                String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                "Chip:" + chip.ToString(),
+                                "0:00:00.000",
+                                read.Time,
+                                read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib);
+                            startTimes[startResult.Identifier] = startResult;
+                            newResults.Add(startResult);
+                            read.Status = Constants.Timing.CHIPREAD_STATUS_STARTTIME;
+                        }
+                        // Possible reads at this point:
+                        //      Start Location reads past the StartWindow (IGNORE)
+                        //      Start/Finish Location reads past the StartWindow (valid reads)
+                        //          These could be BEFORE or AFTER the last occurrence at this spot
+                        //      Reads at any other location
+                        else if (Constants.Timing.LOCATION_START != read.LocationID)
+                        {
+                            int occurrence = 1;
+                            int occursWithin = 0;
+                            if (Constants.Timing.LOCATION_FINISH == read.LocationID)
+                            {
+                                occursWithin = theEvent.FinishIgnoreWithin;
+                            }
+                            else if (locationDictionary.ContainsKey(read.LocationID))
+                            {
+                                occursWithin = locationDictionary[read.LocationID].IgnoreWithin;
+                            }
+                            // Minimum time to create a result.
+                            long minSeconds = startSeconds;
+                            int minMilliseconds = startMilliseconds;
+                            if (chipLastReadDictionary.ContainsKey((chip, read.LocationID)))
+                            {
+                                occurrence = chipLastReadDictionary[(chip, read.LocationID)].Occurrence + 1;
+                                minSeconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeSeconds + occursWithin;
+                                minMilliseconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeMilliseconds;
+                            }
+                            // Check if we're in the ignore within period.
+                            if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
+                            {
+                                read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
+                            }
+                            else
+                            {
+                                chipLastReadDictionary[(chip, read.LocationID)] = (read, occurrence);
+                                int segId = Constants.Timing.SEGMENT_NONE;
+                                // Check for Division specific segments (Occurrence is always 1 for time based)
+                                if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
                                 {
-                                    chipLastReadDictionary[(chip, read.LocationID)].Read.Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
+                                    segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
                                 }
-                                // Update the last read we've seen at this location
-                                chipLastReadDictionary[(chip, read.LocationID)] = (Read: read, Occurrence: 0);
-                                if (startResult != null && newResults.Contains(startResult))
+                                else if (Constants.Timing.LOCATION_FINISH == read.LocationID)
                                 {
-                                    newResults.Remove(startResult);
+                                    segId = Constants.Timing.SEGMENT_FINISH;
                                 }
-                                // Create a result for the start time.
+                                string identifier = "Chip:" + chip.ToString();
+                                // Create a result for the start value
                                 long secondsDiff = read.TimeSeconds - startSeconds;
                                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
                                 if (millisecDiff < 0)
@@ -1151,101 +1214,32 @@ namespace EventDirector.Timing
                                     secondsDiff--;
                                     millisecDiff += 1000;
                                 }
-                                startResult = new TimeResult(theEvent.Identifier,
+                                long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? RFIDUltraInterface.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
+                                int chipMillisecDiff = read.TimeMilliseconds - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime.Millisecond : startMilliseconds);
+                                if (chipMillisecDiff < 0)
+                                {
+                                    chipSecDiff--;
+                                    chipMillisecDiff += 1000;
+                                }
+                                newResults.Add(new TimeResult(theEvent.Identifier,
                                     read.ReadId,
                                     Constants.Timing.TIMERESULT_DUMMYPERSON,
                                     read.LocationID,
-                                    Constants.Timing.SEGMENT_START,
-                                    0, // start reads are not an occurrence at the start line
+                                    segId,
+                                    occurrence,
                                     String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
-                                    "Chip:" + chip.ToString(),
-                                    "0:00:00.000",
+                                    identifier,
+                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
                                     read.Time,
-                                    read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib);
-                                startTimes[startResult.Identifier] = startResult;
-                                newResults.Add(startResult);
-                                read.Status = Constants.Timing.CHIPREAD_STATUS_STARTTIME;
+                                    read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib));
+                                read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                             }
-                            // Possible reads at this point:
-                            //      Start Location reads past the StartWindow (IGNORE)
-                            //      Start/Finish Location reads past the StartWindow (valid reads)
-                            //          These could be BEFORE or AFTER the last occurrence at this spot
-                            //      Reads at any other location
-                            else if (Constants.Timing.LOCATION_START != read.LocationID)
-                            {
-                                int occurrence = 1;
-                                int occursWithin = 0;
-                                if (Constants.Timing.LOCATION_FINISH == read.LocationID)
-                                {
-                                    occursWithin = theEvent.FinishIgnoreWithin;
-                                }
-                                else if (locationDictionary.ContainsKey(read.LocationID))
-                                {
-                                    occursWithin = locationDictionary[read.LocationID].IgnoreWithin;
-                                }
-                                // Minimum time to create a result.
-                                long minSeconds = startSeconds;
-                                int minMilliseconds = startMilliseconds;
-                                if (chipLastReadDictionary.ContainsKey((chip, read.LocationID)))
-                                {
-                                    occurrence = chipLastReadDictionary[(chip, read.LocationID)].Occurrence + 1;
-                                    minSeconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeSeconds + occursWithin;
-                                    minMilliseconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeMilliseconds;
-                                }
-                                // Check if we're in the ignore within period.
-                                if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
-                                {
-                                    read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
-                                }
-                                else
-                                {
-                                    chipLastReadDictionary[(chip, read.LocationID)] = (read, occurrence);
-                                    int segId = Constants.Timing.SEGMENT_NONE;
-                                    // Check for Division specific segments (Occurrence is always 1 for time based)
-                                    if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
-                                    {
-                                        segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
-                                    }
-                                    else if (Constants.Timing.LOCATION_FINISH == read.LocationID)
-                                    {
-                                        segId = Constants.Timing.SEGMENT_FINISH;
-                                    }
-                                    string identifier = "Chip:" + chip.ToString();
-                                    // Create a result for the start value
-                                    long secondsDiff = read.TimeSeconds - startSeconds;
-                                    int millisecDiff = read.TimeMilliseconds - startMilliseconds;
-                                    if (millisecDiff < 0)
-                                    {
-                                        secondsDiff--;
-                                        millisecDiff += 1000;
-                                    }
-                                    long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? RFIDUltraInterface.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
-                                    int chipMillisecDiff = read.TimeMilliseconds - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime.Millisecond : startMilliseconds);
-                                    if (chipMillisecDiff < 0)
-                                    {
-                                        chipSecDiff--;
-                                        chipMillisecDiff += 1000;
-                                    }
-                                    newResults.Add(new TimeResult(theEvent.Identifier,
-                                        read.ReadId,
-                                        Constants.Timing.TIMERESULT_DUMMYPERSON,
-                                        read.LocationID,
-                                        segId,
-                                        occurrence,
-                                        String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
-                                        identifier,
-                                        String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
-                                        read.Time,
-                                        read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib));
-                                    read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
-                                }
-                            }
-                            // Possible reads at this point:
-                            //      Start Location reads past the StartWindow (set status to ignore)
-                            else
-                            {
-                                read.Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
-                            }
+                        }
+                        // Possible reads at this point:
+                        //      Start Location reads past the StartWindow (set status to ignore)
+                        else
+                        {
+                            read.Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
                         }
                     }
                 }
