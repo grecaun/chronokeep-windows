@@ -252,6 +252,7 @@ namespace EventDirector.Timing
                             if (RecalculateAgeGroupsBool)
                             {
                                 Log.D("Updating Age Groups.");
+                                RecalculateAgeGroupsBool = false;
                                 ageGroupMutex.ReleaseMutex();
                                 UpdateAgeGroups(theEvent);
                             }
@@ -359,7 +360,7 @@ namespace EventDirector.Timing
             DateTime start = DateTime.Now;
             foreach (ChipRead read in allChipReads)
             {
-                if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
                     // if we process all the used reads before putting them in the list
                     // we can ensure that all of the reads we process are STATUS_NONE
@@ -369,42 +370,30 @@ namespace EventDirector.Timing
                     {
                         if (!lastReadDictionary.ContainsKey((read.ChipBib, read.LocationID)))
                         {
-                            lastReadDictionary[(read.ChipBib, read.LocationID)] = (read, 1);
+                            lastReadDictionary[(read.Bib, read.LocationID)] = (read, 1);
                         }
                         else
                         {
-                            lastReadDictionary[(read.ChipBib, read.LocationID)] = (read, lastReadDictionary[(read.ChipBib, read.LocationID)].Occurrence + 1);
+                            lastReadDictionary[(read.Bib, read.LocationID)] = (read, lastReadDictionary[(read.Bib, read.LocationID)].Occurrence + 1);
+                        }
+                    }
+                    else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status &&
+                        (Constants.Timing.LOCATION_START == read.LocationID ||
+                        (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                    {
+                        // If we haven't found anything, let us know what our start time was
+                        if (!lastReadDictionary.ContainsKey((read.ChipBib, read.LocationID)))
+                        {
+                            lastReadDictionary[(read.Bib, read.LocationID)] = (read, 0);
                         }
                     }
                     else
                     {
-                        if (!bibReadPairs.ContainsKey(read.ChipBib))
+                        if (!bibReadPairs.ContainsKey(read.Bib))
                         {
-                            bibReadPairs[read.ChipBib] = new List<ChipRead>();
+                            bibReadPairs[read.Bib] = new List<ChipRead>();
                         }
-                        bibReadPairs[read.ChipBib].Add(read);
-                    }
-                }
-                else if (read.ReadBib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                {
-                    if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
-                    {
-                        if (!lastReadDictionary.ContainsKey((read.ReadBib, read.LocationID)))
-                        {
-                            lastReadDictionary[(read.ReadBib, read.LocationID)] = (read, 1);
-                        }
-                        else
-                        {
-                            lastReadDictionary[(read.ReadBib, read.LocationID)] = (read, lastReadDictionary[(read.ReadBib, read.LocationID)].Occurrence + 1);
-                        }
-                    }
-                    else
-                    {
-                        if (!bibReadPairs.ContainsKey(read.ReadBib))
-                        {
-                            bibReadPairs[read.ReadBib] = new List<ChipRead>();
-                        }
-                        bibReadPairs[read.ReadBib].Add(read);
+                        bibReadPairs[read.Bib].Add(read);
                     }
                 }
                 else if (read.ChipNumber != Constants.Timing.CHIPREAD_DUMMYCHIP)
@@ -418,6 +407,16 @@ namespace EventDirector.Timing
                         else
                         {
                             chipLastReadDictionary[(read.ChipNumber.ToString(), read.LocationID)] = (read, chipLastReadDictionary[(read.ChipNumber.ToString(), read.LocationID)].Occurrence + 1);
+                        }
+                    }
+                    else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status &&
+                        (Constants.Timing.LOCATION_START == read.LocationID ||
+                        (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                    {
+                        // If we haven't found anything, let us know what our start time was
+                        if (!chipLastReadDictionary.ContainsKey((read.ChipNumber.ToString(), read.LocationID)))
+                        {
+                            chipLastReadDictionary[(read.ChipNumber.ToString(), read.LocationID)] = (Read: read, Occurrence: 0);
                         }
                     }
                     else
@@ -462,21 +461,15 @@ namespace EventDirector.Timing
                     startSeconds = divisionStartDict[div.Identifier].Seconds;
                     startMilliseconds = divisionStartDict[div.Identifier].Milliseconds;
                 }
-                if (part.EventSpecific.EarlyStart == 1)
+                if (part != null && part.EventSpecific != null && part.EventSpecific.EarlyStart == 1)
                 {
                     startSeconds = startSeconds - theEvent.EarlyStartDifference;
                 }
                 maxStartSeconds = startSeconds + theEvent.StartWindow;
                 foreach (ChipRead read in bibReadPairs[bib])
                 {
-                    // Check for start chip read
-                    if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status)
-                    {
-                        // Update what we perceive to be our start time
-                        lastReadDictionary[(bib, read.LocationID)] = (Read: read, Occurrence: 0);
-                    }
                     // Check that we haven't processed the read yet
-                    else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                    if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
                     {
                         // Check if we're before the start time.
                         if (read.TimeSeconds < startSeconds || (read.TimeSeconds == startSeconds && read.TimeMilliseconds < startMilliseconds))
@@ -658,14 +651,8 @@ namespace EventDirector.Timing
                 TimeResult startResult = null;
                 foreach (ChipRead read in chipReadPairs[chip])
                 {
-                    // Check for start chip read
-                    if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status)
-                    {
-                        // Update what we perceive to be our start time
-                        chipLastReadDictionary[(chip, read.LocationID)] = (Read: read, Occurrence: 0);
-                    }
                     // Check that we haven't processed the read yet
-                    else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                    if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
                     {
                         // Check if we're before the start time.
                         if (read.TimeSeconds < startSeconds || (read.TimeSeconds == startSeconds && read.TimeMilliseconds < startMilliseconds))

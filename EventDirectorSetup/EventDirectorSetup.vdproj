@@ -33,6 +33,30 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_22856B3B2C2F5C69479C4FBB3EE4C266"
+        "OwnerKey" = "8:_E57372AAA2A64ACF901F7B652A4EEE38"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_22856B3B2C2F5C69479C4FBB3EE4C266"
+        "OwnerKey" = "8:_C394C1E903ED3994F297ACFBFEECB72F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_22856B3B2C2F5C69479C4FBB3EE4C266"
+        "OwnerKey" = "8:_B850CA04066A8F4012F896AF5C7E9704"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_22856B3B2C2F5C69479C4FBB3EE4C266"
+        "OwnerKey" = "8:_7280FB7ECF8301DB91FCD5F2F493AAE8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_27A12DF2F5FBBC498F5408728B8FAE9D"
         "OwnerKey" = "8:_E57372AAA2A64ACF901F7B652A4EEE38"
         "MsmSig" = "8:_UNDEFINED"
@@ -41,30 +65,6 @@
         {
         "MsmKey" = "8:_3DC32FEE21DA0832B47A28E6371325AD"
         "OwnerKey" = "8:_E57372AAA2A64ACF901F7B652A4EEE38"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5A8D2FFD0B64E7F283BCA086738F5387"
-        "OwnerKey" = "8:_E57372AAA2A64ACF901F7B652A4EEE38"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5A8D2FFD0B64E7F283BCA086738F5387"
-        "OwnerKey" = "8:_C394C1E903ED3994F297ACFBFEECB72F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5A8D2FFD0B64E7F283BCA086738F5387"
-        "OwnerKey" = "8:_B850CA04066A8F4012F896AF5C7E9704"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5A8D2FFD0B64E7F283BCA086738F5387"
-        "OwnerKey" = "8:_7280FB7ECF8301DB91FCD5F2F493AAE8"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -304,7 +304,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_5A8D2FFD0B64E7F283BCA086738F5387"
+        "OwnerKey" = "8:_22856B3B2C2F5C69479C4FBB3EE4C266"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -439,6 +439,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_22856B3B2C2F5C69479C4FBB3EE4C266"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:PdfSharp-gdi, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_22856B3B2C2F5C69479C4FBB3EE4C266"
+                    {
+                    "Name" = "8:PdfSharp-gdi.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:PdfSharp-gdi.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_94750394C95242E69DA9D3093051D295"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_27A12DF2F5FBBC498F5408728B8FAE9D"
             {
             "AssemblyRegister" = "3:1"
@@ -484,37 +515,6 @@
                     }
                 }
             "SourcePath" = "8:System.Data.SQLite.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_94750394C95242E69DA9D3093051D295"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5A8D2FFD0B64E7F283BCA086738F5387"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:PdfSharp-gdi, Version=1.50.5147.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_5A8D2FFD0B64E7F283BCA086738F5387"
-                    {
-                    "Name" = "8:PdfSharp-gdi.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:PdfSharp-gdi.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_94750394C95242E69DA9D3093051D295"
@@ -1064,15 +1064,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Event Director"
-        "ProductCode" = "8:{E1CD6C91-83BC-470D-839E-D84626545100}"
-        "PackageCode" = "8:{825859AD-6141-4026-A718-8AE08782AA65}"
+        "ProductCode" = "8:{6B1587D1-CD2F-41FD-B710-8BCFDF345002}"
+        "PackageCode" = "8:{3D393AC2-67AA-45E7-8413-8F42C00500F5}"
         "UpgradeCode" = "8:{4F418996-6822-410D-B406-806D95C5FC1C}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.2.21"
+        "ProductVersion" = "8:0.2.22"
         "Manufacturer" = "8:James Sentinella"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
