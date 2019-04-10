@@ -4,6 +4,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,6 +29,7 @@ namespace EventDirector.UI.MainPages
         private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
+        private AppSetting chipType;
 
         private bool BibsChanged = false;
         private readonly Regex allowedChars = new Regex("[^0-9]");
@@ -38,6 +40,16 @@ namespace EventDirector.UI.MainPages
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
+            chipType = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE);
+            if (chipType.value == Constants.Settings.CHIP_TYPE_DEC)
+            {
+                ChipTypeBox.SelectedIndex = 0;
+            }
+            else if (chipType.value == Constants.Settings.CHIP_TYPE_HEX)
+            {
+                ChipTypeBox.SelectedIndex = 1;
+            }
+            ChipTypeBox.SelectionChanged += new SelectionChangedEventHandler(ChipTypeBox_SelectionChanged);
         }
 
         private void BibChipList_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -66,16 +78,33 @@ namespace EventDirector.UI.MainPages
             });
             bibChipList.ItemsSource = list;
             long maxChip = 0;
-            // check if hex before using a convert
             long chip = -1;
-            foreach (BibChipAssociation b in list)
+            // check if hex before using a convert
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
             {
-                chip = Convert.ToInt64(b.Chip);
-                maxChip = chip > maxChip ? chip : maxChip;
+                foreach (BibChipAssociation b in list)
+                {
+                    chip = Convert.ToInt64(b.Chip);
+                    maxChip = chip > maxChip ? chip : maxChip;
+                }
+            }
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            {
+                foreach (BibChipAssociation b in list)
+                {
+                    chip = Convert.ToInt64(b.Chip, 16);
+                    maxChip = chip > maxChip ? chip : maxChip;
+                }
             }
             maxChip += 1;
-            SingleChipBox.Text = maxChip.ToString();
-            RangeStartChipBox.Text = maxChip.ToString();
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            {
+            }
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            {
+                SingleChipBox.Text = maxChip.ToString("X");
+                RangeStartChipBox.Text = maxChip.ToString("X");
+            }
             List<Event> events = new List<Event>();
             await Task.Run(() =>
             {
@@ -109,9 +138,16 @@ namespace EventDirector.UI.MainPages
         private void SaveSingleButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Save Single clicked.");
-            int chip = -1, bib = -1;
-            int.TryParse(SingleChipBox.Text, out chip);
-            int.TryParse(SingleBibBox.Text, out bib);
+            long chip = -1, bib = -1;
+            long.TryParse(SingleBibBox.Text, out bib);
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            {
+                long.TryParse(SingleChipBox.Text, out chip);
+            }
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            {
+                long.TryParse(SingleChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out chip);
+            }
             Log.D("Bib " + bib + " Chip " + chip);
             if (chip == -1 || bib == -1)
             {
@@ -122,8 +158,8 @@ namespace EventDirector.UI.MainPages
             {
                 new BibChipAssociation()
                 {
-                    Bib = bib,
-                    Chip = chip.ToString()
+                    Bib = (int) bib,
+                    Chip = Constants.Settings.CHIP_TYPE_DEC == chipType.value ? chip.ToString() : chip.ToString("X")
                 }
             };
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
@@ -136,11 +172,19 @@ namespace EventDirector.UI.MainPages
         private void SaveRangeButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Save Range clicked.");
-            int startChip = -1, endChip = -1, startBib = -1, endBib = -1;
-            int.TryParse(RangeStartChipBox.Text, out startChip);
-            int.TryParse(RangeEndChipLabel.Content.ToString(), out endChip);
-            int.TryParse(RangeStartBibBox.Text, out startBib);
-            int.TryParse(RangeEndBibBox.Text, out endBib);
+            long startChip = -1, endChip = -1, startBib = -1, endBib = -1;
+            long.TryParse(RangeStartBibBox.Text, out startBib);
+            long.TryParse(RangeEndBibBox.Text, out endBib);
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            {
+                long.TryParse(RangeStartChipBox.Text, out startChip);
+                long.TryParse(RangeEndChipLabel.Content.ToString(), out endChip);
+            }
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            {
+                long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip);
+                long.TryParse(RangeEndChipLabel.Content.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip);
+            }
             Log.D("StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
             if (startChip == -1 || endChip == -1 || startBib == -1 || endBib == -1)
             {
@@ -148,11 +192,11 @@ namespace EventDirector.UI.MainPages
                 return;
             }
             List<BibChipAssociation> bibChips = new List<BibChipAssociation>();
-            for (int bib = startBib, tag = startChip; bib <= endBib && tag <= endChip; bib++, tag++)
+            for (long bib = startBib, tag = startChip; bib <= endBib && tag <= endChip; bib++, tag++)
             {
                 bibChips.Add(new BibChipAssociation() {
-                    Bib = bib,
-                    Chip = tag.ToString()
+                    Bib = (int)bib,
+                    Chip = Constants.Settings.CHIP_TYPE_HEX == chipType.value ? tag.ToString("X") : tag.ToString()
                 });
             }
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
@@ -256,12 +300,29 @@ namespace EventDirector.UI.MainPages
 
         private void UpdateEndChip(object sender, TextChangedEventArgs e)
         {
-            int startBib = -1, endBib = -1, startChip = -1, endChip = -1;
-            int.TryParse(RangeStartBibBox.Text, out startBib);
-            int.TryParse(RangeEndBibBox.Text, out endBib);
-            int.TryParse(RangeStartChipBox.Text, out startChip);
+            long startBib = -1, endBib = -1, startChip = -1, endChip = -1;
+            long.TryParse(RangeStartBibBox.Text, out startBib);
+            long.TryParse(RangeEndBibBox.Text, out endBib);
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            {
+                long.TryParse(RangeStartChipBox.Text, out startChip);
+            }
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            {
+                long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip);
+            }
             endChip = endBib - startBib + startChip;
-            if (startBib > -1 && endBib > -1 && startChip > -1) RangeEndChipLabel.Content = endChip.ToString();
+            if (startBib > -1 && endBib > -1 && startChip > -1)
+            {
+                if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+                {
+                    RangeEndChipLabel.Content = endChip.ToString();
+                }
+                else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+                {
+                    RangeEndChipLabel.Content = endChip.ToString("X");
+                }
+            }
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
@@ -335,7 +396,29 @@ namespace EventDirector.UI.MainPages
 
         private void ChipValidation(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = allowedChars.IsMatch(e.Text);
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            {
+                e.Handled = allowedChars.IsMatch(e.Text);
+            }
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            {
+                e.Handled = allowedHexChars.IsMatch(e.Text);
+            }
+        }
+
+        private void ChipTypeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (0 == ChipTypeBox.SelectedIndex)
+            {
+                database.SetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE, Constants.Settings.CHIP_TYPE_DEC);
+                SingleChipBox.Text = "0";
+                RangeStartChipBox.Text = "0";
+            }
+            else if (1 == ChipTypeBox.SelectedIndex)
+            {
+                database.SetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE, Constants.Settings.CHIP_TYPE_HEX);
+            }
+            chipType = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE);
         }
     }
 }

@@ -28,6 +28,13 @@
                 </ListView.View>
             </ListView>
             <StackPanel Grid.Column="0">
+                <DockPanel HorizontalAlignment="Center">
+                    <Label Content="Chip Type" Margin="10" VerticalAlignment="Center" VerticalContentAlignment="Center" FontSize="16"/>
+                    <ComboBox Name="ChipTypeBox" Width="100" Margin="10" VerticalContentAlignment="Center" FontSize="16">
+                        <ComboBoxItem Content="Dec" IsSelected="True" />
+                        <ComboBoxItem Content="Hex" />
+                    </ComboBox>
+                </DockPanel>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>

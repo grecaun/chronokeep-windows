@@ -17,6 +17,7 @@ namespace EventDirector.Constants
         public static readonly string COMPANY_NAME          = "SETTING_COMPANY_NAME";
         public static readonly string UPDATE_ON_PAGE_CHANGE = "SETTING_UPDATE_PAGE_CHANGE";
         public static readonly string EXIT_NO_PROMPT        = "EXIT_NO_PROMPT";
+        public static readonly string DEFAULT_CHIP_TYPE     = "DEFAULT_CHIP_TYPE";
         // Not yet implemented
         public static readonly string AUTO_READ_LOG         = "SETTING_AUTO_READ_LOG";
         public static readonly string AUTO_READ_LOG_DIR     = "SETTING_AUTO_READ_LOG_DIR";
@@ -31,6 +32,9 @@ namespace EventDirector.Constants
         public static readonly string TIMING_IPICO      = "IPICO";
         public static readonly string TIMING_MANUAL     = "MANUAL";
         public static readonly string TIMING_LAST_USED  = "LAST_USED";
+
+        public static readonly string CHIP_TYPE_DEC     = "DEC";
+        public static readonly string CHIP_TYPE_HEX     = "HEX";
 
         public static readonly string WAIVER_YEAR       = "[YEAR]";
         public static readonly string WAIVER_EVENT      = "[EVENT]";
@@ -90,6 +94,10 @@ namespace EventDirector.Constants
             if (database.GetAppSetting(EXIT_NO_PROMPT) == null)
             {
                 database.SetAppSetting(EXIT_NO_PROMPT, SETTING_FALSE);
+            }
+            if (database.GetAppSetting(DEFAULT_CHIP_TYPE) == null)
+            {
+                database.SetAppSetting(DEFAULT_CHIP_TYPE, CHIP_TYPE_DEC);
             }
         }
     }
