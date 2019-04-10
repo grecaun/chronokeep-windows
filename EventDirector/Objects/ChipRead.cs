@@ -12,7 +12,7 @@ namespace EventDirector
         public int EventId { get; set; }
         public int Status { get; set; }
         public int LocationID { get; set; }
-        public long ChipNumber { get; set; }
+        public string ChipNumber { get; set; }
         public long Seconds { get; set; }
         public int Milliseconds { get; set; }
         public long TimeSeconds { get; set; }
@@ -41,7 +41,7 @@ namespace EventDirector
         }
 
         // This constructor is used when receiving a read from a RFID Ultra 8
-        public ChipRead(int eventId, int locationId, long chipNumber, long seconds, int millisec,
+        public ChipRead(int eventId, int locationId, string chipNumber, long seconds, int millisec,
             int antenna, string rssi, int isRewind, string reader, string box, string readertime,
             long starttime, int logid)
         {
@@ -74,7 +74,7 @@ namespace EventDirector
             this.EventId = eventId;
             this.Status = status;
             this.LocationID = locationId;
-            this.ChipNumber = chipNumber;
+            this.ChipNumber = chipNumber.ToString();
             this.Seconds = seconds;
             this.Milliseconds = millisec;
             this.Antenna = antenna;
@@ -92,7 +92,7 @@ namespace EventDirector
         }
 
         // new database constructor
-        public ChipRead(int readId, int eventId, int status, int locationId, long chipNumber, long seconds,
+        public ChipRead(int readId, int eventId, int status, int locationId, string chipNumber, long seconds,
             int millisec, int antenna, string rssi, int isRewind, string reader, string box, string readertime,
             long starttime, int logid, long time_seconds, int time_millisec, int readbib, int type, int chipbib,
             string first, string last, DateTime start, string locationName)
@@ -155,7 +155,7 @@ namespace EventDirector
             this.EventId = eventId;
             this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
             this.LocationID = locationId;
-            this.ChipNumber = Convert.ToInt64(chip);
+            this.ChipNumber = chip.Trim();
             this.Seconds = RFIDUltraInterface.DateToEpoch(time);
             this.Milliseconds = time.Millisecond;
             this.Antenna = 0;

@@ -11,13 +11,13 @@ namespace EventDirector
         public BibChipAssociation()
         {
             this.EventId = -1;
-            this.Bib = -1;
-            this.Chip = -1;
+            this.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
+            this.Chip = Constants.Timing.CHIPREAD_DUMMYCHIP;
         }
 
         public int EventId { get; set; }
         public int Bib { get; set; }
-        public int Chip { get; set; }
+        public string Chip { get; set; }
 
         public int CompareTo(BibChipAssociation other)
         {

@@ -65,10 +65,13 @@ namespace EventDirector.UI.MainPages
                 list.Sort();
             });
             bibChipList.ItemsSource = list;
-            int maxChip = 0;
+            long maxChip = 0;
+            // check if hex before using a convert
+            long chip = -1;
             foreach (BibChipAssociation b in list)
             {
-                maxChip = b.Chip > maxChip ? b.Chip : maxChip;
+                chip = Convert.ToInt64(b.Chip);
+                maxChip = chip > maxChip ? chip : maxChip;
             }
             maxChip += 1;
             SingleChipBox.Text = maxChip.ToString();
@@ -120,7 +123,7 @@ namespace EventDirector.UI.MainPages
                 new BibChipAssociation()
                 {
                     Bib = bib,
-                    Chip = chip
+                    Chip = chip.ToString()
                 }
             };
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
@@ -149,7 +152,7 @@ namespace EventDirector.UI.MainPages
             {
                 bibChips.Add(new BibChipAssociation() {
                     Bib = bib,
-                    Chip = tag
+                    Chip = tag.ToString()
                 });
             }
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);

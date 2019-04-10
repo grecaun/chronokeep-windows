@@ -45,7 +45,7 @@ namespace EventDirector.UI.Timing
             Log.D("Submit clicked.");
             // Keep track of any bibs/chips we've changed.
             HashSet<int> bibsChanged = new HashSet<int>();
-            HashSet<long> chipsChanged = new HashSet<long>();
+            HashSet<string> chipsChanged = new HashSet<string>();
             bool add = AddRadio.IsChecked == true;
             string[] firstparts = TimeBox.Text.Replace('_', '0').Split(':');
             string[] secondparts = firstparts[2].Split('.');
@@ -99,9 +99,9 @@ namespace EventDirector.UI.Timing
             {
                 database.ResetTimingResultsBib(theEvent.Identifier, bib);
             }
-            foreach (long chip in chipsChanged)
+            foreach (string chip in chipsChanged)
             {
-                database.ResetTimingResultsChip(theEvent.Identifier, chip.ToString());
+                database.ResetTimingResultsChip(theEvent.Identifier, chip);
             }
             parent.UpdateView();
             parent.NotifyTimingWorker();

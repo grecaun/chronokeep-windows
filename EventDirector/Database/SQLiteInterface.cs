@@ -13,7 +13,7 @@ namespace EventDirector
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 35;
+        private readonly int version = 36;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -56,7 +56,7 @@ namespace EventDirector
                 queries.Add("CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "bib INTEGER NOT NULL," +
-                    "chip INTEGER NOT NULL," +
+                    "chip VARCHAR NOT NULL," +
                     "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS events (" +
@@ -200,7 +200,7 @@ namespace EventDirector
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "read_status INTEGER NOT NULL DEFAULT 0," +
                     "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
-                    "read_chipnumber INTEGER NOT NULL," +
+                    "read_chipnumber VARCHAR NOT NULL," +
                     "read_seconds INTEGER NOT NULL," +
                     "read_milliseconds INTEGER NOT NULL," +
                     "read_antenna INTEGER NOT NULL," +
@@ -213,8 +213,8 @@ namespace EventDirector
                     "read_starttime INTEGER NOT NULL," +
                     "read_time_seconds INTEGER NOT NULL," +
                     "read_time_milliseconds INTEGER NOT NULL," +
-                    "read_split_seconds INTEGER NOT NULL," +
-                    "read_split_milliseconds INTEGER NOT NULL," +
+                    "read_split_seconds INTEGER NOT NULL DEFAULT 0," +
+                    "read_split_milliseconds INTEGER NOT NULL DEFAULT 0," +
                     "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
                     "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
                     "UNIQUE (event_id, read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
@@ -1117,6 +1117,108 @@ namespace EventDirector
                         command.CommandText = "ALTER TABLE time_results ADD " +
                             "timeresult_splittime TEXT NOT NULL DEFAULT '';" +
                             "UPDATE settings SET version=35 WHERE version=34;";
+                        command.ExecuteNonQuery();
+                        goto case 35;
+                    case 35:
+                        Log.D("Upgrading from version 35.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO " +
+                            "old_bib_chip_assoc; ALTER TABLE chipreads RENAME TO " +
+                            "old_chipreads; CREATE TABLE IF NOT EXISTS chipreads (" +
+                                "read_id INTEGER PRIMARY KEY," +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "read_status INTEGER NOT NULL DEFAULT 0," +
+                                "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                                "read_chipnumber VARCHAR NOT NULL," +
+                                "read_seconds INTEGER NOT NULL," +
+                                "read_milliseconds INTEGER NOT NULL," +
+                                "read_antenna INTEGER NOT NULL," +
+                                "read_reader TEXT NOT NULL," +
+                                "read_box TEXT NOT NULL," +
+                                "read_logindex INTEGER NOT NULL," +
+                                "read_rssi INTEGER NOT NULL," +
+                                "read_isrewind INTEGER NOT NULL," +
+                                "read_readertime TEXT NOT NULL," +
+                                "read_starttime INTEGER NOT NULL," +
+                                "read_time_seconds INTEGER NOT NULL," +
+                                "read_time_milliseconds INTEGER NOT NULL," +
+                                "read_split_seconds INTEGER NOT NULL DEFAULT 0," +
+                                "read_split_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                                "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
+                                "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
+                                "UNIQUE (event_id, read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
+                                ");" +
+                            "CREATE TABLE IF NOT EXISTS bib_chip_assoc(" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "bib INTEGER NOT NULL," +
+                                "chip VARCHAR NOT NULL," +
+                                "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
+                                ");";
+                        command.ExecuteNonQuery();
+                        command.CommandText = "SELECT * FROM old_bib_chip_assoc;";
+                        SQLiteDataReader bibreader = command.ExecuteReader();
+                        List<BibChipAssociation> assocs = new List<BibChipAssociation>();
+                        while (bibreader.Read())
+                        {
+                            assocs.Add(new BibChipAssociation()
+                            {
+                                EventId = Convert.ToInt32(bibreader["event_id"]),
+                                Bib = Convert.ToInt32(bibreader["bib"]),
+                                Chip = bibreader["chip"].ToString()
+                            });
+                        }
+                        bibreader.Close();
+                        command.CommandText = "INSERT INTO bib_chip_assoc (event_id, bib, chip) VALUES (@eventId, @bib, @chip);";
+                        foreach (BibChipAssociation a in assocs)
+                        {
+                                command.Parameters.AddRange(new SQLiteParameter[]
+                                {
+                                    new SQLiteParameter("@eventId", a.EventId),
+                                    new SQLiteParameter("@bib", a.Bib),
+                                    new SQLiteParameter("@chip", a.Chip),
+                                });
+                                command.ExecuteNonQuery();
+                        }
+                        command.CommandText = "SELECT * FROM old_chipreads;";
+                        bibreader = command.ExecuteReader();
+                        List<ChipRead> reads = new List<ChipRead>();
+                        DateTime time = DateTime.Now;
+                        while (bibreader.Read())
+                        {
+                            reads.Add(new ChipRead(
+                                Convert.ToInt32(bibreader["read_id"]),
+                                Convert.ToInt32(bibreader["event_id"]),
+                                Convert.ToInt32(bibreader["read_status"]),
+                                Convert.ToInt32(bibreader["location_id"]),
+                                bibreader["read_chipnumber"].ToString(),
+                                Convert.ToInt64(bibreader["read_seconds"]),
+                                Convert.ToInt32(bibreader["read_milliseconds"]),
+                                Convert.ToInt32(bibreader["read_antenna"]),
+                                bibreader["read_rssi"].ToString(),
+                                Convert.ToInt32(bibreader["read_isrewind"]),
+                                bibreader["read_reader"].ToString(),
+                                bibreader["read_box"].ToString(),
+                                bibreader["read_readertime"].ToString(),
+                                Convert.ToInt32(bibreader["read_starttime"]),
+                                Convert.ToInt32(bibreader["read_logindex"]),
+                                Convert.ToInt64(bibreader["read_time_seconds"]),
+                                Convert.ToInt32(bibreader["read_time_milliseconds"]),
+                                Convert.ToInt32(bibreader["read_bib"]),
+                                Convert.ToInt32(bibreader["read_type"]),
+                                Constants.Timing.CHIPREAD_DUMMYBIB,
+                                "",
+                                "",
+                                time,
+                                ""
+                                ));
+                        }
+                        bibreader.Close();
+                        foreach (ChipRead read in reads)
+                        {
+                            AddChipReadInternal(read, connection);
+                        }
+                        command.CommandText = "DROP TABLE old_chipreads; DROP TABLE old_bib_chip_assoc;" +
+                            "UPDATE settings SET version=36 WHERE version=35;";
                         command.ExecuteNonQuery();
                         break;
                 }
@@ -4072,7 +4174,7 @@ namespace EventDirector
                 {
                     EventId = Convert.ToInt32(reader["event_id"]),
                     Bib = Convert.ToInt32(reader["bib"]),
-                    Chip = Convert.ToInt32(reader["chip"])
+                    Chip = reader["chip"].ToString()
                 });
             }
             reader.Close();
@@ -4102,7 +4204,7 @@ namespace EventDirector
                 {
                     EventId = Convert.ToInt32(reader["event_id"]),
                     Bib = Convert.ToInt32(reader["bib"]),
-                    Chip = Convert.ToInt32(reader["chip"])
+                    Chip = reader["chip"].ToString()
                 });
             }
             reader.Close();
@@ -4111,7 +4213,7 @@ namespace EventDirector
             return output;
         }
 
-        private void RemoveBibChipAssociationInternal(int eventId, int chip, SQLiteConnection connection)
+        private void RemoveBibChipAssociationInternal(int eventId, string chip, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -4122,7 +4224,7 @@ namespace EventDirector
             command.ExecuteNonQuery();
         }
 
-        public void RemoveBibChipAssociation(int eventId, int chip)
+        public void RemoveBibChipAssociation(int eventId, string chip)
         {
             Log.D("Attempting to grab Mutex: ID 80");
             if (!mutex.WaitOne(3000))
@@ -4493,7 +4595,7 @@ namespace EventDirector
                     Convert.ToInt32(reader["event_id"]),
                     Convert.ToInt32(reader["read_status"]),
                     locationId,
-                    Convert.ToInt64(reader["read_chipnumber"]),
+                    reader["read_chipnumber"].ToString(),
                     Convert.ToInt64(reader["read_seconds"]),
                     Convert.ToInt32(reader["read_milliseconds"]),
                     Convert.ToInt32(reader["read_antenna"]),

@@ -142,7 +142,7 @@ namespace EventDirector
                         items.Add(new BibChipAssociation
                         {
                             Bib = int.Parse(data.Headers[keys[1]]),
-                            Chip = int.Parse(data.Headers[keys[2]])
+                            Chip = data.Headers[keys[2]]
                         });
                     }
                     for (int counter = 0; counter < numEntries; counter++)
@@ -152,7 +152,7 @@ namespace EventDirector
                             items.Add(new BibChipAssociation
                             {
                                 Bib = int.Parse(data.Data[counter][keys[1]]),
-                                Chip = int.Parse(data.Data[counter][keys[2]])
+                                Chip = data.Data[counter][keys[2]]
                             });
                         }
                         catch

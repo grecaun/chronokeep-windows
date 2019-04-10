@@ -17,7 +17,7 @@ namespace EventDirector.UI.Timing
 
         List<ChipRead> chipReads = new List<ChipRead>();
         HashSet<int> bibsToReset = new HashSet<int>();
-        HashSet<long> chipsToReset = new HashSet<long>();
+        HashSet<string> chipsToReset = new HashSet<string>();
 
         public TimingRawReadsPage(TimingPage parent, IDBInterface database)
         {
@@ -60,9 +60,9 @@ namespace EventDirector.UI.Timing
             {
                 database.ResetTimingResultsBib(theEvent.Identifier, bib);
             }
-            foreach (long chip in chipsToReset)
+            foreach (string chip in chipsToReset)
             {
-                database.ResetTimingResultsChip(theEvent.Identifier, chip.ToString());
+                database.ResetTimingResultsChip(theEvent.Identifier, chip);
             }
             UpdateView();
             parent.NotifyTimingWorker();
@@ -194,9 +194,9 @@ namespace EventDirector.UI.Timing
                 {
                     database.ResetTimingResultsBib(theEvent.Identifier, bib);
                 }
-                foreach (long chip in chipsToReset)
+                foreach (string chip in chipsToReset)
                 {
-                    database.ResetTimingResultsChip(theEvent.Identifier, chip.ToString());
+                    database.ResetTimingResultsChip(theEvent.Identifier, chip);
                 }
                 UpdateView();
                 parent.NotifyTimingWorker();

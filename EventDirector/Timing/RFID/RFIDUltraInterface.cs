@@ -60,7 +60,7 @@ namespace EventDirector
                     ChipRead chipRead = new ChipRead(
                         theEvent.Identifier,
                         locationId,
-                        long.Parse(chipVals[1]),
+                        chipVals[1],
                         long.Parse(chipVals[2]),
                         int.Parse(chipVals[3]),
                         int.Parse(chipVals[4]),

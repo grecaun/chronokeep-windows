@@ -260,7 +260,7 @@ namespace EventDirector.UI.ChipAssignment
                     list.Add(new BibChipAssociation()
                     {
                         Bib = bib,
-                        Chip = tag
+                        Chip = tag.ToString()
                     });
                 }
             }
