@@ -1,7 +1,10 @@
 ﻿using EventDirector.Interfaces;
+using EventDirector.Objects;
 using EventDirector.Timing;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml;
 
 namespace EventDirector.UI.MainPages
 {
@@ -545,6 +549,82 @@ namespace EventDirector.UI.MainPages
             {
                 UpdateDatabase();
             }
+        }
+
+        private void SaveEvent_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Saving event.");
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "SQLite Database File (*.sqlite)|*.sqlite",
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                Log.D("Creating database file.");
+                SQLiteConnection.CreateFile(saveFileDialog.FileName);
+                SQLiteInterface savedDatabase = new SQLiteInterface(saveFileDialog.FileName);
+                savedDatabase.Initialize();
+                Event theEvent = database.GetCurrentEvent();
+                int oldEventId = theEvent.Identifier, newEventId = -1;
+                theEvent.Identifier = -1;
+                theEvent.NextYear = -1;
+                savedDatabase.AddEvent(theEvent);
+                newEventId = savedDatabase.GetEventID(theEvent);
+                // Get all of the parts that don't depend on other parts, then parts that do.
+                // Order of operation matters here.
+                List<AgeGroup> ageGroups = database.GetAgeGroups(oldEventId);
+                foreach (AgeGroup item in ageGroups)
+                {
+                    item.EventId = newEventId;
+                }
+                savedDatabase.AddAgeGroups(ageGroups);
+                List<BibChipAssociation> bibChipAssociations = database.GetBibChips(oldEventId);
+                savedDatabase.AddBibChipAssociation(newEventId, bibChipAssociations);
+                List<Division> divisions = database.GetDivisions(oldEventId);
+                foreach (Division item in divisions)
+                {
+                    item.EventIdentifier = newEventId;
+                }
+                savedDatabase.AddDivisions(divisions);
+                List<Segment> segments = database.GetSegments(oldEventId);
+                foreach (Segment item in segments)
+                {
+                    item.EventId = newEventId;
+                }
+                savedDatabase.AddSegments(segments);
+                List<TimingLocation> locations = database.GetTimingLocations(oldEventId);
+                foreach (TimingLocation item in locations)
+                {
+                    item.EventIdentifier = newEventId;
+                }
+                savedDatabase.AddTimingLocations(locations);
+                List<DayOfParticipant> dayOfParticipants = database.GetDayOfParticipants(oldEventId);
+                foreach (DayOfParticipant item in dayOfParticipants)
+                {
+                    item.EventIdentifier = newEventId;
+                }
+                savedDatabase.AddDayOfParticipants(dayOfParticipants);
+                List<Participant> participants = database.GetParticipants(oldEventId);
+                foreach (Participant item in participants)
+                {
+                    item.EventSpecific.EventIdentifier = newEventId;
+                }
+                savedDatabase.AddParticipants(participants);
+                List<ChipRead> chipReads = database.GetChipReads(oldEventId);
+                foreach (ChipRead item in chipReads)
+                {
+                    item.EventId = newEventId;
+                }
+                savedDatabase.AddChipReads(chipReads);
+                List<TimeResult> results = database.GetTimingResults(oldEventId);
+                foreach (TimeResult item in results)
+                {
+                    item.EventIdentifier = newEventId;
+                }
+                savedDatabase.AddTimingResults(results);
+            }
+            Log.D("Done saving file.");
         }
     }
 }

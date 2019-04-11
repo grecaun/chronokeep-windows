@@ -25,11 +25,13 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Button Name="newEvent" Content="New Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="25,10,25,10" Grid.Column="0" Click="NewEvent_Click" />
-            <Button Name="importEvent" Content="Import Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="25,10,25,10" Grid.Column="1" IsEnabled="False" Click="ImportEvent_Click"/>
-            <Button Name="changeEvent" Content="Change Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="25,10,25,10" Grid.Column="2" Click="ChangeEvent_Click"/>
-            <Button Name="deleteEvent" Content="Delete Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="25,10,25,10" Grid.Column="3" Click="DeleteEvent_Click"/>
+            <Button Name="newEvent" Content="New Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="15,10,15,10" Grid.Column="0" Click="NewEvent_Click" />
+            <Button Name="importEvent" Content="Import Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="15,10,15,10" Grid.Column="1" IsEnabled="False" Click="ImportEvent_Click"/>
+            <Button Name="saveEvent" Content="Save Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="15,10,15,10" Grid.Column="2" Click="SaveEvent_Click"/>
+            <Button Name="changeEvent" Content="Change Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="15,10,15,10" Grid.Column="3" Click="ChangeEvent_Click"/>
+            <Button Name="deleteEvent" Content="Delete Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="15,10,15,10" Grid.Column="4" Click="DeleteEvent_Click"/>
         </Grid>
         <StackPanel Name="LeftPanel" Grid.Column="0" Grid.Row="1" Margin="20,0,20,0">
             <DockPanel LastChildFill="True">

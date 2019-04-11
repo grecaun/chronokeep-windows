@@ -37,6 +37,7 @@ namespace EventDirector
 
         // Division Functions
         void AddDivision(Division div);
+        void AddDivisions(List<Division> divisions);
         void RemoveDivision(int identifier);
         void RemoveDivision(Division div);
         void UpdateDivision(Division div);
@@ -47,6 +48,7 @@ namespace EventDirector
 
         // Timing Location Functions
         void AddTimingLocation(TimingLocation tp);
+        void AddTimingLocations(List<TimingLocation> locations);
         void RemoveTimingLocation(TimingLocation tp);
         void RemoveTimingLocation(int identifier);
         void UpdateTimingLocation(TimingLocation tp);
@@ -131,6 +133,7 @@ namespace EventDirector
 
         // Day of Participant / Kiosk Functions
         void AddDayOfParticipant(DayOfParticipant part);
+        void AddDayOfParticipants(List<DayOfParticipant> participants);
         DayOfParticipant GetDayOfParticipant(DayOfParticipant part);
         List<DayOfParticipant> GetDayOfParticipants(int eventId);
         List<DayOfParticipant> GetDayOfParticipants();
