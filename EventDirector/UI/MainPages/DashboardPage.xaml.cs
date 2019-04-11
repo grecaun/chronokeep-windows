@@ -42,7 +42,7 @@ namespace EventDirector.UI.MainPages
         {
             int oldEventId = theEvent == null ? -1 : theEvent.Identifier;
             theEvent = database.GetCurrentEvent();
-            if (oldEventId != -1 && oldEventId != theEvent.Identifier)
+            if (theEvent != null && oldEventId != -1 && oldEventId != theEvent.Identifier)
             {
                 mWindow.DatasetChanged();
                 mWindow.NotifyRecalculateAgeGroups();
@@ -440,6 +440,77 @@ namespace EventDirector.UI.MainPages
         private void ImportEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import event clicked.");
+            OpenFileDialog openFileDialog = new OpenFileDialog() { Filter = "SQLite Database Files (*.sqlite)|*.sqlite;|All files|*" };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                SQLiteInterface savedDatabase = new SQLiteInterface(openFileDialog.FileName);
+                savedDatabase.Initialize();
+                List<Event> events = savedDatabase.GetEvents();
+                int lastID = -1;
+                foreach (Event ev in events)
+                {
+                    int oldEventId = ev.Identifier, newEventId = -1;
+                    ev.Identifier = -1;
+                    ev.NextYear = -1;
+                    database.AddEvent(ev);
+                    newEventId = database.GetEventID(ev);
+                    lastID = newEventId;
+                    // Get all of the parts that don't depend on other parts, then parts that do.
+                    // Order of operation matters here.
+                    List<AgeGroup> ageGroups = savedDatabase.GetAgeGroups(oldEventId);
+                    foreach (AgeGroup item in ageGroups)
+                    {
+                        item.EventId = newEventId;
+                    }
+                    database.AddAgeGroups(ageGroups);
+                    List<BibChipAssociation> bibChipAssociations = savedDatabase.GetBibChips(oldEventId);
+                    database.AddBibChipAssociation(newEventId, bibChipAssociations);
+                    List<Division> divisions = savedDatabase.GetDivisions(oldEventId);
+                    foreach (Division item in divisions)
+                    {
+                        item.EventIdentifier = newEventId;
+                    }
+                    database.AddDivisions(divisions);
+                    List<Segment> segments = savedDatabase.GetSegments(oldEventId);
+                    foreach (Segment item in segments)
+                    {
+                        item.EventId = newEventId;
+                    }
+                    database.AddSegments(segments);
+                    List<TimingLocation> locations = savedDatabase.GetTimingLocations(oldEventId);
+                    foreach (TimingLocation item in locations)
+                    {
+                        item.EventIdentifier = newEventId;
+                    }
+                    database.AddTimingLocations(locations);
+                    List<DayOfParticipant> dayOfParticipants = savedDatabase.GetDayOfParticipants(oldEventId);
+                    foreach (DayOfParticipant item in dayOfParticipants)
+                    {
+                        item.EventIdentifier = newEventId;
+                    }
+                    database.AddDayOfParticipants(dayOfParticipants);
+                    List<Participant> participants = savedDatabase.GetParticipants(oldEventId);
+                    foreach (Participant item in participants)
+                    {
+                        item.EventSpecific.EventIdentifier = newEventId;
+                    }
+                    database.AddParticipants(participants);
+                    List<ChipRead> chipReads = savedDatabase.GetChipReads(oldEventId);
+                    foreach (ChipRead item in chipReads)
+                    {
+                        item.EventId = newEventId;
+                    }
+                    database.AddChipReads(chipReads);
+                    List<TimeResult> results = savedDatabase.GetTimingResults(oldEventId);
+                    foreach (TimeResult item in results)
+                    {
+                        item.EventIdentifier = newEventId;
+                    }
+                    database.AddTimingResults(results);
+                }
+                database.SetAppSetting(Constants.Settings.CURRENT_EVENT, lastID.ToString());
+                UpdateView();
+            }
         }
 
         private void ChangeEvent_Click(object sender, RoutedEventArgs e)
@@ -491,8 +562,6 @@ namespace EventDirector.UI.MainPages
                 {
                     database.RemoveEvent(theEvent.Identifier);
                     database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
-                    UpdateView();
-                    mWindow.UpdateStatus();
                 }
             }
             catch
@@ -500,6 +569,8 @@ namespace EventDirector.UI.MainPages
                 Log.D("Unable to remove the event.");
                 MessageBox.Show("Unable to remove the event.");
             }
+            UpdateView();
+            mWindow.UpdateStatus();
         }
 
         private void EarlyCheckBox_Click(object sender, RoutedEventArgs e)
@@ -562,7 +633,15 @@ namespace EventDirector.UI.MainPages
             if (saveFileDialog.ShowDialog() == true)
             {
                 Log.D("Creating database file.");
-                SQLiteConnection.CreateFile(saveFileDialog.FileName);
+                try
+                {
+                    SQLiteConnection.CreateFile(saveFileDialog.FileName);
+                }
+                catch
+                {
+                    MessageBox.Show("Unable to save to file.");
+                    return;
+                }
                 SQLiteInterface savedDatabase = new SQLiteInterface(saveFileDialog.FileName);
                 savedDatabase.Initialize();
                 Event theEvent = database.GetCurrentEvent();

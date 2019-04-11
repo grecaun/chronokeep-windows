@@ -1614,9 +1614,9 @@ namespace EventDirector
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "DELETE FROM eventspecific_apparel a WHERE EXISTS " +
-                    "(SELECT * FROM eventspecific e WHERE a.eventspecific_id=e.eventspecific_id" +
-                    " AND e.event_id=@event); DELETE FROM day_of_part WHERE event_id=@event; DELETE FROM" +
+                command.CommandText = "DELETE FROM eventspecific_apparel AS a WHERE EXISTS " +
+                    "(SELECT * FROM eventspecific AS e WHERE a.eventspecific_id=e.eventspecific_id" +
+                    " AND e.event_id=@event); DELETE FROM dayof_participant WHERE event_id=@event; DELETE FROM" +
                     " kiosk WHERE event_id=@event; DELETE FROM time_results WHERE event_id=@event;" +
                     "DELETE FROM bib_group WHERE event_id=@event; DELETE FROM bib_chip_assoc WHERE event_id=@event;" +
                     "DELETE FROM segments WHERE event_id=@event; DELETE FROM chipreads WHERE event_id=@event;" +
@@ -3964,8 +3964,8 @@ namespace EventDirector
                     {
                         Log.D("We've found something.");
                         EventSpecific newSpecific = new EventSpecific(
-                            Convert.ToInt32(reader["dop_event_id"]),
-                            Convert.ToInt32(reader["dop_division_id"]),
+                            Convert.ToInt32(reader["event_id"]),
+                            Convert.ToInt32(reader["division_id"]),
                             reader["division_name"].ToString(),
                             bib.ToString(),
                             1,
@@ -4104,7 +4104,7 @@ namespace EventDirector
                     {
                         output = new DayOfParticipant(
                             Convert.ToInt32(reader["dop_id"]),
-                            Convert.ToInt32(reader["dop_event_id"]),
+                            Convert.ToInt32(reader["event_id"]),
                             reader["dop_first"].ToString(),
                             reader["dop_last"].ToString(),
                             reader["dop_street"].ToString(),
@@ -4642,16 +4642,21 @@ namespace EventDirector
         private List<ChipRead> GetChipReadsWorker(SQLiteDataReader reader)
         {
             Event theEvent = GetCurrentEvent();
-            DateTime start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
-            List<TimingLocation> locations = GetTimingLocations(theEvent.Identifier);
-            if (theEvent.CommonStartFinish != 1)
+            DateTime start = DateTime.Now;
+            if (theEvent != null)
+            {
+                start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
+            }
+            List<TimingLocation> locations = new List<TimingLocation>();
+            if (theEvent != null) locations.AddRange(GetTimingLocations(theEvent.Identifier));
+            if (theEvent != null && theEvent.CommonStartFinish != 1)
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
             }
             else
             {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent == null ? -1 : theEvent.Identifier, "Start/Finish", theEvent == null ? 1 : theEvent.FinishMaxOccurrences, theEvent == null ? 0 : theEvent.FinishIgnoreWithin));
             }
             Dictionary<int, string> locDict = new Dictionary<int, string>();
             foreach (TimingLocation loc in locations)
@@ -4662,6 +4667,7 @@ namespace EventDirector
             while (reader.Read())
             {
                 int locationId = Convert.ToInt32(reader["location_id"]);
+                string locationName = locDict.ContainsKey(locationId) ? locDict[locationId] : "";
                 output.Add(new ChipRead(
                     Convert.ToInt32(reader["read_id"]),
                     Convert.ToInt32(reader["event_id"]),
@@ -4686,7 +4692,7 @@ namespace EventDirector
                     reader["participant_first"] == DBNull.Value ? "" : reader["participant_first"].ToString(),
                     reader["participant_last"] == DBNull.Value ? "" : reader["participant_last"].ToString(),
                     start,
-                    locDict[locationId]
+                    locationName
                     ));
             }
             reader.Close();
