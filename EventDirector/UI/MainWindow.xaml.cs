@@ -1,4 +1,5 @@
-﻿using EventDirector.Interfaces;
+﻿using EventDirector.Database;
+using EventDirector.Interfaces;
 using EventDirector.Objects;
 using EventDirector.Timing;
 using EventDirector.UI.MainPages;
@@ -59,7 +60,15 @@ namespace EventDirector.UI
                 SQLiteConnection.CreateFile(path);
             }
             database = new SQLiteInterface(path);
-            database.Initialize();
+            try
+            {
+                database.Initialize();
+            }
+            catch (InvalidDatabaseVersion db)
+            {
+                MessageBox.Show("Database version greater than the max known by this client. Please update the client.", "fv"+db.FoundVersion+"mv"+db.MaxVersion);
+                this.Close();
+            }
 
             UpdateImportOptions();
             Constants.Settings.SetupSettings(database);
@@ -227,7 +236,7 @@ namespace EventDirector.UI
                     Log.D("Oh well!");
                 }
             }
-            page.Closing();
+            if (page != null) page.Closing();
         }
 
         private bool StopTimingWorker()

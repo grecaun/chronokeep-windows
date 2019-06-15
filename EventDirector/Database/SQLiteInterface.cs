@@ -7,6 +7,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using EventDirector.Database;
 using EventDirector.Objects;
 
 namespace EventDirector
@@ -361,6 +363,12 @@ namespace EventDirector
             connection.Close();
             if (oldVersion == -1) Log.D("Unable to get a version number. Something is terribly wrong.");
             else if (oldVersion < version) UpdateDatabase(oldVersion, version);
+            else if (oldVersion > version) UpdateClient(oldVersion, version);
+        }
+
+        private void UpdateClient(int dbVersion, int maxVersion)
+        {
+            throw new InvalidDatabaseVersion(dbVersion, maxVersion);
         }
 
         private void UpdateDatabase(int oldversion, int newversion)

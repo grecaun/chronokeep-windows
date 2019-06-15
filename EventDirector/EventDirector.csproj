@@ -210,6 +210,7 @@
     <Compile Include="Constants\Distances.cs" />
     <Compile Include="Constants\JsonOptions.cs" />
     <Compile Include="Constants\Settings.cs" />
+    <Compile Include="Database\InvalidDatabaseVersion.cs" />
     <Compile Include="Interfaces\IO\IDataExporter.cs" />
     <Compile Include="Interfaces\UI\ISubPage.cs" />
     <Compile Include="Interfaces\Timing\ITimingSystemInterface.cs" />
