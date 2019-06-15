@@ -13,6 +13,19 @@ namespace EventDirector
         private int distance_unit;
         private string name;
 
+        public Segment(Segment seg)
+        {
+            this.id = -1;
+            this.event_id = seg.event_id;
+            this.division_id = seg.division_id;
+            this.location_id = seg.location_id;
+            this.occurrence = seg.occurrence;
+            this.distance_segment = seg.distance_segment;
+            this.distance_cumulative = seg.distance_cumulative;
+            this.distance_unit = seg.distance_unit;
+            this.name = seg.name;
+        }
+
         public Segment(int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n)
         {
             this.id = -1;

@@ -27,9 +27,13 @@ namespace EventDirector.UI.MainPages
         private Event theEvent;
         private List<TimingLocation> locations;
         private List<Division> divisions;
-        
+
         private static HashSet<int> DivisionsToReset = new HashSet<int>();
         private bool UpdateTimingWorker = false;
+
+        private Dictionary<int, List<Segment>> allSegments = new Dictionary<int, List<Segment>>();
+        private List<Segment> SegmentsToRemove = new List<Segment>();
+        private List<Segment> SegmentsToAdd = new List<Segment>();
 
         public SegmentsPage(IMainWindow mWindow, IDBInterface database)
         {
@@ -52,6 +56,7 @@ namespace EventDirector.UI.MainPages
                 divisions = database.GetDivisions(theEvent.Identifier);
                 divisions.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
             }
+            UpdateSegments();
         }
 
         public void UpdateView()
@@ -61,59 +66,95 @@ namespace EventDirector.UI.MainPages
                 return;
             }
             SegmentsBox.Items.Clear();
+            int TabIndexVal = 0;
+            if (theEvent.DivisionSpecificSegments == 1)
+            {
+                foreach (Division div in divisions)
+                {
+                    ADivisionSegmentHolder newHolder = new ADivisionSegmentHolder(theEvent, this, div, divisions, allSegments[div.Identifier], locations, TabIndexVal);
+                    TabIndexVal = newHolder.TabIx;
+                    SegmentsBox.Items.Add(newHolder);
+                    foreach (ListBoxItem item in newHolder.SegmentItems)
+                    {
+                        SegmentsBox.Items.Add(item);
+                    }
+                }
+            }
+            else
+            {
+                ADivisionSegmentHolder newHolder = new ADivisionSegmentHolder(theEvent, this, null, divisions, allSegments[Constants.Timing.COMMON_SEGMENTS_DIVISIONID], locations, TabIndexVal);
+                SegmentsBox.Items.Add(newHolder);
+                foreach (ListBoxItem item in newHolder.SegmentItems)
+                {
+                    SegmentsBox.Items.Add(item);
+                }
+            }
+        }
+
+        private void UpdateSegments()
+        {
+            allSegments.Clear();
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
             if (theEvent.DivisionSpecificSegments == 1)
             {
                 foreach (Division div in divisions)
                 {
-                    List<Segment> divSegments = new List<Segment>(segments);
-                    divSegments.RemoveAll(x => x.DivisionId != div.Identifier);
-                    SegmentsBox.Items.Add(new ADivisionSegmentHolder(theEvent, this, div, divisions, divSegments, locations));
+                    allSegments[div.Identifier] = new List<Segment>(segments);
+                    allSegments[div.Identifier].RemoveAll(x => x.DivisionId != div.Identifier);
                 }
             }
             else
             {
-                segments.RemoveAll(x => x.DivisionId != Constants.Timing.COMMON_SEGMENTS_DIVISIONID);
-                SegmentsBox.Items.Add(new ADivisionSegmentHolder(theEvent, this, null, divisions, segments, locations));
+                allSegments[Constants.Timing.COMMON_SEGMENTS_DIVISIONID] = segments;
+                allSegments[Constants.Timing.COMMON_SEGMENTS_DIVISIONID].RemoveAll(x => x.DivisionId != Constants.Timing.COMMON_SEGMENTS_DIVISIONID);
             }
         }
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
             UpdateDatabase();
+            UpdateSegments();
             UpdateView();
         }
 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
+            UpdateSegments();
             UpdateView();
         }
 
         private void RemoveSegment(Segment mySegment)
         {
             Log.D("Removing segment.");
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                UpdateDatabase();
-            }
-            database.RemoveSegment(mySegment);
-            DivisionsToReset.Add(mySegment.DivisionId);
-            UpdateTimingWorker = true;
+            SegmentsToRemove.Add(mySegment);
+            allSegments[mySegment.DivisionId].Remove(mySegment);
             UpdateView();
         }
 
         public void UpdateDatabase()
         {
             List<Segment> segments = new List<Segment>();
-            foreach (ADivisionSegmentHolder divSegHolder in SegmentsBox.Items)
+            foreach (Object seg in SegmentsBox.Items)
             {
-                foreach (ASegment aSegment in divSegHolder.segmentHolder.Items)
+                if (seg is ASegment)
                 {
-                    aSegment.UpdateSegment();
-                    segments.Add(aSegment.mySegment);
+
+                    ((ASegment)seg).UpdateSegment();
+                    segments.Add(((ASegment)seg).mySegment);
                 }
             }
+            foreach (Segment seg in SegmentsToAdd)
+            {
+                DivisionsToReset.Add(seg.DivisionId);
+            }
+            database.AddSegments(SegmentsToAdd);
+            foreach (Segment seg in SegmentsToRemove)
+            {
+                DivisionsToReset.Add(seg.DivisionId);
+            }
+            database.RemoveSegments(SegmentsToRemove);
             UpdateTimingWorker = true;
+            segments.RemoveAll(x => (SegmentsToAdd.Contains(x) || SegmentsToRemove.Contains(x)));
             database.UpdateSegments(segments);
         }
 
@@ -161,35 +202,24 @@ namespace EventDirector.UI.MainPages
         public void AddSegment(int divisionId, int finish_occurrences)
         {
             Log.D("Adding segment.");
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
-            {
-                UpdateDatabase();
-            }
-            database.AddSegment(new Segment(theEvent.Identifier, divisionId, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences));
-            DivisionsToReset.Add(divisionId);
-            UpdateTimingWorker = true;
+            Segment newSeg = new Segment(theEvent.Identifier, divisionId, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences);
+            SegmentsToAdd.Add(newSeg);
+            allSegments[divisionId].Add(newSeg);
             UpdateView();
         }
 
         public void CopyFromDivision(int intoDivision, int fromDivision)
         {
             Log.D("Copying segments.");
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            SegmentsToRemove.AddRange(allSegments[intoDivision]);
+            allSegments[intoDivision].Clear();
+            foreach (Segment seg in allSegments[fromDivision])
             {
-                UpdateDatabase();
+                Segment newSeg = new Segment(seg);
+                newSeg.DivisionId = intoDivision;
+                allSegments[intoDivision].Add(newSeg);
             }
-            List<Segment> oldSegments = database.GetSegments(theEvent.Identifier);
-            List<Segment> newSegments = new List<Segment>(oldSegments);
-            oldSegments.RemoveAll(x => x.DivisionId != intoDivision);
-            database.RemoveSegments(oldSegments);
-            newSegments.RemoveAll(x => x.DivisionId != fromDivision);
-            foreach (Segment seg in newSegments)
-            {
-                seg.DivisionId = intoDivision;
-            }
-            database.AddSegments(newSegments);
-            DivisionsToReset.Add(intoDivision);
-            UpdateTimingWorker = true;
+            SegmentsToAdd.AddRange(allSegments[intoDivision]);
             UpdateView();
         }
 
@@ -204,19 +234,23 @@ namespace EventDirector.UI.MainPages
             private ComboBox copyFromDivision = null;
             private int finish_occurrences;
             private List<Division> otherDivisions;
+            public List<ListBoxItem> SegmentItems = new List<ListBoxItem>();
 
-            public ListBox segmentHolder;
+            //public ListBox segmentHolder;
             public Division division;
+            public int TabIx { get; } = -1;
 
             public ADivisionSegmentHolder(Event theEvent, SegmentsPage page, Division division,
-                List<Division> divisions, List<Segment> segments, List<TimingLocation> locations)
+                List<Division> divisions, List<Segment> segments, List<TimingLocation> locations, int TabIx)
             {
+                this.TabIx = TabIx;
                 this.division = division;
                 this.page = page;
                 otherDivisions = new List<Division>(divisions);
                 otherDivisions.RemoveAll(x => x.Identifier == (division == null ? -1 : division.Identifier));
                 StackPanel thePanel = new StackPanel();
                 this.Content = thePanel;
+                this.IsTabStop = false;
                 Grid namePanel = new Grid();
                 namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(85) });
@@ -228,9 +262,10 @@ namespace EventDirector.UI.MainPages
                 {
                     Content = division == null ? "All Divisions" : division.Name,
                     FontSize = 20,
-                    Margin = new Thickness(10,5,0,5),
+                    Margin = new Thickness(10, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
+                divName.IsTabStop = false;
                 namePanel.Children.Add(divName);
                 Grid.SetColumn(divName, 0);
                 Button addButton = new Button()
@@ -241,7 +276,8 @@ namespace EventDirector.UI.MainPages
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Width = 75,
-                    Height = 25
+                    Height = 25,
+                    TabIndex = this.TabIx++
                 };
                 addButton.Click += new RoutedEventHandler(this.AddClick);
                 namePanel.Children.Add(addButton);
@@ -256,7 +292,8 @@ namespace EventDirector.UI.MainPages
                         VerticalContentAlignment = VerticalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Right,
-                        Margin = new Thickness(10, 0, 2, 0)
+                        Margin = new Thickness(10, 0, 2, 0),
+                        IsTabStop = false
                     });
                     copyFromDivision = new ComboBox()
                     {
@@ -264,7 +301,8 @@ namespace EventDirector.UI.MainPages
                         Height = 25,
                         VerticalAlignment = VerticalAlignment.Center,
                         VerticalContentAlignment = VerticalAlignment.Center,
-                        Margin = new Thickness(0,0,10,0)
+                        Margin = new Thickness(0, 0, 10, 0),
+                        TabIndex = this.TabIx++
                     };
                     copyFromDivision.Items.Add(new ComboBoxItem()
                     {
@@ -290,21 +328,26 @@ namespace EventDirector.UI.MainPages
                 {
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(5,0,5,0),
+                    Margin = new Thickness(5, 0, 5, 0),
                     Height = 1,
                     Fill = new SolidColorBrush(Colors.Gray)
                 });
-                segmentHolder = new ListBox()
+                /*segmentHolder = new ListBox()
                 {
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Center,
                     BorderThickness = new Thickness(0)
                 };
-                thePanel.Children.Add(segmentHolder);
+                thePanel.Children.Add(segmentHolder);//*/
                 finish_occurrences = 0;
+                SegmentItems.Add(new ASegmentHeader(theEvent));
+                //segmentHolder.Items.Add(new ASegmentHeader(theEvent));
                 foreach (Segment s in segments)
                 {
-                    segmentHolder.Items.Add(new ASegment(theEvent, page, s, locations));
+                    ASegment newSeg = new ASegment(theEvent, page, s, locations, this.TabIx);
+                    SegmentItems.Add(newSeg);
+                    //segmentHolder.Items.Add(newSeg);
+                    this.TabIx = newSeg.TabIx;
                     if (s.LocationId == Constants.Timing.LOCATION_FINISH || s.LocationId == Constants.Timing.LOCATION_START)
                     {
                         finish_occurrences = s.Occurrence > finish_occurrences ? s.Occurrence : finish_occurrences;
@@ -343,6 +386,84 @@ namespace EventDirector.UI.MainPages
             }
         }
 
+        private class ASegmentHeader : ListBoxItem
+        {
+            public Label Where = new Label()
+            {
+                Content = "Where",
+                FontSize = 14,
+                Width = 140,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+            public Label NameLabel = new Label()
+            {
+                Content = "Name",
+                FontSize = 14,
+                Width = 190,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+            public Label Occurrence = new Label()
+            {
+                Content = "Occ",
+                FontSize = 14,
+                Width = 70,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+            public Label SegDistance = new Label()
+            {
+                Content = "Dist",
+                FontSize = 14,
+                Width = 70,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+            public Label TotalDistance = new Label()
+            {
+                Content = "Total",
+                FontSize = 14,
+                Width = 70,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+            public Label Unit = new Label()
+            {
+                Content = "Unit",
+                FontSize = 14,
+                Width = 90,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+            public Label Remove = new Label()
+            {
+                Content = "",
+                FontSize = 14,
+                Width = 50,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+            public ASegmentHeader(Event theEvent)
+            {
+                this.IsTabStop = false;
+                DockPanel dockPanel = new DockPanel()
+                {
+                    MaxWidth = 700
+                };
+                this.Content = dockPanel;
+                dockPanel.Children.Add(Where);
+                dockPanel.Children.Add(NameLabel);
+                if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
+                {
+                    dockPanel.Children.Add(Occurrence);
+                }
+                dockPanel.Children.Add(SegDistance);
+                dockPanel.Children.Add(TotalDistance);
+                dockPanel.Children.Add(Unit);
+                dockPanel.Children.Add(Remove);
+            }
+        }
         private class ASegment : ListBoxItem
         {
             public TextBox SegName { get; private set; }
@@ -357,46 +478,30 @@ namespace EventDirector.UI.MainPages
             public Segment mySegment;
             private Dictionary<string, int> locationDictionary;
 
+            public int TabIx { get; }
+
             private readonly Regex allowedChars = new Regex("[^0-9.]+");
             private readonly Regex allowedNums = new Regex("[^0-9]+");
 
-            public ASegment(Event theEvent, SegmentsPage page, Segment segment, List<TimingLocation> locations)
+            public ASegment(Event theEvent, SegmentsPage page, Segment segment, List<TimingLocation> locations, int tabIndex)
             {
                 this.page = page;
                 this.mySegment = segment;
                 this.locationDictionary = new Dictionary<string, int>();
-                StackPanel thePanel = new StackPanel()
+                this.TabIx = tabIndex;
+                DockPanel thePanel = new DockPanel()
                 {
-                    MaxWidth = 600
+                    MaxWidth = 700
                 };
                 this.Content = thePanel;
-                this.IsTabStop = false;
 
-                // Name - Location
-                DockPanel topDock = new DockPanel();
-                topDock.Children.Add(new Label()
-                {
-                    Content = "Name",
-                    Width = 100,
-                    FontSize = 16,
-                    Margin = new Thickness(10, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
-                });
-                SegName = new TextBox()
-                {
-                    Text = mySegment.Name,
-                    FontSize = 16,
-                    Width = 180,
-                    Margin = new Thickness(0, 10, 0, 10)
-                };
-                SegName.GotFocus += new RoutedEventHandler(this.SelectAll);
-                topDock.Children.Add(SegName);
+                // Where
                 Location = new ComboBox()
                 {
                     FontSize = 16,
-                    Width = 150,
-                    Margin = new Thickness(10,10,10,10)
+                    Width = 140,
+                    Margin = new Thickness(5, 5, 5, 0),
+                    TabIndex = TabIx++
                 };
                 ComboBoxItem selected = null, current;
                 foreach (TimingLocation loc in locations)
@@ -418,23 +523,29 @@ namespace EventDirector.UI.MainPages
                     Location.SelectedItem = selected;
                 }
                 Location.SelectionChanged += new SelectionChangedEventHandler(this.Location_Changed);
-                topDock.Children.Add(Location);
+                thePanel.Children.Add(Location);
+                // Name
+                SegName = new TextBox()
+                {
+                    Text = mySegment.Name,
+                    FontSize = 14,
+                    Width = 190,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5, 5, 5, 0),
+                    TabIndex = TabIx++
+                };
+                SegName.GotFocus += new RoutedEventHandler(this.SelectAll);
+                thePanel.Children.Add(SegName);
+                // Occurrence
                 if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                 {
-                    topDock.Children.Add(new Label()
-                    {
-                        Content = "Occurrence",
-                        Width = 100,
-                        FontSize = 15,
-                        Margin = new Thickness(0, 0, 0, 0),
-                        VerticalAlignment = VerticalAlignment.Center,
-                        HorizontalContentAlignment = HorizontalAlignment.Right
-                    });
                     Occurrence = new ComboBox()
                     {
-                        FontSize = 16,
-                        Margin = new Thickness(0, 10, 0, 10),
-                        VerticalContentAlignment = VerticalAlignment.Center
+                        FontSize = 14,
+                        Width = 70,
+                        Margin = new Thickness(5, 5, 5, 0),
+                        VerticalContentAlignment = VerticalAlignment.Center,
+                        TabIndex = TabIx++
                     };
                     if (Location.SelectedItem == null || !locationDictionary.TryGetValue(((ComboBoxItem)Location.SelectedItem).Uid, out int maxOccurrences))
                     {
@@ -462,57 +573,41 @@ namespace EventDirector.UI.MainPages
                     {
                         Occurrence.SelectedIndex = 0;
                     }
-                    topDock.Children.Add(Occurrence);
+                    thePanel.Children.Add(Occurrence);
                 }
-                thePanel.Children.Add(topDock);
 
                 // Distance information
-                DockPanel bottomDock = new DockPanel();
-                bottomDock.Children.Add(new Label()
-                {
-                    Content = "Distance",
-                    Width = 100,
-                    FontSize = 16,
-                    Margin = new Thickness(10, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
-                });
                 SegDistance = new TextBox()
                 {
                     Text = mySegment.SegmentDistance.ToString(),
-                    Width = 80,
-                    FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
-                    VerticalContentAlignment = VerticalAlignment.Center
+                    Width = 70,
+                    FontSize = 14,
+                    Margin = new Thickness(5, 5, 5, 0),
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    TabIndex = TabIx++
                 };
                 SegDistance.GotFocus += new RoutedEventHandler(this.SelectAll);
                 SegDistance.PreviewTextInput += new TextCompositionEventHandler(this.DoubleValidation);
-                bottomDock.Children.Add(SegDistance);
-                bottomDock.Children.Add(new Label()
-                {
-                    Content = "From Start",
-                    Width = 130,
-                    FontSize = 16,
-                    Margin = new Thickness(10, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
-                });
+                thePanel.Children.Add(SegDistance);
                 CumDistance = new TextBox()
                 {
                     Text = mySegment.CumulativeDistance.ToString(),
-                    Width = 80,
-                    FontSize = 16,
-                    Margin = new Thickness(0, 10, 0, 10),
-                    VerticalContentAlignment = VerticalAlignment.Center
+                    Width = 70,
+                    FontSize = 14,
+                    Margin = new Thickness(5, 5, 5, 0),
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    TabIndex = TabIx++
                 };
                 CumDistance.GotFocus += new RoutedEventHandler(this.SelectAll);
                 CumDistance.PreviewTextInput += new TextCompositionEventHandler(this.DoubleValidation);
-                bottomDock.Children.Add(CumDistance);
+                thePanel.Children.Add(CumDistance);
                 DistanceUnit = new ComboBox()
                 {
-                    FontSize = 16,
+                    FontSize = 14,
                     VerticalContentAlignment = VerticalAlignment.Center,
-                    Margin = new Thickness(10, 10, 10, 10)
+                    Width = 90,
+                    Margin = new Thickness(5, 5, 5, 0),
+                    TabIndex = TabIx++
                 };
                 DistanceUnit.Items.Add(new ComboBoxItem()
                 {
@@ -556,16 +651,16 @@ namespace EventDirector.UI.MainPages
                 {
                     DistanceUnit.SelectedIndex = 4;
                 }
-                bottomDock.Children.Add(DistanceUnit);
-                thePanel.Children.Add(bottomDock);
+                thePanel.Children.Add(DistanceUnit);
 
                 Remove = new Button()
                 {
-                    Content = "Remove",
-                    FontSize = 16,
-                    Height = 35,
-                    Width = 150,
-                    Margin = new Thickness(10, 10, 10, 10)
+                    Content = "X",
+                    FontSize = 14,
+                    Width = 50,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5, 5, 5, 0),
+                    TabIndex = TabIx++
                 };
                 Remove.Click += new RoutedEventHandler(this.Remove_Click);
                 thePanel.Children.Add(Remove);
