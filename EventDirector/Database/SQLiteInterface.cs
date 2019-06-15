@@ -4387,6 +4387,7 @@ namespace EventDirector
                 new SQLiteParameter("@type", read.Type)
             });
             command.ExecuteNonQuery();
+            Log.D("EventID " + read.EventId);
         }
 
         public void AddChipRead(ChipRead read)
@@ -4401,7 +4402,11 @@ namespace EventDirector
                 + " LogId " + read.LogId + " Time Given " + read.TimeString);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            AddChipReadInternal(read, connection);
+            using (var transaction = connection.BeginTransaction())
+            {
+                AddChipReadInternal(read, connection);
+                transaction.Commit();
+            }
             connection.Close();
             mutex.ReleaseMutex();
         }
@@ -4431,12 +4436,13 @@ namespace EventDirector
         private void UpdateChipReadInternal(ChipRead read, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "UPDATE chipreads SET read_status=@status, read_time=@time WHERE read_id=@id;";
+            command.CommandText = "UPDATE chipreads SET read_status=@status, read_time_seconds=@time, read_time_milliseconds=@mill WHERE read_id=@id;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                     new SQLiteParameter("@status", read.Status),
                     new SQLiteParameter("@id", read.ReadId),
-                    new SQLiteParameter("@time", read.TimeString)
+                    new SQLiteParameter("@time", read.TimeSeconds),
+                    new SQLiteParameter("@mill", read.TimeMilliseconds)
             });
             command.ExecuteNonQuery();
 
@@ -4621,9 +4627,9 @@ namespace EventDirector
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on c.read_chipnumber=b.chip " +
+            command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on (c.read_chipnumber=b.chip AND c.event_id=b.event_id) " +
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id) " +
-                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND c.event_id=b.event_id AND " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND " +
                 "(read_status=@status OR read_status=@used OR read_status=@start);";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
