@@ -133,6 +133,7 @@ namespace EventDirector.UI.Participants
             FirstBox.Text = person.FirstName;
             LastBox.Text = person.LastName;
             BirthdayBox.Text = person.Birthdate;
+            AgeBox.Text = person.Age(theEvent.Date);
             GenderBox.SelectedIndex = person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase) ? 0 : 1;
             StreetBox.Text = person.Street;
             Street2Box.Text = person.Street2;
@@ -160,6 +161,7 @@ namespace EventDirector.UI.Participants
             FirstBox.Text = "";
             LastBox.Text = "";
             BirthdayBox.Text = "";
+            AgeBox.Text = "";
             GenderBox.SelectedIndex = 0;
             StreetBox.Text = "";
             Street2Box.Text = "";
@@ -208,6 +210,16 @@ namespace EventDirector.UI.Participants
             }
             if (newPart != null)
             {
+                if (newPart.FirstName.Trim().Length < 1 || newPart.LastName.Trim().Length < 1)
+                {
+                    MessageBox.Show("Invalid name given.");
+                    return;
+                }
+                if (newPart.Birthdate.Length < 1)
+                {
+                    MessageBox.Show("Birthdate or Age not specified.");
+                    return;
+                }
                 database.AddParticipant(newPart);
                 if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
@@ -276,7 +288,11 @@ namespace EventDirector.UI.Participants
                 nextYear = person.EventSpecific.NextYear;
             }
             int bib = Constants.Timing.CHIPREAD_DUMMYBIB;
-            int.TryParse(BibBox.Text, out bib);
+            try
+            {
+                bib = int.Parse(BibBox.Text);
+            }
+            catch { }
             string gender = "Male";
             if (GenderBox.SelectedItem != null)
             {
@@ -291,6 +307,14 @@ namespace EventDirector.UI.Participants
             {
                 earlystart = 1;
             }
+            int.TryParse(AgeBox.Text, out int age);
+            string birthdate = BirthdayBox.Text;
+            if (age != 0 && birthdate.Length < 1)
+            {
+                int.TryParse(theEvent.Date.Split('/')[2], out int year);
+                year = year < 1969 ? DateTime.Now.Year : year;
+                birthdate = "1/1/" + (year - age);
+            }
             Participant output = new Participant(
                 participantId,
                 FirstBox.Text,
@@ -299,7 +323,7 @@ namespace EventDirector.UI.Participants
                 CityBox.Text,
                 StateBox.Text,
                 ZipBox.Text,
-                BirthdayBox.Text,
+                birthdate,
                 new EventSpecific(
                     eventSpecificId,
                     theEvent.Identifier,

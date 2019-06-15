@@ -26,8 +26,10 @@
         </DockPanel>
         <DockPanel>
             <Label Content="Birthday" FontSize="16" Margin="5,0,5,0" Width="100" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
-            <DatePicker Name="BirthdayBox" FontSize="16" Margin="0,5,5,5" Width="180" KeyDown="Box_KeyDown"/>
-            <Label Content="Gender" FontSize="16" Margin="0,0,5,0" Width="100" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
+            <DatePicker Name="BirthdayBox" FontSize="16" Margin="0,5,5,5" Width="130" KeyDown="Box_KeyDown" VerticalContentAlignment="Center"/>
+            <Label Content="Age" FontSize="16" Margin="0,0,5,0" Width="45" HorizontalContentAlignment="Right" VerticalAlignment="Center"/>
+            <TextBox Name="AgeBox" FontSize="16" Margin="0,5,5,5" Width="40" KeyDown="Box_KeyDown" VerticalContentAlignment="Center"/>
+            <Label Content="Gender" FontSize="16" Margin="0,0,5,0" Width="70" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
             <ComboBox Name="GenderBox" FontSize="16" Margin="0,5,5,5">
                 <ComboBoxItem Content="Male"/>
                 <ComboBoxItem Content="Female"/>
