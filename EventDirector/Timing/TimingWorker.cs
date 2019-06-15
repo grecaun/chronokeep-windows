@@ -1287,15 +1287,30 @@ namespace EventDirector.Timing
             List<TimeResult> output = new List<TimeResult>();
             // Get a list of all segments
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
+            Dictionary<int, List<TimeResult>> segmentDictionary = new Dictionary<int, List<TimeResult>>();
+            foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
+            {
+                if (!segmentDictionary.ContainsKey(result.SegmentId))
+                {
+                    segmentDictionary[result.SegmentId] = new List<TimeResult>();
+                }
+                segmentDictionary[result.SegmentId].Add(result);
+            }
             // process results based upon the segment they're in
             foreach (Segment segment in segments)
             {
                 Log.D("Processing segment " + segment.Name);
-                List<TimeResult> segmentResults = database.GetSegmentTimes(theEvent.Identifier, segment.Identifier);
-                ProcessSegmentPlacementsDistance(theEvent, segmentResults, participantEventSpecificDictionary);
+                if (segmentDictionary.ContainsKey(segment.Identifier))
+                {
+                    output.AddRange(ProcessSegmentPlacementsDistance(theEvent, segmentDictionary[segment.Identifier], participantEventSpecificDictionary));
+                }
             }
             Log.D("Processing finish results");
-            ProcessSegmentPlacementsDistance(theEvent, database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH), participantEventSpecificDictionary);
+            if (segmentDictionary.ContainsKey(Constants.Timing.SEGMENT_FINISH))
+            {
+                output.AddRange(ProcessSegmentPlacementsDistance(theEvent, segmentDictionary[Constants.Timing.SEGMENT_FINISH], participantEventSpecificDictionary));
+            }
+            database.AddTimingResults(output);
             return output;
         }
 
@@ -1304,14 +1319,30 @@ namespace EventDirector.Timing
             List<TimeResult> output = new List<TimeResult>();
             // Get a list of all segments
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
+            Dictionary<int, List<TimeResult>> segmentDictionary = new Dictionary<int, List<TimeResult>>();
+            foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
+            {
+                if (!segmentDictionary.ContainsKey(result.SegmentId))
+                {
+                    segmentDictionary[result.SegmentId] = new List<TimeResult>();
+                }
+                segmentDictionary[result.SegmentId].Add(result);
+            }
+            // process results based upon the segment they're in
             foreach (Segment segment in segments)
             {
                 Log.D("Processing segment " + segment.Name);
-                List<TimeResult> segmentResults = database.GetSegmentTimes(theEvent.Identifier, segment.Identifier);
-                output.AddRange(ProcessSegmentPlacementsTime(theEvent, segmentResults, participantEventSpecificDictionary));
+                if (segmentDictionary.ContainsKey(segment.Identifier))
+                {
+                    output.AddRange(ProcessSegmentPlacementsTime(theEvent, segmentDictionary[segment.Identifier], participantEventSpecificDictionary));
+                }
             }
             Log.D("Processing finish results");
-            output.AddRange(ProcessSegmentPlacementsTime(theEvent, database.GetSegmentTimes(theEvent.Identifier, Constants.Timing.SEGMENT_FINISH), participantEventSpecificDictionary));
+            if (segmentDictionary.ContainsKey(Constants.Timing.SEGMENT_FINISH))
+            {
+                output.AddRange(ProcessSegmentPlacementsTime(theEvent, segmentDictionary[Constants.Timing.SEGMENT_FINISH], participantEventSpecificDictionary));
+            }
+            database.AddTimingResults(output);
             return output;
         }
 
@@ -1405,7 +1436,6 @@ namespace EventDirector.Timing
                     }
                 }
             }
-            database.AddTimingResults(segmentResults);
             return segmentResults;
         }
 
@@ -1502,7 +1532,6 @@ namespace EventDirector.Timing
                     result.AgePlace = ++(ageGroupPlaceDictionary[(divisionId, ageGroupId, gender)]);
                 }
             }
-            database.AddTimingResults(segmentResults);
             return segmentResults;
         }
     }

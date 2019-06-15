@@ -1756,11 +1756,12 @@ namespace EventDirector
 
         public Event GetCurrentEvent()
         {
-            if (GetAppSetting(Constants.Settings.CURRENT_EVENT) == null)
+            AppSetting CurEvent = GetAppSetting(Constants.Settings.CURRENT_EVENT);
+            if (CurEvent == null)
             {
                 return null;
             }
-            return GetEvent(Convert.ToInt32(GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
+            return GetEvent(Convert.ToInt32(CurEvent.value));
         }
 
         public Event GetEvent(int id)
