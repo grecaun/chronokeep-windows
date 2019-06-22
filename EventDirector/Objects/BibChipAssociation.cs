@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     public class BibChipAssociation : IEquatable<BibChipAssociation>, IComparable<BibChipAssociation>
     {

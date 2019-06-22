@@ -1,9 +1,9 @@
-﻿<Window x:Class="EventDirector.NewEventWindow"
+﻿<Window x:Class="ChronoKeep.NewEventWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:EventDirector"
+        xmlns:local="clr-namespace:ChronoKeep"
         mc:Ignorable="d"
         Title="Event" Height="410" Width="350" ResizeMode="NoResize" Closing="Window_Closing" Topmost="True">
     <StackPanel>

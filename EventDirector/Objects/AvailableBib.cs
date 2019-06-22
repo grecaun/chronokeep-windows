@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventDirector.Objects
+namespace ChronoKeep.Objects
 {
     public class AvailableBib : IEquatable<AvailableBib>, IComparable<AvailableBib>
     {

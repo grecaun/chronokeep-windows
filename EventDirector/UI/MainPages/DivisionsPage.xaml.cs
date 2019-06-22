@@ -1,5 +1,5 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.Objects;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 
-namespace EventDirector.UI.MainPages
+namespace ChronoKeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for DivisionsPage.xaml

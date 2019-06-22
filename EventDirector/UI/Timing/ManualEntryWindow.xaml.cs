@@ -1,4 +1,4 @@
-﻿using EventDirector.Interfaces;
+﻿using ChronoKeep.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace EventDirector.UI.Timing
+namespace ChronoKeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for ManualEntryWindow.xaml

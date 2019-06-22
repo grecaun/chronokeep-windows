@@ -1,5 +1,5 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.Objects;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.Objects;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EventDirector.UI.MainPages
+namespace ChronoKeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for BibAssignmentPage.xaml

@@ -1,10 +1,10 @@
-﻿using EventDirector.Database;
-using EventDirector.Interfaces;
-using EventDirector.Objects;
-using EventDirector.Timing;
-using EventDirector.UI.MainPages;
-using EventDirector.UI.Timing;
-using EventDirector.UI.Timing.Import;
+﻿using ChronoKeep.Database;
+using ChronoKeep.Interfaces;
+using ChronoKeep.Objects;
+using ChronoKeep.Timing;
+using ChronoKeep.UI.MainPages;
+using ChronoKeep.UI.Timing;
+using ChronoKeep.UI.Timing.Import;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace EventDirector.UI
+namespace ChronoKeep.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

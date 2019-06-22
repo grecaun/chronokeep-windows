@@ -1,6 +1,6 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.Objects;
-using EventDirector.Timing;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.Objects;
+using ChronoKeep.Timing;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
 
-namespace EventDirector.UI.MainPages
+namespace ChronoKeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for DashboardPage.xaml

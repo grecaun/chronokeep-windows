@@ -1,9 +1,9 @@
-﻿<Window x:Class="EventDirector.ImportFileWindow"
+﻿<Window x:Class="ChronoKeep.ImportFileWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:EventDirector"
+        xmlns:local="clr-namespace:ChronoKeep"
         mc:Ignorable="d"
         Title="ImportFileWindow" Height="600" Width="500" MinWidth="450"
         Closing="Window_Closing">
@@ -15,13 +15,13 @@
         <Grid Grid.Row="0" Name="HeaderGrid">
             <TextBox x:Name="eventLabel" FontSize="17" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,10,0" Width="340" TabIndex="0"/>
             <DatePicker x:Name="date" Height="25" Width="120" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,10,0" TabIndex="1" />
-            
+
             <Label Content="Shirt Price" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,47,420,0" IsTabStop="False" />
             <TextBox x:Name="shirtPriceBox" VerticalAlignment="Top" HorizontalAlignment="Right" Width="75" Height="25" FontSize="16" Margin="0,47,345,0" TabIndex="2" />
             <CheckBox x:Name="shirtOptionalBox" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Shirt Optional" IsChecked="True" Margin="10,53,245,0" TabIndex="3"/>
-            
+
             <ComboBox x:Name="SheetsBox" Height="25" Width="100" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="70,47,131,0" SelectionChanged="SheetsBox_SelectionChanged" TabIndex="1"/>
-            
+
             <Button x:Name="Done" Height="25" Width="55" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Next" Margin="0,47,68,0" Click="Done_Click" TabIndex="500"/>
             <Button x:Name="Cancel" Height="25" Width="55" VerticalAlignment="Top" HorizontalAlignment="Right" Content="Cancel" Margin="0,47,6,0" Click="Cancel_Click" TabIndex="501"/>
         </Grid>

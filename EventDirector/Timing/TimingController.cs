@@ -1,6 +1,6 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.Interfaces.Timing;
-using EventDirector.Objects;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.Interfaces.Timing;
+using ChronoKeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EventDirector.Timing
+namespace ChronoKeep.Timing
 {
     class TimingController
     {

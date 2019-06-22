@@ -1,5 +1,5 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.IO;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.IO;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace EventDirector.UI.Timing.Import
+namespace ChronoKeep.UI.Timing.Import
 {
     /// <summary>
     /// Interaction logic for ImportLogWindow.xaml

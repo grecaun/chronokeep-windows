@@ -1,5 +1,5 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.UI.MainPages;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.UI.MainPages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace EventDirector.UI.Timing
+namespace ChronoKeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for EditRawReadsWindow.xaml

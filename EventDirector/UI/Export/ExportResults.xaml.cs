@@ -1,5 +1,5 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.UI.IO;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.UI.IO;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace EventDirector.UI.Export
+namespace ChronoKeep.UI.Export
 {
     /// <summary>
     /// Interaction logic for ExportResults.xaml

@@ -1,12 +1,12 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.UI.MainPages;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.UI.MainPages;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace EventDirector.UI.Participants
+namespace ChronoKeep.UI.Participants
 {
     /// <summary>
     /// Interaction logic for ModifyParticipantWindow.xaml

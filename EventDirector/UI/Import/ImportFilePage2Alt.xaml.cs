@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EventDirector.UI.Import
+namespace ChronoKeep.UI.Import
 {
     /// <summary>
     /// Interaction logic for ImportFilePage2Alt.xaml

@@ -1,5 +1,5 @@
-﻿using EventDirector.Objects;
-using EventDirector.UI.MainPages;
+﻿using ChronoKeep.Objects;
+using ChronoKeep.UI.MainPages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace EventDirector.UI.Timing
+namespace ChronoKeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for RewindWindow.xaml

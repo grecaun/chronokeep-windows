@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     internal class HeaderListBoxItem : ListBoxItem
     {

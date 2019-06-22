@@ -1,5 +1,5 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.UI.MainPages;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.UI.MainPages;
 using Microsoft.Win32;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace EventDirector.UI.Timing
+namespace ChronoKeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for PrintPage.xaml

@@ -1,8 +1,8 @@
-﻿using EventDirector.Objects;
+﻿using ChronoKeep.Objects;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace EventDirector.Interfaces
+namespace ChronoKeep.Interfaces
 {
     public interface IMainWindow : IWindowCallback
     {

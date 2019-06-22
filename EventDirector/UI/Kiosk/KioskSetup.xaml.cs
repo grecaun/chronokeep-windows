@@ -1,10 +1,10 @@
-﻿using EventDirector.Interfaces;
+﻿using ChronoKeep.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Windows;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     /// <summary>
     /// Interaction logic for KioskSettup.xaml

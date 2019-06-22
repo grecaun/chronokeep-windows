@@ -1,10 +1,10 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.UI.MainPages;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.UI.MainPages;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace EventDirector.UI.Timing
+namespace ChronoKeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for TimingRawReadsPage.xaml

@@ -1,8 +1,8 @@
-﻿using EventDirector.Interfaces;
+﻿using ChronoKeep.Interfaces;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     /// <summary>
     /// Interaction logic for NextYearSetup.xaml

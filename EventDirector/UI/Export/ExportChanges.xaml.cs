@@ -1,5 +1,5 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.UI.IO;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.UI.IO;
 using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     /// <summary>
     /// Interaction logic for ExportChanges.xaml

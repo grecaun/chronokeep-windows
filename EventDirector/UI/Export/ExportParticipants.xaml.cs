@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.IO;
-using EventDirector.Interfaces;
-using EventDirector.UI.IO;
+using ChronoKeep.Interfaces;
+using ChronoKeep.UI.IO;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     /// <summary>
     /// Interaction logic for ExportParticipants.xaml

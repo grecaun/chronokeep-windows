@@ -1,4 +1,4 @@
-﻿using EventDirector.Interfaces;
+﻿using ChronoKeep.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 
-namespace EventDirector.UI.MainPages
+namespace ChronoKeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for LocationsPage.xaml

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     /// <summary>
     /// Interaction logic for KioskSettupPage1.xaml

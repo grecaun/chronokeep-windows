@@ -8,10 +8,10 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using EventDirector.Database;
-using EventDirector.Objects;
+using ChronoKeep.Database;
+using ChronoKeep.Objects;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     class SQLiteInterface : IDBInterface
     {

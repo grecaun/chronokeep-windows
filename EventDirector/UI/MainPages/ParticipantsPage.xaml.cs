@@ -1,5 +1,5 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.UI.Participants;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.UI.Participants;
 using Microsoft.Win32;
 using System;
 using System.Collections;
@@ -18,7 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EventDirector.UI.MainPages
+namespace ChronoKeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for ParticipantsPage.xaml

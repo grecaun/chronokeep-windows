@@ -1,4 +1,4 @@
-﻿namespace EventDirector.Interfaces
+﻿namespace ChronoKeep.Interfaces
 {
     public interface IMainPage
     {

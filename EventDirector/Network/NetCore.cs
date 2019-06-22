@@ -5,7 +5,7 @@ using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     class NetCore
     {

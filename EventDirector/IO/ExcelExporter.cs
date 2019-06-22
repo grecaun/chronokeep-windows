@@ -1,4 +1,4 @@
-﻿using EventDirector.Interfaces;
+﻿using ChronoKeep.Interfaces;
 using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventDirector.UI.IO
+namespace ChronoKeep.UI.IO
 {
     class ExcelExporter : IDataExporter
     {

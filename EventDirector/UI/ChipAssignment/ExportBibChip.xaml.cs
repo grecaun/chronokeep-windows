@@ -1,12 +1,12 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.UI.IO;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.UI.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace EventDirector.UI.ChipAssignment
+namespace ChronoKeep.UI.ChipAssignment
 {
     /// <summary>
     /// Interaction logic for ExportBibChip.xaml

@@ -1,4 +1,4 @@
-﻿using EventDirector.Interfaces;
+﻿using ChronoKeep.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventDirector.UI.IO
+namespace ChronoKeep.UI.IO
 {
     class CSVExporter : IDataExporter
     {

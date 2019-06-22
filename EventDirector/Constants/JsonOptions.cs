@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventDirector.Constants
+namespace ChronoKeep.Constants
 {
     class JsonOptions
     {

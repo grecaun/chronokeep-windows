@@ -1,12 +1,12 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.Objects;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace EventDirector.UI.ChipAssignment
+namespace ChronoKeep.UI.ChipAssignment
 {
     /// <summary>
     /// Interaction logic for ChipTool.xaml

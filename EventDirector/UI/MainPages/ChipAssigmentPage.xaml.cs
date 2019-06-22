@@ -1,5 +1,5 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.UI.ChipAssignment;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.UI.ChipAssignment;
 using Microsoft.Win32;
 using System;
 using System.Collections;
@@ -19,7 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EventDirector.UI.MainPages
+namespace ChronoKeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for ChipAssigmentPage.xaml

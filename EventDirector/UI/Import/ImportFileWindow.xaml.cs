@@ -1,5 +1,5 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.UI.Import;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.UI.Import;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,9 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static EventDirector.UI.Import.ImportFilePage2Alt;
+using static ChronoKeep.UI.Import.ImportFilePage2Alt;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     /// <summary>
     /// Interaction logic for ImportFileWindow.xaml

@@ -1,9 +1,9 @@
-﻿using EventDirector.Interfaces;
-using EventDirector.IO;
-using EventDirector.Objects;
-using EventDirector.UI.Export;
-using EventDirector.UI.Timing;
-using EventDirector.UI.Timing.Import;
+﻿using ChronoKeep.Interfaces;
+using ChronoKeep.IO;
+using ChronoKeep.Objects;
+using ChronoKeep.UI.Export;
+using ChronoKeep.UI.Timing;
+using ChronoKeep.UI.Timing.Import;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace EventDirector.UI.MainPages
+namespace ChronoKeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for TimingPage.xaml

@@ -1,11 +1,11 @@
-﻿using EventDirector.Interfaces;
+﻿using ChronoKeep.Interfaces;
 using System;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace EventDirector
+namespace ChronoKeep
 {
     /// <summary>
     /// Interaction logic for ChipReaderWindow.xaml
