@@ -139,7 +139,7 @@
     <OutputPath>bin\x86\x64\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>EventDirector.App</StartupObject>
+    <StartupObject>ChronoKeep.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
