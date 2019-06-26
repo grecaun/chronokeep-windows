@@ -15,7 +15,7 @@ namespace ChronoKeep
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 36;
+        private readonly int version = 37;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -177,7 +177,8 @@ namespace ChronoKeep
                     "eventspecific_next_year INTEGER DEFAULT 0," +
                     "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
                     "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
-                    "UNIQUE (participant_id, event_id, division_id) ON CONFLICT REPLACE" +
+                    "UNIQUE (participant_id, event_id, division_id) ON CONFLICT REPLACE," +
+                    "UNIQUE (event_id, eventspecific_bib) ON CONFLICT REPLACE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS eventspecific_apparel (" +
                     "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
@@ -1228,6 +1229,31 @@ namespace ChronoKeep
                         command.CommandText = "DROP TABLE old_chipreads; DROP TABLE old_bib_chip_assoc;" +
                             "UPDATE settings SET version=36 WHERE version=35;";
                         command.ExecuteNonQuery();
+                        goto case 36;
+                    case 36:
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE eventspecific RENAME TO eventspecific_old;" +
+                            "CREATE TABLE IF NOT EXISTS eventspecific (" +
+                                "eventspecific_id INTEGER PRIMARY KEY," +
+                                "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "division_id INTEGER NOT NULL REFERENCES divisions(division_id)," +
+                                "eventspecific_bib INTEGER," +
+                                "eventspecific_checkedin INTEGER DEFAULT 0," +
+                                "eventspecific_comments VARCHAR," +
+                                "eventspecific_owes VARCHAR(50)," +
+                                "eventspecific_other VARCHAR," +
+                                "eventspecific_earlystart INTEGER DEFAULT 0," +
+                                "eventspecific_next_year INTEGER DEFAULT 0," +
+                                "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
+                                "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
+                                "UNIQUE (participant_id, event_id, division_id) ON CONFLICT REPLACE," +
+                                "UNIQUE (event_id, eventspecific_bib) ON CONFLICT REPLACE" +
+                                ");" +
+                            "INSERT INTO eventspecific SELECT * FROM eventspecific_old;" +
+                            "DROP TABLE eventspecific_old;" +
+                            "UPDATE settings SET version=37 WHERE version=36;";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();
@@ -2040,13 +2066,8 @@ namespace ChronoKeep
                 new SQLiteParameter("@ecname", person.ECName),
                 new SQLiteParameter("@ecphone", person.ECPhone),
                 new SQLiteParameter("@gender", person.Gender) });
-            Log.D("SQL query: '" + command.CommandText + "'");
-            SQLiteDataReader reader = command.ExecuteReader();
-            if (reader.Read())
-            {
-                person.Identifier = Convert.ToInt32(reader["participant_id"]);
-            }
-            reader.Close();
+            command.ExecuteNonQuery();
+            person.Identifier = GetParticipantIDInternal(person, connection);
             command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, division_id, eventspecific_bib, " +
@@ -2064,7 +2085,6 @@ namespace ChronoKeep
                 new SQLiteParameter("@other", person.EventSpecific.Other),
                 new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart),
                 new SQLiteParameter("@nextYear", person.EventSpecific.NextYear) });
-            Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
         }
 
@@ -2578,29 +2598,40 @@ namespace ChronoKeep
             }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
+            int output = GetParticipantIDInternal(person, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
+        private int GetParticipantIDInternal(Participant person, SQLiteConnection connection)
+        {
+            int output = -1;
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT participant_id FROM participants WHERE participant_first=@first AND" +
-                " participant_last=@last AND participant_street=@street AND participant_city=@city AND " +
-                "participant_state=@state AND participant_zip=@zip AND participant_birthday=@birthday";
+                " participant_last=@last AND participant_street=@street AND " +
+                "participant_zip=@zip AND participant_birthday=@birthday";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@first", person.FirstName),
                 new SQLiteParameter("@last", person.LastName),
                 new SQLiteParameter("@street", person.Street),
-                new SQLiteParameter("@city", person.City),
-                new SQLiteParameter("@state", person.State),
                 new SQLiteParameter("@zip", person.Zip),
                 new SQLiteParameter("@birthday", person.Birthdate)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            int output = -1;
             if (reader.Read())
             {
-                output = Convert.ToInt32(reader["participant_id"]);
+                try
+                {
+                    output = Convert.ToInt32(reader["participant_id"]);
+                }
+                catch
+                {
+                    output = -1;
+                }
             }
             reader.Close();
-            connection.Close();
-            mutex.ReleaseMutex();
             return output;
         }
 
