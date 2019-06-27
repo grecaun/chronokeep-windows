@@ -84,7 +84,7 @@ namespace ChronoKeep.UI.MainPages
             {
                 foreach (BibChipAssociation b in list)
                 {
-                    chip = Convert.ToInt64(b.Chip);
+                    long.TryParse(b.Chip, out chip);
                     maxChip = chip > maxChip ? chip : maxChip;
                 }
             }
@@ -92,13 +92,15 @@ namespace ChronoKeep.UI.MainPages
             {
                 foreach (BibChipAssociation b in list)
                 {
-                    chip = Convert.ToInt64(b.Chip, 16);
+                    long.TryParse(b.Chip, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out chip);
                     maxChip = chip > maxChip ? chip : maxChip;
                 }
             }
             maxChip += 1;
             if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
             {
+                SingleChipBox.Text = maxChip.ToString();
+                RangeStartChipBox.Text = maxChip.ToString();
             }
             else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
             {
