@@ -232,6 +232,50 @@ namespace ChronoKeep.UI.Timing
                     row.Cells[LoopStart + max + 1].AddParagraph(result.Time.Substring(0, result.Time.Length - 2));
                     row.Cells[LoopStart + max + 2].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
                 }
+                if (type == ValuesType.TIME_ALL)
+                {
+                    HashSet<string> DidNotFinish = new HashSet<string>(personStartTimeDictionary.Keys);
+                    foreach ((string val, int x) in personFinishResultDictionary.Keys)
+                    {
+                        DidNotFinish.Add(val);
+                    }
+                    DidNotFinish.RemoveWhere(x => personFinalLoopDictionary.ContainsKey(x));
+                    foreach (string identifier in DidNotFinish)
+                    {
+                        TimeResult result = personStartTimeDictionary.ContainsKey(identifier) ? personStartTimeDictionary[identifier] : null;
+                        if (result == null)
+                        {
+                            for (int i = 0; i < max; i++)
+                            {
+                                result = personFinishResultDictionary.ContainsKey((identifier, i)) ? personFinishResultDictionary[(identifier, i)] : null;
+                            }
+                        }
+                        row = table.AddRow();
+                        row.Style = "ResultsRow";
+                        row.Cells[0].AddParagraph("");
+                        row.Cells[1].AddParagraph(result.Bib.ToString());
+                        row.Cells[2].AddParagraph(result.ParticipantName);
+                        row.Cells[2].Style = "ResultsRowName";
+                        row.Cells[3].AddParagraph(result.Gender);
+                        row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                        row.Cells[5].AddParagraph("");
+                        row.Cells[6].AddParagraph("");
+                        if (type == ValuesType.TIME_ALL)
+                        {
+                            for (int i = 0; i < max; i++)
+                            {
+                                string value = personFinishResultDictionary.ContainsKey((result.Identifier, i))
+                                    ? personFinishResultDictionary[(result.Identifier, i)].LapTime
+                                    : "";
+                                value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                                row.Cells[LoopStart + i].AddParagraph(value);
+                            }
+                        }
+                        row.Cells[LoopStart + max].AddParagraph("");
+                        row.Cells[LoopStart + max + 1].AddParagraph("");
+                        row.Cells[LoopStart + max + 2].AddParagraph("");
+                    }
+                }
                 section.Add(table);
             }
             return document;
@@ -412,6 +456,50 @@ namespace ChronoKeep.UI.Timing
                         row.Cells[LoopStart + max].AddParagraph(result.Occurrence.ToString());
                         row.Cells[LoopStart + max + 1].AddParagraph(result.Time.Substring(0, result.Time.Length - 2));
                         row.Cells[LoopStart + max + 2].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
+                    }
+                    if (type == ValuesType.TIME_ALL)
+                    {
+                        HashSet<string> DidNotFinish = new HashSet<string>(personStartTimeDictionary.Keys);
+                        foreach ((string val, int x) in personFinishResultDictionary.Keys)
+                        {
+                            DidNotFinish.Add(val);
+                        }
+                        DidNotFinish.RemoveWhere(x => personFinalLoopDictionary.ContainsKey(x));
+                        foreach (string identifier in DidNotFinish)
+                        {
+                            TimeResult result = personStartTimeDictionary.ContainsKey(identifier) ? personStartTimeDictionary[identifier] : null;
+                            if (result == null)
+                            {
+                                for (int i = 0; i < max; i++)
+                                {
+                                    result = personFinishResultDictionary.ContainsKey((identifier, i)) ? personFinishResultDictionary[(identifier, i)] : null;
+                                }
+                            }
+                            row = table.AddRow();
+                            row.Style = "ResultsRow";
+                            row.Cells[0].AddParagraph("");
+                            row.Cells[1].AddParagraph(result.Bib.ToString());
+                            row.Cells[2].AddParagraph(result.ParticipantName);
+                            row.Cells[2].Style = "ResultsRowName";
+                            row.Cells[3].AddParagraph(result.Gender);
+                            row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                            row.Cells[5].AddParagraph("");
+                            row.Cells[6].AddParagraph("");
+                            if (type == ValuesType.TIME_ALL)
+                            {
+                                for (int i = 0; i < max; i++)
+                                {
+                                    string value = personFinishResultDictionary.ContainsKey((result.Identifier, i))
+                                        ? personFinishResultDictionary[(result.Identifier, i)].LapTime
+                                        : "";
+                                    value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                                    row.Cells[LoopStart + i].AddParagraph(value);
+                                }
+                            }
+                            row.Cells[LoopStart + max].AddParagraph("");
+                            row.Cells[LoopStart + max + 1].AddParagraph("");
+                            row.Cells[LoopStart + max + 2].AddParagraph("");
+                        }
                     }
                     section.Add(table);
                 }
@@ -600,6 +688,50 @@ namespace ChronoKeep.UI.Timing
                         row.Cells[LoopStart + max + 1].AddParagraph(result.Time.Substring(0, result.Time.Length - 2));
                         row.Cells[LoopStart + max + 2].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
                     }
+                    if (type == ValuesType.TIME_ALL)
+                    {
+                        HashSet<string> DidNotFinish = new HashSet<string>(personStartTimeDictionary.Keys);
+                        foreach ((string val, int x) in personFinishResultDictionary.Keys)
+                        {
+                            DidNotFinish.Add(val);
+                        }
+                        DidNotFinish.RemoveWhere(x => personFinalLoopDictionary.ContainsKey(x));
+                        foreach (string identifier in DidNotFinish)
+                        {
+                            TimeResult result = personStartTimeDictionary.ContainsKey(identifier) ? personStartTimeDictionary[identifier] : null;
+                            if (result == null)
+                            {
+                                for (int i = 0; i < max; i++)
+                                {
+                                    result = personFinishResultDictionary.ContainsKey((identifier, i)) ? personFinishResultDictionary[(identifier, i)] : null;
+                                }
+                            }
+                            row = table.AddRow();
+                            row.Style = "ResultsRow";
+                            row.Cells[0].AddParagraph("");
+                            row.Cells[1].AddParagraph(result.Bib.ToString());
+                            row.Cells[2].AddParagraph(result.ParticipantName);
+                            row.Cells[2].Style = "ResultsRowName";
+                            row.Cells[3].AddParagraph(result.Gender);
+                            row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                            row.Cells[5].AddParagraph("");
+                            row.Cells[6].AddParagraph("");
+                            if (type == ValuesType.TIME_ALL)
+                            {
+                                for (int i = 0; i < max; i++)
+                                {
+                                    string value = personFinishResultDictionary.ContainsKey((result.Identifier, i))
+                                        ? personFinishResultDictionary[(result.Identifier, i)].LapTime
+                                        : "";
+                                    value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                                    row.Cells[LoopStart + i].AddParagraph(value);
+                                }
+                            }
+                            row.Cells[LoopStart + max].AddParagraph("");
+                            row.Cells[LoopStart + max + 1].AddParagraph("");
+                            row.Cells[LoopStart + max + 2].AddParagraph("");
+                        }
+                    }
                     row = table.AddRow();
 
                     if (type == ValuesType.TIME_ALL || personFinalLoopDictionary.Keys.Count > 0)
@@ -766,6 +898,62 @@ namespace ChronoKeep.UI.Timing
                     row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length - 2));
                     row.Cells[FinishIndex+1].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
                 }
+                if (type != ValuesType.FINISHONLY)
+                {
+                    HashSet<int> DidNotFinish = new HashSet<int>(); // Event Specific ID
+                    foreach ((int val, int x) in personSegmentResultDictionary.Keys)
+                    {
+                        DidNotFinish.Add(val);
+                    }
+                    foreach (TimeResult result in finishTimes)
+                    {
+                        DidNotFinish.Remove(result.EventSpecificId);
+                    }
+                    foreach (int identifier in DidNotFinish)
+                    {
+                        TimeResult result = personSegmentResultDictionary.ContainsKey((identifier, Constants.Timing.SEGMENT_START))
+                            ? personSegmentResultDictionary[(identifier, Constants.Timing.SEGMENT_START)] : null;
+                        if (result == null)
+                        {
+                            foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                            {
+                                result = personSegmentResultDictionary.ContainsKey((identifier, s.Identifier))
+                              ? personSegmentResultDictionary[(identifier, s.Identifier)] : null;
+                            }
+                        }
+                        row = table.AddRow();
+                        row.Style = "ResultsRow";
+                        row.Cells[0].AddParagraph("");
+                        row.Cells[1].AddParagraph(result.Bib.ToString());
+                        row.Cells[2].AddParagraph(result.ParticipantName);
+                        row.Cells[2].Style = "ResultsRowName";
+                        row.Cells[3].AddParagraph(result.Gender);
+                        row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                        row.Cells[5].AddParagraph("");
+                        row.Cells[6].AddParagraph("");
+                        if (type != ValuesType.FINISHONLY)
+                        {
+                            string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, Constants.Timing.SEGMENT_START))
+                                ? personSegmentResultDictionary[(result.EventSpecificId, Constants.Timing.SEGMENT_START)].Time
+                                : "";
+                            value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                            row.Cells[7].AddParagraph(value);
+                        }
+                        if (distanceSegments)
+                        {
+                            foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                            {
+                                string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
+                                    ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
+                                    : "";
+                                value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                                row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(value);
+                            }
+                        }
+                        row.Cells[FinishIndex].AddParagraph("");
+                        row.Cells[FinishIndex + 1].AddParagraph("");
+                    }
+                }
                 section.Add(table);
             }
             return document;
@@ -856,8 +1044,8 @@ namespace ChronoKeep.UI.Timing
                         table.AddColumn(Unit.FromCentimeter(2.3)); // start
                         FinishIndex++;
                     }
-                    bool dosegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(divisionDictionary[divName]);
-                    if (dosegments)
+                    bool distanceSegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(divisionDictionary[divName]);
+                    if (distanceSegments)
                     {
                         foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
                         {
@@ -881,7 +1069,7 @@ namespace ChronoKeep.UI.Timing
                     {
                         row.Cells[6].AddParagraph("Start");
                     }
-                    if (dosegments)
+                    if (distanceSegments)
                     {
                         foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
                         {
@@ -921,7 +1109,7 @@ namespace ChronoKeep.UI.Timing
                             value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
                             row.Cells[6].AddParagraph(value);
                         }
-                        if (dosegments)
+                        if (distanceSegments)
                         {
                             foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
                             {
@@ -934,6 +1122,62 @@ namespace ChronoKeep.UI.Timing
                         }
                         row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length - 2));
                         row.Cells[FinishIndex + 1].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
+                    }
+                    if (type != ValuesType.FINISHONLY)
+                    {
+                        HashSet<int> DidNotFinish = new HashSet<int>(); // Event Specific ID
+                        foreach ((int val, int x) in personSegmentResultDictionary.Keys)
+                        {
+                            DidNotFinish.Add(val);
+                        }
+                        foreach (TimeResult result in finishTimes)
+                        {
+                            DidNotFinish.Remove(result.EventSpecificId);
+                        }
+                        foreach (int identifier in DidNotFinish)
+                        {
+                            TimeResult result = personSegmentResultDictionary.ContainsKey((identifier, Constants.Timing.SEGMENT_START))
+                                ? personSegmentResultDictionary[(identifier, Constants.Timing.SEGMENT_START)] : null;
+                            if (result == null)
+                            {
+                                foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                {
+                                    result = personSegmentResultDictionary.ContainsKey((identifier, s.Identifier))
+                                  ? personSegmentResultDictionary[(identifier, s.Identifier)] : null;
+                                }
+                            }
+                            row = table.AddRow();
+                            row.Style = "ResultsRow";
+                            row.Cells[0].AddParagraph("");
+                            row.Cells[1].AddParagraph(result.Bib.ToString());
+                            row.Cells[2].AddParagraph(result.ParticipantName);
+                            row.Cells[2].Style = "ResultsRowName";
+                            row.Cells[3].AddParagraph(result.Gender);
+                            row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                            row.Cells[5].AddParagraph("");
+                            row.Cells[6].AddParagraph("");
+                            if (type != ValuesType.FINISHONLY)
+                            {
+                                string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, Constants.Timing.SEGMENT_START))
+                                    ? personSegmentResultDictionary[(result.EventSpecificId, Constants.Timing.SEGMENT_START)].Time
+                                    : "";
+                                value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                                row.Cells[7].AddParagraph(value);
+                            }
+                            if (distanceSegments)
+                            {
+                                foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                {
+                                    string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
+                                        ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
+                                        : "";
+                                    value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                                    row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(value);
+                                }
+                            }
+                            row.Cells[FinishIndex].AddParagraph("");
+                            row.Cells[FinishIndex + 1].AddParagraph("");
+                        }
                     }
                     section.Add(table);
                 }
@@ -1032,8 +1276,8 @@ namespace ChronoKeep.UI.Timing
                         table.AddColumn(Unit.FromCentimeter(2.3)); // start
                         FinishIndex++;
                     }
-                    bool dosegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(divisionDictionary[divName]);
-                    if (dosegments)
+                    bool distanceSegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(divisionDictionary[divName]);
+                    if (distanceSegments)
                     {
                         foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
                         {
@@ -1057,7 +1301,7 @@ namespace ChronoKeep.UI.Timing
                     {
                         row.Cells[6].AddParagraph("Start");
                     }
-                    if (dosegments)
+                    if (distanceSegments)
                     {
                         foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
                         {
@@ -1097,7 +1341,7 @@ namespace ChronoKeep.UI.Timing
                             value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
                             row.Cells[6].AddParagraph(value);
                         }
-                        if (dosegments)
+                        if (distanceSegments)
                         {
                             foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
                             {
@@ -1111,8 +1355,64 @@ namespace ChronoKeep.UI.Timing
                         row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length - 2));
                         row.Cells[FinishIndex + 1].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
                     }
+                    if (type != ValuesType.FINISHONLY)
+                    {
+                        HashSet<int> DidNotFinish = new HashSet<int>(); // Event Specific ID
+                        foreach ((int val, int x) in personSegmentResultDictionary.Keys)
+                        {
+                            DidNotFinish.Add(val);
+                        }
+                        foreach (TimeResult result in finishTimes)
+                        {
+                            DidNotFinish.Remove(result.EventSpecificId);
+                        }
+                        foreach (int identifier in DidNotFinish)
+                        {
+                            TimeResult result = personSegmentResultDictionary.ContainsKey((identifier, Constants.Timing.SEGMENT_START))
+                                ? personSegmentResultDictionary[(identifier, Constants.Timing.SEGMENT_START)] : null;
+                            if (result == null)
+                            {
+                                foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                {
+                                    result = personSegmentResultDictionary.ContainsKey((identifier, s.Identifier))
+                                  ? personSegmentResultDictionary[(identifier, s.Identifier)] : null;
+                                }
+                            }
+                            row = table.AddRow();
+                            row.Style = "ResultsRow";
+                            row.Cells[0].AddParagraph("");
+                            row.Cells[1].AddParagraph(result.Bib.ToString());
+                            row.Cells[2].AddParagraph(result.ParticipantName);
+                            row.Cells[2].Style = "ResultsRowName";
+                            row.Cells[3].AddParagraph(result.Gender);
+                            row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                            row.Cells[5].AddParagraph("");
+                            row.Cells[6].AddParagraph("");
+                            if (type != ValuesType.FINISHONLY)
+                            {
+                                string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, Constants.Timing.SEGMENT_START))
+                                    ? personSegmentResultDictionary[(result.EventSpecificId, Constants.Timing.SEGMENT_START)].Time
+                                    : "";
+                                value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                                row.Cells[7].AddParagraph(value);
+                            }
+                            if (distanceSegments)
+                            {
+                                foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                {
+                                    string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
+                                        ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
+                                        : "";
+                                    value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                                    row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(value);
+                                }
+                            }
+                            row.Cells[FinishIndex].AddParagraph("");
+                            row.Cells[FinishIndex + 1].AddParagraph("");
+                        }
+                    }
                     row = table.AddRow();
-                    if (type != ValuesType.FINISHONLY || dosegments || finishTimes.Count > 0)
+                    if (type != ValuesType.FINISHONLY || distanceSegments || finishTimes.Count > 0)
                     {
                         section.Add(table);
                     }
