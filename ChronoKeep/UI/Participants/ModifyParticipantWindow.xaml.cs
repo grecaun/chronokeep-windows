@@ -356,9 +356,9 @@ namespace ChronoKeep.UI.Participants
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            foreach (int bib in bibsChanged)
+            if (bibsChanged.Count > 0)
             {
-                database.ResetTimingResultsBib(theEvent.Identifier, bib);
+                database.ResetTimingResultsEvent(theEvent.Identifier);
             }
             if (ParticipantChanged)
             {

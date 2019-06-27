@@ -126,9 +126,6 @@ namespace ChronoKeep
 
         // Reset functions for ChipReads/TimeResults
         void ResetTimingResultsEvent(int eventId);                      // event based reset
-        void ResetTimingResultsBib(int eventId, int bib);               // bib based reset
-        void ResetTimingResultsChip(int eventId, string chip);          // chip based reset
-        void ResetTimingResultsDivision(int eventId, int divisionId);   // Division based reset
         void ResetTimingResultsPlacements(int eventId);
 
         // Day of Participant / Kiosk Functions

@@ -1313,7 +1313,7 @@ namespace ChronoKeep
             Log.D("Attempting to grab Mutex: ID 117");
             if (!mutex.WaitOne(3000))
             {
-                Log.D("Failed to grab Mutex: ID 1");
+                Log.D("Failed to grab Mutex: ID 117");
                 return;
             }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
@@ -3420,6 +3420,7 @@ namespace ChronoKeep
             mutex.ReleaseMutex();
         }
 
+        /*  These functions *work*, but are slower than just resetting the whole darn thing.
         public void ResetTimingResultsBib(int eventId, int bib)
         {
             Log.D("Attempting to grab Mutex: ID 61");
@@ -3431,6 +3432,13 @@ namespace ChronoKeep
             Log.D("Resetting timing results for bib " + bib + " and event " + eventId);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
+            ResetTimingResultsBibInternal(eventId, bib, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        private void ResetTimingResultsBibInternal(int eventId, int bib, SQLiteConnection connection)
+        {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM time_results WHERE event_id=@event AND" +
                 " EXISTS (SELECT * FROM eventspecific s WHERE s.eventspecific_id=time_results.eventspecific_id" +
@@ -3446,8 +3454,6 @@ namespace ChronoKeep
                 new SQLiteParameter("@bib", bib)
             });
             command.ExecuteNonQuery();
-            connection.Close();
-            mutex.ReleaseMutex();
         }
 
         public void ResetTimingResultsChip(int eventId, string chip)
@@ -3461,6 +3467,13 @@ namespace ChronoKeep
             Log.D("Resetting timing results for chip " + chip + " and event " + eventId);
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
+            ResetTimingResultsChipInternal(eventId, chip, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        private void ResetTimingResultsChipInternal(int eventId, string chip, SQLiteConnection connection)
+        {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM time_results WHERE event_id=@event AND" +
                 " EXISTS (SELECT * FROM eventspecific s JOIN bib_chip_assoc b ON b.bib=s.eventspecific_bib " +
@@ -3476,8 +3489,6 @@ namespace ChronoKeep
                 new SQLiteParameter("@chip", chip)
             });
             command.ExecuteNonQuery();
-            connection.Close();
-            mutex.ReleaseMutex();
         }
 
         public void ResetTimingResultsDivision(int eventId, int divisionId)
@@ -3510,7 +3521,7 @@ namespace ChronoKeep
             command.ExecuteNonQuery();
             connection.Close();
             mutex.ReleaseMutex();
-        }
+        } //*/
 
         public void ResetTimingResultsPlacements(int eventId)
         {

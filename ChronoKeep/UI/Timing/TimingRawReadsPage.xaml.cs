@@ -56,14 +56,7 @@ namespace ChronoKeep.UI.Timing
                 }
             }
             database.SetChipReadStatuses(newChipReads);
-            foreach (int bib in bibsToReset)
-            {
-                database.ResetTimingResultsBib(theEvent.Identifier, bib);
-            }
-            foreach (string chip in chipsToReset)
-            {
-                database.ResetTimingResultsChip(theEvent.Identifier, chip);
-            }
+            database.ResetTimingResultsEvent(theEvent.Identifier);
             UpdateView();
             parent.NotifyTimingWorker();
         }
@@ -190,14 +183,7 @@ namespace ChronoKeep.UI.Timing
                     }
                 }
                 database.DeleteChipReads(readsToDelete);
-                foreach (int bib in bibsToReset)
-                {
-                    database.ResetTimingResultsBib(theEvent.Identifier, bib);
-                }
-                foreach (string chip in chipsToReset)
-                {
-                    database.ResetTimingResultsChip(theEvent.Identifier, chip);
-                }
+                database.ResetTimingResultsEvent(theEvent.Identifier);
                 UpdateView();
                 parent.NotifyTimingWorker();
             }

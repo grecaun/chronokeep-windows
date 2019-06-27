@@ -157,10 +157,7 @@ namespace ChronoKeep.UI.MainPages
             }
             if (divisionsChanged.Count > 0)
             {
-                foreach (int divId in divisionsChanged)
-                {
-                    database.ResetTimingResultsDivision(theEvent.Identifier, divId);
-                }
+                database.ResetTimingResultsEvent(theEvent.Identifier);
                 mWindow.NotifyTimingWorker();
             }
         }

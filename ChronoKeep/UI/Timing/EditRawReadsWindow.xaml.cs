@@ -95,14 +95,7 @@ namespace ChronoKeep.UI.Timing
                 }
             }
             database.UpdateChipReads(chipReads);
-            foreach (int bib in bibsChanged)
-            {
-                database.ResetTimingResultsBib(theEvent.Identifier, bib);
-            }
-            foreach (string chip in chipsChanged)
-            {
-                database.ResetTimingResultsChip(theEvent.Identifier, chip);
-            }
+            database.ResetTimingResultsEvent(theEvent.Identifier);
             parent.UpdateView();
             parent.NotifyTimingWorker();
             this.Close();

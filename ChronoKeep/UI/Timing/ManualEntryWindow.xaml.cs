@@ -168,10 +168,7 @@ namespace ChronoKeep.UI.Timing
             if (window != null) window.WindowFinalize(this);
             if (bibsAdded.Count > 0)
             {
-                foreach (int bib in bibsAdded)
-                {
-                    database.ResetTimingResultsBib(theEvent.Identifier, bib);
-                }
+                database.ResetTimingResultsEvent(theEvent.Identifier);
                 window.NotifyTimingWorker();
             }
         }

@@ -86,12 +86,12 @@ namespace ChronoKeep.UI.Timing
                     || divisionDictionary[div.Identifier].StartOffsetSeconds != div.StartOffsetSeconds
                     || divisionDictionary[div.Identifier].StartOffsetMilliseconds != div.StartOffsetMilliseconds)
                 {
-                    database.ResetTimingResultsDivision(theEvent.Identifier, div.Identifier);
                     update = true;
                 }
             }
             if (update)
             {
+                database.ResetTimingResultsEvent(theEvent.Identifier);
                 window.UpdateTiming();
                 window.NotifyTimingWorker();
             }

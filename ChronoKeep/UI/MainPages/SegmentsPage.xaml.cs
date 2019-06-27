@@ -186,18 +186,8 @@ namespace ChronoKeep.UI.MainPages
             }
             if (DivisionsToReset.Count > 0)
             {
-                foreach (int identifier in DivisionsToReset)
-                {
-                    if (identifier == Constants.Timing.COMMON_SEGMENTS_DIVISIONID)
-                    {
-                        database.ResetTimingResultsEvent(theEvent.Identifier);
-                        mWindow.NetworkClearResults(theEvent.Identifier);
-                    }
-                    else
-                    {
-                        database.ResetTimingResultsDivision(theEvent.Identifier, identifier);
-                    }
-                }
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                mWindow.NetworkClearResults(theEvent.Identifier);
                 mWindow.NotifyTimingWorker();
             }
         }
