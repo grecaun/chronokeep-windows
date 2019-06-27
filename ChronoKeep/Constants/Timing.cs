@@ -49,7 +49,6 @@ namespace ChronoKeep.Constants
 
         public static readonly Dictionary<string, string> SYSTEM_NAMES = new Dictionary<string, string>()
         {
-            { Constants.Settings.TIMING_MANUAL, "Manual" },
             { Constants.Settings.TIMING_RFID, "Chip: RFID" },
             { Constants.Settings.TIMING_IPICO, "Chip: Ipico" }
         };

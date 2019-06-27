@@ -30,8 +30,6 @@ namespace ChronoKeep.Constants
 
         public static readonly string TIMING_RFID       = "RFID";
         public static readonly string TIMING_IPICO      = "IPICO";
-        public static readonly string TIMING_MANUAL     = "MANUAL";
-        public static readonly string TIMING_LAST_USED  = "LAST_USED";
 
         public static readonly string CHIP_TYPE_DEC     = "DEC";
         public static readonly string CHIP_TYPE_HEX     = "HEX";
@@ -73,7 +71,7 @@ namespace ChronoKeep.Constants
             }
             if (database.GetAppSetting(DEFAULT_TIMING_SYSTEM) == null)
             {
-                database.SetAppSetting(DEFAULT_TIMING_SYSTEM, TIMING_LAST_USED);
+                database.SetAppSetting(DEFAULT_TIMING_SYSTEM, TIMING_RFID);
             }
             if (database.GetAppSetting(DEFAULT_WAIVER) == null)
             {

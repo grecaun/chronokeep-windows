@@ -108,31 +108,6 @@ namespace ChronoKeep.UI.MainPages
                 }
             }
 
-            // Setup timing systems.
-            TimingType.Items.Clear();
-            ComboBoxItem current, selected = null;
-            foreach (string key in Constants.Timing.SYSTEM_NAMES.Keys)
-            {
-                current = new ComboBoxItem()
-                {
-                    Content = Constants.Timing.SYSTEM_NAMES[key],
-                    Uid = key
-                };
-                TimingType.Items.Add(current);
-                if (key == theEvent.TimingSystem)
-                {
-                    selected = current;
-                }
-            }
-            if (selected != null)
-            {
-                TimingType.SelectedItem = selected;
-            }
-            else
-            {
-                TimingType.SelectedIndex = 0;
-            }
-
             // Check if we've already started the event.  Show a clock if we have.
             if (theEvent != null && theEvent.StartSeconds >= 0)
             {
@@ -160,10 +135,10 @@ namespace ChronoKeep.UI.MainPages
                 Log.D(systems.Count + " systems found.");
                 for (int i = 0; i < 3 - numSystems; i++)
                 {
-                    systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid));
+                    systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID));
                 }
             }
-            systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid));
+            systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID));
             connected = 0;
             foreach (TimingSystem sys in systems)
             {
@@ -172,14 +147,6 @@ namespace ChronoKeep.UI.MainPages
                 {
                     connected++;
                 }
-            }
-            if (connected > 0)
-            {
-                TimingTypeButton.IsEnabled = false;
-            }
-            else
-            {
-                TimingTypeButton.IsEnabled = true;
             }
             total = ReadersBox.Items.Count;
             subPage = new TimingResultsPage(this, database);
@@ -214,16 +181,6 @@ namespace ChronoKeep.UI.MainPages
                 UpdateStartTime();
             }
 
-            // Ensure we've still got the right timing system.
-            foreach (ComboBoxItem item in TimingType.Items)
-            {
-                if (item.Uid == theEvent.TimingSystem)
-                {
-                    TimingType.SelectedItem = item;
-                    break;
-                }
-            }
-
             // Get updated list of locations
             locations = database.GetTimingLocations(theEvent.Identifier);
             if (theEvent.CommonStartFinish != 1)
@@ -242,7 +199,6 @@ namespace ChronoKeep.UI.MainPages
             {
                 read.UpdateLocations(locations);
                 read.UpdateStatus();
-                read.UpdateSystemType(((ComboBoxItem)TimingType.SelectedItem).Uid, database);
                 connected = read.reader.Status == SYSTEM_STATUS.DISCONNECTED ? connected : connected + 1;
             }
 
@@ -259,16 +215,6 @@ namespace ChronoKeep.UI.MainPages
                 }
                 ReadersBox.Items.Remove(removeMe);
                 total = ReadersBox.Items.Count;
-            }
-
-            // Ensure no editing allowed if we're connected.
-            if (connected > 0)
-            {
-                TimingTypeButton.IsEnabled = false;
-            }
-            else
-            {
-                TimingTypeButton.IsEnabled = true;
             }
             subPage.UpdateView();
         }
@@ -450,29 +396,15 @@ namespace ChronoKeep.UI.MainPages
 
         internal bool ConnectSystem(TimingSystem sys)
         {
-            if (!TimingTypeButton.IsEnabled)
-            {
-                MessageBox.Show("Please select a timing method before attempting to connect.");
-                sys.Status = SYSTEM_STATUS.DISCONNECTED;
-                return false;
-            }
             mWindow.ConnectTimingSystem(sys);
             if (sys.Status == SYSTEM_STATUS.CONNECTED || sys.Status == SYSTEM_STATUS.WORKING)
             {
                 connected++;
             }
             Log.D(connected + " systems connected or trying to connect.");
-            if (connected > 0)
-            {
-                TimingTypeButton.IsEnabled = false;
-            }
-            else
-            {
-                TimingTypeButton.IsEnabled = true;
-            }
             if (connected >= total)
             {
-                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), ((ComboBoxItem)TimingType.SelectedItem).Uid), locations));
+                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID), locations));
                 total = ReadersBox.Items.Count;
             }
             return sys.Status != SYSTEM_STATUS.DISCONNECTED;
@@ -486,14 +418,6 @@ namespace ChronoKeep.UI.MainPages
                 connected--;
             }
             Log.D(connected + " systems connected or trying to connect/disconnect.");
-            if (connected > 0)
-            {
-                TimingTypeButton.IsEnabled = false;
-            }
-            else
-            {
-                TimingTypeButton.IsEnabled = true;
-            }
             if (total > 4 && connected < total - 1)
             {
                 AReaderBox removeMe = null;
@@ -509,28 +433,6 @@ namespace ChronoKeep.UI.MainPages
                 total = ReadersBox.Items.Count;
             }
             return sys.Status == SYSTEM_STATUS.DISCONNECTED;
-        }
-
-        private void TimingTypeButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("User wants to change the connected system type.");
-            if (TimingTypeButton.Content.ToString() == "Edit")
-            {
-                if (connected == 0)
-                {
-                    TimingType.IsEnabled = true;
-                    TimingTypeButton.Content = "Save";
-                }
-            }
-            else if (TimingTypeButton.Content.ToString() == "Save")
-            {
-                TimingType.IsEnabled = false;
-                TimingTypeButton.Content = "Edit";
-                theEvent = database.GetCurrentEvent();
-                theEvent.TimingSystem = ((ComboBoxItem)TimingType.SelectedItem).Uid;
-                database.UpdateEvent(theEvent);
-                UpdateView();
-            }
         }
 
         private void RawReads_Click(object sender, RoutedEventArgs e)

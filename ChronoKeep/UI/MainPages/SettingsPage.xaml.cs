@@ -34,16 +34,6 @@ namespace ChronoKeep.UI.MainPages
             DefaultTimingBox.Items.Clear();
             DefaultTimingBox.Items.Add(new ComboBoxItem()
             {
-                Content = "Last Used",
-                Uid = Constants.Settings.TIMING_LAST_USED
-            });
-            DefaultTimingBox.Items.Add(new ComboBoxItem()
-            {
-                Content = "Manual",
-                Uid = Constants.Settings.TIMING_MANUAL
-            });
-            DefaultTimingBox.Items.Add(new ComboBoxItem()
-            {
                 Content = "RFID",
                 Uid = Constants.Settings.TIMING_RFID
             });
@@ -58,17 +48,9 @@ namespace ChronoKeep.UI.MainPages
         public void UpdateView()
         {
             AppSetting setting = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
-            if (setting.value == Constants.Settings.TIMING_MANUAL)
+            if (setting.value == Constants.Settings.TIMING_IPICO)
             {
                 DefaultTimingBox.SelectedIndex = 1;
-            }
-            else if (setting.value == Constants.Settings.TIMING_RFID)
-            {
-                DefaultTimingBox.SelectedIndex = 2;
-            }
-            else if (setting.value == Constants.Settings.TIMING_IPICO)
-            {
-                DefaultTimingBox.SelectedIndex = 3;
             }
             else
             {
