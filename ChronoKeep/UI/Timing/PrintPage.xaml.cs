@@ -1,10 +1,12 @@
 ﻿using ChronoKeep.Interfaces;
+using ChronoKeep.Objects;
 using ChronoKeep.UI.MainPages;
 using Microsoft.Win32;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
 using MigraDoc.Rendering.Printing;
+using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Linq;
@@ -107,11 +109,7 @@ namespace ChronoKeep.UI.Timing
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 int LoopStart = 7;
                 // Set margins to really small
-                Section section = document.AddSection();
-                section.PageSetup.TopMargin = Unit.FromInch(1.7);
-                section.PageSetup.LeftMargin = Unit.FromInch(0.3);
-                section.PageSetup.RightMargin = Unit.FromInch(0.3);
-                section.PageSetup.BottomMargin = Unit.FromInch(0.3);
+                Section section = SetupMargins(document.AddSection());
                 if (type == ValuesType.TIME_ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -281,11 +279,7 @@ namespace ChronoKeep.UI.Timing
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
-                Section section = document.AddSection();
-                section.PageSetup.TopMargin = Unit.FromInch(1.7);
-                section.PageSetup.LeftMargin = Unit.FromInch(0.3);
-                section.PageSetup.RightMargin = Unit.FromInch(0.3);
-                section.PageSetup.BottomMargin = Unit.FromInch(0.3);
+                Section section = SetupMargins(document.AddSection());
                 if (type == ValuesType.TIME_ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -294,7 +288,7 @@ namespace ChronoKeep.UI.Timing
                 HeaderFooter header = section.Headers.Primary;
                 Paragraph curPara = header.AddParagraph(theEvent.Name);
                 curPara.Style = "Heading1";
-                curPara = header.AddParagraph("Overall Results");
+                curPara = header.AddParagraph("Gender Results");
                 curPara.Style = "Heading2";
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
@@ -429,6 +423,8 @@ namespace ChronoKeep.UI.Timing
         {
             // Get all participants for the race and categorize them by their event specific identifier;
             Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
+            // Get all of the age groups for the race
+            Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier).ToDictionary(x => x.GroupId, x=> x);
             // Get all finish results for the race
             List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
             // Remove all results where we don't have the person's information.
@@ -467,11 +463,7 @@ namespace ChronoKeep.UI.Timing
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
-                Section section = document.AddSection();
-                section.PageSetup.TopMargin = Unit.FromInch(1.7);
-                section.PageSetup.LeftMargin = Unit.FromInch(0.3);
-                section.PageSetup.RightMargin = Unit.FromInch(0.3);
-                section.PageSetup.BottomMargin = Unit.FromInch(0.3);
+                Section section = SetupMargins(document.AddSection());
                 if (type == ValuesType.TIME_ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -480,26 +472,30 @@ namespace ChronoKeep.UI.Timing
                 HeaderFooter header = section.Headers.Primary;
                 Paragraph curPara = header.AddParagraph(theEvent.Name);
                 curPara.Style = "Heading1";
-                curPara = header.AddParagraph("Overall Results");
+                curPara = header.AddParagraph("Age Group Results");
                 curPara.Style = "Heading2";
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
                 curPara = header.AddParagraph(divName);
                 curPara.Style = "DivisionName";
                 // Separate each age group into their own little world
-                Dictionary<(string, string), List<TimeResult>> ageGroupResultsDictionary = new Dictionary<(string, string), List<TimeResult>>();
+                Dictionary<(int, string), List<TimeResult>> ageGroupResultsDictionary = new Dictionary<(int, string), List<TimeResult>>();
                 foreach (TimeResult result in divisionResult[divName])
                 {
-                    if (!ageGroupResultsDictionary.ContainsKey((result.AgeGroupName, result.Gender)))
+                    if (!ageGroupResultsDictionary.ContainsKey((result.AgeGroupId, result.Gender)))
                     {
-                        ageGroupResultsDictionary[(result.AgeGroupName, result.Gender)] = new List<TimeResult>();
+                        ageGroupResultsDictionary[(result.AgeGroupId, result.Gender)] = new List<TimeResult>();
                     }
-                    ageGroupResultsDictionary[(result.AgeGroupName, result.Gender)].Add(result);
+                    ageGroupResultsDictionary[(result.AgeGroupId, result.Gender)].Add(result);
                 }
-                foreach ((string AgeGroup, string gender) in ageGroupResultsDictionary.Keys.OrderBy(i => i.Item2))
+                foreach ((int AgeGroupID, string gender) in ageGroupResultsDictionary.Keys
+                    .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge))
                 {
                     int LoopStart = 6;
-                    section.AddParagraph(string.Format("{0} {1}", gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female", AgeGroup), "SubHeading");
+                    section.AddParagraph(string.Format("{0} {1} - {2}",
+                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
+                        ageGroups[AgeGroupID].StartAge,
+                        ageGroups[AgeGroupID].EndAge), "SubHeading");
                     // Create a tabel to display the results.
                     Table table = new Table();
                     table.Borders.Width = 0.0;
@@ -514,7 +510,7 @@ namespace ChronoKeep.UI.Timing
                     int max = 0;
                     if (type == ValuesType.TIME_ALL)
                     {
-                        foreach (TimeResult result in ageGroupResultsDictionary[(AgeGroup, gender)])
+                        foreach (TimeResult result in ageGroupResultsDictionary[(AgeGroupID, gender)])
                         {
                             if (result.LocationId == Constants.Timing.LOCATION_FINISH && max < result.Occurrence)
                             {
@@ -561,7 +557,7 @@ namespace ChronoKeep.UI.Timing
                     Dictionary<(string, int), TimeResult> personFinishResultDictionary = new Dictionary<(string, int), TimeResult>();
                     // and their final loop result;
                     Dictionary<string, TimeResult> personFinalLoopDictionary = new Dictionary<string, TimeResult>();
-                    foreach (TimeResult result in ageGroupResultsDictionary[(AgeGroup, gender)])
+                    foreach (TimeResult result in ageGroupResultsDictionary[(AgeGroupID, gender)])
                     {
                         if (result.SegmentId == Constants.Timing.SEGMENT_START)
                         {
@@ -605,7 +601,11 @@ namespace ChronoKeep.UI.Timing
                         row.Cells[LoopStart + max + 2].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
                     }
                     row = table.AddRow();
-                    section.Add(table);
+
+                    if (type == ValuesType.TIME_ALL || personFinalLoopDictionary.Keys.Count > 0)
+                    {
+                        section.Add(table);
+                    }
                 }
             }
             return document;
@@ -653,11 +653,7 @@ namespace ChronoKeep.UI.Timing
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 int FinishIndex = 7;
                 // Set margins to really small
-                Section section = document.AddSection();
-                section.PageSetup.TopMargin = Unit.FromInch(1.7);
-                section.PageSetup.LeftMargin = Unit.FromInch(0.3);
-                section.PageSetup.RightMargin = Unit.FromInch(0.3);
-                section.PageSetup.BottomMargin = Unit.FromInch(0.3);
+                Section section = SetupMargins(document.AddSection());
                 if (type == ValuesType.ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -815,11 +811,7 @@ namespace ChronoKeep.UI.Timing
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
-                Section section = document.AddSection();
-                section.PageSetup.TopMargin = Unit.FromInch(1.7);
-                section.PageSetup.LeftMargin = Unit.FromInch(0.3);
-                section.PageSetup.RightMargin = Unit.FromInch(0.3);
-                section.PageSetup.BottomMargin = Unit.FromInch(0.3);
+                Section section = SetupMargins(document.AddSection());
                 if (type == ValuesType.ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -828,7 +820,7 @@ namespace ChronoKeep.UI.Timing
                 HeaderFooter header = section.Headers.Primary;
                 Paragraph curPara = header.AddParagraph(theEvent.Name);
                 curPara.Style = "Heading1";
-                curPara = header.AddParagraph("Overall Results");
+                curPara = header.AddParagraph("Gender Results");
                 curPara.Style = "Heading2";
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
@@ -953,6 +945,8 @@ namespace ChronoKeep.UI.Timing
         {
             // Get all participants for the race and categorize them by their event specific identifier;
             Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
+            // Get all of the age groups for the race
+            Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier).ToDictionary(x => x.GroupId, x => x);
             // Get all finish results for the race
             List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
             // Remove all results where we don't have the person's information.
@@ -989,11 +983,7 @@ namespace ChronoKeep.UI.Timing
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
-                Section section = document.AddSection();
-                section.PageSetup.TopMargin = Unit.FromInch(1.7);
-                section.PageSetup.LeftMargin = Unit.FromInch(0.3);
-                section.PageSetup.RightMargin = Unit.FromInch(0.3);
-                section.PageSetup.BottomMargin = Unit.FromInch(0.3);
+                Section section = SetupMargins(document.AddSection());
                 if (type == ValuesType.ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -1002,26 +992,30 @@ namespace ChronoKeep.UI.Timing
                 HeaderFooter header = section.Headers.Primary;
                 Paragraph curPara = header.AddParagraph(theEvent.Name);
                 curPara.Style = "Heading1";
-                curPara = header.AddParagraph("Overall Results");
+                curPara = header.AddParagraph("Age Group Results");
                 curPara.Style = "Heading2";
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
                 curPara = header.AddParagraph(divName);
                 curPara.Style = "DivisionName";
                 // Separate each age group into their own little world
-                Dictionary<(string, string), List<TimeResult>> ageGroupResultsDictionary = new Dictionary<(string, string), List<TimeResult>>();
+                Dictionary<(int, string), List<TimeResult>> ageGroupResultsDictionary = new Dictionary<(int, string), List<TimeResult>>();
                 foreach (TimeResult result in divisionResult[divName])
                 {
-                    if (!ageGroupResultsDictionary.ContainsKey((result.AgeGroupName, result.Gender)))
+                    if (!ageGroupResultsDictionary.ContainsKey((result.AgeGroupId, result.Gender)))
                     {
-                        ageGroupResultsDictionary[(result.AgeGroupName, result.Gender)] = new List<TimeResult>();
+                        ageGroupResultsDictionary[(result.AgeGroupId, result.Gender)] = new List<TimeResult>();
                     }
-                    ageGroupResultsDictionary[(result.AgeGroupName, result.Gender)].Add(result);
+                    ageGroupResultsDictionary[(result.AgeGroupId, result.Gender)].Add(result);
                 }
-                foreach ((string AgeGroup, string gender) in ageGroupResultsDictionary.Keys.OrderBy(i => i.Item2))
+                foreach ((int AgeGroupID, string gender) in ageGroupResultsDictionary.Keys
+                    .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge))
                 {
                     int FinishIndex = 6;
-                    section.AddParagraph(string.Format("{0} {1}", gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female", AgeGroup), "SubHeading");
+                    section.AddParagraph(string.Format("{0} {1} - {2}",
+                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
+                        ageGroups[AgeGroupID].StartAge,
+                        ageGroups[AgeGroupID].EndAge), "SubHeading");
                     // Create a tabel to display the results.
                     Table table = new Table();
                     table.Borders.Width = 0.0;
@@ -1074,13 +1068,13 @@ namespace ChronoKeep.UI.Timing
                     int numColumns = table.Columns.Count;
                     row.Cells[FinishIndex + 1].AddParagraph("Finish Chip");
                     List<TimeResult> finishTimes = new List<TimeResult>();
-                    finishTimes.AddRange(ageGroupResultsDictionary[(AgeGroup, gender)]);
+                    finishTimes.AddRange(ageGroupResultsDictionary[(AgeGroupID, gender)]);
                     finishTimes.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
                     finishTimes.Sort(TimeResult.CompareByDivisionAgeGroupPlace);
                     // The key is (EVENTSPECIFICID, SEGMENTID) and is used to identify segment results
                     // such as the start chip read and any other reads there may be other than finish.
                     Dictionary<(int, int), TimeResult> personSegmentResultDictionary = new Dictionary<(int, int), TimeResult>();
-                    foreach (TimeResult result in ageGroupResultsDictionary[(AgeGroup, gender)])
+                    foreach (TimeResult result in ageGroupResultsDictionary[(AgeGroupID, gender)])
                     {
                         personSegmentResultDictionary[(result.EventSpecificId, result.SegmentId)] = result;
                     }
@@ -1118,7 +1112,10 @@ namespace ChronoKeep.UI.Timing
                         row.Cells[FinishIndex + 1].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
                     }
                     row = table.AddRow();
-                    section.Add(table);
+                    if (type != ValuesType.FINISHONLY || dosegments || finishTimes.Count > 0)
+                    {
+                        section.Add(table);
+                    }
                 }
             }
             return document;
@@ -1178,7 +1175,18 @@ namespace ChronoKeep.UI.Timing
             style = document.Styles.AddStyle("ResultsHeaderName", "ResultsHeader");
             style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
 
+
             return document;
+        }
+
+        private Section SetupMargins(Section section)
+        {
+            Section output = section;
+            output.PageSetup.TopMargin = Unit.FromInch(1.7);
+            output.PageSetup.LeftMargin = Unit.FromInch(0.3);
+            output.PageSetup.RightMargin = Unit.FromInch(0.3);
+            output.PageSetup.BottomMargin = Unit.FromInch(1.0);
+            return output;
         }
 
         public void Search(string value) { }
@@ -1294,7 +1302,14 @@ namespace ChronoKeep.UI.Timing
                     Renderer = renderer.DocumentRenderer,
                     PrinterSettings = printDialog.PrinterSettings
                 };
-                printDocument.Print();
+                try
+                {
+                    printDocument.Print();
+                }
+                catch
+                {
+                    MessageBox.Show("Something went wrong when attempting to print.");
+                }
             }
         }
 
@@ -1385,8 +1400,15 @@ namespace ChronoKeep.UI.Timing
                     return;
                 }
                 renderer.RenderDocument();
-                renderer.PdfDocument.Save(saveFileDialog.FileName);
-                MessageBox.Show("File saved.");
+                try
+                {
+                    renderer.PdfDocument.Save(saveFileDialog.FileName);
+                    MessageBox.Show("File saved.");
+                }
+                catch
+                {
+                    MessageBox.Show("Unable to save file.");
+                }
             }
         }
     }
