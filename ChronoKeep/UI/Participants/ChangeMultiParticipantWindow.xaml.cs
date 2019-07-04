@@ -74,7 +74,10 @@ namespace ChronoKeep.UI.Participants
                 }
             }
             database.UpdateParticipants(toChange);
+            database.ResetTimingResultsEvent(theEvent.Identifier);
             window.DatasetChanged();
+            window.NotifyRecalculateAgeGroups();
+            window.NotifyTimingWorker();
             this.Close();
         }
 

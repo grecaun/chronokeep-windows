@@ -29,7 +29,6 @@ namespace ChronoKeep.UI.MainPages
         private IDBInterface database;
         private Event theEvent;
         List<Participant> participants = new List<Participant>();
-        private bool UpdateTimingWorker = false;
 
         public ParticipantsPage(IMainWindow mainWindow, IDBInterface database)
         {

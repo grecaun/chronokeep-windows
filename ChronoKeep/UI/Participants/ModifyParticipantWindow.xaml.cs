@@ -20,7 +20,6 @@ namespace ChronoKeep.UI.Participants
         Participant person;
 
         private bool ParticipantChanged = false;
-        private HashSet<int> bibsChanged = new HashSet<int>();
 
         public ModifyParticipantWindow(IMainWindow window, IDBInterface database, Participant person)
         {
@@ -185,7 +184,6 @@ namespace ChronoKeep.UI.Participants
             Log.D("Add clicked.");
             if (person != null && person.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
             {
-                bibsChanged.Add(person.Bib);
                 ParticipantChanged = true;
             }
             Participant newPart = FromFields();
@@ -223,7 +221,6 @@ namespace ChronoKeep.UI.Participants
                 database.AddParticipant(newPart);
                 if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
-                    bibsChanged.Add(newPart.Bib);
                     ParticipantChanged = true;
                 }
             }
@@ -236,7 +233,6 @@ namespace ChronoKeep.UI.Participants
             Log.D("Modify clicked.");
             if (person != null && person.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
             {
-                bibsChanged.Add(person.Bib);
                 ParticipantChanged = true;
             }
             Participant newPart = FromFields();
@@ -254,7 +250,7 @@ namespace ChronoKeep.UI.Participants
                 {
                     offendingBib.EventSpecific.Bib = oldPart.EventSpecific.Bib;
                     database.UpdateParticipant(offendingBib);
-                    bibsChanged.Add(offendingBib.Bib);
+                    ParticipantChanged = true;
                 }
                 else if (MessageBoxResult.No == result)
                 {
@@ -267,7 +263,6 @@ namespace ChronoKeep.UI.Participants
                 database.UpdateParticipant(newPart);
                 if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
-                    bibsChanged.Add(newPart.Bib);
                     ParticipantChanged = true;
                 }
                 this.Close();
@@ -356,13 +351,9 @@ namespace ChronoKeep.UI.Participants
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (bibsChanged.Count > 0)
-            {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
-            }
             if (ParticipantChanged)
             {
-                database.ResetTimingResultsPlacements(theEvent.Identifier);
+                database.ResetTimingResultsEvent(theEvent.Identifier);
                 if (window != null)
                 {
                     window.DatasetChanged();

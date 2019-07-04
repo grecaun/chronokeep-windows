@@ -29,6 +29,7 @@ namespace ChronoKeep.UI.Export
         int maxNumSegments;
         List<String> commonHeaders = new List<String>
         {
+            "Place", "Age Group Place", "Gender Place",
             "Bib", "Distance", "Checked In", "Early Start", "First", "Last", "Birthday",
             "Age", "Gender", "Start", "Street", "Apartment",
             "City", "State", "Zip", "Country", "Mobile", "Email", "Parent", "Comments",
@@ -265,6 +266,18 @@ namespace ChronoKeep.UI.Export
                                 }
                                 else if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
                                 {
+                                    if (headerIndex.ContainsKey("Place"))
+                                    {
+                                        line[headerIndex["Place"]] = result.Place;
+                                    }
+                                    if (headerIndex.ContainsKey("Age Group Place"))
+                                    {
+                                        line[headerIndex["Age Group Place"]] = result.AgePlace;
+                                    }
+                                    if (headerIndex.ContainsKey("Gender Place"))
+                                    {
+                                        line[headerIndex["Gender Place"]] = result.GenderPlace;
+                                    }
                                     if (headerIndex.ContainsKey("Chip Finish"))
                                     {
                                         line[headerIndex["Chip Finish"]] = result.ChipTime;
@@ -316,6 +329,18 @@ namespace ChronoKeep.UI.Export
                         }
                         if (occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Identifier, finalLap)))
                         {
+                            if (headerIndex.ContainsKey("Place"))
+                            {
+                                line[headerIndex["Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].Place;
+                            }
+                            if (headerIndex.ContainsKey("Age Group Place"))
+                            {
+                                line[headerIndex["Age Group Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].AgePlace;
+                            }
+                            if (headerIndex.ContainsKey("Gender Place"))
+                            {
+                                line[headerIndex["Gender Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].GenderPlace;
+                            }
                             if (headerIndex.ContainsKey("Laps Completed"))
                             {
                                 line[headerIndex["Laps Completed"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].Occurrence;
