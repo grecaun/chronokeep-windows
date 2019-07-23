@@ -125,6 +125,9 @@ namespace ChronoKeep
         bool UnprocessedReadsExist(int eventId);
         bool UnprocessedResultsExist(int eventId);
 
+        // Timing analytics... sort of
+        List<DivisionStats> GetDivisionStats(int eventId);
+
         // Reset functions for ChipReads/TimeResults
         void ResetTimingResultsEvent(int eventId);                      // event based reset
         void ResetTimingResultsPlacements(int eventId);

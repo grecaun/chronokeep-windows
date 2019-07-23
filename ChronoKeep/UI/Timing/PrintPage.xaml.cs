@@ -895,8 +895,8 @@ namespace ChronoKeep.UI.Timing
                             row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(value);
                         }
                     }
-                    row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length - 2));
-                    row.Cells[FinishIndex+1].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
+                    row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length > 3 ? result.Time.Length - 2 : result.Time.Length));
+                    row.Cells[FinishIndex+1].AddParagraph(result.ChipTime.Substring(0, result.Time.Length > 3 ? result.Time.Length - 2 : result.Time.Length));
                 }
                 if (type != ValuesType.FINISHONLY)
                 {
@@ -1120,8 +1120,8 @@ namespace ChronoKeep.UI.Timing
                                 row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(value);
                             }
                         }
-                        row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length - 2));
-                        row.Cells[FinishIndex + 1].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
+                        row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length > 3 ? result.Time.Length - 2 : result.Time.Length));
+                        row.Cells[FinishIndex + 1].AddParagraph(result.ChipTime.Substring(0, result.Time.Length > 3 ? result.Time.Length - 2 : result.Time.Length));
                     }
                     if (type != ValuesType.FINISHONLY)
                     {
@@ -1352,8 +1352,8 @@ namespace ChronoKeep.UI.Timing
                                 row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(value);
                             }
                         }
-                        row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length - 2));
-                        row.Cells[FinishIndex + 1].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2));
+                        row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length > 3 ? result.Time.Length - 2 : result.Time.Length));
+                        row.Cells[FinishIndex + 1].AddParagraph(result.ChipTime.Substring(0, result.Time.Length > 3 ? result.Time.Length - 2 : result.Time.Length));
                     }
                     if (type != ValuesType.FINISHONLY)
                     {

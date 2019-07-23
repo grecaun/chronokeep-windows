@@ -227,6 +227,7 @@
     <Compile Include="Objects\AvailableBib.cs" />
     <Compile Include="Objects\BibGroup.cs" />
     <Compile Include="Objects\ChipRead.cs" />
+    <Compile Include="Objects\DivisionStats.cs" />
     <Compile Include="Objects\Range.cs" />
     <Compile Include="Objects\Segment.cs" />
     <Compile Include="Objects\TimingSystem.cs" />

@@ -576,7 +576,7 @@ namespace ChronoKeep.Timing
                                 newResults.Add(startResult);
                                 if (part != null &&
                                     (Constants.Timing.EVENTSPECIFIC_NOSHOW == part.Status
-                                    || Constants.Timing.EVENTSPECIFIC_CHECKEDIN == part.Status))
+                                    && !dnfDictionary.ContainsKey(bib)))
                                 {
                                     part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
                                     updateParticipants.Add(part);
@@ -693,23 +693,22 @@ namespace ChronoKeep.Timing
                                             String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
                                             read.Time,
                                             bib));
-                                    }
-                                    if (part != null)
-                                    {
-                                        // Check if we've marked the person as DNF, otherwise mark them as FINISHED
-                                        if (Constants.Timing.SEGMENT_FINISH == segId
-                                            && Constants.Timing.EVENTSPECIFIC_NOFINISH != part.Status)
+                                        if (part != null)
                                         {
-                                            part.Status = Constants.Timing.EVENTSPECIFIC_FINISHED;
-                                            updateParticipants.Add(part);
-                                        }
-                                        // Otherwise check if we've marked them as DNF or FINISHED
-                                        // and mark them as STARTED if we haven't.
-                                        else if (Constants.Timing.EVENTSPECIFIC_NOFINISH != part.Status
-                                            && Constants.Timing.EVENTSPECIFIC_FINISHED != part.Status)
-                                        {
-                                            part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
-                                            updateParticipants.Add(part);
+                                            // If they've finished, mark them as such.
+                                            if (Constants.Timing.SEGMENT_FINISH == segId
+                                                && !dnfDictionary.ContainsKey(bib))
+                                            {
+                                                part.Status = Constants.Timing.EVENTSPECIFIC_FINISHED;
+                                                updateParticipants.Add(part);
+                                            }
+                                            // If they were marked as noshow previously, mark them as started
+                                            else if (Constants.Timing.EVENTSPECIFIC_NOSHOW == part.Status
+                                                && !dnfDictionary.ContainsKey(bib))
+                                            {
+                                                part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
+                                                updateParticipants.Add(part);
+                                            }
                                         }
                                     }
                                     read.Status = Constants.Timing.CHIPREAD_STATUS_USED;

@@ -44,10 +44,9 @@ namespace ChronoKeep.Constants
         public static readonly int TIMERESULT_DUMMYAGEGROUP = -1;
 
         public static readonly int EVENTSPECIFIC_NOSHOW = 0;
-        public static readonly int EVENTSPECIFIC_CHECKEDIN = 1;
-        public static readonly int EVENTSPECIFIC_STARTED = 2;
-        public static readonly int EVENTSPECIFIC_FINISHED = 3;
-        public static readonly int EVENTSPECIFIC_NOFINISH = 4;
+        public static readonly int EVENTSPECIFIC_STARTED = 1;
+        public static readonly int EVENTSPECIFIC_FINISHED = 2;
+        public static readonly int EVENTSPECIFIC_NOFINISH = 3;
 
         public static readonly int DEFAULT_BIB_GROUP = -1;
 
