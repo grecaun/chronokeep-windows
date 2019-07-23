@@ -3245,6 +3245,37 @@ namespace ChronoKeep
             return output;
         }
 
+        public List<TimeResult> GetFinishTimes(int eventId)
+        {
+            Log.D("Attempting to grab Mutex: ID 120");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 120");
+                return new List<TimeResult>();
+            }
+            Log.D("Getting finish times for event id of " + eventId);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM time_results r " +
+                "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN (eventspecific e " +
+                "JOIN participants p ON p.participant_id=e.participant_id " +
+                "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "LEFT JOIN age_groups a ON e.eventspecific_age_group_id=a.group_id " +
+                "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@eventid", eventId),
+                new SQLiteParameter("@segment", Constants.Timing.SEGMENT_FINISH)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            List<TimeResult> output = GetResultsInternal(reader);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
         public List<TimeResult> GetStartTimes(int eventId)
         {
             Log.D("Attempting to grab Mutex: ID 55");
@@ -3408,12 +3439,13 @@ namespace ChronoKeep
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM time_results WHERE event_id=@event;" +
-                "UPDATE chipreads SET read_status=@status WHERE event_id=@event AND read_status<>@ignore;";
+                "UPDATE chipreads SET read_status=@status WHERE event_id=@event AND read_status!=@ignore AND read_status!=@dnf;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
                 new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
-                new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE)
+                new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE),
+                new SQLiteParameter("@dnf", Constants.Timing.CHIPREAD_STATUS_DNF)
             });
             command.ExecuteNonQuery();
             connection.Close();
@@ -4634,10 +4666,10 @@ namespace ChronoKeep
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b ON c.read_chipnumber=b.chip " +
+            command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b ON (c.read_chipnumber=b.chip AND c.event_id=b.event_id) " +
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
                 "AND e.eventspecific_bib != @dummybib) " +
-                "LEFT JOIN participants p ON p.participant_id=e.participant_id AND c.event_id=b.event_id;";
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id;";
             command.Parameters.Add(new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB));
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader);
@@ -4661,7 +4693,7 @@ namespace ChronoKeep
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
                 "AND e.eventspecific_bib != @dummybib) " +
                 "LEFT JOIN participants p ON p.participant_id=e.participant_id " +
-                "WHERE c.event_id=@event AND c.event_id=b.event_id;";
+                "WHERE c.event_id=@event;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             command.Parameters.Add(new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB));
             SQLiteDataReader reader = command.ExecuteReader();

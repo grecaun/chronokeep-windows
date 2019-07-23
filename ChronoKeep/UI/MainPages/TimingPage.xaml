@@ -58,7 +58,7 @@
                         <StackPanel Grid.Column="1">
                             <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
                             <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="RawReads_Click"/>
-                            <Button Content="DNS/DNF List" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
+                            <Button x:Name="DNFButton" Content="Add DNF" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="AddDNF_Click"/>
                         </StackPanel>
                     </Grid>
                 </Expander>

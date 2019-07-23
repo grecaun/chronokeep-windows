@@ -120,6 +120,7 @@ namespace ChronoKeep
         void RemoveTimingResult(TimeResult tr);
         List<TimeResult> GetTimingResults(int eventId);
         List<TimeResult> GetStartTimes(int eventId);
+        List<TimeResult> GetFinishTimes(int eventId);
         List<TimeResult> GetSegmentTimes(int eventId, int segmentId);
         bool UnprocessedReadsExist(int eventId);
         bool UnprocessedResultsExist(int eventId);

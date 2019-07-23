@@ -512,6 +512,7 @@ namespace ChronoKeep
         public string EarlyStart { get => eventSpecific.EarlyStart == 0 ? "No" : "Yes"; }
         public bool IsEarlyStart { get => EventSpecific.EarlyStart == 1; }
         public string NextYear { get => eventSpecific.NextYear == 0 ? "No" : "Yes"; }
+        public int Status { get => eventSpecific.CheckedIn; set => eventSpecific.CheckedIn = value; }
 
         // Emergency Contact binding stuffs
         public string ECName { get => emergencyName; }

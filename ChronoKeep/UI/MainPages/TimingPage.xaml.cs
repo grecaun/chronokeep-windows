@@ -151,6 +151,11 @@ namespace ChronoKeep.UI.MainPages
             total = ReadersBox.Items.Count;
             subPage = new TimingResultsPage(this, database);
             TimingFrame.Content = subPage;
+
+            if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+            {
+                DNFButton.Content = "Add Finished";
+            }
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -558,6 +563,17 @@ namespace ChronoKeep.UI.MainPages
         {
             Log.D("Starting TimingPage Update Timer.");
             ViewUpdateTimer.Start();
+        }
+
+        private void AddDNF_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Add DNF Entry clicked.");
+            ManualEntryWindow manualEntryWindow = ManualEntryWindow.NewWindow(mWindow, database);
+            if (manualEntryWindow != null)
+            {
+                mWindow.AddWindow(manualEntryWindow);
+                manualEntryWindow.ShowDialog();
+            }
         }
 
         private class AReaderBox : ListBoxItem

@@ -27,6 +27,9 @@ namespace ChronoKeep.Constants
         public static readonly int CHIPREAD_STATUS_STARTTIME = 8;
         public static readonly int CHIPREAD_STATUS_DNF = 9;
 
+        public static readonly int TIMERESULT_STATUS_NONE = 0;
+        public static readonly int TIMERESULT_STATUS_DNF = 1;
+
         public static readonly int CHIPREAD_TYPE_MANUAL = 1;
         public static readonly int CHIPREAD_TYPE_CHIP = 0;  // If this value changes, SQLiteInterface version must be updated to reflect said change.
 

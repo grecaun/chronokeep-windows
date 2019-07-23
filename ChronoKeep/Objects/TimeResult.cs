@@ -61,9 +61,6 @@ namespace ChronoKeep
             this.readId = readId;
             this.systemTime = RFIDUltraInterface.EpochToDate(systemTimeSec).AddMilliseconds(systemTimeMill);
             this.chipTime = chipTime;
-            string[] chipParts = chipTime.Split(':');
-            this.chipSeconds = (Convert.ToInt32(chipParts[0]) * 3600) + (Convert.ToInt32(chipParts[1]) * 60) + Convert.ToInt32(chipParts[2].Substring(0, 2));
-            this.chipMilliseconds = Convert.ToInt32(chipParts[2].Substring(3));
             this.place = place;
             this.agePlace = agePlace;
             this.genderPlace = genderPlace;
@@ -73,7 +70,7 @@ namespace ChronoKeep
             Match chipTimeMatch = timeRegex.Match(chipTime);
             chipSeconds = 0;
             chipMilliseconds = 0;
-            if (chipTimeMatch != null)
+            if (chipTimeMatch.Success)
             {
                 chipSeconds = (Convert.ToInt64(chipTimeMatch.Groups[1].Value) * 3600)
                    + (Convert.ToInt64(chipTimeMatch.Groups[2].Value) * 60)
