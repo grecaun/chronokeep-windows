@@ -5510,56 +5510,65 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 121");
                 return new List<DivisionStats>();
             }
-            List<DivisionStats> output = new List<DivisionStats>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText =
-                "SELECT d.division_name AS name, e.eventspecific_status AS status, COUNT(e.eventspecific_status) AS count " +
+                "SELECT d.division_id AS id, d.division_name AS name, e.eventspecific_status AS status, COUNT(e.eventspecific_status) AS count " +
                 "FROM divisions d JOIN eventspecific e ON d.division_id=e.division_id " +
                 "WHERE e.event_id=@event " +
                 "GROUP BY d.division_name, e.eventspecific_status;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            Dictionary<string, DivisionStats> statsDictionary = new Dictionary<string, DivisionStats>();
+            Dictionary<int, DivisionStats> statsDictionary = new Dictionary<int, DivisionStats>();
             while (reader.Read())
             {
-                string name = reader["name"].ToString();
-                if (!statsDictionary.ContainsKey(name))
+                int divId = Convert.ToInt32(reader["id"].ToString());
+                if (!statsDictionary.ContainsKey(divId))
                 {
-                    statsDictionary[name] = new DivisionStats()
+                    statsDictionary[divId] = new DivisionStats()
                     {
-                        DivisionName = name
+                        DivisionName = reader["name"].ToString(),
+                        DivisionID = divId
                     };
                 }
                 if (int.TryParse(reader["status"].ToString(), out int status))
                 {
                     if (Constants.Timing.EVENTSPECIFIC_NOSHOW == status)
                     {
-                        statsDictionary[name].DNS = Convert.ToInt32(reader["count"]);
+                        statsDictionary[divId].DNS = Convert.ToInt32(reader["count"]);
                     }
                     else if (Constants.Timing.EVENTSPECIFIC_FINISHED == status)
                     {
-                        statsDictionary[name].Finished = Convert.ToInt32(reader["count"]);
+                        statsDictionary[divId].Finished = Convert.ToInt32(reader["count"]);
                     }
                     else if (Constants.Timing.EVENTSPECIFIC_STARTED == status)
                     {
-                        statsDictionary[name].Active = Convert.ToInt32(reader["count"]);
+                        statsDictionary[divId].Active = Convert.ToInt32(reader["count"]);
                     }
                     else if (Constants.Timing.EVENTSPECIFIC_NOFINISH == status)
                     {
-                        statsDictionary[name].DNF = Convert.ToInt32(reader["count"]);
+                        statsDictionary[divId].DNF = Convert.ToInt32(reader["count"]);
                     }
                 }
             }
             reader.Close();
-            foreach (string div in statsDictionary.Keys)
-            {
-                statsDictionary[div].CalculateAll();
-                output.Add(statsDictionary[div]);
-            }
             connection.Close();
             mutex.ReleaseMutex();
+            return new List<DivisionStats>(statsDictionary.Values);
+        }
+
+        public Dictionary<int, List<Participant>> GetDivisionParticipantsStatus(int eventId, int divisionId)
+        {
+            Dictionary<int, List<Participant>> output = new Dictionary<int, List<Participant>>();
+            foreach (Participant person in GetParticipants(eventId, divisionId))
+            {
+                if (!output.ContainsKey(person.Status))
+                {
+                    output[person.Status] = new List<Participant>();
+                }
+                output[person.Status].Add(person);
+            }
             return output;
         }
     }

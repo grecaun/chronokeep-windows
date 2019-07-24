@@ -295,6 +295,9 @@
     <Compile Include="UI\Participants\ModifyParticipantWindow.xaml.cs">
       <DependentUpon>ModifyParticipantWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\Timing\DivisionStatsPage.xaml.cs">
+      <DependentUpon>DivisionStatsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Timing\EditRawReadsWindow.xaml.cs">
       <DependentUpon>EditRawReadsWindow.xaml</DependentUpon>
     </Compile>
@@ -500,6 +503,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Participants\ModifyParticipantWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Timing\DivisionStatsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

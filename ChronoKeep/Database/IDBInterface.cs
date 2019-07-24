@@ -127,6 +127,7 @@ namespace ChronoKeep
 
         // Timing analytics... sort of
         List<DivisionStats> GetDivisionStats(int eventId);
+        Dictionary<int, List<Participant>> GetDivisionParticipantsStatus(int eventId, int divisionId);
 
         // Reset functions for ChipReads/TimeResults
         void ResetTimingResultsEvent(int eventId);                      // event based reset

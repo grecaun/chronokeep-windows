@@ -45,7 +45,7 @@
                     <ComboBoxItem Content="Gender"/>
                 </ComboBox>
                 <Expander Name="statsExpander" Header="Stats" Margin="5,5,5,0" IsExpanded="True">
-                    <ListView x:Name="statsListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" FontSize="10">
+                    <ListView x:Name="statsListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" FontSize="10" MouseDoubleClick="StatsListView_MouseDoubleClick">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Group" Width="75" DisplayMemberBinding="{Binding DivisionName}" />

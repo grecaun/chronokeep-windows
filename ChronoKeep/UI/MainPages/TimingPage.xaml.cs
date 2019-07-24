@@ -590,6 +590,16 @@ namespace ChronoKeep.UI.MainPages
             }
         }
 
+        private void StatsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DivisionStats selected = (DivisionStats)statsListView.SelectedItem;
+            Log.D("Stats double cliked. Division is " + selected.DivisionName);
+            subPage = new DivisionStatsPage(this, database, selected.DivisionID, selected.DivisionName);
+            TimingFrame.NavigationService.RemoveBackEntry();
+            TimingFrame.Content = subPage;
+
+        }
+
         private class AReaderBox : ListBoxItem
         {
             public TextBox ReaderIP { get; private set; }
