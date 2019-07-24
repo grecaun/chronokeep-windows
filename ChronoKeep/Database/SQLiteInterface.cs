@@ -5520,6 +5520,15 @@ namespace ChronoKeep
                 "GROUP BY d.division_name, e.eventspecific_status;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
+            DivisionStats allstats = new DivisionStats
+            {
+                DivisionName = "All",
+                DivisionID = -1,
+                Active = 0,
+                DNF = 0,
+                DNS = 0,
+                Finished = 0
+            };
             Dictionary<int, DivisionStats> statsDictionary = new Dictionary<int, DivisionStats>();
             while (reader.Read())
             {
@@ -5537,31 +5546,42 @@ namespace ChronoKeep
                     if (Constants.Timing.EVENTSPECIFIC_NOSHOW == status)
                     {
                         statsDictionary[divId].DNS = Convert.ToInt32(reader["count"]);
+                        allstats.DNS += statsDictionary[divId].DNS;
                     }
                     else if (Constants.Timing.EVENTSPECIFIC_FINISHED == status)
                     {
                         statsDictionary[divId].Finished = Convert.ToInt32(reader["count"]);
+                        allstats.Finished += statsDictionary[divId].Finished;
                     }
                     else if (Constants.Timing.EVENTSPECIFIC_STARTED == status)
                     {
                         statsDictionary[divId].Active = Convert.ToInt32(reader["count"]);
+                        allstats.Active += statsDictionary[divId].Active;
                     }
                     else if (Constants.Timing.EVENTSPECIFIC_NOFINISH == status)
                     {
                         statsDictionary[divId].DNF = Convert.ToInt32(reader["count"]);
+                        allstats.DNF += statsDictionary[divId].DNF;
                     }
                 }
             }
             reader.Close();
             connection.Close();
             mutex.ReleaseMutex();
-            return new List<DivisionStats>(statsDictionary.Values);
+            List<DivisionStats> output = new List<DivisionStats>();
+            output.Add(allstats);
+            foreach (DivisionStats stats in statsDictionary.Values)
+            {
+                output.Add(stats);
+            }
+            return output;
         }
 
         public Dictionary<int, List<Participant>> GetDivisionParticipantsStatus(int eventId, int divisionId)
         {
             Dictionary<int, List<Participant>> output = new Dictionary<int, List<Participant>>();
-            foreach (Participant person in GetParticipants(eventId, divisionId))
+            List<Participant> parts = (divisionId == -1) ? GetParticipants(eventId) : GetParticipants(eventId, divisionId);
+            foreach (Participant person in parts)
             {
                 if (!output.ContainsKey(person.Status))
                 {
