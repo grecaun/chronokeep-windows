@@ -218,6 +218,7 @@
     <Compile Include="Interfaces\UI\IMainWindow.cs" />
     <Compile Include="Interfaces\UI\IWindowCallback.cs" />
     <Compile Include="IO\LogImporter.cs" />
+    <Compile Include="IO\PrintingInterface.cs" />
     <Compile Include="MigraDocPrinting\MigraDocPrintDocument.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -294,6 +295,9 @@
     </Compile>
     <Compile Include="UI\Participants\ModifyParticipantWindow.xaml.cs">
       <DependentUpon>ModifyParticipantWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Timing\AwardPage.xaml.cs">
+      <DependentUpon>AwardPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Timing\DivisionStatsPage.xaml.cs">
       <DependentUpon>DivisionStatsPage.xaml</DependentUpon>
@@ -503,6 +507,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Participants\ModifyParticipantWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Timing\AwardPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -40,6 +40,11 @@ namespace ChronoKeep.UI.Timing
             this.database = database;
             this.divisionId = divisionId;
             theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                Log.E("Something went wrong and no proper event was returned.");
+                return;
+            }
             activeListView.ItemsSource = activeParticipants;
             dnsListView.ItemsSource = dnsParticipants;
             dnfListView.ItemsSource = dnfParticipants;

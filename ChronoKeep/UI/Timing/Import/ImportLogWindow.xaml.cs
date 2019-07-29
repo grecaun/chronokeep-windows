@@ -31,7 +31,7 @@ namespace ChronoKeep.UI.Timing.Import
             this.database = database;
             theEvent = database.GetCurrentEvent();
             List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
-            if (theEvent.CommonStartFinish != 1)
+            if (!theEvent.CommonStartFinish)
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
@@ -49,7 +49,7 @@ namespace ChronoKeep.UI.Timing.Import
             {
                 Log.D("Updating locations on page.");
                 List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
-                if (theEvent.CommonStartFinish != 1)
+                if (!theEvent.CommonStartFinish)
                 {
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));

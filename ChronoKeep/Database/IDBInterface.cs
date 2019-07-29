@@ -168,7 +168,9 @@ namespace ChronoKeep
         void UpdateAgeGroup(AgeGroup group);
         void RemoveAgeGroup(AgeGroup group);
         void RemoveAgeGroups(int eventId, int divisionId);
+        void RemoveAgeGroups(List<AgeGroup> groups);
         List<AgeGroup> GetAgeGroups(int eventId);
+        List<AgeGroup> GetAgeGroups(int eventId, int divisionId);
 
         // Timing Systems
         void AddTimingSystem(TimingSystem system);

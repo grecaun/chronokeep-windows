@@ -104,12 +104,12 @@ namespace ChronoKeep
         public string Date { get => date; set => date = value; }
         public int ShirtOptional { get => shirtOptional; set => shirtOptional = value; }
         public int ShirtPrice { get => shirtPrice; set => shirtPrice = value; }
-        public int CommonAgeGroups { get => common_age_groups; set => common_age_groups = value; }
-        public int CommonStartFinish { get => common_start_finish; set => common_start_finish = value; }
-        public int DivisionSpecificSegments { get => division_specific_segments; set => division_specific_segments = value; }
-        public int RankByGun { get => rank_by_gun; set => rank_by_gun = value; }
+        public bool CommonAgeGroups { get => common_age_groups != 0; set => common_age_groups = value ? 1 : 0; }
+        public bool CommonStartFinish { get => common_start_finish != 0; set => common_start_finish = value ? 1 : 0; }
+        public bool DivisionSpecificSegments { get => division_specific_segments != 0; set => division_specific_segments = value ? 1 : 0; }
+        public bool RankByGun { get => rank_by_gun != 0; set => rank_by_gun = value ? 1 : 0; }
         public string YearCode { get => yearcode; set => yearcode = value; }
-        public int AllowEarlyStart { get => allow_early_start; set => allow_early_start = value; }
+        public bool AllowEarlyStart { get => allow_early_start != 0; set => allow_early_start = value ? 1 : 0; }
         public int EarlyStartDifference { get => early_start_difference; set => early_start_difference = value; }
         public int StartWindow { get => start_window; set => start_window = value; }
         public int FinishMaxOccurrences { get => finish_max_occurrences; set => finish_max_occurrences = value; }

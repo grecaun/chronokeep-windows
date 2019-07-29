@@ -1,4 +1,5 @@
 ﻿using ChronoKeep.Interfaces;
+using ChronoKeep.IO;
 using ChronoKeep.Objects;
 using ChronoKeep.UI.MainPages;
 using Microsoft.Win32;
@@ -100,7 +101,7 @@ namespace ChronoKeep.UI.Timing
             Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
-            Document document = CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
+            Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
             int maxLoops = 0;
 
@@ -109,7 +110,7 @@ namespace ChronoKeep.UI.Timing
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 int LoopStart = 7;
                 // Set margins to really small
-                Section section = SetupMargins(document.AddSection());
+                Section section = PrintingInterface.SetupMargins(document.AddSection());
                 if (type == ValuesType.TIME_ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -315,7 +316,7 @@ namespace ChronoKeep.UI.Timing
             Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
-            Document document = CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
+            Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
             int maxLoops = 0;
 
@@ -323,7 +324,7 @@ namespace ChronoKeep.UI.Timing
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
-                Section section = SetupMargins(document.AddSection());
+                Section section = PrintingInterface.SetupMargins(document.AddSection());
                 if (type == ValuesType.TIME_ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -543,7 +544,7 @@ namespace ChronoKeep.UI.Timing
             Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
-            Document document = CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
+            Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
             int maxLoops = 0;
 
@@ -551,7 +552,7 @@ namespace ChronoKeep.UI.Timing
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
-                Section section = SetupMargins(document.AddSection());
+                Section section = PrintingInterface.SetupMargins(document.AddSection());
                 if (type == ValuesType.TIME_ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -778,14 +779,14 @@ namespace ChronoKeep.UI.Timing
             Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
-            Document document = CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
+            Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
             foreach (string divName in divisionResults.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 int FinishIndex = 7;
                 // Set margins to really small
-                Section section = SetupMargins(document.AddSection());
+                Section section = PrintingInterface.SetupMargins(document.AddSection());
                 if (type == ValuesType.ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -993,13 +994,13 @@ namespace ChronoKeep.UI.Timing
             Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
-            Document document = CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
+            Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
             foreach (string divName in divisionResult.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
-                Section section = SetupMargins(document.AddSection());
+                Section section = PrintingInterface.SetupMargins(document.AddSection());
                 if (type == ValuesType.ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -1221,13 +1222,13 @@ namespace ChronoKeep.UI.Timing
             Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
-            Document document = CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
+            Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
             foreach (string divName in divisionResult.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
-                Section section = SetupMargins(document.AddSection());
+                Section section = PrintingInterface.SetupMargins(document.AddSection());
                 if (type == ValuesType.ALL)
                 {
                     section.PageSetup.Orientation = MigraDoc.DocumentObjectModel.Orientation.Landscape;
@@ -1419,74 +1420,6 @@ namespace ChronoKeep.UI.Timing
                 }
             }
             return document;
-        }
-
-        public static Document CreateDocument(string year, string eventName, string companyName)
-        {
-            Document document = new Document();
-            document.Info.Title = string.Format("{0} {1}", year, eventName);
-            document.Info.Subject = "Results";
-            document.Info.Author = companyName;
-
-            // Declare styles
-            MigraDoc.DocumentObjectModel.Style style = document.Styles["Normal"];
-            style.Font.Color = Colors.Black;
-
-            style = document.Styles["Heading1"];
-            style.Font.Size = 18;
-            style.ParagraphFormat.OutlineLevel = OutlineLevel.BodyText;
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
-            style.ParagraphFormat.SpaceAfter = 1;
-
-            style = document.Styles["Heading2"];
-            style.Font.Size = 14;
-            style.ParagraphFormat.OutlineLevel = OutlineLevel.BodyText;
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
-            style.ParagraphFormat.SpaceBefore = 1;
-            style.ParagraphFormat.SpaceAfter = 1;
-
-            style = document.Styles["Heading3"];
-            style.Font.Size = 10;
-            style.ParagraphFormat.OutlineLevel = OutlineLevel.BodyText;
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
-            style.ParagraphFormat.SpaceBefore = 1;
-
-            style = document.Styles.AddStyle("DivisionName", "Heading2");
-            style.ParagraphFormat.OutlineLevel = OutlineLevel.Level1;
-            style.ParagraphFormat.SpaceBefore = Unit.FromMillimeter(2.5);
-
-            style = document.Styles.AddStyle("SubHeading", "Heading2");
-            style.ParagraphFormat.OutlineLevel = OutlineLevel.Level2;
-            style.ParagraphFormat.SpaceBefore = Unit.FromMillimeter(0);
-            style.ParagraphFormat.SpaceAfter = Unit.FromMillimeter(5);
-
-            style = document.Styles.AddStyle("ResultsRow", "Normal");
-            style.Font.Size = 9;
-            style.ParagraphFormat.SpaceAfter = Unit.FromMillimeter(0.5);
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
-
-            style = document.Styles.AddStyle("ResultsRowName", "ResultsRow");
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
-
-            style = document.Styles.AddStyle("ResultsHeader", "ResultsRow");
-            style.ParagraphFormat.SpaceAfter = Unit.FromMillimeter(1);
-            style.Font.Underline = Underline.Single;
-
-            style = document.Styles.AddStyle("ResultsHeaderName", "ResultsHeader");
-            style.ParagraphFormat.Alignment = ParagraphAlignment.Left;
-
-
-            return document;
-        }
-
-        private Section SetupMargins(Section section)
-        {
-            Section output = section;
-            output.PageSetup.TopMargin = Unit.FromInch(1.7);
-            output.PageSetup.LeftMargin = Unit.FromInch(0.3);
-            output.PageSetup.RightMargin = Unit.FromInch(0.3);
-            output.PageSetup.BottomMargin = Unit.FromInch(1.0);
-            return output;
         }
 
         public void Search(string value) { }

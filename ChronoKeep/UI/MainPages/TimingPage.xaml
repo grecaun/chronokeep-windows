@@ -70,7 +70,7 @@
                             <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" IsEnabled="True" Click="Recalculate_Click"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1">
-                            <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" IsEnabled="False"/>
+                            <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Award_Click"/>
                             <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="RawReads_Click"/>
                             <Button x:Name="DNFButton" Content="Add DNF" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="AddDNF_Click"/>
                         </StackPanel>

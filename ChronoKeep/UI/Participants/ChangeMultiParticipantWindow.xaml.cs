@@ -43,7 +43,7 @@ namespace ChronoKeep.UI.Participants
             }
             DivisionBox.SelectedIndex = 0;
             DivisionBox.Focus();
-            if (theEvent.AllowEarlyStart == 1)
+            if (theEvent.AllowEarlyStart)
             {
                 EarlyStartHolder.Visibility = Visibility.Visible;
             }

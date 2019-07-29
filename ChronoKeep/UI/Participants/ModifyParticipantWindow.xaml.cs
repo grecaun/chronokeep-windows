@@ -40,7 +40,7 @@ namespace ChronoKeep.UI.Participants
                 UpdateAllFields();
             }
             BibBox.Focus();
-            if (theEvent.AllowEarlyStart == 1)
+            if (theEvent.AllowEarlyStart)
             {
                 EarlyStartBox.Visibility = Visibility.Visible;
             }
@@ -71,7 +71,7 @@ namespace ChronoKeep.UI.Participants
                 UpdateAllFields();
             }
             BibBox.IsEnabled = false;
-            if (theEvent.AllowEarlyStart == 1)
+            if (theEvent.AllowEarlyStart)
             {
                 EarlyStartBox.Visibility = Visibility.Visible;
             }

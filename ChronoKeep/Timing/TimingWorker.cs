@@ -388,7 +388,7 @@ namespace ChronoKeep.Timing
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status &&
                         (Constants.Timing.LOCATION_START == read.LocationID ||
-                        (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                        (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
                         // If we haven't found anything, let us know what our start time was
                         if (!lastReadDictionary.ContainsKey((read.ChipBib, read.LocationID)))
@@ -424,7 +424,7 @@ namespace ChronoKeep.Timing
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status &&
                         (Constants.Timing.LOCATION_START == read.LocationID ||
-                        (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                        (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
                         // If we haven't found anything, let us know what our start time was
                         if (!chipLastReadDictionary.ContainsKey((read.ChipNumber.ToString(), read.LocationID)))
@@ -538,7 +538,7 @@ namespace ChronoKeep.Timing
                             if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
                                 (Constants.Timing.LOCATION_START == read.LocationID
                                     || (Constants.Timing.LOCATION_FINISH == read.LocationID
-                                        && theEvent.CommonStartFinish == 1)))
+                                        && theEvent.CommonStartFinish)))
                             {
                                 // check if we've stored a chipread as the start chipread, update it to unused if so
                                 if (lastReadDictionary.ContainsKey((bib, read.LocationID)))
@@ -648,7 +648,7 @@ namespace ChronoKeep.Timing
                                     // Find if there's a segment associated with this combination
                                     int segId = Constants.Timing.SEGMENT_NONE;
                                     // First check if we're using Division specific segments
-                                    if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
+                                    if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
                                     {
                                         segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)].Identifier;
                                     }
@@ -777,7 +777,7 @@ namespace ChronoKeep.Timing
                             if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
                                 (Constants.Timing.LOCATION_START == read.LocationID
                                     || (Constants.Timing.LOCATION_FINISH == read.LocationID
-                                        && theEvent.CommonStartFinish == 1)))
+                                        && theEvent.CommonStartFinish)))
                             {
                                 // check if we've stored a chipread as the start chipread, update it to unused if so
                                 if (chipLastReadDictionary.ContainsKey((chip, read.LocationID)))
@@ -877,7 +877,7 @@ namespace ChronoKeep.Timing
                                     // Find if there's a segment associated with this combination
                                     int segId = Constants.Timing.SEGMENT_NONE;
                                     // First check if we're using Division specific segments
-                                    if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
+                                    if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
                                     {
                                         segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)].Identifier;
                                     }
@@ -982,7 +982,7 @@ namespace ChronoKeep.Timing
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status && (
                         Constants.Timing.LOCATION_START == read.LocationID ||
-                            (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                            (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
                         startReadDictionary[read.Bib] = read;
                     }
@@ -1010,7 +1010,7 @@ namespace ChronoKeep.Timing
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status && (
                         Constants.Timing.LOCATION_START == read.LocationID ||
-                            (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                            (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
                         chipStartReadDictionary[read.ChipNumber.ToString()] = read;
                     }
@@ -1077,7 +1077,7 @@ namespace ChronoKeep.Timing
                         if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
                             (Constants.Timing.LOCATION_START == read.LocationID ||
                             (Constants.Timing.LOCATION_FINISH == read.LocationID
-                            && theEvent.CommonStartFinish == 1)))
+                            && theEvent.CommonStartFinish)))
                         {
                             // check if we've stored a chipread as the start chipread, update it to unused if so
                             if (startReadDictionary.ContainsKey(bib))
@@ -1160,7 +1160,7 @@ namespace ChronoKeep.Timing
                                 lastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
                                 int segId = Constants.Timing.SEGMENT_NONE;
                                 // Check for Division specific segments (Occurrence is always 1 for time based)
-                                if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
+                                if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
                                 {
                                     segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
                                 }
@@ -1239,7 +1239,7 @@ namespace ChronoKeep.Timing
                         if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
                             (Constants.Timing.LOCATION_START == read.LocationID ||
                             (Constants.Timing.LOCATION_FINISH == read.LocationID
-                            && theEvent.CommonStartFinish == 1)))
+                            && theEvent.CommonStartFinish)))
                         {
                             // check if we've stored a chipread as the start chipread, update it to unused if so
                             if (chipStartReadDictionary.ContainsKey(chip))
@@ -1322,7 +1322,7 @@ namespace ChronoKeep.Timing
                                 chipLastReadDictionary[(chip, read.LocationID)] = (read, occurrence);
                                 int segId = Constants.Timing.SEGMENT_NONE;
                                 // Check for Division specific segments (Occurrence is always 1 for time based)
-                                if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
+                                if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
                                 {
                                     segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
                                 }
@@ -1397,7 +1397,7 @@ namespace ChronoKeep.Timing
             int ageGroupDivisionId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
             foreach (Participant part in participants)
             {
-                if (theEvent.CommonAgeGroups != 1)
+                if (!theEvent.CommonAgeGroups)
                 {
                     ageGroupDivisionId = part.EventSpecific.DivisionIdentifier;
                 }
@@ -1576,7 +1576,7 @@ namespace ChronoKeep.Timing
             List<TimeResult> segmentResults,
             Dictionary<int, Participant> participantEventSpecificDictionary)
         {
-            if (theEvent.RankByGun != 0)
+            if (theEvent.RankByGun)
             {
                 //segmentResults.Sort(TimeResult.CompareByDivision);
                 segmentResults.Sort((x1, x2) =>

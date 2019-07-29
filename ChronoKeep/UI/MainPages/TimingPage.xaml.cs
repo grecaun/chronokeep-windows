@@ -115,7 +115,7 @@ namespace ChronoKeep.UI.MainPages
             // Populate the list of readers with connected readers (or at least 4 readers)
             ReadersBox.Items.Clear();
             locations = database.GetTimingLocations(theEvent.Identifier);
-            if (theEvent.CommonStartFinish != 1)
+            if (!theEvent.CommonStartFinish)
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
@@ -190,7 +190,7 @@ namespace ChronoKeep.UI.MainPages
 
             // Get updated list of locations
             locations = database.GetTimingLocations(theEvent.Identifier);
-            if (theEvent.CommonStartFinish != 1)
+            if (!theEvent.CommonStartFinish)
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
@@ -598,6 +598,14 @@ namespace ChronoKeep.UI.MainPages
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
 
+        }
+
+        private void Award_Click (object sender, RoutedEventArgs e)
+        {
+            Log.D("Awards clicked.");
+            subPage = new AwardPage(this, database);
+            TimingFrame.NavigationService.RemoveBackEntry();
+            TimingFrame.Content = subPage;
         }
 
         private class AReaderBox : ListBoxItem

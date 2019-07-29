@@ -50,7 +50,7 @@ namespace ChronoKeep.UI.MainPages
         public void UpdateView()
         {
             theEvent = database.GetCurrentEvent();
-            if (theEvent.CommonAgeGroups == 1)
+            if (theEvent.CommonAgeGroups)
             {
                 DivisionRow.Height = new GridLength(0);
                 UpdateAgeGroupsList();
@@ -102,7 +102,7 @@ namespace ChronoKeep.UI.MainPages
         {
             Log.D("Adding group.");
             int divId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
-            if (theEvent.CommonAgeGroups != 1)
+            if (!theEvent.CommonAgeGroups)
             {
                 divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
             }
@@ -113,7 +113,7 @@ namespace ChronoKeep.UI.MainPages
         {
             Log.D("Add default age groups button clicked.");
             int divId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
-            if (theEvent.CommonAgeGroups != 1)
+            if (!theEvent.CommonAgeGroups)
             {
                 divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
             }
@@ -190,7 +190,7 @@ namespace ChronoKeep.UI.MainPages
             }
             ageGroups.AddRange(toAdd);
             int divId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
-            if (theEvent.CommonAgeGroups != 1)
+            if (!theEvent.CommonAgeGroups)
             {
                 divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
             }

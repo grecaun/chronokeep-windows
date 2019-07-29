@@ -59,11 +59,11 @@ namespace ChronoKeep.UI.MainPages
             eventNameTextBox.Text = theEvent.Name;
             eventYearCodeTextBox.Text = theEvent.YearCode;
             eventDatePicker.Text = theEvent.Date;
-            rankByGunCheckBox.IsChecked = theEvent.RankByGun == 1;
-            commonAgeCheckBox.IsChecked = theEvent.CommonAgeGroups == 1;
-            commonStartCheckBox.IsChecked = theEvent.CommonStartFinish == 1;
-            segmentCheckBox.IsChecked = theEvent.DivisionSpecificSegments == 1;
-            if (theEvent.AllowEarlyStart == 1)
+            rankByGunCheckBox.IsChecked = theEvent.RankByGun;
+            commonAgeCheckBox.IsChecked = theEvent.CommonAgeGroups;
+            commonStartCheckBox.IsChecked = theEvent.CommonStartFinish;
+            segmentCheckBox.IsChecked = theEvent.DivisionSpecificSegments;
+            if (theEvent.AllowEarlyStart)
             {
                 earlyCheckBox.IsChecked = true;
                 earlyTimePanel.Visibility = Visibility.Visible;
@@ -168,11 +168,11 @@ namespace ChronoKeep.UI.MainPages
                 theEvent.Name = eventNameTextBox.Text;
                 theEvent.YearCode = eventYearCodeTextBox.Text;
                 theEvent.Date = eventDatePicker.Text;
-                theEvent.RankByGun = (rankByGunCheckBox.IsChecked ?? false) ? 1 : 0;
-                theEvent.CommonAgeGroups = (commonAgeCheckBox.IsChecked ?? false) ? 1 : 0;
-                theEvent.CommonStartFinish = (commonStartCheckBox.IsChecked ?? false) ? 1 : 0;
-                theEvent.DivisionSpecificSegments = (segmentCheckBox.IsChecked ?? false) ? 1 : 0;
-                theEvent.AllowEarlyStart = (earlyCheckBox.IsChecked ?? false) ? 1 : 0;
+                theEvent.RankByGun = (rankByGunCheckBox.IsChecked ?? false);
+                theEvent.CommonAgeGroups = (commonAgeCheckBox.IsChecked ?? false);
+                theEvent.CommonStartFinish = (commonStartCheckBox.IsChecked ?? false);
+                theEvent.DivisionSpecificSegments = (segmentCheckBox.IsChecked ?? false);
+                theEvent.AllowEarlyStart = (earlyCheckBox.IsChecked ?? false);
                 theEvent.EventType = Constants.Timing.EVENT_TYPE_DISTANCE;
                 if (((ComboBoxItem)TypeBox.SelectedItem).Content.Equals("Time Based"))
                 {

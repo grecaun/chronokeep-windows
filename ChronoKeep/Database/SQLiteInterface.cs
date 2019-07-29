@@ -4760,7 +4760,7 @@ namespace ChronoKeep
             }
             List<TimingLocation> locations = new List<TimingLocation>();
             if (theEvent != null) locations.AddRange(GetTimingLocations(theEvent.Identifier));
-            if (theEvent != null && theEvent.CommonStartFinish != 1)
+            if (theEvent != null && !theEvent.CommonStartFinish)
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
@@ -5336,6 +5336,33 @@ namespace ChronoKeep
             mutex.ReleaseMutex();
         }
 
+        public void RemoveAgeGroups(List<AgeGroup> groups)
+        {
+            Log.D("Attempting to grab Mutex: ID 123");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 123");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                foreach (AgeGroup ag in groups) {
+                    command.CommandText = "DELETE FROM age_groups WHERE group_id=@group;";
+                    command.Parameters.AddRange(new SQLiteParameter[]
+                    {
+                        new SQLiteParameter("@group", ag.GroupId),
+                    });
+                    command.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
         public List<AgeGroup> GetAgeGroups(int eventId)
         {
             Log.D("Attempting to grab Mutex: ID 112");
@@ -5351,6 +5378,36 @@ namespace ChronoKeep
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                     new SQLiteParameter("@event", eventId)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            List<AgeGroup> output = new List<AgeGroup>();
+            while (reader.Read())
+            {
+                output.Add(new AgeGroup(Convert.ToInt32(reader["group_id"]), Convert.ToInt32(reader["event_id"]),
+                    Convert.ToInt32(reader["division_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"])));
+            }
+            reader.Close();
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
+        public List<AgeGroup> GetAgeGroups(int eventId, int divisionId)
+        {
+            Log.D("Attempting to grab Mutex: ID 122");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 122");
+                return new List<AgeGroup>();
+            }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM age_groups WHERE event_id=@event AND division_id=@division;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                    new SQLiteParameter("@event", eventId),
+                    new SQLiteParameter("@division", divisionId)
             });
             SQLiteDataReader reader = command.ExecuteReader();
             List<AgeGroup> output = new List<AgeGroup>();

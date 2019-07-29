@@ -113,7 +113,7 @@ namespace ChronoKeep
             {
                 return;
             }
-            if (theEvent.CommonStartFinish != 1)
+            if (!theEvent.CommonStartFinish)
             {
                 locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
                 locations[Constants.Timing.LOCATION_START] = new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow);
