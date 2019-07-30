@@ -1,5 +1,6 @@
 ﻿using ChronoKeep.Interfaces;
 using ChronoKeep.IO;
+using ChronoKeep.IO.HtmlTemplates;
 using ChronoKeep.Objects;
 using ChronoKeep.UI.Export;
 using ChronoKeep.UI.Timing;
@@ -606,6 +607,45 @@ namespace ChronoKeep.UI.MainPages
             subPage = new AwardPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
+        }
+
+        private void CreateHTML_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Create HTML clicked.");
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "HTML file (*.htm,*.html)|*.htm;*.html",
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                HtmlResultsTemplate template = new HtmlResultsTemplate(database);
+                String content = template.TransformText();
+                System.IO.File.WriteAllText(saveFileDialog.FileName, content);
+            }
+        }
+
+        private void HTMLServerButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (HTMLServerButton.Content.ToString().Equals("Start Web", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    mWindow.StartHttpServer();
+                    HTMLServerButton.Content = "Stop Web";
+                }
+                catch
+                {
+                    mWindow.StopHttpServer();
+                    HTMLServerButton.Content = "Start Web";
+                    MessageBox.Show("Unable to start the web server. Please type this command in an elevated command prompt: 'netsh http add urlacl url=http://*:6933/ user=everyone'");
+                }
+            }
+            else
+            {
+                mWindow.StopHttpServer();
+                HTMLServerButton.Content = "Start Web";
+            }
         }
 
         private class AReaderBox : ListBoxItem

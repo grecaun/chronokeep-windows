@@ -1,5 +1,6 @@
 ﻿using ChronoKeep.Database;
 using ChronoKeep.Interfaces;
+using ChronoKeep.Network;
 using ChronoKeep.Objects;
 using ChronoKeep.Timing;
 using ChronoKeep.UI.MainPages;
@@ -34,6 +35,8 @@ namespace ChronoKeep.UI
         TCPServer tcpServer = null;
         Thread zeroConfThread = null;
         ZeroConf zeroConf = null;
+        HttpServer httpServer = null;
+        int httpServerPort = 6933;
 
         // Timing objects.
         Thread TimingControllerThread = null;
@@ -400,6 +403,10 @@ namespace ChronoKeep.UI
                     tcpServer.UpdateEvent(Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
                     tcpServer.UpdateEventKiosk(Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
                 }
+                if (httpServer != null)
+                {
+                    httpServer.Stop();
+                }
             }
             catch { }
             UpdateStatus();
@@ -599,6 +606,24 @@ namespace ChronoKeep.UI
                 return;
             }
             SwitchPage(new AboutPage(this), true);
+        }
+
+        public void StartHttpServer()
+        {
+            if (httpServer != null)
+            {
+                httpServer.Stop();
+            }
+            httpServer = new HttpServer(database, httpServerPort);
+        }
+
+        public void StopHttpServer()
+        {
+            if (httpServer != null)
+            {
+                httpServer.Stop();
+            }
+            httpServer = null;
         }
     }
 }

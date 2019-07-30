@@ -67,12 +67,14 @@
                         <StackPanel Grid.Column="0">
                             <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Print_Click"/>
                             <Button Content="Export Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Export_Click"/>
-                            <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" IsEnabled="True" Click="Recalculate_Click"/>
+                            <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Recalculate_Click"/>
+                            <Button Content="Create HTML" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="CreateHTML_Click" />
                         </StackPanel>
                         <StackPanel Grid.Column="1">
                             <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Award_Click"/>
                             <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="RawReads_Click"/>
                             <Button x:Name="DNFButton" Content="Add DNF" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="AddDNF_Click"/>
+                            <Button x:Name="HTMLServerButton" Content="Start Web" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="HTMLServerButton_Click"/>
                         </StackPanel>
                     </Grid>
                 </Expander>

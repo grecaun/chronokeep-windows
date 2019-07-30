@@ -171,6 +171,7 @@
       <HintPath>..\packages\System.Data.SQLite.Core.1.0.111.0\lib\net46\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -217,11 +218,18 @@
     <Compile Include="Interfaces\UI\IMainPage.cs" />
     <Compile Include="Interfaces\UI\IMainWindow.cs" />
     <Compile Include="Interfaces\UI\IWindowCallback.cs" />
+    <Compile Include="IO\HtmlTemplates\HTMLCreator.cs" />
+    <Compile Include="IO\HtmlTemplates\HtmlResultsTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HtmlResultsTemplate.tt</DependentUpon>
+    </Compile>
     <Compile Include="IO\LogImporter.cs" />
     <Compile Include="IO\PrintingInterface.cs" />
     <Compile Include="MigraDocPrinting\MigraDocPrintDocument.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Network\HttpServer.cs" />
     <Compile Include="Objects\AgeGroup.cs" />
     <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
@@ -664,6 +672,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="EventDirector_TemporaryKey.pfx" />
+    <None Include="keys.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -729,6 +738,14 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="IO\HtmlTemplates\bootstrap.min.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\bootstrap.min.js" />
+    <Content Include="IO\HtmlTemplates\HtmlResultsTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>HtmlResultsTemplate.cs</LastGenOutput>
+    </Content>
+    <Content Include="IO\HtmlTemplates\style.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\style.min.css" />
     <Content Include="Properties\FileVersion.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>FileVersion.cs</LastGenOutput>

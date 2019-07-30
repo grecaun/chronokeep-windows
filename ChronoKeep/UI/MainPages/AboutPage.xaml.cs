@@ -31,7 +31,7 @@ namespace ChronoKeep.UI.MainPages
             this.mWindow = mWindow;
             string gitVersion = "";
 
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("EventDirector." + "version.txt"))
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChronoKeep." + "version.txt"))
             {
                 using (StreamReader reader = new StreamReader(stream))
                 {

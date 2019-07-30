@@ -91,6 +91,7 @@ namespace ChronoKeep.UI.MainPages
             AgeGroupsBox.Items.Clear();
             AgeGroupsBox.Items.Add(new ALabel());
             List<AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier);
+            ageGroups.RemoveAll(x => Constants.Timing.AGEGROUPS_CUSTOM_DIVISIONID == x.DivisionId);
             ageGroups.Sort();
             foreach (AgeGroup group in ageGroups)
             {
