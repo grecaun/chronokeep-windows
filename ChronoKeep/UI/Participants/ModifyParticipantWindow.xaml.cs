@@ -244,13 +244,15 @@ namespace ChronoKeep.UI.Participants
             if (offendingBib != null && newPart.Identifier != offendingBib.Identifier)
             {
                 // bib is taken
-                Participant oldPart = database.GetParticipant(theEvent.Identifier, newPart.Identifier);
+                Participant oldPart = database.GetParticipant(theEvent.Identifier, newPart);
                 MessageBoxResult result = MessageBox.Show("This bib is already taken. Swap bibs?", "", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (MessageBoxResult.Yes == result)
                 {
                     offendingBib.EventSpecific.Bib = oldPart.EventSpecific.Bib;
                     database.UpdateParticipant(offendingBib);
+                    database.UpdateParticipant(newPart);
                     ParticipantChanged = true;
+                    this.Close();
                 }
                 else if (MessageBoxResult.No == result)
                 {
