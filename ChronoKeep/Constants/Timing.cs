@@ -25,6 +25,10 @@ namespace ChronoKeep.Constants
         public static readonly int CHIPREAD_STATUS_OVERMAX = 6; // over max occurrences
         public static readonly int CHIPREAD_STATUS_UNKNOWN = 7; // Unknown chip read
         public static readonly int CHIPREAD_STATUS_STARTTIME = 8;
+        public static readonly int CHIPREAD_STATUS_DNF = 9;
+
+        public static readonly int TIMERESULT_STATUS_NONE = 0;
+        public static readonly int TIMERESULT_STATUS_DNF = 1;
 
         public static readonly int CHIPREAD_TYPE_MANUAL = 1;
         public static readonly int CHIPREAD_TYPE_CHIP = 0;  // If this value changes, SQLiteInterface version must be updated to reflect said change.
@@ -39,10 +43,17 @@ namespace ChronoKeep.Constants
         public static readonly int TIMERESULT_GENDER_UNKNOWN = 3;
         public static readonly int TIMERESULT_DUMMYAGEGROUP = -1;
 
+        public static readonly int EVENTSPECIFIC_NOSHOW = 0;
+        public static readonly int EVENTSPECIFIC_STARTED = 1;
+        public static readonly int EVENTSPECIFIC_FINISHED = 2;
+        public static readonly int EVENTSPECIFIC_NOFINISH = 3;
+
         public static readonly int DEFAULT_BIB_GROUP = -1;
 
         public static readonly int COMMON_SEGMENTS_DIVISIONID = -1;
         public static readonly int COMMON_AGEGROUPS_DIVISIONID = -1;
+
+        public static readonly int AGEGROUPS_CUSTOM_DIVISIONID = -8;
 
         public static readonly int EVENT_TYPE_DISTANCE = 0;
         public static readonly int EVENT_TYPE_TIME = 1;

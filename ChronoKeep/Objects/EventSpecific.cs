@@ -10,7 +10,8 @@ namespace ChronoKeep
     {
         private int identifier, eventIdentifier, divisionIdentifier, bib,
             checkedIn = 0, earlystart = 0, nextyear = 0, chip = -1,
-            ageGroup = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+            ageGroup = Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
+            status = Constants.Timing.EVENTSPECIFIC_NOSHOW;
         private String comments, divisionName, owes, other;
         private List<Apparel> apparel;
 
@@ -56,7 +57,8 @@ namespace ChronoKeep
             string other,
             int earlystart,
             int nextyear,
-            int ageGroup
+            int ageGroup,
+            int status
             )
         {
             this.identifier = id;
@@ -72,6 +74,7 @@ namespace ChronoKeep
             this.nextyear = nextyear;
             this.apparel = new List<Apparel>();
             this.ageGroup = ageGroup;
+            this.status = status;
         }
 
         public EventSpecific(
@@ -120,6 +123,7 @@ namespace ChronoKeep
             this.earlystart = that.earlystart;
             this.nextyear = that.nextyear;
             this.apparel = that.apparel;
+            this.status = that.status;
         }
 
         internal void Trim()
@@ -132,7 +136,7 @@ namespace ChronoKeep
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, 0, Constants.Timing.TIMERESULT_DUMMYAGEGROUP);
+            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, 0, Constants.Timing.TIMERESULT_DUMMYAGEGROUP, 0);
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -149,6 +153,7 @@ namespace ChronoKeep
         public int NextYear { get => nextyear; set => nextyear = value; }
         public int NumApparel { get => apparel.Count; }
         public int AgeGroup { get => ageGroup; set => ageGroup = value; }
+        public int Status { get => status; set => status = value; }
 
         public void SetApparel(List<Apparel> incoming)
         {

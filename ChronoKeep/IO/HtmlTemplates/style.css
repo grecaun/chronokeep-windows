@@ -1,0 +1,76 @@
+﻿/*
+ * Set website details.
+ */
+body {
+}
+a {
+}
+a:hover {
+  text-decoration: none;
+}
+a:visited {
+  text-decoration: none;
+}
+.text-center {
+  text-align: center;
+}
+.text-important {
+  font-family: 'Roboto Condensed', sans-serif;
+  color: #337ab7;
+}
+/**
+ * Event options
+ */
+.results-wrapper {
+  margin: 0px 0px 20px 15px;
+  padding: 10px 20px 20px 20px;
+  text-align: center;
+  border-radius: 7px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #e7e7e7;
+  background-color: #F8F8F8;
+  box-shadow: 3px 3px 3px #767676;
+}
+.results-btn {
+  width: 150px;
+  display: inline-block;
+  margin-top: 5px;
+}
+.btn-wrapper {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.results-panel {
+  border-style: none;
+  box-shadow: none;
+}
+@media (max-width: 556px) {
+  .results-wrapper {
+    margin: 0px 0px 10px 0px;
+  }
+}
+/**
+ * Table options for results.
+ */
+.table-header {
+  text-align: center;
+  font-size: 26px;
+  padding-top: 19px;
+  padding-bottom: 8px;
+}
+.table-label {
+  font-size: 18px;
+}
+.table-info {
+  text-align: center;
+  padding-top: 4px;
+}
+.well {
+  padding: 0px;
+  overflow: hidden;
+}
+table {
+  min-width: 360px;
+  overflow: hidden;
+}

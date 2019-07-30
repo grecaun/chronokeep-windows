@@ -48,9 +48,9 @@ namespace ChronoKeep.Objects
             return this.start_age.CompareTo(other.start_age);
         }
 
-        public bool Equals(AgeGroup other)
+        public bool Equals(AgeGroup that)
         {
-            throw new NotImplementedException();
+            return this.event_id == that.event_id && this.division_id == that.division_id && this.start_age == that.start_age && this.end_age == that.start_age;
         }
     }
 }

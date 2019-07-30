@@ -1,5 +1,6 @@
 ﻿using ChronoKeep.Interfaces;
 using ChronoKeep.IO;
+using ChronoKeep.IO.HtmlTemplates;
 using ChronoKeep.Objects;
 using ChronoKeep.UI.Export;
 using ChronoKeep.UI.Timing;
@@ -7,20 +8,14 @@ using ChronoKeep.UI.Timing.Import;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace ChronoKeep.UI.MainPages
@@ -43,6 +38,8 @@ namespace ChronoKeep.UI.MainPages
         DispatcherTimer ViewUpdateTimer = new DispatcherTimer();
         private Boolean TimerStarted = false;
         private SetTimeWindow timeWindow = null;
+
+        ObservableCollection<DivisionStats> stats = new ObservableCollection<DivisionStats>();
 
         int total = 4, connected = 0;
 
@@ -119,7 +116,7 @@ namespace ChronoKeep.UI.MainPages
             // Populate the list of readers with connected readers (or at least 4 readers)
             ReadersBox.Items.Clear();
             locations = database.GetTimingLocations(theEvent.Identifier);
-            if (theEvent.CommonStartFinish != 1)
+            if (!theEvent.CommonStartFinish)
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
@@ -151,6 +148,17 @@ namespace ChronoKeep.UI.MainPages
             total = ReadersBox.Items.Count;
             subPage = new TimingResultsPage(this, database);
             TimingFrame.Content = subPage;
+            List<DivisionStats> inStats = database.GetDivisionStats(theEvent.Identifier);
+            statsListView.ItemsSource = stats;
+            foreach (DivisionStats s in inStats)
+            {
+                stats.Add(s);
+            }
+
+            if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+            {
+                DNFButton.Content = "Add Finished";
+            }
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -183,7 +191,7 @@ namespace ChronoKeep.UI.MainPages
 
             // Get updated list of locations
             locations = database.GetTimingLocations(theEvent.Identifier);
-            if (theEvent.CommonStartFinish != 1)
+            if (!theEvent.CommonStartFinish)
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
@@ -216,6 +224,12 @@ namespace ChronoKeep.UI.MainPages
                 ReadersBox.Items.Remove(removeMe);
                 total = ReadersBox.Items.Count;
             }
+            List<DivisionStats> inStats = database.GetDivisionStats(theEvent.Identifier);
+            stats.Clear();
+            foreach (DivisionStats s in inStats)
+            {
+                stats.Add(s);
+            }
             subPage.UpdateView();
         }
 
@@ -229,6 +243,12 @@ namespace ChronoKeep.UI.MainPages
             if (updates)
             {
                 Log.D("Updates available.");
+                List<DivisionStats> inStats = database.GetDivisionStats(theEvent.Identifier);
+                stats.Clear();
+                foreach (DivisionStats s in inStats)
+                {
+                    stats.Add(s);
+                }
                 subPage.UpdateView();
             }
         }
@@ -558,6 +578,74 @@ namespace ChronoKeep.UI.MainPages
         {
             Log.D("Starting TimingPage Update Timer.");
             ViewUpdateTimer.Start();
+        }
+
+        private void AddDNF_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Add DNF Entry clicked.");
+            ManualEntryWindow manualEntryWindow = ManualEntryWindow.NewWindow(mWindow, database);
+            if (manualEntryWindow != null)
+            {
+                mWindow.AddWindow(manualEntryWindow);
+                manualEntryWindow.ShowDialog();
+            }
+        }
+
+        private void StatsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DivisionStats selected = (DivisionStats)statsListView.SelectedItem;
+            Log.D("Stats double cliked. Division is " + selected.DivisionName);
+            subPage = new DivisionStatsPage(this, database, selected.DivisionID, selected.DivisionName);
+            TimingFrame.NavigationService.RemoveBackEntry();
+            TimingFrame.Content = subPage;
+
+        }
+
+        private void Award_Click (object sender, RoutedEventArgs e)
+        {
+            Log.D("Awards clicked.");
+            subPage = new AwardPage(this, database);
+            TimingFrame.NavigationService.RemoveBackEntry();
+            TimingFrame.Content = subPage;
+        }
+
+        private void CreateHTML_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Create HTML clicked.");
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "HTML file (*.htm,*.html)|*.htm;*.html",
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                HtmlResultsTemplate template = new HtmlResultsTemplate(database);
+                String content = template.TransformText();
+                System.IO.File.WriteAllText(saveFileDialog.FileName, content);
+            }
+        }
+
+        private void HTMLServerButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (HTMLServerButton.Content.ToString().Equals("Start Web", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    mWindow.StartHttpServer();
+                    HTMLServerButton.Content = "Stop Web";
+                }
+                catch
+                {
+                    mWindow.StopHttpServer();
+                    HTMLServerButton.Content = "Start Web";
+                    MessageBox.Show("Unable to start the web server. Please type this command in an elevated command prompt: 'netsh http add urlacl url=http://*:6933/ user=everyone'");
+                }
+            }
+            else
+            {
+                mWindow.StopHttpServer();
+                HTMLServerButton.Content = "Start Web";
+            }
         }
 
         private class AReaderBox : ListBoxItem

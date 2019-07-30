@@ -24,18 +24,18 @@
                     <Label Name="StartTimeLabel" Content="Start Time" Width="75" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Right" Margin="0,0,0,0" />
                     <xctk:MaskedTextBox Name="StartTime" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="80,0,0,0" FontWeight="Bold" FontSize="16" KeyDown="StartTimeKeyDown" LostFocus="StartTimeLostFocus"/>
                 </Grid>
-                <Button Name="StartRace" Content="Start Race" Width="150" Height="25" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,8,0,0" Click="StartRaceClick" />
-                <Button Name="WaveButton" Content="Set Wave Times" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="ChangeWaves"/>
-                <Button Content="Manual Entry" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="ManualEntry" IsEnabled="True"/>
-                <Button Content="Load Log" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="LoadLog" IsEnabled="True" />
-                <TextBox Name="searchBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="SearchBox_TextChanged"/>
-                <ComboBox Name="viewOnlyBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" SelectionChanged="ViewOnlyBox_SelectionChanged">
+                <Button Name="StartRace" Content="Start Race" Width="150" Height="25" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,0" Click="StartRaceClick" />
+                <Button Name="WaveButton" Content="Set Wave Times" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="ChangeWaves"/>
+                <Button Content="Manual Entry" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="ManualEntry" IsEnabled="True"/>
+                <Button Content="Load Log" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="LoadLog" IsEnabled="True" />
+                <TextBox Name="searchBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="SearchBox_TextChanged"/>
+                <ComboBox Name="viewOnlyBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" SelectionChanged="ViewOnlyBox_SelectionChanged">
                     <ComboBoxItem Content="Hide Unknown" IsSelected="True"/>
                     <ComboBoxItem Content="Show All" />
                     <ComboBoxItem Content="Show Only Starts" />
                     <ComboBoxItem Content="Show Only Finishes" />
                 </ComboBox>
-                <ComboBox Name="SortBy" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" SelectionChanged="SortBy_SelectionChanged">
+                <ComboBox Name="SortBy" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" SelectionChanged="SortBy_SelectionChanged">
                     <ComboBoxItem Content="System Time" IsSelected="True" />
                     <ComboBoxItem Content="Gun Time" />
                     <ComboBoxItem Content="Bib"/>
@@ -44,21 +44,37 @@
                     <ComboBoxItem Content="Age Group"/>
                     <ComboBoxItem Content="Gender"/>
                 </ComboBox>
-                <Expander Name="extraExpander" Header="More" Margin="5,15,5,0" IsExpanded="True">
+                <Expander Name="statsExpander" Header="Stats" Margin="5,5,5,0" IsExpanded="True">
+                    <ListView x:Name="statsListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" FontSize="10" MouseDoubleClick="StatsListView_MouseDoubleClick">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Group" Width="75" DisplayMemberBinding="{Binding DivisionName}" />
+                                <GridViewColumn Header="Tot" Width="35" DisplayMemberBinding="{Binding Total}" />
+                                <GridViewColumn Header="DNS" Width="35" DisplayMemberBinding="{Binding DNS}" />
+                                <GridViewColumn Header="DNF" Width="35" DisplayMemberBinding="{Binding DNF}" />
+                                <GridViewColumn Header="Fin" Width="35" DisplayMemberBinding="{Binding Finished}" />
+                                <GridViewColumn Header="Act" Width="35" DisplayMemberBinding="{Binding Active}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Expander>
+                <Expander Name="extraExpander" Header="More" Margin="5,5,5,0" IsExpanded="True">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
-                            <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="Print_Click"/>
-                            <Button Content="Export Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="Export_Click"/>
-                            <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="True" Click="Recalculate_Click"/>
+                            <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Print_Click"/>
+                            <Button Content="Export Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Export_Click"/>
+                            <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Recalculate_Click"/>
+                            <Button Content="Create HTML" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="CreateHTML_Click" />
                         </StackPanel>
                         <StackPanel Grid.Column="1">
-                            <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
-                            <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" Click="RawReads_Click"/>
-                            <Button Content="DNS/DNF List" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,15,0,0" IsEnabled="False"/>
+                            <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Award_Click"/>
+                            <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="RawReads_Click"/>
+                            <Button x:Name="DNFButton" Content="Add DNF" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="AddDNF_Click"/>
+                            <Button x:Name="HTMLServerButton" Content="Start Web" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="HTMLServerButton_Click"/>
                         </StackPanel>
                     </Grid>
                 </Expander>

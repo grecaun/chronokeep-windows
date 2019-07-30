@@ -45,7 +45,7 @@ namespace ChronoKeep.UI.MainPages
             if (theEvent != null)
             {
                 locations = database.GetTimingLocations(theEvent.Identifier);
-                if (theEvent.CommonStartFinish == 1)
+                if (theEvent.CommonStartFinish)
                 {
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 }
@@ -67,7 +67,7 @@ namespace ChronoKeep.UI.MainPages
                 return;
             }
             List<ListBoxItem> items = new List<ListBoxItem>();
-            if (theEvent.DivisionSpecificSegments == 1)
+            if (theEvent.DivisionSpecificSegments)
             {
                 foreach (Division div in divisions)
                 {
@@ -95,7 +95,7 @@ namespace ChronoKeep.UI.MainPages
         {
             allSegments.Clear();
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
-            if (theEvent.DivisionSpecificSegments == 1)
+            if (theEvent.DivisionSpecificSegments)
             {
                 foreach (Segment seg in segments)
                 {

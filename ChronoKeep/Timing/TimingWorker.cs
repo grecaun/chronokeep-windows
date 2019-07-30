@@ -344,6 +344,12 @@ namespace ChronoKeep.Timing
             {
                 startTimes[result.Identifier] = result;
             }
+            // Get finish TimeResults
+            Dictionary<string, TimeResult> finishTimes = new Dictionary<string, TimeResult>();
+            foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
+            {
+                finishTimes[result.Identifier] = result;
+            }
             // Get all of the Chip Reads we find useful (Unprocessed, and those used as a result.)
             // and then sort them into groups based upon Bib, Chip, or put them in the ignore pile if
             // they have no bib or chip.
@@ -354,10 +360,13 @@ namespace ChronoKeep.Timing
             // (Bib, Location), Last Chip Read
             Dictionary<(int, int), (ChipRead Read, int Occurrence)> lastReadDictionary = new Dictionary<(int, int), (ChipRead, int)>();
             Dictionary<(string, int), (ChipRead Read, int Occurrence)> chipLastReadDictionary = new Dictionary<(string, int), (ChipRead Read, int Occurrence)>();
+            // Keep a list of DNF participants so we can mark them as DNF in results.
+            // Keep a record of the DNF chipread so we can link it with the TimeResult
+            Dictionary<int, ChipRead> dnfDictionary = new Dictionary<int, ChipRead>();
+            Dictionary<string, ChipRead> chipDnfDictionary = new Dictionary<string, ChipRead>();
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
             allChipReads.Sort();
             List<ChipRead> setUnknown = new List<ChipRead>();
-            DateTime start = DateTime.Now;
             foreach (ChipRead read in allChipReads)
             {
                 if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
@@ -379,13 +388,17 @@ namespace ChronoKeep.Timing
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status &&
                         (Constants.Timing.LOCATION_START == read.LocationID ||
-                        (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                        (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
                         // If we haven't found anything, let us know what our start time was
                         if (!lastReadDictionary.ContainsKey((read.ChipBib, read.LocationID)))
                         {
                             lastReadDictionary[(read.Bib, read.LocationID)] = (read, 0);
                         }
+                    }
+                    else if (Constants.Timing.CHIPREAD_STATUS_DNF == read.Status)
+                    {
+                        dnfDictionary[read.Bib] = read;
                     }
                     else
                     {
@@ -411,7 +424,7 @@ namespace ChronoKeep.Timing
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status &&
                         (Constants.Timing.LOCATION_START == read.LocationID ||
-                        (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                        (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
                         // If we haven't found anything, let us know what our start time was
                         if (!chipLastReadDictionary.ContainsKey((read.ChipNumber.ToString(), read.LocationID)))
@@ -419,13 +432,17 @@ namespace ChronoKeep.Timing
                             chipLastReadDictionary[(read.ChipNumber.ToString(), read.LocationID)] = (Read: read, Occurrence: 0);
                         }
                     }
+                    else if (Constants.Timing.CHIPREAD_STATUS_DNF == read.Status)
+                    {
+                        chipDnfDictionary[read.ChipNumber] = read;
+                    }
                     else
                     {
-                        if (!chipReadPairs.ContainsKey(read.ChipNumber.ToString()))
+                        if (!chipReadPairs.ContainsKey(read.ChipNumber))
                         {
-                            chipReadPairs[read.ChipNumber.ToString()] = new List<ChipRead>();
+                            chipReadPairs[read.ChipNumber] = new List<ChipRead>();
                         }
-                        chipReadPairs[read.ChipNumber.ToString()].Add(read);
+                        chipReadPairs[read.ChipNumber].Add(read);
                     }
                 }
                 else
@@ -433,12 +450,46 @@ namespace ChronoKeep.Timing
                     setUnknown.Add(read);
                 }
             }
-            DateTime end = DateTime.Now;
-            TimeSpan first = end - start;
-            start = DateTime.Now;
             // Go through each chip read for a single person.
             // List<ChipRead> updateStatusReads = new List<ChipRead>();
             List<TimeResult> newResults = new List<TimeResult>();
+            // Keep a list of participants to update.
+            HashSet<Participant> updateParticipants = new HashSet<Participant>();
+            // Process the intersection of DNF people and Finish results:
+            foreach (int bib in dnfDictionary.Keys)
+            {
+                Participant part = participantBibDictionary.ContainsKey(bib) ?
+                    participantBibDictionary[bib] :
+                    null;
+                if (part != null)
+                {
+                    part.Status = Constants.Timing.EVENTSPECIFIC_NOFINISH;
+                    updateParticipants.Add(part);
+                }
+                if (finishTimes.ContainsKey("Bib:" + bib.ToString()))
+                {
+                    TimeResult finish = finishTimes["Bib:" + bib.ToString()];
+                    finish.ReadId = dnfDictionary[bib].ReadId;
+                    finish.Time = "DNF";
+                    finish.ChipTime = "DNF";
+                    finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
+                    newResults.Add(finish);
+                }
+                else
+                {
+                    newResults.Add(new TimeResult(theEvent.Identifier,
+                        dnfDictionary[bib].ReadId,
+                        part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
+                        Constants.Timing.LOCATION_FINISH,
+                        Constants.Timing.SEGMENT_FINISH,
+                        -1,
+                        "DNF",
+                        "Bib:" + bib.ToString(),
+                        "DNF",
+                        dnfDictionary[bib].Time,
+                        bib));
+                }
+            }
             // process reads that have a bib
             foreach (int bib in bibReadPairs.Keys)
             {
@@ -451,6 +502,10 @@ namespace ChronoKeep.Timing
                 long startSeconds, maxStartSeconds;
                 int startMilliseconds;
                 TimeResult startResult = null;
+                if (startTimes.ContainsKey("Bib:" + bib.ToString()))
+                {
+                    startResult = startTimes["Bib:" + bib.ToString()];
+                }
                 if (div == null || !divisionStartDict.ContainsKey(div.Identifier))
                 {
                     startSeconds = divisionStartDict[0].Seconds;
@@ -483,7 +538,7 @@ namespace ChronoKeep.Timing
                             if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
                                 (Constants.Timing.LOCATION_START == read.LocationID
                                     || (Constants.Timing.LOCATION_FINISH == read.LocationID
-                                        && theEvent.CommonStartFinish == 1)))
+                                        && theEvent.CommonStartFinish)))
                             {
                                 // check if we've stored a chipread as the start chipread, update it to unused if so
                                 if (lastReadDictionary.ContainsKey((bib, read.LocationID)))
@@ -519,6 +574,13 @@ namespace ChronoKeep.Timing
                                     bib);
                                 startTimes[startResult.Identifier] = startResult;
                                 newResults.Add(startResult);
+                                if (part != null &&
+                                    (Constants.Timing.EVENTSPECIFIC_NOSHOW == part.Status
+                                    && !dnfDictionary.ContainsKey(bib)))
+                                {
+                                    part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
+                                    updateParticipants.Add(part);
+                                }
                                 // Finally, set the chipread status to STARTTIME.
                                 read.Status = Constants.Timing.CHIPREAD_STATUS_STARTTIME;
                             }
@@ -586,7 +648,7 @@ namespace ChronoKeep.Timing
                                     // Find if there's a segment associated with this combination
                                     int segId = Constants.Timing.SEGMENT_NONE;
                                     // First check if we're using Division specific segments
-                                    if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
+                                    if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
                                     {
                                         segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)].Identifier;
                                     }
@@ -616,17 +678,39 @@ namespace ChronoKeep.Timing
                                         chipSecDiff--;
                                         chipMillisecDiff += 1000;
                                     }
-                                    newResults.Add(new TimeResult(theEvent.Identifier,
-                                        read.ReadId,
-                                        part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
-                                        read.LocationID,
-                                        segId,
-                                        occurrence,
-                                        String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
-                                        identifier,
-                                        String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
-                                        read.Time,
-                                        bib));
+                                    // Check that we're not adding a finish time for a DNF person, we can use any other times
+                                    // for information for that person.
+                                    if (Constants.Timing.SEGMENT_FINISH != segId || !dnfDictionary.ContainsKey(bib))
+                                    {
+                                        newResults.Add(new TimeResult(theEvent.Identifier,
+                                            read.ReadId,
+                                            part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
+                                            read.LocationID,
+                                            segId,
+                                            occurrence,
+                                            String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                            identifier,
+                                            String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
+                                            read.Time,
+                                            bib));
+                                        if (part != null)
+                                        {
+                                            // If they've finished, mark them as such.
+                                            if (Constants.Timing.SEGMENT_FINISH == segId
+                                                && !dnfDictionary.ContainsKey(bib))
+                                            {
+                                                part.Status = Constants.Timing.EVENTSPECIFIC_FINISHED;
+                                                updateParticipants.Add(part);
+                                            }
+                                            // If they were marked as noshow previously, mark them as started
+                                            else if (Constants.Timing.EVENTSPECIFIC_NOSHOW == part.Status
+                                                && !dnfDictionary.ContainsKey(bib))
+                                            {
+                                                part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
+                                                updateParticipants.Add(part);
+                                            }
+                                        }
+                                    }
                                     read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                 }
                             }
@@ -638,6 +722,33 @@ namespace ChronoKeep.Timing
                             }
                         }
                     }
+                }
+            }
+            // Process the intersection of DNF people and Finish results:
+            foreach (string chip in chipDnfDictionary.Keys)
+            {
+                if (finishTimes.ContainsKey("Chip:" + chip))
+                {
+                    TimeResult finish = finishTimes["Chip:" + chip];
+                    finish.ReadId = chipDnfDictionary[chip].ReadId;
+                    finish.Time = "DNF";
+                    finish.ChipTime = "DNF";
+                    finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
+                    newResults.Add(finish);
+                }
+                else
+                {
+                    newResults.Add(new TimeResult(theEvent.Identifier,
+                        chipDnfDictionary[chip].ReadId,
+                        Constants.Timing.TIMERESULT_DUMMYPERSON,
+                        Constants.Timing.LOCATION_FINISH,
+                        Constants.Timing.SEGMENT_FINISH,
+                        -1,
+                        "DNF",
+                        "Chip:" + chip,
+                        "DNF",
+                        chipDnfDictionary[chip].Time,
+                        chipDnfDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDnfDictionary[chip].ReadBib : chipDnfDictionary[chip].ChipBib));
                 }
             }
             // process reads that have a chip
@@ -666,7 +777,7 @@ namespace ChronoKeep.Timing
                             if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
                                 (Constants.Timing.LOCATION_START == read.LocationID
                                     || (Constants.Timing.LOCATION_FINISH == read.LocationID
-                                        && theEvent.CommonStartFinish == 1)))
+                                        && theEvent.CommonStartFinish)))
                             {
                                 // check if we've stored a chipread as the start chipread, update it to unused if so
                                 if (chipLastReadDictionary.ContainsKey((chip, read.LocationID)))
@@ -681,7 +792,7 @@ namespace ChronoKeep.Timing
                                     // Remove it if so.
                                     newResults.Remove(startResult);
                                 }
-                                string identifier = "Chip:" + chip.ToString();
+                                string identifier = "Chip:" + chip;
                                 // Create a result for the start value.
                                 long secondsDiff = read.TimeSeconds - startSeconds;
                                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
@@ -766,7 +877,7 @@ namespace ChronoKeep.Timing
                                     // Find if there's a segment associated with this combination
                                     int segId = Constants.Timing.SEGMENT_NONE;
                                     // First check if we're using Division specific segments
-                                    if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
+                                    if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
                                     {
                                         segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)].Identifier;
                                     }
@@ -786,7 +897,11 @@ namespace ChronoKeep.Timing
                                         chipSecDiff--;
                                         chipMillisecDiff += 1000;
                                     }
-                                    newResults.Add(new TimeResult(theEvent.Identifier,
+                                    // Check that we're not adding a finish time for a DNF person, we can use any other times
+                                    // for information for that person.
+                                    if (Constants.Timing.SEGMENT_FINISH != segId || !chipDnfDictionary.ContainsKey(chip))
+                                    {
+                                        newResults.Add(new TimeResult(theEvent.Identifier,
                                         read.ReadId,
                                         Constants.Timing.TIMERESULT_DUMMYPERSON,
                                         read.LocationID,
@@ -797,7 +912,8 @@ namespace ChronoKeep.Timing
                                         String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
                                         read.Time,
                                         read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib));
-                                    read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
+                                        read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
+                                    }
                                 }
                             }
                             // Possible reads at this point:
@@ -810,9 +926,6 @@ namespace ChronoKeep.Timing
                     }
                 }
             }
-            end = DateTime.Now;
-            TimeSpan second = end - start;
-            start = DateTime.Now;
             // process reads that need to be set to ignore
             foreach (ChipRead read in setUnknown)
             {
@@ -821,9 +934,7 @@ namespace ChronoKeep.Timing
             // Update database with information.
             database.AddTimingResults(newResults);
             database.SetChipReadStatuses(allChipReads);
-            end = DateTime.Now;
-            TimeSpan third = end - start;
-            Log.D(String.Format("Done. Splitting into bib/chip: {0} - Creating Results: {1} - Putting Results in DB: {2}", first.ToString("c"), second.ToString("c"), third.ToString("c")));
+            database.UpdateParticipants(new List<Participant>(updateParticipants));
             return newResults;
         }
 
@@ -851,7 +962,6 @@ namespace ChronoKeep.Timing
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
             allChipReads.Sort();
             List<ChipRead> setUnknown = new List<ChipRead>();
-            DateTime start = DateTime.Now;
             foreach (ChipRead read in allChipReads)
             {
                 if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
@@ -872,11 +982,11 @@ namespace ChronoKeep.Timing
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status && (
                         Constants.Timing.LOCATION_START == read.LocationID ||
-                            (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                            (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
                         startReadDictionary[read.Bib] = read;
                     }
-                    else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                    else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status || Constants.Timing.CHIPREAD_STATUS_DNF == read.Status)
                     {
                         if (!bibReadPairs.ContainsKey(read.Bib))
                         {
@@ -900,11 +1010,11 @@ namespace ChronoKeep.Timing
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status && (
                         Constants.Timing.LOCATION_START == read.LocationID ||
-                            (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish == 1)))
+                            (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
                         chipStartReadDictionary[read.ChipNumber.ToString()] = read;
                     }
-                    else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                    else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status || Constants.Timing.CHIPREAD_STATUS_DNF == read.Status)
                     {
                         if (!chipReadPairs.ContainsKey(read.ChipNumber.ToString()))
                         {
@@ -918,17 +1028,20 @@ namespace ChronoKeep.Timing
                     setUnknown.Add(read);
                 }
             }
-            DateTime end = DateTime.Now;
-            TimeSpan first = end - start;
-            start = DateTime.Now;
             // Go through all of the chipreads we've marked and create new results.
             List<TimeResult> newResults = new List<TimeResult>();
+            List<Participant> updateParticipants = new List<Participant>();
             // start with bibs
             foreach (int bib in bibReadPairs.Keys)
             {
                 Participant part = participantBibDictionary.ContainsKey(bib) ?
                     participantBibDictionary[bib] :
                     null;
+                if (part != null)
+                {
+                    part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
+                    updateParticipants.Add(part);
+                }
                 Division div = part != null ?
                     divisionDictionary[part.EventSpecific.DivisionIdentifier] :
                     null;
@@ -946,6 +1059,7 @@ namespace ChronoKeep.Timing
                     endSeconds = divisionEndDict[div.Identifier].Seconds;
                 }
                 maxStartSeconds = startSeconds + theEvent.StartWindow;
+                bool finished = false;
                 foreach (ChipRead read in bibReadPairs[bib])
                 {
                     // pre-start
@@ -963,7 +1077,7 @@ namespace ChronoKeep.Timing
                         if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
                             (Constants.Timing.LOCATION_START == read.LocationID ||
                             (Constants.Timing.LOCATION_FINISH == read.LocationID
-                            && theEvent.CommonStartFinish == 1)))
+                            && theEvent.CommonStartFinish)))
                         {
                             // check if we've stored a chipread as the start chipread, update it to unused if so
                             if (startReadDictionary.ContainsKey(bib))
@@ -1025,8 +1139,19 @@ namespace ChronoKeep.Timing
                                 minSeconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeSeconds + occursWithin;
                                 minMilliseconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeMilliseconds;
                             }
+                            // Check if this is a 'dnf' read.  If it is we set the flag to the previous finish time and
+                            // IGNORE ANY SUBSEQUENT READS. PERIOD.
+                            if (Constants.Timing.CHIPREAD_STATUS_DNF == read.Status)
+                            {
+                                finished = true;
+                            }
+                            // Check if we've marked the person as finished;
+                            if (finished == true)
+                            {
+                                read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
+                            }
                             // Check if we're in the ignore within period.
-                            if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
+                            else if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
                             {
                                 read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
                             }
@@ -1035,7 +1160,7 @@ namespace ChronoKeep.Timing
                                 lastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
                                 int segId = Constants.Timing.SEGMENT_NONE;
                                 // Check for Division specific segments (Occurrence is always 1 for time based)
-                                if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
+                                if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
                                 {
                                     segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
                                 }
@@ -1095,6 +1220,8 @@ namespace ChronoKeep.Timing
                 endSeconds = divisionEndDict[0].Seconds;
                 maxStartSeconds = startSeconds + theEvent.StartWindow;
                 TimeResult startResult = null;
+                // keep a boolean so we can notify ourselves if we've marked a person as finished
+                bool finished = false;
                 foreach (ChipRead read in chipReadPairs[chip])
                 {
                     // pre-start
@@ -1112,7 +1239,7 @@ namespace ChronoKeep.Timing
                         if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
                             (Constants.Timing.LOCATION_START == read.LocationID ||
                             (Constants.Timing.LOCATION_FINISH == read.LocationID
-                            && theEvent.CommonStartFinish == 1)))
+                            && theEvent.CommonStartFinish)))
                         {
                             // check if we've stored a chipread as the start chipread, update it to unused if so
                             if (chipStartReadDictionary.ContainsKey(chip))
@@ -1174,8 +1301,19 @@ namespace ChronoKeep.Timing
                                 minSeconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeSeconds + occursWithin;
                                 minMilliseconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeMilliseconds;
                             }
+                            // Check if this is a 'dnf' read.  If it is we set the flag to the previous finish time and
+                            // IGNORE ANY SUBSEQUENT READS. PERIOD.
+                            if (Constants.Timing.CHIPREAD_STATUS_DNF == read.Status)
+                            {
+                                finished = true;
+                            }
+                            // Check if we've marked the person as finished;
+                            if (finished == true)
+                            {
+                                read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
+                            }
                             // Check if we're in the ignore within period.
-                            if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
+                            else if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
                             {
                                 read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
                             }
@@ -1184,7 +1322,7 @@ namespace ChronoKeep.Timing
                                 chipLastReadDictionary[(chip, read.LocationID)] = (read, occurrence);
                                 int segId = Constants.Timing.SEGMENT_NONE;
                                 // Check for Division specific segments (Occurrence is always 1 for time based)
-                                if (theEvent.DivisionSpecificSegments == 1 && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
+                                if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
                                 {
                                     segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
                                 }
@@ -1231,9 +1369,6 @@ namespace ChronoKeep.Timing
                     }
                 }
             }
-            end = DateTime.Now;
-            TimeSpan second = end - start;
-            start = DateTime.Now;
             // process reads that need to be set to ignore
             foreach (ChipRead read in setUnknown)
             {
@@ -1242,9 +1377,7 @@ namespace ChronoKeep.Timing
             // Update database with information.
             database.AddTimingResults(newResults);
             database.SetChipReadStatuses(allChipReads);
-            end = DateTime.Now;
-            TimeSpan third = end - start;
-            Log.D(String.Format("Done. Splitting into bib/chip: {0} - Creating Results: {1} - Putting Results in DB: {2}", first.ToString("c"), second.ToString("c"), third.ToString("c")));
+            database.UpdateParticipants(updateParticipants);
             return newResults;
         }
 
@@ -1264,7 +1397,7 @@ namespace ChronoKeep.Timing
             int ageGroupDivisionId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
             foreach (Participant part in participants)
             {
-                if (theEvent.CommonAgeGroups != 1)
+                if (!theEvent.CommonAgeGroups)
                 {
                     ageGroupDivisionId = part.EventSpecific.DivisionIdentifier;
                 }
@@ -1443,7 +1576,7 @@ namespace ChronoKeep.Timing
             List<TimeResult> segmentResults,
             Dictionary<int, Participant> participantEventSpecificDictionary)
         {
-            if (theEvent.RankByGun != 0)
+            if (theEvent.RankByGun)
             {
                 //segmentResults.Sort(TimeResult.CompareByDivision);
                 segmentResults.Sort((x1, x2) =>

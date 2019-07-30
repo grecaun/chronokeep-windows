@@ -123,14 +123,14 @@ namespace ChronoKeep
         }
 
         // Constructor used in manual entry.
-        public ChipRead(int eventId, int locationId, int bib, DateTime time)
+        public ChipRead(int eventId, int locationId, int bib, DateTime time, int status)
         {
             this.ReadBib = bib;
             this.TimeSeconds = RFIDUltraInterface.DateToEpoch(time);
             this.TimeMilliseconds = time.Millisecond;
             this.Type = Constants.Timing.CHIPREAD_TYPE_MANUAL;
             this.EventId = eventId;
-            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            this.Status = status;
             this.LocationID = locationId;
             this.ChipNumber = Constants.Timing.CHIPREAD_DUMMYCHIP;
             this.Seconds = RFIDUltraInterface.DateToEpoch(time);
@@ -236,6 +236,10 @@ namespace ChronoKeep
                 if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == Status)
                 {
                     return "Start";
+                }
+                if (Constants.Timing.CHIPREAD_STATUS_DNF == Status)
+                {
+                    return "DNF";
                 }
                 return "Unknown";
             }

@@ -120,9 +120,14 @@ namespace ChronoKeep
         void RemoveTimingResult(TimeResult tr);
         List<TimeResult> GetTimingResults(int eventId);
         List<TimeResult> GetStartTimes(int eventId);
+        List<TimeResult> GetFinishTimes(int eventId);
         List<TimeResult> GetSegmentTimes(int eventId, int segmentId);
         bool UnprocessedReadsExist(int eventId);
         bool UnprocessedResultsExist(int eventId);
+
+        // Timing analytics... sort of
+        List<DivisionStats> GetDivisionStats(int eventId);
+        Dictionary<int, List<Participant>> GetDivisionParticipantsStatus(int eventId, int divisionId);
 
         // Reset functions for ChipReads/TimeResults
         void ResetTimingResultsEvent(int eventId);                      // event based reset
@@ -163,7 +168,9 @@ namespace ChronoKeep
         void UpdateAgeGroup(AgeGroup group);
         void RemoveAgeGroup(AgeGroup group);
         void RemoveAgeGroups(int eventId, int divisionId);
+        void RemoveAgeGroups(List<AgeGroup> groups);
         List<AgeGroup> GetAgeGroups(int eventId);
+        List<AgeGroup> GetAgeGroups(int eventId, int divisionId);
 
         // Timing Systems
         void AddTimingSystem(TimingSystem system);

@@ -1,0 +1,59 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="ChronoKeep" #>
+<html>
+	<head>
+		<link rel='stylesheet' href='style.css'>
+		<link rel='stylesheet' href='bootstrap.css'>
+	</head>
+	<body>
+		<div class='panel-group' id='results'>
+			<div class='text-important results-header'><h2><#= theEvent.YearCode #> <#= theEvent.Name #></h2></div>
+			<div class='results-panel panel panel-default'>
+				<div class='btn-wrapper'>
+					<# foreach (string d in divisionResults.Keys)
+					{ #>
+					<button class='btn btn-default results-btn' type='button' data-toggle='collapse' data-parent='#results' data-target='#<#= d.Replace(' ', '-') #>' aria-expanded='false' aria-controls='<#= d.Replace(' ', '-') #>'><#= d #></button>
+					<# } #>
+				</div>
+				<# foreach (string d in divisionResults.Keys)
+				{ #>
+				<div class='collapse' id='<#= d.Replace(' ', '-') #>'>
+					<div class='well'>
+						<table>
+							<tr><td colspan='8' class='table-header text-important'><#= d #></td></tr>
+							<tr>
+							   <td class="overflow-hidden text-important table-label">Place</td>
+							   <td class="overflow-hidden text-important table-label">Age Place</td>
+							   <td class="text-important table-label">First</td>
+							   <td class="text-important table-label">Last</td>
+							   <td class="overflow-hidden text-important table-label">Age</td>
+							   <td class="overflow-hidden text-important table-label">Gender</td>
+							   <td class="overflow-hidden text-important table-label">Gun Time</td>
+							   <td class="text-important table-label">Time</td>
+							</tr>
+							<# foreach (TimeResult r in divisionResults[d])
+							{ #>
+							<tr>
+							   <td class="overflow-hidden"><#= r.PlaceStr #></td>
+							   <td class="overflow-hidden"><#= r.AgePlaceStr #></td>
+							   <td><#= participantDictionary[r.EventSpecificId].FirstName #></td>
+							   <td><#= participantDictionary[r.EventSpecificId].LastName #></td>
+							   <td class="overflow-hidden"><#= participantDictionary[r.EventSpecificId].Age(theEvent.Date) #></td>
+							   <td class="overflow-hidden"><#= participantDictionary[r.EventSpecificId].Gender #></td>
+							   <td class="overflow-hidden"><#= r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) #></td>
+							   <td><#= r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length) #></td>
+							</tr>
+							<# } #>
+						</table>
+					</div>
+				</div>
+				<# } #>
+			</div>
+		</div>
+		<script src='bootstrap.js'></script>
+	</body>
+</html>
