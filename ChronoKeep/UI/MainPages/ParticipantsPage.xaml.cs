@@ -1,22 +1,16 @@
 ﻿using ChronoKeep.Interfaces;
 using ChronoKeep.UI.Participants;
+using ChronoKeep.UI.IO;
 using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ChronoKeep.UI.MainPages
 {
@@ -243,14 +237,106 @@ namespace ChronoKeep.UI.MainPages
             UpdateView();
         }
 
-        private void Export_Click(object sender, RoutedEventArgs e)
+        private async void Export_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Export clicked.");
-            ExportParticipants exportParticipants = ExportParticipants.NewWindow(mWindow, database, mWindow.ExcelEnabled());
-            if (exportParticipants != null)
+            Log.D("Export clicked."); bool excel = mWindow.ExcelEnabled();
+            SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                mWindow.AddWindow(exportParticipants);
-                exportParticipants.ShowDialog();
+                Filter = mWindow.ExcelEnabled() ? "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv" : "CSV (*.csv)|*.csv",
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                if (theEvent != null)
+                {
+                    await Task.Run(() =>
+                    {
+                        Log.D("Event has name " + theEvent.Name + " and date of " + theEvent.Date + " and finally has ID " + theEvent.Identifier);
+                        List<Participant> parts = database.GetParticipants(theEvent.Identifier);
+                        string[] headers = new string[] {
+                            "Bib",
+                            "Distance",
+                            "Status",
+                            "Early Start",
+                            "First",
+                            "Last",
+                            "Birthday",
+                            "Age",
+                            "Street",
+                            "Apartment",
+                            "City",
+                            "State",
+                            "Zip",
+                            "Country",
+                            "Mobile",
+                            "Email",
+                            "Parent",
+                            "Gender",
+                            "Comments",
+                            "Other",
+                            "Owes",
+                            "Emergency Contact Name",
+                            "Emergency Contact Phone",
+                            "Division"
+                        };
+                        List<object[]> data = new List<object[]>();
+                        foreach (Participant p in parts)
+                        {
+                            data.Add(new object[] {
+                                p.Bib,
+                                p.Division,
+                                p.EventSpecific.StatusStr,
+                                p.EarlyStart,
+                                p.FirstName,
+                                p.LastName,
+                                p.Birthdate,
+                                p.Age(theEvent.Date),
+                                p.Street,
+                                p.Street2,
+                                p.City,
+                                p.State,
+                                p.Zip,
+                                p.Country,
+                                p.Mobile,
+                                p.Email,
+                                p.Parent,
+                                p.Gender,
+                                p.Comments,
+                                p.Other,
+                                p.Owes,
+                                p.ECName,
+                                p.ECPhone,
+                                p.Division +
+                                (p.EventSpecific.EarlyStart == 1 ? " Early Start" : "")
+                            });
+                        }
+                        IDataExporter exporter = null;
+                        string extension = Path.GetExtension(saveFileDialog.FileName);
+                        Log.D(String.Format("Extension is '{0}'", extension));
+                        if (extension.IndexOf("xls") != -1)
+                        {
+                            exporter = new ExcelExporter();
+                        }
+                        else
+                        {
+                            StringBuilder format = new StringBuilder();
+                            for (int i = 0; i < headers.Length; i++)
+                            {
+                                format.Append("\"{");
+                                format.Append(i);
+                                format.Append("}\",");
+                            }
+                            format.Remove(format.Length - 1, 1);
+                            Log.D(String.Format("The format is '{0}'", format.ToString()));
+                            exporter = new CSVExporter(format.ToString());
+                        }
+                        if (exporter != null)
+                        {
+                            exporter.SetData(headers, data);
+                            exporter.ExportData(saveFileDialog.FileName);
+                        }
+                    });
+                }
             }
         }
 

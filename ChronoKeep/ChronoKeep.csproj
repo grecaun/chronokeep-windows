@@ -250,9 +250,6 @@
     <Compile Include="UI\ChipAssignment\ChipTool.xaml.cs">
       <DependentUpon>ChipTool.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ChipAssignment\ExportBibChip.xaml.cs">
-      <DependentUpon>ExportBibChip.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\EventWindows\ChangeEventWindow.xaml.cs">
       <DependentUpon>ChangeEventWindow.xaml</DependentUpon>
     </Compile>
@@ -366,12 +363,6 @@
       <DependentUpon>ExampleLiabilityWaiver.xaml</DependentUpon>
     </Compile>
     <Compile Include="IO\ExcelImporter.cs" />
-    <Compile Include="UI\Export\ExportChanges.xaml.cs">
-      <DependentUpon>ExportChanges.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Export\ExportParticipants.xaml.cs">
-      <DependentUpon>ExportParticipants.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Interfaces\UI\IChangeUpdater.cs" />
     <Compile Include="Interfaces\IO\IDataImporter.cs" />
     <Compile Include="Database\IDBInterface.cs" />
@@ -444,10 +435,6 @@
     <Compile Include="Objects\Helpers\Utils.cs" />
     <Compile Include="Network\ZeroConf.cs" />
     <Page Include="UI\ChipAssignment\ChipTool.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\ChipAssignment\ExportBibChip.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -588,14 +575,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Kiosk\ExampleLiabilityWaiver.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Export\ExportChanges.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Export\ExportParticipants.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -154,6 +154,7 @@ namespace ChronoKeep
         public int NumApparel { get => apparel.Count; }
         public int AgeGroup { get => ageGroup; set => ageGroup = value; }
         public int Status { get => status; set => status = value; }
+        public string StatusStr { get => Constants.Timing.EVENTSPECIFIC_STATUS_NAMES[status]; }
 
         public void SetApparel(List<Apparel> incoming)
         {

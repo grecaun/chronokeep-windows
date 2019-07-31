@@ -60,8 +60,16 @@ namespace ChronoKeep.Constants
 
         public static readonly Dictionary<string, string> SYSTEM_NAMES = new Dictionary<string, string>()
         {
-            { Constants.Settings.TIMING_RFID, "Chip: RFID" },
-            { Constants.Settings.TIMING_IPICO, "Chip: Ipico" }
+            { Settings.TIMING_RFID, "Chip: RFID" },
+            { Settings.TIMING_IPICO, "Chip: Ipico" }
+        };
+
+        public static readonly Dictionary<int, string> EVENTSPECIFIC_STATUS_NAMES = new Dictionary<int, string>()
+        {
+            { EVENTSPECIFIC_NOSHOW, "DNS" },
+            { EVENTSPECIFIC_STARTED, "Started" },
+            { EVENTSPECIFIC_FINISHED, "Finished" },
+            { EVENTSPECIFIC_NOFINISH, "DNF" },
         };
     }
 }

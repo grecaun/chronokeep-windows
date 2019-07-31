@@ -1,23 +1,18 @@
 ﻿using ChronoKeep.Interfaces;
 using ChronoKeep.UI.ChipAssignment;
+using ChronoKeep.UI.IO;
 using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ChronoKeep.UI.MainPages
 {
@@ -343,11 +338,44 @@ namespace ChronoKeep.UI.MainPages
         private void Export_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Export clicked.");
-            ExportBibChip exportBibChip = ExportBibChip.NewWindow(mWindow, database, mWindow.ExcelEnabled());
-            if (exportBibChip != null)
+            bool excel = mWindow.ExcelEnabled();
+            SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                mWindow.AddWindow(exportBibChip);
-                exportBibChip.ShowDialog();
+                Filter = mWindow.ExcelEnabled() ? "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv" : "CSV (*.csv)|*.csv",
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                List<object[]> data = new List<object[]>();
+                List<BibChipAssociation> associations = database.GetBibChips(theEvent.Identifier);
+                associations.Sort();
+                string[] headers = new string[] { "Bib", "Chip" };
+                foreach (BibChipAssociation bca in associations)
+                {
+                    data.Add(new object[] { bca.Bib, bca.Chip });
+                }
+                IDataExporter exporter;
+                string extension = Path.GetExtension(saveFileDialog.FileName);
+                Log.D(String.Format("Extension is '{0}'", extension));
+                if (extension.IndexOf("xls") != -1)
+                {
+                    exporter = new ExcelExporter();
+                }
+                else
+                {
+                    StringBuilder format = new StringBuilder();
+                    for (int i = 0; i < headers.Length; i++)
+                    {
+                        format.Append("\"{");
+                        format.Append(i);
+                        format.Append("}\",");
+                    }
+                    format.Remove(format.Length - 1, 1);
+                    Log.D(String.Format("The format is '{0}'", format.ToString()));
+                    exporter = new CSVExporter(format.ToString());
+                }
+                exporter.SetData(headers, data);
+                exporter.ExportData(saveFileDialog.FileName);
             }
         }
 

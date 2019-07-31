@@ -4,16 +4,9 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace ChronoKeep.UI.Export
 {
@@ -30,7 +23,7 @@ namespace ChronoKeep.UI.Export
         List<String> commonHeaders = new List<String>
         {
             "Place", "Age Group Place", "Gender Place",
-            "Bib", "Distance", "Checked In", "Early Start", "First", "Last", "Birthday",
+            "Bib", "Distance", "Status", "Early Start", "First", "Last", "Birthday",
             "Age", "Gender", "Start", "Street", "Apartment",
             "City", "State", "Zip", "Country", "Mobile", "Email", "Parent", "Comments",
             "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone", "Division"
@@ -162,9 +155,9 @@ namespace ChronoKeep.UI.Export
                     {
                         line[headerIndex["Distance"]] = participant.Division;
                     }
-                    if (headerIndex.ContainsKey("Checked In"))
+                    if (headerIndex.ContainsKey("Status"))
                     {
-                        line[headerIndex["Checked In"]] = participant.CheckedIn;
+                        line[headerIndex["Status"]] = participant.EventSpecific.StatusStr;
                     }
                     if (headerIndex.ContainsKey("Early Start"))
                     {
@@ -357,7 +350,7 @@ namespace ChronoKeep.UI.Export
                     }
                     data.Add(line);
                 }
-                IDataExporter exporter = null;
+                IDataExporter exporter;
                 string extension = Path.GetExtension(saveFileDialog.FileName);
                 Log.D(String.Format("Extension is '{0}'", extension));
                 if (extension.IndexOf("xls") != -1)
@@ -367,7 +360,7 @@ namespace ChronoKeep.UI.Export
                 else
                 {
                     StringBuilder format = new StringBuilder();
-                    for (int i = 0; i < headersToOutput.Count; i++)
+                    for (int i = 0; i < headers.Length; i++)
                     {
                         format.Append("\"{");
                         format.Append(i);
