@@ -74,7 +74,7 @@
                             <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Award_Click"/>
                             <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="RawReads_Click"/>
                             <Button x:Name="DNFButton" Content="Add DNF" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="AddDNF_Click"/>
-                            <Button x:Name="HTMLServerButton" Content="Start Web" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="HTMLServerButton_Click"/>
+                            <Button x:Name="HttpServerButton" Content="Start Web" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="HTMLServerButton_Click"/>
                         </StackPanel>
                     </Grid>
                 </Expander>

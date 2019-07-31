@@ -18,6 +18,7 @@ namespace ChronoKeep.Interfaces
         void NetworkClearResults(int eventid);
         void StartHttpServer();
         void StopHttpServer();
+        bool HttpServerActive();
 
         // Tools.
         void UpdateStatus();

@@ -230,6 +230,14 @@ namespace ChronoKeep.UI.MainPages
             {
                 stats.Add(s);
             }
+            if (mWindow.HttpServerActive())
+            {
+                HttpServerButton.Content = "Stop Web";
+            }
+            else
+            {
+                HttpServerButton.Content = "Start Web";
+            }
             subPage.UpdateView();
         }
 
@@ -627,24 +635,24 @@ namespace ChronoKeep.UI.MainPages
 
         private void HTMLServerButton_Click(object sender, RoutedEventArgs e)
         {
-            if (HTMLServerButton.Content.ToString().Equals("Start Web", StringComparison.OrdinalIgnoreCase))
+            if (HttpServerButton.Content.ToString().Equals("Start Web", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {
                     mWindow.StartHttpServer();
-                    HTMLServerButton.Content = "Stop Web";
+                    HttpServerButton.Content = "Stop Web";
                 }
                 catch
                 {
                     mWindow.StopHttpServer();
-                    HTMLServerButton.Content = "Start Web";
+                    HttpServerButton.Content = "Start Web";
                     MessageBox.Show("Unable to start the web server. Please type this command in an elevated command prompt: 'netsh http add urlacl url=http://*:6933/ user=everyone'");
                 }
             }
             else
             {
                 mWindow.StopHttpServer();
-                HTMLServerButton.Content = "Start Web";
+                HttpServerButton.Content = "Start Web";
             }
         }
 

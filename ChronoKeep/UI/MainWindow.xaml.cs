@@ -620,8 +620,16 @@ namespace ChronoKeep.UI
 
         public void StopHttpServer()
         {
-            httpServer.Stop();
+            if (httpServer != null)
+            {
+                httpServer.Stop();
+            }
             httpServer = null;
+        }
+
+        public bool HttpServerActive()
+        {
+            return httpServer != null;
         }
     }
 }
