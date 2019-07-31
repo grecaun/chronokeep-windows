@@ -14,10 +14,9 @@ namespace ChronoKeep.IO.HtmlTemplates
         private Dictionary<string, List<TimeResult>> divisionResults = new Dictionary<string, List<TimeResult>>();
         private Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
 
-        public HtmlResultsTemplate(IDBInterface database)
+        public HtmlResultsTemplate(Event theEvent, List<TimeResult> resultList, Dictionary<int, Participant> participantDictionary)
         {
-            theEvent = database.GetCurrentEvent();
-            List<TimeResult> resultList = database.GetFinishTimes(theEvent.Identifier);
+            this.theEvent = theEvent;
             resultList.Sort(TimeResult.CompareByDivisionPlace);
             foreach (TimeResult result in resultList)
             {
@@ -27,10 +26,7 @@ namespace ChronoKeep.IO.HtmlTemplates
                 }
                 divisionResults[result.DivisionName].Add(result);
             }
-            foreach (Participant person in database.GetParticipants(theEvent.Identifier))
-            {
-                participantDictionary[person.EventSpecific.Identifier] = person;
-            }
+            this.participantDictionary = participantDictionary;
         }
     }
 }

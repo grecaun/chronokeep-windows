@@ -583,6 +583,10 @@ namespace ChronoKeep.UI
             {
                 tcpServer.UpdateResults(eventid, results);
             }
+            if (httpServer != null)
+            {
+                httpServer.UpdateInformation();
+            }
         }
 
         public void NetworkAddResults(int eventid, List<TimeResult> results)
@@ -594,6 +598,10 @@ namespace ChronoKeep.UI
             if (tcpServer != null)
             {
                 tcpServer.ClearResults(eventid);
+            }
+            if (httpServer != null)
+            {
+                httpServer.UpdateInformation();
             }
         }
 

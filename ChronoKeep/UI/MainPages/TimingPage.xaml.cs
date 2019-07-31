@@ -627,7 +627,9 @@ namespace ChronoKeep.UI.MainPages
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                HtmlResultsTemplate template = new HtmlResultsTemplate(database);
+                List<TimeResult> finishResults = database.GetFinishTimes(theEvent.Identifier);
+                Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
+                HtmlResultsTemplate template = new HtmlResultsTemplate(theEvent, finishResults, partDict);
                 String content = template.TransformText();
                 System.IO.File.WriteAllText(saveFileDialog.FileName, content);
             }
