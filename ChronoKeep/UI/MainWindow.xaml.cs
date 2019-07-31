@@ -228,6 +228,10 @@ namespace ChronoKeep.UI
             StopNetworkServices();
             StopTimingController();
             StopTimingWorker();
+            if (httpServer != null)
+            {
+                httpServer.Stop();
+            }
             foreach (Window w in openWindows)
             {
                 try
@@ -402,10 +406,6 @@ namespace ChronoKeep.UI
                 {
                     tcpServer.UpdateEvent(Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
                     tcpServer.UpdateEventKiosk(Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
-                }
-                if (httpServer != null)
-                {
-                    httpServer.Stop();
                 }
             }
             catch { }
@@ -613,16 +613,14 @@ namespace ChronoKeep.UI
             if (httpServer != null)
             {
                 httpServer.Stop();
+                httpServer = null;
             }
             httpServer = new HttpServer(database, httpServerPort);
         }
 
         public void StopHttpServer()
         {
-            if (httpServer != null)
-            {
-                httpServer.Stop();
-            }
+            httpServer.Stop();
             httpServer = null;
         }
     }

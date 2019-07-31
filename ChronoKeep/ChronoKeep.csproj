@@ -744,6 +744,7 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>HtmlResultsTemplate.cs</LastGenOutput>
     </Content>
+    <EmbeddedResource Include="IO\HtmlTemplates\jquery-3.4.1.min.js" />
     <Content Include="IO\HtmlTemplates\style.css" />
     <EmbeddedResource Include="IO\HtmlTemplates\style.min.css" />
     <Content Include="Properties\FileVersion.tt">

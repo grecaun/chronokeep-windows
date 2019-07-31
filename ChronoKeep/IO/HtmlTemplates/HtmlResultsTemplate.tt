@@ -6,22 +6,22 @@
 <#@ import namespace="ChronoKeep" #>
 <html>
 	<head>
-		<link rel='stylesheet' href='style.css'>
 		<link rel='stylesheet' href='bootstrap.css'>
+		<link rel='stylesheet' href='style.css'>
 	</head>
 	<body>
-		<div class='panel-group' id='results'>
+		<div class='results-wrapper panel-group' id='results'>
 			<div class='text-important results-header'><h2><#= theEvent.YearCode #> <#= theEvent.Name #></h2></div>
 			<div class='results-panel panel panel-default'>
 				<div class='btn-wrapper'>
 					<# foreach (string d in divisionResults.Keys)
 					{ #>
-					<button class='btn btn-default results-btn' type='button' data-toggle='collapse' data-parent='#results' data-target='#<#= d.Replace(' ', '-') #>' aria-expanded='false' aria-controls='<#= d.Replace(' ', '-') #>'><#= d #></button>
+					<button class="btn btn-default results-btn collapsed" type="button" data-toggle="collapse" data-parent="#results" data-target="#results-<#= d.Replace(' ', '-') #>" aria-expanded="false" aria-controls="results-<#= d.Replace(' ', '-') #>"><#= d #></button>
 					<# } #>
 				</div>
 				<# foreach (string d in divisionResults.Keys)
 				{ #>
-				<div class='collapse' id='<#= d.Replace(' ', '-') #>'>
+				<div class="collapse" id="results-<#= d.Replace(' ', '-') #>">
 					<div class='well'>
 						<table>
 							<tr><td colspan='8' class='table-header text-important'><#= d #></td></tr>
@@ -54,6 +54,7 @@
 				<# } #>
 			</div>
 		</div>
-		<script src='bootstrap.js'></script>
+		<script type="text/javascript" src='jquery.js'></script>
+		<script type="text/javascript" src='bootstrap.js'></script>
 	</body>
 </html>

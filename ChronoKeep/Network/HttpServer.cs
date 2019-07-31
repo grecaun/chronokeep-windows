@@ -47,9 +47,6 @@ namespace ChronoKeep.Network
 
         private void Listen()
         {
-            _listener = new HttpListener();
-            _listener.Prefixes.Add("http://*:" + _port.ToString() + "/");
-            _listener.Start();
             while (true)
             {
                 try
@@ -115,8 +112,22 @@ namespace ChronoKeep.Network
                         message = reader.ReadToEnd();
                     }
                 }
-                context.Response.ContentType = "application/x-javascript";
+                context.Response.ContentType = "text/javascript";
                 Log.D("Bootstrap js");
+            }
+            else if (filename.Equals("jquery.min.js", StringComparison.OrdinalIgnoreCase) || filename.Equals("jquery.js", StringComparison.OrdinalIgnoreCase))
+            {
+                // Serve up jquery-3.4.1.min.js
+                message = "";
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChronoKeep.IO.HtmlTemplates." + "jquery-3.4.1.min.js"))
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        message = reader.ReadToEnd();
+                    }
+                }
+                context.Response.ContentType = "text/javascript";
+                Log.D("jquery js");
             }
             context.Response.ContentLength64 = message.Length;
             context.Response.AddHeader("Date", DateTime.Now.ToString("r"));
@@ -137,7 +148,6 @@ namespace ChronoKeep.Network
             _listener = new HttpListener();
             _listener.Prefixes.Add("http://*:" + _port.ToString() + "/");
             _listener.Start();
-            _listener.Stop();
 
             _serverThread = new Thread(this.Listen);
             _serverThread.Start();
