@@ -243,20 +243,23 @@ namespace ChronoKeep.UI.Participants
             }
             if (offendingBib != null && newPart.Identifier != offendingBib.Identifier)
             {
-                // bib is taken
-                Participant oldPart = database.GetParticipant(theEvent.Identifier, newPart);
+                // bib is taken - person object holds old bib #
                 MessageBoxResult result = MessageBox.Show("This bib is already taken. Swap bibs?", "", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (MessageBoxResult.Yes == result)
                 {
-                    offendingBib.EventSpecific.Bib = oldPart.EventSpecific.Bib;
+                    offendingBib.EventSpecific.Bib = person.EventSpecific.Bib;
+                    int newBib = newPart.EventSpecific.Bib;
+                    newPart.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                    database.UpdateParticipant(newPart);
                     database.UpdateParticipant(offendingBib);
+                    newPart.EventSpecific.Bib = newBib;
                     database.UpdateParticipant(newPart);
                     ParticipantChanged = true;
                     this.Close();
                 }
                 else if (MessageBoxResult.No == result)
                 {
-                    BibBox.Text = oldPart.Bib.ToString();
+                    BibBox.Text = person.EventSpecific.Bib.ToString();
                     return;
                 }
             }
