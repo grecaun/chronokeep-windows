@@ -159,6 +159,16 @@ namespace ChronoKeep.UI.MainPages
             {
                 DNFButton.Content = "Add Finished";
             }
+
+            // Check if our web server is active and update the button
+            if (mWindow.HttpServerActive())
+            {
+                HttpServerButton.Content = "Stop Web";
+            }
+            else
+            {
+                HttpServerButton.Content = "Start Web";
+            }
         }
 
         public void Keyboard_Ctrl_A() { }
