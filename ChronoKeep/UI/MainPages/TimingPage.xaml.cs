@@ -670,6 +670,7 @@ namespace ChronoKeep.UI.MainPages
 
         private class AReaderBox : ListBoxItem
         {
+            public ComboBox ReaderType { get; private set; }
             public TextBox ReaderIP { get; private set; }
             public TextBox ReaderPort { get; private set; }
             public ComboBox ReaderLocation { get; private set; }
@@ -692,9 +693,10 @@ namespace ChronoKeep.UI.MainPages
                 this.reader = sys;
                 Grid thePanel = new Grid()
                 {
-                    MaxWidth = 600,
-                    Width = 600
+                    MaxWidth = 740,
+                    Width = 740
                 };
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(70) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120) });
@@ -702,6 +704,37 @@ namespace ChronoKeep.UI.MainPages
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(65) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
                 this.Content = thePanel;
+                ReaderType = new ComboBox()
+                {
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5, 5, 5, 5),
+                    Height = 25
+                };
+                ComboBoxItem current = null, selected = null;
+                foreach (string SYSTEM_IDVAL in Constants.Timing.SYSTEM_NAMES.Keys)
+                {
+                    current = new ComboBoxItem()
+                    {
+                        Content = Constants.Timing.SYSTEM_NAMES[SYSTEM_IDVAL],
+                        Uid = SYSTEM_IDVAL
+                    };
+                    if (SYSTEM_IDVAL == reader.Type)
+                    {
+                        selected = current;
+                    }
+                    ReaderType.Items.Add(current);
+                }
+                if (selected != null)
+                {
+                    ReaderType.SelectedItem = selected;
+                }
+                else
+                {
+                    ReaderType.SelectedIndex = 0;
+                }
+                ReaderType.SelectionChanged += new SelectionChangedEventHandler(ReaderTypeChanged);
+                thePanel.Children.Add(ReaderType);
+                Grid.SetColumn(ReaderType, 0);
                 ReaderIP = new TextBox()
                 {
                     Text = reader.IPAddress,
@@ -712,7 +745,7 @@ namespace ChronoKeep.UI.MainPages
                 ReaderIP.GotFocus += new RoutedEventHandler(this.SelectAll);
                 ReaderIP.PreviewTextInput += new TextCompositionEventHandler(this.IPValidation);
                 thePanel.Children.Add(ReaderIP);
-                Grid.SetColumn(ReaderIP, 0);
+                Grid.SetColumn(ReaderIP, 1);
                 ReaderPort = new TextBox()
                 {
                     Text = reader.Port.ToString(),
@@ -723,14 +756,14 @@ namespace ChronoKeep.UI.MainPages
                 ReaderPort.GotFocus += new RoutedEventHandler(this.SelectAll);
                 ReaderPort.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
                 thePanel.Children.Add(ReaderPort);
-                Grid.SetColumn(ReaderPort, 1);
+                Grid.SetColumn(ReaderPort, 2);
                 ReaderLocation = new ComboBox()
                 {
                     VerticalContentAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(5, 5, 5, 5),
                     Height = 25
                 };
-                ComboBoxItem current = null, selected = null;
+                current = null; selected = null;
                 foreach (TimingLocation loc in this.locations)
                 {
                     current = new ComboBoxItem()
@@ -753,7 +786,7 @@ namespace ChronoKeep.UI.MainPages
                     ReaderLocation.SelectedIndex = 0;
                 }
                 thePanel.Children.Add(ReaderLocation);
-                Grid.SetColumn(ReaderLocation, 2);
+                Grid.SetColumn(ReaderLocation, 3);
                 ClockButton = new Button()
                 {
                     Content = "Clock",
@@ -763,7 +796,7 @@ namespace ChronoKeep.UI.MainPages
                 };
                 ClockButton.Click += new RoutedEventHandler(this.Clock);
                 thePanel.Children.Add(ClockButton);
-                Grid.SetColumn(ClockButton, 3);
+                Grid.SetColumn(ClockButton, 4);
                 RewindButton = new Button()
                 {
                     Content = "Rewind",
@@ -773,7 +806,7 @@ namespace ChronoKeep.UI.MainPages
                 };
                 RewindButton.Click += new RoutedEventHandler(this.Rewind);
                 thePanel.Children.Add(RewindButton);
-                Grid.SetColumn(RewindButton, 4);
+                Grid.SetColumn(RewindButton, 5);
                 ConnectButton = new Button()
                 {
                     Content = "Connect",
@@ -782,7 +815,7 @@ namespace ChronoKeep.UI.MainPages
                 };
                 ConnectButton.Click += new RoutedEventHandler(this.Connect);
                 thePanel.Children.Add(ConnectButton);
-                Grid.SetColumn(ConnectButton, 5);
+                Grid.SetColumn(ConnectButton, 6);
                 UpdateStatus();
             }
 
@@ -868,6 +901,15 @@ namespace ChronoKeep.UI.MainPages
                 reader.Port = portNo;
                 reader.LocationID = Convert.ToInt32(((ComboBoxItem)ReaderLocation.SelectedItem).Uid);
                 reader.LocationName = ((ComboBoxItem)ReaderLocation.SelectedItem).Content.ToString();
+            }
+
+            private void ReaderTypeChanged(object sender, SelectionChangedEventArgs args)
+            {
+                Log.D("Reader type has changed.");
+                string type = ((ComboBoxItem)ReaderType.SelectedItem).Uid;
+                Log.D("Updating to type: " + Constants.Timing.SYSTEM_NAMES[type]);
+                reader.UpdateSystemType(type);
+                ReaderPort.Text = reader.Port.ToString();
             }
 
             private void Connect(object sender, RoutedEventArgs e)

@@ -154,7 +154,7 @@ namespace ChronoKeep.Timing
             // Get the start time for the event. (Net time of 0:00:00.000)
             divisionStartDict.Clear();
             DateTime startTime = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds);
-            divisionStartDict[0] = (RFIDUltraInterface.DateToEpoch(startTime), theEvent.StartMilliseconds);
+            divisionStartDict[0] = (Constants.Timing.DateToEpoch(startTime), theEvent.StartMilliseconds);
             // And the end time (for time based events)
             divisionEndDict.Clear();
             divisionEndDict[0] = divisionStartDict[0];
@@ -671,7 +671,7 @@ namespace ChronoKeep.Timing
                                         secondsDiff--;
                                         millisecDiff += 1000;
                                     }
-                                    long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? RFIDUltraInterface.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
+                                    long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? Constants.Timing.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
                                     int chipMillisecDiff = read.TimeMilliseconds - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime.Millisecond : startMilliseconds);
                                     if (chipMillisecDiff < 0)
                                     {
@@ -890,7 +890,7 @@ namespace ChronoKeep.Timing
                                         secondsDiff--;
                                         millisecDiff += 1000;
                                     }
-                                    long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? RFIDUltraInterface.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
+                                    long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? Constants.Timing.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
                                     int chipMillisecDiff = read.TimeMilliseconds - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime.Millisecond : startMilliseconds);
                                     if (chipMillisecDiff < 0)
                                     {
@@ -1182,7 +1182,7 @@ namespace ChronoKeep.Timing
                                     secondsDiff--;
                                     millisecDiff += 1000;
                                 }
-                                long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? RFIDUltraInterface.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
+                                long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? Constants.Timing.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
                                 int chipMillisecDiff = read.TimeMilliseconds - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime.Millisecond : startMilliseconds);
                                 if (chipMillisecDiff < 0)
                                 {
@@ -1339,7 +1339,7 @@ namespace ChronoKeep.Timing
                                     secondsDiff--;
                                     millisecDiff += 1000;
                                 }
-                                long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? RFIDUltraInterface.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
+                                long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? Constants.Timing.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
                                 int chipMillisecDiff = read.TimeMilliseconds - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime.Millisecond : startMilliseconds);
                                 if (chipMillisecDiff < 0)
                                 {

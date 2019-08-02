@@ -245,6 +245,7 @@
     <Compile Include="Objects\Range.cs" />
     <Compile Include="Objects\Segment.cs" />
     <Compile Include="Objects\TimingSystem.cs" />
+    <Compile Include="Timing\Interfaces\IpicoInterface.cs" />
     <Compile Include="Timing\TimingController.cs" />
     <Compile Include="Timing\TimingWorker.cs" />
     <Compile Include="UI\ChipAssignment\ChipTool.xaml.cs">
@@ -426,7 +427,7 @@
     <Compile Include="UI\Timing\RFID\RFIDSettings.xaml.cs">
       <DependentUpon>RFIDSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Timing\RFID\RFIDUltraInterface.cs" />
+    <Compile Include="Timing\Interfaces\RFIDUltraInterface.cs" />
     <Compile Include="UI\UHF RFID Reader\RFIDSerial.cs" />
     <Compile Include="Database\SQLiteInterface.cs" />
     <Compile Include="Network\TCPServer.cs" />

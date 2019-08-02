@@ -58,10 +58,21 @@ namespace ChronoKeep.Constants
         public static readonly int EVENT_TYPE_DISTANCE = 0;
         public static readonly int EVENT_TYPE_TIME = 1;
 
+        public static long DateToEpoch(DateTime date)
+        {
+            var ticks = date.Ticks - new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
+            return ticks / TimeSpan.TicksPerSecond;
+        }
+
+        public static DateTime EpochToDate(long date)
+        {
+            return new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(date * TimeSpan.TicksPerSecond);
+        }
+
         public static readonly Dictionary<string, string> SYSTEM_NAMES = new Dictionary<string, string>()
         {
-            { Settings.TIMING_RFID, "Chip: RFID" },
-            { Settings.TIMING_IPICO, "Chip: Ipico" }
+            { Settings.TIMING_RFID, "RFID Timing Systems" },
+            { Settings.TIMING_IPICO, "Ipico" }
         };
 
         public static readonly Dictionary<int, string> EVENTSPECIFIC_STATUS_NAMES = new Dictionary<int, string>()

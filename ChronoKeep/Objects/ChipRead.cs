@@ -65,6 +65,29 @@ namespace ChronoKeep
             this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
         }
 
+        // This constructor is used when receiving a read from an Ipico system
+        public ChipRead(int eventId, int locationId, string chipNumber, DateTime time, int antenna, int isRewind)
+        {
+            this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+            this.TimeSeconds = Constants.Timing.DateToEpoch(time);
+            this.TimeMilliseconds = time.Millisecond;
+            this.Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
+            this.EventId = eventId;
+            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            this.LocationID = locationId;
+            this.ChipNumber = chipNumber.Trim();
+            this.Seconds = Constants.Timing.DateToEpoch(time);
+            this.Milliseconds = time.Millisecond;
+            this.Antenna = antenna;
+            this.RSSI = "";
+            this.IsRewind = isRewind;
+            this.Reader = "I";
+            this.Box = "Ipico";
+            this.ReaderTime = "";
+            this.StartTime = 0;
+            this.LogId = 0;
+        }
+
         // This is the OLD database' constructor.
         public ChipRead(int readId, int eventId, int status, int locationId, long chipNumber, long seconds,
            int millisec, int antenna, string rssi, int isRewind, string reader, string box, string readertime,
@@ -85,7 +108,7 @@ namespace ChronoKeep
             this.ReaderTime = readertime;
             this.StartTime = starttime;
             this.LogId = logid;
-            this.TimeSeconds = RFIDUltraInterface.DateToEpoch(time);
+            this.TimeSeconds = Constants.Timing.DateToEpoch(time);
             this.TimeMilliseconds = time.Millisecond;
             this.ReadBib = readbib;
             this.Type = type;
@@ -126,14 +149,14 @@ namespace ChronoKeep
         public ChipRead(int eventId, int locationId, int bib, DateTime time, int status)
         {
             this.ReadBib = bib;
-            this.TimeSeconds = RFIDUltraInterface.DateToEpoch(time);
+            this.TimeSeconds = Constants.Timing.DateToEpoch(time);
             this.TimeMilliseconds = time.Millisecond;
             this.Type = Constants.Timing.CHIPREAD_TYPE_MANUAL;
             this.EventId = eventId;
             this.Status = status;
             this.LocationID = locationId;
             this.ChipNumber = Constants.Timing.CHIPREAD_DUMMYCHIP;
-            this.Seconds = RFIDUltraInterface.DateToEpoch(time);
+            this.Seconds = Constants.Timing.DateToEpoch(time);
             this.Milliseconds = time.Millisecond;
             this.Antenna = 0;
             this.RSSI = "";
@@ -149,14 +172,14 @@ namespace ChronoKeep
         public ChipRead(int eventId, int locationId, string chip, DateTime time)
         {
             this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
-            this.TimeSeconds = RFIDUltraInterface.DateToEpoch(time);
+            this.TimeSeconds = Constants.Timing.DateToEpoch(time);
             this.TimeMilliseconds = time.Millisecond;
             this.Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
             this.EventId = eventId;
             this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
             this.LocationID = locationId;
             this.ChipNumber = chip.Trim();
-            this.Seconds = RFIDUltraInterface.DateToEpoch(time);
+            this.Seconds = Constants.Timing.DateToEpoch(time);
             this.Milliseconds = time.Millisecond;
             this.Antenna = 0;
             this.RSSI = "";
@@ -191,7 +214,7 @@ namespace ChronoKeep
 
         public DateTime Time
         {
-            get => RFIDUltraInterface.EpochToDate(TimeSeconds).AddMilliseconds(TimeMilliseconds);
+            get => Constants.Timing.EpochToDate(TimeSeconds).AddMilliseconds(TimeMilliseconds);
         }
 
         public string TypeName

@@ -1,4 +1,5 @@
 ﻿using ChronoKeep.Interfaces.Timing;
+using ChronoKeep.Timing.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace ChronoKeep.Objects
         public string LocationName { get; set; } = "Unknown";
         public string Type { get; set; } = Constants.Settings.TIMING_RFID;
         public SYSTEM_STATUS Status { get; set; } = SYSTEM_STATUS.DISCONNECTED;
-        public Socket Socket { get; private set; }
+        public List<Socket> Sockets { get; private set; }
         public ITimingSystemInterface SystemInterface;
         private DateTime ConnectedAt;
 
@@ -58,6 +59,24 @@ namespace ChronoKeep.Objects
             this.Status = SYSTEM_STATUS.DISCONNECTED;
         }
 
+        public List<Socket> Connect()
+        {
+            if (SystemInterface == null)
+            {
+                return null;
+            }
+            Sockets = SystemInterface.Connect(IPAddress, Port);
+            return Sockets;
+        }
+
+        public void Disconnect()
+        {
+            foreach (Socket sock in Sockets)
+            {
+                sock.Disconnect(false);
+            }
+        }
+
         public void UpdateSystemType(string type)
         {
             if (type == Constants.Settings.TIMING_RFID)
@@ -70,24 +89,17 @@ namespace ChronoKeep.Objects
             }
         }
 
-        public void CreateTimingSystemInterface(IDBInterface database, Socket sock)
+        public void CreateTimingSystemInterface(IDBInterface database)
         {
-            this.Socket = sock;
             if (this.Type == Constants.Settings.TIMING_RFID)
             {
                 Log.D("System interface is RFID.");
-                SystemInterface = new RFIDUltraInterface(database, sock, LocationID);
+                SystemInterface = new RFIDUltraInterface(database, LocationID);
             }
             else if (this.Type == Constants.Settings.TIMING_IPICO)
             {
-                SystemInterface = null;
+                SystemInterface = new IpicoInterface(database, LocationID);
             }
-        }
-
-        public void SetSocket(Socket sock)
-        {
-            this.Socket = sock;
-            SystemInterface.SetMainSocket(sock);
         }
 
         public void SetLastCommunicationTime()

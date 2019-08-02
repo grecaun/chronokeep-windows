@@ -69,31 +69,30 @@ namespace ChronoKeep.Timing
 
         public void ConnectTimingSystem(TimingSystem system)
         {
-            Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            Log.D("Attempting to connect to " + system.IPAddress);
-            try
+            system.CreateTimingSystemInterface(database);
+            List<Socket> sockets = system.Connect();
+            if (sockets == null)
             {
-                sock.Connect(system.IPAddress, system.Port);
-            }
-            catch
-            {
-                Log.D("Unable to connect to " + system.IPAddress);
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
-                return;
-            }
-            system.CreateTimingSystemInterface(database, sock);
-            TimingSystemDict[sock] = system;
-            if (sock.Connected)
-            {
-                Log.D("Connected to " + system.IPAddress);
-                TimingSystemSockets.Add(sock);
-                TimingSystemDict[sock].SetLastCommunicationTime();
             }
             else
             {
-                Log.D("Unable to connect to " + system.IPAddress);
-                TimingSystemDict.Remove(sock);
-                system.Status = SYSTEM_STATUS.DISCONNECTED;
+                foreach (Socket sock in sockets)
+                {
+                    TimingSystemDict[sock] = system;
+                    if (sock.Connected)
+                    {
+                        TimingSystemDict[sock].SetLastCommunicationTime();
+                    }
+                    else
+                    {
+                        TimingSystemDict.Remove(sock);
+                        if (!TimingSystemDict.Values.Contains(system))
+                        {
+                            system.Status = SYSTEM_STATUS.DISCONNECTED;
+                        }
+                    }
+                }
             }
         }
 
@@ -108,9 +107,12 @@ namespace ChronoKeep.Timing
 
         public void DisconnectTimingSystem(TimingSystem system)
         {
-            system.Socket.Disconnect(false);
-            TimingSystemSockets.Remove(system.Socket);
-            TimingSystemDict.Remove(system.Socket);
+            system.Disconnect();
+            foreach (Socket sock in system.Sockets)
+            {
+                TimingSystemSockets.Remove(sock);
+                TimingSystemDict.Remove(sock);
+            }
             system.Status = SYSTEM_STATUS.DISCONNECTED;
         }
 
@@ -160,7 +162,7 @@ namespace ChronoKeep.Timing
                         {
                             String msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
                             Log.D("Timing System - Message is :" + msg.Trim());
-                            Dictionary<MessageType, List<string>> messageTypes = TimingSystemDict[sock].SystemInterface.ParseMessages(msg);
+                            Dictionary<MessageType, List<string>> messageTypes = TimingSystemDict[sock].SystemInterface.ParseMessages(msg, sock);
                             foreach (MessageType type in messageTypes.Keys)
                             {
                                 switch (type)

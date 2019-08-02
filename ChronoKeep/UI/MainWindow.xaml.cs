@@ -23,7 +23,7 @@ namespace ChronoKeep.UI
     {
         IDBInterface database;
         IMainPage page;
-        String dbName = "EventDirector.sqlite";
+        String dbName = "ChronoKeep.sqlite";
         bool closing = false;
         bool excelEnabled = false;
 

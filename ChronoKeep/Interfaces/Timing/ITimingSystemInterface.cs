@@ -9,9 +9,8 @@ namespace ChronoKeep.Interfaces.Timing
 {
     public interface ITimingSystemInterface
     {
-        Dictionary<MessageType, List<string>> ParseMessages(string message);
-        void SettingsWindow();
-        void ClockWindow();
+        Dictionary<MessageType, List<string>> ParseMessages(string message, Socket sock);
+        List<Socket> Connect(string IpAddress, int Port);
         void StartReading();
         void StopReading();
         void SetTime(DateTime date);

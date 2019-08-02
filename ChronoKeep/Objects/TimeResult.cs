@@ -59,7 +59,7 @@ namespace ChronoKeep
             this.bib = bib;
             this.unknownId = unknownId;
             this.readId = readId;
-            this.systemTime = RFIDUltraInterface.EpochToDate(systemTimeSec).AddMilliseconds(systemTimeMill);
+            this.systemTime = Constants.Timing.EpochToDate(systemTimeSec).AddMilliseconds(systemTimeMill);
             this.chipTime = chipTime;
             this.place = place;
             this.agePlace = agePlace;

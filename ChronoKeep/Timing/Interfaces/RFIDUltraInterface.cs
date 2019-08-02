@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ChronoKeep
+namespace ChronoKeep.Timing.Interfaces
 {
     class RFIDUltraInterface : ITimingSystemInterface
     {
@@ -42,7 +42,25 @@ namespace ChronoKeep
             this.locationId = locationId;
         }
 
-        public Dictionary<MessageType, List<string>> ParseMessages(string inMessage)
+        public List<Socket> Connect(string IpAddress, int Port)
+        {
+            List<Socket> output = new List<Socket>();
+            sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Log.D("Attempting to connect to " + IpAddress + ":" + Port.ToString());
+            try
+            {
+                sock.Connect(IpAddress, Port);
+                output.Add(sock);
+            }
+            catch
+            {
+                Log.D("Unable to connect.");
+                return null;
+            }
+            return output;
+        }
+
+        public Dictionary<MessageType, List<string>> ParseMessages(string inMessage, Socket sock)
         {
             Dictionary<MessageType, List<string>> output = new Dictionary<MessageType, List<string>>();
             buffer.Append(inMessage);
@@ -200,7 +218,7 @@ namespace ChronoKeep
 
         public void Rewind(DateTime start, DateTime end)
         {
-            SendMessage("800" + DateToEpoch(start).ToString() + RFIDUltraCodes.RewindDelimiter + DateToEpoch(end).ToString());
+            SendMessage("800" + Constants.Timing.DateToEpoch(start).ToString() + RFIDUltraCodes.RewindDelimiter + Constants.Timing.DateToEpoch(end).ToString());
         }
 
         public void Rewind()
@@ -249,7 +267,7 @@ namespace ChronoKeep
 
         public void StartSending(DateTime date)
         {
-            SendMessage("700" + DateToEpoch(date));
+            SendMessage("700" + Constants.Timing.DateToEpoch(date));
         }
 
         public void StopSending()
@@ -645,27 +663,6 @@ namespace ChronoKeep
         {
             Log.D("Sending message '" + msg + "'");
             sock.Send(Encoding.ASCII.GetBytes(msg + "\n"));
-        }
-
-        public static long DateToEpoch(DateTime date)
-        {
-            var ticks = date.Ticks - new DateTime(1980,1,1,0,0,0,DateTimeKind.Utc).Ticks;
-            return ticks / TimeSpan.TicksPerSecond;
-        }
-
-        public static DateTime EpochToDate(long date)
-        {
-            return new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(date * TimeSpan.TicksPerSecond);
-        }
-
-        public void SettingsWindow()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClockWindow()
-        {
-            throw new NotImplementedException();
         }
 
         public void SetMainSocket(Socket sock)

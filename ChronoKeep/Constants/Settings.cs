@@ -8,7 +8,7 @@ namespace ChronoKeep.Constants
 {
     class Settings
     {
-        public static readonly string PROGRAM_DIR            = "EventDirector";
+        public static readonly string PROGRAM_DIR            = "ChronoKeep";
 
         public static readonly string DEFAULT_EXPORT_DIR    = "SETTING_DEFAULT_EXPORT_DIR";
         public static readonly string DEFAULT_TIMING_SYSTEM = "SETTING_DEFAULT_TIMING_SYSTEM";
