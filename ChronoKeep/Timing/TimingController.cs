@@ -73,15 +73,20 @@ namespace ChronoKeep.Timing
             List<Socket> sockets = system.Connect();
             if (sockets == null)
             {
+                Log.D("No sockets returned.");
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
             }
             else
             {
+                int i = 1;
                 foreach (Socket sock in sockets)
                 {
+                    Log.D("Socket " + i++);
                     TimingSystemDict[sock] = system;
                     if (sock.Connected)
                     {
+                        Log.D("Connected to " + system.IPAddress);
+                        TimingSystemSockets.Add(sock);
                         TimingSystemDict[sock].SetLastCommunicationTime();
                     }
                     else

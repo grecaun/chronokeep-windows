@@ -38,7 +38,6 @@ namespace ChronoKeep.Timing.Interfaces
         {
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
-            this.sock = sock;
             this.locationId = locationId;
         }
 
@@ -57,6 +56,7 @@ namespace ChronoKeep.Timing.Interfaces
                 Log.D("Unable to connect.");
                 return null;
             }
+            Log.D("Connected. Returning socket.");
             return output;
         }
 
