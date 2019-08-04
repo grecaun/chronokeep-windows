@@ -54,6 +54,8 @@ namespace ChronoKeep.Constants
         public static readonly int COMMON_AGEGROUPS_DIVISIONID = -1;
 
         public static readonly int AGEGROUPS_CUSTOM_DIVISIONID = -8;
+        public static readonly int AGEGROUPS_LASTGROUP_TRUE = 1;
+        public static readonly int AGEGROUPS_LASTGROUP_FALSE = 0;
 
         public static readonly int EVENT_TYPE_DISTANCE = 0;
         public static readonly int EVENT_TYPE_TIME = 1;

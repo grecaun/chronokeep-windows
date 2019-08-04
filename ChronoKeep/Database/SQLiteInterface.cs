@@ -15,7 +15,7 @@ namespace ChronoKeep
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 38;
+        private readonly int version = 39;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -325,7 +325,8 @@ namespace ChronoKeep
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "division_id INTEGER NOT NULL DEFAULT -1," +
                     "start_age INTEGER NOT NULL," +
-                    "end_age INTEGER NOT NULL);");
+                    "end_age INTEGER NOT NULL," +
+                    "last_group INTEGER DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + " NOT NULL);");
                 queries.Add("CREATE TABLE IF NOT EXISTS timing_systems (" +
                     "ts_identifier INTEGER PRIMARY KEY," +
                     "ts_ip TEXT NOT NULL," +
@@ -1261,6 +1262,13 @@ namespace ChronoKeep
                         command.CommandText = "ALTER TABLE eventspecific ADD " +
                             "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + ";" +
                             "UPDATE settings SET version=38 WHERE version=37;";
+                        command.ExecuteNonQuery();
+                        goto case 38;
+                    case 38:
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE age_groups ADD " +
+                            "last_group INTEGER DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + " NOT NULL;" +
+                            "UPDATE settings SET version=39 WHERE version=38;";
                         command.ExecuteNonQuery();
                         break;
                 }
@@ -5384,7 +5392,7 @@ namespace ChronoKeep
             while (reader.Read())
             {
                 output.Add(new AgeGroup(Convert.ToInt32(reader["group_id"]), Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["division_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"])));
+                    Convert.ToInt32(reader["division_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"]), Convert.ToInt32(reader["last_group"])));
             }
             reader.Close();
             connection.Close();
@@ -5414,7 +5422,8 @@ namespace ChronoKeep
             while (reader.Read())
             {
                 output.Add(new AgeGroup(Convert.ToInt32(reader["group_id"]), Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["division_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"])));
+                    Convert.ToInt32(reader["division_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"]),
+                    Convert.ToInt32(reader["last_group"])));
             }
             reader.Close();
             connection.Close();

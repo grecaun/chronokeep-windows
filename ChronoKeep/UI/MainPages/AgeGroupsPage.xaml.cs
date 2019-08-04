@@ -184,6 +184,7 @@ namespace ChronoKeep.UI.MainPages
                 }
                 previous = current;
             }
+            previous.LastGroup = true;
             if (conflict)
             {
                 MessageBox.Show("There is a conflict in the age groups. Unable to save.");

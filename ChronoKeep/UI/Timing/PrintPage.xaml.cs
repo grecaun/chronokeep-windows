@@ -1192,6 +1192,8 @@ namespace ChronoKeep.UI.Timing
             Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
             // Get all of the age groups for the race
             Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier).ToDictionary(x => x.GroupId, x => x);
+            // Add an age group for our unknown age people/
+            ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new AgeGroup(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DIVISIONID, 0, 3000);
             // Get all finish results for the race
             List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
             // Remove all results where we don't have the person's information.
@@ -1253,149 +1255,112 @@ namespace ChronoKeep.UI.Timing
                     }
                     ageGroupResultsDictionary[(result.AgeGroupId, result.Gender)].Add(result);
                 }
-                foreach ((int AgeGroupID, string gender) in ageGroupResultsDictionary.Keys
-                    .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge))
+                IOrderedEnumerable<(int, string)> ageGroupKeys;
+                try
                 {
-                    int FinishIndex = 6;
-                    section.AddParagraph(string.Format("{0} {1} - {2}",
-                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
-                        ageGroups[AgeGroupID].StartAge,
-                        ageGroups[AgeGroupID].EndAge), "SubHeading");
-                    // Create a tabel to display the results.
-                    Table table = new Table();
-                    table.Borders.Width = 0.0;
-                    table.Rows.Alignment = RowAlignment.Center;
-                    // Create the rows we're displaying
-                    table.AddColumn(Unit.FromCentimeter(1));   // place
-                    table.AddColumn(Unit.FromCentimeter(1.2)); // bib
-                    table.AddColumn(Unit.FromCentimeter(5));   // name
-                    table.AddColumn(Unit.FromCentimeter(0.6)); // gender
-                    table.AddColumn(Unit.FromCentimeter(0.6)); // age
-                    table.AddColumn(Unit.FromCentimeter(1.3)); // Overall
-                    if (type != ValuesType.FINISHONLY)
+                    ageGroupKeys = ageGroupResultsDictionary.Keys
+                       .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge);
+                }
+                catch
+                {
+                    ageGroupKeys = ageGroupResultsDictionary.Keys.OrderBy(c => c.Item2);
+                }
+                foreach ((int AgeGroupID, string gender) in ageGroupKeys)
+                {
+                    if (AgeGroupID != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
                     {
-                        table.AddColumn(Unit.FromCentimeter(2.3)); // start
-                        FinishIndex++;
-                    }
-                    bool distanceSegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(divisionDictionary[divName]);
-                    if (distanceSegments)
-                    {
-                        foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                        int FinishIndex = 6;
+                        string subheading = string.Format("{0} {1} - {2}",
+                            gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
+                            ageGroups[AgeGroupID].StartAge,
+                            ageGroups[AgeGroupID].EndAge);
+                        if (ageGroups[AgeGroupID].LastGroup)
                         {
-                            segmentIndexDictionary[s.Identifier] = FinishIndex++;
-                            table.AddColumn(Unit.FromCentimeter(2.3));
+                            subheading = string.Format("{0} {1}+",
+                                    gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
+                                    ageGroups[AgeGroupID].StartAge);
                         }
-                    }
-                    table.AddColumn(Unit.FromCentimeter(2.3)); // gun time
-                    table.AddColumn(Unit.FromCentimeter(2.3)); // chip time
-                                                               // add the header row
-                    Row row = table.AddRow();
-                    row.Style = "ResultsHeader";
-                    row.Cells[0].AddParagraph("Place");
-                    row.Cells[1].AddParagraph("Bib");
-                    row.Cells[2].AddParagraph("Name");
-                    row.Cells[2].Style = "ResultsHeaderName";
-                    row.Cells[3].AddParagraph("G");
-                    row.Cells[4].AddParagraph("Age");
-                    row.Cells[5].AddParagraph("Overall");
-                    if (type != ValuesType.FINISHONLY)
-                    {
-                        row.Cells[6].AddParagraph("Start");
-                    }
-                    if (distanceSegments)
-                    {
-                        foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
-                        {
-                            row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(s.Name);
-                        }
-                    }
-                    row.Cells[FinishIndex].AddParagraph("Finish Gun");
-                    int numColumns = table.Columns.Count;
-                    row.Cells[FinishIndex + 1].AddParagraph("Finish Chip");
-                    List<TimeResult> finishTimes = new List<TimeResult>();
-                    finishTimes.AddRange(ageGroupResultsDictionary[(AgeGroupID, gender)]);
-                    finishTimes.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
-                    finishTimes.Sort(TimeResult.CompareByDivisionAgeGroupPlace);
-                    // The key is (EVENTSPECIFICID, SEGMENTID) and is used to identify segment results
-                    // such as the start chip read and any other reads there may be other than finish.
-                    Dictionary<(int, int), TimeResult> personSegmentResultDictionary = new Dictionary<(int, int), TimeResult>();
-                    foreach (TimeResult result in ageGroupResultsDictionary[(AgeGroupID, gender)])
-                    {
-                        personSegmentResultDictionary[(result.EventSpecificId, result.SegmentId)] = result;
-                    }
-                    foreach (TimeResult result in finishTimes)
-                    {
-                        row = table.AddRow();
-                        row.Style = "ResultsRow";
-                        row.Cells[0].AddParagraph(result.AgePlace.ToString());
-                        row.Cells[1].AddParagraph(result.Bib.ToString());
-                        row.Cells[2].AddParagraph(result.ParticipantName);
-                        row.Cells[2].Style = "ResultsRowName";
-                        row.Cells[3].AddParagraph(result.Gender);
-                        row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                        row.Cells[5].AddParagraph(result.Place.ToString());
+                        section.AddParagraph(subheading, "SubHeading");
+                        // Create a tabel to display the results.
+                        Table table = new Table();
+                        table.Borders.Width = 0.0;
+                        table.Rows.Alignment = RowAlignment.Center;
+                        // Create the rows we're displaying
+                        table.AddColumn(Unit.FromCentimeter(1));   // place
+                        table.AddColumn(Unit.FromCentimeter(1.2)); // bib
+                        table.AddColumn(Unit.FromCentimeter(5));   // name
+                        table.AddColumn(Unit.FromCentimeter(0.6)); // gender
+                        table.AddColumn(Unit.FromCentimeter(0.6)); // age
+                        table.AddColumn(Unit.FromCentimeter(1.3)); // Overall
                         if (type != ValuesType.FINISHONLY)
                         {
-                            string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, Constants.Timing.SEGMENT_START))
-                                ? personSegmentResultDictionary[(result.EventSpecificId, Constants.Timing.SEGMENT_START)].Time
-                                : "";
-                            value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
-                            row.Cells[6].AddParagraph(value);
+                            table.AddColumn(Unit.FromCentimeter(2.3)); // start
+                            FinishIndex++;
+                        }
+                        bool distanceSegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(divisionDictionary[divName]);
+                        if (distanceSegments)
+                        {
+                            foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                            {
+                                segmentIndexDictionary[s.Identifier] = FinishIndex++;
+                                table.AddColumn(Unit.FromCentimeter(2.3));
+                            }
+                        }
+                        table.AddColumn(Unit.FromCentimeter(2.3)); // gun time
+                        table.AddColumn(Unit.FromCentimeter(2.3)); // chip time
+                                                                   // add the header row
+                        Row row = table.AddRow();
+                        row.Style = "ResultsHeader";
+                        row.Cells[0].AddParagraph("Place");
+                        row.Cells[1].AddParagraph("Bib");
+                        row.Cells[2].AddParagraph("Name");
+                        row.Cells[2].Style = "ResultsHeaderName";
+                        row.Cells[3].AddParagraph("G");
+                        row.Cells[4].AddParagraph("Age");
+                        row.Cells[5].AddParagraph("Overall");
+                        if (type != ValuesType.FINISHONLY)
+                        {
+                            row.Cells[6].AddParagraph("Start");
                         }
                         if (distanceSegments)
                         {
                             foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
                             {
-                                string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
-                                    ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
-                                    : "";
-                                value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
-                                row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(value);
+                                row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(s.Name);
                             }
                         }
-                        row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length > 3 ? result.Time.Length - 2 : result.Time.Length));
-                        row.Cells[FinishIndex + 1].AddParagraph(result.ChipTime.Substring(0, result.Time.Length > 3 ? result.Time.Length - 2 : result.Time.Length));
-                    }
-                    if (type != ValuesType.FINISHONLY)
-                    {
-                        HashSet<int> DidNotFinish = new HashSet<int>(); // Event Specific ID
-                        foreach ((int val, int x) in personSegmentResultDictionary.Keys)
+                        row.Cells[FinishIndex].AddParagraph("Finish Gun");
+                        int numColumns = table.Columns.Count;
+                        row.Cells[FinishIndex + 1].AddParagraph("Finish Chip");
+                        List<TimeResult> finishTimes = new List<TimeResult>();
+                        finishTimes.AddRange(ageGroupResultsDictionary[(AgeGroupID, gender)]);
+                        finishTimes.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
+                        finishTimes.Sort(TimeResult.CompareByDivisionAgeGroupPlace);
+                        // The key is (EVENTSPECIFICID, SEGMENTID) and is used to identify segment results
+                        // such as the start chip read and any other reads there may be other than finish.
+                        Dictionary<(int, int), TimeResult> personSegmentResultDictionary = new Dictionary<(int, int), TimeResult>();
+                        foreach (TimeResult result in ageGroupResultsDictionary[(AgeGroupID, gender)])
                         {
-                            DidNotFinish.Add(val);
+                            personSegmentResultDictionary[(result.EventSpecificId, result.SegmentId)] = result;
                         }
                         foreach (TimeResult result in finishTimes)
                         {
-                            DidNotFinish.Remove(result.EventSpecificId);
-                        }
-                        foreach (int identifier in DidNotFinish)
-                        {
-                            TimeResult result = personSegmentResultDictionary.ContainsKey((identifier, Constants.Timing.SEGMENT_START))
-                                ? personSegmentResultDictionary[(identifier, Constants.Timing.SEGMENT_START)] : null;
-                            if (result == null)
-                            {
-                                foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
-                                {
-                                    result = personSegmentResultDictionary.ContainsKey((identifier, s.Identifier))
-                                  ? personSegmentResultDictionary[(identifier, s.Identifier)] : null;
-                                }
-                            }
                             row = table.AddRow();
                             row.Style = "ResultsRow";
-                            row.Cells[0].AddParagraph("");
+                            row.Cells[0].AddParagraph(result.AgePlace.ToString());
                             row.Cells[1].AddParagraph(result.Bib.ToString());
                             row.Cells[2].AddParagraph(result.ParticipantName);
                             row.Cells[2].Style = "ResultsRowName";
                             row.Cells[3].AddParagraph(result.Gender);
                             row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                            row.Cells[5].AddParagraph("");
-                            row.Cells[6].AddParagraph("");
+                            row.Cells[5].AddParagraph(result.Place.ToString());
                             if (type != ValuesType.FINISHONLY)
                             {
                                 string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, Constants.Timing.SEGMENT_START))
                                     ? personSegmentResultDictionary[(result.EventSpecificId, Constants.Timing.SEGMENT_START)].Time
                                     : "";
                                 value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
-                                row.Cells[7].AddParagraph(value);
+                                row.Cells[6].AddParagraph(value);
                             }
                             if (distanceSegments)
                             {
@@ -1408,14 +1373,70 @@ namespace ChronoKeep.UI.Timing
                                     row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(value);
                                 }
                             }
-                            row.Cells[FinishIndex].AddParagraph("");
-                            row.Cells[FinishIndex + 1].AddParagraph("");
+                            row.Cells[FinishIndex].AddParagraph(result.Time.Substring(0, result.Time.Length > 3 ? result.Time.Length - 2 : result.Time.Length));
+                            row.Cells[FinishIndex + 1].AddParagraph(result.ChipTime.Substring(0, result.Time.Length > 3 ? result.Time.Length - 2 : result.Time.Length));
                         }
-                    }
-                    row = table.AddRow();
-                    if (type != ValuesType.FINISHONLY || distanceSegments || finishTimes.Count > 0)
-                    {
-                        section.Add(table);
+                        if (type != ValuesType.FINISHONLY)
+                        {
+                            HashSet<int> DidNotFinish = new HashSet<int>(); // Event Specific ID
+                            foreach ((int val, int x) in personSegmentResultDictionary.Keys)
+                            {
+                                DidNotFinish.Add(val);
+                            }
+                            foreach (TimeResult result in finishTimes)
+                            {
+                                DidNotFinish.Remove(result.EventSpecificId);
+                            }
+                            foreach (int identifier in DidNotFinish)
+                            {
+                                TimeResult result = personSegmentResultDictionary.ContainsKey((identifier, Constants.Timing.SEGMENT_START))
+                                    ? personSegmentResultDictionary[(identifier, Constants.Timing.SEGMENT_START)] : null;
+                                if (result == null)
+                                {
+                                    foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                    {
+                                        result = personSegmentResultDictionary.ContainsKey((identifier, s.Identifier))
+                                      ? personSegmentResultDictionary[(identifier, s.Identifier)] : null;
+                                    }
+                                }
+                                row = table.AddRow();
+                                row.Style = "ResultsRow";
+                                row.Cells[0].AddParagraph("");
+                                row.Cells[1].AddParagraph(result.Bib.ToString());
+                                row.Cells[2].AddParagraph(result.ParticipantName);
+                                row.Cells[2].Style = "ResultsRowName";
+                                row.Cells[3].AddParagraph(result.Gender);
+                                row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                                row.Cells[5].AddParagraph("");
+                                row.Cells[6].AddParagraph("");
+                                if (type != ValuesType.FINISHONLY)
+                                {
+                                    string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, Constants.Timing.SEGMENT_START))
+                                        ? personSegmentResultDictionary[(result.EventSpecificId, Constants.Timing.SEGMENT_START)].Time
+                                        : "";
+                                    value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                                    row.Cells[7].AddParagraph(value);
+                                }
+                                if (distanceSegments)
+                                {
+                                    foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                    {
+                                        string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
+                                            ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
+                                            : "";
+                                        value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
+                                        row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(value);
+                                    }
+                                }
+                                row.Cells[FinishIndex].AddParagraph("");
+                                row.Cells[FinishIndex + 1].AddParagraph("");
+                            }
+                        }
+                        row = table.AddRow();
+                        if (type != ValuesType.FINISHONLY || distanceSegments || finishTimes.Count > 0)
+                        {
+                            section.Add(table);
+                        }
                     }
                 }
             }

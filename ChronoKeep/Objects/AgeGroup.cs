@@ -8,7 +8,7 @@ namespace ChronoKeep.Objects
 {
     public class AgeGroup : IEquatable<AgeGroup>, IComparable<AgeGroup>
     {
-        private int group_id, event_id, division_id, start_age, end_age;
+        private int group_id, event_id, division_id, start_age, end_age, last_group = Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
 
         public AgeGroup(int eventId, int divisionId, int startAge, int endAge)
         {
@@ -17,15 +17,17 @@ namespace ChronoKeep.Objects
             this.division_id = divisionId;
             this.start_age = startAge;
             this.end_age = endAge;
+            this.last_group = Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
         }
 
-        public AgeGroup(int groupId, int eventId, int divisionId, int startAge, int endAge)
+        public AgeGroup(int groupId, int eventId, int divisionId, int startAge, int endAge, int last_group)
         {
             this.group_id = groupId;
             this.event_id = eventId;
             this.division_id = divisionId;
             this.start_age = startAge;
             this.end_age = endAge;
+            this.last_group = last_group;
         }
 
         public int EventId { get => event_id; set => event_id = value; }
@@ -33,6 +35,8 @@ namespace ChronoKeep.Objects
         public int StartAge { get => start_age; set => start_age = value; }
         public int EndAge { get => end_age; set => end_age = value; }
         public int GroupId { get => group_id; set => group_id = value; }
+        public bool LastGroup { get => last_group == Constants.Timing.AGEGROUPS_LASTGROUP_TRUE;
+            set => last_group = value ? Constants.Timing.AGEGROUPS_LASTGROUP_TRUE : Constants.Timing.AGEGROUPS_LASTGROUP_FALSE; }
 
         public int CompareTo(AgeGroup other)
         {

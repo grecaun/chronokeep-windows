@@ -290,6 +290,8 @@ namespace ChronoKeep.UI.Timing
             }
             // Get a list of all our age groups + our custom age groups
             Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier).ToDictionary(x => x.GroupId, x => x);
+            // Add an age group for our unknown age people/
+            ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new AgeGroup(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DIVISIONID, 0, 3000);
             Dictionary<int, AgeGroup> customAgeGroups = new Dictionary<int, AgeGroup>();
             foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
             {
@@ -419,39 +421,76 @@ namespace ChronoKeep.UI.Timing
                 }
                 if (options.PrintAgeGroups)
                 {
-                    foreach ((int AgeGroupId, string gender) in ageGroupResultDictionary.Keys
-                        .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge))
+                    IOrderedEnumerable<(int, string)> ageGroupKeys;
+                    try
                     {
-                        string subheading = string.Format("{0} {1} - {2}",
-                                    gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
-                                    ageGroups[AgeGroupId].StartAge,
-                                    ageGroups[AgeGroupId].EndAge);
-                        if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
+                        ageGroupKeys = ageGroupResultDictionary.Keys
+                           .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge);
+                    }
+                    catch
+                    {
+                        ageGroupKeys = ageGroupResultDictionary.Keys.OrderBy(c => c.Item2);
+                    }
+                    foreach ((int AgeGroupId, string gender) in ageGroupKeys)
+                    {
+                        if (AgeGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
                         {
-                            maleResults.Add((subheading, results: ageGroupResultDictionary[(AgeGroupId, gender)]));
-                        }
-                        else
-                        {
-                            femaleResults.Add((subheading, results: ageGroupResultDictionary[(AgeGroupId, gender)]));
+                            string subheading = string.Format("{0} {1} - {2}",
+                                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
+                                        ageGroups[AgeGroupId].StartAge,
+                                        ageGroups[AgeGroupId].EndAge);
+                            if (ageGroups[AgeGroupId].LastGroup)
+                            {
+                                subheading = string.Format("{0} {1}+",
+                                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
+                                        ageGroups[AgeGroupId].StartAge);
+                            }
+                            if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
+                            {
+                                maleResults.Add((subheading, results: ageGroupResultDictionary[(AgeGroupId, gender)]));
+                            }
+                            else
+                            {
+                                femaleResults.Add((subheading, results: ageGroupResultDictionary[(AgeGroupId, gender)]));
+                            }
+
                         }
                     }
                 }
                 if (options.PrintCustom)
                 {
-                    foreach ((int AgeGroupId, string gender) in customResultDictionary.Keys
-                        .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge))
+                    IOrderedEnumerable<(int, string)> customKeys;
+                    try
                     {
-                        string subheading = string.Format("{0} {1} - {2} (Custom)",
-                                    gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
-                                    ageGroups[AgeGroupId].StartAge,
-                                    ageGroups[AgeGroupId].EndAge);
-                        if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
+                        customKeys = customResultDictionary.Keys
+                           .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge);
+                    }
+                    catch
+                    {
+                        customKeys = customResultDictionary.Keys.OrderBy(c => c.Item2);
+                    }
+                    foreach ((int AgeGroupId, string gender) in customKeys)
+                    {
+                        if (AgeGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
                         {
-                            maleResults.Add((subheading, results: customResultDictionary[(AgeGroupId, gender)]));
-                        }
-                        else
-                        {
-                            femaleResults.Add((subheading, results: customResultDictionary[(AgeGroupId, gender)]));
+                            string subheading = string.Format("{0} {1} - {2} (Custom)",
+                                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
+                                        ageGroups[AgeGroupId].StartAge,
+                                        ageGroups[AgeGroupId].EndAge);
+                            if (ageGroups[AgeGroupId].LastGroup)
+                            {
+                                subheading = string.Format("{0} {1}+ (Custom)",
+                                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
+                                        ageGroups[AgeGroupId].StartAge);
+                            }
+                            if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
+                            {
+                                maleResults.Add((subheading, results: customResultDictionary[(AgeGroupId, gender)]));
+                            }
+                            else
+                            {
+                                femaleResults.Add((subheading, results: customResultDictionary[(AgeGroupId, gender)]));
+                            }
                         }
                     }
                 }
