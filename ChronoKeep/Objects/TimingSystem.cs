@@ -65,7 +65,9 @@ namespace ChronoKeep.Objects
             {
                 return null;
             }
+            Log.D("TimingSystem class calling connect on interface.");
             Sockets = SystemInterface.Connect(IPAddress, Port);
+            Log.D("TimingSystem class returning output from Connect.");
             return Sockets;
         }
 
