@@ -176,7 +176,6 @@ namespace ChronoKeep
                     "eventspecific_earlystart INTEGER DEFAULT 0," +
                     "eventspecific_next_year INTEGER DEFAULT 0," +
                     "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
-                    "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
                     "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + "," +
                     "UNIQUE (participant_id, event_id, division_id) ON CONFLICT REPLACE," +
                     "UNIQUE (event_id, eventspecific_bib) ON CONFLICT REPLACE" +
@@ -2237,7 +2236,7 @@ namespace ChronoKeep
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE eventspecific SET division_id=@divid, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
                 "eventspecific_owes=@owes, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_next_year=@nextYear," +
-                "eventspecific_comments=@comments, eventspecific_age_group_id=@agegroup, eventspecific_status=@status " +
+                "eventspecific_comments=@comments, eventspecific_status=@status " +
                 "WHERE eventspecific_id=@eventspecid";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@divid", person.EventSpecific.DivisionIdentifier),
@@ -2249,7 +2248,6 @@ namespace ChronoKeep
                     new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart),
                     new SQLiteParameter("@nextYear", person.EventSpecific.NextYear),
                     new SQLiteParameter("@comments", person.EventSpecific.Comments),
-                    new SQLiteParameter("@agegroup", person.EventSpecific.AgeGroup),
                     new SQLiteParameter("@status", person.EventSpecific.Status)
                 });
             command.ExecuteNonQuery();
@@ -2426,7 +2424,6 @@ namespace ChronoKeep
                         reader["eventspecific_other"].ToString(),
                         Convert.ToInt32(reader["eventspecific_earlystart"]),
                         Convert.ToInt32(reader["eventspecific_next_year"]),
-                        Convert.ToInt32(reader["eventspecific_age_group_id"]),
                         Convert.ToInt32(reader["eventspecific_status"])
                         ),
                     reader["participant_email"].ToString(),
@@ -2470,7 +2467,6 @@ namespace ChronoKeep
                         reader["eventspecific_other"].ToString(),
                         Convert.ToInt32(reader["eventspecific_earlystart"]),
                         Convert.ToInt32(reader["eventspecific_next_year"]),
-                        Convert.ToInt32(reader["eventspecific_age_group_id"]),
                         Convert.ToInt32(reader["eventspecific_status"])
                         ),
                     reader["participant_email"].ToString(),
@@ -3801,7 +3797,6 @@ namespace ChronoKeep
                             reader["new_other"].ToString(),
                             Convert.ToInt32(reader["new_earlystart"]),
                             Convert.ToInt32(reader["new_next_year"]),
-                            Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
                             Constants.Timing.EVENTSPECIFIC_NOSHOW
                             ),
                         reader["new_email"].ToString(),
@@ -3834,7 +3829,6 @@ namespace ChronoKeep
                             reader["old_other"].ToString(),
                             Convert.ToInt32(reader["old_earlystart"]),
                             Convert.ToInt32(reader["old_next_year"]),
-                            Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
                             Constants.Timing.EVENTSPECIFIC_NOSHOW
                             ),
                         reader["old_email"].ToString(),

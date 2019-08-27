@@ -38,6 +38,5 @@ namespace ChronoKeep.Interfaces
         void ShutdownTimingController();
         List<TimingSystem> GetConnectedSystems();
         void NotifyTimingWorker();
-        void NotifyRecalculateAgeGroups();
     }
 }

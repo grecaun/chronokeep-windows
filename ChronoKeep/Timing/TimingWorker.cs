@@ -17,11 +17,9 @@ namespace ChronoKeep.Timing
 
         private static readonly Semaphore semaphore = new Semaphore(0, 2);
         private static readonly Mutex mutex = new Mutex();
-        private static readonly Mutex ageGroupMutex = new Mutex();
         private static readonly Mutex ResultsMutex = new Mutex();
         private static readonly Mutex ResetDictionariesMutex = new Mutex();
         private static bool QuittingTime = false;
-        private static bool RecalculateAgeGroupsBool = true;
         private static bool NewResults = false;
         private static bool ResetDictionariesBool = true;
 
@@ -80,15 +78,6 @@ namespace ChronoKeep.Timing
             {
                 NewResults = false;
                 ResultsMutex.ReleaseMutex();
-            }
-        }
-
-        public static void RecalculateAgeGroups()
-        {
-            if (ageGroupMutex.WaitOne(3000))
-            {
-                RecalculateAgeGroupsBool = true;
-                ageGroupMutex.ReleaseMutex();
             }
         }
 
@@ -247,20 +236,6 @@ namespace ChronoKeep.Timing
                     results = null;
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
                     {
-                        if (ageGroupMutex.WaitOne(3000))
-                        {
-                            if (RecalculateAgeGroupsBool)
-                            {
-                                Log.D("Updating Age Groups.");
-                                RecalculateAgeGroupsBool = false;
-                                ageGroupMutex.ReleaseMutex();
-                                UpdateAgeGroups(theEvent);
-                            }
-                            else
-                            {
-                                ageGroupMutex.ReleaseMutex();
-                            }
-                        }
                         DateTime start = DateTime.Now;
                         // If RACETYPE if DISTANCE
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
@@ -1381,40 +1356,6 @@ namespace ChronoKeep.Timing
             return newResults;
         }
 
-        private void UpdateAgeGroups(Event theEvent)
-        {
-            List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-            // Dictionary containing Age groups based upon their (Division, Age in Years)
-            Dictionary<(int, int), int> divisionAgeGroups = new Dictionary<(int, int), int>();
-            // process them into lists based upon divisions (in case there are division specific age groups)
-            foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
-            {
-                for (int age = group.StartAge; age <= group.EndAge; age++)
-                {
-                    divisionAgeGroups[(group.DivisionId, age)] = group.GroupId;
-                }
-            }
-            int ageGroupDivisionId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
-            foreach (Participant part in participants)
-            {
-                if (!theEvent.CommonAgeGroups)
-                {
-                    ageGroupDivisionId = part.EventSpecific.DivisionIdentifier;
-                }
-                int age = part.GetAge(theEvent.Date);
-                if (divisionAgeGroups.ContainsKey((ageGroupDivisionId, age)))
-                {
-                    part.EventSpecific.AgeGroup = divisionAgeGroups[(ageGroupDivisionId, age)];
-                }
-            }
-            database.UpdateParticipants(participants);
-            if (ageGroupMutex.WaitOne(3000))
-            {
-                RecalculateAgeGroupsBool = false;
-                ageGroupMutex.ReleaseMutex();
-            }
-        }
-
         private List<TimeResult> ProcessPlacementsDistance(Event theEvent)
         {
             List<TimeResult> output = new List<TimeResult>();
@@ -1524,6 +1465,8 @@ namespace ChronoKeep.Timing
                 }
                 return x2.Occurrence.CompareTo(x1.Occurrence);
             });
+            Dictionary<int, AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
+            AgeGroup LastAgeGroup = AgeGroup.GetLastAgeGroup();
             foreach (TimeResult result in topResults)
             {
                 // Make sure we know who we're looking at. Can't rank otherwise.
@@ -1543,7 +1486,11 @@ namespace ChronoKeep.Timing
                     {
                         gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
                     }
-                    ageGroupId = person.EventSpecific.AgeGroup;
+                    ageGroupId = AgeGroups == null ? Constants.Timing.TIMERESULT_DUMMYAGEGROUP : // If we don't have age groups use dummy
+                        AgeGroups.ContainsKey(age) ?  AgeGroups[age].GroupId : // If we have an age group for the age use it
+                        age < 0 ? Constants.Timing.TIMERESULT_DUMMYAGEGROUP : // age unknown use dummy
+                        LastAgeGroup != null ? LastAgeGroup.GroupId : // else if their age is known use the last group
+                        Constants.Timing.TIMERESULT_DUMMYAGEGROUP; // no last group implies the same as no groups, use dummy
                     // Since Results were sorted before we started, let's assume that the first item
                     // is the fastest/best and if we can't find the key, add one starting at 0
                     if (!placeDictionary.ContainsKey(divisionId))
@@ -1625,6 +1572,8 @@ namespace ChronoKeep.Timing
             int age = -1;
             int gender = -1;
             Participant person = null;
+            Dictionary<int, AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
+            AgeGroup LastAgeGroup = AgeGroup.GetLastAgeGroup();
             foreach (TimeResult result in segmentResults)
             {
                 // Check if we know who the person is. Can't rank them if we don't know
@@ -1645,7 +1594,11 @@ namespace ChronoKeep.Timing
                     {
                         gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
                     }
-                    ageGroupId = person.EventSpecific.AgeGroup;
+                    ageGroupId = AgeGroups == null ? Constants.Timing.TIMERESULT_DUMMYAGEGROUP : // If we don't have age groups use dummy
+                        AgeGroups.ContainsKey(age) ? AgeGroups[age].GroupId : // If we have an age group for the age use it
+                        age < 0 ? Constants.Timing.TIMERESULT_DUMMYAGEGROUP : // age unknown use dummy
+                        LastAgeGroup != null ? LastAgeGroup.GroupId : // else if their age is known use the last group
+                        Constants.Timing.TIMERESULT_DUMMYAGEGROUP; // no last group implies the same as no groups, use dummy
                     // Since Results were sorted before we started, let's assume that the first item
                     // is the fastest and if we can't find the key, add one starting at 0
                     if (!placeDictionary.ContainsKey(divisionId))

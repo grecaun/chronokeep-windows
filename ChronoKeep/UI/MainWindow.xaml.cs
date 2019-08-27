@@ -77,6 +77,13 @@ namespace ChronoKeep.UI
             Constants.Settings.SetupSettings(database);
             UpdateStatus();
 
+            // Setup AgeGroup static variables
+            Event theEvent = database.GetCurrentEvent();
+            if (theEvent != null && theEvent.Identifier != -1)
+            {
+                AgeGroup.SetAgeGroups(database.GetAgeGroups(theEvent.Identifier));
+            }
+
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
         }
@@ -564,12 +571,6 @@ namespace ChronoKeep.UI
         private void Announcer_Click(object sender, RoutedEventArgs e)
         {
 
-        }
-
-        public void NotifyRecalculateAgeGroups()
-        {
-            TimingWorker.RecalculateAgeGroups();
-            TimingWorker.ResetDictionaries();
         }
 
         public void DatasetChanged()

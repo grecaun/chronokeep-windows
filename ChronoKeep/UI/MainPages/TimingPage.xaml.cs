@@ -342,11 +342,6 @@ namespace ChronoKeep.UI.MainPages
             mWindow.NotifyTimingWorker();
         }
 
-        public void NotifyRecalculateAgeGroups()
-        {
-            mWindow.NotifyRecalculateAgeGroups();
-        }
-
         private void Search()
         {
             Log.D("Searching");
@@ -496,7 +491,6 @@ namespace ChronoKeep.UI.MainPages
             UpdateView();
             mWindow.NetworkClearResults(theEvent.Identifier);
             mWindow.DatasetChanged();
-            mWindow.NotifyRecalculateAgeGroups();
             mWindow.NotifyTimingWorker();
         }
 
