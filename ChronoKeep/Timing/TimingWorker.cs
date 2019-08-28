@@ -1465,8 +1465,8 @@ namespace ChronoKeep.Timing
                 }
                 return x2.Occurrence.CompareTo(x1.Occurrence);
             });
-            Dictionary<int, AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
-            AgeGroup LastAgeGroup = AgeGroup.GetLastAgeGroup();
+            Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
+            Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
             foreach (TimeResult result in topResults)
             {
                 // Make sure we know who we're looking at. Can't rank otherwise.
@@ -1486,11 +1486,23 @@ namespace ChronoKeep.Timing
                     {
                         gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
                     }
-                    ageGroupId = AgeGroups == null ? Constants.Timing.TIMERESULT_DUMMYAGEGROUP : // If we don't have age groups use dummy
-                        AgeGroups.ContainsKey(age) ?  AgeGroups[age].GroupId : // If we have an age group for the age use it
-                        age < 0 ? Constants.Timing.TIMERESULT_DUMMYAGEGROUP : // age unknown use dummy
-                        LastAgeGroup != null ? LastAgeGroup.GroupId : // else if their age is known use the last group
-                        Constants.Timing.TIMERESULT_DUMMYAGEGROUP; // no last group implies the same as no groups, use dummy
+                    int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DIVISIONID : divisionId;
+                    if (AgeGroups == null || age < 0)
+                    {
+                        ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                    }
+                    else if (AgeGroups.ContainsKey((agDivId, age)))
+                    {
+                        ageGroupId = AgeGroups[(agDivId, age)].GroupId;
+                    }
+                    else if (LastAgeGroup.ContainsKey(agDivId))
+                    {
+                        ageGroupId = LastAgeGroup[agDivId].GroupId;
+                    }
+                    else
+                    {
+                        ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                    }
                     // Since Results were sorted before we started, let's assume that the first item
                     // is the fastest/best and if we can't find the key, add one starting at 0
                     if (!placeDictionary.ContainsKey(divisionId))
@@ -1572,8 +1584,8 @@ namespace ChronoKeep.Timing
             int age = -1;
             int gender = -1;
             Participant person = null;
-            Dictionary<int, AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
-            AgeGroup LastAgeGroup = AgeGroup.GetLastAgeGroup();
+            Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
+            Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
             foreach (TimeResult result in segmentResults)
             {
                 // Check if we know who the person is. Can't rank them if we don't know
@@ -1594,11 +1606,23 @@ namespace ChronoKeep.Timing
                     {
                         gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
                     }
-                    ageGroupId = AgeGroups == null ? Constants.Timing.TIMERESULT_DUMMYAGEGROUP : // If we don't have age groups use dummy
-                        AgeGroups.ContainsKey(age) ? AgeGroups[age].GroupId : // If we have an age group for the age use it
-                        age < 0 ? Constants.Timing.TIMERESULT_DUMMYAGEGROUP : // age unknown use dummy
-                        LastAgeGroup != null ? LastAgeGroup.GroupId : // else if their age is known use the last group
-                        Constants.Timing.TIMERESULT_DUMMYAGEGROUP; // no last group implies the same as no groups, use dummy
+                    int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DIVISIONID : divisionId;
+                    if (AgeGroups == null || age < 0)
+                    {
+                        ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                    }
+                    else if (AgeGroups.ContainsKey((agDivId, age)))
+                    {
+                        ageGroupId = AgeGroups[(agDivId, age)].GroupId;
+                    }
+                    else if (LastAgeGroup.ContainsKey(agDivId))
+                    {
+                        ageGroupId = LastAgeGroup[agDivId].GroupId;
+                    }
+                    else
+                    {
+                        ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                    }
                     // Since Results were sorted before we started, let's assume that the first item
                     // is the fastest and if we can't find the key, add one starting at 0
                     if (!placeDictionary.ContainsKey(divisionId))

@@ -11,8 +11,8 @@ namespace ChronoKeep.Objects
     {
         private int group_id, event_id, division_id, start_age, end_age, last_group = Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
 
-        private static Dictionary<int, AgeGroup> CurrentGroups = null;
-        private static AgeGroup LastAgeGroup = null;
+        private static Dictionary<(int, int), AgeGroup> CurrentGroups = null;
+        private static Dictionary<int, AgeGroup> LastAgeGroup = null;
         private static Mutex AGMutex = new Mutex();
 
         public AgeGroup(int eventId, int divisionId, int startAge, int endAge)
@@ -58,9 +58,9 @@ namespace ChronoKeep.Objects
             return this.start_age.CompareTo(other.start_age);
         }
 
-        public static Dictionary<int, AgeGroup> GetAgeGroups()
+        public static Dictionary<(int, int), AgeGroup> GetAgeGroups()
         {
-            Dictionary<int, AgeGroup> output = null;
+            Dictionary<(int, int), AgeGroup> output = null;
             if (!AGMutex.WaitOne(3000))
             {
                 return output;
@@ -70,9 +70,9 @@ namespace ChronoKeep.Objects
             return output;
         }
 
-        public static AgeGroup GetLastAgeGroup()
+        public static Dictionary<int, AgeGroup> GetLastAgeGroup()
         {
-            AgeGroup output = null;
+            Dictionary<int, AgeGroup> output = null;
             if (!AGMutex.WaitOne(3000))
             {
                 return output;
@@ -84,16 +84,19 @@ namespace ChronoKeep.Objects
 
         public static void SetAgeGroups(List<AgeGroup> groups)
         {
-            CurrentGroups = new Dictionary<int, AgeGroup>();
-            LastAgeGroup = null;
+            CurrentGroups = new Dictionary<(int,int), AgeGroup>();
+            LastAgeGroup = new Dictionary<int, AgeGroup>();
             groups.Sort();
             foreach (AgeGroup group in groups)
             {
                 for (int i = group.StartAge; i <= group.EndAge; i++)
                 {
-                    CurrentGroups[i] = group;
+                    CurrentGroups[(group.DivisionId, i)] = group;
                 }
-                LastAgeGroup = LastAgeGroup == null ? group : LastAgeGroup.StartAge > group.StartAge ? LastAgeGroup : group;
+                if (!LastAgeGroup.ContainsKey(group.DivisionId) || LastAgeGroup[group.DivisionId].StartAge < group.StartAge)
+                {
+                    LastAgeGroup[group.DivisionId] = group;
+                }
             }
         }
 
