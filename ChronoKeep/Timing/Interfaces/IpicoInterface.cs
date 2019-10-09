@@ -137,7 +137,8 @@ namespace ChronoKeep.Timing.Interfaces
                 }
                 m = msg.Match(bufferDict[sock].ToString());
             }
-            Log.D("IpicoInterface -- messages parsed successfully");
+            Log.D("IpicoInterface -- messages parsed successfully adding chipreads");
+            database.AddChipReads(chipReads);
             return output;
         }
 
