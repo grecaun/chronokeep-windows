@@ -61,10 +61,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>22B33A50D24C9640B1CCA10416B83BECA6DFB809</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>6DAC4C8AA2D4B44470EE4EB9B6B7E4C42B02D73B</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>ChronoKeep_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>ChronoKeep_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -656,6 +656,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="ChronoKeep_1_TemporaryKey.pfx" />
     <None Include="ChronoKeep_TemporaryKey.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>

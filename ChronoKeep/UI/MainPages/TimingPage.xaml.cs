@@ -181,6 +181,25 @@ namespace ChronoKeep.UI.MainPages
 
         public void Closing()
         {
+            List<TimingSystem> removedSystems = database.GetTimingSystems();
+            List<TimingSystem> ourSystems = new List<TimingSystem>();
+            foreach (AReaderBox box in ReadersBox.Items)
+            {
+                box.UpdateReader();
+                if (box.reader.IPAddress != "0.0.0.0" && box.reader.IPAddress.Length > 7)
+                {
+                    ourSystems.Add(box.reader);
+                }
+            }
+            removedSystems.RemoveAll(x => ourSystems.Contains(x));
+            foreach (TimingSystem sys in removedSystems)
+            {
+                database.RemoveTimingSystem(sys);
+            }
+            foreach (TimingSystem sys in ourSystems)
+            {
+                database.AddTimingSystem(sys);
+            }
             Timer.Stop();
             ViewUpdateTimer.Stop();
         }

@@ -69,6 +69,7 @@ namespace ChronoKeep.Timing
 
         public void ConnectTimingSystem(TimingSystem system)
         {
+            Log.D("-- UPDATE -- Creating interface for communication with timing system.");
             system.CreateTimingSystemInterface(database);
             List<Socket> sockets = system.Connect();
             if (sockets == null)
@@ -88,6 +89,7 @@ namespace ChronoKeep.Timing
                         Log.D("Connected to " + system.IPAddress);
                         TimingSystemSockets.Add(sock);
                         TimingSystemDict[sock].SetLastCommunicationTime();
+                        TimingSystemDict[sock].Status = SYSTEM_STATUS.CONNECTED;
                     }
                     else
                     {

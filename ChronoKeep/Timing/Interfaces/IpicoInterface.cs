@@ -22,8 +22,8 @@ namespace ChronoKeep.Timing.Interfaces
 
         // private static readonly Regex voltage/connected/chipread/settinginfo/settingconfirmation/time/status/msg
         private static readonly Regex chipread = new Regex(@"aa[0-9a-fA-F]{34,36}");
-        private static readonly Regex time = new Regex(@"date\.\w{3} \w{3} \d{2} \d{2}:\d{2}:\d{2} \w{3} \d{4}");
-        private static readonly Regex msg = new Regex(@"^[^\n]*\n");
+        private static readonly Regex time = new Regex(@"date\.\w{3} \w{3} {1,2}\d{1,2} \d{2}:\d{2}:\d{2} \w{3} \d{4} *");
+        private static readonly Regex msg = new Regex(@"^[^\n]+\n");
 
         public IpicoInterface(IDBInterface database, int locationId)
         {
@@ -75,6 +75,7 @@ namespace ChronoKeep.Timing.Interfaces
 
         public Dictionary<MessageType, List<string>> ParseMessages(string inMessage, Socket sock)
         {
+            Log.D("IpicoInterface -- parsing message.");
             Dictionary<MessageType, List<string>> output = new Dictionary<MessageType, List<string>>();
             if (sock == null)
             {
@@ -85,16 +86,22 @@ namespace ChronoKeep.Timing.Interfaces
                 bufferDict[sock] = new StringBuilder();
             }
             bufferDict[sock].Append(inMessage);
+            Log.D("IpicoInterface -- new message is '" + inMessage + "' with a length of " + inMessage.Length);
             Match m = msg.Match(bufferDict[sock].ToString());
             List<ChipRead> chipReads = new List<ChipRead>();
+            Log.D("IpicoInterface -- matching all lines for messages");
+            int count = 1;
             while (m.Success)
             {
+                Log.D("IpicoInterface -- message " + count++);
                 bufferDict[sock].Remove(m.Index, m.Length);
                 string message = m.Value;
+                Log.D("IpicoInterface -- message is : " + message);
                 // a chipread is as follows: (note that milliseconds don't appear to be an actual millisecond but a hundredth of a second)
                 // aa[ReaderId{2}][TagID{12}(Starts with 058)][ICount?{2}][QCount{2}][Date{yyMMdd}][Time{HHmmss}][Milliseconds{2}(Hex)][Checksum{2}][FS|LS]
                 if (chipread.IsMatch(message))
                 {
+                    Log.D("IpicoInterface -- chipread found");
                     DateTime time = DateTime.ParseExact(message.Substring(20, 12), "yyMMddHHmmss", CultureInfo.InvariantCulture);
                     int.TryParse(message.Substring(32, 2), NumberStyles.HexNumber, null, out int milliseconds);
                     milliseconds *= 10;
@@ -117,18 +124,20 @@ namespace ChronoKeep.Timing.Interfaces
                 // date.Wed Nov 12 15:30:30 CST 2008
                 else if (time.IsMatch(message))
                 {
-                    Log.D("It's a time message.");
-                    Match match = time.Match(message);
-                    if (!output.ContainsKey(MessageType.TIME))
-                    {
-                        output[MessageType.TIME] = new List<string>();
-                    }
-                    output[MessageType.TIME].Clear();
-                    string dateStr = message.Substring(9,16) + message.Substring(29, 4);
-                    DateTime timeDT = DateTime.ParseExact(dateStr, "MMM dd HH:mm:ss YYYY", CultureInfo.InvariantCulture);
-                    output[MessageType.TIME].Add(timeDT.ToString("dd MMM yyyy  HH:mm:ss"));
+                    Log.D("IpicoInterface -- It's a time message.");
+                    string month = message.Substring(9, 3);
+                    string day = message.Substring(13, 2).Trim();
+                    int dayVal = int.Parse(day);
+                    string time = message.Substring(16, 8);
+                    string year = message.Substring(29, 4);
+                    string dateStr = String.Format("{0:D2} {1} {2}  {3}", dayVal, month, year, time);
+                    Log.D("IpicoInterface -- date string is " + dateStr);
+                    output[MessageType.TIME] = new List<string>();
+                    output[MessageType.TIME].Add(dateStr);
                 }
+                m = msg.Match(bufferDict[sock].ToString());
             }
+            Log.D("IpicoInterface -- messages parsed successfully");
             return output;
         }
 

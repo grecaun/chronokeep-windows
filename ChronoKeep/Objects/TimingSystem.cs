@@ -81,6 +81,7 @@ namespace ChronoKeep.Objects
 
         public void UpdateSystemType(string type)
         {
+            this.Type = type;
             if (type == Constants.Settings.TIMING_RFID)
             {
                 this.Port = 23;
@@ -100,6 +101,7 @@ namespace ChronoKeep.Objects
             }
             else if (this.Type == Constants.Settings.TIMING_IPICO)
             {
+                Log.D("System interface is IPICO.");
                 SystemInterface = new IpicoInterface(database, LocationID);
             }
         }
