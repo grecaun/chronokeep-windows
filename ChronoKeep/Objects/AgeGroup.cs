@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ChronoKeep.Objects
@@ -9,6 +10,10 @@ namespace ChronoKeep.Objects
     public class AgeGroup : IEquatable<AgeGroup>, IComparable<AgeGroup>
     {
         private int group_id, event_id, division_id, start_age, end_age, last_group = Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
+
+        private static Dictionary<(int, int), AgeGroup> CurrentGroups = null;
+        private static Dictionary<int, AgeGroup> LastAgeGroup = null;
+        private static Mutex AGMutex = new Mutex();
 
         public AgeGroup(int eventId, int divisionId, int startAge, int endAge)
         {
@@ -37,6 +42,7 @@ namespace ChronoKeep.Objects
         public int GroupId { get => group_id; set => group_id = value; }
         public bool LastGroup { get => last_group == Constants.Timing.AGEGROUPS_LASTGROUP_TRUE;
             set => last_group = value ? Constants.Timing.AGEGROUPS_LASTGROUP_TRUE : Constants.Timing.AGEGROUPS_LASTGROUP_FALSE; }
+        public string Name { get => LastGroup ? String.Format("{0}+", start_age) : String.Format("{0}-{1}", start_age, end_age); }
 
         public int CompareTo(AgeGroup other)
         {
@@ -50,6 +56,48 @@ namespace ChronoKeep.Objects
                 return this.division_id.CompareTo(other.division_id);
             }
             return this.start_age.CompareTo(other.start_age);
+        }
+
+        public static Dictionary<(int, int), AgeGroup> GetAgeGroups()
+        {
+            Dictionary<(int, int), AgeGroup> output = null;
+            if (!AGMutex.WaitOne(3000))
+            {
+                return output;
+            }
+            output = CurrentGroups;
+            AGMutex.ReleaseMutex();
+            return output;
+        }
+
+        public static Dictionary<int, AgeGroup> GetLastAgeGroup()
+        {
+            Dictionary<int, AgeGroup> output = null;
+            if (!AGMutex.WaitOne(3000))
+            {
+                return output;
+            }
+            output = LastAgeGroup;
+            AGMutex.ReleaseMutex();
+            return output;
+        }
+
+        public static void SetAgeGroups(List<AgeGroup> groups)
+        {
+            CurrentGroups = new Dictionary<(int,int), AgeGroup>();
+            LastAgeGroup = new Dictionary<int, AgeGroup>();
+            groups.Sort();
+            foreach (AgeGroup group in groups)
+            {
+                for (int i = group.StartAge; i <= group.EndAge; i++)
+                {
+                    CurrentGroups[(group.DivisionId, i)] = group;
+                }
+                if (!LastAgeGroup.ContainsKey(group.DivisionId) || LastAgeGroup[group.DivisionId].StartAge < group.StartAge)
+                {
+                    LastAgeGroup[group.DivisionId] = group;
+                }
+            }
         }
 
         public bool Equals(AgeGroup that)

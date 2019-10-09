@@ -336,7 +336,6 @@ namespace ChronoKeep.UI.Participants
                     OtherBox.Text,
                     earlystart,
                     nextYear,
-                    Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
                     Constants.Timing.EVENTSPECIFIC_NOSHOW),
                 EmailBox.Text,
                 MobileBox.Text,
@@ -363,14 +362,12 @@ namespace ChronoKeep.UI.Participants
                 if (window != null)
                 {
                     window.DatasetChanged();
-                    window.NotifyRecalculateAgeGroups();
                     window.NotifyTimingWorker();
                 }
                 if (tPage != null)
                 {
                     tPage.DatasetChanged();
                     tPage.UpdateView();
-                    tPage.NotifyRecalculateAgeGroups();
                     tPage.NotifyTimingWorker();
                 }
             }

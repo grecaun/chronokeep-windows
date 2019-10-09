@@ -246,8 +246,10 @@ namespace ChronoKeep.UI.MainPages
             if (touched)
             {
                 database.ResetTimingResultsPlacements(theEvent.Identifier);
-                mWindow.NotifyRecalculateAgeGroups();
                 mWindow.NotifyTimingWorker();
+
+                // Setup AgeGroup static variables
+                AgeGroup.SetAgeGroups(database.GetAgeGroups(theEvent.Identifier));
             }
         }
 
