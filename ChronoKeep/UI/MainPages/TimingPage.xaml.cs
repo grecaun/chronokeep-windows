@@ -331,7 +331,7 @@ namespace ChronoKeep.UI.MainPages
         private async void LoadLog(object sender, RoutedEventArgs e)
         {
             Log.D("Loading from log.");
-            OpenFileDialog csv_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv,*txt)|*.csv;*.txt|All Files|*" };
+            OpenFileDialog csv_dialog = new OpenFileDialog() { Filter = "Log Files (*.csv,*.txt,*.log)|*.csv;*.txt;*.log|All Files|*" };
             if (csv_dialog.ShowDialog() == true)
             {
                 try

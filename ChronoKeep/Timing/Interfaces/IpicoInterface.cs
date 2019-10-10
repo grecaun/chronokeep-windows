@@ -18,11 +18,14 @@ namespace ChronoKeep.Timing.Interfaces
         Dictionary<Socket, StringBuilder> bufferDict = new Dictionary<Socket, StringBuilder>();
         Socket controlSocket;
         Socket streamSocket;
+        Socket rewindSocket;
+        string ipadd;
 
 
         // private static readonly Regex voltage/connected/chipread/settinginfo/settingconfirmation/time/status/msg
         private static readonly Regex chipread = new Regex(@"aa[0-9a-fA-F]{34,36}");
         private static readonly Regex time = new Regex(@"date\.\w{3} \w{3} {1,2}\d{1,2} \d{2}:\d{2}:\d{2} \w{3} \d{4} *");
+        private static readonly Regex rewind = new Regex(@"Starting Replay");
         private static readonly Regex msg = new Regex(@"^[^\n]+\n");
 
         public IpicoInterface(IDBInterface database, int locationId)
@@ -41,11 +44,13 @@ namespace ChronoKeep.Timing.Interfaces
 
         public List<Socket> Connect(string IpAddress, int Port)
         {
+            this.ipadd = IpAddress;
             List<Socket> output = new List<Socket>();
             controlSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             streamSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             Log.D("Attempting to connect to " + IpAddress + ":9999");
             Log.D("Attempting to connect to " + IpAddress + ":10000");
+            Log.D("Attempting to connect to " + IpAddress + ":13000");
             try
             {
                 controlSocket.Connect(IpAddress, 9999);
@@ -135,6 +140,11 @@ namespace ChronoKeep.Timing.Interfaces
                     output[MessageType.TIME] = new List<string>();
                     output[MessageType.TIME].Add(dateStr);
                 }
+                else if (rewind.IsMatch(message))
+                {
+                    Log.D("IpicoInterface -- replay is starting");
+                    GetRewind();
+                }
                 m = msg.Match(bufferDict[sock].ToString());
             }
             Log.D("IpicoInterface -- messages parsed successfully adding chipreads");
@@ -163,17 +173,64 @@ namespace ChronoKeep.Timing.Interfaces
 
         public void StopSending() { }
 
+        private void GetRewind()
+        {
+            Log.D("IpicoInterface -- connecting to rewind socket");
+            rewindSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                rewindSocket.Connect(ipadd, 10300);
+            }
+            catch
+            {
+                Log.D("Upable to connect to rewind socket...");
+                rewindSocket = null;
+                return;
+            }
+            Log.D("IpicoInterface -- looking for messages");
+            byte[] recvd = new byte[4112];
+            try
+            {
+                rewindSocket.Send(Encoding.ASCII.GetBytes("\n"));
+                int num_recvd = rewindSocket.Receive(recvd);
+                while (num_recvd > 0)
+                {
+                    String msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
+                    Log.D("IpicoInterface -- Rewind -- message :" + msg);
+                    Log.D("Timing System - Message is :" + msg.Trim());
+                    Dictionary<MessageType, List<string>> messageTypes = ParseMessages(msg, rewindSocket);
+                    num_recvd = rewindSocket.Receive(recvd);
+                }
+            }
+            catch
+            {
+                Log.E("Something went wrong with the rewind.");
+            }
+            finally
+            {
+                if (rewindSocket != null && bufferDict.ContainsKey(rewindSocket))
+                {
+                    bufferDict[rewindSocket].Clear();
+                }
+                rewindSocket?.Close();
+                rewindSocket = null;
+            }
+            Log.D("IpicoInterface -- finished rewind");
+        }
+
         public void Rewind(DateTime start, DateTime end)
         {
             // yyMMddHHmmss
-            SendMessage("replay_start file.ttyS0 port.10000 datetime." + start.ToString("yyMMddHHmmss"));
+            SendMessage("replay_start file.ttyS0 port.10300 datetime." + start.ToString("yyMMddHHmmss"));
+            SendMessage("replay_start file.ttyS1 port.10300 datetime." + start.ToString("yyMMddHHmmss"));
         }
 
         public void Rewind(int from, int to) { }
 
         public void Rewind()
         {
-            SendMessage("replay_start file.ttyS0 port.10000");
+            SendMessage("replay_start file.ttyS0 port.10300");
+            SendMessage("replay_start file.ttyS1 port.10300");
         }
 
         public void SetMainSocket(Socket sock)

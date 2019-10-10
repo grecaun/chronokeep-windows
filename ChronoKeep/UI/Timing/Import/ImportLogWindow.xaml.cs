@@ -2,6 +2,7 @@
 using ChronoKeep.IO;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,7 +22,7 @@ namespace ChronoKeep.UI.Timing.Import
         Event theEvent;
         int locationId = Constants.Timing.LOCATION_DUMMY;
 
-        Regex DateRegex = new Regex("\\d{4}-\\d{2}-\\d{2}");
+        private static readonly Regex DateRegex = new Regex("\\d{4}-\\d{2}-\\d{2}");
 
         private ImportLogWindow(IMainWindow window, LogImporter importer, IDBInterface database)
         {
@@ -88,43 +89,77 @@ namespace ChronoKeep.UI.Timing.Import
                 ImportData data = importer.Data;
                 int chip = ChipColumn, time = TimeColumn;
                 locationId = iLocationId != Constants.Timing.LOCATION_DUMMY ? iLocationId : locationId;
-                if (type == LogImporter.Type.RFID)
-                {
-                    if (importer.Data.Headers.Length < 4)
-                    {
-                        chip = 1;
-                        time = 2;
-                    }
-                    else
-                    {
-                        chip = 2;
-                        time = 4;
-                    }
-                }
                 List<ChipRead> chipreads = new List<ChipRead>();
-                bool dateIncluded = DateRegex.IsMatch(data.Headers[time]);
-                DateTime date;
-                if (!dateIncluded)
+                if (type == LogImporter.Type.IPICO)
                 {
-                    date = DateTime.Parse(String.Format("{0} {1}", theEvent.Date, data.Headers[time]));
+                    DateTime date = DateTime.ParseExact(data.Headers[1].Substring(20, 12), "yyMMddHHmmss", CultureInfo.InvariantCulture);
+                    int.TryParse(data.Headers[1].Substring(32, 2), NumberStyles.HexNumber, null, out int milliseconds);
+                    milliseconds *= 10;
+                    date = date.AddMilliseconds(milliseconds);
+                    chipreads.Add(new ChipRead(
+                        theEvent.Identifier,
+                        locationId,
+                        data.Headers[1].Substring(4, 12),
+                        date,
+                        Convert.ToInt32(data.Headers[1].Substring(2, 2)),
+                        data.Headers[1].Length == 36 ? 0 : 1
+                        ));
+                    int numEntries = data.Data.Count;
+                    for (int counter = 0; counter < numEntries; counter++)
+                    {
+                        date = DateTime.ParseExact(data.Data[counter][1].Substring(20, 12), "yyMMddHHmmss", CultureInfo.InvariantCulture);
+                        int.TryParse(data.Data[counter][1].Substring(32, 2), NumberStyles.HexNumber, null, out milliseconds);
+                        milliseconds *= 10;
+                        date = date.AddMilliseconds(milliseconds);
+                        chipreads.Add(new ChipRead(
+                            theEvent.Identifier,
+                            locationId,
+                            data.Data[counter][1].Substring(4, 12),
+                            date,
+                            Convert.ToInt32(data.Data[counter][1].Substring(2, 2)),
+                            data.Data[counter][1].Length == 36 ? 0 : 1
+                            ));
+                    }
                 }
                 else
                 {
-                    date = DateTime.Parse(data.Headers[time]);
-                }
-                chipreads.Add(new ChipRead(theEvent.Identifier, locationId, data.Headers[chip], date));
-                int numEntries = data.Data.Count;
-                for (int counter = 0; counter < numEntries; counter++)
-                {
+                    if (type == LogImporter.Type.RFID)
+                    {
+                        if (importer.Data.Headers.Length < 4)
+                        {
+                            chip = 1;
+                            time = 2;
+                        }
+                        else
+                        {
+                            chip = 2;
+                            time = 4;
+                        }
+                    }
+                    bool dateIncluded = DateRegex.IsMatch(data.Headers[time]);
+                    DateTime date;
                     if (!dateIncluded)
                     {
-                        date = DateTime.Parse(String.Format("{0} {1}", theEvent.Date, data.Data[counter][time]));
+                        date = DateTime.Parse(String.Format("{0} {1}", theEvent.Date, data.Headers[time]));
                     }
                     else
                     {
-                        date = DateTime.Parse(data.Data[counter][time]);
+                        date = DateTime.Parse(data.Headers[time]);
                     }
-                    chipreads.Add(new ChipRead(theEvent.Identifier, locationId, data.Data[counter][chip], date));
+                    chipreads.Add(new ChipRead(theEvent.Identifier, locationId, data.Headers[chip], date));
+                    int numEntries = data.Data.Count;
+                    for (int counter = 0; counter < numEntries; counter++)
+                    {
+                        if (!dateIncluded)
+                        {
+                            date = DateTime.Parse(String.Format("{0} {1}", theEvent.Date, data.Data[counter][time]));
+                        }
+                        else
+                        {
+                            date = DateTime.Parse(data.Data[counter][time]);
+                        }
+                        chipreads.Add(new ChipRead(theEvent.Identifier, locationId, data.Data[counter][chip], date));
+                    }
                 }
                 database.AddChipReads(chipreads);
             });
