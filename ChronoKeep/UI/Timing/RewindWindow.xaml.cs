@@ -1,7 +1,9 @@
 ﻿using ChronoKeep.Objects;
+using ChronoKeep.Timing.Interfaces;
 using ChronoKeep.UI.MainPages;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +34,11 @@ namespace ChronoKeep.UI.Timing
             ToDate.Text = dateStr;
             FromTime.Text = "00:00:00";
             ToTime.Text = "23:59:59";
+            if (system.Type == Constants.Settings.TIMING_IPICO || system.Type == Constants.Settings.TIMING_IPICO_LITE)
+            {
+                Reader1.Visibility = Visibility.Visible;
+                Reader2.Visibility = Visibility.Visible;
+            }
         }
 
         private void SetYesterday_Click(object sender, RoutedEventArgs e)
@@ -71,7 +78,29 @@ namespace ChronoKeep.UI.Timing
             {
                 to = DateTime.Now;
             }
-            system.SystemInterface.Rewind(from, to);
+            if (system.Type == Constants.Settings.TIMING_IPICO || system.Type == Constants.Settings.TIMING_IPICO_LITE)
+            {
+                MessageBoxResult result = MessageBox.Show("This process can take up to 3 minutes to complete. There is no guarantee that other processes will work properly while this is occuring. Are you sure you wish to proceed?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == MessageBoxResult.Yes)
+                {
+                    BackgroundWorker worker = new BackgroundWorker();
+                    worker.DoWork += (o, ea) =>
+                    {
+                        system.SystemInterface.Rewind(from, to, Reader1.IsChecked == true ? 1 : 2);
+                        ((IpicoInterface)system.SystemInterface).GetRewind();
+                    };
+                    worker.RunWorkerCompleted += (o, ea) =>
+                    {
+                        busyIndicator.IsBusy = false;
+                    };
+                    busyIndicator.IsBusy = true;
+                    worker.RunWorkerAsync();
+                }
+            }
+            else
+            {
+                system.SystemInterface.Rewind(from, to);
+            }
             this.Close();
         }
 

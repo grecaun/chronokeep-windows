@@ -25,7 +25,6 @@ namespace ChronoKeep.Timing.Interfaces
         // private static readonly Regex voltage/connected/chipread/settinginfo/settingconfirmation/time/status/msg
         private static readonly Regex chipread = new Regex(@"aa[0-9a-fA-F]{34,36}");
         private static readonly Regex time = new Regex(@"date\.\w{3} \w{3} {1,2}\d{1,2} \d{2}:\d{2}:\d{2} \w{3} \d{4} *");
-        private static readonly Regex rewind = new Regex(@"Starting Replay");
         private static readonly Regex msg = new Regex(@"^[^\n]+\n");
 
         public IpicoInterface(IDBInterface database, int locationId)
@@ -140,11 +139,6 @@ namespace ChronoKeep.Timing.Interfaces
                     output[MessageType.TIME] = new List<string>();
                     output[MessageType.TIME].Add(dateStr);
                 }
-                else if (rewind.IsMatch(message))
-                {
-                    Log.D("IpicoInterface -- replay is starting");
-                    GetRewind();
-                }
                 m = msg.Match(bufferDict[sock].ToString());
             }
             Log.D("IpicoInterface -- messages parsed successfully adding chipreads");
@@ -173,7 +167,7 @@ namespace ChronoKeep.Timing.Interfaces
 
         public void StopSending() { }
 
-        private void GetRewind()
+        public void GetRewind()
         {
             Log.D("IpicoInterface -- connecting to rewind socket");
             rewindSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -218,19 +212,31 @@ namespace ChronoKeep.Timing.Interfaces
             Log.D("IpicoInterface -- finished rewind");
         }
 
-        public void Rewind(DateTime start, DateTime end)
+        public void Rewind(DateTime start, DateTime end, int reader = 1)
         {
             // yyMMddHHmmss
-            SendMessage("replay_start file.ttyS0 port.10300 datetime." + start.ToString("yyMMddHHmmss"));
-            SendMessage("replay_start file.ttyS1 port.10300 datetime." + start.ToString("yyMMddHHmmss"));
+            if (reader == 1)
+            {
+                SendMessage("replay_start file.ttyS0 port.10300 datetime." + start.ToString("yyMMddHHmmss"));
+            }
+            else
+            {
+                SendMessage("replay_start file.ttyS1 port.10300 datetime." + start.ToString("yyMMddHHmmss"));
+            }
         }
 
-        public void Rewind(int from, int to) { }
+        public void Rewind(int from, int to, int reader = 1) { }
 
-        public void Rewind()
+        public void Rewind(int reader = 1)
         {
-            SendMessage("replay_start file.ttyS0 port.10300");
-            SendMessage("replay_start file.ttyS1 port.10300");
+            if (reader == 1)
+            {
+                SendMessage("replay_start file.ttyS0 port.10300");
+            }
+            else
+            {
+                SendMessage("replay_start file.ttyS1 port.10300");
+            }
         }
 
         public void SetMainSocket(Socket sock)

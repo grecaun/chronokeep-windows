@@ -30,6 +30,7 @@ namespace ChronoKeep.Constants
 
         public static readonly string TIMING_RFID       = "RFID";
         public static readonly string TIMING_IPICO      = "IPICO";
+        public static readonly string TIMING_IPICO_LITE = "IPICO_LITE";
 
         public static readonly string CHIP_TYPE_DEC     = "DEC";
         public static readonly string CHIP_TYPE_HEX     = "HEX";

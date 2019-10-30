@@ -34,7 +34,7 @@ namespace ChronoKeep.Objects
             {
                 this.Port = 23;
             }
-            else if (type == Constants.Settings.TIMING_IPICO)
+            else if (type == Constants.Settings.TIMING_IPICO || type == Constants.Settings.TIMING_IPICO_LITE)
             {
                 this.Port = 10000;
             }
@@ -86,7 +86,7 @@ namespace ChronoKeep.Objects
             {
                 this.Port = 23;
             }
-            else if (type == Constants.Settings.TIMING_IPICO)
+            else if (type == Constants.Settings.TIMING_IPICO || type == Constants.Settings.TIMING_IPICO_LITE)
             {
                 this.Port = 10000;
             }
@@ -99,7 +99,7 @@ namespace ChronoKeep.Objects
                 Log.D("System interface is RFID.");
                 SystemInterface = new RFIDUltraInterface(database, LocationID);
             }
-            else if (this.Type == Constants.Settings.TIMING_IPICO)
+            else if (this.Type == Constants.Settings.TIMING_IPICO || this.Type == Constants.Settings.TIMING_IPICO_LITE)
             {
                 Log.D("System interface is IPICO.");
                 SystemInterface = new IpicoInterface(database, LocationID);

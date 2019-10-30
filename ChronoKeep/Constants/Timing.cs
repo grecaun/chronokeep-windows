@@ -74,7 +74,8 @@ namespace ChronoKeep.Constants
         public static readonly Dictionary<string, string> SYSTEM_NAMES = new Dictionary<string, string>()
         {
             { Settings.TIMING_RFID, "RFID Timing Systems" },
-            { Settings.TIMING_IPICO, "Ipico" }
+            { Settings.TIMING_IPICO, "Ipico Elite Reader" },
+            { Settings.TIMING_IPICO_LITE, "Ipico Lite Reader" }
         };
 
         public static readonly Dictionary<int, string> EVENTSPECIFIC_STATUS_NAMES = new Dictionary<int, string>()

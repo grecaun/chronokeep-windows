@@ -216,17 +216,17 @@ namespace ChronoKeep.Timing.Interfaces
             SendMessage("S");
         }
 
-        public void Rewind(DateTime start, DateTime end)
+        public void Rewind(DateTime start, DateTime end, int reader = 1)
         {
             SendMessage("800" + Constants.Timing.DateToEpoch(start).ToString() + RFIDUltraCodes.RewindDelimiter + Constants.Timing.DateToEpoch(end).ToString());
         }
 
-        public void Rewind()
+        public void Rewind(int reader = 1)
         {
             SendMessage("8000" + RFIDUltraCodes.RewindDelimiter + "0");
         }
 
-        public void Rewind(int start, int end)
+        public void Rewind(int start, int end, int reader = 1)
         {
             if (start < 1)
             {
