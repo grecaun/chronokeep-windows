@@ -102,7 +102,7 @@ namespace ChronoKeep.Objects
             else if (this.Type == Constants.Settings.TIMING_IPICO || this.Type == Constants.Settings.TIMING_IPICO_LITE)
             {
                 Log.D("System interface is IPICO.");
-                SystemInterface = new IpicoInterface(database, LocationID);
+                SystemInterface = new IpicoInterface(database, LocationID, this.Type);
             }
         }
 
