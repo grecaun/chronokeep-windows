@@ -478,9 +478,9 @@ namespace ChronoKeep.Timing
                     startSeconds = divisionStartDict[div.Identifier].Seconds;
                     startMilliseconds = divisionStartDict[div.Identifier].Milliseconds;
                 }
-                if (part != null && part.EventSpecific != null && part.EventSpecific.EarlyStart == 1)
+                if (part != null && part.EventSpecific != null && part.EventSpecific.EarlyStart == 1 && div != null)
                 {
-                    startSeconds = startSeconds - theEvent.EarlyStartDifference;
+                    startSeconds = startSeconds - div.EarlyStartOffsetSeconds;
                 }
                 maxStartSeconds = startSeconds + theEvent.StartWindow;
                 foreach (ChipRead read in bibReadPairs[bib])

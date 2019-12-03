@@ -10,7 +10,7 @@ namespace ChronoKeep
     {
         private int identifier, nextYear = -1, shirtOptional = 1, shirtPrice = 2000;
         private int common_age_groups = 1, common_start_finish = 1, division_specific_segments = 0, rank_by_gun = 1;
-        private int allow_early_start = 0, early_start_difference = -1;
+        private int allow_early_start = 0;
         private int finish_max_occurrences = 1, finish_ignore_within = 0, start_window = -1;
         private int event_type = Constants.Timing.EVENT_TYPE_DISTANCE;
         private string name, date, yearcode = "", timing_system = Constants.Settings.TIMING_RFID;
@@ -73,7 +73,7 @@ namespace ChronoKeep
         }
 
         public Event(int id, string n, string d, int ny, int so, int price, int age, int start, int seg,
-            int gun, string yearcode, int early, int earlydiff, int maxOcc, int ignWith, int window,
+            int gun, string yearcode, int early, int maxOcc, int ignWith, int window,
             long startsec, int startmill, string system, int type)
         {
             this.nextYear = ny;
@@ -88,7 +88,6 @@ namespace ChronoKeep
             this.rank_by_gun = gun;
             this.yearcode = yearcode;
             this.allow_early_start = early;
-            this.early_start_difference = earlydiff;
             this.finish_max_occurrences = maxOcc;
             this.finish_ignore_within = ignWith;
             this.start_window = window;
@@ -110,7 +109,6 @@ namespace ChronoKeep
         public bool RankByGun { get => rank_by_gun != 0; set => rank_by_gun = value ? 1 : 0; }
         public string YearCode { get => yearcode; set => yearcode = value; }
         public bool AllowEarlyStart { get => allow_early_start != 0; set => allow_early_start = value ? 1 : 0; }
-        public int EarlyStartDifference { get => early_start_difference; set => early_start_difference = value; }
         public int StartWindow { get => start_window; set => start_window = value; }
         public int FinishMaxOccurrences { get => finish_max_occurrences; set => finish_max_occurrences = value; }
         public int FinishIgnoreWithin { get => finish_ignore_within; set => finish_ignore_within = value; }
@@ -142,18 +140,6 @@ namespace ChronoKeep
         {
             if (other == null) return false;
             return (this.Date == other.Date && this.name == other.name) || this.Identifier == other.Identifier;
-        }
-
-        public string GetEarlyStartString()
-        {
-            int hours = early_start_difference / 3600;
-            int minutes = (early_start_difference % 3600) / 60;
-            int seconds = early_start_difference % 60;
-            if (early_start_difference < 0)
-            {
-                hours = minutes = seconds = 0;
-            }
-            return String.Format("{0,2:D2}:{1,2:D2}:{2,2:D2}", hours, minutes, seconds);
         }
     }
 }

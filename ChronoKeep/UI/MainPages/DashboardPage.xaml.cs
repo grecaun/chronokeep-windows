@@ -67,14 +67,10 @@ namespace ChronoKeep.UI.MainPages
             if (theEvent.AllowEarlyStart)
             {
                 earlyCheckBox.IsChecked = true;
-                earlyTimePanel.Visibility = Visibility.Visible;
-                earlyTimeTextBox.Text = theEvent.GetEarlyStartString();
             }
             else
             {
                 earlyCheckBox.IsChecked = false;
-                earlyTimePanel.Visibility = Visibility.Collapsed;
-                earlyTimeTextBox.Text = theEvent.GetEarlyStartString();
             }
             List<JsonOption> options = database.GetEventOptions(theEvent.Identifier);
             foreach (JsonOption opt in options)
@@ -179,12 +175,6 @@ namespace ChronoKeep.UI.MainPages
                 {
                     theEvent.EventType = Constants.Timing.EVENT_TYPE_TIME;
                 }
-                UpdateEarlyTimeTextBox();
-                string[] nums = earlyTimeTextBox.Text.Split(':');
-                if (nums.Length == 3)
-                {
-                    theEvent.EarlyStartDifference = (Convert.ToInt32(nums[0]) * 3600) + (Convert.ToInt32(nums[1]) * 60) + Convert.ToInt32(nums[2]);
-                }
                 Log.D("Updating database.");
                 // Check if we've changed the segment option
                 Event oldEvent = database.GetCurrentEvent();
@@ -222,7 +212,6 @@ namespace ChronoKeep.UI.MainPages
             commonStartCheckBox.IsEnabled = false;
             segmentCheckBox.IsEnabled = false;
             earlyCheckBox.IsEnabled = false;
-            earlyTimeTextBox.IsEnabled = false;
             TypeBox.IsEnabled = false;
         }
 
@@ -236,14 +225,7 @@ namespace ChronoKeep.UI.MainPages
             commonStartCheckBox.IsEnabled = true;
             segmentCheckBox.IsEnabled = true;
             earlyCheckBox.IsEnabled = true;
-            earlyTimeTextBox.IsEnabled = true;
             TypeBox.IsEnabled = true;
-        }
-
-        private void UpdateEarlyTimeTextBox()
-        {
-            String startTimeValue = earlyTimeTextBox.Text.Replace('_', '0');
-            earlyTimeTextBox.Text = startTimeValue;
         }
 
         private async void StartAppService_Click(object sender, RoutedEventArgs e)
@@ -572,19 +554,6 @@ namespace ChronoKeep.UI.MainPages
             }
             UpdateView();
             mWindow.UpdateStatus();
-        }
-
-        private void EarlyCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Allow early start clicked.");
-            if (earlyCheckBox.IsChecked == true)
-            {
-                earlyTimePanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                earlyTimePanel.Visibility = Visibility.Collapsed;
-            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

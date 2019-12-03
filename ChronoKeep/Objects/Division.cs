@@ -13,7 +13,7 @@ namespace ChronoKeep
         private double distance;
         private int distance_unit = Constants.Distances.MILES, finish_location = Constants.Timing.LOCATION_FINISH,
             finish_occurrence = 1, start_location = Constants.Timing.LOCATION_START, start_within = 5,
-            end_seconds = 0;
+            end_seconds = 0, early_start_offset_seconds = 0;
         private int wave = 1, bib_group_number = -1, start_offset_seconds = 0, start_offset_milliseconds = 0;
 
         public Division() { }
@@ -25,31 +25,10 @@ namespace ChronoKeep
             this.cost = cost;
         }
 
-        public Division(int identifier, string name, int eventIdentifier, int cost)
-        {
-            this.identifier = identifier;
-            this.name = name;
-            this.eventIdentifier = eventIdentifier;
-            this.cost = cost;
-        }
-
-        public Division(string name, int eventIdentifier, int cost, double distance, int dunit, int finloc, int finocc, int startloc, int startwith)
-        {
-            this.name = name;
-            this.eventIdentifier = eventIdentifier;
-            this.cost = cost;
-            this.distance = distance;
-            this.distance_unit = dunit;
-            this.finish_location = finloc;
-            this.finish_occurrence = finocc;
-            this.start_location = startloc;
-            this.start_within = startwith;
-        }
-
         public Division(int identifier, string name, int eventIdentifier,
             int cost, double distance, int dunit, int finloc, int finocc,
             int startloc, int startwith, int wave, int bgn, int soffsec, int soffmill,
-            int endseconds)
+            int endseconds, int earlyoffset)
         {
             this.identifier = identifier;
             this.name = name;
@@ -66,6 +45,7 @@ namespace ChronoKeep
             this.start_offset_seconds = soffsec;
             this.start_offset_milliseconds = soffmill;
             this.end_seconds = endseconds;
+            this.early_start_offset_seconds = earlyoffset;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -83,6 +63,7 @@ namespace ChronoKeep
         public int StartOffsetSeconds { get => start_offset_seconds; set => start_offset_seconds = value; }
         public int StartOffsetMilliseconds { get => start_offset_milliseconds; set => start_offset_milliseconds = value; }
         public int EndSeconds { get => end_seconds; set => end_seconds = value; }
+        public int EarlyStartOffsetSeconds { get => early_start_offset_seconds; set => early_start_offset_seconds = value; }
 
         public int CompareTo(Division other)
         {
@@ -98,6 +79,18 @@ namespace ChronoKeep
         {
             if (other == null) return false;
             return this.EventIdentifier == other.EventIdentifier && this.Identifier == other.Identifier;
+        }
+
+        public string GetEarlyStartString()
+        {
+            int hours = early_start_offset_seconds / 3600;
+            int minutes = (early_start_offset_seconds % 3600) / 60;
+            int seconds = early_start_offset_seconds % 60;
+            if (early_start_offset_seconds < 0)
+            {
+                hours = minutes = seconds = 0;
+            }
+            return String.Format("{0,2:D2}:{1,2:D2}:{2,2:D2}", hours, minutes, seconds);
         }
     }
 }

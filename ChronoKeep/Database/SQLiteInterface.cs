@@ -15,7 +15,7 @@ namespace ChronoKeep
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 40;
+        private readonly int version = 41;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -70,7 +70,6 @@ namespace ChronoKeep
                     "event_results_open INTEGER DEFAULT 0," +
                     "event_announce_available INTEGER DEFAULT 0," +
                     "event_allow_early_start INTEGER DEFAULT 0," +
-                    "event_early_start_difference INTEGER NOT NULL DEFAULT 0," +
                     "event_kiosk INTEGER DEFAULT 0," +
                     "event_next_year_event_id INTEGER DEFAULT -1," +
                     "event_shirt_optional INTEGER DEFAULT 1," +
@@ -134,6 +133,7 @@ namespace ChronoKeep
                     "division_start_offset_seconds INTEGER NOT NULL DEFAULT 0," +
                     "division_start_offset_milliseconds INTEGER NOT NULL DEFAULT 0," +
                     "division_end_offset_seconds INTEGER NOT NULL DEFAULT 0," +
+                    "division_early_start_offset_seconds INTEGER NOT NULL DEFAULT 0," +
                     "UNIQUE (division_name, event_id) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS timing_locations (" +
@@ -1277,6 +1277,13 @@ namespace ChronoKeep
                         command.CommandText = "ALTER TABLE eventspecific ADD COLUMN eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110';" +
                             "UPDATE settings SET version=40 WHERE version=39;";
                         command.ExecuteNonQuery();
+                        goto case 40;
+                    case 40:
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE divisions ADD " +
+                            "division_early_start_offset_seconds INTEGER NOT NULL DEFAULT 0;" +
+                            "UPDATE settings SET version=41 WHERE version=40;";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();
@@ -1294,8 +1301,8 @@ namespace ChronoKeep
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO divisions (division_name, event_id, division_cost, division_distance, division_distance_unit," +
                 "division_start_location, division_start_within, division_finish_location, division_finish_occurance, division_wave, bib_group_number," +
-                "division_start_offset_seconds, division_start_offset_milliseconds, division_end_offset_seconds) " +
-                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@bgn,@soffsec,@soffmill,@endSec)";
+                "division_start_offset_seconds, division_start_offset_milliseconds, division_end_offset_seconds, division_early_start_offset_seconds) " +
+                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@bgn,@soffsec,@soffmill,@endSec,@esdiff)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", div.Name),
                 new SQLiteParameter("@event_id", div.EventIdentifier),
@@ -1310,7 +1317,8 @@ namespace ChronoKeep
                 new SQLiteParameter("@bgn", div.BibGroupNumber),
                 new SQLiteParameter("@soffsec", div.StartOffsetSeconds),
                 new SQLiteParameter("@soffmill", div.StartOffsetMilliseconds),
-                new SQLiteParameter("@endSec", div.EndSeconds)
+                new SQLiteParameter("@endSec", div.EndSeconds),
+                new SQLiteParameter("@esdiff", div.EarlyStartOffsetSeconds)
             });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
@@ -1389,7 +1397,8 @@ namespace ChronoKeep
             command.CommandText = "UPDATE divisions SET division_name=@name, event_id=@event, division_cost=@cost, division_distance=@distance," +
                 "division_distance_unit=@unit, division_start_location=@startloc, division_start_within=@within, division_finish_location=@finishloc," +
                 "division_finish_occurance=@occurance, division_wave=@wave, bib_group_number=@bgn, division_start_offset_seconds=@soffsec, " +
-                "division_start_offset_milliseconds=@soffmill, division_end_offset_seconds=@endSec WHERE division_id=@id";
+                "division_start_offset_milliseconds=@soffmill, division_end_offset_seconds=@endSec, division_early_start_offset_seconds=@esdiff " +
+                "WHERE division_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", div.Name),
                 new SQLiteParameter("@event", div.EventIdentifier),
@@ -1405,7 +1414,8 @@ namespace ChronoKeep
                 new SQLiteParameter("@soffsec", div.StartOffsetSeconds),
                 new SQLiteParameter("@soffmill", div.StartOffsetMilliseconds),
                 new SQLiteParameter("@id", div.Identifier),
-                new SQLiteParameter("@endSec", div.EndSeconds)
+                new SQLiteParameter("@endSec", div.EndSeconds),
+                new SQLiteParameter("@esdiff", div.EarlyStartOffsetSeconds)
             });
             command.ExecuteNonQuery();
             connection.Close();
@@ -1442,7 +1452,8 @@ namespace ChronoKeep
                     Convert.ToInt32(reader["bib_group_number"]),
                     Convert.ToInt32(reader["division_start_offset_seconds"]),
                     Convert.ToInt32(reader["division_start_offset_milliseconds"]),
-                    Convert.ToInt32(reader["division_end_offset_seconds"])
+                    Convert.ToInt32(reader["division_end_offset_seconds"]),
+                    Convert.ToInt32(reader["division_early_start_offset_seconds"])
                     ));
             }
             reader.Close();
@@ -1495,7 +1506,8 @@ namespace ChronoKeep
                     Convert.ToInt32(reader["bib_group_number"]),
                     Convert.ToInt32(reader["division_start_offset_seconds"]),
                     Convert.ToInt32(reader["division_start_offset_milliseconds"]),
-                    Convert.ToInt32(reader["division_end_offset_seconds"])
+                    Convert.ToInt32(reader["division_end_offset_seconds"]),
+                    Convert.ToInt32(reader["division_early_start_offset_seconds"])
                     ));
             }
             reader.Close();
@@ -1567,7 +1579,8 @@ namespace ChronoKeep
                     Convert.ToInt32(reader["bib_group_number"]),
                     Convert.ToInt32(reader["division_start_offset_seconds"]),
                     Convert.ToInt32(reader["division_start_offset_milliseconds"]),
-                    Convert.ToInt32(reader["division_end_offset_seconds"])
+                    Convert.ToInt32(reader["division_end_offset_seconds"]),
+                    Convert.ToInt32(reader["division_early_start_offset_seconds"])
                     );
             }
             reader.Close();
@@ -1624,9 +1637,9 @@ namespace ChronoKeep
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO events(event_name, event_date, event_shirt_optional, event_shirt_price," +
                 "event_common_age_groups, event_common_start_finish, event_rank_by_gun, event_division_specific_segments, event_yearcode, " +
-                "event_next_year_event_id, event_allow_early_start, event_early_start_difference, event_start_time_seconds, " +
+                "event_next_year_event_id, event_allow_early_start, event_start_time_seconds, " +
                 "event_start_time_milliseconds, event_timing_system, event_type)" +
-                " values(@name,@date,@so,@price,@age,@start,@gun,@sepseg,@yearcode,@ny,@early,@diff,@startsec,@startmill,@system," +
+                " values(@name,@date,@so,@price,@age,@start,@gun,@sepseg,@yearcode,@ny,@early,@startsec,@startmill,@system," +
                 "@type)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
@@ -1640,7 +1653,6 @@ namespace ChronoKeep
                 new SQLiteParameter("@yearcode", anEvent.YearCode),
                 new SQLiteParameter("@ny", anEvent.NextYear),
                 new SQLiteParameter("@early", anEvent.AllowEarlyStart),
-                new SQLiteParameter("@diff", anEvent.EarlyStartDifference),
                 new SQLiteParameter("@startsec", anEvent.StartSeconds),
                 new SQLiteParameter("@startmill", anEvent.StartMilliseconds),
                 new SQLiteParameter("@system", anEvent.TimingSystem),
@@ -1705,7 +1717,7 @@ namespace ChronoKeep
             command.CommandText = "UPDATE events SET event_name=@name, event_date=@date, event_next_year_event_id=@ny, event_shirt_optional=@so," +
                 "event_shirt_price=@price, event_common_age_groups=@age, event_common_start_finish=@start, event_rank_by_gun=@gun, " +
                 "event_division_specific_segments=@seg, event_yearcode=@yearcode, event_allow_early_start=@early, " +
-                "event_early_start_difference=@diff, event_start_time_seconds=@startsec, event_start_time_milliseconds=@startmill, " +
+                "event_start_time_seconds=@startsec, event_start_time_milliseconds=@startmill, " +
                 "event_timing_system=@system, event_type=@type WHERE event_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@id", anEvent.Identifier),
@@ -1720,7 +1732,6 @@ namespace ChronoKeep
                 new SQLiteParameter("@yearcode", anEvent.YearCode),
                 new SQLiteParameter("@ny", anEvent.NextYear),
                 new SQLiteParameter("@early", anEvent.AllowEarlyStart),
-                new SQLiteParameter("@diff", anEvent.EarlyStartDifference),
                 new SQLiteParameter("@startsec", anEvent.StartSeconds),
                 new SQLiteParameter("@startmill", anEvent.StartMilliseconds),
                 new SQLiteParameter("@system", anEvent.TimingSystem),
@@ -1758,7 +1769,6 @@ namespace ChronoKeep
                     Convert.ToInt32(reader["event_rank_by_gun"]),
                     reader["event_yearcode"].ToString(),
                     Convert.ToInt32(reader["event_allow_early_start"]),
-                    Convert.ToInt32(reader["event_early_start_difference"]),
                     Convert.ToInt32(reader["event_finish_max_occurances"]),
                     Convert.ToInt32(reader["event_finish_ignore_within"]),
                     Convert.ToInt32(reader["event_start_window"]),
@@ -1845,7 +1855,6 @@ namespace ChronoKeep
                     Convert.ToInt32(reader["event_rank_by_gun"]),
                     reader["event_yearcode"].ToString(),
                     Convert.ToInt32(reader["event_allow_early_start"]),
-                    Convert.ToInt32(reader["event_early_start_difference"]),
                     Convert.ToInt32(reader["event_finish_max_occurances"]),
                     Convert.ToInt32(reader["event_finish_ignore_within"]),
                     Convert.ToInt32(reader["event_start_window"]),

@@ -51,11 +51,7 @@
             <CheckBox Name="commonAgeCheckBox" Content="Common Age Groups for Divisions" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <CheckBox Name="commonStartCheckBox" Content="Common Start/Finish Location" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <CheckBox Name="segmentCheckBox" Content="Division Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-            <CheckBox Name="earlyCheckBox" Content="Allow Early Start" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False" Click="EarlyCheckBox_Click"/>
-            <DockPanel Name="earlyTimePanel" LastChildFill="True" Margin="10,0,10,0">
-                <Label Content="Early Start Amount" FontSize="16"  VerticalAlignment="Center"/>
-                <xctk:MaskedTextBox Name="earlyTimeTextBox" ValueDataType="{x:Type s:String}" Mask="00:00:00" VerticalAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="16" IsEnabled="False"/>
-            </DockPanel>
+            <CheckBox Name="earlyCheckBox" Content="Allow Early Start" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <DockPanel Margin="10,5,10,5">
                 <Label Content="Event Type" FontSize="16"/>
                 <ComboBox Name="TypeBox" Margin="10,0,0,0" VerticalContentAlignment="Center" IsEnabled="False">

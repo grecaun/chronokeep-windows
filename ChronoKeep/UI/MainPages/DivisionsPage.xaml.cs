@@ -184,6 +184,7 @@ namespace ChronoKeep.UI.MainPages
             public ComboBox BibGroupNumber { get; private set; }
             public MaskedTextBox StartOffset { get; private set; }
             public MaskedTextBox TimeLimit { get; private set; } = null;
+            public MaskedTextBox EarlyStartOffsetBox { get; private set; } = null;
             public Button Remove { get; private set; }
 
             private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
@@ -511,49 +512,33 @@ namespace ChronoKeep.UI.MainPages
                 numGrid.Children.Add(wavePanel);
                 Grid.SetColumn(wavePanel, 0);
                 Grid secondGrid = new Grid();
-                secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                /*secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(110) });
-                DockPanel bibPanel = new DockPanel();
-                bibPanel.Children.Add(new Label()
+                if (theEvent.AllowEarlyStart)
                 {
-                    Content = "Bib Group",
-                    Width = 100,
-                    FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
-                });
-                BibGroupNumber = new ComboBox()
-                {
-                    FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
-                    VerticalContentAlignment = VerticalAlignment.Center
-                };
-                selected = null;
-                foreach (BibGroup bg in bibGroups)
-                {
-                    current = new ComboBoxItem()
+                    secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(200) });
+                    DockPanel earlyStartPanel = new DockPanel();
+                    earlyStartPanel.Children.Add(new Label()
                     {
-                        Content = bg.Name,
-                        Uid = bg.Number.ToString()
+                        Content = "ES Offset",
+                        Width = 85,
+                        FontSize = 16,
+                        Margin = new Thickness(0,0,0,0),
+                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalContentAlignment = HorizontalAlignment.Right
+                    });
+                    EarlyStartOffsetBox = new MaskedTextBox()
+                    {
+                        Text = division.GetEarlyStartString(),
+                        Mask = "00:00:00",
+                        FontSize = 16,
+                        Width = 100,
+                        Margin = new Thickness(0, 5, 5, 5),
+                        VerticalContentAlignment = VerticalAlignment.Center
                     };
-                    if (bg.Number == theDivision.BibGroupNumber)
-                    {
-                        selected = current;
-                    }
-                    BibGroupNumber.Items.Add(current);
+                    earlyStartPanel.Children.Add(EarlyStartOffsetBox);
+                    secondGrid.Children.Add(earlyStartPanel);
+                    Grid.SetColumn(earlyStartPanel, 0);
                 }
-                if (selected != null)
-                {
-                    BibGroupNumber.SelectedItem = selected;
-                }
-                else
-                {
-                    BibGroupNumber.SelectedIndex = 0;
-                }
-                bibPanel.Children.Add(BibGroupNumber);
-                secondGrid.Children.Add(bibPanel);
-                Grid.SetColumn(bibPanel, 0); //*/
+                secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 Remove = new Button()
                 {
                     Content = "Remove",
@@ -632,7 +617,15 @@ namespace ChronoKeep.UI.MainPages
                 {
                     theDivision.Wave = wave;
                 }
-                //theDivision.BibGroupNumber = Convert.ToInt32(((ComboBoxItem)BibGroupNumber.SelectedItem).Uid);
+                if (EarlyStartOffsetBox != null)
+                {
+                    String startTimeValue = EarlyStartOffsetBox.Text.Replace('_', '0');
+                    string[] nums = startTimeValue.Split(':');
+                    if (nums.Length == 3)
+                    {
+                        theDivision.EarlyStartOffsetSeconds = (Convert.ToInt32(nums[0]) * 3600) + (Convert.ToInt32(nums[1]) * 60) + Convert.ToInt32(nums[2]);
+                    }
+                }
                 theDivision.BibGroupNumber = Constants.Timing.DEFAULT_BIB_GROUP;
                 string[] firstparts = StartOffset.Text.Replace('_', '0').Split(':');
                 string[] secondparts = firstparts[2].Split('.');
