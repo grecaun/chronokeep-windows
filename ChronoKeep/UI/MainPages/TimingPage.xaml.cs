@@ -964,14 +964,15 @@ namespace ChronoKeep.UI.MainPages
                 ReaderIP.IsEnabled = false;
                 ReaderPort.IsEnabled = false;
                 ReaderLocation.IsEnabled = false;
-                ClockButton.IsEnabled = true;
                 if (reader.Type.Equals(Constants.Settings.TIMING_IPICO_LITE, StringComparison.OrdinalIgnoreCase))
                 {
                     RewindButton.IsEnabled = false;
+                    ClockButton.IsEnabled = false;
                 }
                 else
                 {
                     RewindButton.IsEnabled = true;
+                    ClockButton.IsEnabled = true;
                 }
                 ConnectButton.IsEnabled = true;
                 ConnectButton.Content = "Disconnect";

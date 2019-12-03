@@ -20,6 +20,7 @@ namespace ChronoKeep.Timing.Interfaces
         Socket streamSocket;
         Socket rewindSocket;
         string ipadd;
+        string Type;
 
 
         // private static readonly Regex voltage/connected/chipread/settinginfo/settingconfirmation/time/status/msg
@@ -27,18 +28,20 @@ namespace ChronoKeep.Timing.Interfaces
         private static readonly Regex time = new Regex(@"date\.\w{3} \w{3} {1,2}\d{1,2} \d{2}:\d{2}:\d{2} \w{3} \d{4} *");
         private static readonly Regex msg = new Regex(@"^[^\n]+\n");
 
-        public IpicoInterface(IDBInterface database, int locationId)
+        public IpicoInterface(IDBInterface database, int locationId, string type)
         {
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
             this.locationId = locationId;
+            this.Type = type;
         }
 
-        public IpicoInterface(IDBInterface database, Socket sock, int locationId)
+        public IpicoInterface(IDBInterface database, Socket sock, int locationId, string type)
         {
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
             this.locationId = locationId;
+            this.Type = type;
         }
 
         public List<Socket> Connect(string IpAddress, int Port)
@@ -47,21 +50,28 @@ namespace ChronoKeep.Timing.Interfaces
             List<Socket> output = new List<Socket>();
             controlSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             streamSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            Log.D("Attempting to connect to " + IpAddress + ":9999");
-            Log.D("Attempting to connect to " + IpAddress + ":10000");
-            Log.D("Attempting to connect to " + IpAddress + ":13000");
-            try
+            if (Type != Constants.Settings.TIMING_IPICO_LITE)
             {
-                controlSocket.Connect(IpAddress, 9999);
-                output.Add(controlSocket);
+                try
+                {
+                    Log.D("Attempting to connect to " + IpAddress + ":9999");
+                    controlSocket.Connect(IpAddress, 9999);
+                    output.Add(controlSocket);
+                }
+                catch
+                {
+                    Log.D("Unable to connect to control socket...");
+                    controlSocket = null;
+                }
             }
-            catch
+            else
             {
-                Log.D("Unable to connect to control socket...");
+                Log.D("IPICO Lite Reader found.");
                 controlSocket = null;
             }
             try
             {
+                Log.D("Attempting to connect to " + IpAddress + ":10000");
                 streamSocket.Connect(IpAddress, 10000);
                 output.Add(streamSocket);
             }
@@ -70,7 +80,7 @@ namespace ChronoKeep.Timing.Interfaces
                 Log.D("Unable to connect to stream socket...");
                 streamSocket = null;
             }
-            if (controlSocket == null || streamSocket == null)
+            if ((controlSocket == null && Type != Constants.Settings.TIMING_IPICO_LITE) || streamSocket == null)
             {
                 return null;
             }
