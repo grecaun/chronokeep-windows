@@ -10,8 +10,8 @@ namespace ChronoKeep
     {
         private int identifier, eventIdentifier, divisionIdentifier, bib,
             checkedIn = 0, earlystart = 0, nextyear = 0, chip = -1,
-            status = Constants.Timing.EVENTSPECIFIC_NOSHOW;
-        private String comments, divisionName, owes, other;
+            status = Constants.Timing.EVENTSPECIFIC_NOSHOW, ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+        private String comments, divisionName, owes, other, ageGroupName = "0-110";
         private List<Apparel> apparel;
 
         public EventSpecific() { }
@@ -56,7 +56,9 @@ namespace ChronoKeep
             string other,
             int earlystart,
             int nextyear,
-            int status
+            int status,
+            string ageGroupName,
+            int ageGroupId
             )
         {
             this.identifier = id;
@@ -72,6 +74,8 @@ namespace ChronoKeep
             this.nextyear = nextyear;
             this.apparel = new List<Apparel>();
             this.status = status;
+            this.ageGroupName = ageGroupName;
+            this.ageGroupId = ageGroupId;
         }
 
         internal void Trim()
@@ -84,7 +88,7 @@ namespace ChronoKeep
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, 0, 0);
+            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, 0, 0, "0-110", Constants.Timing.TIMERESULT_DUMMYAGEGROUP);
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -102,6 +106,8 @@ namespace ChronoKeep
         public int NumApparel { get => apparel.Count; }
         public int Status { get => status; set => status = value; }
         public string StatusStr { get => Constants.Timing.EVENTSPECIFIC_STATUS_NAMES[status]; }
+        public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
+        public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
 
         public void SetApparel(List<Apparel> incoming)
         {

@@ -75,7 +75,6 @@ namespace ChronoKeep.UI.Participants
             }
             database.UpdateParticipants(toChange);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            window.DatasetChanged();
             window.NotifyTimingWorker();
             this.Close();
         }

@@ -220,7 +220,6 @@ namespace ChronoKeep.UI.MainPages
             }
             if (UpdateTimingWorker)
             {
-                mWindow.DatasetChanged();
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 mWindow.NetworkClearResults(theEvent.Identifier);
                 mWindow.NotifyTimingWorker();

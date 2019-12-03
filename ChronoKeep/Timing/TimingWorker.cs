@@ -34,8 +34,6 @@ namespace ChronoKeep.Timing
         private Dictionary<int, (long Seconds, int Milliseconds)> divisionStartDict = new Dictionary<int, (long, int)>();
         private Dictionary<int, (long Seconds, int Milliseconds)> divisionEndDict = new Dictionary<int, (long, int)>();
         private Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
-        // (DivisionId, Age)
-        private Dictionary<(int, int), int> divisionAgeGroups = new Dictionary<(int, int), int>();
 
         private TimingWorker(IMainWindow window, IDBInterface database)
         {
@@ -160,17 +158,6 @@ namespace ChronoKeep.Timing
                 divisionStartDict[div.Identifier] = (divisionStartDict[0].Seconds + div.StartOffsetSeconds, divisionStartDict[0].Milliseconds + div.StartOffsetMilliseconds);
                 divisionEndDict[div.Identifier] = (divisionStartDict[div.Identifier].Seconds + div.EndSeconds, divisionStartDict[div.Identifier].Milliseconds);
                 divisionEndDict[0] = (divisionEndDict[div.Identifier].Seconds, divisionEndDict[div.Identifier].Milliseconds);
-            }
-            // Dictionary containing Age groups based upon their (Division, Age in Years)
-            divisionAgeGroups.Clear();
-            // process them into lists based upon divisions (in case there are division specific age groups)
-            foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
-            {
-                Log.D(String.Format("Age group {0} - Div {3} - {1} - {2}", group.GroupId, group.StartAge, group.EndAge, group.DivisionId));
-                for (int age = group.StartAge; age <= group.EndAge; age++)
-                {
-                    divisionAgeGroups[(group.DivisionId, age)] = group.GroupId;
-                }
             }
         }
 
@@ -1465,8 +1452,6 @@ namespace ChronoKeep.Timing
                 }
                 return x2.Occurrence.CompareTo(x1.Occurrence);
             });
-            Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
-            Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
             foreach (TimeResult result in topResults)
             {
                 // Make sure we know who we're looking at. Can't rank otherwise.
@@ -1486,23 +1471,7 @@ namespace ChronoKeep.Timing
                     {
                         gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
                     }
-                    int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DIVISIONID : divisionId;
-                    if (AgeGroups == null || age < 0)
-                    {
-                        ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                    }
-                    else if (AgeGroups.ContainsKey((agDivId, age)))
-                    {
-                        ageGroupId = AgeGroups[(agDivId, age)].GroupId;
-                    }
-                    else if (LastAgeGroup.ContainsKey(agDivId))
-                    {
-                        ageGroupId = LastAgeGroup[agDivId].GroupId;
-                    }
-                    else
-                    {
-                        ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                    }
+                    ageGroupId = person.EventSpecific.AgeGroupId;
                     // Since Results were sorted before we started, let's assume that the first item
                     // is the fastest/best and if we can't find the key, add one starting at 0
                     if (!placeDictionary.ContainsKey(divisionId))
@@ -1584,8 +1553,6 @@ namespace ChronoKeep.Timing
             int age = -1;
             int gender = -1;
             Participant person = null;
-            Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
-            Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
             foreach (TimeResult result in segmentResults)
             {
                 // Check if we know who the person is. Can't rank them if we don't know
@@ -1606,23 +1573,7 @@ namespace ChronoKeep.Timing
                     {
                         gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
                     }
-                    int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DIVISIONID : divisionId;
-                    if (AgeGroups == null || age < 0)
-                    {
-                        ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                    }
-                    else if (AgeGroups.ContainsKey((agDivId, age)))
-                    {
-                        ageGroupId = AgeGroups[(agDivId, age)].GroupId;
-                    }
-                    else if (LastAgeGroup.ContainsKey(agDivId))
-                    {
-                        ageGroupId = LastAgeGroup[agDivId].GroupId;
-                    }
-                    else
-                    {
-                        ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                    }
+                    ageGroupId = person.EventSpecific.AgeGroupId;
                     // Since Results were sorted before we started, let's assume that the first item
                     // is the fastest and if we can't find the key, add one starting at 0
                     if (!placeDictionary.ContainsKey(divisionId))

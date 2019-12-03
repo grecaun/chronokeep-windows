@@ -540,6 +540,7 @@ namespace ChronoKeep.UI
         public void NotifyTimingWorker()
         {
             Log.D("MainWindow notifying timer.");
+            TimingWorker.ResetDictionaries();
             TimingWorker.Notify();
         }
 
@@ -571,11 +572,6 @@ namespace ChronoKeep.UI
         private void Announcer_Click(object sender, RoutedEventArgs e)
         {
 
-        }
-
-        public void DatasetChanged()
-        {
-            TimingWorker.ResetDictionaries();
         }
 
         public void NetworkUpdateResults(int eventid, List<TimeResult> results)

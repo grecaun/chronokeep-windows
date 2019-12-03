@@ -1,4 +1,5 @@
 ﻿using ChronoKeep.Interfaces;
+using ChronoKeep.Objects;
 using ChronoKeep.UI.Import;
 using System;
 using System.Collections;
@@ -72,6 +73,9 @@ namespace ChronoKeep
         Page page1 = null;
         Page page2 = null;
         int[] keys;
+
+        Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
+        Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
 
         private ImportFileWindow(IMainWindow window, IDataImporter importer, IDBInterface database)
         {
@@ -259,18 +263,19 @@ namespace ChronoKeep
                         Log.D("Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[DIVISION]].ToLower()));
                         Division thisDiv = (Division)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DIVISION]].Trim().ToLower())];
                         string birthday = "01/01/1900";
+                        int age = -1;
                         if (keys[BIRTHDAY] == 0 && keys[AGE] != 0) // birthday not set but age is
                         {
                             Log.D(String.Format("Counter is {0} and keys[AGE] is {1}", counter, keys[AGE]));
                             Log.D("Age of participant is " + data.Data[counter][keys[AGE]]);
-                            int age = Convert.ToInt32(data.Data[counter][keys[AGE]]);
+                            age = Convert.ToInt32(data.Data[counter][keys[AGE]]);
                             birthday = String.Format("01/01/{0,4}", thisYear - age);
                         }
                         else if (keys[BIRTHDAY] != 0)
                         {
                             birthday = data.Data[counter][keys[BIRTHDAY]]; // birthday
                         }
-                        participants.Add(new Participant(
+                        Participant output = new Participant(
                             data.Data[counter][keys[FIRST]], // First Name
                             data.Data[counter][keys[LAST]], // Last Name
                             data.Data[counter][keys[STREET]], // Street
@@ -298,7 +303,32 @@ namespace ChronoKeep
                             data.Data[counter][keys[GENDER]],  // gender
                             data.Data[counter][keys[EMERGENCYNAME]], // Emergency Name
                             data.Data[counter][keys[EMERGENCYPHONE]]  // Emergency Phone
-                            ));
+                            );
+                        int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DIVISIONID : output.EventSpecific.DivisionIdentifier;
+                        age = output.GetAge(theEvent.Date);
+                        if (AgeGroups == null || age < 0)
+                        {
+                            output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                            output.EventSpecific.AgeGroupName = "0-110";
+                        }
+                        else if (AgeGroups.ContainsKey((agDivId, age)))
+                        {
+                            AgeGroup group = AgeGroups[(agDivId, age)];
+                            output.EventSpecific.AgeGroupId = group.GroupId;
+                            output.EventSpecific.AgeGroupName = String.Format("{0}-{1}", group.StartAge, group.EndAge);
+                        }
+                        else if (LastAgeGroup.ContainsKey(agDivId))
+                        {
+                            AgeGroup group = LastAgeGroup[agDivId];
+                            output.EventSpecific.AgeGroupId = group.GroupId;
+                            output.EventSpecific.AgeGroupName = String.Format("{0}-{1}", group.StartAge, group.EndAge);
+                        }
+                        else
+                        {
+                            output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                            output.EventSpecific.AgeGroupName = "0-110";
+                        }
+                        participants.Add(output);
                     }
                 }
                 database.AddParticipants(participants);

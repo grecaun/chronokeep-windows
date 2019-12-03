@@ -292,7 +292,7 @@ namespace ChronoKeep.UI.MainPages
 
         public void DatasetChanged()
         {
-            mWindow.DatasetChanged();
+            mWindow.NotifyTimingWorker();
         }
 
         private void Timer_Click(object sender, EventArgs e)
@@ -509,7 +509,6 @@ namespace ChronoKeep.UI.MainPages
             database.ResetTimingResultsEvent(theEvent.Identifier);
             UpdateView();
             mWindow.NetworkClearResults(theEvent.Identifier);
-            mWindow.DatasetChanged();
             mWindow.NotifyTimingWorker();
         }
 

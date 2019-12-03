@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChronoKeep.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,8 +28,8 @@ namespace ChronoKeep
         public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
             string time, int occurrence, string first, string last, string division, int bib,
             int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
-            int agePlace, int genderPlace, string gender, int ageGroupId, string ageStart, string ageEnd,
-            int status, int early, string split)
+            int agePlace, int genderPlace, string gender, int status, int early, string split,
+            int ageGroupId, string ageGroupName)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -66,7 +67,7 @@ namespace ChronoKeep
             this.genderPlace = genderPlace;
             this.gender = gender;
             this.ageGroupId = ageGroupId;
-            this.ageGroupName = String.Format("{0}-{1}", ageStart, ageEnd);
+            this.ageGroupName = ageGroupName;
             Match chipTimeMatch = timeRegex.Match(chipTime);
             chipSeconds = 0;
             chipMilliseconds = 0;
@@ -148,6 +149,7 @@ namespace ChronoKeep
         public string DivisionName { get => divisionName; set => divisionName = value; }
         public string DivisionNameWithEarly { get => divisionName + (early == 1 ? " Early" : ""); }
         public int Bib { get => bib; set => bib = value; }
+        public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public string UnknownId { get => unknownId; set => unknownId = value; }
         public int ReadId { get => readId; set => readId = value; }
         public int Place { get => place; set => place = value; }
@@ -172,7 +174,6 @@ namespace ChronoKeep
 
         public string ChipTime { get => chipTime; set => chipTime = value; }
         public string Gender { get => gender; set => gender = value; }
-        public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
         public int Status { get => status; set => status = value; }
         public int Early { get => early; set => early = value; }

@@ -44,7 +44,6 @@ namespace ChronoKeep.UI.MainPages
             theEvent = database.GetCurrentEvent();
             if (theEvent != null && oldEventId != -1 && oldEventId != theEvent.Identifier)
             {
-                mWindow.DatasetChanged();
                 mWindow.NotifyTimingWorker();
 
                 // Setup AgeGroup static variables
@@ -204,7 +203,7 @@ namespace ChronoKeep.UI.MainPages
                     Log.D("Unable to update event with mainwindow. TCP Server error or wrong main window.");
                 }
                 Log.D("Updating view.");
-                mWindow.DatasetChanged();
+                mWindow.NotifyTimingWorker(); ;
                 UpdateView();
             }
             else

@@ -1,4 +1,5 @@
 ﻿using ChronoKeep.Interfaces;
+using ChronoKeep.Objects;
 using ChronoKeep.UI.MainPages;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,9 @@ namespace ChronoKeep.UI.Participants
         Participant person;
 
         private bool ParticipantChanged = false;
+
+        Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
+        Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
 
         public ModifyParticipantWindow(IMainWindow window, IDBInterface database, Participant person)
         {
@@ -336,7 +340,10 @@ namespace ChronoKeep.UI.Participants
                     OtherBox.Text,
                     earlystart,
                     nextYear,
-                    Constants.Timing.EVENTSPECIFIC_NOSHOW),
+                    Constants.Timing.EVENTSPECIFIC_NOSHOW,
+                    "0-110",
+                    Constants.Timing.TIMERESULT_DUMMYAGEGROUP
+                    ),
                 EmailBox.Text,
                 MobileBox.Text,
                 ParentBox.Text,
@@ -345,6 +352,29 @@ namespace ChronoKeep.UI.Participants
                 gender,
                 ECNameBox.Text,
                 ECPhoneBox.Text);
+            int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DIVISIONID : output.EventSpecific.DivisionIdentifier;
+            if (AgeGroups == null || age < 0)
+            {
+                output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                output.EventSpecific.AgeGroupName = "0-110";
+            }
+            else if (AgeGroups.ContainsKey((agDivId, age)))
+            {
+                AgeGroup group = AgeGroups[(agDivId, age)];
+                output.EventSpecific.AgeGroupId = group.GroupId;
+                output.EventSpecific.AgeGroupName = String.Format("{0}-{1}", group.StartAge, group.EndAge);
+            }
+            else if (LastAgeGroup.ContainsKey(agDivId))
+            {
+                AgeGroup group = LastAgeGroup[agDivId];
+                output.EventSpecific.AgeGroupId = group.GroupId;
+                output.EventSpecific.AgeGroupName = String.Format("{0}-{1}", group.StartAge, group.EndAge);
+            }
+            else
+            {
+                output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                output.EventSpecific.AgeGroupName = "0-110";
+            }
             return output;
         }
 
@@ -361,7 +391,6 @@ namespace ChronoKeep.UI.Participants
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 if (window != null)
                 {
-                    window.DatasetChanged();
                     window.NotifyTimingWorker();
                 }
                 if (tPage != null)

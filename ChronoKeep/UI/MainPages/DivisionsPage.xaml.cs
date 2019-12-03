@@ -151,11 +151,7 @@ namespace ChronoKeep.UI.MainPages
             {
                 UpdateDatabase();
             }
-            if (UpdateTimingWorker)
-            {
-                mWindow.DatasetChanged();
-            }
-            if (divisionsChanged.Count > 0)
+            if (UpdateTimingWorker || divisionsChanged.Count > 0)
             {
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 mWindow.NotifyTimingWorker();

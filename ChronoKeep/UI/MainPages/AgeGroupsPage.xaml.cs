@@ -245,11 +245,43 @@ namespace ChronoKeep.UI.MainPages
             }
             if (touched)
             {
-                database.ResetTimingResultsPlacements(theEvent.Identifier);
-                mWindow.NotifyTimingWorker();
-
                 // Setup AgeGroup static variables
                 AgeGroup.SetAgeGroups(database.GetAgeGroups(theEvent.Identifier));
+                Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
+                Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
+                List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+                foreach (Participant person in participants)
+                {
+                    int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DIVISIONID : person.EventSpecific.DivisionIdentifier;
+                    int age = person.GetAge(theEvent.Date);
+                    if (AgeGroups == null || age < 0)
+                    {
+                        person.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                        person.EventSpecific.AgeGroupName = "0-110";
+                    }
+                    else if (AgeGroups.ContainsKey((agDivId, age)))
+                    {
+                        AgeGroup group = AgeGroups[(agDivId, age)];
+                        person.EventSpecific.AgeGroupId = group.GroupId;
+                        person.EventSpecific.AgeGroupName = String.Format("{0}-{1}", group.StartAge, group.EndAge);
+                    }
+                    else if (LastAgeGroup.ContainsKey(agDivId))
+                    {
+                        AgeGroup group = LastAgeGroup[agDivId];
+                        person.EventSpecific.AgeGroupId = group.GroupId;
+                        person.EventSpecific.AgeGroupName = String.Format("{0}-{1}", group.StartAge, group.EndAge);
+                    }
+                    else
+                    {
+                        person.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                        person.EventSpecific.AgeGroupName = "0-110";
+                    }
+                }
+                database.UpdateParticipants(participants);
+
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                mWindow.NetworkClearResults(theEvent.Identifier);
+                mWindow.NotifyTimingWorker();
             }
         }
 

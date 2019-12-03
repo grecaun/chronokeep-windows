@@ -321,7 +321,7 @@ namespace ChronoKeep.UI.MainPages
             }
             if (UpdateTimingWorker)
             {
-                mWindow.DatasetChanged();
+                mWindow.NotifyTimingWorker();
             }
         }
 
