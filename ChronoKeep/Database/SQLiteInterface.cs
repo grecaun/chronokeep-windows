@@ -2986,8 +2986,10 @@ namespace ChronoKeep
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
+                Log.D("Segments count is " + segments.Count);
                 foreach (Segment seg in segments)
                 {
+                    Log.D("Division ID " + seg.DivisionId + " Segment Name " + seg.Name + " Segment ID " + seg.Identifier);
                     UpdateSegmentInternal(seg, connection);
                 }
                 transaction.Commit();

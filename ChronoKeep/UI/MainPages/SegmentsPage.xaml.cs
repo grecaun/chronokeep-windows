@@ -29,7 +29,6 @@ namespace ChronoKeep.UI.MainPages
         private List<TimingLocation> locations;
         private List<Division> divisions;
 
-        private static HashSet<int> DivisionsToReset = new HashSet<int>();
         private bool UpdateTimingWorker = false;
 
         private Dictionary<int, List<Segment>> allSegments = new Dictionary<int, List<Segment>>();
@@ -105,6 +104,13 @@ namespace ChronoKeep.UI.MainPages
                     }
                     allSegments[seg.DivisionId].Add(seg);
                 }
+                foreach (Division div in divisions)
+                {
+                    if (!allSegments.ContainsKey(div.Identifier))
+                    {
+                        allSegments[div.Identifier] = new List<Segment>();
+                    }
+                }
             }
             else
             {
@@ -117,6 +123,23 @@ namespace ChronoKeep.UI.MainPages
         {
             UpdateDatabase();
             UpdateSegments();
+            bool occurrence_error = false;
+            foreach (Object seg in SegmentsBox.Items)
+            {
+                if (seg is ASegment)
+                {
+                    Segment thisSegment = ((ASegment)seg).mySegment;
+                    if (thisSegment.LocationId == Constants.Timing.LOCATION_FINISH && thisSegment.Occurrence >= theEvent.FinishMaxOccurrences)
+                    {
+                        occurrence_error = true;
+                    }
+                    Log.D("Division ID " + ((ASegment)seg).mySegment.DivisionId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                }
+            }
+            if (occurrence_error)
+            {
+                MessageBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  This could cause errors.");
+            }
             UpdateView();
         }
 
@@ -141,24 +164,22 @@ namespace ChronoKeep.UI.MainPages
             {
                 if (seg is ASegment)
                 {
-
                     ((ASegment)seg).UpdateSegment();
-                    segments.Add(((ASegment)seg).mySegment);
+                    Segment thisSegment = ((ASegment)seg).mySegment;
+                    segments.Add(thisSegment);
+                    Log.D("Division ID " + ((ASegment)seg).mySegment.DivisionId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
                 }
             }
-            foreach (Segment seg in SegmentsToAdd)
-            {
-                DivisionsToReset.Add(seg.DivisionId);
-            }
             database.AddSegments(SegmentsToAdd);
-            foreach (Segment seg in SegmentsToRemove)
-            {
-                DivisionsToReset.Add(seg.DivisionId);
-            }
             database.RemoveSegments(SegmentsToRemove);
+            Log.D("Segments to remove count is " + SegmentsToRemove.Count);
             UpdateTimingWorker = true;
             segments.RemoveAll(x => (SegmentsToAdd.Contains(x) || SegmentsToRemove.Contains(x)));
             database.UpdateSegments(segments);
+            Log.D("Segments to update count is " + segments.Count);
+            SegmentsToAdd.Clear();
+            SegmentsToRemove.Clear();
+
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -179,23 +200,37 @@ namespace ChronoKeep.UI.MainPages
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
+                bool occurrence_error = false;
+                foreach (Object seg in SegmentsBox.Items)
+                {
+                    if (seg is ASegment)
+                    {
+                        Segment thisSegment = ((ASegment)seg).mySegment;
+                        if (thisSegment.LocationId == Constants.Timing.LOCATION_FINISH && thisSegment.Occurrence >= theEvent.FinishMaxOccurrences)
+                        {
+                            occurrence_error = true;
+                        }
+                        Log.D("Division ID " + ((ASegment)seg).mySegment.DivisionId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                    }
+                }
+                if (occurrence_error)
+                {
+                    MessageBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  This could cause errors.");
+                }
             }
             if (UpdateTimingWorker)
             {
                 mWindow.DatasetChanged();
-            }
-            if (DivisionsToReset.Count > 0)
-            {
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 mWindow.NetworkClearResults(theEvent.Identifier);
                 mWindow.NotifyTimingWorker();
             }
         }
 
-        public void AddSegment(int divisionId, int finish_occurrences)
+        public void AddSegment(int divisionId, int occurrence)
         {
             Log.D("Adding segment.");
-            Segment newSeg = new Segment(theEvent.Identifier, divisionId, Constants.Timing.LOCATION_FINISH, finish_occurrences, 0.0, 0.0, Constants.Distances.MILES, "Finish " + finish_occurrences);
+            Segment newSeg = new Segment(theEvent.Identifier, divisionId, Constants.Timing.LOCATION_FINISH, occurrence, 0.0, 0.0, Constants.Distances.MILES, "Finish " + occurrence);
             SegmentsToAdd.Add(newSeg);
             allSegments[divisionId].Add(newSeg);
             UpdateView();
@@ -204,6 +239,10 @@ namespace ChronoKeep.UI.MainPages
         public void CopyFromDivision(int intoDivision, int fromDivision)
         {
             Log.D("Copying segments.");
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
             SegmentsToRemove.AddRange(allSegments[intoDivision]);
             allSegments[intoDivision].Clear();
             foreach (Segment seg in allSegments[fromDivision])
@@ -437,7 +476,7 @@ namespace ChronoKeep.UI.MainPages
                 this.IsTabStop = false;
                 DockPanel dockPanel = new DockPanel()
                 {
-                    MaxWidth = 700
+                    MaxWidth = 750
                 };
                 this.Content = dockPanel;
                 dockPanel.Children.Add(Where);
@@ -476,7 +515,7 @@ namespace ChronoKeep.UI.MainPages
                 this.locationDictionary = new Dictionary<string, int>();
                 DockPanel thePanel = new DockPanel()
                 {
-                    MaxWidth = 700
+                    MaxWidth = 750
                 };
                 this.Content = thePanel;
 
