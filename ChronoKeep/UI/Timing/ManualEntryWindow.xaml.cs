@@ -40,7 +40,7 @@ namespace ChronoKeep.UI.Timing
         private ManualEntryWindow(IMainWindow window, IDBInterface database)
         {
             InitializeComponent();
-            this.Height = 295;
+            this.Height = 275;
             this.Title = "Add DNF Entry";
             LocationPanel.Visibility = Visibility.Collapsed;
             this.window = window;
@@ -315,6 +315,34 @@ namespace ChronoKeep.UI.Timing
         private void NumberValidation(object sender, TextCompositionEventArgs e)
         {
             e.Handled = Regex.IsMatch(e.Text, allowedNums);
+        }
+
+        private void TypeButtonChecked(object sender, RoutedEventArgs e)
+        {
+            if (TimeofDayButton != null && TimeofDayButton.IsChecked == true)
+            {
+                DatePanel.Visibility = Visibility.Visible;
+                if (LocationPanel.Visibility == Visibility.Collapsed)
+                {
+                    this.Height = 320;
+                }
+                else
+                {
+                    this.Height = 365;
+                }
+            }
+            else
+            {
+                DatePanel.Visibility = Visibility.Collapsed;
+                if (LocationPanel.Visibility == Visibility.Collapsed)
+                {
+                    this.Height = 270;
+                }
+                else
+                {
+                    this.Height = 315;
+                }
+            }
         }
     }
 }
