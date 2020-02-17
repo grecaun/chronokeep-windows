@@ -53,6 +53,11 @@ namespace ChronoKeep.UI.Timing
             dnf = true;
         }
 
+        private void ClearBib()
+        {
+            BibBox.Clear();
+        }
+
         public void UpdateLocations(List<TimingLocation> locations)
         {
             int selectedLoc;
@@ -133,6 +138,7 @@ namespace ChronoKeep.UI.Timing
 
         private void AddDNF()
         {
+            Log.D("DNF entry detected.");
             int bib = -1;
             try
             {
@@ -147,27 +153,6 @@ namespace ChronoKeep.UI.Timing
             {
                 MessageBox.Show("Invalid bib value given.");
                 return;
-            }
-            List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
-            // Store the offset start values for each division by division ID
-            Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
-            // Store participants by their bib number
-            Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
-            foreach (Division div in divisions)
-            {
-                divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
-            }
-            foreach (Participant part in participants)
-            {
-                participantsDictionary[part.EventSpecific.Bib] = part;
-            }
-            (int seconds, int milliseconds) startOffset = (0, 0);
-            // Check if the bib corresponds to a person, then if that person has a valid division ID
-            if (participantsDictionary.ContainsKey(bib) && divisionStartOffsetDictionary
-                .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
-            {
-                startOffset = divisionStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
             }
             String timeVal = TimeBox.Text.Replace('_', '0');
             int locationId = Constants.Timing.LOCATION_FINISH;
@@ -185,9 +170,36 @@ namespace ChronoKeep.UI.Timing
             {
                 if (NetTimeButton.IsChecked == true)
                 {
+                    List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+                    List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+                    // Store the offset start values for each division by division ID
+                    Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
+                    // Store participants by their bib number
+                    Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
+                    foreach (Division div in divisions)
+                    {
+                        divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
+                    }
+                    foreach (Participant part in participants)
+                    {
+                        participantsDictionary[part.EventSpecific.Bib] = part;
+                    }
+                    (int seconds, int milliseconds) startOffset = (0, 0);
+                    // Check if the bib corresponds to a person, then if that person has a valid division ID
+                    if (participantsDictionary.ContainsKey(bib) && divisionStartOffsetDictionary
+                        .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
+                    {
+                        startOffset = divisionStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
+                    }
                     time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
                     milliseconds += theEvent.StartMilliseconds + startOffset.milliseconds;
                     seconds += (minutes * 60) + (hours * 3600) + theEvent.StartSeconds + startOffset.seconds;
+                }
+                else if (ClockTimeButton.IsChecked == true)
+                {
+                    time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
+                    milliseconds += theEvent.StartMilliseconds;
+                    seconds += (minutes * 60) + (hours * 3600) + theEvent.StartSeconds;
                 }
                 else
                 {
@@ -205,10 +217,12 @@ namespace ChronoKeep.UI.Timing
             Log.D("Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
             database.AddChipRead(newEntry);
             bibsAdded.Add(bib);
+            ClearBib();
         }
 
         private void AddEntry()
         {
+            Log.D("Manual entry detected.");
             int bib = -1;
             try
             {
@@ -224,27 +238,6 @@ namespace ChronoKeep.UI.Timing
                 MessageBox.Show("Invalid bib value given.");
                 return;
             }
-            List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
-            // Store the offset start values for each division by division ID
-            Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
-            // Store participants by their bib number
-            Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
-            foreach (Division div in divisions)
-            {
-                divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
-            }
-            foreach (Participant part in participants)
-            {
-                participantsDictionary[part.EventSpecific.Bib] = part;
-            }
-            (int seconds, int milliseconds) startOffset = (0, 0);
-            // Check if the bib corresponds to a person, then if that person has a valid division ID
-            if (participantsDictionary.ContainsKey(bib) && divisionStartOffsetDictionary
-                .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
-            {
-                startOffset = divisionStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
-            }
             String timeVal = TimeBox.Text.Replace('_', '0');
             int locationId = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem).Uid);
             DateTime time;
@@ -253,11 +246,43 @@ namespace ChronoKeep.UI.Timing
             minutes = Convert.ToInt32(timeVal.Substring(3, 2));
             seconds = Convert.ToInt32(timeVal.Substring(6, 2));
             milliseconds = Convert.ToInt32(timeVal.Substring(9, 3));
+            if (hours == minutes && minutes == seconds && seconds == milliseconds && milliseconds == 0)
+            {
+                MessageBox.Show("No time value specified.");
+                return;
+            }
             if (NetTimeButton.IsChecked == true)
             {
+                List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+                List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+                // Store the offset start values for each division by division ID
+                Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
+                // Store participants by their bib number
+                Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
+                foreach (Division div in divisions)
+                {
+                    divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
+                }
+                foreach (Participant part in participants)
+                {
+                    participantsDictionary[part.EventSpecific.Bib] = part;
+                }
+                (int seconds, int milliseconds) startOffset = (0, 0);
+                // Check if the bib corresponds to a person, then if that person has a valid division ID
+                if (participantsDictionary.ContainsKey(bib) && divisionStartOffsetDictionary
+                    .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
+                {
+                    startOffset = divisionStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
+                }
                 time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
                 milliseconds += theEvent.StartMilliseconds + startOffset.milliseconds;
                 seconds += (minutes * 60) + (hours * 3600) + theEvent.StartSeconds + startOffset.seconds;
+            }
+            else if (ClockTimeButton.IsChecked == true)
+            {
+                time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
+                milliseconds += theEvent.StartMilliseconds;
+                seconds += (minutes * 60) + (hours * 3600) + theEvent.StartSeconds;
             }
             else
             {
@@ -274,6 +299,7 @@ namespace ChronoKeep.UI.Timing
             Log.D("Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
             database.AddChipRead(newEntry);
             bibsAdded.Add(bib);
+            ClearBib();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

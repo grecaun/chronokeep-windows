@@ -85,7 +85,7 @@ namespace ChronoKeep
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
             int segmentId, int occurrence, string time, string unknownId, string chipTime,
-            DateTime systemTime, int bib)
+            DateTime systemTime, int bib, int status)
         {
             this.eventId = eventId;
             this.readId = readId;
@@ -101,7 +101,7 @@ namespace ChronoKeep
             place = Constants.Timing.TIMERESULT_DUMMYPLACE;
             agePlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             genderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
-            status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            this.status = status;
             this.splitTime = "";
         }
 
@@ -180,6 +180,11 @@ namespace ChronoKeep
         public string LapTime { get => splitTime; set => splitTime = value; }
         public long ChipSeconds { get => chipSeconds; set => chipSeconds = value; }
         public int ChipMilliseconds { get => chipMilliseconds; set => chipMilliseconds = value; }
+
+        public bool IsDNF()
+        {
+            return status == Constants.Timing.TIMERESULT_STATUS_DNF;
+        }
 
         public static int CompareByGunTime(TimeResult one, TimeResult two)
         {

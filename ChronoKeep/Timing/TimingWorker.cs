@@ -449,7 +449,8 @@ namespace ChronoKeep.Timing
                         "Bib:" + bib.ToString(),
                         "DNF",
                         dnfDictionary[bib].Time,
-                        bib));
+                        bib,
+                        Constants.Timing.TIMERESULT_STATUS_DNF));
                 }
             }
             // process reads that have a bib
@@ -533,7 +534,9 @@ namespace ChronoKeep.Timing
                                     "Bib:" + bib.ToString(),
                                     "0:00:00.000",
                                     read.Time,
-                                    bib);
+                                    bib,
+                                    Constants.Timing.TIMERESULT_STATUS_NONE
+                                    );
                                 startTimes[startResult.Identifier] = startResult;
                                 newResults.Add(startResult);
                                 if (part != null &&
@@ -654,7 +657,9 @@ namespace ChronoKeep.Timing
                                             identifier,
                                             String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
                                             read.Time,
-                                            bib));
+                                            bib,
+                                            Constants.Timing.TIMERESULT_STATUS_NONE
+                                            ));
                                         if (part != null)
                                         {
                                             // If they've finished, mark them as such.
@@ -710,7 +715,9 @@ namespace ChronoKeep.Timing
                         "Chip:" + chip,
                         "DNF",
                         chipDnfDictionary[chip].Time,
-                        chipDnfDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDnfDictionary[chip].ReadBib : chipDnfDictionary[chip].ChipBib));
+                        chipDnfDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDnfDictionary[chip].ReadBib : chipDnfDictionary[chip].ChipBib,
+                        Constants.Timing.TIMERESULT_STATUS_DNF
+                        ));
                 }
             }
             // process reads that have a chip
@@ -773,7 +780,9 @@ namespace ChronoKeep.Timing
                                     identifier,
                                     "0:00:00.000",
                                     read.Time,
-                                    read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib);
+                                    read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
+                                    Constants.Timing.TIMERESULT_STATUS_NONE
+                                    );
                                 newResults.Add(startResult);
                                 startTimes[startResult.Identifier] = startResult;
                                 // Finally, set the chipread status to USED.
@@ -873,7 +882,9 @@ namespace ChronoKeep.Timing
                                         identifier,
                                         String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
                                         read.Time,
-                                        read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib));
+                                        read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
+                                        Constants.Timing.TIMERESULT_STATUS_NONE
+                                        ));
                                         read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                     }
                                 }
@@ -1070,7 +1081,9 @@ namespace ChronoKeep.Timing
                                 "Bib:" + bib.ToString(),
                                 "0:00:00.000",
                                 read.Time,
-                                bib);
+                                bib,
+                                Constants.Timing.TIMERESULT_STATUS_NONE
+                                );
                             startTimes[startResult.Identifier] = startResult;
                             newResults.Add(startResult);
                             read.Status = Constants.Timing.CHIPREAD_STATUS_STARTTIME;
@@ -1161,7 +1174,9 @@ namespace ChronoKeep.Timing
                                     identifier,
                                     String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
                                     read.Time,
-                                    bib));
+                                    bib,
+                                    Constants.Timing.TIMERESULT_STATUS_NONE
+                                    ));
                                 read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                             }
                         }
@@ -1232,7 +1247,9 @@ namespace ChronoKeep.Timing
                                 "Chip:" + chip.ToString(),
                                 "0:00:00.000",
                                 read.Time,
-                                read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib);
+                                read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
+                                Constants.Timing.TIMERESULT_STATUS_NONE
+                                );
                             startTimes[startResult.Identifier] = startResult;
                             newResults.Add(startResult);
                             read.Status = Constants.Timing.CHIPREAD_STATUS_STARTTIME;
@@ -1318,7 +1335,9 @@ namespace ChronoKeep.Timing
                                     identifier,
                                     String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
                                     read.Time,
-                                    read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib));
+                                    read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
+                                    Constants.Timing.TIMERESULT_STATUS_NONE
+                                    ));
                                 read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                             }
                         }
@@ -1512,11 +1531,22 @@ namespace ChronoKeep.Timing
                     if (x1 == null || x2 == null) return 1;
                     if (x1.DivisionName.Equals(x2.DivisionName))
                     {
-                        if (participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
+                        if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
                         {
-                            return x1.SystemTime.CompareTo(x2.SystemTime);
+                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId) && participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
+                            {
+                                return x1.SystemTime.CompareTo(x2.SystemTime);
+                            }
+                            return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
                         }
-                        return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
+                        if (participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
+                        {
+                            return participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart.CompareTo(false);
+                        }
+                        if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
+                        {
+                            return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
+                        }
                     }
                     return x1.DivisionName.CompareTo(x2.DivisionName);
                 });
@@ -1529,15 +1559,35 @@ namespace ChronoKeep.Timing
                     if (x1 == null || x2 == null) return 1;
                     if (x1.DivisionName.Equals(x2.DivisionName))
                     {
-                        if (participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
+                        if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
                         {
-                            return x1.CompareChip(x2);
+                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId) && participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
+                            {
+                                return x1.CompareChip(x2);
+                            }
+                            return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
                         }
-                        return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
+                        if (!participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
+                        {
+                            return participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart.CompareTo(false);
+                        }
+                        if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
+                        {
+                            return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
+                        }
                     }
                     return x1.DivisionName.CompareTo(x2.DivisionName);
                 });
             }
+            List<TimeResult> DNFResults = segmentResults.FindAll(x => x.IsDNF());
+            foreach (TimeResult res in DNFResults)
+            {
+                res.Place = Constants.Timing.TIMERESULT_DUMMYPLACE;
+                res.AgePlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
+                res.GenderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
+            }
+            int removed = segmentResults.RemoveAll(x => x.IsDNF());
+            Log.D(String.Format("{0} Result(s) in DNFResults - {1} Result(s) removed from segmentResults", DNFResults.Count, removed));
             // Get Dictionaries for storing the last known place (age group, gender)
             // The key is as follows: (Division ID, Age Group ID, int - Gender ID (M=1,F=2))
             // The value stored is the last place given
@@ -1593,6 +1643,7 @@ namespace ChronoKeep.Timing
                     result.AgePlace = ++(ageGroupPlaceDictionary[(divisionId, ageGroupId, gender)]);
                 }
             }
+            segmentResults.AddRange(DNFResults);
             return segmentResults;
         }
     }

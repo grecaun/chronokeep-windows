@@ -10,18 +10,18 @@
 		<link rel='stylesheet' href='style.css'>
 	</head>
 	<body>
-		<div class='results-wrapper panel-group' id='results'>
-			<div class='text-important results-header'><h2><#= theEvent.YearCode #> <#= theEvent.Name #></h2></div>
-			<div class='results-panel panel panel-default'>
-				<div class='btn-wrapper'>
+		<div class='events-results-wrapper panel-group' id='results'>
+			<div class='text-important table-header'><h2><#= theEvent.YearCode #> <#= theEvent.Name #></h2></div>
+			<div class='events-panel panel panel-default'>
+				<div class='events-btn-wrapper'>
 					<# foreach (string d in divisionResults.Keys)
 					{ #>
-					<button class="btn btn-default results-btn collapsed" type="button" data-toggle="collapse" data-parent="#results" data-target="#results-<#= d.Replace(' ', '-') #>" aria-expanded="false" aria-controls="results-<#= d.Replace(' ', '-') #>"><#= d #></button>
+					<button class="btn btn-default events-btn collapsed" type="button" data-toggle="collapse" data-parent="#results" data-target="#<#= theEvent.YearCode #>-results-<#= d.Replace(' ', '-') #>" aria-expanded="false" aria-controls="<#= theEvent.YearCode #>-results-<#= d.Replace(' ', '-') #>"><#= d #></button>
 					<# } #>
 				</div>
 				<# foreach (string d in divisionResults.Keys)
 				{ #>
-				<div class="collapse" id="results-<#= d.Replace(' ', '-') #>">
+				<div class="collapse" id="<#= theEvent.YearCode #>-results-<#= d.Replace(' ', '-') #>">
 					<div class='well'>
 						<table>
 							<tr><td colspan='8' class='table-header text-important'><#= d #></td></tr>

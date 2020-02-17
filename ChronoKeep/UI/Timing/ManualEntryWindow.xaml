@@ -17,7 +17,7 @@
             <Label Content="Time" Margin="10,10,0,10" FontSize="16" Width="80" HorizontalContentAlignment="Right"/>
             <xctk:MaskedTextBox Name="TimeBox" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" FontSize="16" Margin="5,10,10,10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" KeyUp="Enter_KeyDown"/>
         </DockPanel>
-        <DockPanel>
+        <DockPanel Name="DatePanel" Visibility="Collapsed">
             <Label Content="Date" Margin="10,10,0,10" FontSize="16" Width="80" HorizontalContentAlignment="Right"/>
             <DatePicker Name="DateBox" FontSize="16" Margin="5,10,10,10"/>
         </DockPanel>
@@ -26,6 +26,7 @@
             <ComboBox Name="LocationBox" FontSize="16" Margin="5,10,10,10"/>
         </DockPanel>
         <RadioButton Name="NetTimeButton" Content="Net Time" GroupName="TimeGroup" Margin="95,5,0,0" IsChecked="True" FontSize="14" VerticalContentAlignment="Center"/>
+        <RadioButton Name="ClockTimeButton" Content="Clock Time" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center" />
         <RadioButton Name="TimeofDayButton" Content="Time of Day" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center"/>
         <Grid Margin="10,10,10,0">
             <Grid.ColumnDefinitions>

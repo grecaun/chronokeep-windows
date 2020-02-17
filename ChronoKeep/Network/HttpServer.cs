@@ -22,6 +22,13 @@ namespace ChronoKeep.Network
         private List<TimeResult> finishResults = new List<TimeResult>();
         private Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
 
+        // Time based results page specific items
+        private Dictionary<string, int> maxLoops = new Dictionary<string, int>();
+        private Dictionary<(int, int), TimeResult> LoopResults = new Dictionary<(int, int), TimeResult>();
+        private Dictionary<int, int> RunnerLoopsCompleted = new Dictionary<int, int>();
+        private double DistancePerLoop = 0;
+        private string DistanceType = "Miles";
+
         private Mutex info_mutex = new Mutex();
 
         public int Port
@@ -57,6 +64,40 @@ namespace ChronoKeep.Network
             foreach (Participant person in database.GetParticipants(theEvent.Identifier))
             {
                 participantDictionary[person.EventSpecific.Identifier] = person;
+            }
+            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
+            {
+                // Figure out all the information required for time based events.
+                maxLoops.Clear();
+                LoopResults.Clear();
+                RunnerLoopsCompleted.Clear();
+                foreach (TimeResult result in finishResults)
+                {
+                    if (!maxLoops.ContainsKey(result.DivisionName)) {
+                        maxLoops[result.DivisionName] = result.Occurrence;
+                    }
+                    maxLoops[result.DivisionName] = result.Occurrence > maxLoops[result.DivisionName] ? result.Occurrence : maxLoops[result.DivisionName];
+                    LoopResults[(result.EventSpecificId, result.Occurrence)] = result;
+                    if (!RunnerLoopsCompleted.ContainsKey(result.EventSpecificId))
+                    {
+                        RunnerLoopsCompleted[result.EventSpecificId] = result.Occurrence;
+                    }
+                    RunnerLoopsCompleted[result.EventSpecificId] =
+                        RunnerLoopsCompleted[result.EventSpecificId] > result.Occurrence ?
+                            RunnerLoopsCompleted[result.EventSpecificId] :
+                            result.Occurrence;
+                }
+                List<Division> divs = database.GetDivisions(theEvent.Identifier);
+                foreach (Division d in divs)
+                {
+                    DistancePerLoop = DistancePerLoop > d.Distance ? DistancePerLoop : d.Distance;
+                    DistanceType = d.DistanceUnit == Constants.Distances.MILES ? "Miles" :
+                        d.DistanceUnit == Constants.Distances.FEET ? "Feet" :
+                        d.DistanceUnit == Constants.Distances.KILOMETERS ? "Kilometers" :
+                        d.DistanceUnit == Constants.Distances.METERS ? "Meters" :
+                        d.DistanceUnit == Constants.Distances.YARDS ? "Yards" :
+                        "Unknown";
+                }
             }
             info_mutex.ReleaseMutex();
         }
@@ -99,10 +140,21 @@ namespace ChronoKeep.Network
                 }
                 else
                 {
-                    HtmlResultsTemplate results = new HtmlResultsTemplate(theEvent, finishResults, participantDictionary);
-                    message = results.TransformText();
-                    context.Response.ContentType = "text/html";
-                    Log.D("Results html");
+                    if (theEvent.EventType == Constants.Timing.EVENT_TYPE_DISTANCE)
+                    {
+                        HtmlResultsTemplate results = new HtmlResultsTemplate(theEvent, finishResults, participantDictionary);
+                        message = results.TransformText();
+                        context.Response.ContentType = "text/html";
+                        Log.D("Results html");
+                    }
+                    else
+                    {
+                        HtmlResultsTemplateTime results = new HtmlResultsTemplateTime(theEvent, finishResults, participantDictionary,
+                            maxLoops, LoopResults, RunnerLoopsCompleted, DistancePerLoop, DistanceType);
+                        message = results.TransformText();
+                        context.Response.ContentType = "text/html";
+                        Log.D("Results html");
+                    }
                     info_mutex.ReleaseMutex();
                 }
             }

@@ -20,26 +20,26 @@ a:visited {
 /**
  * Event options
  */
-.results-wrapper {
+.events-results-wrapper {
   padding: 20px 20px 20px 20px;
   text-align: center;
 }
-.results-btn {
+.events-btn {
   width: 150px;
   display: inline-block;
   margin-top: 5px;
 }
-.btn-wrapper {
+.events-btn-wrapper {
   text-align: center;
   margin-bottom: 20px;
 }
-.results-panel {
+.events-panel {
   border-style: none;
   box-shadow: none;
   border: none !important;
 }
 @media (max-width: 556px) {
-  .results-wrapper {
+  .events-results-wrapper {
     margin: 0px 0px 10px 0px;
   }
 }
@@ -95,7 +95,7 @@ table {
   overflow: auto;
   max-width: 100%;
   margin: 0px;
-  padding: 0px;
+  padding: 2px;
 }
 @media (max-width: 767px) {
   .overflow-hidden {
