@@ -15,7 +15,7 @@ namespace ChronoKeep
 {
     class SQLiteInterface : IDBInterface
     {
-        private readonly int version = 41;
+        private readonly int version = 42;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -222,7 +222,7 @@ namespace ChronoKeep
                     "read_split_milliseconds INTEGER NOT NULL DEFAULT 0," +
                     "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
                     "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
-                    "UNIQUE (event_id, read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
+                    "UNIQUE (event_id, read_chipnumber, read_bib, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS time_results (" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
@@ -1283,6 +1283,38 @@ namespace ChronoKeep
                         command.CommandText = "ALTER TABLE divisions ADD " +
                             "division_early_start_offset_seconds INTEGER NOT NULL DEFAULT 0;" +
                             "UPDATE settings SET version=41 WHERE version=40;";
+                        command.ExecuteNonQuery();
+                        goto case 41;
+                    case 41:
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE chipreads RENAME TO chipreads_old;" +
+                            "CREATE TABLE IF NOT EXISTS chipreads (" +
+                            "read_id INTEGER PRIMARY KEY," +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                            "read_status INTEGER NOT NULL DEFAULT 0," +
+                            "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                            "read_chipnumber VARCHAR NOT NULL," +
+                            "read_seconds INTEGER NOT NULL," +
+                            "read_milliseconds INTEGER NOT NULL," +
+                            "read_antenna INTEGER NOT NULL," +
+                            "read_reader TEXT NOT NULL," +
+                            "read_box TEXT NOT NULL," +
+                            "read_logindex INTEGER NOT NULL," +
+                            "read_rssi INTEGER NOT NULL," +
+                            "read_isrewind INTEGER NOT NULL," +
+                            "read_readertime TEXT NOT NULL," +
+                            "read_starttime INTEGER NOT NULL," +
+                            "read_time_seconds INTEGER NOT NULL," +
+                            "read_time_milliseconds INTEGER NOT NULL," +
+                            "read_split_seconds INTEGER NOT NULL DEFAULT 0," +
+                            "read_split_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                            "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
+                            "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
+                            "UNIQUE (event_id, read_chipnumber, read_bib, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
+                            ");" +
+                            "INSERT INTO chipreads SELECT * FROM chipreads_old;" +
+                            "DROP TABLE chipreads_old;" +
+                            "UPDATE settings SET version=42 WHERE version=41;";
                         command.ExecuteNonQuery();
                         break;
                 }

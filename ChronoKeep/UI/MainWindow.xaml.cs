@@ -46,9 +46,22 @@ namespace ChronoKeep.UI
 
         List<Window> openWindows = new List<Window>();
 
+        // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
+        static Mutex OneWindow = new Mutex(true,
+            "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
+        bool release = false;
+
         public MainWindow()
         {
             InitializeComponent();
+            // Check that no other instance of this program are running.
+            if (!OneWindow.WaitOne(TimeSpan.Zero, true))
+            {
+                MessageBox.Show("Chronokeep is already running.");
+                this.Close();
+            }
+            release = true;
+            
             String dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
             String path = System.IO.Path.Combine(dirPath, dbName);
             Log.D("Looking for database file.");
@@ -251,6 +264,10 @@ namespace ChronoKeep.UI
                 }
             }
             if (page != null) page.Closing();
+            if (release)
+            {
+                OneWindow.ReleaseMutex();
+            }
         }
 
         private bool StopTimingWorker()

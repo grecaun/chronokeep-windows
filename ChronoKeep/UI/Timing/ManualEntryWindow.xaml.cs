@@ -174,11 +174,13 @@ namespace ChronoKeep.UI.Timing
                     List<Division> divisions = database.GetDivisions(theEvent.Identifier);
                     // Store the offset start values for each division by division ID
                     Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
+                    Dictionary<int, int> divisionEarlyStartOffsetDictionary = new Dictionary<int, int>();
                     // Store participants by their bib number
                     Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
                     foreach (Division div in divisions)
                     {
                         divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
+                        divisionEarlyStartOffsetDictionary[div.Identifier] = div.EarlyStartOffsetSeconds;
                     }
                     foreach (Participant part in participants)
                     {
@@ -190,6 +192,11 @@ namespace ChronoKeep.UI.Timing
                         .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
                     {
                         startOffset = divisionStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
+                        if (participantsDictionary[bib].IsEarlyStart && divisionEarlyStartOffsetDictionary
+                            .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
+                        {
+                            startOffset.seconds -= divisionEarlyStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
+                        }
                     }
                     time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
                     milliseconds += theEvent.StartMilliseconds + startOffset.milliseconds;
@@ -257,11 +264,13 @@ namespace ChronoKeep.UI.Timing
                 List<Division> divisions = database.GetDivisions(theEvent.Identifier);
                 // Store the offset start values for each division by division ID
                 Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
+                Dictionary<int, int> divisionEarlyStartOffsetDictionary = new Dictionary<int, int>();
                 // Store participants by their bib number
                 Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
                 foreach (Division div in divisions)
                 {
                     divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
+                    divisionEarlyStartOffsetDictionary[div.Identifier] = div.EarlyStartOffsetSeconds;
                 }
                 foreach (Participant part in participants)
                 {
@@ -273,6 +282,11 @@ namespace ChronoKeep.UI.Timing
                     .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
                 {
                     startOffset = divisionStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
+                    if (participantsDictionary[bib].IsEarlyStart && divisionEarlyStartOffsetDictionary
+                        .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
+                    {
+                        startOffset.seconds -= divisionEarlyStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
+                    }
                 }
                 time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
                 milliseconds += theEvent.StartMilliseconds + startOffset.milliseconds;
