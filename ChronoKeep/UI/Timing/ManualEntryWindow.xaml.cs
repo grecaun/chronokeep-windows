@@ -56,6 +56,7 @@ namespace ChronoKeep.UI.Timing
         private void ClearBib()
         {
             BibBox.Clear();
+            BibBox.Focus();
         }
 
         public void UpdateLocations(List<TimingLocation> locations)

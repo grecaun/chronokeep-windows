@@ -186,7 +186,8 @@ namespace ChronoKeep.UI.MainPages
             foreach (AReaderBox box in ReadersBox.Items)
             {
                 box.UpdateReader();
-                if (box.reader.IPAddress != "0.0.0.0" && box.reader.IPAddress.Length > 7)
+                if (box.reader.IPAddress != "0.0.0.0" && box.reader.IPAddress.Length > 7 &&
+                    box.reader.IPAddress != String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]))
                 {
                     ourSystems.Add(box.reader);
                 }
@@ -236,23 +237,21 @@ namespace ChronoKeep.UI.MainPages
             {
                 read.UpdateLocations(locations);
                 read.UpdateStatus();
-                connected = read.reader.Status == SYSTEM_STATUS.DISCONNECTED ? connected : connected + 1;
+                connected += read.reader.Status == SYSTEM_STATUS.DISCONNECTED ? 0 : 1;
+            }
+            if (total < 4)
+            {
+                for (int i = total; i < 4; i++)
+                {
+                    ReadersBox.Items.Add(new AReaderBox(
+                        this,
+                        new TimingSystem(
+                            String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
+                            Constants.Settings.TIMING_RFID),
+                        locations));
+                }
             }
 
-            if (total > 4 && connected < total - 1)
-            {
-                AReaderBox removeMe = null;
-                foreach (AReaderBox aReader in ReadersBox.Items)
-                {
-                    if (aReader.reader.Status == SYSTEM_STATUS.DISCONNECTED)
-                    {
-                        removeMe = aReader;
-                        break;
-                    }
-                }
-                ReadersBox.Items.Remove(removeMe);
-                total = ReadersBox.Items.Count;
-            }
             List<DivisionStats> inStats = database.GetDivisionStats(theEvent.Identifier);
             stats.Clear();
             foreach (DivisionStats s in inStats)
@@ -444,6 +443,22 @@ namespace ChronoKeep.UI.MainPages
                     sys.SystemInterface.SetTime(time);
                 }
             }
+        }
+
+        internal void RemoveSystem(TimingSystem sys)
+        {
+            database.RemoveTimingSystem(sys.SystemIdentifier);
+            AReaderBox removed = null;
+            foreach (AReaderBox box in ReadersBox.Items)
+            {
+                if (box.reader.SystemIdentifier == sys.SystemIdentifier && sys.Saved())
+                {
+                    removed = box;
+                    break;
+                }
+            }
+            ReadersBox.Items.Remove(removed);
+            UpdateView();
         }
 
         internal bool ConnectSystem(TimingSystem sys)
@@ -734,6 +749,7 @@ namespace ChronoKeep.UI.MainPages
             public Button ConnectButton { get; private set; }
             public Button ClockButton { get; private set; }
             public Button RewindButton { get; private set; }
+            public Button RemoveButton { get; private set; }
 
             readonly TimingPage parent;
             private List<TimingLocation> locations;
@@ -751,7 +767,7 @@ namespace ChronoKeep.UI.MainPages
                 Grid thePanel = new Grid()
                 {
                     MaxWidth = 740,
-                    Width = 740
+                    Width = 790
                 };
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) });
@@ -760,6 +776,7 @@ namespace ChronoKeep.UI.MainPages
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(65) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(65) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
                 this.Content = thePanel;
                 ReaderType = new ComboBox()
                 {
@@ -873,6 +890,18 @@ namespace ChronoKeep.UI.MainPages
                 ConnectButton.Click += new RoutedEventHandler(this.Connect);
                 thePanel.Children.Add(ConnectButton);
                 Grid.SetColumn(ConnectButton, 6);
+                RemoveButton = new Button()
+                {
+                    Content = "X",
+                    Margin = new Thickness(5, 5, 5, 5),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                if (reader.Saved())
+                {
+                    RemoveButton.Click += new RoutedEventHandler(this.Remove);
+                    thePanel.Children.Add(RemoveButton);
+                    Grid.SetColumn(RemoveButton, 7);
+                }
                 UpdateStatus();
             }
 
@@ -969,6 +998,15 @@ namespace ChronoKeep.UI.MainPages
                 ReaderPort.Text = reader.Port.ToString();
             }
 
+            private void Remove(object sender, RoutedEventArgs e)
+            {
+                Log.D("Remove button for a timing system has been clicked.");
+                if (reader.Saved())
+                {
+                    parent.RemoveSystem(reader);
+                };
+            }
+
             private void Connect(object sender, RoutedEventArgs e)
             {
                 if ("Connect" != (String)ConnectButton.Content)
@@ -1008,6 +1046,7 @@ namespace ChronoKeep.UI.MainPages
                 ReaderIP.IsEnabled = false;
                 ReaderPort.IsEnabled = false;
                 ReaderLocation.IsEnabled = false;
+                RemoveButton.IsEnabled = false;
                 if (reader.Type.Equals(Constants.Settings.TIMING_IPICO_LITE, StringComparison.OrdinalIgnoreCase))
                 {
                     RewindButton.IsEnabled = false;
@@ -1026,6 +1065,7 @@ namespace ChronoKeep.UI.MainPages
             {
                 ReaderIP.IsEnabled = true;
                 ReaderPort.IsEnabled = true;
+                RemoveButton.IsEnabled = true;
                 ReaderLocation.IsEnabled = true;
                 ClockButton.IsEnabled = false;
                 RewindButton.IsEnabled = false;
@@ -1041,6 +1081,7 @@ namespace ChronoKeep.UI.MainPages
                 ClockButton.IsEnabled = false;
                 RewindButton.IsEnabled = false;
                 ConnectButton.IsEnabled = false;
+                RemoveButton.IsEnabled = false;
                 ConnectButton.Content = "Working...";
             }
 

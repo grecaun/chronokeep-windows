@@ -11,7 +11,7 @@ namespace ChronoKeep.Objects
 {
     public class TimingSystem : IEquatable<TimingSystem>
     {
-        public int SystemIdentifier { get; set; } = -1;
+        public int SystemIdentifier { get; set; } = Constants.Timing.TIMINGSYSTEM_UNKNOWN;
         public string IPAddress { get; set; }
         public int Port { get; set; }
         public int LocationID { get; set; } = Constants.Timing.LOCATION_FINISH;
@@ -121,6 +121,11 @@ namespace ChronoKeep.Objects
         {
             return other != null && this.IPAddress.Trim().Equals(other.IPAddress.Trim()) && this.Port == other.Port
                 && this.LocationID == other.LocationID && this.Type.Equals(other.Type);
+        }
+
+        public bool Saved()
+        {
+            return this.SystemIdentifier != Constants.Timing.TIMINGSYSTEM_UNKNOWN;
         }
     }
 
