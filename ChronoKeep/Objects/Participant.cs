@@ -8,7 +8,7 @@ namespace ChronoKeep
 {
     public class Participant : IEquatable<Participant>, IComparable<Participant>
     {
-        private int identifier;
+        private int identifier = Constants.Timing.PARTICIPANT_DUMMYIDENTIFIER;
         private string firstName, lastName, street, city, state, zip, email,
             mobile, parent, country, street2, gender, birthdate, emergencyName,
             emergencyPhone;
@@ -548,7 +548,24 @@ namespace ChronoKeep
         public bool Equals(Participant other)
         {
             if (other == null) return false;
-            return this.Identifier == other.Identifier;
+            return this.Identifier == other.Identifier
+                && this.Bib == other.Bib
+                && this.EventIdentifier == other.EventIdentifier
+                && this.FirstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
+                && this.LastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
+                && this.Street.Equals(other.Street, StringComparison.OrdinalIgnoreCase)
+                && this.Zip.Equals(other.Zip, StringComparison.OrdinalIgnoreCase)
+                && this.Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool Is(Participant other)
+        {
+            if (other == null) return false;
+            return this.FirstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
+                && this.LastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
+                && this.Street.Equals(other.Street, StringComparison.OrdinalIgnoreCase)
+                && this.Zip.Equals(other.Zip, StringComparison.OrdinalIgnoreCase)
+                && this.Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
         }
 
         public String Age(String eventDate)

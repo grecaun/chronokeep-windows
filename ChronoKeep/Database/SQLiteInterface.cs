@@ -15,6 +15,9 @@ namespace ChronoKeep
 {
     class SQLiteInterface : IDBInterface
     {
+        /**
+         * HIGHEST MUTEX ID = 124
+         */
         private readonly int version = 42;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
@@ -2155,7 +2158,7 @@ namespace ChronoKeep
         private void RemoveParticipantInternal(int identifier, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@0; DELETE FROM participant WHERE participant_id=@0";
+            command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@0; DELETE FROM participants WHERE participant_id=@0";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
             command.ExecuteNonQuery();
@@ -2176,9 +2179,32 @@ namespace ChronoKeep
             mutex.ReleaseMutex();
         }
 
+        private void RemoveParticipantEntryInternal(int identifier, SQLiteConnection connection)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@0;";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@0", identifier) });
+            command.ExecuteNonQuery();
+        }
+
         public void RemoveParticipantEntry(Participant person)
         {
-            RemoveParticipant(person.Identifier);
+            Log.D("Attempting to grab Mutex: ID 124");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 124");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            using (var transaction = connection.BeginTransaction())
+            {
+                RemoveParticipantEntryInternal(person.Identifier, connection);
+                transaction.Commit();
+            }
+            connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveParticipantEntries(List<Participant> participants)
@@ -2195,7 +2221,7 @@ namespace ChronoKeep
             {
                 foreach (Participant p in participants)
                 {
-                    RemoveParticipantInternal(p.Identifier, connection);
+                    RemoveParticipantEntryInternal(p.Identifier, connection);
                 }
                 transaction.Commit();
             }

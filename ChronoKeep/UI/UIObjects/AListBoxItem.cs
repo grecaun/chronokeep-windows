@@ -165,6 +165,72 @@ namespace ChronoKeep
         }
     }
 
+    internal class MultipleEntryListBoxItem : ListBoxItem
+    {
+        public CheckBox Keep { get; private set; }
+        public Label Existing { get; private set; }
+        public Label Bib { get; private set; }
+        public Label Division { get; private set; }
+        public Label PartName { get; private set; }
+        public Label Age { get; private set; }
+        public Label Sex { get; private set; }
+        public Participant Part { get; private set; }
+
+        public MultipleEntryListBoxItem(Participant person, Event theEvent)
+        {
+            this.Part = person;
+            this.IsTabStop = false;
+            Grid theGrid = new Grid();
+            this.Content = theGrid;
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
+            Keep = new CheckBox();
+            theGrid.Children.Add(Keep);
+            Grid.SetColumn(Keep, 0);
+            Existing = new Label
+            {
+                Content = (person.Identifier == Constants.Timing.PARTICIPANT_DUMMYIDENTIFIER ? "" : "X")
+            };
+            theGrid.Children.Add(Existing);
+            Grid.SetColumn(Existing, 1);
+            Bib = new Label
+            {
+                Content = person.Bib.ToString()
+            };
+            theGrid.Children.Add(Bib);
+            Grid.SetColumn(Bib, 2);
+            Division = new Label
+            {
+                Content = person.Division
+            };
+            theGrid.Children.Add(Division);
+            Grid.SetColumn(Division, 3);
+            PartName = new Label
+            {
+                Content = String.Format("{0} {1}", person.FirstName, person.LastName)
+            };
+            theGrid.Children.Add(PartName);
+            Grid.SetColumn(PartName, 4);
+            Sex = new Label
+            {
+                Content = person.Gender
+            };
+            theGrid.Children.Add(Sex);
+            Grid.SetColumn(Sex, 5);
+            Age = new Label
+            {
+                Content = person.GetAge(theEvent.Date)
+            };
+            theGrid.Children.Add(Age);
+            Grid.SetColumn(Age, 6);
+        }
+    }
+
     internal class DivisionListBoxItem : ListBoxItem
     {
         public Label DivisionName { get; private set; }

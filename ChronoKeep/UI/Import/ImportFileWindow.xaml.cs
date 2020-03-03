@@ -68,14 +68,25 @@ namespace ChronoKeep
         private static readonly int EMERGENCYNAME = 19;
         private static readonly int EMERGENCYPHONE = 20;
         private static readonly int AGE = 21;
-        public static readonly int APPARELITEM = 22;
+        internal static readonly int APPARELITEM = 22;
         private static readonly int REGISTRATIONDATE = 23;
         Page page1 = null;
         Page page2 = null;
+        Page multiplesPage = null;
+        Page bibConflictsPage = null;
         int[] keys;
 
         Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
         Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
+
+        Event theEvent;
+
+        /**
+         * VERIFICATION VARIABLES
+         */
+        List<Participant> existingParticipants;
+        List<Participant> importParticipants;
+        List<Participant> existingToRemoveParticipants = new List<Participant>();
 
         private ImportFileWindow(IMainWindow window, IDataImporter importer, IDBInterface database)
         {
@@ -83,6 +94,7 @@ namespace ChronoKeep
             this.importer = importer;
             this.window = window;
             this.database = database;
+            this.theEvent = database.GetCurrentEvent();
             Header.Height = new GridLength(55);
             HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
             HeaderGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -152,7 +164,18 @@ namespace ChronoKeep
             }
             else if (page2 != null)
             {
+                Log.D("Importing participants.");
                 ImportWork(((ImportFilePage2Alt)page2).GetDivisions());
+            }
+            else if (multiplesPage != null)
+            {
+                Log.D("Processing multiples to keep/remove.");
+                ProcessMultiplestoRemove(((ImportFilePageConflicts)multiplesPage).GetParticipantsToRemove());
+            }
+            else if (bibConflictsPage != null)
+            {
+                Log.D("Processing bib conflicts to remove.");
+                ProcessBibConflicts(((ImportFilePageConflicts)bibConflictsPage).GetParticipantsToRemove());
             }
             else
             {
@@ -201,14 +224,12 @@ namespace ChronoKeep
             page2 = new ImportFilePage2Alt(divisionsFromFile, divisionsFromDatabase);
             SheetsBox.Visibility = Visibility.Collapsed;
             eventLabel.Width = 460;
-            Done.Content = "Done";
             Frame.Content = page2;
         }
 
         private async void ImportWork(List<ImportDivision> fileDivisions)
         {
-            bool valid = true;
-            Event theEvent = database.GetCurrentEvent();
+            HashSet<Participant> multiples = new HashSet<Participant>();
             await Task.Run(() =>
             {
                 ImportData data = importer.Data;
@@ -255,7 +276,7 @@ namespace ChronoKeep
                     }
                 }
                 int numEntries = data.Data.Count;
-                List<Participant> participants = new List<Participant>();
+                importParticipants = new List<Participant>();
                 for (int counter = 0; counter < numEntries; counter++)
                 {
                     if (data.Data[counter][keys[DIVISION]] != null && data.Data[counter][keys[DIVISION]].Length > 0)
@@ -328,19 +349,160 @@ namespace ChronoKeep
                             output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
                             output.EventSpecific.AgeGroupName = "0-110";
                         }
-                        participants.Add(output);
+                        importParticipants.Add(output);
                     }
                 }
-                database.AddParticipants(participants);
+                /**
+                 * 
+                 * VERIFICATION CODE
+                 * 
+                 */
+                // Check import participants for multiples.
+                existingParticipants = database.GetParticipants(theEvent.Identifier);
+                HashSet<Participant> duplicatesImport = new HashSet<Participant>();
+                for (int inner=0; inner<importParticipants.Count; inner++)
+                {
+                    // Check against others imported
+                    for (int outer=inner+1; outer<importParticipants.Count; outer++)
+                    {
+                        Log.D(String.Format("inner {1} outer {0}", outer, inner));
+                        if (importParticipants[inner].Is(importParticipants[outer]))
+                        {
+                            // if they're a duplicate and not just a multiple
+                            if (importParticipants[inner].Bib == importParticipants[outer].Bib
+                                && importParticipants[inner].Division.Equals(importParticipants[outer].Division, StringComparison.OrdinalIgnoreCase))
+                            {
+                                duplicatesImport.Add(importParticipants[inner]);
+                            }
+                            else
+                            {
+                                multiples.Add(importParticipants[inner]);
+                                multiples.Add(importParticipants[outer]);
+                            }
+                        }
+                    }
+                    // Check against everyone currently in the database.
+                    foreach (Participant part in existingParticipants)
+                    {
+                        if (importParticipants[inner].Is(part))
+                        {
+                            // check if its someone who's already in the database thus we don't need to add to multiples and
+                            // we can remove them from the import
+                            if (importParticipants[inner].Bib == part.Bib 
+                                && importParticipants[inner].Division.Equals(part.Division, StringComparison.OrdinalIgnoreCase))
+                            {
+                                duplicatesImport.Add(importParticipants[inner]);
+                            }
+                            else
+                            {
+                                multiples.Add(importParticipants[inner]);
+                                multiples.Add(part);
+                            }
+                        }
+                    }
+                }
+                // Remove anyone that was deemed a duplicate
+                // This can happen if there was an X, Y, and Z in the import where X and Y are duplicates
+                // but Z is the same person with diff bib/division.
+                // This can also happen if there are X and Z in the import but Y in the database,
+                // where the situation is as above
+                foreach (Participant dup in duplicatesImport)
+                {
+                    if (multiples.Contains(dup))
+                    {
+                        multiples.Remove(dup);
+                    }
+                }
+                // remove all duplicates from the import
+                importParticipants.RemoveAll(x => duplicatesImport.Contains(x));
             });
-            if (valid)
+            // if we have multiples to mess around with display the page
+            if (multiples.Count > 0)
             {
-                Log.D("All done with the import.");
-                database.ResetTimingResultsEvent(theEvent.Identifier);
-                window.NetworkClearResults(theEvent.Identifier);
-                window.NotifyTimingWorker();
-                this.Close();
+                page2 = null;
+                multiplesPage = new ImportFilePageConflicts(new List<Participant>(multiples), theEvent);
+                Frame.Content = multiplesPage;
             }
+            // otherwise process the multiples (none)
+            else
+            {
+                ProcessMultiplestoRemove(new List<Participant>());
+            }
+        }
+
+
+        private async void ProcessMultiplestoRemove(List<Participant> toRemove)
+        {
+            List<Participant> conflicts = new List<Participant>();
+            await Task.Run(() =>
+            {
+                Dictionary<int, HashSet<Participant>> BibConflicts = new Dictionary<int, HashSet<Participant>>();
+                Dictionary<int, Participant> ExistingParticipants = new Dictionary<int, Participant>();
+                // keep track of who we need to tell the database to remove
+                existingToRemoveParticipants.AddRange(toRemove);
+                existingToRemoveParticipants.RemoveAll(x => importParticipants.Contains(x));
+                // Remove those we didn't select to keep from our lists.
+                existingParticipants.RemoveAll(x => toRemove.Contains(x));
+                importParticipants.RemoveAll(x => toRemove.Contains(x));
+                foreach (Participant existing in existingParticipants)
+                {
+                    ExistingParticipants[existing.Bib] = existing;
+                }
+                foreach (Participant import in importParticipants)
+                {
+                    if (ExistingParticipants.ContainsKey(import.Bib))
+                    {
+                        if (!ExistingParticipants[import.Bib].Is(import))
+                        {
+                            Log.D(String.Format("We've found {0} {1} and {2} {3} for bib {4}", import.FirstName, import.LastName, ExistingParticipants[import.Bib].FirstName, ExistingParticipants[import.Bib].LastName, import.Bib));
+                            if (!BibConflicts.ContainsKey(import.Bib))
+                            {
+                                BibConflicts[import.Bib] = new HashSet<Participant>();
+                            }
+                            BibConflicts[import.Bib].Add(import);
+                            BibConflicts[import.Bib].Add(ExistingParticipants[import.Bib]);
+                        }
+                    }
+                }
+                foreach (int bib in BibConflicts.Keys)
+                {
+                    conflicts.AddRange(BibConflicts[bib]);
+                }
+            });
+            // if we have multiples to mess around with display the page
+            if (conflicts.Count > 0)
+            {
+                multiplesPage = null;
+                bibConflictsPage = new ImportFilePageConflicts(conflicts, theEvent);
+                Frame.Content = bibConflictsPage;
+            }
+            // otherwise process the multiples (none)
+            else
+            {
+                ProcessBibConflicts(new List<Participant>());
+            }
+        }
+
+        private async void ProcessBibConflicts(List<Participant> toRemove)
+        {
+            await Task.Run(() =>
+            {
+                // keep track of who we need to tell the database to get rid of
+                existingToRemoveParticipants.AddRange(toRemove);
+                existingToRemoveParticipants.RemoveAll(x => importParticipants.Contains(x));
+                // Remove those we didn't select to keep from our import list
+                // no need to remove from the existing because we're not re-adding those
+                importParticipants.RemoveAll(x => toRemove.Contains(x));
+                Log.D("Removing old participants we were told to.");
+                database.RemoveParticipantEntries(existingToRemoveParticipants);
+                Log.D("Adding new participants.");
+                database.AddParticipants(importParticipants);
+            });
+            Log.D("All done with the import.");
+            database.ResetTimingResultsEvent(theEvent.Identifier);
+            window.NetworkClearResults(theEvent.Identifier);
+            window.NotifyTimingWorker();
+            this.Close();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

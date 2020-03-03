@@ -62,6 +62,8 @@ namespace ChronoKeep.Constants
 
         public static readonly int TIMINGSYSTEM_UNKNOWN = -1;
 
+        public static readonly int PARTICIPANT_DUMMYIDENTIFIER = -1;
+
         public static long DateToEpoch(DateTime date)
         {
             var ticks = date.Ticks - new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
