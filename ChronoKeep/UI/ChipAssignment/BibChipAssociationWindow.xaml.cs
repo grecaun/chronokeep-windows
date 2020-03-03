@@ -134,9 +134,10 @@ namespace ChronoKeep
                 bool extraAssoc = Headers.IsChecked == false;
                 await Task.Run(() =>
                 {
+                    Dictionary<string, int> currentAssociations = database.GetBibChips(eventId).ToDictionary(x => x.Chip, x => x.Bib);
+                    List<BibChipAssociation> items = new List<BibChipAssociation>();
                     ImportData data = importer.Data;
                     int numEntries = data.Data.Count;
-                    List<BibChipAssociation> items = new List<BibChipAssociation>();
                     if (extraAssoc)
                     {
                         items.Add(new BibChipAssociation
@@ -158,6 +159,29 @@ namespace ChronoKeep
                         catch
                         {
                             Log.E("One or more values not an integer.");
+                        }
+                    }
+                    // Check new associations against old ones.
+                    List<BibChipAssociation> conflicts = new List<BibChipAssociation>();
+                    foreach (BibChipAssociation assoc in items)
+                    {
+                        if (currentAssociations.ContainsKey(assoc.Chip) && currentAssociations[assoc.Chip] != assoc.Bib)
+                        {
+                            conflicts.Add(assoc);
+                        }
+                    }
+                    // if there are conflicts, alter the user to them and verify clobbering
+                    if (conflicts.Count > 0)
+                    {
+                        StringBuilder error = new StringBuilder("There were conflicts found in the import file. Please confirm you want to clobber current values.");
+                        foreach (BibChipAssociation assoc in conflicts)
+                        {
+                            error.Append(String.Format("\nChip {0} - Bib {1}", assoc.Chip, assoc.Bib));
+                        }
+                        MessageBoxResult result = MessageBox.Show(error.ToString(), "Clobber?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                        if (result == MessageBoxResult.No)
+                        {
+                            items.RemoveAll(x => conflicts.Contains(x));
                         }
                     }
                     database.AddBibChipAssociation(eventId, items);
