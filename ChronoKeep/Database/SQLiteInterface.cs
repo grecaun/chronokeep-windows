@@ -1749,28 +1749,34 @@ namespace ChronoKeep
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE events SET event_name=@name, event_date=@date, event_next_year_event_id=@ny, event_shirt_optional=@so," +
+            command.CommandText = "UPDATE events SET event_name=@name, event_date=@date, event_yearcode=@yearcode," +
+                "event_next_year_event_id=@ny, event_shirt_optional=@so," +
                 "event_shirt_price=@price, event_common_age_groups=@age, event_common_start_finish=@start, event_rank_by_gun=@gun, " +
-                "event_division_specific_segments=@seg, event_yearcode=@yearcode, event_allow_early_start=@early, " +
+                "event_division_specific_segments=@seg, event_allow_early_start=@early, " +
                 "event_start_time_seconds=@startsec, event_start_time_milliseconds=@startmill, " +
-                "event_timing_system=@system, event_type=@type WHERE event_id=@id";
+                "event_timing_system=@system, event_type=@type," +
+                "event_finish_max_occurances=@maxocc, event_finish_ignore_within=@ignore," +
+                "event_start_window=@startWindow WHERE event_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@id", anEvent.Identifier),
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
+                new SQLiteParameter("@yearcode", anEvent.YearCode),
+                new SQLiteParameter("@ny", anEvent.NextYear),
                 new SQLiteParameter("@so", anEvent.ShirtOptional),
                 new SQLiteParameter("@price", anEvent.ShirtPrice),
                 new SQLiteParameter("@age", anEvent.CommonAgeGroups),
                 new SQLiteParameter("@start", anEvent.CommonStartFinish),
                 new SQLiteParameter("@gun", anEvent.RankByGun),
                 new SQLiteParameter("@seg", anEvent.DivisionSpecificSegments),
-                new SQLiteParameter("@yearcode", anEvent.YearCode),
-                new SQLiteParameter("@ny", anEvent.NextYear),
                 new SQLiteParameter("@early", anEvent.AllowEarlyStart),
                 new SQLiteParameter("@startsec", anEvent.StartSeconds),
                 new SQLiteParameter("@startmill", anEvent.StartMilliseconds),
                 new SQLiteParameter("@system", anEvent.TimingSystem),
-                new SQLiteParameter("@type", anEvent.EventType)
+                new SQLiteParameter("@type", anEvent.EventType),
+                new SQLiteParameter("@maxocc", anEvent.FinishMaxOccurrences),
+                new SQLiteParameter("@ignore", anEvent.FinishIgnoreWithin),
+                new SQLiteParameter("@startWindow", anEvent.StartWindow)
             });
             command.ExecuteNonQuery();
             connection.Close();

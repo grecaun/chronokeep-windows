@@ -1,4 +1,5 @@
 ﻿using ChronoKeep.Interfaces;
+using ChronoKeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -99,24 +100,68 @@ namespace ChronoKeep
                 newEvent.Identifier = database.GetEventID(newEvent);
                 if (oldEventId > 0)
                 {
+                    Event oldEvent = database.GetEvent(oldEventId);
+                    newEvent.EventType = oldEvent.EventType;
+                    newEvent.StartWindow = oldEvent.StartWindow;
+                    newEvent.FinishIgnoreWithin = oldEvent.FinishIgnoreWithin;
+                    newEvent.FinishMaxOccurrences = oldEvent.FinishMaxOccurrences;
+                    newEvent.CommonAgeGroups = oldEvent.CommonAgeGroups;
+                    newEvent.CommonStartFinish = oldEvent.CommonStartFinish;
+                    newEvent.DivisionSpecificSegments = oldEvent.DivisionSpecificSegments;
+                    newEvent.AllowEarlyStart = oldEvent.AllowEarlyStart;
+                    newEvent.RankByGun = oldEvent.RankByGun;
+                    database.UpdateEvent(newEvent);
                     List<Division> divisions = database.GetDivisions(oldEventId);
+                    List<Division> newDivs = new List<Division>();
+                    Dictionary<string, int> DivDict = new Dictionary<string, int>();
+                    Dictionary<int, int> DivTranslationDict = new Dictionary<int, int>();
                     foreach (Division d in divisions)
                     {
+                        DivDict[d.Name] = d.Identifier;
+                        d.Identifier = Constants.Timing.DIVISION_DUMMYIDENTIFIER;
                         d.EventIdentifier = newEvent.Identifier;
-                        database.AddDivision(d);
+                        newDivs.Add(d);
+                    }
+                    database.AddDivisions(newDivs);
+                    newDivs = database.GetDivisions(newEvent.Identifier);
+                    foreach (Division newD in newDivs) {
+                        if (DivTranslationDict.ContainsKey(DivDict[newD.Name]))
+                        {
+                            DivTranslationDict[DivDict[newD.Name]] = newD.Identifier;
+                        }
                     }
                     List<TimingLocation> locations = database.GetTimingLocations(oldEventId);
+                    List<TimingLocation> newLocations = new List<TimingLocation>();
                     foreach (TimingLocation loc in locations)
                     {
                         loc.EventIdentifier = newEvent.Identifier;
-                        database.AddTimingLocation(loc);
+                        newLocations.Add(loc);
                     }
+                    database.AddTimingLocations(newLocations);
                     List<Segment> segments = database.GetSegments(oldEventId);
+                    List<Segment> newSegments = new List<Segment>();
                     foreach (Segment s in segments)
                     {
                         s.EventId = newEvent.Identifier;
-                        database.AddSegment(s);
+                        if (newEvent.DivisionSpecificSegments && DivTranslationDict.ContainsKey(s.DivisionId))
+                        {
+                            s.DivisionId = DivTranslationDict[s.DivisionId];
+                        }
+                        newSegments.Add(s);
                     }
+                    database.AddSegments(newSegments);
+                    List<AgeGroup> ageGroups = database.GetAgeGroups(oldEventId);
+                    List<AgeGroup> newAgeGroups = new List<AgeGroup>();
+                    foreach (AgeGroup ag in ageGroups)
+                    {
+                        ag.EventId = newEvent.Identifier;
+                        if (!newEvent.CommonAgeGroups && DivTranslationDict.ContainsKey(ag.DivisionId))
+                        {
+                            ag.DivisionId = DivTranslationDict[ag.DivisionId];
+                        }
+                        newAgeGroups.Add(ag);
+                    }
+                    database.AddAgeGroups(newAgeGroups);
                 }
                 else
                 {

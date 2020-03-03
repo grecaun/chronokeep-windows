@@ -63,6 +63,7 @@ namespace ChronoKeep.Constants
         public static readonly int TIMINGSYSTEM_UNKNOWN = -1;
 
         public static readonly int PARTICIPANT_DUMMYIDENTIFIER = -1;
+        public static readonly int DIVISION_DUMMYIDENTIFIER = -1;
 
         public static long DateToEpoch(DateTime date)
         {
