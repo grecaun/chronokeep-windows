@@ -34,6 +34,7 @@ namespace ChronoKeep.UI
             {
                 events = database.GetEvents();
             });
+            events.Sort();
             eventList.ItemsSource = events;
             if (events.Count < 1)
             {
