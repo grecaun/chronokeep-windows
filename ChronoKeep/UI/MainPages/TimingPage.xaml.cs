@@ -66,6 +66,8 @@ namespace ChronoKeep.UI.MainPages
             ViewUpdateTimer.Tick += new EventHandler(ViewUpdateTimer_Click);
             ViewUpdateTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
 
+            IPAdd.Content = "localhost";
+            Port.Content = "6933";
             // Check for default IP address to give to our reader boxes for connections
             foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces())
             {
@@ -77,6 +79,7 @@ namespace ChronoKeep.UI.MainPages
                         {
                             if (ipinfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                             {
+                                IPAdd.Content = ipinfo.Address;
                                 Log.D("IP Address :" + ipinfo.Address);
                                 Log.D("IPv4 Mask  :" + ipinfo.IPv4Mask);
                                 string[] ipParts = ipinfo.Address.ToString().Split('.');
@@ -164,10 +167,14 @@ namespace ChronoKeep.UI.MainPages
             if (mWindow.HttpServerActive())
             {
                 HttpServerButton.Content = "Stop Web";
+                IPContainer.Visibility = Visibility.Visible;
+                PortContainer.Visibility = Visibility.Visible;
             }
             else
             {
                 HttpServerButton.Content = "Start Web";
+                IPContainer.Visibility = Visibility.Collapsed;
+                PortContainer.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -261,10 +268,14 @@ namespace ChronoKeep.UI.MainPages
             if (mWindow.HttpServerActive())
             {
                 HttpServerButton.Content = "Stop Web";
+                IPContainer.Visibility = Visibility.Visible;
+                PortContainer.Visibility = Visibility.Visible;
             }
             else
             {
                 HttpServerButton.Content = "Start Web";
+                IPContainer.Visibility = Visibility.Collapsed;
+                PortContainer.Visibility = Visibility.Collapsed;
             }
             subPage.UpdateView();
         }
@@ -725,18 +736,24 @@ namespace ChronoKeep.UI.MainPages
                 {
                     mWindow.StartHttpServer();
                     HttpServerButton.Content = "Stop Web";
+                    IPContainer.Visibility = Visibility.Visible;
+                    PortContainer.Visibility = Visibility.Visible;
                 }
                 catch
                 {
                     mWindow.StopHttpServer();
                     HttpServerButton.Content = "Start Web";
                     MessageBox.Show("Unable to start the web server. Please type this command in an elevated command prompt: 'netsh http add urlacl url=http://*:6933/ user=everyone'");
+                    IPContainer.Visibility = Visibility.Collapsed;
+                    PortContainer.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
                 mWindow.StopHttpServer();
                 HttpServerButton.Content = "Start Web";
+                IPContainer.Visibility = Visibility.Collapsed;
+                PortContainer.Visibility = Visibility.Collapsed;
             }
         }
 
