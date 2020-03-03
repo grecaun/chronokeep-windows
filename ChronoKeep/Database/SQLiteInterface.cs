@@ -2139,8 +2139,8 @@ namespace ChronoKeep
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, division_id, eventspecific_bib, " +
                 "eventspecific_checkedin, eventspecific_comments, eventspecific_owes, eventspecific_other, " +
-                "eventspecific_earlystart, eventspecific_next_year) " +
-                "VALUES (@participant,@event,@division,@bib,@checkedin,@comments,@owes,@other,@earlystart,@nextYear)";
+                "eventspecific_earlystart, eventspecific_next_year, eventspecific_age_group_name, eventspecific_age_group_id) " +
+                "VALUES (@participant,@event,@division,@bib,@checkedin,@comments,@owes,@other,@earlystart,@nextYear,@ageGroupName,@ageGroupId)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@participant", person.Identifier),
                 new SQLiteParameter("@event", person.EventSpecific.EventIdentifier),
@@ -2151,7 +2151,10 @@ namespace ChronoKeep
                 new SQLiteParameter("@owes", person.EventSpecific.Owes),
                 new SQLiteParameter("@other", person.EventSpecific.Other),
                 new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart),
-                new SQLiteParameter("@nextYear", person.EventSpecific.NextYear) });
+                new SQLiteParameter("@nextYear", person.EventSpecific.NextYear),
+                new SQLiteParameter("@ageGroupName", person.EventSpecific.AgeGroupName),
+                new SQLiteParameter("@ageGroupId", person.EventSpecific.AgeGroupId)
+            });
             command.ExecuteNonQuery();
         }
 

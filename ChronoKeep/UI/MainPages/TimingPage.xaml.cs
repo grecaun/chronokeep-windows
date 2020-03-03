@@ -673,8 +673,8 @@ namespace ChronoKeep.UI.MainPages
                     Dictionary<string, int> maxLoops = new Dictionary<string, int>();
                     Dictionary<(int, int), TimeResult> LoopResults = new Dictionary<(int, int), TimeResult>();
                     Dictionary<int, int> RunnerLoopsCompleted = new Dictionary<int, int>();
-                    double DistancePerLoop = 0;
-                    string DistanceType = "Miles";
+                    Dictionary<string, double> DivisionDistancePerLoop = new Dictionary<string, double>();
+                    Dictionary<string, string> DivisionDistanceType = new Dictionary<string, string>();
                     foreach (TimeResult result in finishResults)
                     {
                         if (!maxLoops.ContainsKey(result.DivisionName))
@@ -695,8 +695,8 @@ namespace ChronoKeep.UI.MainPages
                     List<Division> divs = database.GetDivisions(theEvent.Identifier);
                     foreach (Division d in divs)
                     {
-                        DistancePerLoop = DistancePerLoop > d.Distance ? DistancePerLoop : d.Distance;
-                        DistanceType = d.DistanceUnit == Constants.Distances.MILES ? "Miles" :
+                        DivisionDistancePerLoop[d.Name] = d.Distance;
+                        DivisionDistanceType[d.Name] = d.DistanceUnit == Constants.Distances.MILES ? "Miles" :
                             d.DistanceUnit == Constants.Distances.FEET ? "Feet" :
                             d.DistanceUnit == Constants.Distances.KILOMETERS ? "Kilometers" :
                             d.DistanceUnit == Constants.Distances.METERS ? "Meters" :
@@ -704,7 +704,7 @@ namespace ChronoKeep.UI.MainPages
                             "Unknown";
                     }
                     HtmlResultsTemplateTime template = new HtmlResultsTemplateTime(theEvent, finishResults, partDict,
-                        maxLoops, LoopResults, RunnerLoopsCompleted, DistancePerLoop, DistanceType);
+                        maxLoops, LoopResults, RunnerLoopsCompleted, DivisionDistancePerLoop, DivisionDistanceType);
                     content = template.TransformText();
                 }
                 // if event is DISTANCE BASED

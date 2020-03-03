@@ -41,8 +41,8 @@ namespace ChronoKeep.IO.HtmlTemplates
         private Dictionary<string, int> maxLoops = new Dictionary<string, int>();
         private Dictionary<(int, int), TimeResult> LoopResults = new Dictionary<(int, int), TimeResult>();
         private Dictionary<int, int> RunnerLoopsCompleted = new Dictionary<int, int>();
-        private double DistancePerLoop = 0;
-        private string DistanceType = "Miles";
+        private Dictionary<string, double> DivisionDistancePerLoop = new Dictionary<string, double>();
+        private Dictionary<string, string> DivisionDistanceType = new Dictionary<string, string>();
 
         public HtmlResultsTemplateTime(Event theEvent,
             List<TimeResult> finalLoopList,
@@ -50,8 +50,8 @@ namespace ChronoKeep.IO.HtmlTemplates
             Dictionary<string, int> maxLoops,
             Dictionary<(int,int), TimeResult> LoopResults,
             Dictionary<int,int> RunnerLoopsCompleted,
-            double DistancePerLoop,
-            string DistanceType = "Miles"
+            Dictionary<string,double> DivisionDistancePerLoop,
+            Dictionary<string,string> DivisionDistanceType
             )
         {
             this.maxLoops = maxLoops;
@@ -70,8 +70,8 @@ namespace ChronoKeep.IO.HtmlTemplates
             this.LoopResults = LoopResults;
             this.participantDictionary = participantDictionary;
             this.RunnerLoopsCompleted = RunnerLoopsCompleted;
-            this.DistancePerLoop = DistancePerLoop;
-            this.DistanceType = DistanceType;
+            this.DivisionDistancePerLoop = DivisionDistancePerLoop;
+            this.DivisionDistanceType = DivisionDistanceType;
         }
     }
 }

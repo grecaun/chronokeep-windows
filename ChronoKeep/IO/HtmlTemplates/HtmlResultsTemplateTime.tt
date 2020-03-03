@@ -18,41 +18,39 @@
 				<table>
 					<tr>
 						<td class="text-important table-label">Place</td>
-						<td class="text-important table-label">G Place</td>
-						<td class="text-important table-label">AG Place</td>
+						<td class="text-important table-label">Final Time (Gun)</td>
+						<td class="text-important table-label">Laps Completed</td>
+						<td class="text-important table-label"><#= DivisionDistanceType[d] #></td>
 						<td class="text-important table-label">First</td>
 						<td class="text-important table-label">Last</td>
-						<td class="text-important table-label">Age</td>
-						<td class="text-important table-label">AG</td>
+						<td class="text-important table-label">G Place</td>
 						<td class="text-important table-label">Gender</td>
+						<td class="text-important table-label">AG Place</td>
+						<td class="text-important table-label">AG</td>
 						<# for (int i=1; i<=(maxLoops.ContainsKey(d)? maxLoops[d] : 0); i++)
 						{ #>
 						<td class="text-important table-label"><#= i #></td>
 						<# } #>
-						<td class="text-important table-label">Final Time (Gun)</td>
 						<td class="text-important table-label">Final Time (Chip)</td>
-						<td class="text-important table-label">Laps Completed</td>
-						<td class="text-important table-label"><#= DistanceType #></td>
 					</tr>
 					<# foreach (TimeResult r in divisionResults[d])
 					{ #>
 					<tr>
 						<td><#= r.PlaceStr #></td>
-						<td><#= r.GenderPlaceStr #></td>
-						<td><#= r.AgePlaceStr #></td>
+						<td><#= r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) #></td>
+						<td><#= RunnerLoopsCompleted.ContainsKey(r.EventSpecificId) ? RunnerLoopsCompleted[r.EventSpecificId].ToString() : "" #></td>
+						<td><#= RunnerLoopsCompleted.ContainsKey(r.EventSpecificId) ? String.Format("{0:0.#}", RunnerLoopsCompleted[r.EventSpecificId] * DivisionDistancePerLoop[d]) : "" #></td>
 						<td><#= participantDictionary[r.EventSpecificId].FirstName #></td>
 						<td><#= participantDictionary[r.EventSpecificId].LastName #></td>
-						<td><#= participantDictionary[r.EventSpecificId].Age(theEvent.Date) #></td>
-						<td></td>
+						<td><#= r.GenderPlaceStr #></td>
 						<td><#= participantDictionary[r.EventSpecificId].Gender #></td>
+						<td><#= r.AgePlaceStr #></td>
+						<td><#= r.AgeGroupName #></td>
 						<# for (int i=1; i<=(maxLoops.ContainsKey(d)? maxLoops[d] : 0); i++) 
 						{ #>
 						<td><#= LoopResults.ContainsKey((r.EventSpecificId, i)) ? LoopResults[(r.EventSpecificId, i)].LapTime.Substring(0, LoopResults[(r.EventSpecificId, i)].LapTime.Length > 3 ? LoopResults[(r.EventSpecificId, i)].LapTime.Length -2 : LoopResults[(r.EventSpecificId, i)].LapTime.Length) : "" #></td>
 						<# } #>
-						<td><#= r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) #></td>
 						<td><#= r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length) #></td>
-						<td><#= RunnerLoopsCompleted.ContainsKey(r.EventSpecificId) ? RunnerLoopsCompleted[r.EventSpecificId].ToString() : "" #></td>
-						<td><#= RunnerLoopsCompleted.ContainsKey(r.EventSpecificId) ? String.Format("{0:0.#}", RunnerLoopsCompleted[r.EventSpecificId] * DistancePerLoop) : "" #></td>
 					</tr>
 					<# } #>
 				</table>

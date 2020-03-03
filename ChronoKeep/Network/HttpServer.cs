@@ -26,8 +26,8 @@ namespace ChronoKeep.Network
         private Dictionary<string, int> maxLoops = new Dictionary<string, int>();
         private Dictionary<(int, int), TimeResult> LoopResults = new Dictionary<(int, int), TimeResult>();
         private Dictionary<int, int> RunnerLoopsCompleted = new Dictionary<int, int>();
-        private double DistancePerLoop = 0;
-        private string DistanceType = "Miles";
+        private Dictionary<string, double> DivisionDistancePerLoop = new Dictionary<string, double>();
+        private Dictionary<string, string> DivisionDistanceType = new Dictionary<string, string>();
 
         private Mutex info_mutex = new Mutex();
 
@@ -90,8 +90,8 @@ namespace ChronoKeep.Network
                 List<Division> divs = database.GetDivisions(theEvent.Identifier);
                 foreach (Division d in divs)
                 {
-                    DistancePerLoop = DistancePerLoop > d.Distance ? DistancePerLoop : d.Distance;
-                    DistanceType = d.DistanceUnit == Constants.Distances.MILES ? "Miles" :
+                    DivisionDistancePerLoop[d.Name] = d.Distance;
+                    DivisionDistanceType[d.Name] = d.DistanceUnit == Constants.Distances.MILES ? "Miles" :
                         d.DistanceUnit == Constants.Distances.FEET ? "Feet" :
                         d.DistanceUnit == Constants.Distances.KILOMETERS ? "Kilometers" :
                         d.DistanceUnit == Constants.Distances.METERS ? "Meters" :
@@ -150,7 +150,7 @@ namespace ChronoKeep.Network
                     else
                     {
                         HtmlResultsTemplateTime results = new HtmlResultsTemplateTime(theEvent, finishResults, participantDictionary,
-                            maxLoops, LoopResults, RunnerLoopsCompleted, DistancePerLoop, DistanceType);
+                            maxLoops, LoopResults, RunnerLoopsCompleted, DivisionDistancePerLoop, DivisionDistanceType);
                         message = results.TransformText();
                         context.Response.ContentType = "text/html";
                         Log.D("Results html");

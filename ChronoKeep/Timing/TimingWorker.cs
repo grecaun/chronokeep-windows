@@ -1140,7 +1140,7 @@ namespace ChronoKeep.Timing
                                     segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
                                 }
                                 // Division specific segments
-                                else if (div != null & segmentDictionary.ContainsKey((div.Identifier, read.LocationID, 1)))
+                                else if (div != null && segmentDictionary.ContainsKey((div.Identifier, read.LocationID, 1)))
                                 {
                                     segId = segmentDictionary[(div.Identifier, read.LocationID, 1)].Identifier;
                                 }
