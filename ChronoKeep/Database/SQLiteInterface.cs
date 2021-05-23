@@ -83,7 +83,8 @@ namespace ChronoKeep
                     "api_type INTEGER NOT NULL DEFAULT -1," +
                     "api_url VARCHAR(150) NOT NULL," +
                     "api_auth_token VARCHAR(100) NOT NULL," +
-                    "UNIQUE (api_url) ON CONFLICT REPLACE);");
+                    "api_nickname VARCHAR(75) NOT NULL," +
+                    "UNIQUE (api_url, api_auth_token) ON CONFLICT REPLACE);");
                 queries.Add("CREATE TABLE IF NOT EXISTS events (" +
                     "event_id INTEGER PRIMARY KEY," +
                     "event_name VARCHAR(100) NOT NULL," +
@@ -1348,9 +1349,10 @@ namespace ChronoKeep
                                 "api_type INTEGER NOT NULL DEFAULT -1," +
                                 "api_url VARCHAR(150) NOT NULL," +
                                 "api_auth_token VARCHAR(100) NOT NULL," +
-                                "UNIQUE (api_url) ON CONFLICT REPLACE);" +
-                            "ALTER TABLE event ADD COLUMN api_id INTEGER REFERENCES results_api(api_id) DEFAULT NULL;" +
-                            "ALTER TABLE event ADD COLUMN api_event_id VARCHAR(200) DEFAULT '';" +
+                                "api_nickname VARCHAR(75) NOT NULL," +
+                                "UNIQUE (api_url, api_auth_token) ON CONFLICT REPLACE);" +
+                            "ALTER TABLE events ADD COLUMN api_id INTEGER REFERENCES results_api(api_id) DEFAULT NULL;" +
+                            "ALTER TABLE events ADD COLUMN api_event_id VARCHAR(200) DEFAULT '';" +
                             "DROP TABLE settings_old;" +
                             "ALTER TABLE app_settings RENAME to settings;" +
                             "INSERT INTO settings (setting, value) VALUES ('DATABASE_VERSION', '43');";
@@ -1791,7 +1793,7 @@ namespace ChronoKeep
                 "event_start_time_seconds=@startsec, event_start_time_milliseconds=@startmill, " +
                 "event_timing_system=@system, event_type=@type," +
                 "event_finish_max_occurances=@maxocc, event_finish_ignore_within=@ignore," +
-                "event_start_window=@startWindow WHERE event_id=@id";
+                "event_start_window=@startWindow, api_id=@apiid, api_event_id=@apieventid WHERE event_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@id", anEvent.Identifier),
                 new SQLiteParameter("@name", anEvent.Name),
@@ -1811,7 +1813,9 @@ namespace ChronoKeep
                 new SQLiteParameter("@type", anEvent.EventType),
                 new SQLiteParameter("@maxocc", anEvent.FinishMaxOccurrences),
                 new SQLiteParameter("@ignore", anEvent.FinishIgnoreWithin),
-                new SQLiteParameter("@startWindow", anEvent.StartWindow)
+                new SQLiteParameter("@startWindow", anEvent.StartWindow),
+                new SQLiteParameter("@apiid", anEvent.API_ID),
+                new SQLiteParameter("@apieventid", anEvent.API_Event_ID),
             });
             command.ExecuteNonQuery();
             connection.Close();
@@ -1851,7 +1855,9 @@ namespace ChronoKeep
                     Convert.ToInt64(reader["event_start_time_seconds"]),
                     Convert.ToInt32(reader["event_start_time_milliseconds"]),
                     reader["event_timing_system"].ToString(),
-                    Convert.ToInt32(reader["event_type"])
+                    Convert.ToInt32(reader["event_type"]),
+                    Convert.ToInt32(reader["api_id"]),
+                    reader["api_event_id"].ToString()
                     ));
             }
             reader.Close();
@@ -1937,7 +1943,9 @@ namespace ChronoKeep
                     Convert.ToInt64(reader["event_start_time_seconds"]),
                     Convert.ToInt32(reader["event_start_time_milliseconds"]),
                     reader["event_timing_system"].ToString(),
-                    Convert.ToInt32(reader["event_type"])
+                    Convert.ToInt32(reader["event_type"]),
+                    Convert.ToInt32(reader["api_id"]),
+                    reader["api_event_id"].ToString()
                     );
             }
             reader.Close();
@@ -5729,6 +5737,116 @@ namespace ChronoKeep
                 }
                 output[person.Status].Add(person);
             }
+            return output;
+        }
+
+        /*
+         * Results API Functions
+         */
+
+        public int AddResultsAPI(ResultsAPI anAPI)
+        {
+            Log.D("Attempting to grab Mutex: ID 125");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 125");
+                return -1;
+            }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "INSERT INTO results_api (api_type, api_url, api_auth_token, api_nickname)" +
+                " VALUES (@type, @url, @token, @nickname);";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@type", anAPI.Type),
+                new SQLiteParameter("@url", anAPI.URL),
+                new SQLiteParameter("@token", anAPI.AuthToken),
+                new SQLiteParameter("@nickname", anAPI.Nickname)
+            });
+            command.ExecuteNonQuery();
+            long outVal = connection.LastInsertRowId;
+            connection.Close();
+            mutex.ReleaseMutex();
+            return (int)outVal;
+        }
+
+        public void UpdateResultsAPI(ResultsAPI anAPI)
+        {
+            Log.D("Attempting to grab Mutex: ID 126");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 126");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "UPDATE results_api SET api_type=@type, api_url=@url, api_auth_token=@token, api_nickname=@nickname WHERE api_id=@id;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@type", anAPI.Type),
+                new SQLiteParameter("@url", anAPI.URL),
+                new SQLiteParameter("@token", anAPI.AuthToken),
+                new SQLiteParameter("@nickname", anAPI.Nickname),
+                new SQLiteParameter("@id", anAPI.Identifier)
+            });
+        }
+
+        public void RemoveResultsAPI(int identifier)
+        {
+            Log.D("Attempting to grab Mutex: ID 127");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 127");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM results_api WHERE api_id=@id;";
+                command.Parameters.Add(new SQLiteParameter("@id", identifier));
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public ResultsAPI GetResultsAPI(int identifier)
+        {
+            if (identifier < 0)
+            {
+                return null;
+            }
+            Log.D("Attempting to grab Mutex: ID 128");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 128");
+                return null;
+            }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM results_api WHERE api_id=@id";
+            command.Parameters.Add(new SQLiteParameter("@id", identifier));
+            SQLiteDataReader reader = command.ExecuteReader();
+            ResultsAPI output = null;
+            if (reader.Read())
+            {
+                output = new ResultsAPI(
+                    Convert.ToInt32(reader["api_id"]),
+                    reader["api_type"].ToString(),
+                    reader["api_url"].ToString(),
+                    reader["api_nickname"].ToString(),
+                    reader["api_auth_token"].ToString()
+                    );
+            }
+            reader.Close();
+            connection.Close();
+            mutex.ReleaseMutex();
             return output;
         }
     }

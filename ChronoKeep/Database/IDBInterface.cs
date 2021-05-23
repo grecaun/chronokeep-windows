@@ -19,6 +19,12 @@ namespace ChronoKeep
         void SetAppSetting(string name, string value);
         void SetAppSetting(AppSetting setting);
 
+        // Results API Functions
+        int AddResultsAPI(ResultsAPI anAPI);
+        void UpdateResultsAPI(ResultsAPI anAPI);
+        void RemoveResultsAPI(int identifier);
+        ResultsAPI GetResultsAPI(int identifier);
+
         // Event Functions
         void AddEvent(Event anEvent);
         void RemoveEvent(int identifier);

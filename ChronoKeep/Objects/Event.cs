@@ -16,6 +16,8 @@ namespace ChronoKeep
         private string name, date, yearcode = "", timing_system = Constants.Settings.TIMING_RFID;
         private long start_seconds = -1;
         private int start_milliseconds;
+        private int api_id;
+        private string api_event_id;
 
         public Event() { }
 
@@ -74,7 +76,7 @@ namespace ChronoKeep
 
         public Event(int id, string n, string d, int ny, int so, int price, int age, int start, int seg,
             int gun, string yearcode, int early, int maxOcc, int ignWith, int window,
-            long startsec, int startmill, string system, int type)
+            long startsec, int startmill, string system, int type, int api_id, string api_event_id)
         {
             this.nextYear = ny;
             this.identifier = id;
@@ -95,6 +97,8 @@ namespace ChronoKeep
             this.start_milliseconds = startmill;
             this.timing_system = system;
             this.event_type = type;
+            this.api_id = api_id;
+            this.api_event_id = api_event_id;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -116,6 +120,8 @@ namespace ChronoKeep
         public int StartMilliseconds { get => start_milliseconds; set => start_milliseconds = value; }
         public string TimingSystem { get => timing_system; set => timing_system = value; }
         public int EventType { get => event_type; set => event_type = value; }
+        public int API_ID { get => api_id; set => api_id = value; }
+        public string API_Event_ID { get => api_event_id; set => api_event_id = value; }
         public string EventTypeString
         {
             get
