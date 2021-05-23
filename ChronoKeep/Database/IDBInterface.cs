@@ -24,6 +24,7 @@ namespace ChronoKeep
         void UpdateResultsAPI(ResultsAPI anAPI);
         void RemoveResultsAPI(int identifier);
         ResultsAPI GetResultsAPI(int identifier);
+        List<ResultsAPI> GetAllResultsAPI();
 
         // Event Functions
         void AddEvent(Event anEvent);

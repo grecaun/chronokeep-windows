@@ -16,7 +16,8 @@ namespace ChronoKeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 124
+         * HIGHEST MUTEX ID = 129
+         * NEXT AVAILABLE   = 130
          */
         private readonly int version = 43;
         readonly string connectionInfo;
@@ -5843,6 +5844,36 @@ namespace ChronoKeep
                     reader["api_nickname"].ToString(),
                     reader["api_auth_token"].ToString()
                     );
+            }
+            reader.Close();
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
+        public List<ResultsAPI> GetAllResultsAPI()
+        {
+            Log.D("Attempting to grab Mutex: ID 129");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 129");
+                return new List<ResultsAPI>();
+            }
+            List<ResultsAPI> output = new List<ResultsAPI>();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM results_api;";
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(new ResultsAPI(
+                    Convert.ToInt32(reader["api_id"]),
+                    reader["api_type"].ToString(),
+                    reader["api_url"].ToString(),
+                    reader["api_nickname"].ToString(),
+                    reader["api_auth_token"].ToString()
+                    ));
             }
             reader.Close();
             connection.Close();
