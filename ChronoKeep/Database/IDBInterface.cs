@@ -15,8 +15,6 @@ namespace ChronoKeep
         void ResetDatabase();
         void HardResetDatabase();
 
-        void SetServerName(string name);
-        String GetServerName();
         AppSetting GetAppSetting(string name);
         void SetAppSetting(string name, string value);
         void SetAppSetting(AppSetting setting);

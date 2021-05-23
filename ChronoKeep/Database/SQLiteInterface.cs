@@ -18,7 +18,7 @@ namespace ChronoKeep
         /**
          * HIGHEST MUTEX ID = 124
          */
-        private readonly int version = 42;
+        private readonly int version = 43;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -38,17 +38,31 @@ namespace ChronoKeep
             if (reader.Read())
             {
                 Log.D("Tables do not need to be made.");
-
-                command = new SQLiteCommand("SELECT version FROM settings;", connection);
+                // As of version 43 we've changed how we store settings values to something more sensible.
+                command = new SQLiteCommand("SELECT value FROM settings WHERE setting='DATABASE_VERSION';", connection);
                 using (SQLiteDataReader versionChecker = command.ExecuteReader())
                 {
                     if (versionChecker.Read())
                     {
-                        oldVersion = Convert.ToInt32(versionChecker["version"]);
+                        oldVersion = Convert.ToInt32(versionChecker["value"]);
                     }
                     else
                     {
-                        Log.D("Something went wrong when checking the version...");
+                        // Check for an older version
+                        Log.D("We may have a database older than version 43.");
+                        command = new SQLiteCommand("SELECT version FROM settings;");
+                        using (SQLiteDataReader v2Checker = command.ExecuteReader())
+                        {
+                            if (v2Checker.Read())
+                            {
+                                oldVersion = Convert.ToInt32(v2Checker["version"]);
+                            } else
+                            {
+                                Log.D("Tables made, database version not found.");
+                            }
+                            v2Checker.Close();
+                        }
+
                     }
                     versionChecker.Close();
                 }
@@ -64,6 +78,12 @@ namespace ChronoKeep
                     "chip VARCHAR NOT NULL," +
                     "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
                     ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS results_api(" +
+                    "api_id INTEGER PRIMARY KEY," +
+                    "api_type INTEGER NOT NULL DEFAULT -1," +
+                    "api_url VARCHAR(150) NOT NULL," +
+                    "api_auth_token VARCHAR(100) NOT NULL," +
+                    "UNIQUE (api_url) ON CONFLICT REPLACE);");
                 queries.Add("CREATE TABLE IF NOT EXISTS events (" +
                     "event_id INTEGER PRIMARY KEY," +
                     "event_name VARCHAR(100) NOT NULL," +
@@ -88,6 +108,8 @@ namespace ChronoKeep
                     "event_start_window INTEGER NOT NULL DEFAULT -1," +
                     "event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Settings.TIMING_RFID + "'," +
                     "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
+                    "api_id INTEGER REFERENCES results_api(api_id) DEFAULT NULL," +
+                    "api_event_id VARCHAR(200) DEFAULT ''," +
                     "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS dayof_participant (" +
@@ -244,9 +266,6 @@ namespace ChronoKeep
                     "timeresult_status INT NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_STATUS_NONE + "," +
                     "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
                     ");");
-                queries.Add("CREATE TABLE IF NOT EXISTS settings (version INTEGER NOT NULL, name VARCHAR NOT NULL," +
-                    " identifier VARCHAR NOT NULL); INSERT INTO settings (version, name, identifier) VALUES " +
-                    "(" + version + ", 'Northwest Endurance Events', '" + Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "") + "');");
                 queries.Add("CREATE TABLE IF NOT EXISTS changes (" +
                     "change_id INTEGER PRIMARY KEY, " +
                     "old_participant_id INTEGER NOT NULL," +
@@ -308,11 +327,13 @@ namespace ChronoKeep
                     ");");
                 queries.Add("INSERT INTO participants (participant_id, participant_first, participant_last," +
                     " participant_birthday) VALUES (0, 'J', 'Doe', '01/01/1901');");
-                queries.Add("CREATE TABLE IF NOT EXISTS app_settings (" +
+                queries.Add("CREATE TABLE IF NOT EXISTS settings (" +
                     "setting VARCHAR NOT NULL," +
                     "value VARCHAR NOT NULL," +
                     "UNIQUE (setting) ON CONFLICT REPLACE" +
-                    ");");
+                    ");"+
+                    "INSERT INTO settings (setting, value) VALUES " +
+                    "('DATABASE_VERSION','" + version + "');");
                 queries.Add("CREATE TABLE IF NOT EXISTS bib_group (" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "bib_group_number INTEGER NOT NULL," +
@@ -1319,6 +1340,20 @@ namespace ChronoKeep
                             "DROP TABLE chipreads_old;" +
                             "UPDATE settings SET version=42 WHERE version=41;";
                         command.ExecuteNonQuery();
+                        goto case 42;
+                    case 42:
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE TABLE IF NOT EXISTS results_api(" +
+                                "api_id INTEGER PRIMARY KEY," +
+                                "api_type INTEGER NOT NULL DEFAULT -1," +
+                                "api_url VARCHAR(150) NOT NULL," +
+                                "api_auth_token VARCHAR(100) NOT NULL," +
+                                "UNIQUE (api_url) ON CONFLICT REPLACE);" +
+                            "ALTER TABLE event ADD COLUMN api_id INTEGER REFERENCES results_api(api_id) DEFAULT NULL;" +
+                            "ALTER TABLE event ADD COLUMN api_event_id VARCHAR(200) DEFAULT '';" +
+                            "DROP TABLE settings_old;" +
+                            "ALTER TABLE app_settings RENAME to settings;" +
+                            "INSERT INTO settings (setting, value) VALUES ('DATABASE_VERSION', '43');";
                         break;
                 }
                 transaction.Commit();
@@ -3957,7 +3992,7 @@ namespace ChronoKeep
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandText = "DROP TABLE timing_systems; DROP TABLE age_groups; DROP TABLE available_bibs;" +
-                    "DROP TABLE bib_group; DROP TABLE settings; DROP TABLE app_settings; DROP TABLE changes; DROP TABLE chipreads;" +
+                    "DROP TABLE bib_group; DROP TABLE settings; DROP TABLE changes; DROP TABLE chipreads;" +
                     "DROP TABLE time_results; DROP TABLE segments; DROP TABLE eventspecific_apparel; DROP TABLE eventspecific;" +
                     "DROP TABLE participants; DROP TABLE timing_locations; DROP TABLE divisions; DROP TABLE kiosk; DROP TABLE dayof_participant;" +
                     "DROP TABLE events; DROP TABLE bib_chip_assoc;";
@@ -3983,7 +4018,7 @@ namespace ChronoKeep
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandText = "DELETE FROM timing_systems; DELETE FROM age_groups; DELETE FROM available_bibs;" +
-                    "DELETE FROM bib_group; DELETE FROM settings; DELETE FROM app_settings; DELETE FROM changes; DELETE FROM chipreads;" +
+                    "DELETE FROM bib_group; DELETE FROM settings; DELETE FROM changes; DELETE FROM chipreads;" +
                     "DELETE FROM time_results; DELETE FROM segments; DELETE FROM eventspecific_apparel; DELETE FROM eventspecific;" +
                     "DELETE FROM participants; DELETE FROM timing_locations; DELETE FROM divisions; DELETE FROM kiosk; DELETE FROM dayof_participant;" +
                     "DELETE FROM events; DELETE FROM bib_chip_assoc;";
@@ -4907,52 +4942,6 @@ namespace ChronoKeep
          * Settings
          */
 
-        public void SetServerName(string name)
-        {
-            Log.D("Attempting to grab Mutex: ID 93");
-            if (!mutex.WaitOne(3000))
-            {
-                Log.D("Failed to grab Mutex: ID 93");
-                return;
-            }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
-            connection.Open();
-            using (var transaction = connection.BeginTransaction())
-            {
-                SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "UPDATE settings SET name=@name";
-                command.Parameters.Add(new SQLiteParameter("@name", name));
-                command.ExecuteNonQuery();
-                transaction.Commit();
-            }
-            connection.Close();
-            mutex.ReleaseMutex();
-        }
-
-        public string GetServerName()
-        {
-            Log.D("Attempting to grab Mutex: ID 94");
-            if (!mutex.WaitOne(3000))
-            {
-                Log.D("Failed to grab Mutex: ID 94");
-                return "";
-            }
-            String output = "Northwest Endurance Events";
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
-            connection.Open();
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT name FROM settings;";
-            SQLiteDataReader reader = command.ExecuteReader();
-            if (reader.Read())
-            {
-                output = reader["name"].ToString();
-            }
-            reader.Close();
-            connection.Close();
-            mutex.ReleaseMutex();
-            return output;
-        }
-
         public AppSetting GetAppSetting(string name)
         {
             Log.D("Attempting to grab Mutex: ID 95");
@@ -4965,7 +4954,7 @@ namespace ChronoKeep
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM app_settings WHERE setting=@name";
+            command.CommandText = "SELECT * FROM settings WHERE setting=@name";
             command.Parameters.Add(new SQLiteParameter("@name", name));
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
@@ -5005,7 +4994,7 @@ namespace ChronoKeep
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO app_settings (setting, value)" +
+                command.CommandText = "INSERT INTO settings (setting, value)" +
                     " VALUES (@name,@value)";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", setting.name),
