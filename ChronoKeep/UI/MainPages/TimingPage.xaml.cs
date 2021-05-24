@@ -757,6 +757,16 @@ namespace ChronoKeep.UI.MainPages
             }
         }
 
+        private void AutoAPI_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Auto API clicked.");
+        }
+
+        private void ManualAPI_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Manual API clicked.");
+        }
+
         private class AReaderBox : ListBoxItem
         {
             public ComboBox ReaderType { get; private set; }

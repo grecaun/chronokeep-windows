@@ -70,6 +70,7 @@
             <Button Name="setupNextYear" Content="Setup Next Year Mode" Margin="10,5,10,5" Click="SetupNextYear_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" Visibility="Collapsed"/>
             <Button Name="setupKiosk" Content="Setup Kiosk Mode" Margin="10,5,10,5" Click="SetupKiosk_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" Visibility="Collapsed"/>
             <Separator Margin="10,10,10,10" />
+            <Button Name="apiLinkButton" Content="Link to API Event" Margin="10,5,10,5" Click="apiLinkButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
             <Button Name="tagTesterButton" Content="Chip Tester" Margin="10,5,10,5" Click="TagTesterButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
         </StackPanel>
     </Grid>

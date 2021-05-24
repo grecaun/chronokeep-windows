@@ -675,5 +675,10 @@ namespace ChronoKeep.UI.MainPages
             }
             Log.D("Done saving file.");
         }
+
+        private void apiLinkButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
