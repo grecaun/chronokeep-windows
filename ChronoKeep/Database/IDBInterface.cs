@@ -129,6 +129,8 @@ namespace ChronoKeep
         List<TimeResult> GetSegmentTimes(int eventId, int segmentId);
         bool UnprocessedReadsExist(int eventId);
         bool UnprocessedResultsExist(int eventId);
+        void SetUploadedTimingResult(TimeResult tr);
+        List<TimeResult> GetAPIResults(int eventId);
 
         // Timing analytics... sort of
         List<DivisionStats> GetDivisionStats(int eventId);

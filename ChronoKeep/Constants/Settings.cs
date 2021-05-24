@@ -8,7 +8,10 @@ namespace ChronoKeep.Constants
 {
     class Settings
     {
-        public static readonly string PROGRAM_DIR            = "ChronoKeep";
+        public static readonly string PROGRAM_DIR           = "ChronoKeep";
+
+        public static readonly string SERVER_NAME           = "SETTING_SERVER_NAME";
+        public static readonly string DATABASE_VERSION      = "DATABASE_VERSION";
 
         public static readonly string DEFAULT_EXPORT_DIR    = "SETTING_DEFAULT_EXPORT_DIR";
         public static readonly string DEFAULT_TIMING_SYSTEM = "SETTING_DEFAULT_TIMING_SYSTEM";

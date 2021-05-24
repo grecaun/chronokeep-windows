@@ -61,10 +61,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>22B33A50D24C9640B1CCA10416B83BECA6DFB809</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>B60A6DAD95E0E4F6B6D7175BD828EEF82F99FA2F</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>ChronoKeep_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>ChronoKeep_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -212,6 +212,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Constants\DashboardLabels.cs" />
+    <Compile Include="Constants\ResultsAPI.cs" />
     <Compile Include="Constants\Timing.cs" />
     <Compile Include="Constants\Distances.cs" />
     <Compile Include="Constants\JsonOptions.cs" />
@@ -239,8 +240,14 @@
     <Compile Include="MigraDocPrinting\MigraDocPrintDocument.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Network\APIHandlers.cs" />
     <Compile Include="Network\HttpServer.cs" />
     <Compile Include="Objects\AgeGroup.cs" />
+    <Compile Include="Objects\ChronoKeepAPI\Event.cs" />
+    <Compile Include="Objects\ChronoKeepAPI\EventYear.cs" />
+    <Compile Include="Objects\ChronoKeepAPI\Requests.cs" />
+    <Compile Include="Objects\ChronoKeepAPI\Responses.cs" />
+    <Compile Include="Objects\ChronoKeepAPI\Result.cs" />
     <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
     <Compile Include="Objects\AvailableBib.cs" />
@@ -248,6 +255,7 @@
     <Compile Include="Objects\ChipRead.cs" />
     <Compile Include="Objects\DivisionStats.cs" />
     <Compile Include="Objects\Range.cs" />
+    <Compile Include="Objects\ResultsAPI.cs" />
     <Compile Include="Objects\Segment.cs" />
     <Compile Include="Objects\TimingSystem.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
@@ -276,6 +284,9 @@
     </Compile>
     <Compile Include="UI\MainPages\AgeGroupsPage.xaml.cs">
       <DependentUpon>AgeGroupsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\MainPages\APIPage.xaml.cs">
+      <DependentUpon>APIPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainPages\BibAssignmentPage.xaml.cs">
       <DependentUpon>BibAssignmentPage.xaml</DependentUpon>
@@ -464,6 +475,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\MainPages\AgeGroupsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\MainPages\APIPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -665,7 +680,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="ChronoKeep_1_TemporaryKey.pfx" />
+    <None Include="ChronoKeep_2_TemporaryKey.pfx" />
     <None Include="ChronoKeep_TemporaryKey.pfx" />
+    <None Include="EventDirector_TemporaryKey.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

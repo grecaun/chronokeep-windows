@@ -310,7 +310,7 @@ namespace ChronoKeep.UI
                 tcpServerThread = new Thread(new ThreadStart(tcpServer.Run));
                 tcpServerThread.Start();
                 Log.D("Starting zero configuration thread.");
-                zeroConf = new ZeroConf(database.GetServerName());
+                zeroConf = new ZeroConf(database.GetAppSetting(Constants.Settings.SERVER_NAME).value);
                 zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
                 zeroConfThread.Start();
             }
@@ -572,7 +572,7 @@ namespace ChronoKeep.UI
 
         public void SwitchPage(IMainPage iPage, bool IsMainPage)
         {
-            if (iPage is TimingPage)
+            if (iPage is TimingPage || iPage is APIPage)
             {
                 timingChildren.Visibility = Visibility.Visible;
             }
@@ -652,6 +652,17 @@ namespace ChronoKeep.UI
         public bool HttpServerActive()
         {
             return httpServer != null;
+        }
+
+        private void ResultsApi_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Results API button clicked.");
+            if (page is APIPage)
+            {
+                Log.D("Results API page already displayed.");
+                return;
+            }
+            SwitchPage(new APIPage(this, database), true);
         }
     }
 }

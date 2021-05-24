@@ -12,7 +12,7 @@ namespace ChronoKeep
     {
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, bib, readId, place, agePlace, genderPlace,
-            ageGroupId, chipMilliseconds, status, early;
+            ageGroupId, chipMilliseconds, status, early, uploaded;
         private long chipSeconds;
         private string time, locationName, segmentName, participantName,
             divisionName, unknownId, chipTime, gender, ageGroupName, splitTime = "";
@@ -29,7 +29,7 @@ namespace ChronoKeep
             string time, int occurrence, string first, string last, string division, int bib,
             int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
             int agePlace, int genderPlace, string gender, int status, int early, string split,
-            int ageGroupId, string ageGroupName)
+            int ageGroupId, string ageGroupName, int uploaded)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -180,6 +180,12 @@ namespace ChronoKeep
         public string LapTime { get => splitTime; set => splitTime = value; }
         public long ChipSeconds { get => chipSeconds; set => chipSeconds = value; }
         public int ChipMilliseconds { get => chipMilliseconds; set => chipMilliseconds = value; }
+        public int Uploaded { get => uploaded; set => uploaded = (value == Constants.Timing.TIMERESULT_UPLOADED_FALSE ? Constants.Timing.TIMERESULT_UPLOADED_FALSE : Constants.Timing.TIMERESULT_UPLOADED_TRUE); }
+
+        public bool IsUploaded()
+        {
+            return uploaded != Constants.Timing.TIMERESULT_UPLOADED_FALSE;
+        }
 
         public bool IsDNF()
         {

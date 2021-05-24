@@ -16,8 +16,8 @@ namespace ChronoKeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 129
-         * NEXT AVAILABLE   = 130
+         * HIGHEST MUTEX ID = 130
+         * NEXT AVAILABLE   = 131
          */
         private readonly int version = 43;
         readonly string connectionInfo;
@@ -39,34 +39,42 @@ namespace ChronoKeep
             if (reader.Read())
             {
                 Log.D("Tables do not need to be made.");
-                // As of version 43 we've changed how we store settings values to something more sensible.
-                command = new SQLiteCommand("SELECT value FROM settings WHERE setting='DATABASE_VERSION';", connection);
-                using (SQLiteDataReader versionChecker = command.ExecuteReader())
+                try
                 {
-                    if (versionChecker.Read())
+                    // As of version 43 we've changed how we store settings values to something more sensible.
+                    command = new SQLiteCommand("SELECT value FROM settings WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';", connection);
+                    // If we've got an upgraded version then command.ExecuteReader will throw an exception.
+                    using (SQLiteDataReader versionChecker = command.ExecuteReader())
                     {
-                        oldVersion = Convert.ToInt32(versionChecker["value"]);
-                    }
-                    else
-                    {
-                        // Check for an older version
-                        Log.D("We may have a database older than version 43.");
-                        command = new SQLiteCommand("SELECT version FROM settings;");
-                        using (SQLiteDataReader v2Checker = command.ExecuteReader())
+                        if (versionChecker.Read())
                         {
-                            if (v2Checker.Read())
-                            {
-                                oldVersion = Convert.ToInt32(v2Checker["version"]);
-                            } else
-                            {
-                                Log.D("Tables made, database version not found.");
-                            }
-                            v2Checker.Close();
+                            oldVersion = Convert.ToInt32(versionChecker["value"]);
                         }
-
+                        else
+                        {
+                            Log.D("Tables made, database version not found.");
+                        }
+                        versionChecker.Close();
                     }
-                    versionChecker.Close();
+                } catch
+                {
+                    // Check for an older version
+                    Log.D("We may have a database older than version 43.");
+                    command = new SQLiteCommand("SELECT version FROM settings;", connection);
+                    using (SQLiteDataReader v2Checker = command.ExecuteReader())
+                    {
+                        if (v2Checker.Read())
+                        {
+                            oldVersion = Convert.ToInt32(v2Checker["version"]);
+                        }
+                        else
+                        {
+                            Log.D("Tables made, database version not found.");
+                        }
+                        v2Checker.Close();
+                    }
                 }
+                Log.D("Old Version: " + oldVersion.ToString());
             }
             else
             {
@@ -81,7 +89,7 @@ namespace ChronoKeep
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS results_api(" +
                     "api_id INTEGER PRIMARY KEY," +
-                    "api_type INTEGER NOT NULL DEFAULT -1," +
+                    "api_type VARCHAR(50) NOT NULL," +
                     "api_url VARCHAR(150) NOT NULL," +
                     "api_auth_token VARCHAR(100) NOT NULL," +
                     "api_nickname VARCHAR(75) NOT NULL," +
@@ -110,8 +118,8 @@ namespace ChronoKeep
                     "event_start_window INTEGER NOT NULL DEFAULT -1," +
                     "event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Settings.TIMING_RFID + "'," +
                     "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
-                    "api_id INTEGER REFERENCES results_api(api_id) DEFAULT NULL," +
-                    "api_event_id VARCHAR(200) DEFAULT ''," +
+                    "api_id INTEGER REFERENCES results_api(api_id) NOT NULL DEFAULT -1," +
+                    "api_event_id VARCHAR(200) NOT NULL DEFAULT ''," +
                     "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS dayof_participant (" +
@@ -266,6 +274,7 @@ namespace ChronoKeep
                     "timeresult_age_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
                     "timeresult_gender_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
                     "timeresult_status INT NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_STATUS_NONE + "," +
+                    "timeresult_uploaded INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_UPLOADED_FALSE + "," +
                     "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS changes (" +
@@ -335,7 +344,7 @@ namespace ChronoKeep
                     "UNIQUE (setting) ON CONFLICT REPLACE" +
                     ");"+
                     "INSERT INTO settings (setting, value) VALUES " +
-                    "('DATABASE_VERSION','" + version + "');");
+                    "('" + Constants.Settings.DATABASE_VERSION + "','" + version + "');");
                 queries.Add("CREATE TABLE IF NOT EXISTS bib_group (" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "bib_group_number INTEGER NOT NULL," +
@@ -375,12 +384,12 @@ namespace ChronoKeep
                     transaction.Commit();
                 }
 
-                command = new SQLiteCommand("SELECT version FROM settings;", connection);
+                command = new SQLiteCommand("SELECT value FROM settings WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';", connection);
                 using (SQLiteDataReader versionChecker = command.ExecuteReader())
                 {
                     if (versionChecker.Read())
                     {
-                        oldVersion = Convert.ToInt32(versionChecker["version"]);
+                        oldVersion = Convert.ToInt32(versionChecker["value"]);
                     }
                     else
                     {
@@ -1347,16 +1356,20 @@ namespace ChronoKeep
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS results_api(" +
                                 "api_id INTEGER PRIMARY KEY," +
-                                "api_type INTEGER NOT NULL DEFAULT -1," +
+                                "api_type VARCHAR(50) NOT NULL," +
                                 "api_url VARCHAR(150) NOT NULL," +
                                 "api_auth_token VARCHAR(100) NOT NULL," +
                                 "api_nickname VARCHAR(75) NOT NULL," +
                                 "UNIQUE (api_url, api_auth_token) ON CONFLICT REPLACE);" +
-                            "ALTER TABLE events ADD COLUMN api_id INTEGER REFERENCES results_api(api_id) DEFAULT NULL;" +
-                            "ALTER TABLE events ADD COLUMN api_event_id VARCHAR(200) DEFAULT '';" +
-                            "DROP TABLE settings_old;" +
+                            "ALTER TABLE events ADD COLUMN api_id INTEGER REFERENCES results_api(api_id) NOT NULL DEFAULT -1;" +
+                            "ALTER TABLE events ADD COLUMN api_event_id VARCHAR(200) NOT NULL DEFAULT '';" +
+                            "ALTER TABLE time_results ADD COLUMN timeresult_uploaded INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_UPLOADED_FALSE + ";" +
+                            "ALTER TABLE settings RENAME TO settings_old;" +
                             "ALTER TABLE app_settings RENAME to settings;" +
-                            "INSERT INTO settings (setting, value) VALUES ('DATABASE_VERSION', '43');";
+                            "INSERT INTO settings (setting, value) VALUES ('"+ Constants.Settings.DATABASE_VERSION +"', '43');" +
+                            "INSERT INTO settings SELECT '"+ Constants.Settings.SERVER_NAME + "', name FROM settings_old;" +
+                            "DROP TABLE settings_old;";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();
@@ -3246,9 +3259,9 @@ namespace ChronoKeep
             command.CommandText = "INSERT INTO time_results (event_id, eventspecific_id, location_id, segment_id, " +
                 "timeresult_occurance, timeresult_time, timeresult_unknown_id, read_id, timeresult_chiptime," +
                 "timeresult_place, timeresult_age_place, timeresult_gender_place," +
-                "timeresult_status, timeresult_splittime)" +
+                "timeresult_status, timeresult_splittime, timeresult_uploaded)" +
                 " VALUES (@event,@specific,@location,@segment,@occ,@time,@unknown,@read,@chip,@place,@agplace," +
-                "@gendplace,@status,@split)";
+                "@gendplace,@status,@split,@uploaded)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tr.EventIdentifier),
                 new SQLiteParameter("@specific", tr.EventSpecificId),
@@ -3263,7 +3276,9 @@ namespace ChronoKeep
                 new SQLiteParameter("@agplace", tr.AgePlace),
                 new SQLiteParameter("@gendplace", tr.GenderPlace),
                 new SQLiteParameter("@status", tr.Status),
-                new SQLiteParameter("@split", tr.LapTime) });
+                new SQLiteParameter("@split", tr.LapTime),
+                new SQLiteParameter("@uploaded", tr.Uploaded)
+            });
             command.ExecuteNonQuery();
         }
 
@@ -3361,7 +3376,8 @@ namespace ChronoKeep
                     reader["eventspecific_earlystart"] == DBNull.Value ? 0 : Convert.ToInt32(reader["eventspecific_earlystart"]),
                     reader["timeresult_splittime"].ToString(),
                     reader["eventspecific_age_group_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_age_group_id"]),
-                    reader["eventspecific_age_group_name"].ToString()
+                    reader["eventspecific_age_group_name"].ToString(),
+                    Convert.ToInt32(reader["timeresult_uploaded"])
                     ));
             }
             reader.Close();
@@ -3506,6 +3522,60 @@ namespace ChronoKeep
             command.ExecuteNonQuery();
             connection.Close();
             mutex.ReleaseMutex();
+        }
+
+        public void SetUploadedTimingResult(TimeResult result)
+        {
+            Log.D("Attempting to grab Mutex: ID 129");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 129");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "UPDATE time_results SET timeresult_uploaded=@uploaded WHERE event_id=@event AND eventspecific_id=@eventspecific AND location_id=@location AND timeresult_occurance=@occurance";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                new SQLiteParameter("@uploaded", result.Uploaded),
+                new SQLiteParameter("@event", result.EventIdentifier),
+                new SQLiteParameter("@eventspecific", result.EventSpecificId),
+                new SQLiteParameter("@location", result.LocationId),
+                new SQLiteParameter("@occurance", result.Occurrence)});
+            command.ExecuteNonQuery();
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public List<TimeResult> GetNonUploadedResults(int eventId)
+        {
+            Log.D("Attempting to grab Mutex: ID 130");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 130");
+                return new List<TimeResult>();
+            }
+            Log.D("Getting non-uploaded results for event id of " + eventId);
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM time_results r " +
+                "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN (eventspecific e " +
+                "JOIN participants p ON p.participant_id=e.participant_id " +
+                "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "WHERE r.event_id=@eventid AND r.timeresult_uploaded=@uploaded;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@eventid", eventId),
+                new SQLiteParameter("@uploaded", Constants.Timing.TIMERESULT_UPLOADED_FALSE)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            List<TimeResult> output = GetResultsInternal(reader);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
         }
 
         public bool UnprocessedReadsExist(int eventId)
@@ -5792,6 +5862,9 @@ namespace ChronoKeep
                 new SQLiteParameter("@nickname", anAPI.Nickname),
                 new SQLiteParameter("@id", anAPI.Identifier)
             });
+            command.ExecuteNonQuery();
+            connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public void RemoveResultsAPI(int identifier)
@@ -5807,7 +5880,7 @@ namespace ChronoKeep
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM results_api WHERE api_id=@id;";
+                command.CommandText = "UPDATE events SET api_id=-1, api_event_id='' WHERE api_id=@id; DELETE FROM results_api WHERE api_id=@id;";
                 command.Parameters.Add(new SQLiteParameter("@id", identifier));
                 command.ExecuteNonQuery();
                 transaction.Commit();

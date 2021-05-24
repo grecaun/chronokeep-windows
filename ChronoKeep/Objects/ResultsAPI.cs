@@ -11,6 +11,14 @@ namespace ChronoKeep.Objects
         private int id;
         private string type, url, nickname, auth_token;
 
+        public ResultsAPI()
+        {
+            type = Constants.ResultsAPI.CHRONOKEEP;
+            url = Constants.ResultsAPI.CHRONOKEEP_URL;
+            auth_token = "";
+            nickname = "";
+        }
+
         public ResultsAPI(int id, string type, string url, string nickname, string auth_token)
         {
             this.id = id;
