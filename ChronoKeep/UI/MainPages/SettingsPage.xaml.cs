@@ -57,6 +57,7 @@ namespace ChronoKeep.UI.MainPages
                 DefaultTimingBox.SelectedIndex = 0;
             }
             CompanyNameBox.Text = database.GetAppSetting(Constants.Settings.COMPANY_NAME).value;
+            ContactEmailBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).value;
             DefaultExportDirBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value;
             DefaultWaiverBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_WAIVER).value;
             UpdatePage.IsChecked = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE;
@@ -107,6 +108,7 @@ namespace ChronoKeep.UI.MainPages
         {
             Log.D("Save button clicked.");
             database.SetAppSetting(Constants.Settings.COMPANY_NAME, CompanyNameBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.CONTACT_EMAIL, ContactEmailBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM, ((ComboBoxItem)DefaultTimingBox.SelectedItem).Uid);
             database.SetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR, DefaultExportDirBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.DEFAULT_WAIVER, DefaultWaiverBox.Text);

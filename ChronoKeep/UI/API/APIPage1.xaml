@@ -1,0 +1,19 @@
+﻿<Page x:Class="ChronoKeep.UI.API.APIPage1"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ChronoKeep.UI.API"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="300"
+      Title="APIPage1">
+
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label Content="Select API to use:" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+            <ComboBox Name="APIBox" Width="200" VerticalAlignment="Center" />
+        </StackPanel>
+        <Button Content="Next" Height="25" Width="100" VerticalAlignment="Bottom" Margin="0,0,150,10" Click="Next_Click" />
+        <Button Content="Cancel" Height="25" Width="100" VerticalAlignment="Bottom" Margin="150,0,0,10" Click="Cancel_Click" />
+    </Grid>
+</Page>

@@ -14,10 +14,7 @@
         <StackPanel Name="leftSide" Grid.Column="0">
             <Button x:Name="dashboardButton" Content="Dashboard" HorizontalAlignment="Center" Margin="0,10,0,10" Width="160" Click="DashboardButton_Click" AutomationProperties.HelpText="Display Dashboard" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
             <Button x:Name="timingButton" Content="Timing" HorizontalAlignment="Center" Margin="0,0,0,10" Width="160" Click="TimingButton_Click" AutomationProperties.HelpText="Display Timing" FontSize="16" VerticalContentAlignment="Center" Height="35" />
-            <StackPanel Name="timingChildren" HorizontalAlignment="Center" Margin="10,0,0,0" Visibility="Collapsed">
-                <Button Name="announcer" Content="Announcer Window" HorizontalAlignment="Center" Margin="0,0,0,10" Width="150" Click="Announcer_Click" AutomationProperties.HelpText="Announcer Window" FontSize="12" VerticalContentAlignment="Center" Height="35" IsEnabled="False"/>
-                <Button Name="resultsApi" Content="Results API" HorizontalAlignment="Center" Margin="0,0,0,10" Width="150" Click="ResultsApi_Click" AutomationProperties.HelpText="Results API" FontSize="12" VerticalContentAlignment="Center" Height="35"/>
-            </StackPanel>
+            <Button Name="announcer" Content="Announcer Window" HorizontalAlignment="Center" Margin="0,0,0,10" Width="160" Click="Announcer_Click" AutomationProperties.HelpText="Announcer Window" FontSize="16" VerticalContentAlignment="Center" Height="35" IsEnabled="False"/>
             <Button x:Name="participantsButton" Content="Participants" HorizontalAlignment="Center" Margin="0,0,0,10" Width="160" Click="ParticipantsButton_Click" AutomationProperties.HelpText="Display Participants" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
             <Button x:Name="bibsButton" Content="Bibs" HorizontalAlignment="Center" Margin="0,0,0,10" Width="160" Click="BibsButton_Click" AutomationProperties.HelpText="Display Bibs" FontSize="16" VerticalContentAlignment="Center" Height="35" Visibility="Collapsed"/>
             <Button x:Name="chipsButton" Content="Chips" HorizontalAlignment="Center" Margin="0,0,0,10" Width="160" Click="ChipsButton_Click" AutomationProperties.HelpText="Display Chips" FontSize="16" VerticalContentAlignment="Center" Height="35"/>

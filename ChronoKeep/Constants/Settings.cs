@@ -18,9 +18,11 @@ namespace ChronoKeep.Constants
         public static readonly string DEFAULT_WAIVER        = "SETTING_DEFAULT_WAIVER";
         public static readonly string CURRENT_EVENT         = "SETTING_CURRENT_EVENT";
         public static readonly string COMPANY_NAME          = "SETTING_COMPANY_NAME";
+        public static readonly string CONTACT_EMAIL         = "SETTING_CONTACT_EMAIL";
         public static readonly string UPDATE_ON_PAGE_CHANGE = "SETTING_UPDATE_PAGE_CHANGE";
         public static readonly string EXIT_NO_PROMPT        = "EXIT_NO_PROMPT";
         public static readonly string DEFAULT_CHIP_TYPE     = "DEFAULT_CHIP_TYPE";
+        public static readonly string LAST_USED_API_ID      = "SETTING_LAST_USED_API_ID";
         // Not yet implemented
         public static readonly string AUTO_READ_LOG         = "SETTING_AUTO_READ_LOG";
         public static readonly string AUTO_READ_LOG_DIR     = "SETTING_AUTO_READ_LOG_DIR";
@@ -87,7 +89,7 @@ namespace ChronoKeep.Constants
             }
             if (database.GetAppSetting(COMPANY_NAME) == null)
             {
-                database.SetAppSetting(COMPANY_NAME, WAIVER_COMPANY);
+                database.SetAppSetting(COMPANY_NAME, "");
             }
             if (database.GetAppSetting(UPDATE_ON_PAGE_CHANGE) == null)
             {
@@ -100,6 +102,10 @@ namespace ChronoKeep.Constants
             if (database.GetAppSetting(DEFAULT_CHIP_TYPE) == null)
             {
                 database.SetAppSetting(DEFAULT_CHIP_TYPE, CHIP_TYPE_DEC);
+            }
+            if (database.GetAppSetting(CONTACT_EMAIL) == null)
+            {
+                database.SetAppSetting(CONTACT_EMAIL, "");
             }
         }
     }

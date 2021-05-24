@@ -170,12 +170,28 @@
       <HintPath>..\packages\PDFsharp-MigraDoc-gdi.1.50.5147\lib\net20\PdfSharp.Charting-gdi.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.113.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.113.3\lib\net46\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WinHttpHandler, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Net.Http.WinHttpHandler.5.0.0\lib\net461\System.Net.Http.WinHttpHandler.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -240,14 +256,15 @@
     <Compile Include="MigraDocPrinting\MigraDocPrintDocument.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Network\APIHandlers.cs" />
+    <Compile Include="Network\API\APIException.cs" />
+    <Compile Include="Network\API\APIHandlers.cs" />
     <Compile Include="Network\HttpServer.cs" />
     <Compile Include="Objects\AgeGroup.cs" />
-    <Compile Include="Objects\ChronoKeepAPI\Event.cs" />
-    <Compile Include="Objects\ChronoKeepAPI\EventYear.cs" />
+    <Compile Include="Objects\ChronoKeepAPI\APIEvent.cs" />
+    <Compile Include="Objects\ChronoKeepAPI\APIEventYear.cs" />
     <Compile Include="Objects\ChronoKeepAPI\Requests.cs" />
     <Compile Include="Objects\ChronoKeepAPI\Responses.cs" />
-    <Compile Include="Objects\ChronoKeepAPI\Result.cs" />
+    <Compile Include="Objects\ChronoKeepAPI\APIResult.cs" />
     <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
     <Compile Include="Objects\AvailableBib.cs" />
@@ -262,6 +279,21 @@
     <Compile Include="Timing\Interfaces\IpicoInterface.cs" />
     <Compile Include="Timing\TimingController.cs" />
     <Compile Include="Timing\TimingWorker.cs" />
+    <Compile Include="UI\API\APIErrorPage.xaml.cs">
+      <DependentUpon>APIErrorPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\API\APIPage1.xaml.cs">
+      <DependentUpon>APIPage1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\API\APIPage2.xaml.cs">
+      <DependentUpon>APIPage2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\API\APIPage3.xaml.cs">
+      <DependentUpon>APIPage3.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\API\APIWindow.xaml.cs">
+      <DependentUpon>APIWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\ChipAssignment\ChipTool.xaml.cs">
       <DependentUpon>ChipTool.xaml</DependentUpon>
     </Compile>
@@ -450,6 +482,26 @@
     <Compile Include="Objects\TimingLocation.cs" />
     <Compile Include="Objects\Helpers\Utils.cs" />
     <Compile Include="Network\ZeroConf.cs" />
+    <Page Include="UI\API\APIErrorPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\API\APIPage1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\API\APIPage2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\API\APIPage3.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\API\APIWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\ChipAssignment\ChipTool.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -679,10 +731,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="ChronoKeep_1_TemporaryKey.pfx" />
     <None Include="ChronoKeep_2_TemporaryKey.pfx" />
-    <None Include="ChronoKeep_TemporaryKey.pfx" />
-    <None Include="EventDirector_TemporaryKey.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

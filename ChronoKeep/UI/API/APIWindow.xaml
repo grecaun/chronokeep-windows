@@ -1,12 +1,12 @@
-﻿<Window x:Class="ChronoKeep.UI.APIWindow.APIWindow"
+﻿<Window x:Class="ChronoKeep.UI.API.APIWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ChronoKeep.UI.APIWindow"
+        xmlns:local="clr-namespace:ChronoKeep.UI.API"
         mc:Ignorable="d"
-        Title="APIWindow" Height="450" Width="800">
+        Title="Link Event" Height="450" Width="300" MinWidth="300">
     <Grid>
-        
+        <Frame x:Name="APIFrame" NavigationUIVisibility="Hidden" IsTabStop="False" />
     </Grid>
 </Window>

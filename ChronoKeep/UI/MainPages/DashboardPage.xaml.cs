@@ -1,6 +1,7 @@
 ﻿using ChronoKeep.Interfaces;
 using ChronoKeep.Objects;
 using ChronoKeep.Timing;
+using ChronoKeep.UI.API;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -143,6 +144,13 @@ namespace ChronoKeep.UI.MainPages
             else
             {
                 SetNetworkStopped();
+            }
+            if (theEvent.API_ID > 0 && theEvent.API_Event_ID != "")
+            {
+                apiLinkButton.Content = "Event Linked";
+            } else
+            {
+                apiLinkButton.Content = "Link to API Event";
             }
         }
 
@@ -678,7 +686,19 @@ namespace ChronoKeep.UI.MainPages
 
         private void apiLinkButton_Click(object sender, RoutedEventArgs e)
         {
+            Log.D("Link to API Event.");
+            APIWindow apiWindow = APIWindow.NewWindow(mWindow, database);
+            if (apiWindow != null) {
+                mWindow.AddWindow(apiWindow);
+                apiWindow.ShowDialog();
+                UpdateView();
+            }
+        }
 
+        private void apiPageButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Results API button clicked.");
+            mWindow.SwitchPage(new APIPage(mWindow, database), true);
         }
     }
 }

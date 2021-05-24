@@ -572,14 +572,6 @@ namespace ChronoKeep.UI
 
         public void SwitchPage(IMainPage iPage, bool IsMainPage)
         {
-            if (iPage is TimingPage || iPage is APIPage)
-            {
-                timingChildren.Visibility = Visibility.Visible;
-            }
-            else if (IsMainPage)
-            {
-                timingChildren.Visibility = Visibility.Collapsed;
-            }
             page.Closing();
             page = iPage;
             TheFrame.NavigationService.RemoveBackEntry();
@@ -652,17 +644,6 @@ namespace ChronoKeep.UI
         public bool HttpServerActive()
         {
             return httpServer != null;
-        }
-
-        private void ResultsApi_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Results API button clicked.");
-            if (page is APIPage)
-            {
-                Log.D("Results API page already displayed.");
-                return;
-            }
-            SwitchPage(new APIPage(this, database), true);
         }
     }
 }

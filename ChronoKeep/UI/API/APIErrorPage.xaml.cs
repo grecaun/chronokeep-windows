@@ -10,18 +10,25 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.APIWindow
+namespace ChronoKeep.UI.API
 {
     /// <summary>
-    /// Interaction logic for APIWindow.xaml
+    /// Interaction logic for APIErrorPage.xaml
     /// </summary>
-    public partial class APIWindow : Window
+    public partial class APIErrorPage : Page
     {
-        public APIWindow()
+        APIWindow window;
+        public APIErrorPage(APIWindow window, bool noAPI)
         {
             InitializeComponent();
+            this.window = window;
+            if (noAPI)
+            {
+                errorLabel.Text = "An API must be set up before you can use this tool.";
+            }
         }
     }
 }

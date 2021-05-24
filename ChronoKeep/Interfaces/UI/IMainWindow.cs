@@ -8,6 +8,7 @@ namespace ChronoKeep.Interfaces
     {
         // Window related calls.
         void AddWindow(Window w);
+        void SwitchPage(IMainPage iPage, bool IsMainPage);
         
         // Networking services related calls.
         bool StartNetworkServices();
