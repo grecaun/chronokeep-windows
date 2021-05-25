@@ -14,8 +14,8 @@ namespace ChronoKeep
             occurrence, bib, readId, place, agePlace, genderPlace,
             ageGroupId, chipMilliseconds, status, early, uploaded;
         private long chipSeconds;
-        private string time, locationName, segmentName, participantName,
-            divisionName, unknownId, chipTime, gender, ageGroupName, splitTime = "";
+        private string time, locationName, segmentName, firstName, lastName,
+            divisionName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday;
         DateTime systemTime;
 
         public static readonly Regex timeRegex = new Regex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})");
@@ -29,7 +29,7 @@ namespace ChronoKeep
             string time, int occurrence, string first, string last, string division, int bib,
             int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
             int agePlace, int genderPlace, string gender, int status, int early, string split,
-            int ageGroupId, string ageGroupName, int uploaded)
+            int ageGroupId, string ageGroupName, int uploaded, string birthday)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -55,7 +55,8 @@ namespace ChronoKeep
             {
                 this.segmentName = "";
             }
-            this.participantName = String.Format("{0} {1}", first, last).Trim();
+            this.firstName = first;
+            this.lastName = last;
             this.divisionName = division;
             this.bib = bib;
             this.unknownId = unknownId;
@@ -81,6 +82,8 @@ namespace ChronoKeep
             this.status = status;
             this.early = early;
             this.splitTime = split;
+            this.uploaded = uploaded;
+            this.birthday = birthday;
         }
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
@@ -145,7 +148,9 @@ namespace ChronoKeep
         public string Time { get => time; set => time = value; }
         public string LocationName { get => locationName; set => locationName = value; }
         public string SegmentName { get => segmentName; set => segmentName = value; }
-        public string ParticipantName { get => participantName; set => participantName = value; }
+        public string First { get => firstName; set => firstName = value; }
+        public string Last { get => lastName; set => lastName = value; }
+        public string ParticipantName { get => String.Format("{0} {1}", firstName, lastName).Trim(); }
         public string DivisionName { get => divisionName; set => divisionName = value; }
         public string DivisionNameWithEarly { get => divisionName + (early == 1 ? " Early" : ""); }
         public int Bib { get => bib; set => bib = value; }
@@ -181,6 +186,18 @@ namespace ChronoKeep
         public long ChipSeconds { get => chipSeconds; set => chipSeconds = value; }
         public int ChipMilliseconds { get => chipMilliseconds; set => chipMilliseconds = value; }
         public int Uploaded { get => uploaded; set => uploaded = (value == Constants.Timing.TIMERESULT_UPLOADED_FALSE ? Constants.Timing.TIMERESULT_UPLOADED_FALSE : Constants.Timing.TIMERESULT_UPLOADED_TRUE); }
+        public string Birthday { get => birthday; set => birthday = value; }
+        public int Age(string eventDate)
+        {
+            DateTime eventDateTime = Convert.ToDateTime(eventDate);
+            DateTime myDateTime = Convert.ToDateTime(birthday);
+            int numYears = eventDateTime.Year - myDateTime.Year;
+            if (eventDateTime.Month < myDateTime.Month || (eventDateTime.Month == myDateTime.Month && eventDateTime.Day < myDateTime.Day))
+            {
+                numYears--;
+            }
+            return numYears;
+        }
 
         public bool IsUploaded()
         {

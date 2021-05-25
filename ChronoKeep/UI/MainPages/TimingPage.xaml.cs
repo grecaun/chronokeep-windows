@@ -1,7 +1,9 @@
 ﻿using ChronoKeep.Interfaces;
 using ChronoKeep.IO;
 using ChronoKeep.IO.HtmlTemplates;
+using ChronoKeep.Network.API;
 using ChronoKeep.Objects;
+using ChronoKeep.Objects.API;
 using ChronoKeep.UI.Export;
 using ChronoKeep.UI.Timing;
 using ChronoKeep.UI.Timing.Import;
@@ -176,6 +178,14 @@ namespace ChronoKeep.UI.MainPages
                 IPContainer.Visibility = Visibility.Collapsed;
                 PortContainer.Visibility = Visibility.Collapsed;
             }
+            if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
+            {
+                apiPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                apiPanel.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -276,6 +286,14 @@ namespace ChronoKeep.UI.MainPages
                 HttpServerButton.Content = "Start Web";
                 IPContainer.Visibility = Visibility.Collapsed;
                 PortContainer.Visibility = Visibility.Collapsed;
+            }
+            if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
+            {
+                apiPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                apiPanel.Visibility = Visibility.Collapsed;
             }
             subPage.UpdateView();
         }
@@ -765,6 +783,95 @@ namespace ChronoKeep.UI.MainPages
         private void ManualAPI_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Manual API clicked.");
+            if (ManualAPIButton.Content.ToString() != "Uploading")
+            {
+                Log.D("Uploading data.");
+                ManualAPIButton.Content = "Uploading";
+                UploadResults();
+                return;
+            }
+            Log.D("Already uploading.");
+        }
+
+        private async void UploadResults()
+        {
+            // Get API to upload.
+            if (theEvent.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
+            {
+                ManualAPIButton.Content = "Manual Upload";
+                return;
+            }
+            ResultsAPI api = database.GetResultsAPI(theEvent.API_ID);
+            string[] event_ids = theEvent.API_Event_ID.Split(',');
+            if (event_ids.Length != 2)
+            {
+                ManualAPIButton.Content = "Manual Upload";
+                return;
+            }
+            // Get results to upload.
+            List<TimeResult> results = database.GetNonUploadedResults(theEvent.Identifier);
+            if (results.Count < 1)
+            {
+                Log.D("Nothing to upload.");
+                ManualAPIButton.Content = "Manual Upload";
+                return;
+            }
+            // Change TimeResults to APIResults
+            List<APIResult> upRes = new List<APIResult>();
+            Log.D("Results count: " + results.Count.ToString());
+            foreach (TimeResult tr in results)
+            {
+                tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
+                upRes.Add(new APIResult(theEvent, tr));
+            }
+            Log.D("Attempting to upload " + upRes.Count.ToString() + " results.");
+            int total = 0;
+            int loops = upRes.Count / 20;
+            AddResultsResponse response;
+            for (int i = 0; i < loops; i += 1)
+            {
+                try
+                {
+                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * 20, 20));
+                }
+                catch (APIException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    ManualAPIButton.Content = "Manual Upload";
+                    return;
+                }
+                if (response != null)
+                {
+                    total += response.Count;
+                    Log.D("Total: " + total + " Count: " + response.Count);
+                }
+            }
+            int leftovers = upRes.Count - (loops * 20);
+            if (leftovers > 0)
+            {
+                try
+                {
+                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops, leftovers));
+                }
+                catch (APIException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    ManualAPIButton.Content = "Manual Upload";
+                    return;
+                }
+                if (response != null)
+                {
+                    total += response.Count;
+                    Log.D("Total: " + total + " Count: " + response.Count);
+                }
+                Log.D("Upload finished. Count total: " + total);
+            }
+            if (results.Count == total)
+            {
+                Log.D("Count matches, updating records.");
+                database.AddTimingResults(results);
+            }
+            ManualAPIButton.Content = "Manual Upload";
         }
 
         private class AReaderBox : ListBoxItem

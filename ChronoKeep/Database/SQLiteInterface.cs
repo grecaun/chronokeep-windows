@@ -3377,7 +3377,8 @@ namespace ChronoKeep
                     reader["timeresult_splittime"].ToString(),
                     reader["eventspecific_age_group_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_age_group_id"]),
                     reader["eventspecific_age_group_name"].ToString(),
-                    Convert.ToInt32(reader["timeresult_uploaded"])
+                    Convert.ToInt32(reader["timeresult_uploaded"]),
+                    reader["participant_birthday"].ToString()
                     ));
             }
             reader.Close();
@@ -3524,7 +3525,7 @@ namespace ChronoKeep
             mutex.ReleaseMutex();
         }
 
-        public void SetUploadedTimingResult(TimeResult result)
+        public void SetUploadedTimingResults(List<TimeResult> results)
         {
             Log.D("Attempting to grab Mutex: ID 129");
             if (!mutex.WaitOne(3000))
@@ -3534,16 +3535,24 @@ namespace ChronoKeep
             }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE time_results SET timeresult_uploaded=@uploaded WHERE event_id=@event AND eventspecific_id=@eventspecific AND location_id=@location AND timeresult_occurance=@occurance";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                new SQLiteParameter("@uploaded", result.Uploaded),
-                new SQLiteParameter("@event", result.EventIdentifier),
-                new SQLiteParameter("@eventspecific", result.EventSpecificId),
-                new SQLiteParameter("@location", result.LocationId),
-                new SQLiteParameter("@occurance", result.Occurrence)});
-            command.ExecuteNonQuery();
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (TimeResult result in results)
+                {
+                    SQLiteCommand command = connection.CreateCommand();
+                    command.CommandType = System.Data.CommandType.Text;
+                    command.CommandText = "UPDATE time_results SET timeresult_uploaded=@uploaded WHERE event_id=@event AND eventspecific_id=@eventspecific AND location_id=@location AND timeresult_occurance=@occurance";
+                    command.Parameters.AddRange(new SQLiteParameter[] {
+                        new SQLiteParameter("@uploaded", result.Uploaded),
+                        new SQLiteParameter("@event", result.EventIdentifier),
+                        new SQLiteParameter("@eventspecific", result.EventSpecificId),
+                        new SQLiteParameter("@location", result.LocationId),
+                        new SQLiteParameter("@occurance", result.Occurrence)}
+                    );
+                    command.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
             connection.Close();
             mutex.ReleaseMutex();
         }
@@ -3562,7 +3571,7 @@ namespace ChronoKeep
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN (eventspecific e " +
+                "JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid AND r.timeresult_uploaded=@uploaded;";
