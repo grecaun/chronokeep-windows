@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using Newtonsoft.Json;
 
 namespace ChronoKeep.Network.API
@@ -17,7 +18,7 @@ namespace ChronoKeep.Network.API
             var handler = new WinHttpHandler();
             var client = new HttpClient(handler);
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             return client;
         }
 
@@ -32,13 +33,9 @@ namespace ChronoKeep.Network.API
                     var request = new HttpRequestMessage
                     {
                         Method = HttpMethod.Get,
-                        RequestUri = new Uri(api.URL + "event/my"),
-                        Content = new StringContent(
-                            JsonConvert.SerializeObject(new GeneralRequest { Key = api.AuthToken }),
-                            Encoding.UTF8,
-                            "application/json"
-                            )
+                        RequestUri = new Uri(api.URL + "event/my")
                     };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
                     HttpResponseMessage response = await client.SendAsync(request);
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
@@ -76,13 +73,13 @@ namespace ChronoKeep.Network.API
                         Content = new StringContent(
                             JsonConvert.SerializeObject(new GetEventRequest
                             {
-                                Key = api.AuthToken,
                                 Slug = slug
                             }),
                             Encoding.UTF8,
                             "application/json"
                             )
                     };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
                     HttpResponseMessage response = await client.SendAsync(request);
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
@@ -120,13 +117,13 @@ namespace ChronoKeep.Network.API
                         Content = new StringContent(
                             JsonConvert.SerializeObject(new ModifyEventRequest
                             {
-                                Key = api.AuthToken,
                                 Event = ev
                             }),
                             Encoding.UTF8,
                             "application/json"
                             )
                     };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
                     HttpResponseMessage response = await client.SendAsync(request);
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
@@ -164,7 +161,6 @@ namespace ChronoKeep.Network.API
                         Content = new StringContent(
                             JsonConvert.SerializeObject(new ModifyEventYearRequest
                             {
-                                Key = api.AuthToken,
                                 Slug = slug,
                                 Year = year
                             }),
@@ -172,6 +168,7 @@ namespace ChronoKeep.Network.API
                             "application/json"
                             )
                     };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
                     HttpResponseMessage response = await client.SendAsync(request);
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
@@ -209,7 +206,6 @@ namespace ChronoKeep.Network.API
                         Content = new StringContent(
                             JsonConvert.SerializeObject(new AddResultsRequest
                             {
-                                Key = api.AuthToken,
                                 Slug = slug,
                                 Year = year,
                                 Results = results
@@ -218,6 +214,7 @@ namespace ChronoKeep.Network.API
                             "application/json"
                             )
                     };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
                     HttpResponseMessage response = await client.SendAsync(request);
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {

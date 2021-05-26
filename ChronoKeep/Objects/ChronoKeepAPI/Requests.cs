@@ -13,26 +13,15 @@ namespace ChronoKeep.Objects.API
      * 
      */
 
-    // General request with only the key
-    public class GeneralRequest
-    {
-        [JsonProperty("key")]
-        public string Key { get; set; }
-    }
-
     // Event specific requests
     public class GetEventRequest
     {
-        [JsonProperty("key")]
-        public string Key { get; set; }
         [JsonProperty("slug")]
         public string Slug { get; set; }
     }
 
     public class ModifyEventRequest
     {
-        [JsonProperty("key")]
-        public string Key { get; set; }
         [JsonProperty("event")]
         public APIEvent Event { get; set; }
     }
@@ -40,8 +29,6 @@ namespace ChronoKeep.Objects.API
     // Event Year specific requests.
     public class GetEventYearRequest
     {
-        [JsonProperty("key")]
-        public string Key { get; set; }
         [JsonProperty("slug")]
         public string Slug { get; set; }
         [JsonProperty("year")]
@@ -50,8 +37,6 @@ namespace ChronoKeep.Objects.API
 
     public class ModifyEventYearRequest
     {
-        [JsonProperty("key")]
-        public string Key { get; set; }
         [JsonProperty("slug")]
         public string Slug { get; set; }
         [JsonProperty("event_year")]
@@ -61,8 +46,6 @@ namespace ChronoKeep.Objects.API
     // Result specific requests
     public class GetResultsRequest
     {
-        [JsonProperty("key")]
-        public string Key { get; set; }
         [JsonProperty("slug")]
         public string Slug { get; set; }
         [JsonProperty("year")]
@@ -71,8 +54,6 @@ namespace ChronoKeep.Objects.API
 
     public class AddResultsRequest
     {
-        [JsonProperty("key")]
-        public string Key { get; set; }
         [JsonProperty("slug")]
         public string Slug { get; set; }
         [JsonProperty("year")]
