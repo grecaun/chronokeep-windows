@@ -170,16 +170,17 @@ namespace ChronoKeep.UI.MainPages
                     Log.D("Division ID " + ((ASegment)seg).mySegment.DivisionId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
                 }
             }
+            SegmentsToAdd.RemoveAll(x => x.Occurrence >= theEvent.FinishMaxOccurrences);
             database.AddSegments(SegmentsToAdd);
             database.RemoveSegments(SegmentsToRemove);
             Log.D("Segments to remove count is " + SegmentsToRemove.Count);
             UpdateTimingWorker = true;
             segments.RemoveAll(x => (SegmentsToAdd.Contains(x) || SegmentsToRemove.Contains(x)));
+            segments.RemoveAll(x => x.Occurrence >= theEvent.FinishMaxOccurrences);
             database.UpdateSegments(segments);
             Log.D("Segments to update count is " + segments.Count);
             SegmentsToAdd.Clear();
             SegmentsToRemove.Clear();
-
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -215,7 +216,7 @@ namespace ChronoKeep.UI.MainPages
                 }
                 if (occurrence_error)
                 {
-                    MessageBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  This could cause errors.");
+                    MessageBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  These will not be added. Update locations and max occurrences to fix this.");
                 }
             }
             if (UpdateTimingWorker)
@@ -229,6 +230,10 @@ namespace ChronoKeep.UI.MainPages
         public void AddSegment(int divisionId, int occurrence)
         {
             Log.D("Adding segment.");
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
             Segment newSeg = new Segment(theEvent.Identifier, divisionId, Constants.Timing.LOCATION_FINISH, occurrence, 0.0, 0.0, Constants.Distances.MILES, "Finish " + occurrence);
             SegmentsToAdd.Add(newSeg);
             allSegments[divisionId].Add(newSeg);
@@ -266,6 +271,7 @@ namespace ChronoKeep.UI.MainPages
             private int finish_occurrences;
             private List<Division> otherDivisions;
             public List<ListBoxItem> SegmentItems = new List<ListBoxItem>();
+            private TextBox numAdd;
 
             //public ListBox segmentHolder;
             public Division division;
@@ -282,6 +288,7 @@ namespace ChronoKeep.UI.MainPages
                 this.IsTabStop = false;
                 Grid namePanel = new Grid();
                 namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
                 namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(85) });
                 if (division != null)
                 {
@@ -297,6 +304,22 @@ namespace ChronoKeep.UI.MainPages
                 divName.IsTabStop = false;
                 namePanel.Children.Add(divName);
                 Grid.SetColumn(divName, 0);
+                numAdd = new TextBox
+                {
+                    Text = "1",
+                    FontSize = 16,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Width = 40,
+                    Height = 25
+                };
+                numAdd.PreviewTextInput += (s, e) =>
+                {
+                    e.Handled = !e.Text.All(char.IsDigit);
+                };
+                namePanel.Children.Add(numAdd);
+                Grid.SetColumn(numAdd, 1);
                 Button addButton = new Button()
                 {
                     Content = "Add",
@@ -309,7 +332,7 @@ namespace ChronoKeep.UI.MainPages
                 };
                 addButton.Click += new RoutedEventHandler(this.AddClick);
                 namePanel.Children.Add(addButton);
-                Grid.SetColumn(addButton, 1);
+                Grid.SetColumn(addButton, 2);
                 if (division != null)
                 {
                     DockPanel copyPanel = new DockPanel();
@@ -348,7 +371,7 @@ namespace ChronoKeep.UI.MainPages
                     copyFromDivision.SelectionChanged += new SelectionChangedEventHandler(this.CopyFromDivisionSelected);
                     copyPanel.Children.Add(copyFromDivision);
                     namePanel.Children.Add(copyPanel);
-                    Grid.SetColumn(copyPanel, 2);
+                    Grid.SetColumn(copyPanel, 3);
                 }
                 thePanel.Children.Add(namePanel);
                 thePanel.Children.Add(new Rectangle()
@@ -398,7 +421,12 @@ namespace ChronoKeep.UI.MainPages
                 {
                     selectedDiv = division.Identifier;
                 }
-                page.AddSegment(selectedDiv, finish_occurrences);
+                int count;
+                int.TryParse(numAdd.Text, out count);
+                for (int i = 0; i < count; i++)
+                {
+                    page.AddSegment(selectedDiv, finish_occurrences + i);
+                }
             }
 
             private void CopyFromDivisionSelected(Object sender, SelectionChangedEventArgs e)
