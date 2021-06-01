@@ -186,6 +186,14 @@ namespace ChronoKeep.UI.MainPages
             {
                 apiPanel.Visibility = Visibility.Collapsed;
             }
+            if (mWindow.IsAPIControllerRunning())
+            {
+                AutoAPIButton.Content = "Stop Uploads";
+            }
+            else
+            {
+                AutoAPIButton.Content = "Auto Upload";
+            }
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -294,6 +302,14 @@ namespace ChronoKeep.UI.MainPages
             else
             {
                 apiPanel.Visibility = Visibility.Collapsed;
+            }
+            if (mWindow.IsAPIControllerRunning())
+            {
+                AutoAPIButton.Content = "Stop Uploads";
+            }
+            else
+            {
+                AutoAPIButton.Content = "Auto Upload";
             }
             subPage.UpdateView();
         }
@@ -778,6 +794,14 @@ namespace ChronoKeep.UI.MainPages
         private void AutoAPI_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Auto API clicked.");
+            if ((string)AutoAPIButton.Content == "Auto Upload")
+            {
+                mWindow.StartAPIController();
+            }
+            else
+            {
+                mWindow.StopAPIController();
+            }
         }
 
         private void ManualAPI_Click(object sender, RoutedEventArgs e)

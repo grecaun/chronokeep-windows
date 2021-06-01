@@ -84,7 +84,7 @@
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
-                                <Button Content="Auto Upload" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="AutoAPI_Click" Grid.Column="0"/>
+                                <Button x:Name="AutoAPIButton" Content="Auto Upload" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="AutoAPI_Click" Grid.Column="0"/>
                                 <Button x:Name="ManualAPIButton" Content="Manual Upload" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="ManualAPI_Click" Grid.Column="1"/>
                             </Grid>
                         </StackPanel>

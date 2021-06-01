@@ -1,4 +1,5 @@
-﻿using ChronoKeep.Database;
+﻿using ChronoKeep.API;
+using ChronoKeep.Database;
 using ChronoKeep.Interfaces;
 using ChronoKeep.Network;
 using ChronoKeep.Objects;
@@ -43,6 +44,10 @@ namespace ChronoKeep.UI
         TimingController TimingController = null;
         Thread TimingWorkerThread = null;
         TimingWorker TimingWorker = null;
+
+        // API objects.
+        Thread APIControllerThread = null;
+        APIController APIController = null;
 
         List<Window> openWindows = new List<Window>();
 
@@ -248,6 +253,7 @@ namespace ChronoKeep.UI
             StopNetworkServices();
             StopTimingController();
             StopTimingWorker();
+            StopAPIController();
             if (httpServer != null)
             {
                 httpServer.Stop();
@@ -414,6 +420,48 @@ namespace ChronoKeep.UI
                 return false;
             }
             return true;
+        }
+
+        public bool StopAPIController()
+        {
+            try
+            {
+                Log.D("Stopping API Controller");
+                if (APIController != null) APIController.Shutdown();
+                if (APIControllerThread != null)
+                {
+                    APIControllerThread.Abort();
+                    APIControllerThread.Join();
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async void StartAPIController()
+        {
+            await Task.Run(() =>
+            {
+                if (!APIController.IsRunning())
+                {
+                    APIController = new APIController(this, database);
+                    APIControllerThread = new Thread(new ThreadStart(APIController.Run));
+                    APIControllerThread.Start();
+                }
+            });
+        }
+
+        public void DeleteAPIResults()
+        {
+            if (APIController != null) APIController.DeleteResults();
+        }
+
+        public bool IsAPIControllerRunning()
+        {
+            return APIController.IsRunning();
         }
 
         public void UpdateChangesBox()
@@ -609,6 +657,7 @@ namespace ChronoKeep.UI
             {
                 httpServer.UpdateInformation();
             }
+            if (APIController != null) APIController.DeleteResults();
         }
 
         private void AboutButton_Click(object sender, RoutedEventArgs e)

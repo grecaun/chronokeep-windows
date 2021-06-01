@@ -38,5 +38,11 @@ namespace ChronoKeep.Interfaces
         void ShutdownTimingController();
         List<TimingSystem> GetConnectedSystems();
         void NotifyTimingWorker();
+
+        // API System related calls.
+        void StartAPIController();
+        bool StopAPIController();
+        bool IsAPIControllerRunning();
+        void DeleteAPIResults();
     }
 }

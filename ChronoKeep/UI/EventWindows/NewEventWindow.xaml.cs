@@ -98,8 +98,10 @@ namespace ChronoKeep
                 Event newEvent = new Event(nameString, dateVal, shirtOptionalVal, shirtPrice, yearString);
                 database.AddEvent(newEvent);
                 newEvent.Identifier = database.GetEventID(newEvent);
+                // Copy all values from old event.
                 if (oldEventId > 0)
                 {
+                    // Copy old event values.
                     Event oldEvent = database.GetEvent(oldEventId);
                     newEvent.EventType = oldEvent.EventType;
                     newEvent.StartWindow = oldEvent.StartWindow;
@@ -110,10 +112,14 @@ namespace ChronoKeep
                     newEvent.DivisionSpecificSegments = oldEvent.DivisionSpecificSegments;
                     newEvent.AllowEarlyStart = oldEvent.AllowEarlyStart;
                     newEvent.RankByGun = oldEvent.RankByGun;
+                    // Update database with current values.
                     database.UpdateEvent(newEvent);
+                    // Get divisions from old event
                     List<Division> divisions = database.GetDivisions(oldEventId);
                     List<Division> newDivs = new List<Division>();
+                    // DivDict translates a division name into the old division identifier.
                     Dictionary<string, int> DivDict = new Dictionary<string, int>();
+                    // DivTranslationDict holds a new division id and translates it from the old division with the same name.
                     Dictionary<int, int> DivTranslationDict = new Dictionary<int, int>();
                     foreach (Division d in divisions)
                     {
@@ -122,14 +128,16 @@ namespace ChronoKeep
                         d.EventIdentifier = newEvent.Identifier;
                         newDivs.Add(d);
                     }
+                    // Update database with new divisions.
                     database.AddDivisions(newDivs);
+                    // Retrieve newly added divisions.
                     newDivs = database.GetDivisions(newEvent.Identifier);
-                    foreach (Division newD in newDivs) {
-                        if (DivTranslationDict.ContainsKey(DivDict[newD.Name]))
-                        {
-                            DivTranslationDict[DivDict[newD.Name]] = newD.Identifier;
-                        }
+                    foreach (Division newD in newDivs)
+                    {
+                        // Set up a translation dictionary.
+                        DivTranslationDict[DivDict[newD.Name]] = newD.Identifier;
                     }
+                    // Get locations from old event.
                     List<TimingLocation> locations = database.GetTimingLocations(oldEventId);
                     List<TimingLocation> newLocations = new List<TimingLocation>();
                     foreach (TimingLocation loc in locations)
@@ -137,7 +145,9 @@ namespace ChronoKeep
                         loc.EventIdentifier = newEvent.Identifier;
                         newLocations.Add(loc);
                     }
+                    // Update database with new locations
                     database.AddTimingLocations(newLocations);
+                    // Get old segments from the database.
                     List<Segment> segments = database.GetSegments(oldEventId);
                     List<Segment> newSegments = new List<Segment>();
                     foreach (Segment s in segments)
@@ -149,7 +159,9 @@ namespace ChronoKeep
                         }
                         newSegments.Add(s);
                     }
+                    // Update database with new segments.
                     database.AddSegments(newSegments);
+                    // Get age groups from database.
                     List<AgeGroup> ageGroups = database.GetAgeGroups(oldEventId);
                     List<AgeGroup> newAgeGroups = new List<AgeGroup>();
                     foreach (AgeGroup ag in ageGroups)
@@ -161,6 +173,7 @@ namespace ChronoKeep
                         }
                         newAgeGroups.Add(ag);
                     }
+                    // Update database with new age groups.
                     database.AddAgeGroups(newAgeGroups);
                 }
                 else

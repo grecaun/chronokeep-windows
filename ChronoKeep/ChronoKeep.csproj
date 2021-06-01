@@ -227,6 +227,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="API\APIController.cs" />
     <Compile Include="Constants\DashboardLabels.cs" />
     <Compile Include="Constants\ResultsAPI.cs" />
     <Compile Include="Constants\Timing.cs" />

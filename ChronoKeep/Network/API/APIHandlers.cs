@@ -232,7 +232,52 @@ namespace ChronoKeep.Network.API
             catch (Exception ex)
             {
                 Log.D("Exception thrown.");
-                throw new APIException("Exception thrown adding event year: " + ex.Message);
+                throw new APIException("Exception thrown uploading results: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
+        public static async Task<AddResultsResponse> DeleteResults(ResultsAPI api, string slug, string year)
+        {
+            string content;
+            Log.D("Deleting results.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri(api.URL + "results/delete"),
+                        Content = new StringContent(
+                            JsonConvert.SerializeObject(new GetResultsRequest
+                            {
+                                Slug = slug,
+                                Year = year
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonConvert.DeserializeObject<AddResultsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonConvert.DeserializeObject<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Exception thrown.");
+                throw new APIException("Exception thrown deleting results: " + ex.Message);
             }
             throw new APIException(content);
         }
