@@ -3405,7 +3405,8 @@ namespace ChronoKeep
                     reader["eventspecific_age_group_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_age_group_id"]),
                     reader["eventspecific_age_group_name"].ToString(),
                     Convert.ToInt32(reader["timeresult_uploaded"]),
-                    reader["participant_birthday"].ToString()
+                    reader["participant_birthday"].ToString(),
+                    reader["division_type"] == DBNull.Value ? Constants.Timing.DIVISION_TYPE_SUPER : Convert.ToInt32(reader["division_type"])
                     ));
             }
             reader.Close();

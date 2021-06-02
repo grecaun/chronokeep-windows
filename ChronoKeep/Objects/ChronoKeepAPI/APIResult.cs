@@ -27,6 +27,7 @@ namespace ChronoKeep.Objects.API
             this.AgeRanking = result.AgePlace;
             this.GenderRanking = result.GenderPlace;
             this.Finish = result.SegmentId == Constants.Timing.SEGMENT_FINISH;
+            this.Type = result.Type;
             string[] split1 = result.Time.Split('.');
             string[] split2 = split1[0].Split(':');
             switch (split2.Length)
@@ -92,5 +93,7 @@ namespace ChronoKeep.Objects.API
         public int GenderRanking { get; set; }
         [JsonProperty("finish")]
         public bool Finish { get; set; }
+        [JsonProperty("type")]
+        public int Type { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace ChronoKeep
     {
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, bib, readId, place, agePlace, genderPlace,
-            ageGroupId, chipMilliseconds, status, early, uploaded;
+            ageGroupId, chipMilliseconds, status, early, uploaded, type;
         private long chipSeconds;
         private string time, locationName, segmentName, firstName, lastName,
             divisionName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday;
@@ -29,7 +29,7 @@ namespace ChronoKeep
             string time, int occurrence, string first, string last, string division, int bib,
             int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
             int agePlace, int genderPlace, string gender, int status, int early, string split,
-            int ageGroupId, string ageGroupName, int uploaded, string birthday)
+            int ageGroupId, string ageGroupName, int uploaded, string birthday, int type)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -84,6 +84,7 @@ namespace ChronoKeep
             this.splitTime = split;
             this.uploaded = uploaded;
             this.birthday = birthday;
+            this.type = type;
         }
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
@@ -163,6 +164,7 @@ namespace ChronoKeep
         public string AgePlaceStr { get => agePlace < 1 ? "" : agePlace.ToString(); }
         public int GenderPlace { get => genderPlace; set => genderPlace = value; }
         public string GenderPlaceStr { get => genderPlace < 1 ? "" : genderPlace.ToString(); }
+        public int Type { get => type; set => type = value; }
         public string Identifier {
             get => unknownId;
         }
