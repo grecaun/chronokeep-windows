@@ -65,14 +65,6 @@ namespace ChronoKeep.UI.MainPages
             commonAgeCheckBox.IsChecked = theEvent.CommonAgeGroups;
             commonStartCheckBox.IsChecked = theEvent.CommonStartFinish;
             segmentCheckBox.IsChecked = theEvent.DivisionSpecificSegments;
-            if (theEvent.AllowEarlyStart)
-            {
-                earlyCheckBox.IsChecked = true;
-            }
-            else
-            {
-                earlyCheckBox.IsChecked = false;
-            }
             List<JsonOption> options = database.GetEventOptions(theEvent.Identifier);
             foreach (JsonOption opt in options)
             {
@@ -177,7 +169,6 @@ namespace ChronoKeep.UI.MainPages
                 theEvent.CommonAgeGroups = (commonAgeCheckBox.IsChecked ?? false);
                 theEvent.CommonStartFinish = (commonStartCheckBox.IsChecked ?? false);
                 theEvent.DivisionSpecificSegments = (segmentCheckBox.IsChecked ?? false);
-                theEvent.AllowEarlyStart = (earlyCheckBox.IsChecked ?? false);
                 theEvent.EventType = Constants.Timing.EVENT_TYPE_DISTANCE;
                 if (((ComboBoxItem)TypeBox.SelectedItem).Content.Equals("Time Based"))
                 {
@@ -219,7 +210,6 @@ namespace ChronoKeep.UI.MainPages
             commonAgeCheckBox.IsEnabled = false;
             commonStartCheckBox.IsEnabled = false;
             segmentCheckBox.IsEnabled = false;
-            earlyCheckBox.IsEnabled = false;
             TypeBox.IsEnabled = false;
         }
 
@@ -232,7 +222,6 @@ namespace ChronoKeep.UI.MainPages
             commonAgeCheckBox.IsEnabled = true;
             commonStartCheckBox.IsEnabled = true;
             segmentCheckBox.IsEnabled = true;
-            earlyCheckBox.IsEnabled = true;
             TypeBox.IsEnabled = true;
         }
 

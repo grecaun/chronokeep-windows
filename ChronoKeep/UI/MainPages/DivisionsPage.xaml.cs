@@ -30,6 +30,7 @@ namespace ChronoKeep.UI.MainPages
         private List<BibGroup> bibGroups;
         private List<Division> divisions;
         private Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
+        private Dictionary<int, List<Division>> subDivisionDictionary = new Dictionary<int, List<Division>>();
         private HashSet<int> divisionsChanged = new HashSet<int>();
         private bool UpdateTimingWorker = false;
         private int DivisionCount = 1;
@@ -59,11 +60,38 @@ namespace ChronoKeep.UI.MainPages
             DivisionCount = 1;
             divisions.Sort();
             divisionDictionary.Clear();
+            subDivisionDictionary.Clear();
+            List<Division> superDivs = new List<Division>();
             foreach (Division div in divisions)
+            {
+                // Check if we're a linked division
+                if (div.LinkedDivision > 0)
+                {
+                    if (!subDivisionDictionary.ContainsKey(div.LinkedDivision))
+                    {
+                        subDivisionDictionary[div.LinkedDivision] = new List<Division>();
+                    }
+                    subDivisionDictionary[div.LinkedDivision].Add(div);
+                }
+                else
+                {
+                    superDivs.Add(div);
+                }
+            }
+            foreach (Division div in superDivs)
             {
                 divisionDictionary[div.Identifier] = div;
                 DivisionsBox.Items.Add(new ADivision(this, div, theEvent.FinishMaxOccurrences, bibGroups, divisions, divisionDictionary, theEvent));
                 DivisionCount = div.Identifier > DivisionCount - 1 ? div.Identifier + 1 : DivisionCount;
+                // Add linked divisions
+                if (subDivisionDictionary.ContainsKey(div.Identifier))
+                {
+                    foreach (Division sub in subDivisionDictionary[div.Identifier])
+                    {
+                        DivisionsBox.Items.Add(new ASubDivision(this, sub, theEvent));
+                        DivisionCount = sub.Identifier > DivisionCount - 1 ? sub.Identifier + 1 : DivisionCount;
+                    }
+                }
             }
         }
 
@@ -111,19 +139,19 @@ namespace ChronoKeep.UI.MainPages
             {
                 oldDivisions[division.Identifier] = division;
             }
-            foreach (ADivision listDiv in DivisionsBox.Items)
+            foreach (ADivisionInterface listDiv in DivisionsBox.Items)
             {
                 listDiv.UpdateDivision();
-                int divId = listDiv.theDivision.Identifier;
+                int divId = listDiv.GetDivision().Identifier;
                 if (oldDivisions.ContainsKey(divId) &&
-                    (oldDivisions[divId].StartOffsetSeconds != listDiv.theDivision.StartOffsetSeconds
-                    || oldDivisions[divId].StartOffsetMilliseconds != listDiv.theDivision.StartOffsetMilliseconds
-                    || oldDivisions[divId].FinishOccurrence != listDiv.theDivision.FinishOccurrence) )
+                    (oldDivisions[divId].StartOffsetSeconds != listDiv.GetDivision().StartOffsetSeconds
+                    || oldDivisions[divId].StartOffsetMilliseconds != listDiv.GetDivision().StartOffsetMilliseconds
+                    || oldDivisions[divId].FinishOccurrence != listDiv.GetDivision().FinishOccurrence) )
                 {
                     divisionsChanged.Add(divId);
                     UpdateTimingWorker = true;
                 }
-                database.UpdateDivision(listDiv.theDivision);
+                database.UpdateDivision(listDiv.GetDivision());
             }
         }
 
@@ -172,7 +200,263 @@ namespace ChronoKeep.UI.MainPages
             UpdateView();
         }
 
-        private class ADivision : ListBoxItem
+        public void AddSubDivision(Division theDivision)
+        {
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            {
+                UpdateDatabase();
+            }
+            database.AddDivision(new Division(theDivision.Name + " Linked " + DivisionCount, theDivision.EventIdentifier, theDivision.Identifier, Constants.Timing.DIVISION_TYPE_EARLY, 1, theDivision.Wave, theDivision.StartOffsetSeconds, theDivision.StartOffsetMilliseconds));
+            UpdateTimingWorker = true;
+            UpdateView();
+        }
+
+        private interface ADivisionInterface
+        {
+            Division GetDivision();
+            void UpdateDivision();
+        }
+
+        private class ASubDivision : ListBoxItem, ADivisionInterface
+        {
+            public TextBox DivisionName { get; private set; }
+            public TextBox Wave { get; private set; }
+            public TextBox Ranking { get; private set; }
+            public MaskedTextBox StartOffset { get; private set; }
+            public ComboBox TypeBox { get; private set; }
+            public Button Remove { get; private set; }
+
+            private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
+
+            readonly DivisionsPage page;
+            public Division theDivision;
+
+            private readonly Regex allowedWithDot = new Regex("[^0-9.]");
+            private readonly Regex allowedChars = new Regex("[^0-9]");
+
+            public ASubDivision(DivisionsPage page, Division division, Event theEvent)
+            {
+                this.page = page;
+                this.theDivision = division;
+                StackPanel thePanel = new StackPanel()
+                {
+                    Margin = new Thickness(50, 0, 0, 0),
+                    MaxWidth = 600
+                };
+                this.Content = thePanel;
+                this.IsTabStop = false;
+
+                // Name Grid (Name NameBox) - Rank Order - Remove Button
+                Grid nameGrid = new Grid();
+                nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(5, GridUnitType.Star) });
+                nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
+                nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+                thePanel.Children.Add(nameGrid);
+                // Name information.
+                DockPanel namePanel = new DockPanel();
+                namePanel.Children.Add(new Label()
+                {
+                    Content = "Name",
+                    Width = 55,
+                    FontSize = 16,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Right
+                });
+                DivisionName = new TextBox()
+                {
+                    Text = theDivision.Name,
+                    FontSize = 16,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                DivisionName.GotFocus += new RoutedEventHandler(this.SelectAll);
+                namePanel.Children.Add(DivisionName);
+                nameGrid.Children.Add(namePanel);
+                Grid.SetColumn(namePanel, 0);
+                DockPanel rankPanel = new DockPanel();
+                rankPanel.Children.Add(new Label()
+                {
+                    Content = "Rank Priority",
+                    Width = 135,
+                    FontSize = 16,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Right
+                });
+                Ranking = new TextBox
+                {
+                    Text = theDivision.Ranking.ToString(),
+                    FontSize = 16,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                Ranking.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                rankPanel.Children.Add(Ranking);
+                nameGrid.Children.Add(rankPanel);
+                Grid.SetColumn(rankPanel, 1);
+                Remove = new Button()
+                {
+                    Content = "Remove",
+                    FontSize = 14,
+                    Width = 100,
+                    Height = 30,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                Remove.Click += new RoutedEventHandler(this.Remove_Click);
+                nameGrid.Children.Add(Remove);
+                Grid.SetColumn(Remove, 2);
+                // Wave # - Start Offset - Type - Ranking Order
+                DockPanel wavePanel = new DockPanel();
+                wavePanel.Children.Add(new Label()
+                {
+                    Content = "Wave",
+                    Width = 55,
+                    FontSize = 16,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Right
+                });
+                Wave = new TextBox()
+                {
+                    Text = theDivision.Wave.ToString(),
+                    FontSize = 16,
+                    Width = 50,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                Wave.GotFocus += new RoutedEventHandler(this.SelectAll);
+                Wave.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                wavePanel.Children.Add(Wave);
+                wavePanel.Children.Add(new Label()
+                {
+                    Content = "Start",
+                    Width = 55,
+                    FontSize = 16,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Right
+                });
+                string sOffset = string.Format(TimeFormat, theDivision.StartOffsetSeconds / 3600,
+                    (theDivision.StartOffsetSeconds % 3600) / 60, theDivision.StartOffsetSeconds % 60,
+                    theDivision.StartOffsetMilliseconds);
+                StartOffset = new MaskedTextBox()
+                {
+                    Text = sOffset,
+                    Mask = "00:00:00.000",
+                    FontSize = 16,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                StartOffset.GotFocus += new RoutedEventHandler(this.SelectAll);
+                wavePanel.Children.Add(StartOffset);
+                wavePanel.Children.Add(new Label()
+                {
+                    Content = "Type",
+                    Width = 55,
+                    FontSize = 16,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Right
+                });
+                TypeBox = new ComboBox()
+                {
+                    FontSize = 16,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                TypeBox.Items.Add(
+                    new ComboBoxItem
+                    {
+                        Content = "Early Start",
+                        Uid = Constants.Timing.DIVISION_TYPE_EARLY.ToString()
+                    });
+                TypeBox.Items.Add(
+                    new ComboBoxItem
+                    {
+                        Content = "Unranked",
+                        Uid = Constants.Timing.DIVISION_TYPE_UNRANKED.ToString()
+                    });
+                if (theDivision.Type == Constants.Timing.DIVISION_TYPE_EARLY)
+                {
+                    TypeBox.SelectedIndex = 0;
+                }
+                else if (theDivision.Type == Constants.Timing.DIVISION_TYPE_UNRANKED)
+                {
+                    TypeBox.SelectedIndex = 1;
+                }
+                wavePanel.Children.Add(TypeBox);
+                thePanel.Children.Add(wavePanel);
+            }
+
+            private void Remove_Click(object sender, RoutedEventArgs e)
+            {
+                Log.D("Removing division.");
+                this.page.RemoveDivision(theDivision);
+            }
+
+            private void DotValidation(object sender, TextCompositionEventArgs e)
+            {
+                e.Handled = allowedWithDot.IsMatch(e.Text);
+            }
+
+            private void NumberValidation(object sender, TextCompositionEventArgs e)
+            {
+                e.Handled = allowedChars.IsMatch(e.Text);
+            }
+
+            private void SelectAll(object sender, RoutedEventArgs e)
+            {
+                TextBox src = (TextBox)e.OriginalSource;
+                src.SelectAll();
+            }
+
+            public Division GetDivision()
+            {
+                return theDivision;
+            }
+
+            public void UpdateDivision()
+            {
+                Log.D("Updating sub division.");
+                theDivision.Name = DivisionName.Text;
+                theDivision.Cost = 0;
+                theDivision.Distance = 0.0;
+                theDivision.EndSeconds = 0;
+                theDivision.Type = TypeBox.SelectedIndex == 0 ? Constants.Timing.DIVISION_TYPE_EARLY : Constants.Timing.DIVISION_TYPE_UNRANKED;
+                int ranking;
+                int.TryParse(Ranking.Text, out ranking);
+                if (ranking >= 0)
+                {
+                    theDivision.Ranking = ranking;
+                }
+                int wave;
+                int.TryParse(Wave.Text, out wave);
+                if (wave >= 0)
+                {
+                    theDivision.Wave = wave;
+                }
+                theDivision.BibGroupNumber = Constants.Timing.DEFAULT_BIB_GROUP;
+                string[] firstparts = StartOffset.Text.Replace('_', '0').Split(':');
+                string[] secondparts = firstparts[2].Split('.');
+                try
+                {
+                    theDivision.StartOffsetSeconds = (Convert.ToInt32(firstparts[0]) * 3600)
+                        + (Convert.ToInt32(firstparts[1]) * 60)
+                        + Convert.ToInt32(secondparts[0]);
+                    theDivision.StartOffsetMilliseconds = Convert.ToInt32(secondparts[1]);
+                }
+                catch
+                {
+                    System.Windows.MessageBox.Show("Error with values given.");
+                }
+            }
+
+        }
+
+        private class ADivision : ListBoxItem, ADivisionInterface
         {
             public TextBox DivisionName { get; private set; }
             public ComboBox CopyFromBox { get; private set; }
@@ -184,7 +468,7 @@ namespace ChronoKeep.UI.MainPages
             public ComboBox BibGroupNumber { get; private set; }
             public MaskedTextBox StartOffset { get; private set; }
             public MaskedTextBox TimeLimit { get; private set; } = null;
-            public MaskedTextBox EarlyStartOffsetBox { get; private set; } = null;
+            public Button AddSubDivision { get; private set; }
             public Button Remove { get; private set; }
 
             private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
@@ -253,7 +537,6 @@ namespace ChronoKeep.UI.MainPages
                     Margin = new Thickness(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-
                 CopyFromBox.Items.Add(new ComboBoxItem()
                 {
                     Content = "",
@@ -512,33 +795,21 @@ namespace ChronoKeep.UI.MainPages
                 numGrid.Children.Add(wavePanel);
                 Grid.SetColumn(wavePanel, 0);
                 Grid secondGrid = new Grid();
-                if (theEvent.AllowEarlyStart)
-                {
-                    secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(200) });
-                    DockPanel earlyStartPanel = new DockPanel();
-                    earlyStartPanel.Children.Add(new Label()
-                    {
-                        Content = "ES Offset",
-                        Width = 85,
-                        FontSize = 16,
-                        Margin = new Thickness(0,0,0,0),
-                        VerticalAlignment = VerticalAlignment.Center,
-                        HorizontalContentAlignment = HorizontalAlignment.Right
-                    });
-                    EarlyStartOffsetBox = new MaskedTextBox()
-                    {
-                        Text = division.GetEarlyStartString(),
-                        Mask = "00:00:00",
-                        FontSize = 16,
-                        Width = 100,
-                        Margin = new Thickness(0, 5, 5, 5),
-                        VerticalContentAlignment = VerticalAlignment.Center
-                    };
-                    earlyStartPanel.Children.Add(EarlyStartOffsetBox);
-                    secondGrid.Children.Add(earlyStartPanel);
-                    Grid.SetColumn(earlyStartPanel, 0);
-                }
                 secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                AddSubDivision = new Button()
+                {
+                    Content = "Add Linked",
+                    FontSize = 14,
+                    Width = 100,
+                    Height = 30,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                AddSubDivision.Click += new RoutedEventHandler(this.AddSub_Click);
+                secondGrid.Children.Add(AddSubDivision);
+                Grid.SetColumn(AddSubDivision, 0);
                 Remove = new Button()
                 {
                     Content = "Remove",
@@ -557,10 +828,21 @@ namespace ChronoKeep.UI.MainPages
                 thePanel.Children.Add(numGrid);
             }
 
+            private void AddSub_Click(object sender, RoutedEventArgs e)
+            {
+                Log.D("Adding sub division.");
+                this.page.AddSubDivision(theDivision);
+            }
+
             private void Remove_Click(object sender, RoutedEventArgs e)
             {
                 Log.D("Removing division.");
                 this.page.RemoveDivision(theDivision);
+            }
+
+            public Division GetDivision()
+            {
+                return theDivision;
             }
 
             public void UpdateDivision()
@@ -616,15 +898,6 @@ namespace ChronoKeep.UI.MainPages
                 if (wave >= 0)
                 {
                     theDivision.Wave = wave;
-                }
-                if (EarlyStartOffsetBox != null)
-                {
-                    String startTimeValue = EarlyStartOffsetBox.Text.Replace('_', '0');
-                    string[] nums = startTimeValue.Split(':');
-                    if (nums.Length == 3)
-                    {
-                        theDivision.EarlyStartOffsetSeconds = (Convert.ToInt32(nums[0]) * 3600) + (Convert.ToInt32(nums[1]) * 60) + Convert.ToInt32(nums[2]);
-                    }
                 }
                 theDivision.BibGroupNumber = Constants.Timing.DEFAULT_BIB_GROUP;
                 string[] firstparts = StartOffset.Text.Replace('_', '0').Split(':');

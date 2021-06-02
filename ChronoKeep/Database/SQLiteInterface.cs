@@ -19,7 +19,7 @@ namespace ChronoKeep
          * HIGHEST MUTEX ID = 130
          * NEXT AVAILABLE   = 131
          */
-        private readonly int version = 43;
+        private readonly int version = 44;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -169,6 +169,9 @@ namespace ChronoKeep
                     "division_start_offset_milliseconds INTEGER NOT NULL DEFAULT 0," +
                     "division_end_offset_seconds INTEGER NOT NULL DEFAULT 0," +
                     "division_early_start_offset_seconds INTEGER NOT NULL DEFAULT 0," +
+                    "division_linked_id INTEGER NOT NULL REFERENCES divisions(division_id) DEFAULT -1," +
+                    "division_type INTEGER NOT NULL DEFAULT 0," +
+                    "division_ranking_order INTEGER NOT NULL DEFAULT 0, " +
                     "UNIQUE (division_name, event_id) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS timing_locations (" +
@@ -1365,10 +1368,18 @@ namespace ChronoKeep
                             "ALTER TABLE events ADD COLUMN api_event_id VARCHAR(200) NOT NULL DEFAULT '';" +
                             "ALTER TABLE time_results ADD COLUMN timeresult_uploaded INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_UPLOADED_FALSE + ";" +
                             "ALTER TABLE settings RENAME TO settings_old;" +
-                            "ALTER TABLE app_settings RENAME to settings;" +
+                            "ALTER TABLE app_settings RENAME TO settings;" +
                             "INSERT INTO settings (setting, value) VALUES ('"+ Constants.Settings.DATABASE_VERSION +"', '43');" +
                             "INSERT INTO settings SELECT '"+ Constants.Settings.SERVER_NAME + "', name FROM settings_old;" +
                             "DROP TABLE settings_old;";
+                        command.ExecuteNonQuery();
+                        goto case 43;
+                    case 43:
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE divisions ADD COLUMN division_linked_id INTEGER NOT NULL REFERENCES divisions(division_id) DEFAULT -1;" +
+                            "ALTER TABLE divisions ADD COLUMN division_type INTEGER NOT NULL DEFAULT 0;" +
+                            "ALTER TABLE divisions ADD COLUMN division_ranking_order INTEGER NOT NULL DEFAULT 0;" +
+                            "UPDATE settings SET value='44' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
                         command.ExecuteNonQuery();
                         break;
                 }
@@ -1387,8 +1398,9 @@ namespace ChronoKeep
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO divisions (division_name, event_id, division_cost, division_distance, division_distance_unit," +
                 "division_start_location, division_start_within, division_finish_location, division_finish_occurance, division_wave, bib_group_number," +
-                "division_start_offset_seconds, division_start_offset_milliseconds, division_end_offset_seconds, division_early_start_offset_seconds) " +
-                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@bgn,@soffsec,@soffmill,@endSec,@esdiff)";
+                "division_start_offset_seconds, division_start_offset_milliseconds, division_end_offset_seconds, division_early_start_offset_seconds, " +
+                "division_linked_id, division_type, division_ranking_order) " +
+                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@bgn,@soffsec,@soffmill,@endSec,@esdiff,@linked,@type,@rank)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", div.Name),
                 new SQLiteParameter("@event_id", div.EventIdentifier),
@@ -1404,7 +1416,10 @@ namespace ChronoKeep
                 new SQLiteParameter("@soffsec", div.StartOffsetSeconds),
                 new SQLiteParameter("@soffmill", div.StartOffsetMilliseconds),
                 new SQLiteParameter("@endSec", div.EndSeconds),
-                new SQLiteParameter("@esdiff", div.EarlyStartOffsetSeconds)
+                new SQLiteParameter("@esdiff", div.EarlyStartOffsetSeconds),
+                new SQLiteParameter("@linked", div.LinkedDivision),
+                new SQLiteParameter("@type", div.Type),
+                new SQLiteParameter("@rank", div.Ranking)
             });
             Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
@@ -1483,7 +1498,8 @@ namespace ChronoKeep
             command.CommandText = "UPDATE divisions SET division_name=@name, event_id=@event, division_cost=@cost, division_distance=@distance," +
                 "division_distance_unit=@unit, division_start_location=@startloc, division_start_within=@within, division_finish_location=@finishloc," +
                 "division_finish_occurance=@occurance, division_wave=@wave, bib_group_number=@bgn, division_start_offset_seconds=@soffsec, " +
-                "division_start_offset_milliseconds=@soffmill, division_end_offset_seconds=@endSec, division_early_start_offset_seconds=@esdiff " +
+                "division_start_offset_milliseconds=@soffmill, division_end_offset_seconds=@endSec, division_early_start_offset_seconds=@esdiff," +
+                "division_linked_id=@linked, division_type=@type, division_ranking_order=@rank " +
                 "WHERE division_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", div.Name),
@@ -1501,7 +1517,10 @@ namespace ChronoKeep
                 new SQLiteParameter("@soffmill", div.StartOffsetMilliseconds),
                 new SQLiteParameter("@id", div.Identifier),
                 new SQLiteParameter("@endSec", div.EndSeconds),
-                new SQLiteParameter("@esdiff", div.EarlyStartOffsetSeconds)
+                new SQLiteParameter("@esdiff", div.EarlyStartOffsetSeconds),
+                new SQLiteParameter("@linked", div.LinkedDivision),
+                new SQLiteParameter("@type", div.Type),
+                new SQLiteParameter("@rank", div.Ranking)
             });
             command.ExecuteNonQuery();
             connection.Close();
@@ -1539,7 +1558,10 @@ namespace ChronoKeep
                     Convert.ToInt32(reader["division_start_offset_seconds"]),
                     Convert.ToInt32(reader["division_start_offset_milliseconds"]),
                     Convert.ToInt32(reader["division_end_offset_seconds"]),
-                    Convert.ToInt32(reader["division_early_start_offset_seconds"])
+                    Convert.ToInt32(reader["division_early_start_offset_seconds"]),
+                    Convert.ToInt32(reader["division_linked_id"]),
+                    Convert.ToInt32(reader["division_type"]),
+                    Convert.ToInt32(reader["division_ranking_order"])
                     ));
             }
             reader.Close();
@@ -1593,7 +1615,10 @@ namespace ChronoKeep
                     Convert.ToInt32(reader["division_start_offset_seconds"]),
                     Convert.ToInt32(reader["division_start_offset_milliseconds"]),
                     Convert.ToInt32(reader["division_end_offset_seconds"]),
-                    Convert.ToInt32(reader["division_early_start_offset_seconds"])
+                    Convert.ToInt32(reader["division_early_start_offset_seconds"]),
+                    Convert.ToInt32(reader["division_linked_id"]),
+                    Convert.ToInt32(reader["division_type"]),
+                    Convert.ToInt32(reader["division_ranking_order"])
                     ));
             }
             reader.Close();
@@ -1666,7 +1691,10 @@ namespace ChronoKeep
                     Convert.ToInt32(reader["division_start_offset_seconds"]),
                     Convert.ToInt32(reader["division_start_offset_milliseconds"]),
                     Convert.ToInt32(reader["division_end_offset_seconds"]),
-                    Convert.ToInt32(reader["division_early_start_offset_seconds"])
+                    Convert.ToInt32(reader["division_early_start_offset_seconds"]),
+                    Convert.ToInt32(reader["division_linked_id"]),
+                    Convert.ToInt32(reader["division_type"]),
+                    Convert.ToInt32(reader["division_ranking_order"])
                     );
             }
             reader.Close();
@@ -2035,7 +2063,6 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 16");
                 return;
             }
-            List<JsonOption> output = new List<JsonOption>();
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
@@ -3982,7 +4009,6 @@ namespace ChronoKeep
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                int val = Convert.ToInt32(reader["old_event_spec_division_id"]);
                 String oldDivName = Convert.ToInt32(reader["old_event_spec_division_id"]) == -1 ? "" : divisions[Convert.ToInt32(reader["old_event_spec_division_id"])].ToString();
                 output.Add(new Change(
                     Convert.ToInt32(reader["change_id"]),
@@ -5796,8 +5822,10 @@ namespace ChronoKeep
             reader.Close();
             connection.Close();
             mutex.ReleaseMutex();
-            List<DivisionStats> output = new List<DivisionStats>();
-            output.Add(allstats);
+            List<DivisionStats> output = new List<DivisionStats>
+            {
+                allstats
+            };
             foreach (DivisionStats stats in statsDictionary.Values)
             {
                 output.Add(stats);

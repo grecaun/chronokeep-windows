@@ -13,8 +13,8 @@ namespace ChronoKeep.API
 {
     class APIController
     {
-        IMainWindow mainWindow;
-        IDBInterface database;
+        readonly IMainWindow mainWindow;
+        readonly IDBInterface database;
 
         private static readonly Mutex mut = new Mutex();
         private static readonly Semaphore waiter = new Semaphore(0, 1);
@@ -23,7 +23,7 @@ namespace ChronoKeep.API
 
         private static bool delResults = false;
 
-        private static int SleepSeconds = 30;
+        private static readonly int SleepSeconds = 30;
 
         public APIController(IMainWindow mainWindow, IDBInterface database)
         {

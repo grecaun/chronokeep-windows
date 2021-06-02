@@ -44,15 +44,6 @@ namespace ChronoKeep.UI.Participants
                 UpdateAllFields();
             }
             BibBox.Focus();
-            if (theEvent.AllowEarlyStart)
-            {
-                EarlyStartBox.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                EarlyStartBox.Visibility = Visibility.Collapsed;
-                EarlyStartBox.IsChecked = false;
-            }
         }
 
         public ModifyParticipantWindow(TimingPage tPage, IDBInterface database, int EventSpecificId, int Bib)
@@ -75,15 +66,6 @@ namespace ChronoKeep.UI.Participants
                 UpdateAllFields();
             }
             BibBox.IsEnabled = false;
-            if (theEvent.AllowEarlyStart)
-            {
-                EarlyStartBox.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                EarlyStartBox.Visibility = Visibility.Collapsed;
-                EarlyStartBox.IsChecked = false;
-            }
         }
 
         public static ModifyParticipantWindow NewWindow(IMainWindow window, IDBInterface database, Participant person = null)
@@ -150,7 +132,6 @@ namespace ChronoKeep.UI.Participants
             CommentsBox.Text = person.Comments;
             OtherBox.Text = person.Other;
             CheckedInBox.IsChecked = person.IsCheckedIn;
-            EarlyStartBox.IsChecked = person.IsEarlyStart;
             ECNameBox.Text = person.ECName;
             ECPhoneBox.Text = person.ECPhone;
             Add.Content = "Update";
@@ -178,7 +159,6 @@ namespace ChronoKeep.UI.Participants
             CommentsBox.Text = "";
             OtherBox.Text = "";
             CheckedInBox.IsChecked = false;
-            EarlyStartBox.IsChecked = false;
             ECNameBox.Text = "";
             ECPhoneBox.Text = "";
         }
@@ -306,10 +286,6 @@ namespace ChronoKeep.UI.Participants
             if (CheckedInBox.IsChecked ?? false)
             {
                 checkedin = 1;
-            }
-            if (EarlyStartBox.IsChecked ?? false)
-            {
-                earlystart = 1;
             }
             int.TryParse(AgeBox.Text, out int age);
             string birthdate = BirthdayBox.Text;

@@ -67,6 +67,10 @@ namespace ChronoKeep.Constants
         public static readonly int PARTICIPANT_DUMMYIDENTIFIER = -1;
         public static readonly int DIVISION_DUMMYIDENTIFIER = -1;
 
+        public static readonly int DIVISION_TYPE_SUPER = 0;
+        public static readonly int DIVISION_TYPE_EARLY = 1;
+        public static readonly int DIVISION_TYPE_UNRANKED = 2;
+
         public static long DateToEpoch(DateTime date)
         {
             var ticks = date.Ticks - new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;

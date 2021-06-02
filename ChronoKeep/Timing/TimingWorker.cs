@@ -35,6 +35,9 @@ namespace ChronoKeep.Timing
         private Dictionary<int, (long Seconds, int Milliseconds)> divisionEndDict = new Dictionary<int, (long, int)>();
         private Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
 
+        private Dictionary<string, (Division, int)> linkedDivisionDictionary = new Dictionary<string, (Division, int)>();
+        private Dictionary<int, int> linkedDivIdentifierDictionary = new Dictionary<int, int>();
+
         private TimingWorker(IMainWindow window, IDBInterface database)
         {
             this.window = window;
@@ -147,7 +150,8 @@ namespace ChronoKeep.Timing
             divisionEndDict[0] = divisionStartDict[0];
             // Divisions so we can get their start offset.
             divisionDictionary.Clear();
-            foreach (Division div in database.GetDivisions(theEvent.Identifier))
+            List<Division> divs = database.GetDivisions(theEvent.Identifier);
+            foreach (Division div in divs)
             {
                 if (divisionDictionary.ContainsKey(div.Identifier))
                 {
@@ -158,6 +162,34 @@ namespace ChronoKeep.Timing
                 divisionStartDict[div.Identifier] = (divisionStartDict[0].Seconds + div.StartOffsetSeconds, divisionStartDict[0].Milliseconds + div.StartOffsetMilliseconds);
                 divisionEndDict[div.Identifier] = (divisionStartDict[div.Identifier].Seconds + div.EndSeconds, divisionStartDict[div.Identifier].Milliseconds);
                 divisionEndDict[0] = (divisionEndDict[div.Identifier].Seconds, divisionEndDict[div.Identifier].Milliseconds);
+            }
+            // Dictionary for looking up linked divisions
+            linkedDivisionDictionary.Clear();
+            foreach (Division div in divs)
+            {
+                // Check if its a linked division
+                if (div.LinkedDivision > 0)
+                {
+                    // Verify we know the division its linked to.
+                    if (!divisionDictionary.ContainsKey(div.LinkedDivision))
+                    {
+                        Log.E("Unable to find linked division.");
+                    }
+                    else
+                    {
+                        // Set linked division for ranking as the linked division and set ranking int.
+                        linkedDivisionDictionary[div.Name] = (divisionDictionary[div.LinkedDivision], div.Ranking);
+                        linkedDivIdentifierDictionary[div.Identifier] = divisionDictionary[div.LinkedDivision].Identifier;
+                        // Set end time for linked division to linked divisions end time.
+                        divisionEndDict[div.Identifier] = (divisionStartDict[div.Identifier].Seconds + divisionDictionary[div.LinkedDivision].EndSeconds, divisionStartDict[div.Identifier].Milliseconds);
+                    }
+                }
+                else
+                {
+                    // No linked division found, use division and 0 as ranking int.
+                    linkedDivisionDictionary[div.Name] = (div, 0);
+                    linkedDivIdentifierDictionary[div.Identifier] = div.Identifier;
+                }
             }
         }
 
@@ -1465,11 +1497,26 @@ namespace ChronoKeep.Timing
             List<TimeResult> topResults = personLastResult.Values.ToList<TimeResult>();
             topResults.Sort((x1, x2) =>
             {
-                if (x1.Occurrence == x2.Occurrence)
+                Division div1 = null, div2 = null;
+                int rank1 = 0, rank2 = 0;
+                // Get *linked* divisions. (Could be that specific division)
+                if (linkedDivisionDictionary.ContainsKey(x1.DivisionName))
                 {
-                    return x1.SystemTime.CompareTo(x2.SystemTime);
+                    (div1, rank1) = linkedDivisionDictionary[x1.DivisionName];
                 }
-                return x2.Occurrence.CompareTo(x1.Occurrence);
+                if (linkedDivisionDictionary.ContainsKey(x2.DivisionName))
+                {
+                    (div2, rank2) = linkedDivisionDictionary[x2.DivisionName];
+                }
+                if (rank1 == rank2)
+                {
+                    if (x1.Occurrence == x2.Occurrence)
+                    {
+                        return x1.SystemTime.CompareTo(x2.SystemTime);
+                    }
+                    return x2.Occurrence.CompareTo(x1.Occurrence);
+                }
+                return rank1.CompareTo(rank2);
             });
             foreach (TimeResult result in topResults)
             {
@@ -1477,6 +1524,15 @@ namespace ChronoKeep.Timing
                 if (participantEventSpecificDictionary.ContainsKey(result.EventSpecificId))
                 {
                     person = participantEventSpecificDictionary[result.EventSpecificId];
+                    // Use a linked division ID for ranking instead of a specific division id.
+                    if (linkedDivIdentifierDictionary.ContainsKey(person.EventSpecific.DivisionIdentifier))
+                    {
+                        divisionId = linkedDivIdentifierDictionary[person.EventSpecific.DivisionIdentifier];
+                    }
+                    else
+                    {
+                        divisionId = person.EventSpecific.DivisionIdentifier;
+                    }
                     divisionId = person.EventSpecific.DivisionIdentifier;
                     age = person.GetAge(theEvent.Date);
                     gender = Constants.Timing.TIMERESULT_GENDER_UNKNOWN;
@@ -1529,24 +1585,47 @@ namespace ChronoKeep.Timing
                 segmentResults.Sort((x1, x2) =>
                 {
                     if (x1 == null || x2 == null) return 1;
-                    if (x1.DivisionName.Equals(x2.DivisionName))
+                    Division div1 = null, div2 = null;
+                    int rank1 = 0, rank2 = 0;
+                    // Get *linked* divisions. (Could be that specific division)
+                    if (linkedDivisionDictionary.ContainsKey(x1.DivisionName))
                     {
-                        if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
+                        (div1, rank1) = linkedDivisionDictionary[x1.DivisionName];
+                    }
+                    if (linkedDivisionDictionary.ContainsKey(x2.DivisionName))
+                    {
+                        (div2, rank2) = linkedDivisionDictionary[x2.DivisionName];
+                    }
+                    // Check if they're in the same division or a linked division.
+                    if (div1 != null && div2 != null && div1.Identifier == div2.Identifier)
+                    {
+                        // Sort based on rank.  This is the linked division new sorting item.
+                        if (rank1 == rank2)
                         {
-                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId) && participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
+                            // These are the old ways to sort before we've added linked divisions.
+                            // Check if we know the participants we're comparing
+                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
                             {
-                                return x1.SystemTime.CompareTo(x2.SystemTime);
+                                // Check if they're both either EARLY START or not EARLY START. (DEPRECATED METHOD)
+                                if (participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
+                                {
+                                    return x1.SystemTime.CompareTo(x2.SystemTime);
+                                }
+                                // Sort early starts below non early starts
+                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
                             }
-                            return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
+                            // Sort by early start values
+                            if (participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
+                            {
+                                return participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart.CompareTo(false);
+                            }
+                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
+                            {
+                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
+                            }
                         }
-                        if (participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
-                        {
-                            return participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart.CompareTo(false);
-                        }
-                        if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
-                        {
-                            return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
-                        }
+                        // Ranks not the same
+                        return rank1.CompareTo(rank2);
                     }
                     return x1.DivisionName.CompareTo(x2.DivisionName);
                 });
@@ -1557,25 +1636,49 @@ namespace ChronoKeep.Timing
                 segmentResults.Sort((x1, x2) =>
                 {
                     if (x1 == null || x2 == null) return 1;
-                    if (x1.DivisionName.Equals(x2.DivisionName))
+                    Division div1 = null, div2 = null;
+                    int rank1 = 0, rank2 = 0;
+                    // Get *linked* divisions. (Could be that specific division)
+                    if (linkedDivisionDictionary.ContainsKey(x1.DivisionName))
                     {
-                        if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
-                        {
-                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId) && participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
-                            {
-                                return x1.CompareChip(x2);
-                            }
-                            return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
-                        }
-                        if (!participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
-                        {
-                            return participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart.CompareTo(false);
-                        }
-                        if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
-                        {
-                            return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
-                        }
+                        (div1, rank1) = linkedDivisionDictionary[x1.DivisionName];
                     }
+                    if (linkedDivisionDictionary.ContainsKey(x2.DivisionName))
+                    {
+                        (div2, rank2) = linkedDivisionDictionary[x2.DivisionName];
+                    }
+                    // Check if they're in the same division or a linked division.
+                    if (div1 != null && div2 != null && div1.Identifier == div2.Identifier)
+                    {
+                        // Sort based on rank.  This is the linked division new sorting item.
+                        if (rank1 == rank2)
+                        {
+                            // These are the old ways to sort before we've added linked divisions.
+                            // Check if we know the participants we're comparing
+                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
+                            {
+                            // Check if they're both either EARLY START or not EARLY START. (DEPRECATED METHOD)
+                                if (participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
+                                {
+                                    return x1.CompareChip(x2);
+                                }
+                                // Sort early starts below non early starts
+                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
+                            }
+                            // Check if we know one of the two participants and sort based upon their early start value.
+                            if (participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
+                            {
+                                return participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart.CompareTo(false);
+                            }
+                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
+                            {
+                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
+                            }
+                        }
+                        // Ranks not the same
+                        return rank1.CompareTo(rank2);
+                    }
+                    // Default to sorting by division name.
                     return x1.DivisionName.CompareTo(x2.DivisionName);
                 });
             }
@@ -1610,7 +1713,15 @@ namespace ChronoKeep.Timing
                 if (participantEventSpecificDictionary.ContainsKey(result.EventSpecificId))
                 {
                     person = participantEventSpecificDictionary[result.EventSpecificId];
-                    divisionId = person.EventSpecific.DivisionIdentifier;
+                    // Use a linked division ID for ranking instead of a specific division id.
+                    if (linkedDivIdentifierDictionary.ContainsKey(person.EventSpecific.DivisionIdentifier))
+                    {
+                        divisionId = linkedDivIdentifierDictionary[person.EventSpecific.DivisionIdentifier];
+                    }
+                    else
+                    {
+                        divisionId = person.EventSpecific.DivisionIdentifier;
+                    }
                     age = person.GetAge(theEvent.Date);
                     gender = Constants.Timing.TIMERESULT_GENDER_UNKNOWN;
                     if (person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase)

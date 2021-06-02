@@ -15,6 +15,7 @@ namespace ChronoKeep
             finish_occurrence = 1, start_location = Constants.Timing.LOCATION_START, start_within = 5,
             end_seconds = 0, early_start_offset_seconds = 0;
         private int wave = 1, bib_group_number = -1, start_offset_seconds = 0, start_offset_milliseconds = 0;
+        private int linked_division = -1, type = 0, ranking = 0;
 
         public Division() { }
 
@@ -25,10 +26,22 @@ namespace ChronoKeep
             this.cost = cost;
         }
 
+        public Division(string name, int eventIdentifier, int linkedIdentifier, int type, int ranking, int wave, int start_offset_seconds, int start_offset_milliseconds)
+        {
+            this.name = name;
+            this.eventIdentifier = eventIdentifier;
+            this.linked_division = linkedIdentifier;
+            this.type = type;
+            this.ranking = ranking;
+            this.wave = wave;
+            this.start_offset_seconds = start_offset_seconds;
+            this.start_offset_milliseconds = start_offset_milliseconds;
+        }
+
         public Division(int identifier, string name, int eventIdentifier,
             int cost, double distance, int dunit, int finloc, int finocc,
             int startloc, int startwith, int wave, int bgn, int soffsec, int soffmill,
-            int endseconds, int earlyoffset)
+            int endseconds, int earlyoffset, int linked_division, int type, int ranking)
         {
             this.identifier = identifier;
             this.name = name;
@@ -46,6 +59,9 @@ namespace ChronoKeep
             this.start_offset_milliseconds = soffmill;
             this.end_seconds = endseconds;
             this.early_start_offset_seconds = earlyoffset;
+            this.linked_division = linked_division;
+            this.type = type;
+            this.ranking = ranking;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -64,6 +80,9 @@ namespace ChronoKeep
         public int StartOffsetMilliseconds { get => start_offset_milliseconds; set => start_offset_milliseconds = value; }
         public int EndSeconds { get => end_seconds; set => end_seconds = value; }
         public int EarlyStartOffsetSeconds { get => early_start_offset_seconds; set => early_start_offset_seconds = value; }
+        public int LinkedDivision { get => linked_division; set => LinkedDivision = value; }
+        public int Type { get => type; set => type = value; }
+        public int Ranking { get => ranking; set => ranking = value; }
 
         public int CompareTo(Division other)
         {
