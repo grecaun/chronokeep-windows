@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -226,7 +227,7 @@ namespace ChronoKeep.UI.Timing
             parent.LoadMainDisplay();
         }
 
-        public void Search(string value) { }
+        public void Search(string value, CancellationToken token) { }
 
         public void Show(PeopleType type) { }
 

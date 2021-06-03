@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing.Printing;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -1467,7 +1468,7 @@ namespace ChronoKeep.UI.Timing
             return document;
         }
 
-        public void Search(string value) { }
+        public void Search(string value, CancellationToken token) { }
 
         public void Show(PeopleType type) { }
 

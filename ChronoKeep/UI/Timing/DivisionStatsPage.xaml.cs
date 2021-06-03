@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -63,7 +64,7 @@ namespace ChronoKeep.UI.Timing
 
         public void Keyboard_Ctrl_Z() { }
 
-        public void Search(string value) { }
+        public void Search(string value, CancellationToken token) { }
 
         public void Show(PeopleType type) { }
 

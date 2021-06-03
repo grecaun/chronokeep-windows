@@ -1,8 +1,10 @@
-﻿namespace ChronoKeep.Interfaces
+﻿using System.Threading;
+
+namespace ChronoKeep.Interfaces
 {
     public interface ISubPage : IMainPage
     {
-        void Search(string value);
+        void Search(string value, CancellationToken token);
         void Show(PeopleType type);
         void SortBy(SortType type);
         void EditSelected();

@@ -1,6 +1,7 @@
 ﻿using ChronoKeep.Interfaces;
 using ChronoKeep.UI.MainPages;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -109,8 +110,9 @@ namespace ChronoKeep.UI.Timing
 
         public void Keyboard_Ctrl_Z() { }
 
-        public async void Search(string value)
+        public async void Search(string value, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
             List<ChipRead> reads = new List<ChipRead>(chipReads);
             SortType sortType = parent.GetSortType();
             string search = parent.GetSearchValue();

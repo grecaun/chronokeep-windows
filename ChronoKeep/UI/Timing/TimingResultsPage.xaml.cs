@@ -2,6 +2,7 @@
 using ChronoKeep.UI.MainPages;
 using ChronoKeep.UI.Participants;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
@@ -42,8 +43,9 @@ namespace ChronoKeep.UI.Timing
 
         public void Keyboard_Ctrl_Z() { }
 
-        public async void Search(string value)
+        public async void Search(string value, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
             List<TimeResult> newResults = new List<TimeResult>(results);
             PeopleType peopleType = parent.GetPeopleType();
             SortType sortType = parent.GetSortType();

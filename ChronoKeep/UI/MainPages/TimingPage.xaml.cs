@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,6 +31,8 @@ namespace ChronoKeep.UI.MainPages
         private IMainWindow mWindow;
         private IDBInterface database;
         private ISubPage subPage;
+
+        private CancellationTokenSource cts;
 
         private Event theEvent;
         List<TimingLocation> locations;
@@ -408,7 +411,24 @@ namespace ChronoKeep.UI.MainPages
         private void Search()
         {
             Log.D("Searching");
-            subPage.Search(searchBox.Text.Trim());
+            if (cts != null)
+            {
+                cts.Cancel();
+                cts = null;
+            }
+            cts = new CancellationTokenSource();
+            try
+            {
+                subPage.Search(searchBox.Text.Trim(), cts.Token);
+            }
+            catch
+            {
+                Log.D("Search cancelled.");
+            }
+            finally
+            {
+                cts = null;
+            }
         }
 
         private void StartTimeKeyDown(object sender, KeyEventArgs e)
