@@ -644,18 +644,26 @@ namespace ChronoKeep.Timing
                                     lastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
                                     // Find if there's a segment associated with this combination
                                     int segId = Constants.Timing.SEGMENT_NONE;
+                                    // With linked divisions we want to ensure we use the Finish Occurence and Segments from the linked
+                                    // division instead of the actual division since those aren't set.
+                                    int divId = div == null ? 0 : div.Identifier, divFinOcc = div == null ? 0 : div.FinishOccurrence;
+                                    if (div != null && div.LinkedDivision > 0)
+                                    {
+                                        divId = div.LinkedDivision;
+                                        divFinOcc = divisionDictionary.ContainsKey(div.LinkedDivision) ? divisionDictionary[div.LinkedDivision].FinishOccurrence : div.FinishOccurrence;
+                                    }
                                     // First check if we're using Division specific segments
                                     if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
                                     {
                                         segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)].Identifier;
                                     }
                                     // Then check if we can find a segment
-                                    else if (div != null && segmentDictionary.ContainsKey((div.Identifier, read.LocationID, occurrence)))
+                                    else if (div != null && segmentDictionary.ContainsKey((divId, read.LocationID, occurrence)))
                                     {
-                                        segId = segmentDictionary[(div.Identifier, read.LocationID, occurrence)].Identifier;
+                                        segId = segmentDictionary[(divId, read.LocationID, occurrence)].Identifier;
                                     }
                                     // then check if it's the finish occurence. obviously this doesn't work if we can't find the division
-                                    else if (div != null && occurrence == div.FinishOccurrence && Constants.Timing.LOCATION_FINISH == read.LocationID)
+                                    else if (div != null && occurrence == divFinOcc && Constants.Timing.LOCATION_FINISH == read.LocationID)
                                     {
                                         segId = Constants.Timing.SEGMENT_FINISH;
                                     }
@@ -1166,6 +1174,8 @@ namespace ChronoKeep.Timing
                             {
                                 lastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
                                 int segId = Constants.Timing.SEGMENT_NONE;
+                                int divId = div == null ? 0 : div.LinkedDivision > 0 ? div.LinkedDivision : div.Identifier;
+
                                 // Check for Division specific segments (Occurrence is always 1 for time based)
                                 if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
                                 {
