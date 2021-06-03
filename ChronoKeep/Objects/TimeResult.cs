@@ -85,6 +85,12 @@ namespace ChronoKeep
             this.uploaded = uploaded;
             this.birthday = birthday;
             this.type = type;
+            // Some backwards compatability here.
+            // Type is never set to 1 in a version of Chronokeep that uses type.
+            if (this.early == 1)
+            {
+                this.type = Constants.Timing.DIVISION_TYPE_EARLY;
+            }
             this.linked_division_name = linked_division_name;
         }
 
