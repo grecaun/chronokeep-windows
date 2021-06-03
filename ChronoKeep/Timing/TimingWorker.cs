@@ -170,6 +170,7 @@ namespace ChronoKeep.Timing
                 // Check if its a linked division
                 if (div.LinkedDivision > 0)
                 {
+                    Log.D("Linked division found. " + div.LinkedDivision);
                     // Verify we know the division its linked to.
                     if (!divisionDictionary.ContainsKey(div.LinkedDivision))
                     {
@@ -177,6 +178,7 @@ namespace ChronoKeep.Timing
                     }
                     else
                     {
+                        Log.D("Setting linked dictionaries. Ranking: " + div.Ranking);
                         // Set linked division for ranking as the linked division and set ranking int.
                         linkedDivisionDictionary[div.Name] = (divisionDictionary[div.LinkedDivision], div.Ranking);
                         linkedDivIdentifierDictionary[div.Identifier] = divisionDictionary[div.LinkedDivision].Identifier;
@@ -186,6 +188,7 @@ namespace ChronoKeep.Timing
                 }
                 else
                 {
+                    Log.D("Setting linked dictionaries (no linked div found). Ranking: 0");
                     // No linked division found, use division and 0 as ranking int.
                     linkedDivisionDictionary[div.Name] = (div, 0);
                     linkedDivIdentifierDictionary[div.Identifier] = div.Identifier;
@@ -1174,17 +1177,18 @@ namespace ChronoKeep.Timing
                             {
                                 lastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
                                 int segId = Constants.Timing.SEGMENT_NONE;
+                                // Check for linked division and set divId to the linked division, or to the actual div id.
+                                // Segments are based on the linked division.
                                 int divId = div == null ? 0 : div.LinkedDivision > 0 ? div.LinkedDivision : div.Identifier;
-
                                 // Check for Division specific segments (Occurrence is always 1 for time based)
                                 if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
                                 {
                                     segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
                                 }
                                 // Division specific segments
-                                else if (div != null && segmentDictionary.ContainsKey((div.Identifier, read.LocationID, 1)))
+                                else if (div != null && segmentDictionary.ContainsKey((divId, read.LocationID, 1)))
                                 {
-                                    segId = segmentDictionary[(div.Identifier, read.LocationID, 1)].Identifier;
+                                    segId = segmentDictionary[(divId, read.LocationID, 1)].Identifier;
                                 }
                                 else if (Constants.Timing.LOCATION_FINISH == read.LocationID)
                                 {
@@ -1510,13 +1514,13 @@ namespace ChronoKeep.Timing
                 Division div1 = null, div2 = null;
                 int rank1 = 0, rank2 = 0;
                 // Get *linked* divisions. (Could be that specific division)
-                if (linkedDivisionDictionary.ContainsKey(x1.DivisionName))
+                if (linkedDivisionDictionary.ContainsKey(x1.RealDivisionName))
                 {
-                    (div1, rank1) = linkedDivisionDictionary[x1.DivisionName];
+                    (div1, rank1) = linkedDivisionDictionary[x1.RealDivisionName];
                 }
-                if (linkedDivisionDictionary.ContainsKey(x2.DivisionName))
+                if (linkedDivisionDictionary.ContainsKey(x2.RealDivisionName))
                 {
-                    (div2, rank2) = linkedDivisionDictionary[x2.DivisionName];
+                    (div2, rank2) = linkedDivisionDictionary[x2.RealDivisionName];
                 }
                 if (rank1 == rank2)
                 {
@@ -1597,21 +1601,24 @@ namespace ChronoKeep.Timing
                     if (x1 == null || x2 == null) return 1;
                     Division div1 = null, div2 = null;
                     int rank1 = 0, rank2 = 0;
+                    Log.D("x1 division name: " + x1.RealDivisionName + " -- x2 division name: " + x2.RealDivisionName);
                     // Get *linked* divisions. (Could be that specific division)
-                    if (linkedDivisionDictionary.ContainsKey(x1.DivisionName))
+                    if (linkedDivisionDictionary.ContainsKey(x1.RealDivisionName))
                     {
-                        (div1, rank1) = linkedDivisionDictionary[x1.DivisionName];
+                        (div1, rank1) = linkedDivisionDictionary[x1.RealDivisionName];
                     }
-                    if (linkedDivisionDictionary.ContainsKey(x2.DivisionName))
+                    if (linkedDivisionDictionary.ContainsKey(x2.RealDivisionName))
                     {
-                        (div2, rank2) = linkedDivisionDictionary[x2.DivisionName];
+                        (div2, rank2) = linkedDivisionDictionary[x2.RealDivisionName];
                     }
+                    Log.D((div1 == null || div2 == null) ? "One of the divs not found." : "Rank 1: " + rank1 + " -- Rank 2: " + rank2);
                     // Check if they're in the same division or a linked division.
                     if (div1 != null && div2 != null && div1.Identifier == div2.Identifier)
                     {
                         // Sort based on rank.  This is the linked division new sorting item.
                         if (rank1 == rank2)
                         {
+                            Log.D("Ranks the same.");
                             // These are the old ways to sort before we've added linked divisions.
                             // Check if we know the participants we're comparing
                             if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
@@ -1634,6 +1641,7 @@ namespace ChronoKeep.Timing
                                 return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
                             }
                         }
+                        Log.D("Ranks not the same.");
                         // Ranks not the same
                         return rank1.CompareTo(rank2);
                     }
@@ -1649,13 +1657,13 @@ namespace ChronoKeep.Timing
                     Division div1 = null, div2 = null;
                     int rank1 = 0, rank2 = 0;
                     // Get *linked* divisions. (Could be that specific division)
-                    if (linkedDivisionDictionary.ContainsKey(x1.DivisionName))
+                    if (linkedDivisionDictionary.ContainsKey(x1.RealDivisionName))
                     {
-                        (div1, rank1) = linkedDivisionDictionary[x1.DivisionName];
+                        (div1, rank1) = linkedDivisionDictionary[x1.RealDivisionName];
                     }
-                    if (linkedDivisionDictionary.ContainsKey(x2.DivisionName))
+                    if (linkedDivisionDictionary.ContainsKey(x2.RealDivisionName))
                     {
-                        (div2, rank2) = linkedDivisionDictionary[x2.DivisionName];
+                        (div2, rank2) = linkedDivisionDictionary[x2.RealDivisionName];
                     }
                     // Check if they're in the same division or a linked division.
                     if (div1 != null && div2 != null && div1.Identifier == div2.Identifier)

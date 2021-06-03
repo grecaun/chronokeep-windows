@@ -3380,7 +3380,7 @@ namespace ChronoKeep
             while (reader.Read())
             {
                 output.Add(new TimeResult(
-                    Convert.ToInt32(reader["event_id"]),
+                    reader["event_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["event_id"]),
                     reader["eventspecific_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_id"]),
                     Convert.ToInt32(reader["location_id"]),
                     Convert.ToInt32(reader["segment_id"]),
@@ -3406,7 +3406,8 @@ namespace ChronoKeep
                     reader["eventspecific_age_group_name"].ToString(),
                     Convert.ToInt32(reader["timeresult_uploaded"]),
                     reader["participant_birthday"].ToString(),
-                    reader["division_type"] == DBNull.Value ? Constants.Timing.DIVISION_TYPE_SUPER : Convert.ToInt32(reader["division_type"])
+                    reader["division_type"] == DBNull.Value ? Constants.Timing.DIVISION_TYPE_NORMAL : Convert.ToInt32(reader["division_type"]),
+                    reader["linked_division_name"].ToString()
                     ));
             }
             reader.Close();
@@ -3425,11 +3426,40 @@ namespace ChronoKeep
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM time_results r " +
+            command.CommandText = "SELECT " +
+                    "e.event_id," +
+                    "e.eventspecific_id," +
+                    "r.location_id," +
+                    "r.segment_id," +
+                    "timeresult_time," +
+                    "timeresult_occurance," +
+                    "participant_first," +
+                    "participant_last," +
+                    "d.division_name," +
+                    "eventspecific_bib," +
+                    "r.read_id," +
+                    "timeresult_unknown_id," +
+                    "read_time_seconds," +
+                    "read_time_milliseconds," +
+                    "timeresult_chiptime," +
+                    "timeresult_place," +
+                    "timeresult_age_place," +
+                    "timeresult_gender_place," +
+                    "participant_gender," +
+                    "timeresult_status," +
+                    "eventspecific_earlystart," +
+                    "timeresult_splittime," +
+                    "eventspecific_age_group_id," +
+                    "eventspecific_age_group_name," +
+                    "timeresult_uploaded," +
+                    "participant_birthday," +
+                    "d.division_type," +
+                    "y.division_name AS linked_division_name " +
+                "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid;";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
@@ -3451,11 +3481,40 @@ namespace ChronoKeep
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM time_results r " +
+            command.CommandText = "SELECT " +
+                    "e.event_id," +
+                    "e.eventspecific_id," +
+                    "r.location_id," +
+                    "r.segment_id," +
+                    "timeresult_time," +
+                    "timeresult_occurance," +
+                    "participant_first," +
+                    "participant_last," +
+                    "d.division_name," +
+                    "eventspecific_bib," +
+                    "r.read_id," +
+                    "timeresult_unknown_id," +
+                    "read_time_seconds," +
+                    "read_time_milliseconds," +
+                    "timeresult_chiptime," +
+                    "timeresult_place," +
+                    "timeresult_age_place," +
+                    "timeresult_gender_place," +
+                    "participant_gender," +
+                    "timeresult_status," +
+                    "eventspecific_earlystart," +
+                    "timeresult_splittime," +
+                    "eventspecific_age_group_id," +
+                    "eventspecific_age_group_name," +
+                    "timeresult_uploaded," +
+                    "participant_birthday," +
+                    "d.division_type," +
+                    "y.division_name AS linked_division_name " +
+                "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN divisions d ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {

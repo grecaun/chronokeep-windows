@@ -55,10 +55,13 @@ namespace ChronoKeep.UI.Timing
             divisions.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
             foreach (Division d in divisions)
             {
-                DivisionsBox.Items.Add(new ListBoxItem()
+                if (d.LinkedDivision <= 0)
                 {
-                    Content = d.Name
-                });
+                    DivisionsBox.Items.Add(new ListBoxItem()
+                    {
+                        Content = d.Name
+                    });
+                }
             }
         }
 
@@ -80,6 +83,7 @@ namespace ChronoKeep.UI.Timing
             {
                 results.RemoveAll(x => !divisions.Contains(x.DivisionName));
             }
+            Dictionary<string, string> linkedDivisionDictionary = new Dictionary<string, string>();
             Dictionary<string, List<TimeResult>> divisionResults = new Dictionary<string, List<TimeResult>>();
             foreach (TimeResult result in results)
             {
@@ -108,7 +112,7 @@ namespace ChronoKeep.UI.Timing
             foreach (string divName in divisionResults.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
-                int LoopStart = 7;
+                int LoopStart = 8;
                 // Set margins to really small
                 Section section = PrintingInterface.SetupMargins(document.AddSection());
                 if (type == ValuesType.TIME_ALL)
@@ -131,6 +135,7 @@ namespace ChronoKeep.UI.Timing
                 table.Rows.Alignment = RowAlignment.Center;
                 // Create the rows we're displaying
                 table.AddColumn(Unit.FromCentimeter(1));   // place
+                table.AddColumn(Unit.FromCentimeter(0.6)); // type (no header)
                 table.AddColumn(Unit.FromCentimeter(1.2)); // bib
                 table.AddColumn(Unit.FromCentimeter(5));   // name
                 table.AddColumn(Unit.FromCentimeter(0.6)); // gender
@@ -165,13 +170,14 @@ namespace ChronoKeep.UI.Timing
                 Row row = table.AddRow();
                 row.Style = "ResultsHeader";
                 row.Cells[0].AddParagraph("Place");
-                row.Cells[1].AddParagraph("Bib");
-                row.Cells[2].AddParagraph("Name");
-                row.Cells[2].Style = "ResultsHeaderName";
-                row.Cells[3].AddParagraph("G");
-                row.Cells[4].AddParagraph("Age");
-                row.Cells[5].AddParagraph("AG Place");
-                row.Cells[5].MergeRight = 1;
+                //row.Cells[1].AddParagraph("T");
+                row.Cells[2].AddParagraph("Bib");
+                row.Cells[3].AddParagraph("Name");
+                row.Cells[3].Style = "ResultsHeaderName";
+                row.Cells[4].AddParagraph("G");
+                row.Cells[5].AddParagraph("Age");
+                row.Cells[6].AddParagraph("AG Place");
+                row.Cells[6].MergeRight = 1;
                 if (type == ValuesType.TIME_ALL)
                 {
                     for (int i = 0; i < max; i++)
@@ -211,13 +217,14 @@ namespace ChronoKeep.UI.Timing
                     row = table.AddRow();
                     row.Style = "ResultsRow";
                     row.Cells[0].AddParagraph(result.Place.ToString());
-                    row.Cells[1].AddParagraph(result.Bib.ToString());
-                    row.Cells[2].AddParagraph(result.ParticipantName);
-                    row.Cells[2].Style = "ResultsRowName";
-                    row.Cells[3].AddParagraph(result.Gender);
-                    row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                    row.Cells[5].AddParagraph(result.AgePlaceStr);
-                    row.Cells[6].AddParagraph(result.AgeGroupName);
+                    row.Cells[1].AddParagraph(result.PrettyType);
+                    row.Cells[2].AddParagraph(result.Bib.ToString());
+                    row.Cells[3].AddParagraph(result.ParticipantName);
+                    row.Cells[3].Style = "ResultsRowName";
+                    row.Cells[4].AddParagraph(result.Gender);
+                    row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                    row.Cells[6].AddParagraph(result.AgePlaceStr);
+                    row.Cells[7].AddParagraph(result.AgeGroupName);
                     if (type == ValuesType.TIME_ALL)
                     {
                         for (int i = 0; i < max; i++)
@@ -254,13 +261,14 @@ namespace ChronoKeep.UI.Timing
                         row = table.AddRow();
                         row.Style = "ResultsRow";
                         row.Cells[0].AddParagraph("");
-                        row.Cells[1].AddParagraph(result.Bib.ToString());
-                        row.Cells[2].AddParagraph(result.ParticipantName);
-                        row.Cells[2].Style = "ResultsRowName";
-                        row.Cells[3].AddParagraph(result.Gender);
-                        row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                        row.Cells[5].AddParagraph("");
+                        row.Cells[1].AddParagraph(result.PrettyType);
+                        row.Cells[2].AddParagraph(result.Bib.ToString());
+                        row.Cells[3].AddParagraph(result.ParticipantName);
+                        row.Cells[3].Style = "ResultsRowName";
+                        row.Cells[4].AddParagraph(result.Gender);
+                        row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
                         row.Cells[6].AddParagraph("");
+                        row.Cells[7].AddParagraph("");
                         if (type == ValuesType.TIME_ALL)
                         {
                             for (int i = 0; i < max; i++)
@@ -351,7 +359,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 foreach (string gender in genderResultDictionary.Keys.OrderBy(i => i))
                 {
-                    int LoopStart = 6;
+                    int LoopStart = 7;
                     section.AddParagraph(gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female", "SubHeading");
                     // Create a tabel to display the results.
                     Table table = new Table();
@@ -359,6 +367,7 @@ namespace ChronoKeep.UI.Timing
                     table.Rows.Alignment = RowAlignment.Center;
                     // Create the rows we're displaying
                     table.AddColumn(Unit.FromCentimeter(1));   // place
+                    table.AddColumn(Unit.FromCentimeter(0.6)); // type
                     table.AddColumn(Unit.FromCentimeter(1.2)); // bib
                     table.AddColumn(Unit.FromCentimeter(5));   // name
                     table.AddColumn(Unit.FromCentimeter(0.6)); // gender
@@ -392,12 +401,13 @@ namespace ChronoKeep.UI.Timing
                     Row row = table.AddRow();
                     row.Style = "ResultsHeader";
                     row.Cells[0].AddParagraph("Place");
-                    row.Cells[1].AddParagraph("Bib");
-                    row.Cells[2].AddParagraph("Name");
-                    row.Cells[2].Style = "ResultsHeaderName";
-                    row.Cells[3].AddParagraph("G");
-                    row.Cells[4].AddParagraph("Age");
-                    row.Cells[5].AddParagraph("Overall");
+                    // type
+                    row.Cells[2].AddParagraph("Bib");
+                    row.Cells[3].AddParagraph("Name");
+                    row.Cells[3].Style = "ResultsHeaderName";
+                    row.Cells[4].AddParagraph("G");
+                    row.Cells[5].AddParagraph("Age");
+                    row.Cells[6].AddParagraph("Overall");
                     if (type == ValuesType.TIME_ALL)
                     {
                         for (int i = 0; i < max; i++)
@@ -437,12 +447,13 @@ namespace ChronoKeep.UI.Timing
                         row = table.AddRow();
                         row.Style = "ResultsRow";
                         row.Cells[0].AddParagraph(result.GenderPlace.ToString());
-                        row.Cells[1].AddParagraph(result.Bib.ToString());
-                        row.Cells[2].AddParagraph(result.ParticipantName);
-                        row.Cells[2].Style = "ResultsRowName";
-                        row.Cells[3].AddParagraph(result.Gender);
-                        row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                        row.Cells[5].AddParagraph(result.Place.ToString());
+                        row.Cells[1].AddParagraph(result.PrettyType);
+                        row.Cells[2].AddParagraph(result.Bib.ToString());
+                        row.Cells[3].AddParagraph(result.ParticipantName);
+                        row.Cells[3].Style = "ResultsRowName";
+                        row.Cells[4].AddParagraph(result.Gender);
+                        row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                        row.Cells[6].AddParagraph(result.Place.ToString());
                         if (type == ValuesType.TIME_ALL)
                         {
                             for (int i = 0; i < max; i++)
@@ -479,12 +490,12 @@ namespace ChronoKeep.UI.Timing
                             row = table.AddRow();
                             row.Style = "ResultsRow";
                             row.Cells[0].AddParagraph("");
-                            row.Cells[1].AddParagraph(result.Bib.ToString());
-                            row.Cells[2].AddParagraph(result.ParticipantName);
-                            row.Cells[2].Style = "ResultsRowName";
-                            row.Cells[3].AddParagraph(result.Gender);
-                            row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                            row.Cells[5].AddParagraph("");
+                            row.Cells[1].AddParagraph(result.PrettyType);
+                            row.Cells[2].AddParagraph(result.Bib.ToString());
+                            row.Cells[3].AddParagraph(result.ParticipantName);
+                            row.Cells[3].Style = "ResultsRowName";
+                            row.Cells[4].AddParagraph(result.Gender);
+                            row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
                             row.Cells[6].AddParagraph("");
                             if (type == ValuesType.TIME_ALL)
                             {
@@ -580,7 +591,7 @@ namespace ChronoKeep.UI.Timing
                 foreach ((int AgeGroupID, string gender) in ageGroupResultsDictionary.Keys
                     .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge))
                 {
-                    int LoopStart = 6;
+                    int LoopStart = 7;
                     section.AddParagraph(string.Format("{0} {1} - {2}",
                         gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
                         ageGroups[AgeGroupID].StartAge,
@@ -591,6 +602,7 @@ namespace ChronoKeep.UI.Timing
                     table.Rows.Alignment = RowAlignment.Center;
                     // Create the rows we're displaying
                     table.AddColumn(Unit.FromCentimeter(1));   // place
+                    table.AddColumn(Unit.FromCentimeter(0.6)); // type
                     table.AddColumn(Unit.FromCentimeter(1.2)); // bib
                     table.AddColumn(Unit.FromCentimeter(5));   // name
                     table.AddColumn(Unit.FromCentimeter(0.6)); // gender
@@ -623,12 +635,13 @@ namespace ChronoKeep.UI.Timing
                     Row row = table.AddRow();
                     row.Style = "ResultsHeader";
                     row.Cells[0].AddParagraph("Place");
-                    row.Cells[1].AddParagraph("Bib");
-                    row.Cells[2].AddParagraph("Name");
-                    row.Cells[2].Style = "ResultsHeaderName";
-                    row.Cells[3].AddParagraph("G");
-                    row.Cells[4].AddParagraph("Age");
-                    row.Cells[5].AddParagraph("Overall");
+                    // type
+                    row.Cells[2].AddParagraph("Bib");
+                    row.Cells[3].AddParagraph("Name");
+                    row.Cells[3].Style = "ResultsHeaderName";
+                    row.Cells[4].AddParagraph("G");
+                    row.Cells[5].AddParagraph("Age");
+                    row.Cells[6].AddParagraph("Overall");
                     if (type == ValuesType.TIME_ALL)
                     {
                         for (int i = 0; i < max; i++)
@@ -668,12 +681,13 @@ namespace ChronoKeep.UI.Timing
                         row = table.AddRow();
                         row.Style = "ResultsRow";
                         row.Cells[0].AddParagraph(result.AgePlace.ToString());
-                        row.Cells[1].AddParagraph(result.Bib.ToString());
-                        row.Cells[2].AddParagraph(result.ParticipantName);
-                        row.Cells[2].Style = "ResultsRowName";
-                        row.Cells[3].AddParagraph(result.Gender);
-                        row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                        row.Cells[5].AddParagraph(result.Place.ToString());
+                        row.Cells[1].AddParagraph(result.PrettyType);
+                        row.Cells[2].AddParagraph(result.Bib.ToString());
+                        row.Cells[3].AddParagraph(result.ParticipantName);
+                        row.Cells[3].Style = "ResultsRowName";
+                        row.Cells[4].AddParagraph(result.Gender);
+                        row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                        row.Cells[6].AddParagraph(result.Place.ToString());
                         if (type == ValuesType.TIME_ALL)
                         {
                             for (int i = 0; i < max; i++)
@@ -710,12 +724,12 @@ namespace ChronoKeep.UI.Timing
                             row = table.AddRow();
                             row.Style = "ResultsRow";
                             row.Cells[0].AddParagraph("");
-                            row.Cells[1].AddParagraph(result.Bib.ToString());
-                            row.Cells[2].AddParagraph(result.ParticipantName);
-                            row.Cells[2].Style = "ResultsRowName";
-                            row.Cells[3].AddParagraph(result.Gender);
-                            row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                            row.Cells[5].AddParagraph("");
+                            row.Cells[1].AddParagraph(result.PrettyType);
+                            row.Cells[2].AddParagraph(result.Bib.ToString());
+                            row.Cells[3].AddParagraph(result.ParticipantName);
+                            row.Cells[3].Style = "ResultsRowName";
+                            row.Cells[4].AddParagraph(result.Gender);
+                            row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
                             row.Cells[6].AddParagraph("");
                             if (type == ValuesType.TIME_ALL)
                             {
@@ -784,7 +798,7 @@ namespace ChronoKeep.UI.Timing
             foreach (string divName in divisionResults.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
-                int FinishIndex = 7;
+                int FinishIndex = 8;
                 // Set margins to really small
                 Section section = PrintingInterface.SetupMargins(document.AddSection());
                 if (type == ValuesType.ALL)
@@ -807,6 +821,7 @@ namespace ChronoKeep.UI.Timing
                 table.Rows.Alignment = RowAlignment.Center;
                 // Create the rows we're displaying
                 table.AddColumn(Unit.FromCentimeter(1));   // place
+                table.AddColumn(Unit.FromCentimeter(0.6)); // type
                 table.AddColumn(Unit.FromCentimeter(1.2)); // bib
                 table.AddColumn(Unit.FromCentimeter(5));   // name
                 table.AddColumn(Unit.FromCentimeter(0.6)); // gender
@@ -834,16 +849,17 @@ namespace ChronoKeep.UI.Timing
                 Row row = table.AddRow();
                 row.Style = "ResultsHeader";
                 row.Cells[0].AddParagraph("Place");
-                row.Cells[1].AddParagraph("Bib");
-                row.Cells[2].AddParagraph("Name");
-                row.Cells[2].Style = "ResultsHeaderName";
-                row.Cells[3].AddParagraph("G");
-                row.Cells[4].AddParagraph("Age");
-                row.Cells[5].AddParagraph("AG Place");
-                row.Cells[5].MergeRight = 1;
+                // type
+                row.Cells[2].AddParagraph("Bib");
+                row.Cells[3].AddParagraph("Name");
+                row.Cells[3].Style = "ResultsHeaderName";
+                row.Cells[4].AddParagraph("G");
+                row.Cells[5].AddParagraph("Age");
+                row.Cells[6].AddParagraph("AG Place");
+                row.Cells[6].MergeRight = 1;
                 if (type != ValuesType.FINISHONLY)
                 {
-                    row.Cells[7].AddParagraph("Start");
+                    row.Cells[8].AddParagraph("Start");
                 }
                 if (distanceSegments)
                 {
@@ -870,20 +886,21 @@ namespace ChronoKeep.UI.Timing
                     row = table.AddRow();
                     row.Style = "ResultsRow";
                     row.Cells[0].AddParagraph(result.Place.ToString());
-                    row.Cells[1].AddParagraph(result.Bib.ToString());
-                    row.Cells[2].AddParagraph(result.ParticipantName);
-                    row.Cells[2].Style = "ResultsRowName";
-                    row.Cells[3].AddParagraph(result.Gender);
-                    row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                    row.Cells[5].AddParagraph(result.AgePlaceStr);
-                    row.Cells[6].AddParagraph(result.AgeGroupName);
+                    row.Cells[1].AddParagraph(result.PrettyType);
+                    row.Cells[2].AddParagraph(result.Bib.ToString());
+                    row.Cells[3].AddParagraph(result.ParticipantName);
+                    row.Cells[3].Style = "ResultsRowName";
+                    row.Cells[4].AddParagraph(result.Gender);
+                    row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                    row.Cells[6].AddParagraph(result.AgePlaceStr);
+                    row.Cells[7].AddParagraph(result.AgeGroupName);
                     if (type != ValuesType.FINISHONLY)
                     {
                         string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, Constants.Timing.SEGMENT_START))
                             ? personSegmentResultDictionary[(result.EventSpecificId, Constants.Timing.SEGMENT_START)].Time
                             : "";
                         value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
-                        row.Cells[7].AddParagraph(value);
+                        row.Cells[8].AddParagraph(value);
                     }
                     if (distanceSegments)
                     {
@@ -925,20 +942,21 @@ namespace ChronoKeep.UI.Timing
                         row = table.AddRow();
                         row.Style = "ResultsRow";
                         row.Cells[0].AddParagraph("");
-                        row.Cells[1].AddParagraph(result.Bib.ToString());
-                        row.Cells[2].AddParagraph(result.ParticipantName);
-                        row.Cells[2].Style = "ResultsRowName";
-                        row.Cells[3].AddParagraph(result.Gender);
-                        row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                        row.Cells[5].AddParagraph("");
+                        row.Cells[1].AddParagraph(result.PrettyType);
+                        row.Cells[2].AddParagraph(result.Bib.ToString());
+                        row.Cells[3].AddParagraph(result.ParticipantName);
+                        row.Cells[3].Style = "ResultsRowName";
+                        row.Cells[4].AddParagraph(result.Gender);
+                        row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
                         row.Cells[6].AddParagraph("");
+                        row.Cells[7].AddParagraph("");
                         if (type != ValuesType.FINISHONLY)
                         {
                             string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, Constants.Timing.SEGMENT_START))
                                 ? personSegmentResultDictionary[(result.EventSpecificId, Constants.Timing.SEGMENT_START)].Time
                                 : "";
                             value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
-                            row.Cells[7].AddParagraph(value);
+                            row.Cells[8].AddParagraph(value);
                         }
                         if (distanceSegments)
                         {
@@ -1027,7 +1045,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 foreach (string gender in genderResultDictionary.Keys.OrderBy(i=>i))
                 {
-                    int FinishIndex = 6;
+                    int FinishIndex = 7;
                     section.AddParagraph(gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female", "SubHeading");
                     // Create a tabel to display the results.
                     Table table = new Table();
@@ -1035,6 +1053,7 @@ namespace ChronoKeep.UI.Timing
                     table.Rows.Alignment = RowAlignment.Center;
                     // Create the rows we're displaying
                     table.AddColumn(Unit.FromCentimeter(1));   // place
+                    table.AddColumn(Unit.FromCentimeter(0.6)); // type
                     table.AddColumn(Unit.FromCentimeter(1.2)); // bib
                     table.AddColumn(Unit.FromCentimeter(5));   // name
                     table.AddColumn(Unit.FromCentimeter(0.6)); // gender
@@ -1060,15 +1079,16 @@ namespace ChronoKeep.UI.Timing
                     Row row = table.AddRow();
                     row.Style = "ResultsHeader";
                     row.Cells[0].AddParagraph("Place");
-                    row.Cells[1].AddParagraph("Bib");
-                    row.Cells[2].AddParagraph("Name");
-                    row.Cells[2].Style = "ResultsHeaderName";
-                    row.Cells[3].AddParagraph("G");
-                    row.Cells[4].AddParagraph("Age");
-                    row.Cells[5].AddParagraph("Overall");
+                    // Type
+                    row.Cells[2].AddParagraph("Bib");
+                    row.Cells[3].AddParagraph("Name");
+                    row.Cells[3].Style = "ResultsHeaderName";
+                    row.Cells[4].AddParagraph("G");
+                    row.Cells[5].AddParagraph("Age");
+                    row.Cells[6].AddParagraph("Overall");
                     if (type != ValuesType.FINISHONLY)
                     {
-                        row.Cells[6].AddParagraph("Start");
+                        row.Cells[7].AddParagraph("Start");
                     }
                     if (distanceSegments)
                     {
@@ -1096,19 +1116,20 @@ namespace ChronoKeep.UI.Timing
                         row = table.AddRow();
                         row.Style = "ResultsRow";
                         row.Cells[0].AddParagraph(result.GenderPlace.ToString());
-                        row.Cells[1].AddParagraph(result.Bib.ToString());
-                        row.Cells[2].AddParagraph(result.ParticipantName);
-                        row.Cells[2].Style = "ResultsRowName";
-                        row.Cells[3].AddParagraph(result.Gender);
-                        row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                        row.Cells[5].AddParagraph(result.Place.ToString());
+                        row.Cells[1].AddParagraph(result.PrettyType);
+                        row.Cells[2].AddParagraph(result.Bib.ToString());
+                        row.Cells[3].AddParagraph(result.ParticipantName);
+                        row.Cells[3].Style = "ResultsRowName";
+                        row.Cells[4].AddParagraph(result.Gender);
+                        row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                        row.Cells[6].AddParagraph(result.Place.ToString());
                         if (type != ValuesType.FINISHONLY)
                         {
                             string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, Constants.Timing.SEGMENT_START))
                                 ? personSegmentResultDictionary[(result.EventSpecificId, Constants.Timing.SEGMENT_START)].Time
                                 : "";
                             value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
-                            row.Cells[6].AddParagraph(value);
+                            row.Cells[7].AddParagraph(value);
                         }
                         if (distanceSegments)
                         {
@@ -1150,12 +1171,12 @@ namespace ChronoKeep.UI.Timing
                             row = table.AddRow();
                             row.Style = "ResultsRow";
                             row.Cells[0].AddParagraph("");
-                            row.Cells[1].AddParagraph(result.Bib.ToString());
-                            row.Cells[2].AddParagraph(result.ParticipantName);
-                            row.Cells[2].Style = "ResultsRowName";
-                            row.Cells[3].AddParagraph(result.Gender);
-                            row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                            row.Cells[5].AddParagraph("");
+                            row.Cells[1].AddParagraph(result.PrettyType);
+                            row.Cells[2].AddParagraph(result.Bib.ToString());
+                            row.Cells[3].AddParagraph(result.ParticipantName);
+                            row.Cells[3].Style = "ResultsRowName";
+                            row.Cells[4].AddParagraph(result.Gender);
+                            row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
                             row.Cells[6].AddParagraph("");
                             if (type != ValuesType.FINISHONLY)
                             {
@@ -1269,7 +1290,7 @@ namespace ChronoKeep.UI.Timing
                 {
                     if (AgeGroupID != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
                     {
-                        int FinishIndex = 6;
+                        int FinishIndex = 7;
                         string subheading = string.Format("{0} {1} - {2}",
                             gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
                             ageGroups[AgeGroupID].StartAge,
@@ -1287,6 +1308,7 @@ namespace ChronoKeep.UI.Timing
                         table.Rows.Alignment = RowAlignment.Center;
                         // Create the rows we're displaying
                         table.AddColumn(Unit.FromCentimeter(1));   // place
+                        table.AddColumn(Unit.FromCentimeter(0.6)); // type
                         table.AddColumn(Unit.FromCentimeter(1.2)); // bib
                         table.AddColumn(Unit.FromCentimeter(5));   // name
                         table.AddColumn(Unit.FromCentimeter(0.6)); // gender
@@ -1312,15 +1334,16 @@ namespace ChronoKeep.UI.Timing
                         Row row = table.AddRow();
                         row.Style = "ResultsHeader";
                         row.Cells[0].AddParagraph("Place");
-                        row.Cells[1].AddParagraph("Bib");
-                        row.Cells[2].AddParagraph("Name");
-                        row.Cells[2].Style = "ResultsHeaderName";
-                        row.Cells[3].AddParagraph("G");
-                        row.Cells[4].AddParagraph("Age");
-                        row.Cells[5].AddParagraph("Overall");
+                        // type
+                        row.Cells[2].AddParagraph("Bib");
+                        row.Cells[3].AddParagraph("Name");
+                        row.Cells[3].Style = "ResultsHeaderName";
+                        row.Cells[4].AddParagraph("G");
+                        row.Cells[5].AddParagraph("Age");
+                        row.Cells[6].AddParagraph("Overall");
                         if (type != ValuesType.FINISHONLY)
                         {
-                            row.Cells[6].AddParagraph("Start");
+                            row.Cells[7].AddParagraph("Start");
                         }
                         if (distanceSegments)
                         {
@@ -1348,19 +1371,20 @@ namespace ChronoKeep.UI.Timing
                             row = table.AddRow();
                             row.Style = "ResultsRow";
                             row.Cells[0].AddParagraph(result.AgePlace.ToString());
-                            row.Cells[1].AddParagraph(result.Bib.ToString());
-                            row.Cells[2].AddParagraph(result.ParticipantName);
-                            row.Cells[2].Style = "ResultsRowName";
-                            row.Cells[3].AddParagraph(result.Gender);
-                            row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                            row.Cells[5].AddParagraph(result.Place.ToString());
+                            row.Cells[1].AddParagraph(result.PrettyType);
+                            row.Cells[2].AddParagraph(result.Bib.ToString());
+                            row.Cells[3].AddParagraph(result.ParticipantName);
+                            row.Cells[3].Style = "ResultsRowName";
+                            row.Cells[4].AddParagraph(result.Gender);
+                            row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
+                            row.Cells[6].AddParagraph(result.Place.ToString());
                             if (type != ValuesType.FINISHONLY)
                             {
                                 string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, Constants.Timing.SEGMENT_START))
                                     ? personSegmentResultDictionary[(result.EventSpecificId, Constants.Timing.SEGMENT_START)].Time
                                     : "";
                                 value = value.Length > 0 ? value.Substring(0, value.Length - 2) : "";
-                                row.Cells[6].AddParagraph(value);
+                                row.Cells[7].AddParagraph(value);
                             }
                             if (distanceSegments)
                             {
@@ -1402,12 +1426,12 @@ namespace ChronoKeep.UI.Timing
                                 row = table.AddRow();
                                 row.Style = "ResultsRow";
                                 row.Cells[0].AddParagraph("");
-                                row.Cells[1].AddParagraph(result.Bib.ToString());
-                                row.Cells[2].AddParagraph(result.ParticipantName);
-                                row.Cells[2].Style = "ResultsRowName";
-                                row.Cells[3].AddParagraph(result.Gender);
-                                row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
-                                row.Cells[5].AddParagraph("");
+                                row.Cells[1].AddParagraph(result.PrettyType);
+                                row.Cells[2].AddParagraph(result.Bib.ToString());
+                                row.Cells[3].AddParagraph(result.ParticipantName);
+                                row.Cells[3].Style = "ResultsRowName";
+                                row.Cells[4].AddParagraph(result.Gender);
+                                row.Cells[5].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date));
                                 row.Cells[6].AddParagraph("");
                                 if (type != ValuesType.FINISHONLY)
                                 {

@@ -15,7 +15,7 @@ namespace ChronoKeep
             ageGroupId, chipMilliseconds, status, early, uploaded, type;
         private long chipSeconds;
         private string time, locationName, segmentName, firstName, lastName,
-            divisionName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday;
+            divisionName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday, linked_division_name = "";
         DateTime systemTime;
 
         public static readonly Regex timeRegex = new Regex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})");
@@ -29,7 +29,7 @@ namespace ChronoKeep
             string time, int occurrence, string first, string last, string division, int bib,
             int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
             int agePlace, int genderPlace, string gender, int status, int early, string split,
-            int ageGroupId, string ageGroupName, int uploaded, string birthday, int type)
+            int ageGroupId, string ageGroupName, int uploaded, string birthday, int type, string linked_division_name)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -85,6 +85,7 @@ namespace ChronoKeep
             this.uploaded = uploaded;
             this.birthday = birthday;
             this.type = type;
+            this.linked_division_name = linked_division_name;
         }
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
@@ -152,8 +153,9 @@ namespace ChronoKeep
         public string First { get => firstName; set => firstName = value; }
         public string Last { get => lastName; set => lastName = value; }
         public string ParticipantName { get => String.Format("{0} {1}", firstName, lastName).Trim(); }
-        public string DivisionName { get => divisionName; set => divisionName = value; }
-        public string DivisionNameWithEarly { get => divisionName + (early == 1 ? " Early" : ""); }
+        public string DivisionName { get => linked_division_name == "" ? divisionName : linked_division_name; }
+        public string RealDivisionName { get => divisionName; }
+        public string DivisionNameWithEarly { get => DivisionName + (early == 1 ? " Early" : ""); }
         public int Bib { get => bib; set => bib = value; }
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public string UnknownId { get => unknownId; set => unknownId = value; }
@@ -165,9 +167,8 @@ namespace ChronoKeep
         public int GenderPlace { get => genderPlace; set => genderPlace = value; }
         public string GenderPlaceStr { get => genderPlace < 1 ? "" : genderPlace.ToString(); }
         public int Type { get => type; set => type = value; }
-        public string Identifier {
-            get => unknownId;
-        }
+        public string Identifier { get => unknownId; }
+        public string PrettyType { get => type == Constants.Timing.DIVISION_TYPE_EARLY ? "E" : type == Constants.Timing.DIVISION_TYPE_UNOFFICIAL ? "U" : ""; }
 
         public DateTime SystemTime { get => systemTime; set => systemTime = value; }
 

@@ -377,13 +377,13 @@ namespace ChronoKeep.UI.MainPages
                     new ComboBoxItem
                     {
                         Content = "Unranked",
-                        Uid = Constants.Timing.DIVISION_TYPE_UNRANKED.ToString()
+                        Uid = Constants.Timing.DIVISION_TYPE_UNOFFICIAL.ToString()
                     });
                 if (theDivision.Type == Constants.Timing.DIVISION_TYPE_EARLY)
                 {
                     TypeBox.SelectedIndex = 0;
                 }
-                else if (theDivision.Type == Constants.Timing.DIVISION_TYPE_UNRANKED)
+                else if (theDivision.Type == Constants.Timing.DIVISION_TYPE_UNOFFICIAL)
                 {
                     TypeBox.SelectedIndex = 1;
                 }
@@ -425,7 +425,7 @@ namespace ChronoKeep.UI.MainPages
                 theDivision.Cost = 0;
                 theDivision.Distance = 0.0;
                 theDivision.EndSeconds = 0;
-                theDivision.Type = TypeBox.SelectedIndex == 0 ? Constants.Timing.DIVISION_TYPE_EARLY : Constants.Timing.DIVISION_TYPE_UNRANKED;
+                theDivision.Type = TypeBox.SelectedIndex == 0 ? Constants.Timing.DIVISION_TYPE_EARLY : Constants.Timing.DIVISION_TYPE_UNOFFICIAL;
                 int ranking;
                 int.TryParse(Ranking.Text, out ranking);
                 if (ranking >= 0)

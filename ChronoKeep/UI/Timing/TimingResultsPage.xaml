@@ -23,7 +23,8 @@
                     <GridViewColumn Header="GP" Width="25" DisplayMemberBinding="{Binding GenderPlaceStr}"/>
                     <GridViewColumn Header="Age Grp" Width="55" DisplayMemberBinding="{Binding AgeGroupName}" />
                     <GridViewColumn Header="AP" Width="25" DisplayMemberBinding="{Binding AgePlaceStr}"/>
-                    <GridViewColumn Header="Division" Width="80" DisplayMemberBinding="{Binding DivisionNameWithEarly}" />
+                    <GridViewColumn Header="Division" Width="60" DisplayMemberBinding="{Binding DivisionName}" />
+                    <GridViewColumn Header="T" Width="20" DisplayMemberBinding="{Binding PrettyType}"/>
                     <GridViewColumn Header="Segment" Width="70" DisplayMemberBinding="{Binding SegmentName}" />
                 </GridView>
             </ListView.View>
