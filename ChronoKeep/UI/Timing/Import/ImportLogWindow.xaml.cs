@@ -121,6 +121,33 @@ namespace ChronoKeep.UI.Timing.Import
                             ));
                     }
                 }
+                else if (type == LogImporter.Type.CHRONOKEEP)
+                {
+                    foreach (object[] line in data.Data)
+                    {
+                        chipreads.Add(new ChipRead(
+                            theEvent.Identifier,        // event id
+                            locationId,                 // location id
+                            Convert.ToInt32(line[1]),   // status
+                            line[2].ToString(),         // chip number
+                            Convert.ToInt64(line[3]),   // seconds
+                            Convert.ToInt32(line[4]),   // milliseconds
+                            Convert.ToInt64(line[5]),   // time_seconds
+                            Convert.ToInt32(line[6]),   // time_milliseconds
+                            Convert.ToInt32(line[7]),   // antenna
+                            line[8].ToString(),         // reader
+                            line[9].ToString(),         // box
+                            Convert.ToInt32(line[10]),   // log_index
+                            line[11].ToString(),        // rssi
+                            Convert.ToInt32(line[12]),  // is_rewind
+                            line[13].ToString(),        // reader_time
+                            Convert.ToInt64(line[14]),  // start_time
+                            Convert.ToInt32(line[15]),  // read_bib
+                            Convert.ToInt32(line[16]),  // type
+                            false                       // placeholder
+                            ));
+                    }
+                }
                 else
                 {
                     if (type == LogImporter.Type.RFID)

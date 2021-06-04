@@ -93,6 +93,7 @@ namespace ChronoKeep.UI.Timing.Import
         {
             Log.D("Next Button Clicked.");
             int locationId = Convert.ToInt32(((ComboBoxItem)LocationHolder.SelectedItem).Uid);
+            Log.D("Location ID is: " + locationId + " name of: " + ((ComboBoxItem)LocationHolder.SelectedItem).Content.ToString());
             if (((ComboBoxItem)TypeHolder.SelectedItem).Uid == LogImporter.Type.CUSTOM.ToString())
             {
                 parent.Next(locationId);

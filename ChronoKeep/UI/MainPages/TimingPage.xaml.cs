@@ -5,14 +5,17 @@ using ChronoKeep.Network.API;
 using ChronoKeep.Objects;
 using ChronoKeep.Objects.API;
 using ChronoKeep.UI.Export;
+using ChronoKeep.UI.IO;
 using ChronoKeep.UI.Timing;
 using ChronoKeep.UI.Timing.Import;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -916,6 +919,118 @@ namespace ChronoKeep.UI.MainPages
                 database.AddTimingResults(results);
             }
             ManualAPIButton.Content = "Manual Upload";
+        }
+
+        private void SaveLog(object sender, RoutedEventArgs e)
+        {
+            Log.D("Save Log clicked.");
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "CSV (*.csv)|*.csv",
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                Dictionary<string, List<ChipRead>> locationReadDict = new Dictionary<string, List<ChipRead>>();
+                string[] headers =
+                {
+                    "status",
+                    "chip_number",
+                    "seconds",
+                    "milliseconds",
+                    "time_seconds",
+                    "time_milliseconds",
+                    "antenna",
+                    "reader",
+                    "box",
+                    "log_index",
+                    "rssi",
+                    "is_rewind",
+                    "reader_time",
+                    "start_time",
+                    "read_bib",
+                    "type"
+                };
+                List<ChipRead> chipReads = database.GetChipReads(theEvent.Identifier);
+                foreach (ChipRead read in chipReads)
+                {
+                    if (!locationReadDict.ContainsKey(read.LocationName))
+                    {
+                        locationReadDict[read.LocationName] = new List<ChipRead>();
+                    }
+                    locationReadDict[read.LocationName].Add(read);
+                }
+                StringBuilder format = new StringBuilder();
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    format.Append("\"{");
+                    format.Append(i);
+                    format.Append("}\",");
+                }
+                format.Remove(format.Length - 1, 1);
+                Log.D(String.Format("The format is '{0}'", format.ToString()));
+                if (locationReadDict.Keys.Count == 1)
+                {
+                    List<object[]> data = new List<object[]>();
+                    foreach (ChipRead read in chipReads)
+                    {
+                        data.Add(new object[] {
+                            read.Status,
+                            read.ChipNumber,
+                            read.Seconds,
+                            read.Milliseconds,
+                            read.TimeSeconds,
+                            read.TimeMilliseconds,
+                            read.Antenna,
+                            read.Reader,
+                            read.Box,
+                            read.LogId,
+                            read.RSSI,
+                            read.IsRewind,
+                            read.ReaderTime,
+                            read.StartTime,
+                            read.ReadBib,
+                            read.Type
+                        });
+                    }
+                    IDataExporter exporter = new CSVExporter(format.ToString());
+                    exporter.SetData(headers, data);
+                    exporter.ExportData(saveFileDialog.FileName);
+                }
+                // Multiple locations, save each individually.
+                else
+                {
+                    foreach (string key in locationReadDict.Keys)
+                    {
+                        List<object[]> data = new List<object[]>();
+                        foreach (ChipRead read in locationReadDict[key])
+                        {
+                            data.Add(new object[] {
+                            read.Status,
+                            read.ChipNumber,
+                            read.Seconds,
+                            read.Milliseconds,
+                            read.TimeSeconds,
+                            read.TimeMilliseconds,
+                            read.Antenna,
+                            read.Reader,
+                            read.Box,
+                            read.LogId,
+                            read.RSSI,
+                            read.IsRewind,
+                            read.ReaderTime,
+                            read.StartTime,
+                            read.ReadBib,
+                            read.Type
+                        });
+                        }
+                        IDataExporter exporter = new CSVExporter(format.ToString());
+                        exporter.SetData(headers, data);
+                        Log.D("Saving file to: " + Path.GetDirectoryName(saveFileDialog.FileName) + "\\" + Regex.Replace(key.ToLower(), @"[^a-z0-9\-]", "") + "-" + Path.GetFileName(saveFileDialog.FileName));
+                        exporter.ExportData(Path.GetDirectoryName(saveFileDialog.FileName) + "\\" + Regex.Replace(key.ToLower(), @"[^a-z0-9\-]", "") + "-" + Path.GetFileName(saveFileDialog.FileName));
+                    }
+                }
+            }
         }
 
         private class AReaderBox : ListBoxItem

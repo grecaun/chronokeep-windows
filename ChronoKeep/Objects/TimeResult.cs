@@ -85,7 +85,7 @@ namespace ChronoKeep
             this.uploaded = uploaded;
             this.birthday = birthday;
             this.type = type;
-            // Some backwards compatability here.
+            // Some backwards compatibility here.
             // Type is never set to 1 in a version of Chronokeep that uses type.
             if (this.early == 1)
             {

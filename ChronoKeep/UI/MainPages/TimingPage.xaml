@@ -27,7 +27,14 @@
                 <Button Name="StartRace" Content="Start Race" Width="150" Height="25" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,0" Click="StartRaceClick" />
                 <Button Name="WaveButton" Content="Set Wave Times" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="ChangeWaves"/>
                 <Button Content="Manual Entry" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="ManualEntry" IsEnabled="True"/>
-                <Button Content="Load Log" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="LoadLog" IsEnabled="True" />
+                <Grid Width="150">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Load Log" Width="74" Height="25" HorizontalAlignment="Center" Margin="0,5,1,0" Click="LoadLog" IsEnabled="True"  Grid.Column="0"/>
+                    <Button x:Name="SaveLogButton" Content="Save Log" Width="74" Height="25" HorizontalAlignment="Center" Margin="1,5,0,0" Click="SaveLog" IsEnabled="True" Grid.Column="1"/>
+                </Grid>
                 <TextBox Name="searchBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="SearchBox_TextChanged"/>
                 <ComboBox Name="viewOnlyBox" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" SelectionChanged="ViewOnlyBox_SelectionChanged">
                     <ComboBoxItem Content="Hide Unknown" IsSelected="True"/>
@@ -60,24 +67,6 @@
                 </Expander>
                 <Expander Name="extraExpander" Header="More" Margin="5,5,5,0" IsExpanded="True">
                     <StackPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0">
-                                <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Print_Click"/>
-                                <Button Content="Export Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Export_Click"/>
-                                <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Recalculate_Click"/>
-                                <Button Content="Create HTML" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="CreateHTML_Click" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Award_Click"/>
-                                <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="RawReads_Click"/>
-                                <Button x:Name="DNFButton" Content="Add DNF" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="AddDNF_Click"/>
-                                <Button x:Name="HttpServerButton" Content="Start Web" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="HTMLServerButton_Click"/>
-                            </StackPanel>
-                        </Grid>
                         <StackPanel x:Name="apiPanel">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -88,6 +77,24 @@
                                 <Button x:Name="ManualAPIButton" Content="Manual Upload" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="ManualAPI_Click" Grid.Column="1"/>
                             </Grid>
                         </StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Print_Click"/>
+                                <Button Content="Export Results" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Export_Click"/>
+                                <Button Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Recalculate_Click"/>
+                                <Button Content="Create HTML" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="CreateHTML_Click" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Award_Click"/>
+                                <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="RawReads_Click"/>
+                                <Button x:Name="DNFButton" Content="Add DNF" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="AddDNF_Click"/>
+                                <Button x:Name="HttpServerButton" Content="Start Web" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="HTMLServerButton_Click"/>
+                            </StackPanel>
+                        </Grid>
                         <DockPanel Name="IPContainer" HorizontalAlignment="Center" Margin="0,10,0,0">
                             <Label Content="IP:" Width="75" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
                             <Label Name="IPAdd" Width="150" Content="IP" VerticalContentAlignment="Center" HorizontalContentAlignment="Left"/>

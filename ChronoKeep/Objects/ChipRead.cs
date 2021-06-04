@@ -53,7 +53,7 @@ namespace ChronoKeep
             this.Milliseconds = millisec;
             this.Antenna = antenna;
             this.RSSI = rssi;
-            this.IsRewind = IsRewind;
+            this.IsRewind = isRewind;
             this.Reader = reader;
             this.Box = box;
             this.ReaderTime = readertime;
@@ -102,7 +102,7 @@ namespace ChronoKeep
             this.Milliseconds = millisec;
             this.Antenna = antenna;
             this.RSSI = rssi;
-            this.IsRewind = IsRewind;
+            this.IsRewind = isRewind;
             this.Reader = reader;
             this.Box = box;
             this.ReaderTime = readertime;
@@ -129,7 +129,7 @@ namespace ChronoKeep
             this.Milliseconds = millisec;
             this.Antenna = antenna;
             this.RSSI = rssi;
-            this.IsRewind = IsRewind;
+            this.IsRewind = isRewind;
             this.Reader = reader;
             this.Box = box;
             this.ReaderTime = readertime;
@@ -189,6 +189,48 @@ namespace ChronoKeep
             this.ReaderTime = "";
             this.StartTime = 0;
             this.LogId = 0;
+        }
+
+        // Constructor used for loading data from a chronokeep log, fake variable used to differentiate between this and the old db constructor.
+        public ChipRead(
+            int eventId,
+            int locationId,
+            int status,
+            string chipNumber, 
+            long seconds, 
+            int milliseconds,
+            long time_seconds,
+            int time_milliseconds,
+            int antenna,
+            string reader,
+            string box,
+            int log_index,
+            string rssi,
+            int is_rewind,
+            string reader_time,
+            long start_time,
+            int read_bib,
+            int type,
+            bool fake)
+        {
+            this.EventId = eventId;
+            this.LocationID = locationId;
+            this.Status = status;
+            this.ChipNumber = chipNumber;
+            this.Seconds = seconds;
+            this.Milliseconds = milliseconds;
+            this.TimeSeconds = time_seconds;
+            this.TimeMilliseconds = time_milliseconds;
+            this.Antenna = antenna;
+            this.Reader = reader;
+            this.Box = box;
+            this.LogId = log_index;
+            this.RSSI = rssi;
+            this.IsRewind = is_rewind;
+            this.ReaderTime = reader_time;
+            this.StartTime = start_time;
+            this.ReadBib = read_bib;
+            this.Type = type;
         }
 
         public string TimeString
