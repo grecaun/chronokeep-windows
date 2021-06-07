@@ -28,32 +28,43 @@ namespace ChronoKeep.Objects.API
             this.GenderRanking = result.GenderPlace;
             this.Finish = result.SegmentId == Constants.Timing.SEGMENT_FINISH;
             this.Type = result.Type;
-            string[] split1 = result.Time.Split('.');
-            string[] split2 = split1[0].Split(':');
-            switch (split2.Length)
+            if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
             {
-                case 3:
-                    // HOURS : MINUTES : SECONDS -- Seconds * 1 + Minutes * 60 + Hours * 60 * 60
-                    this.Seconds = Convert.ToInt32(split2[2]) + (Convert.ToInt32(split2[1]) * 60) + (Convert.ToInt32(split2[0]) * 60 * 60);
-                    break;
-                case 2:
-                    // MINUTES : SECONDS -- Seconds * 1 + Minutes * 60
-                    this.Seconds = Convert.ToInt32(split2[2]) + (Convert.ToInt32(split2[1]) * 60);
-                    break;
-                case 1:
-                    // SECONDS
-                    this.Seconds = Convert.ToInt32(split2[2]);
-                    break;
-                default:
-                    this.Seconds = 0;
-                    break;
-            }
-            if (split1.Length == 2)
-            {
-                this.Milliseconds = Convert.ToInt32(split1[1]);
-            } else
-            {
+                this.Type = Constants.Timing.API_TYPE_DNF;
+                this.Seconds = 0;
                 this.Milliseconds = 0;
+            }
+            else
+            {
+                string[] split1 = result.Time.Split('.');
+                string[] split2 = split1[0].Split(':');
+                Log.D(string.Format("Time is {0} - Split1 {1} - Split2 length {2}", result.Time, split1[0], split2.Length));
+                switch (split2.Length)
+                {
+                    case 3:
+                        // HOURS : MINUTES : SECONDS -- Seconds * 1 + Minutes * 60 + Hours * 60 * 60
+                        this.Seconds = Convert.ToInt32(split2[2]) + (Convert.ToInt32(split2[1]) * 60) + (Convert.ToInt32(split2[0]) * 60 * 60);
+                        break;
+                    case 2:
+                        // MINUTES : SECONDS -- Seconds * 1 + Minutes * 60
+                        this.Seconds = Convert.ToInt32(split2[1]) + (Convert.ToInt32(split2[0]) * 60);
+                        break;
+                    case 1:
+                        // SECONDS
+                        this.Seconds = Convert.ToInt32(split2[0]);
+                        break;
+                    default:
+                        this.Seconds = 0;
+                        break;
+                }
+                if (split1.Length == 2)
+                {
+                    this.Milliseconds = Convert.ToInt32(split1[1]);
+                }
+                else
+                {
+                    this.Milliseconds = 0;
+                }
             }
         }
 

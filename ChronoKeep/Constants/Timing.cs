@@ -67,9 +67,12 @@ namespace ChronoKeep.Constants
         public static readonly int PARTICIPANT_DUMMYIDENTIFIER = -1;
         public static readonly int DIVISION_DUMMYIDENTIFIER = -1;
 
+        // These values are what are sent in the API Result and indicate the type of the result.
         public static readonly int DIVISION_TYPE_NORMAL = 0;
         public static readonly int DIVISION_TYPE_EARLY = 1;
         public static readonly int DIVISION_TYPE_UNOFFICIAL = 2;
+        public static readonly int API_TYPE_DNF = 3;
+        public static readonly int API_TYPE_DNS = 4;
 
         public static long DateToEpoch(DateTime date)
         {
