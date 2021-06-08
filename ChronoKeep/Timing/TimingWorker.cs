@@ -35,6 +35,9 @@ namespace ChronoKeep.Timing
         private Dictionary<int, (long Seconds, int Milliseconds)> divisionEndDict = new Dictionary<int, (long, int)>();
         private Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
 
+        // Link bibs and chipreads for adding occurence to bib based dnf entry.
+        Dictionary<int, string> bibChipDictionary = new Dictionary<int, string>();
+
         private Dictionary<string, (Division, int)> linkedDivisionDictionary = new Dictionary<string, (Division, int)>();
         private Dictionary<int, int> linkedDivIdentifierDictionary = new Dictionary<int, int>();
 
@@ -162,6 +165,12 @@ namespace ChronoKeep.Timing
                 divisionStartDict[div.Identifier] = (divisionStartDict[0].Seconds + div.StartOffsetSeconds, divisionStartDict[0].Milliseconds + div.StartOffsetMilliseconds);
                 divisionEndDict[div.Identifier] = (divisionStartDict[div.Identifier].Seconds + div.EndSeconds, divisionStartDict[div.Identifier].Milliseconds);
                 divisionEndDict[0] = (divisionEndDict[div.Identifier].Seconds, divisionEndDict[div.Identifier].Milliseconds);
+            }
+            // Set up bibChipDictionary so we can link bibs to chips
+            List<BibChipAssociation> bibChips = database.GetBibChips(theEvent.Identifier);
+            foreach (BibChipAssociation assoc in bibChips)
+            {
+                bibChipDictionary[assoc.Bib] = assoc.Chip;
             }
             // Dictionary for looking up linked divisions
             linkedDivisionDictionary.Clear();
@@ -452,42 +461,6 @@ namespace ChronoKeep.Timing
             List<TimeResult> newResults = new List<TimeResult>();
             // Keep a list of participants to update.
             HashSet<Participant> updateParticipants = new HashSet<Participant>();
-            // Process the intersection of DNF people and Finish results:
-            foreach (int bib in dnfDictionary.Keys)
-            {
-                Participant part = participantBibDictionary.ContainsKey(bib) ?
-                    participantBibDictionary[bib] :
-                    null;
-                if (part != null)
-                {
-                    part.Status = Constants.Timing.EVENTSPECIFIC_NOFINISH;
-                    updateParticipants.Add(part);
-                }
-                if (finishTimes.ContainsKey("Bib:" + bib.ToString()))
-                {
-                    TimeResult finish = finishTimes["Bib:" + bib.ToString()];
-                    finish.ReadId = dnfDictionary[bib].ReadId;
-                    finish.Time = "DNF";
-                    finish.ChipTime = "DNF";
-                    finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
-                    newResults.Add(finish);
-                }
-                else
-                {
-                    newResults.Add(new TimeResult(theEvent.Identifier,
-                        dnfDictionary[bib].ReadId,
-                        part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
-                        Constants.Timing.LOCATION_FINISH,
-                        Constants.Timing.SEGMENT_FINISH,
-                        -1,
-                        "DNF",
-                        "Bib:" + bib.ToString(),
-                        "DNF",
-                        dnfDictionary[bib].Time,
-                        bib,
-                        Constants.Timing.TIMERESULT_STATUS_DNF));
-                }
-            }
             // process reads that have a bib
             foreach (int bib in bibReadPairs.Keys)
             {
@@ -734,35 +707,6 @@ namespace ChronoKeep.Timing
                     }
                 }
             }
-            // Process the intersection of DNF people and Finish results:
-            foreach (string chip in chipDnfDictionary.Keys)
-            {
-                if (finishTimes.ContainsKey("Chip:" + chip))
-                {
-                    TimeResult finish = finishTimes["Chip:" + chip];
-                    finish.ReadId = chipDnfDictionary[chip].ReadId;
-                    finish.Time = "DNF";
-                    finish.ChipTime = "DNF";
-                    finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
-                    newResults.Add(finish);
-                }
-                else
-                {
-                    newResults.Add(new TimeResult(theEvent.Identifier,
-                        chipDnfDictionary[chip].ReadId,
-                        Constants.Timing.TIMERESULT_DUMMYPERSON,
-                        Constants.Timing.LOCATION_FINISH,
-                        Constants.Timing.SEGMENT_FINISH,
-                        -1,
-                        "DNF",
-                        "Chip:" + chip,
-                        "DNF",
-                        chipDnfDictionary[chip].Time,
-                        chipDnfDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDnfDictionary[chip].ReadBib : chipDnfDictionary[chip].ChipBib,
-                        Constants.Timing.TIMERESULT_STATUS_DNF
-                        ));
-                }
-            }
             // process reads that have a chip
             Dictionary<string, ChipRead> chipStartReadDictionary = new Dictionary<string, ChipRead>();
             foreach (string chip in chipReadPairs.Keys)
@@ -940,6 +884,82 @@ namespace ChronoKeep.Timing
                             }
                         }
                     }
+                }
+            }
+            // Process the intersection of DNF people and Finish results:
+            foreach (string chip in chipDnfDictionary.Keys)
+            {
+                if (finishTimes.ContainsKey("Chip:" + chip))
+                {
+                    TimeResult finish = finishTimes["Chip:" + chip];
+                    finish.ReadId = chipDnfDictionary[chip].ReadId;
+                    finish.Time = "DNF";
+                    finish.ChipTime = "DNF";
+                    finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
+                    finish.Occurrence = chipLastReadDictionary.ContainsKey((chip, Constants.Timing.LOCATION_FINISH)) ? chipLastReadDictionary[(chip, Constants.Timing.LOCATION_FINISH)].Occurrence + 1 : -1;
+                    newResults.Add(finish);
+                }
+                else
+                {
+                    newResults.Add(new TimeResult(theEvent.Identifier,
+                        chipDnfDictionary[chip].ReadId,
+                        Constants.Timing.TIMERESULT_DUMMYPERSON,
+                        Constants.Timing.LOCATION_FINISH,
+                        Constants.Timing.SEGMENT_FINISH,
+                        chipLastReadDictionary.ContainsKey((chip, Constants.Timing.LOCATION_FINISH)) ? chipLastReadDictionary[(chip, Constants.Timing.LOCATION_FINISH)].Occurrence + 1 : -1,
+                        "DNF",
+                        "Chip:" + chip,
+                        "DNF",
+                        chipDnfDictionary[chip].Time,
+                        chipDnfDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDnfDictionary[chip].ReadBib : chipDnfDictionary[chip].ChipBib,
+                        Constants.Timing.TIMERESULT_STATUS_DNF
+                        ));
+                }
+            }
+            // Process the intersection of DNF people and Finish results:
+            foreach (int bib in dnfDictionary.Keys)
+            {
+                Participant part = participantBibDictionary.ContainsKey(bib) ?
+                    participantBibDictionary[bib] :
+                    null;
+                if (part != null)
+                {
+                    part.Status = Constants.Timing.EVENTSPECIFIC_NOFINISH;
+                    updateParticipants.Add(part);
+                }
+                int occurrence = -1;
+                if (lastReadDictionary.ContainsKey((bib, Constants.Timing.LOCATION_FINISH)))
+                {
+                    occurrence = lastReadDictionary[(bib, Constants.Timing.LOCATION_FINISH)].Occurrence + 1;
+                }
+                else if (bibChipDictionary.ContainsKey(bib) && chipLastReadDictionary.ContainsKey((bibChipDictionary[bib], Constants.Timing.LOCATION_FINISH)))
+                {
+                    occurrence = chipLastReadDictionary[(bibChipDictionary[bib], Constants.Timing.LOCATION_FINISH)].Occurrence + 1;
+                }
+                if (finishTimes.ContainsKey("Bib:" + bib.ToString()))
+                {
+                    TimeResult finish = finishTimes["Bib:" + bib.ToString()];
+                    finish.ReadId = dnfDictionary[bib].ReadId;
+                    finish.Time = "DNF";
+                    finish.ChipTime = "DNF";
+                    finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
+                    finish.Occurrence = occurrence;
+                    newResults.Add(finish);
+                }
+                else
+                {
+                    newResults.Add(new TimeResult(theEvent.Identifier,
+                        dnfDictionary[bib].ReadId,
+                        part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
+                        Constants.Timing.LOCATION_FINISH,
+                        Constants.Timing.SEGMENT_FINISH,
+                        occurrence,
+                        "DNF",
+                        "Bib:" + bib.ToString(),
+                        "DNF",
+                        dnfDictionary[bib].Time,
+                        bib,
+                        Constants.Timing.TIMERESULT_STATUS_DNF));
                 }
             }
             // process reads that need to be set to ignore

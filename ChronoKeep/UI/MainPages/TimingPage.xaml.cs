@@ -873,13 +873,13 @@ namespace ChronoKeep.UI.MainPages
             }
             Log.D("Attempting to upload " + upRes.Count.ToString() + " results.");
             int total = 0;
-            int loops = upRes.Count / 20;
+            int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
             AddResultsResponse response;
             for (int i = 0; i < loops; i += 1)
             {
                 try
                 {
-                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * 20, 20));
+                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
                 }
                 catch (APIException ex)
                 {
@@ -893,12 +893,12 @@ namespace ChronoKeep.UI.MainPages
                     Log.D("Total: " + total + " Count: " + response.Count);
                 }
             }
-            int leftovers = upRes.Count - (loops * 20);
+            int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
             if (leftovers > 0)
             {
                 try
                 {
-                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops, leftovers));
+                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
                 }
                 catch (APIException ex)
                 {

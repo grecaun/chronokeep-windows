@@ -74,6 +74,9 @@ namespace ChronoKeep.Constants
         public static readonly int API_TYPE_DNF = 3;
         public static readonly int API_TYPE_DNS = 4;
 
+        // API Upload Count
+        public static readonly int API_LOOP_COUNT = 20;
+
         public static long DateToEpoch(DateTime date)
         {
             var ticks = date.Ticks - new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
