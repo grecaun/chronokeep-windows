@@ -3379,6 +3379,15 @@ namespace ChronoKeep
             List<TimeResult> output = new List<TimeResult>();
             while (reader.Read())
             {
+                int bib = -1;
+                if (reader["bib"] != DBNull.Value)
+                {
+                    bib = Convert.ToInt32(reader["bib"]);
+                }
+                else if (reader["eventspecific_bib"] != DBNull.Value)
+                {
+                    bib = Convert.ToInt32(reader["eventspecific_bib"]);
+                }
                 output.Add(new TimeResult(
                     reader["event_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["event_id"]),
                     reader["eventspecific_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_id"]),
@@ -3389,7 +3398,7 @@ namespace ChronoKeep
                     reader["participant_first"] == DBNull.Value ? "" : reader["participant_first"].ToString(),
                     reader["participant_last"] == DBNull.Value ? "" : reader["participant_last"].ToString(),
                     reader["division_name"] == DBNull.Value ? "" : reader["division_name"].ToString(),
-                    reader["eventspecific_bib"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_bib"]),
+                    bib,
                     Convert.ToInt32(reader["read_id"]),
                     reader["timeresult_unknown_id"].ToString(),
                     Convert.ToInt64(reader["read_time_seconds"]),
@@ -3454,9 +3463,11 @@ namespace ChronoKeep
                     "timeresult_uploaded," +
                     "participant_birthday," +
                     "d.division_type," +
-                    "y.division_name AS linked_division_name " +
+                    "y.division_name AS linked_division_name, " +
+                    "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN bib_chip_assoc b ON b.chip=c.read_chipnumber " +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
@@ -3509,9 +3520,11 @@ namespace ChronoKeep
                     "timeresult_uploaded," +
                     "participant_birthday," +
                     "d.division_type," +
-                    "y.division_name AS linked_division_name " +
+                    "y.division_name AS linked_division_name, " +
+                    "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN bib_chip_assoc b ON b.chip=c.read_chipnumber " +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
@@ -3568,9 +3581,11 @@ namespace ChronoKeep
                     "timeresult_uploaded," +
                     "participant_birthday," +
                     "d.division_type," +
-                    "y.division_name AS linked_division_name " +
+                    "y.division_name AS linked_division_name, " +
+                    "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN bib_chip_assoc b ON b.chip=c.read_chipnumber " +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
@@ -3627,9 +3642,11 @@ namespace ChronoKeep
                     "timeresult_uploaded," +
                     "participant_birthday," +
                     "d.division_type," +
-                    "y.division_name AS linked_division_name " +
+                    "y.division_name AS linked_division_name, " +
+                    "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN bib_chip_assoc b ON b.chip=c.read_chipnumber " +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
@@ -3742,9 +3759,11 @@ namespace ChronoKeep
                     "timeresult_uploaded," +
                     "participant_birthday," +
                     "d.division_type," +
-                    "y.division_name AS linked_division_name " +
+                    "y.division_name AS linked_division_name, " +
+                    "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN bib_chip_assoc b ON b.chip=c.read_chipnumber " +
                 "JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +

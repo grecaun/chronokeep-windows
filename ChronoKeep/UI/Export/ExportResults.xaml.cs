@@ -118,24 +118,27 @@ namespace ChronoKeep.UI.Export
                 // write to file
                 List<Participant> participants = database.GetParticipants(theEvent.Identifier);
                 List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
-                results.RemoveAll(x => x.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON);
+                //results.RemoveAll(x => x.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON);
                 results.Sort(TimeResult.CompareBySystemTime);
+                // Key is BIB -- Using BIB here instead of event specific because we want to know about unknown runners.
                 Dictionary<int, List<TimeResult>> resultDictionary = new Dictionary<int, List<TimeResult>>();
-                // (EventSpecificID, Occurence) - for Time Based Race exporting.
+                Dictionary<int, bool> outputDictionary = new Dictionary<int, bool>();
+                // (Bib, Occurence) - for Time Based Race exporting.
                 Dictionary<(int, int), TimeResult> occurrenceResultDictionary = new Dictionary<(int, int), TimeResult>();
                 int maxLaps = 0;
                 foreach (TimeResult result in results)
                 {
-                    if (!resultDictionary.ContainsKey(result.EventSpecificId))
+                    if (!resultDictionary.ContainsKey(result.Bib))
                     {
-                        resultDictionary[result.EventSpecificId] = new List<TimeResult>();
+                        resultDictionary[result.Bib] = new List<TimeResult>();
                     }
-                    resultDictionary[result.EventSpecificId].Add(result);
+                    resultDictionary[result.Bib].Add(result);
                     if (result.SegmentId == Constants.Timing.SEGMENT_FINISH)
                     {
-                        occurrenceResultDictionary[(result.EventSpecificId, result.Occurrence)] = result;
+                        occurrenceResultDictionary[(result.Bib, result.Occurrence)] = result;
                         maxLaps = result.Occurrence > maxLaps ? result.Occurrence : maxLaps;
                     }
+                    outputDictionary[result.Bib] = false;
                 }
                 string[] headers = new string[headersToOutput.Count];
                 foreach (string header in headersToOutput)
@@ -144,8 +147,10 @@ namespace ChronoKeep.UI.Export
                     headers[headerIndex[header]] = header;
                 }
                 List<object[]> data = new List<object[]>();
+                // Output all known participants
                 foreach (Participant participant in participants)
                 {
+                    outputDictionary[participant.Bib] = true;
                     object[] line = new object[headersToOutput.Count];
                     if (headerIndex.ContainsKey("Bib"))
                     {
@@ -245,10 +250,10 @@ namespace ChronoKeep.UI.Export
                     }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                     {
-                        if (resultDictionary.ContainsKey(participant.EventSpecific.Identifier))
+                        if (resultDictionary.ContainsKey(participant.EventSpecific.Bib))
                         {
                             int segmentNum = 1;
-                            foreach (TimeResult result in resultDictionary[participant.EventSpecific.Identifier])
+                            foreach (TimeResult result in resultDictionary[participant.EventSpecific.Bib])
                             {
                                 if (Constants.Timing.SEGMENT_START == result.SegmentId)
                                 {
@@ -304,51 +309,169 @@ namespace ChronoKeep.UI.Export
                     else // Time Based
                     {
                         int finalLap = -1;
-                        if (headerIndex.ContainsKey("Start") && occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Identifier, 0)))
+                        if (headerIndex.ContainsKey("Start") && occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Bib, 0)))
                         {
-                            line[headerIndex["Start"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, 0)].Time;
+                            line[headerIndex["Start"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, 0)].Time;
                         }
                         for (int i=1; i<=maxLaps; i++)
                         {
                             string key = String.Format("Lap {0}", i);
-                            if (occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Identifier, i)))
+                            if (occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Bib, i)))
                             {
                                 finalLap = i;
                                 if (headerIndex.ContainsKey(key))
                                 {
-                                    line[headerIndex[key]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, i)].LapTime;
+                                    line[headerIndex[key]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, i)].LapTime;
                                 }
                             }
                         }
-                        if (occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Identifier, finalLap)))
+                        if (occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Bib, finalLap)))
                         {
                             if (headerIndex.ContainsKey("Place"))
                             {
-                                line[headerIndex["Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].Place;
+                                line[headerIndex["Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].Place;
                             }
                             if (headerIndex.ContainsKey("Age Group Place"))
                             {
-                                line[headerIndex["Age Group Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].AgePlace;
+                                line[headerIndex["Age Group Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].AgePlace;
                             }
                             if (headerIndex.ContainsKey("Gender Place"))
                             {
-                                line[headerIndex["Gender Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].GenderPlace;
+                                line[headerIndex["Gender Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].GenderPlace;
                             }
                             if (headerIndex.ContainsKey("Laps Completed"))
                             {
-                                line[headerIndex["Laps Completed"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].Occurrence;
+                                line[headerIndex["Laps Completed"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].Occurrence;
                             }
                             if (headerIndex.ContainsKey("Ellapsed Time (Gun)"))
                             {
-                                line[headerIndex["Ellapsed Time (Gun)"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].Time;
+                                line[headerIndex["Ellapsed Time (Gun)"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].Time;
                             }
                             if (headerIndex.ContainsKey("Ellapsed Time (Chip)"))
                             {
-                                line[headerIndex["Ellapsed Time (Chip)"]] = occurrenceResultDictionary[(participant.EventSpecific.Identifier, finalLap)].ChipTime;
+                                line[headerIndex["Ellapsed Time (Chip)"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].ChipTime;
                             }
                         }
                     }
                     data.Add(line);
+                }
+                // Add data for unknown runners
+                foreach (int bib in outputDictionary.Keys)
+                {
+                    if (!outputDictionary[bib] && bib > 0)
+                    {
+                        object[] line = new object[headersToOutput.Count];
+                        if (headerIndex.ContainsKey("Bib"))
+                        {
+                            line[headerIndex["Bib"]] = bib;
+                        }
+                        if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
+                        {
+                            if (resultDictionary.ContainsKey(bib))
+                            {
+                                int segmentNum = 1;
+                                foreach (TimeResult result in resultDictionary[bib])
+                                {
+                                    if (Constants.Timing.SEGMENT_START == result.SegmentId)
+                                    {
+                                        if (headerIndex.ContainsKey("Start"))
+                                        {
+                                            line[headerIndex["Start"]] = result.Time;
+                                        }
+                                    }
+                                    else if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
+                                    {
+                                        if (headerIndex.ContainsKey("Place"))
+                                        {
+                                            line[headerIndex["Place"]] = result.Place;
+                                        }
+                                        if (headerIndex.ContainsKey("Age Group Place"))
+                                        {
+                                            line[headerIndex["Age Group Place"]] = result.AgePlace;
+                                        }
+                                        if (headerIndex.ContainsKey("Gender Place"))
+                                        {
+                                            line[headerIndex["Gender Place"]] = result.GenderPlace;
+                                        }
+                                        if (headerIndex.ContainsKey("Chip Finish"))
+                                        {
+                                            line[headerIndex["Chip Finish"]] = result.ChipTime;
+                                        }
+                                        if (headerIndex.ContainsKey("Gun Finish"))
+                                        {
+                                            line[headerIndex["Gun Finish"]] = result.Time;
+                                        }
+                                    }
+                                    else if (Constants.Timing.SEGMENT_NONE != result.SegmentId)
+                                    {
+                                        string key = String.Format("Segment {0} Chip Time", segmentNum);
+                                        if (headerIndex.ContainsKey(key))
+                                        {
+                                            line[headerIndex[key]] = result.ChipTime;
+                                        }
+                                        key = String.Format("Segment {0} Gun Time", segmentNum);
+                                        if (headerIndex.ContainsKey(key))
+                                        {
+                                            line[headerIndex[key]] = result.Time;
+                                        }
+                                        key = String.Format("Segment {0} Name", segmentNum++);
+                                        if (headerIndex.ContainsKey(key))
+                                        {
+                                            line[headerIndex[key]] = result.SegmentName;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else // Time Based
+                        {
+                            int finalLap = -1;
+                            if (headerIndex.ContainsKey("Start") && occurrenceResultDictionary.ContainsKey((bib, 0)))
+                            {
+                                line[headerIndex["Start"]] = occurrenceResultDictionary[(bib, 0)].Time;
+                            }
+                            for (int i = 1; i <= maxLaps; i++)
+                            {
+                                string key = String.Format("Lap {0}", i);
+                                if (occurrenceResultDictionary.ContainsKey((bib, i)))
+                                {
+                                    finalLap = i;
+                                    if (headerIndex.ContainsKey(key))
+                                    {
+                                        line[headerIndex[key]] = occurrenceResultDictionary[(bib, i)].LapTime;
+                                    }
+                                }
+                            }
+                            if (occurrenceResultDictionary.ContainsKey((bib, finalLap)))
+                            {
+                                if (headerIndex.ContainsKey("Place"))
+                                {
+                                    line[headerIndex["Place"]] = occurrenceResultDictionary[(bib, finalLap)].Place;
+                                }
+                                if (headerIndex.ContainsKey("Age Group Place"))
+                                {
+                                    line[headerIndex["Age Group Place"]] = occurrenceResultDictionary[(bib, finalLap)].AgePlace;
+                                }
+                                if (headerIndex.ContainsKey("Gender Place"))
+                                {
+                                    line[headerIndex["Gender Place"]] = occurrenceResultDictionary[(bib, finalLap)].GenderPlace;
+                                }
+                                if (headerIndex.ContainsKey("Laps Completed"))
+                                {
+                                    line[headerIndex["Laps Completed"]] = occurrenceResultDictionary[(bib, finalLap)].Occurrence;
+                                }
+                                if (headerIndex.ContainsKey("Ellapsed Time (Gun)"))
+                                {
+                                    line[headerIndex["Ellapsed Time (Gun)"]] = occurrenceResultDictionary[(bib, finalLap)].Time;
+                                }
+                                if (headerIndex.ContainsKey("Ellapsed Time (Chip)"))
+                                {
+                                    line[headerIndex["Ellapsed Time (Chip)"]] = occurrenceResultDictionary[(bib, finalLap)].ChipTime;
+                                }
+                            }
+                        }
+                        data.Add(line);
+                    }
                 }
                 IDataExporter exporter;
                 string extension = Path.GetExtension(saveFileDialog.FileName);

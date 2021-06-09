@@ -68,7 +68,7 @@ namespace ChronoKeep.Network.API
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Get,
+                        Method = HttpMethod.Post,
                         RequestUri = new Uri(api.URL + "event-year/event"),
                         Content = new StringContent(
                             JsonConvert.SerializeObject(new GetEventRequest
