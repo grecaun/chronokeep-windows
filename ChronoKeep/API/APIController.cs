@@ -21,14 +21,38 @@ namespace ChronoKeep.API
         private static bool Running = false;
         private static bool KeepAlive = true;
 
-        private static bool delResults = false;
-
         private static readonly int SleepSeconds = 30;
 
         public APIController(IMainWindow mainWindow, IDBInterface database)
         {
             this.database = database;
             this.mainWindow = mainWindow;
+        }
+
+        public static async Task<AddResultsResponse> DeleteResults(ResultsAPI api, string slug, string year)
+        {
+            AddResultsResponse response = null;
+            try
+            {
+                response = await APIHandlers.DeleteResults(api, slug, year);
+                Log.D("API Controller response: " + response.Count);
+            }
+            catch { }
+            return response;
+        }
+
+        public static bool GrabMutex(int millisecondsTimeout)
+        {
+            if (mut.WaitOne(millisecondsTimeout))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static void ReleaseMutex()
+        {
+            mut.ReleaseMutex();
         }
 
         public static bool IsRunning()
@@ -40,15 +64,6 @@ namespace ChronoKeep.API
                 mut.ReleaseMutex();
             }
             return output;
-        }
-
-        public static void DeleteResults()
-        {
-            if (mut.WaitOne(6000))
-            {
-                delResults = true;
-                mut.ReleaseMutex();
-            }
         }
 
         public void Shutdown()
@@ -118,27 +133,6 @@ namespace ChronoKeep.API
                     Running = false;
                     mainWindow.UpdateTimingFromController();
                     return;
-                }
-                // Check if we're supposed to delete old records.
-                if (mut.WaitOne(3000))
-                {
-                    try
-                    {
-                        if (delResults)
-                        {
-                            await APIHandlers.DeleteResults(api, event_ids[0], event_ids[1]);
-                            delResults = false;
-                        }
-                        mut.ReleaseMutex();
-                    }
-                    catch
-                    {
-                        KeepAlive = false;
-                        Running = false;
-                        mainWindow.UpdateTimingFromController();
-                        mut.ReleaseMutex();
-                        return;
-                    }
                 }
                 // Get results to upload.
                 List<TimeResult> results = database.GetNonUploadedResults(theEvent.Identifier);

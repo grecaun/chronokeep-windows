@@ -43,6 +43,5 @@ namespace ChronoKeep.Interfaces
         void StartAPIController();
         bool StopAPIController();
         bool IsAPIControllerRunning();
-        void DeleteAPIResults();
     }
 }

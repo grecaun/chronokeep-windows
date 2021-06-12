@@ -119,7 +119,8 @@ namespace ChronoKeep.UI.API
                         Website = "",
                         Image = "",
                         ContactEmail = contactBox.Text,
-                        AccessRestricted = (bool)restrictBox.IsChecked ? true : false
+                        AccessRestricted = (bool)restrictBox.IsChecked ? true : false,
+                        Type = theEvent.EventType == Constants.Timing.EVENT_TYPE_DISTANCE ? "distance" : theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "time" : "unknown"
                     });
                     slug = addResponse.Event.Slug;
                 }

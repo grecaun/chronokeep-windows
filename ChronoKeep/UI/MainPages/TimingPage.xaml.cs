@@ -1,4 +1,5 @@
-﻿using ChronoKeep.Interfaces;
+﻿using ChronoKeep.API;
+using ChronoKeep.Interfaces;
 using ChronoKeep.IO;
 using ChronoKeep.IO.HtmlTemplates;
 using ChronoKeep.Network.API;
@@ -586,13 +587,51 @@ namespace ChronoKeep.UI.MainPages
             TimingFrame.Content = subPage;
         }
 
-        private void Recalculate_Click(object sender, RoutedEventArgs e)
+        private async void Recalculate_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Recalculate results clicked.");
+            if ((string)recalculateButton.Content == "Working...")
+            {
+                return;
+            }
+            recalculateButton.Content = "Working...";
+            ResultsAPI api = null;
+            try
+            {
+                api = database.GetResultsAPI(theEvent.API_ID);
+                Log.D("API found.");
+            }
+            catch {}
+            // Get the event id values. Exit if not valid.
+            string[] event_ids = theEvent.API_Event_ID.Split(',');
+            Log.D("Event Id's found: " + event_ids.Length + " API is null? " + (api == null).ToString());
+            // Create a bool for checking if we've grabbed the APIController's mutex so we release it later
+            bool mutexGrabbed = false;
+            if (event_ids.Length == 2 && api != null && APIController.GrabMutex(15000))
+            {
+                mutexGrabbed = true;
+                try
+                {
+                    Log.D("Deleting results from API.");
+                    await APIController.DeleteResults(api, event_ids[0], event_ids[1]);
+                }
+                catch (APIException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            // We do this because we want to ensure we've reset all the results before we allow
+            // the auto uploader to start uploading any more results so we don't upload
+            // old results over our brand new results.
             database.ResetTimingResultsEvent(theEvent.Identifier);
+            if (mutexGrabbed)
+            {
+                APIController.ReleaseMutex();
+            }
             UpdateView();
             mWindow.NetworkClearResults(theEvent.Identifier);
             mWindow.NotifyTimingWorker();
+            recalculateButton.Content = "Recalculate";
         }
 
         private void ViewOnlyBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

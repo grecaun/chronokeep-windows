@@ -454,11 +454,6 @@ namespace ChronoKeep.UI
             });
         }
 
-        public void DeleteAPIResults()
-        {
-            if (APIController != null) APIController.DeleteResults();
-        }
-
         public bool IsAPIControllerRunning()
         {
             return APIController.IsRunning();
@@ -657,7 +652,6 @@ namespace ChronoKeep.UI
             {
                 httpServer.UpdateInformation();
             }
-            if (APIController != null) APIController.DeleteResults();
         }
 
         private void AboutButton_Click(object sender, RoutedEventArgs e)

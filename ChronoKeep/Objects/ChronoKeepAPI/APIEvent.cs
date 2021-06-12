@@ -21,5 +21,7 @@ namespace ChronoKeep.Objects.API
         public string ContactEmail { get; set; }
         [JsonProperty("access_restricted")]
         public bool AccessRestricted { get; set; }
+        [JsonProperty("type")]
+        public string Type { get; set; }
     }
 }
