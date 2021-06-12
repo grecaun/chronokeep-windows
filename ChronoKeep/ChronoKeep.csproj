@@ -800,6 +800,8 @@
   <ItemGroup>
     <EmbeddedResource Include="IO\HtmlTemplates\bootstrap.min.css" />
     <EmbeddedResource Include="IO\HtmlTemplates\bootstrap.min.js" />
+    <Resource Include="img\plus.png" />
+    <Resource Include="img\dash.png" />
     <Content Include="IO\HtmlTemplates\HtmlResultsTemplateTime.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>HtmlResultsTemplateTime.cs</LastGenOutput>

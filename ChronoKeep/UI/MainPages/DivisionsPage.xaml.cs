@@ -465,6 +465,7 @@ namespace ChronoKeep.UI.MainPages
             public ComboBox DistanceUnit { get; private set; }
             public ComboBox FinishOccurrence { get; private set; } = null;
             public TextBox Wave { get; private set; }
+            public Image WaveTypeImg { get; private set; }
             public ComboBox BibGroupNumber { get; private set; }
             public MaskedTextBox StartOffset { get; private set; }
             public MaskedTextBox TimeLimit { get; private set; } = null;
@@ -476,6 +477,7 @@ namespace ChronoKeep.UI.MainPages
             readonly DivisionsPage page;
             public Division theDivision;
             private Dictionary<int, Division> divisionDictionary;
+            private int waveType = 1;
 
             private readonly Regex allowedWithDot = new Regex("[^0-9.]");
             private readonly Regex allowedChars = new Regex("[^0-9]");
@@ -729,7 +731,7 @@ namespace ChronoKeep.UI.MainPages
                         HorizontalContentAlignment = HorizontalAlignment.Right
                     });
                     string limit = string.Format(LimitFormat, theDivision.EndSeconds / 3600,
-                        (theDivision.EndSeconds % 3600) / 60, theDivision.EndSeconds % 60);
+                        theDivision.EndSeconds % 3600 / 60, theDivision.EndSeconds % 60);
                     TimeLimit = new MaskedTextBox()
                     {
                         Text = limit,
@@ -779,8 +781,26 @@ namespace ChronoKeep.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Right
                 });
+                Uri imgUri = new Uri("pack://application:,,,/img/plus.png");
+                waveType = 1;
+                if (theDivision.StartOffsetSeconds < 0)
+                {
+                    Log.D("Setting type to negative and making seconds/milliseconds positive for offset textbox.");
+                    waveType = -1;
+                    imgUri = new Uri("pack://application:,,,/img/dash.png");
+                    theDivision.StartOffsetSeconds *= -1;
+                    theDivision.StartOffsetMilliseconds *= -1;
+                }
+                WaveTypeImg = new Image()
+                {
+                    Width = 25,
+                    Margin = new Thickness(0,0,3,0),
+                    Source = new BitmapImage(imgUri),
+                };
+                WaveTypeImg.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
+                wavePanel.Children.Add(WaveTypeImg);
                 string sOffset = string.Format(TimeFormat, theDivision.StartOffsetSeconds / 3600,
-                    (theDivision.StartOffsetSeconds % 3600) / 60, theDivision.StartOffsetSeconds % 60,
+                    theDivision.StartOffsetSeconds % 3600 / 60, theDivision.StartOffsetSeconds % 60,
                     theDivision.StartOffsetMilliseconds);
                 StartOffset = new MaskedTextBox()
                 {
@@ -838,6 +858,22 @@ namespace ChronoKeep.UI.MainPages
             {
                 Log.D("Removing division.");
                 this.page.RemoveDivision(theDivision);
+            }
+
+            private void SwapWaveType_Click(object sender, RoutedEventArgs e)
+            {
+                Log.D("Plus/Minus sign clicked. WaveType is: " + waveType);
+                if (waveType < 0)
+                {
+                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/plus.png"));
+                } else if (waveType > 0)
+                {
+                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/dash.png"));
+                } else
+                {
+                    Log.E("Something went wrong and the wave type was set to 0.");
+                }
+                waveType *= -1;
             }
 
             public Division GetDivision()
@@ -912,6 +948,12 @@ namespace ChronoKeep.UI.MainPages
                 catch
                 {
                     System.Windows.MessageBox.Show("Error with values given.");
+                }
+                if (waveType < 0)
+                {
+                    Log.D("Recording negative values.");
+                    theDivision.StartOffsetSeconds *= -1;
+                    theDivision.StartOffsetMilliseconds *= -1;
                 }
             }
 

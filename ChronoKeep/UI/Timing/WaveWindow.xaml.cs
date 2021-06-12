@@ -132,7 +132,9 @@ namespace ChronoKeep.UI.Timing
         private class AWave : ListBoxItem
         {
             public MaskedTextBox StartOffset { get; private set; }
+            public Image WaveTypeImg { get; private set; }
             private int Wave;
+            private int waveType = 1;
 
             public AWave(int num, long startSeconds, int startMilliseconds)
             {
@@ -147,6 +149,24 @@ namespace ChronoKeep.UI.Timing
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Center
                 });
+                Uri imgUri = new Uri("pack://application:,,,/img/plus.png");
+                waveType = 1;
+                if (startSeconds < 0)
+                {
+                    Log.D("Setting type to negative and making seconds/milliseconds positive for offset textbox.");
+                    waveType = -1;
+                    imgUri = new Uri("pack://application:,,,/img/dash.png");
+                    startSeconds *= -1;
+                    startMilliseconds *= -1;
+                }
+                WaveTypeImg = new Image()
+                {
+                    Width = 25,
+                    Margin = new Thickness(0, 0, 3, 0),
+                    Source = new BitmapImage(imgUri),
+                };
+                WaveTypeImg.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
+                thePanel.Children.Add(WaveTypeImg);
                 string sOffset = string.Format(TimeFormat, startSeconds / 3600,
                     (startSeconds % 3600) / 60, startSeconds % 60,
                     startMilliseconds);
@@ -174,6 +194,24 @@ namespace ChronoKeep.UI.Timing
                 return Wave;
             }
 
+            private void SwapWaveType_Click(object sender, RoutedEventArgs e)
+            {
+                Log.D("Plus/Minus sign clicked. WaveType is: " + waveType);
+                if (waveType < 0)
+                {
+                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/plus.png"));
+                }
+                else if (waveType > 0)
+                {
+                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/dash.png"));
+                }
+                else
+                {
+                    Log.E("Something went wrong and the wave type was set to 0.");
+                }
+                waveType *= -1;
+            }
+
             public (int, long, int) GetValues()
             {
                 string[] firstparts = StartOffset.Text.Replace('_', '0').Split(':');
@@ -185,6 +223,12 @@ namespace ChronoKeep.UI.Timing
                         seconds = Convert.ToInt32(secondparts[0]),
                         milliseconds = Convert.ToInt32(secondparts[1]);
                     seconds = (hours * 3600) + (minutes * 60) + seconds;
+                    if (waveType < 0)
+                    {
+                        Log.D("Negative wave, setting values to match.");
+                        seconds *= -1;
+                        milliseconds *= -1;
+                    }
                     return (Wave, seconds, milliseconds);
                 }
                 catch
