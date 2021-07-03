@@ -3467,11 +3467,11 @@ namespace ChronoKeep
                     "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON b.chip=c.read_chipnumber " +
+                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
-                "WHERE r.event_id=@eventid;";
+                "WHERE r.event_id=@eventid";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
             List<TimeResult> output = GetResultsInternal(reader);
@@ -3524,7 +3524,7 @@ namespace ChronoKeep
                     "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON b.chip=c.read_chipnumber " +
+                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
@@ -3585,7 +3585,7 @@ namespace ChronoKeep
                     "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON b.chip=c.read_chipnumber " +
+                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
@@ -3646,7 +3646,7 @@ namespace ChronoKeep
                     "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON b.chip=c.read_chipnumber " +
+                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
@@ -3763,7 +3763,7 @@ namespace ChronoKeep
                     "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON b.chip=c.read_chipnumber " +
+                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
                 "JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
                 "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +

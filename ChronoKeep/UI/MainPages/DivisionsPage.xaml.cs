@@ -81,14 +81,15 @@ namespace ChronoKeep.UI.MainPages
             foreach (Division div in superDivs)
             {
                 divisionDictionary[div.Identifier] = div;
-                DivisionsBox.Items.Add(new ADivision(this, div, theEvent.FinishMaxOccurrences, bibGroups, divisions, divisionDictionary, theEvent));
+                ADivision parent = new ADivision(this, div, theEvent.FinishMaxOccurrences, bibGroups, divisions, divisionDictionary, theEvent);
+                DivisionsBox.Items.Add(parent);
                 DivisionCount = div.Identifier > DivisionCount - 1 ? div.Identifier + 1 : DivisionCount;
                 // Add linked divisions
                 if (subDivisionDictionary.ContainsKey(div.Identifier))
                 {
                     foreach (Division sub in subDivisionDictionary[div.Identifier])
                     {
-                        DivisionsBox.Items.Add(new ASubDivision(this, sub, theEvent));
+                        DivisionsBox.Items.Add(new ASubDivision(this, sub, parent));
                         DivisionCount = sub.Identifier > DivisionCount - 1 ? sub.Identifier + 1 : DivisionCount;
                     }
                 }
@@ -231,12 +232,15 @@ namespace ChronoKeep.UI.MainPages
             readonly DivisionsPage page;
             public Division theDivision;
 
+            private ADivision parent;
+
             private readonly Regex allowedWithDot = new Regex("[^0-9.]");
             private readonly Regex allowedChars = new Regex("[^0-9]");
 
-            public ASubDivision(DivisionsPage page, Division division, Event theEvent)
+            public ASubDivision(DivisionsPage page, Division division, ADivision parent)
             {
                 this.page = page;
+                this.parent = parent;
                 this.theDivision = division;
                 StackPanel thePanel = new StackPanel()
                 {
@@ -421,10 +425,13 @@ namespace ChronoKeep.UI.MainPages
             public void UpdateDivision()
             {
                 Log.D("Updating sub division.");
+                parent.UpdateDivision();
+                Division parentDiv = parent.GetDivision();
                 theDivision.Name = DivisionName.Text;
-                theDivision.Cost = 0;
-                theDivision.Distance = 0.0;
-                theDivision.EndSeconds = 0;
+                theDivision.Cost = parentDiv.Cost;
+                theDivision.Distance = parentDiv.Distance;
+                theDivision.EndSeconds = parentDiv.EndSeconds;
+                theDivision.FinishOccurrence = parent.GetDivision().FinishOccurrence;
                 theDivision.Type = TypeBox.SelectedIndex == 0 ? Constants.Timing.DIVISION_TYPE_EARLY : Constants.Timing.DIVISION_TYPE_UNOFFICIAL;
                 int ranking;
                 int.TryParse(Ranking.Text, out ranking);

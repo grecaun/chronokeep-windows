@@ -249,6 +249,7 @@ namespace ChronoKeep.UI.Participants
             }
             if (newPart != null)
             {
+                Log.D("NewPart not null ---- Should update --- NewPart birthdate ----" + newPart.Birthdate);
                 database.UpdateParticipant(newPart);
                 if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
@@ -295,6 +296,7 @@ namespace ChronoKeep.UI.Participants
                 year = year < 1969 ? DateTime.Now.Year : year;
                 birthdate = "1/1/" + (year - age);
             }
+            Log.D("----- Birthdate -----" + birthdate);
             Participant output = new Participant(
                 participantId,
                 FirstBox.Text,
