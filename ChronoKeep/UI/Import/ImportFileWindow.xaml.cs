@@ -220,7 +220,7 @@ namespace ChronoKeep
                 Log.E("No event selected.");
                 this.Close();
             }
-            List<Division> divisionsFromDatabase = database.GetDivisions(theEvent.Identifier);
+            List<Distance> divisionsFromDatabase = database.GetDistances(theEvent.Identifier);
             page2 = new ImportFilePage2Alt(divisionsFromFile, divisionsFromDatabase);
             SheetsBox.Visibility = Visibility.Collapsed;
             eventLabel.Width = 460;
@@ -237,23 +237,23 @@ namespace ChronoKeep
                 Hashtable divHashName = new Hashtable(500);
                 Hashtable divHashId = new Hashtable(500);
                 Hashtable divHash = new Hashtable(500);
-                List<Division> divisions = database.GetDivisions(theEvent.Identifier);
-                foreach (Division d in divisions)
+                List<Distance> divisions = database.GetDistances(theEvent.Identifier);
+                foreach (Distance d in divisions)
                 {
                     divHashName.Add(d.Name, d);
                     divHashId.Add(d.Identifier, d);
                 }
-                Division theDiv;
+                Distance theDiv;
                 foreach (ImportDivision id in fileDivisions)
                 {
                     if (id.DivisionId == -1)
                     {
-                        theDiv = (Division)divHashName[id.NameFromFile];
+                        theDiv = (Distance)divHashName[id.NameFromFile];
                         if (theDiv == null)
                         {
-                            Division div = new Division(id.NameFromFile, theEvent.Identifier, 0);
-                            database.AddDivision(div);
-                            div.Identifier = database.GetDivisionID(div);
+                            Distance div = new Distance(id.NameFromFile, theEvent.Identifier, 0);
+                            database.AddDistance(div);
+                            div.Identifier = database.GetDistanceID(div);
                             divHash.Add(div.Name, div);
                             Log.D("Div name is " + div.Name);
                         }
@@ -264,7 +264,7 @@ namespace ChronoKeep
                     }
                     else
                     {
-                        theDiv = (Division)divHashId[id.DivisionId];
+                        theDiv = (Distance)divHashId[id.DivisionId];
                         if (theDiv != null)
                         {
                             divHash.Add(id.NameFromFile, theDiv);
@@ -282,7 +282,7 @@ namespace ChronoKeep
                     if (data.Data[counter][keys[DIVISION]] != null && data.Data[counter][keys[DIVISION]].Length > 0)
                     {
                         Log.D("Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[DIVISION]].ToLower()));
-                        Division thisDiv = (Division)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DIVISION]].Trim().ToLower())];
+                        Distance thisDiv = (Distance)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DIVISION]].Trim().ToLower())];
                         string birthday = "01/01/1900";
                         int age = -1;
                         if (keys[BIRTHDAY] == 0 && keys[AGE] != 0) // birthday not set but age is

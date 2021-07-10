@@ -120,7 +120,7 @@ namespace ChronoKeep
         public Label DivisionName { get; private set; }
         public ComboBox Divisions { get; private set; }
 
-        public DivisionListBoxItemAlternate(String name, List<Division> divisions)
+        public DivisionListBoxItemAlternate(String name, List<Distance> divisions)
         {
             this.IsTabStop = false;
             Grid theGrid = new Grid();
@@ -139,7 +139,7 @@ namespace ChronoKeep
                 Content = "Auto",
                 Uid = "-1"
             });
-            foreach (Division d in divisions)
+            foreach (Distance d in divisions)
             {
                 Divisions.Items.Add(new ComboBoxItem()
                 {

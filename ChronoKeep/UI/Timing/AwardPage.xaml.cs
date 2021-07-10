@@ -45,9 +45,9 @@ namespace ChronoKeep.UI.Timing
                 return;
             }
             customGroupsListView.ItemsSource = customAgeGroups;
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+            List<Distance> divisions = database.GetDistances(theEvent.Identifier);
             divisions.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
-            foreach (Division d in divisions)
+            foreach (Distance d in divisions)
             {
                 DivisionsBox.Items.Add(new ListBoxItem()
                 {
@@ -301,8 +301,8 @@ namespace ChronoKeep.UI.Timing
                     customAgeGroups[group.GroupId] = group;
                 }
             }
-            Dictionary<string, Division> divisionsDictionary = new Dictionary<string, Division>();
-            foreach (Division div in database.GetDivisions(theEvent.Identifier))
+            Dictionary<string, Distance> divisionsDictionary = new Dictionary<string, Distance>();
+            foreach (Distance div in database.GetDistances(theEvent.Identifier))
             {
                 divisionsDictionary[div.Name] = div;
             }

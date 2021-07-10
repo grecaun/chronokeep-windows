@@ -25,7 +25,7 @@ namespace ChronoKeep.UI.Timing
         IMainWindow window;
         IDBInterface database;
         Event theEvent;
-        Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
+        Dictionary<int, Distance> divisionDictionary = new Dictionary<int, Distance>();
         Dictionary<int, (long seconds, int milliseconds)> waveTimes = new Dictionary<int, (long, int)>();
         HashSet<int> waves = new HashSet<int>();
 
@@ -38,7 +38,7 @@ namespace ChronoKeep.UI.Timing
             this.database = database;
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier == -1) return;
-            foreach (Division div in database.GetDivisions(theEvent.Identifier))
+            foreach (Distance div in database.GetDistances(theEvent.Identifier))
             {
                 divisionDictionary[div.Identifier] = div;
                 waves.Add(div.Wave);
@@ -78,9 +78,9 @@ namespace ChronoKeep.UI.Timing
                 }
                 database.SetWaveTimes(theEvent.Identifier, waveNo, seconds, milliseconds);
             }
-            List<Division> newDivisions = database.GetDivisions(theEvent.Identifier);
+            List<Distance> newDivisions = database.GetDistances(theEvent.Identifier);
             bool update = false;
-            foreach (Division div in newDivisions)
+            foreach (Distance div in newDivisions)
             {
                 if (!divisionDictionary.ContainsKey(div.Identifier)
                     || divisionDictionary[div.Identifier].StartOffsetSeconds != div.StartOffsetSeconds

@@ -20,7 +20,7 @@ namespace ChronoKeep.UI.Import
     /// </summary>
     public partial class ImportFilePage2Alt : Page
     {
-        public ImportFilePage2Alt(string[] fileDivisions, List<Division> dbDivisions)
+        public ImportFilePage2Alt(string[] fileDivisions, List<Distance> dbDivisions)
         {
             InitializeComponent();
             foreach (string div in fileDivisions)

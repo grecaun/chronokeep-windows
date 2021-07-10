@@ -172,13 +172,13 @@ namespace ChronoKeep.UI.Timing
                 if (NetTimeButton.IsChecked == true)
                 {
                     List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-                    List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+                    List<Distance> divisions = database.GetDistances(theEvent.Identifier);
                     // Store the offset start values for each division by division ID
                     Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
                     Dictionary<int, int> divisionEarlyStartOffsetDictionary = new Dictionary<int, int>();
                     // Store participants by their bib number
                     Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
-                    foreach (Division div in divisions)
+                    foreach (Distance div in divisions)
                     {
                         divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
                         divisionEarlyStartOffsetDictionary[div.Identifier] = div.EarlyStartOffsetSeconds;
@@ -262,13 +262,13 @@ namespace ChronoKeep.UI.Timing
             if (NetTimeButton.IsChecked == true)
             {
                 List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-                List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+                List<Distance> divisions = database.GetDistances(theEvent.Identifier);
                 // Store the offset start values for each division by division ID
                 Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
                 Dictionary<int, int> divisionEarlyStartOffsetDictionary = new Dictionary<int, int>();
                 // Store participants by their bib number
                 Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
-                foreach (Division div in divisions)
+                foreach (Distance div in divisions)
                 {
                     divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
                     divisionEarlyStartOffsetDictionary[div.Identifier] = div.EarlyStartOffsetSeconds;

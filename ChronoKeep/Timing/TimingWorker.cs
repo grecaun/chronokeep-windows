@@ -33,12 +33,12 @@ namespace ChronoKeep.Timing
         // Start times. Item at 0 should always be 00:00:00.000. Key is Division ID
         private Dictionary<int, (long Seconds, int Milliseconds)> divisionStartDict = new Dictionary<int, (long, int)>();
         private Dictionary<int, (long Seconds, int Milliseconds)> divisionEndDict = new Dictionary<int, (long, int)>();
-        private Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
+        private Dictionary<int, Distance> divisionDictionary = new Dictionary<int, Distance>();
 
         // Link bibs and chipreads for adding occurence to bib based dnf entry.
         Dictionary<int, string> bibChipDictionary = new Dictionary<int, string>();
 
-        private Dictionary<string, (Division, int)> linkedDivisionDictionary = new Dictionary<string, (Division, int)>();
+        private Dictionary<string, (Distance, int)> linkedDivisionDictionary = new Dictionary<string, (Distance, int)>();
         private Dictionary<int, int> linkedDivIdentifierDictionary = new Dictionary<int, int>();
 
         private TimingWorker(IMainWindow window, IDBInterface database)
@@ -153,8 +153,8 @@ namespace ChronoKeep.Timing
             divisionEndDict[0] = divisionStartDict[0];
             // Divisions so we can get their start offset.
             divisionDictionary.Clear();
-            List<Division> divs = database.GetDivisions(theEvent.Identifier);
-            foreach (Division div in divs)
+            List<Distance> divs = database.GetDistances(theEvent.Identifier);
+            foreach (Distance div in divs)
             {
                 if (divisionDictionary.ContainsKey(div.Identifier))
                 {
@@ -174,7 +174,7 @@ namespace ChronoKeep.Timing
             }
             // Dictionary for looking up linked divisions
             linkedDivisionDictionary.Clear();
-            foreach (Division div in divs)
+            foreach (Distance div in divs)
             {
                 // Check if its a linked division
                 if (div.LinkedDivision > 0)
@@ -260,10 +260,6 @@ namespace ChronoKeep.Timing
                         TimeSpan time = end - start;
                         Log.D(String.Format("Time to process all chip reads was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
                     }
-                    if (results != null && results.Count > 0)
-                    {
-                        window.NetworkAddResults(theEvent.Identifier, results);
-                    }
                     results = null;
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
                     {
@@ -284,10 +280,6 @@ namespace ChronoKeep.Timing
                         DateTime end = DateTime.Now;
                         TimeSpan time = end - start;
                         Log.D(String.Format("Time to process placements was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
-                    }
-                    if (results != null && results.Count > 0)
-                    {
-                        window.NetworkUpdateResults(theEvent.Identifier, results);
                     }
                     if (touched)
                     {
@@ -467,7 +459,7 @@ namespace ChronoKeep.Timing
                 Participant part = participantBibDictionary.ContainsKey(bib) ?
                     participantBibDictionary[bib] :
                     null;
-                Division div = part != null ?
+                Distance div = part != null ?
                     divisionDictionary[part.EventSpecific.DivisionIdentifier] :
                     null;
                 long startSeconds, maxStartSeconds;
@@ -1078,7 +1070,7 @@ namespace ChronoKeep.Timing
                     part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
                     updateParticipants.Add(part);
                 }
-                Division div = part != null ?
+                Distance div = part != null ?
                     divisionDictionary[part.EventSpecific.DivisionIdentifier] :
                     null;
                 long startSeconds, maxStartSeconds, endSeconds;
@@ -1531,7 +1523,7 @@ namespace ChronoKeep.Timing
             List<TimeResult> topResults = personLastResult.Values.ToList<TimeResult>();
             topResults.Sort((x1, x2) =>
             {
-                Division div1 = null, div2 = null;
+                Distance div1 = null, div2 = null;
                 int rank1 = 0, rank2 = 0;
                 // Get *linked* divisions. (Could be that specific division)
                 if (linkedDivisionDictionary.ContainsKey(x1.RealDivisionName))
@@ -1619,7 +1611,7 @@ namespace ChronoKeep.Timing
                 segmentResults.Sort((x1, x2) =>
                 {
                     if (x1 == null || x2 == null) return 1;
-                    Division div1 = null, div2 = null;
+                    Distance div1 = null, div2 = null;
                     int rank1 = 0, rank2 = 0;
                     Log.D("x1 division name: " + x1.RealDivisionName + " -- x2 division name: " + x2.RealDivisionName);
                     // Get *linked* divisions. (Could be that specific division)
@@ -1674,7 +1666,7 @@ namespace ChronoKeep.Timing
                 segmentResults.Sort((x1, x2) =>
                 {
                     if (x1 == null || x2 == null) return 1;
-                    Division div1 = null, div2 = null;
+                    Distance div1 = null, div2 = null;
                     int rank1 = 0, rank2 = 0;
                     // Get *linked* divisions. (Could be that specific division)
                     if (linkedDivisionDictionary.ContainsKey(x1.RealDivisionName))

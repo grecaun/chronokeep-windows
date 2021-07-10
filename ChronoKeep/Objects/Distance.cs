@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChronoKeep
 {
-    public class Division : IEquatable<Division>, IComparable<Division>
+    public class Distance : IEquatable<Distance>, IComparable<Distance>
     {
         private String name;
         private int identifier, eventIdentifier, cost;
@@ -17,16 +17,16 @@ namespace ChronoKeep
         private int wave = 1, bib_group_number = -1, start_offset_seconds = 0, start_offset_milliseconds = 0;
         private int linked_division = -1, type = 0, ranking = 0;
 
-        public Division() { }
+        public Distance() { }
 
-        public Division(string name, int eventIdentifier, int cost)
+        public Distance(string name, int eventIdentifier, int cost)
         {
             this.name = name;
             this.eventIdentifier = eventIdentifier;
             this.cost = cost;
         }
 
-        public Division(string name, int eventIdentifier, int linkedIdentifier, int type, int ranking, int wave, int start_offset_seconds, int start_offset_milliseconds)
+        public Distance(string name, int eventIdentifier, int linkedIdentifier, int type, int ranking, int wave, int start_offset_seconds, int start_offset_milliseconds)
         {
             this.name = name;
             this.eventIdentifier = eventIdentifier;
@@ -38,7 +38,7 @@ namespace ChronoKeep
             this.start_offset_milliseconds = start_offset_milliseconds;
         }
 
-        public Division(int identifier, string name, int eventIdentifier,
+        public Distance(int identifier, string name, int eventIdentifier,
             int cost, double distance, int dunit, int finloc, int finocc,
             int startloc, int startwith, int wave, int bgn, int soffsec, int soffmill,
             int endseconds, int earlyoffset, int linked_division, int type, int ranking)
@@ -68,7 +68,7 @@ namespace ChronoKeep
         public string Name { get => name; set => name = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public int Cost { get => cost; set => cost = value; }
-        public double Distance { get => distance; set => distance = value; }
+        public double DistanceValue { get => distance; set => distance = value; }
         public int DistanceUnit { get => distance_unit; set => distance_unit = value; }
         public int FinishLocation { get => finish_location; set => finish_location = value; }
         public int FinishOccurrence { get => finish_occurrence; set => finish_occurrence = value; }
@@ -84,7 +84,7 @@ namespace ChronoKeep
         public int Type { get => type; set => type = value; }
         public int Ranking { get => ranking; set => ranking = value; }
 
-        public int CompareTo(Division other)
+        public int CompareTo(Distance other)
         {
             if (other == null) return 1;
             if (this.EventIdentifier == other.EventIdentifier)
@@ -94,7 +94,7 @@ namespace ChronoKeep
             return this.EventIdentifier.CompareTo(other.EventIdentifier);
         }
 
-        public bool Equals(Division other)
+        public bool Equals(Distance other)
         {
             if (other == null) return false;
             return this.EventIdentifier == other.EventIdentifier && this.Identifier == other.Identifier;

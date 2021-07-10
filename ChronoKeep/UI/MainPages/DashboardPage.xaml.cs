@@ -65,44 +65,6 @@ namespace ChronoKeep.UI.MainPages
             commonAgeCheckBox.IsChecked = theEvent.CommonAgeGroups;
             commonStartCheckBox.IsChecked = theEvent.CommonStartFinish;
             segmentCheckBox.IsChecked = theEvent.DivisionSpecificSegments;
-            List<JsonOption> options = database.GetEventOptions(theEvent.Identifier);
-            foreach (JsonOption opt in options)
-            {
-                Log.D("Option is " + opt.Name + " value is " + opt.Value);
-                if (opt.Name == Constants.JsonOptions.RESULTS)
-                {
-                    if (opt.Value == Constants.JsonOptions.TRUE)
-                    {
-                        openResults.Content = Constants.DashboardLabels.CLOSE_RESULTS;
-                    }
-                    else
-                    {
-                        openResults.Content = Constants.DashboardLabels.OPEN_RESULTS;
-                    }
-                }
-                else if (opt.Name == Constants.JsonOptions.REGISTRATION)
-                {
-                    if (opt.Value == Constants.JsonOptions.TRUE)
-                    {
-                        startCheckIn.Content = Constants.DashboardLabels.STOP_CHECKIN;
-                    }
-                    else
-                    {
-                        startCheckIn.Content = Constants.DashboardLabels.START_CHECKIN;
-                    }
-                }
-                else if (opt.Name == Constants.JsonOptions.KIOSK)
-                {
-                    if (opt.Value == Constants.JsonOptions.TRUE)
-                    {
-                        setupKiosk.Content = Constants.DashboardLabels.CANCEL_KIOSK;
-                    }
-                    else
-                    {
-                        setupKiosk.Content = Constants.DashboardLabels.SETUP_KIOSK;
-                    }
-                }
-            }
             ComboBoxItem eventType = null;
             foreach (ComboBoxItem item in TypeBox.Items)
             {
@@ -119,24 +81,8 @@ namespace ChronoKeep.UI.MainPages
             {
                 TypeBox.SelectedIndex = 0;
             }
-            if (theEvent.NextYear != -1)
-            {
-                setupNextYear.Content = Constants.DashboardLabels.CANCEL_NEXT_YEAR;
-            }
-            else
-            {
-                setupNextYear.Content = Constants.DashboardLabels.SETUP_NEXT_YEAR;
-            }
             editButton.Content = Constants.DashboardLabels.EDIT;
             cancelButton.Visibility = Visibility.Collapsed;
-            if (mWindow.NetworkServicesRunning())
-            {
-                SetNetworkWorking();
-            }
-            else
-            {
-                SetNetworkStopped();
-            }
             if (theEvent.API_ID > 0 && theEvent.API_Event_ID != "")
             {
                 apiLinkButton.Content = "Event Linked";
@@ -183,14 +129,6 @@ namespace ChronoKeep.UI.MainPages
                     database.ResetSegments(theEvent.Identifier);
                 }
                 database.UpdateEvent(theEvent);
-                try
-                {
-                    mWindow.UpdateEvent(theEvent.Identifier, "", 0, 0, 0, 0);
-                }
-                catch
-                {
-                    Log.D("Unable to update event with mainwindow. TCP Server error or wrong main window.");
-                }
                 Log.D("Updating view.");
                 mWindow.NotifyTimingWorker(); ;
                 UpdateView();
@@ -223,174 +161,6 @@ namespace ChronoKeep.UI.MainPages
             commonStartCheckBox.IsEnabled = true;
             segmentCheckBox.IsEnabled = true;
             TypeBox.IsEnabled = true;
-        }
-
-        private async void StartAppService_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Start App Service Button Clicked.");
-            if (startAppService.Content.ToString() == Constants.DashboardLabels.START_NETWORK)
-            {
-                startAppService.Content = Constants.DashboardLabels.WORKING;
-                bool worked = false;
-                await Task.Run(() =>
-                {
-                    worked = mWindow.StartNetworkServices();
-                });
-                if (worked)
-                {
-                    SetNetworkWorking();
-                }
-                else
-                {
-                    SetNetworkStopped();
-                }
-            }
-            else if (startAppService.Content.ToString() == Constants.DashboardLabels.STOP_NETWORK)
-            {
-                startAppService.Content = Constants.DashboardLabels.WORKING;
-                bool worked = false;
-                await Task.Run(() =>
-                {
-                    worked = mWindow.StopNetworkServices();
-                });
-                if (!worked)
-                {
-                    SetNetworkWorking();
-                }
-                else
-                {
-                    SetNetworkStopped();
-                }
-            }
-        }
-
-        private void SetNetworkStopped()
-        {
-            startAppService.Content = Constants.DashboardLabels.START_NETWORK;
-            startCheckIn.Visibility = Visibility.Collapsed;
-            openResults.Visibility = Visibility.Collapsed;
-            setupNextYear.Visibility = Visibility.Collapsed;
-            setupKiosk.Visibility = Visibility.Collapsed;
-        }
-
-        private void SetNetworkWorking()
-        {
-            startAppService.Content = Constants.DashboardLabels.STOP_NETWORK;
-            startCheckIn.Visibility = Visibility.Visible;
-            openResults.Visibility = Visibility.Visible;
-            setupNextYear.Visibility = Visibility.Visible;
-            setupKiosk.Visibility = Visibility.Visible;
-        }
-
-        private void SetupKiosk_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Setup Kiosk Button Clicked.");
-            if (setupKiosk.Content.ToString() == Constants.DashboardLabels.SETUP_KIOSK)
-            {
-                KioskSetup kiosk = KioskSetup.NewWindow(mWindow, database);
-                if (kiosk != null)
-                {
-                    mWindow.AddWindow(kiosk);
-                    kiosk.ShowDialog();
-                }
-            }
-            else if (setupKiosk.Content.ToString() == Constants.DashboardLabels.CANCEL_KIOSK)
-            {
-                List<JsonOption> list = database.GetEventOptions(theEvent.Identifier);
-                foreach (JsonOption opt in list)
-                {
-                    if (opt.Name == "kiosk")
-                    {
-                        opt.Value = "false";
-                    }
-                }
-                database.SetEventOptions(theEvent.Identifier, list);
-                UpdateView();
-            }
-        }
-
-        private void StartCheckIn_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Start checkin clicked.");
-            bool value = false;
-            if (startCheckIn.Content.ToString() == Constants.DashboardLabels.START_CHECKIN)
-            {
-                value = true;
-                startCheckIn.Content = Constants.DashboardLabels.STOP_CHECKIN;
-            }
-            else
-            {
-                startCheckIn.Content = Constants.DashboardLabels.START_CHECKIN;
-            }
-            List<JsonOption> list = database.GetEventOptions(theEvent.Identifier);
-            foreach (JsonOption opt in list)
-            {
-                if (opt.Name == Constants.JsonOptions.REGISTRATION)
-                {
-                    opt.Value = value.ToString().ToLower();
-                }
-            }
-            database.SetEventOptions(theEvent.Identifier, list);
-            try
-            {
-                mWindow.UpdateEvent(theEvent.Identifier, "", 0, 0, 0, 0);
-            }
-            catch
-            {
-                Log.D("Main window failed updating the event. Either the TCP Server isn't running, or someone is using the wrong Main Window.");
-            }
-        }
-
-        private void OpenResults_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Open Results clicked.");
-            bool value = false;
-            if (openResults.Content.ToString() == Constants.DashboardLabels.OPEN_RESULTS)
-            {
-                value = true;
-                openResults.Content = Constants.DashboardLabels.CLOSE_RESULTS;
-            }
-            else
-            {
-                openResults.Content = Constants.DashboardLabels.OPEN_RESULTS;
-            }
-            List<JsonOption> list = database.GetEventOptions(theEvent.Identifier);
-            foreach (JsonOption opt in list)
-            {
-                if (opt.Name == Constants.JsonOptions.RESULTS)
-                {
-                    opt.Value = value.ToString().ToLower();
-                }
-            }
-            database.SetEventOptions(theEvent.Identifier, list);
-            try
-            {
-                mWindow.UpdateEvent(theEvent.Identifier, "", 0, 0, 0, 0);
-            }
-            catch
-            {
-                Log.D("Main window failed updating the event. Either the TCP Server isn't running, or someone is using the wrong Main Window.");
-            }
-        }
-
-        private void SetupNextYear_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Setup Next Year Mode clicked.");
-            if (setupNextYear.Content.ToString() == Constants.DashboardLabels.SETUP_NEXT_YEAR)
-            {
-                NextYearSetup nysetup = NextYearSetup.NewWindow(mWindow, database, theEvent);
-                if (nysetup != null)
-                {
-                    mWindow.AddWindow(nysetup);
-                    nysetup.ShowDialog();
-                }
-            }
-            else if (setupNextYear.Content.ToString() == Constants.DashboardLabels.CANCEL_NEXT_YEAR)
-            {
-                theEvent.NextYear = -1;
-                database.UpdateEvent(theEvent);
-                UpdateView();
-            }
         }
 
         private void NewEvent_Click(object sender, RoutedEventArgs e)
@@ -445,12 +215,12 @@ namespace ChronoKeep.UI.MainPages
                     database.AddAgeGroups(ageGroups);
                     List<BibChipAssociation> bibChipAssociations = savedDatabase.GetBibChips(oldEventId);
                     database.AddBibChipAssociation(newEventId, bibChipAssociations);
-                    List<Division> divisions = savedDatabase.GetDivisions(oldEventId);
-                    foreach (Division item in divisions)
+                    List<Distance> divisions = savedDatabase.GetDistances(oldEventId);
+                    foreach (Distance item in divisions)
                     {
                         item.EventIdentifier = newEventId;
                     }
-                    database.AddDivisions(divisions);
+                    database.AddDistances(divisions);
                     List<Segment> segments = savedDatabase.GetSegments(oldEventId);
                     foreach (Segment item in segments)
                     {
@@ -463,12 +233,6 @@ namespace ChronoKeep.UI.MainPages
                         item.EventIdentifier = newEventId;
                     }
                     database.AddTimingLocations(locations);
-                    List<DayOfParticipant> dayOfParticipants = savedDatabase.GetDayOfParticipants(oldEventId);
-                    foreach (DayOfParticipant item in dayOfParticipants)
-                    {
-                        item.EventIdentifier = newEventId;
-                    }
-                    database.AddDayOfParticipants(dayOfParticipants);
                     List<Participant> participants = savedDatabase.GetParticipants(oldEventId);
                     foreach (Participant item in participants)
                     {
@@ -627,12 +391,12 @@ namespace ChronoKeep.UI.MainPages
                 savedDatabase.AddAgeGroups(ageGroups);
                 List<BibChipAssociation> bibChipAssociations = database.GetBibChips(oldEventId);
                 savedDatabase.AddBibChipAssociation(newEventId, bibChipAssociations);
-                List<Division> divisions = database.GetDivisions(oldEventId);
-                foreach (Division item in divisions)
+                List<Distance> divisions = database.GetDistances(oldEventId);
+                foreach (Distance item in divisions)
                 {
                     item.EventIdentifier = newEventId;
                 }
-                savedDatabase.AddDivisions(divisions);
+                savedDatabase.AddDistances(divisions);
                 List<Segment> segments = database.GetSegments(oldEventId);
                 foreach (Segment item in segments)
                 {
@@ -645,12 +409,6 @@ namespace ChronoKeep.UI.MainPages
                     item.EventIdentifier = newEventId;
                 }
                 savedDatabase.AddTimingLocations(locations);
-                List<DayOfParticipant> dayOfParticipants = database.GetDayOfParticipants(oldEventId);
-                foreach (DayOfParticipant item in dayOfParticipants)
-                {
-                    item.EventIdentifier = newEventId;
-                }
-                savedDatabase.AddDayOfParticipants(dayOfParticipants);
                 List<Participant> participants = database.GetParticipants(oldEventId);
                 foreach (Participant item in participants)
                 {

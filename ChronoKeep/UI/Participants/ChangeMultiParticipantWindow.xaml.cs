@@ -33,7 +33,7 @@ namespace ChronoKeep.UI.Participants
             this.toChange = toChange;
             theEvent = database.GetCurrentEvent();
             if (theEvent == null) return;
-            foreach (Division div in database.GetDivisions(theEvent.Identifier))
+            foreach (Distance div in database.GetDistances(theEvent.Identifier))
             {
                 DivisionBox.Items.Add(new ComboBoxItem()
                 {

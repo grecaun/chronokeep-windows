@@ -27,7 +27,7 @@ namespace ChronoKeep.UI.MainPages
         private IDBInterface database;
         private Event theEvent;
         private List<TimingLocation> locations;
-        private List<Division> divisions;
+        private List<Distance> divisions;
 
         private bool UpdateTimingWorker = false;
 
@@ -53,7 +53,7 @@ namespace ChronoKeep.UI.MainPages
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 1, theEvent.StartWindow));
                 }
-                divisions = database.GetDivisions(theEvent.Identifier);
+                divisions = database.GetDistances(theEvent.Identifier);
                 divisions.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
             }
             UpdateSegments();
@@ -68,7 +68,7 @@ namespace ChronoKeep.UI.MainPages
             List<ListBoxItem> items = new List<ListBoxItem>();
             if (theEvent.DivisionSpecificSegments)
             {
-                foreach (Division div in divisions)
+                foreach (Distance div in divisions)
                 {
                     ADivisionSegmentHolder newHolder = new ADivisionSegmentHolder(theEvent, this, div, divisions, allSegments[div.Identifier], locations);
                     items.Add(newHolder);
@@ -104,7 +104,7 @@ namespace ChronoKeep.UI.MainPages
                     }
                     allSegments[seg.DivisionId].Add(seg);
                 }
-                foreach (Division div in divisions)
+                foreach (Distance div in divisions)
                 {
                     if (!allSegments.ContainsKey(div.Identifier))
                     {
@@ -269,19 +269,19 @@ namespace ChronoKeep.UI.MainPages
             private SegmentsPage page;
             private ComboBox copyFromDivision = null;
             private int finish_occurrences;
-            private List<Division> otherDivisions;
+            private List<Distance> otherDivisions;
             public List<ListBoxItem> SegmentItems = new List<ListBoxItem>();
             private TextBox numAdd;
 
             //public ListBox segmentHolder;
-            public Division division;
+            public Distance division;
 
-            public ADivisionSegmentHolder(Event theEvent, SegmentsPage page, Division division,
-                List<Division> divisions, List<Segment> segments, List<TimingLocation> locations)
+            public ADivisionSegmentHolder(Event theEvent, SegmentsPage page, Distance division,
+                List<Distance> divisions, List<Segment> segments, List<TimingLocation> locations)
             {
                 this.division = division;
                 this.page = page;
-                otherDivisions = new List<Division>(divisions);
+                otherDivisions = new List<Distance>(divisions);
                 otherDivisions.RemoveAll(x => x.Identifier == (division == null ? -1 : division.Identifier));
                 StackPanel thePanel = new StackPanel();
                 this.Content = thePanel;
@@ -359,7 +359,7 @@ namespace ChronoKeep.UI.MainPages
                         Content = "",
                         Uid = "-1"
                     });
-                    foreach (Division div in otherDivisions)
+                    foreach (Distance div in otherDivisions)
                     {
                         copyFromDivision.Items.Add(new ComboBoxItem()
                         {

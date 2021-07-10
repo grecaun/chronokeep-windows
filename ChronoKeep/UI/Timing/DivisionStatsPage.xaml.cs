@@ -76,7 +76,7 @@ namespace ChronoKeep.UI.Timing
             dnsParticipants.Clear();
             dnfParticipants.Clear();
             finishedParticipants.Clear();
-            Dictionary<int, List<Participant>> partDict = database.GetDivisionParticipantsStatus(theEvent.Identifier, divisionId);
+            Dictionary<int, List<Participant>> partDict = database.GetDistanceParticipantsStatus(theEvent.Identifier, divisionId);
             if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_STARTED)) // ACTIVE
             {
                 activePanel.Visibility = Visibility.Visible;

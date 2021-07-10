@@ -22,11 +22,11 @@ namespace ChronoKeep
     {
         NextYearSetup kiosk;
 
-        public NextYearSetupPage3(List<Division> divs, NextYearSetup nextYear)
+        public NextYearSetupPage3(List<Distance> divs, NextYearSetup nextYear)
         {
             InitializeComponent();
             this.kiosk = nextYear;
-            foreach (Division div in divs)
+            foreach (Distance div in divs)
             {
                 DivisionListBoxItem2 newBox = new DivisionListBoxItem2(div.Name, div.Cost);
                 divisionListBox.Items.Add(newBox);
@@ -40,10 +40,10 @@ namespace ChronoKeep
 
         private void Submit()
         {
-            List<Division> divisions = new List<Division>();
+            List<Distance> divisions = new List<Distance>();
             foreach (DivisionListBoxItem2 div in divisionListBox.Items)
             {
-                divisions.Add(new Division(div.DivName(), -1, div.Cost()));
+                divisions.Add(new Distance(div.DivName(), -1, div.Cost()));
             }
             kiosk.GoToPage4(divisions);
         }

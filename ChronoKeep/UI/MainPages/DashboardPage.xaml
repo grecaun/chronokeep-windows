@@ -63,13 +63,7 @@
             <Button Name="cancelButton" Content="Cancel" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="10,5,10,5" Click="CancelButton_Click" Visibility="Collapsed"/>
         </StackPanel>
         <StackPanel Name="RightPanel" Grid.Column="1" Grid.Row="1" Margin="20,0,20,0">
-            <Button Name="startAppService" Content="Start Network Service" Margin="10,5,10,5" Click="StartAppService_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
-            <Button Name="startCheckIn" Content="Start Check-In" Margin="10,5,10,5" Click="StartCheckIn_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" Visibility="Collapsed"/>
-            <Button Name="openResults" Content="Open Results" Margin="10,5,10,5" Click="OpenResults_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" Visibility="Collapsed"/>
-            <Button Name="setupNextYear" Content="Setup Next Year Mode" Margin="10,5,10,5" Click="SetupNextYear_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" Visibility="Collapsed"/>
-            <Button Name="setupKiosk" Content="Setup Kiosk Mode" Margin="10,5,10,5" Click="SetupKiosk_Click" FontSize="16" VerticalContentAlignment="Center" Height="35" Visibility="Collapsed"/>
-            <Separator Margin="10,10,10,10" />
-            <Button Name="apiPageButton" Content="Manage Results API" Margin="10,5,10,5" Click="apiPageButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
+            <Button Name="apiPageButton" Content="Manage Results API" Margin="10,15,10,5" Click="apiPageButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
             <Button Name="apiLinkButton" Content="Link to API Event" Margin="10,5,10,5" Click="apiLinkButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
             <Button Name="tagTesterButton" Content="Chip Tester" Margin="10,5,10,5" Click="TagTesterButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
         </StackPanel>

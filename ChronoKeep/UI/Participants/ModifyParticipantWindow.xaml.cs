@@ -77,10 +77,10 @@ namespace ChronoKeep.UI.Participants
         {
             if (theEvent == null || theEvent.Identifier < 0)
                 return;
-            List<Division> divs = database.GetDivisions(theEvent.Identifier);
+            List<Distance> divs = database.GetDistances(theEvent.Identifier);
             DivisionBox.Items.Clear();
             divs.Sort();
-            foreach (Division d in divs)
+            foreach (Distance d in divs)
             {
                 DivisionBox.Items.Add(new ComboBoxItem()
                 {
@@ -96,11 +96,11 @@ namespace ChronoKeep.UI.Participants
         {
             if (person == null || theEvent == null || theEvent.Identifier < 0)
                 return;
-            List<Division> divs = database.GetDivisions(theEvent.Identifier);
+            List<Distance> divs = database.GetDistances(theEvent.Identifier);
             DivisionBox.Items.Clear();
             divs.Sort();
             ComboBoxItem selected = null;
-            foreach (Division d in divs)
+            foreach (Distance d in divs)
             {
                 ComboBoxItem item = new ComboBoxItem()
                 {

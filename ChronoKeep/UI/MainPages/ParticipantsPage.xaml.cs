@@ -97,9 +97,9 @@ namespace ChronoKeep.UI.MainPages
             {
                 return;
             }
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+            List<Distance> divisions = database.GetDistances(theEvent.Identifier);
             divisions.Sort();
-            foreach (Division d in divisions)
+            foreach (Distance d in divisions)
             {
                 DivisionBox.Items.Add(new ComboBoxItem()
                 {

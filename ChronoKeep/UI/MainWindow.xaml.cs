@@ -20,22 +20,14 @@ namespace ChronoKeep.UI
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IMainWindow, IChangeUpdater
+    public partial class MainWindow : Window, IMainWindow
     {
         IDBInterface database;
         IMainPage page;
         String dbName = "ChronoKeep.sqlite";
-        bool closing = false;
         bool excelEnabled = false;
 
-        bool NetworkRunning = false;
-        Mutex NetworkRunningBoolMutex = new Mutex();
-
         // Network objects
-        Thread tcpServerThread = null;
-        TCPServer tcpServer = null;
-        Thread zeroConfThread = null;
-        ZeroConf zeroConf = null;
         HttpServer httpServer = null;
         int httpServerPort = 6933;
 
@@ -148,17 +140,6 @@ namespace ChronoKeep.UI
             SwitchPage(new ParticipantsPage(this, database), true);
         }
 
-        private void BibsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("Bibs button clicked.");
-            if (page is BibAssignmentPage)
-            {
-                Log.D("Bib page already displayed.");
-                return;
-            }
-            SwitchPage(new BibAssignmentPage(this, database), true);
-        }
-
         private void ChipsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Chips button clicked.");
@@ -249,8 +230,6 @@ namespace ChronoKeep.UI
                     return;
                 }
             }
-            closing = true;
-            StopNetworkServices();
             StopTimingController();
             StopTimingWorker();
             StopAPIController();
@@ -295,115 +274,6 @@ namespace ChronoKeep.UI
         public void WindowClosed(Window window)
         {
             Utils.QuitExcel();
-        }
-
-        public void UpdateEvent(int identifier, string nameString, long dateVal, int nextYear, int shirtOptionalVal, int shirtPrice)
-        {
-            Log.D("Updating event information via TCP Server.");
-            if (tcpServer != null)
-            {
-                tcpServer.UpdateEvent(identifier);
-            }
-            // *TODO* Update Timing Controller
-        }
-
-        public bool StartNetworkServices()
-        {
-            try
-            {
-                Log.D("Starting TCP server thread.");
-                tcpServer = new TCPServer(database, this);
-                tcpServerThread = new Thread(new ThreadStart(tcpServer.Run));
-                tcpServerThread.Start();
-                Log.D("Starting zero configuration thread.");
-                zeroConf = new ZeroConf(database.GetAppSetting(Constants.Settings.SERVER_NAME).value);
-                zeroConfThread = new Thread(new ThreadStart(zeroConf.Run));
-                zeroConfThread.Start();
-            }
-            catch
-            {
-                if (NetworkRunningBoolMutex.WaitOne(3000))
-                {
-                    NetworkRunning = false;
-                    NetworkRunningBoolMutex.ReleaseMutex();
-                }
-                return false;
-            }
-            if (NetworkRunningBoolMutex.WaitOne(3000))
-            {
-                NetworkRunning = true;
-                NetworkRunningBoolMutex.ReleaseMutex();
-            }
-            return true;
-        }
-
-        public bool StopNetworkServices()
-        {
-            try
-            {
-                Log.D("Stopping TCP server thread.");
-                if (tcpServer != null) tcpServer.Stop();
-                if (tcpServerThread != null) tcpServerThread.Abort();
-                if (tcpServerThread != null) tcpServerThread.Join();
-                Log.D("Stopping zero configuration thread.");
-                if (zeroConf != null) zeroConf.Stop();
-                if (zeroConfThread != null) zeroConfThread.Abort();
-                if (zeroConfThread != null) zeroConfThread.Join();
-            }
-            catch
-            {
-                if (NetworkRunningBoolMutex.WaitOne(3000))
-                {
-                    NetworkRunning = false;
-                    NetworkRunningBoolMutex.ReleaseMutex();
-                }
-                return false;
-            }
-            if (NetworkRunningBoolMutex.WaitOne(3000))
-            {
-                NetworkRunning = false;
-                NetworkRunningBoolMutex.ReleaseMutex();
-            }
-            return true;
-        }
-
-        public bool NetworkServicesRunning()
-        {
-            bool output = false;
-            if (NetworkRunningBoolMutex.WaitOne(3000))
-            {
-                output = NetworkRunning;
-                NetworkRunningBoolMutex.ReleaseMutex();
-            }
-            return output;
-        }
-
-        public void NetworkServicesStopped()
-        {
-            try
-            {
-                Log.D("Stopping TCP server thread.");
-                if (tcpServer != null) tcpServer.Stop();
-                if (tcpServerThread != null) tcpServerThread.Abort();
-                if (tcpServerThread != null) tcpServerThread.Join();
-                Log.D("Stopping zero configuration thread.");
-                if (zeroConf != null) zeroConf.Stop();
-                if (zeroConfThread != null) zeroConfThread.Abort();
-                if (zeroConfThread != null) zeroConfThread.Join();
-            }
-            catch
-            {
-                if (NetworkRunningBoolMutex.WaitOne(3000))
-                {
-                    NetworkRunning = false;
-                    NetworkRunningBoolMutex.ReleaseMutex();
-                }
-            }
-            if (NetworkRunningBoolMutex.WaitOne(3000))
-            {
-                NetworkRunning = false;
-                NetworkRunningBoolMutex.ReleaseMutex();
-            }
         }
 
         public bool StopTimingController()
@@ -459,23 +329,9 @@ namespace ChronoKeep.UI
             return APIController.IsRunning();
         }
 
-        public void UpdateChangesBox()
-        {
-        }
-
         public void WindowFinalize(Window w)
         {
             page.UpdateView();
-            if (!closing) openWindows.Remove(w);
-            try
-            {
-                if (tcpServer != null)
-                {
-                    tcpServer.UpdateEvent(Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
-                    tcpServer.UpdateEventKiosk(Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value));
-                }
-            }
-            catch { }
             UpdateStatus();
         }
 
@@ -511,7 +367,6 @@ namespace ChronoKeep.UI
             if (theEvent == null || theEvent.Identifier == -1)
             {
                 participantsButton.IsEnabled = false;
-                bibsButton.IsEnabled = false;
                 chipsButton.IsEnabled = false;
                 reportsButton.IsEnabled = false;
                 divisionsButton.IsEnabled = false;
@@ -523,7 +378,6 @@ namespace ChronoKeep.UI
             else
             {
                 participantsButton.IsEnabled = true;
-                bibsButton.IsEnabled = true;
                 chipsButton.IsEnabled = true;
                 reportsButton.IsEnabled = false;  // REPORTS DISABLED FOR NOW
                 divisionsButton.IsEnabled = true;
@@ -628,10 +482,6 @@ namespace ChronoKeep.UI
 
         public void NetworkUpdateResults(int eventid, List<TimeResult> results)
         {
-            if (tcpServer != null)
-            {
-                tcpServer.UpdateResults(eventid, results);
-            }
             if (httpServer != null)
             {
                 httpServer.UpdateInformation();
@@ -644,10 +494,6 @@ namespace ChronoKeep.UI
 
         public void NetworkClearResults(int eventid)
         {
-            if (tcpServer != null)
-            {
-                tcpServer.ClearResults(eventid);
-            }
             if (httpServer != null)
             {
                 httpServer.UpdateInformation();

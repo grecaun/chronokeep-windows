@@ -52,9 +52,9 @@ namespace ChronoKeep.UI.Timing
                 });
             }
 
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
+            List<Distance> divisions = database.GetDistances(theEvent.Identifier);
             divisions.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
-            foreach (Division d in divisions)
+            foreach (Distance d in divisions)
             {
                 if (d.LinkedDivision <= 0)
                 {
@@ -103,7 +103,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 segmentsDictionary[seg.DivisionId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> divisionDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
@@ -322,7 +322,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 segmentsDictionary[seg.DivisionId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> divisionDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
@@ -553,7 +553,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 segmentsDictionary[seg.DivisionId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> divisionDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
@@ -791,7 +791,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 segmentsDictionary[seg.DivisionId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> divisionDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
@@ -1010,7 +1010,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 segmentsDictionary[seg.DivisionId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> divisionDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
@@ -1243,7 +1243,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 segmentsDictionary[seg.DivisionId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> divisionDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);

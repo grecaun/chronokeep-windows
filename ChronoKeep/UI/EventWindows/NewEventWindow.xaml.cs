@@ -115,13 +115,13 @@ namespace ChronoKeep
                     // Update database with current values.
                     database.UpdateEvent(newEvent);
                     // Get divisions from old event
-                    List<Division> divisions = database.GetDivisions(oldEventId);
-                    List<Division> newDivs = new List<Division>();
+                    List<Distance> divisions = database.GetDistances(oldEventId);
+                    List<Distance> newDivs = new List<Distance>();
                     // DivDict translates a division name into the old division identifier.
                     Dictionary<string, int> DivDict = new Dictionary<string, int>();
                     // DivTranslationDict holds a new division id and translates it from the old division with the same name.
                     Dictionary<int, int> DivTranslationDict = new Dictionary<int, int>();
-                    foreach (Division d in divisions)
+                    foreach (Distance d in divisions)
                     {
                         DivDict[d.Name] = d.Identifier;
                         d.Identifier = Constants.Timing.DIVISION_DUMMYIDENTIFIER;
@@ -129,10 +129,10 @@ namespace ChronoKeep
                         newDivs.Add(d);
                     }
                     // Update database with new divisions.
-                    database.AddDivisions(newDivs);
+                    database.AddDistances(newDivs);
                     // Retrieve newly added divisions.
-                    newDivs = database.GetDivisions(newEvent.Identifier);
-                    foreach (Division newD in newDivs)
+                    newDivs = database.GetDistances(newEvent.Identifier);
+                    foreach (Distance newD in newDivs)
                     {
                         // Set up a translation dictionary.
                         DivTranslationDict[DivDict[newD.Name]] = newD.Identifier;
@@ -178,7 +178,7 @@ namespace ChronoKeep
                 }
                 else
                 {
-                    database.AddDivision(new Division("Default Division", newEvent.Identifier, 0));
+                    database.AddDistance(new Distance("Default Division", newEvent.Identifier, 0));
                 }
                 database.SetAppSetting(Constants.Settings.CURRENT_EVENT, newEvent.Identifier.ToString());
                 window.WindowFinalize(this);

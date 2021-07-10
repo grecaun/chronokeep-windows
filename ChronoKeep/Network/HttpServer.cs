@@ -87,10 +87,10 @@ namespace ChronoKeep.Network
                             RunnerLoopsCompleted[result.EventSpecificId] :
                             result.Occurrence;
                 }
-                List<Division> divs = database.GetDivisions(theEvent.Identifier);
-                foreach (Division d in divs)
+                List<Distance> divs = database.GetDistances(theEvent.Identifier);
+                foreach (Distance d in divs)
                 {
-                    DivisionDistancePerLoop[d.Name] = d.Distance;
+                    DivisionDistancePerLoop[d.Name] = d.DistanceValue;
                     DivisionDistanceType[d.Name] = d.DistanceUnit == Constants.Distances.MILES ? "Miles" :
                         d.DistanceUnit == Constants.Distances.FEET ? "Feet" :
                         d.DistanceUnit == Constants.Distances.KILOMETERS ? "Kilometers" :

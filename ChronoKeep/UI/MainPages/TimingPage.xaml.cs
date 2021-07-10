@@ -48,7 +48,7 @@ namespace ChronoKeep.UI.MainPages
         private Boolean TimerStarted = false;
         private SetTimeWindow timeWindow = null;
 
-        ObservableCollection<DivisionStats> stats = new ObservableCollection<DivisionStats>();
+        ObservableCollection<DistanceStat> stats = new ObservableCollection<DistanceStat>();
 
         int total = 4, connected = 0;
 
@@ -160,9 +160,9 @@ namespace ChronoKeep.UI.MainPages
             total = ReadersBox.Items.Count;
             subPage = new TimingResultsPage(this, database);
             TimingFrame.Content = subPage;
-            List<DivisionStats> inStats = database.GetDivisionStats(theEvent.Identifier);
+            List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
             statsListView.ItemsSource = stats;
-            foreach (DivisionStats s in inStats)
+            foreach (DistanceStat s in inStats)
             {
                 stats.Add(s);
             }
@@ -284,9 +284,9 @@ namespace ChronoKeep.UI.MainPages
                 }
             }
 
-            List<DivisionStats> inStats = database.GetDivisionStats(theEvent.Identifier);
+            List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
             stats.Clear();
-            foreach (DivisionStats s in inStats)
+            foreach (DistanceStat s in inStats)
             {
                 stats.Add(s);
             }
@@ -331,9 +331,9 @@ namespace ChronoKeep.UI.MainPages
             if (updates)
             {
                 Log.D("Updates available.");
-                List<DivisionStats> inStats = database.GetDivisionStats(theEvent.Identifier);
+                List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
                 stats.Clear();
-                foreach (DivisionStats s in inStats)
+                foreach (DistanceStat s in inStats)
                 {
                     stats.Add(s);
                 }
@@ -745,7 +745,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void StatsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            DivisionStats selected = (DivisionStats)statsListView.SelectedItem;
+            DistanceStat selected = (DistanceStat)statsListView.SelectedItem;
             Log.D("Stats double cliked. Division is " + selected.DivisionName);
             subPage = new DivisionStatsPage(this, database, selected.DivisionID, selected.DivisionName);
             TimingFrame.NavigationService.RemoveBackEntry();
@@ -799,10 +799,10 @@ namespace ChronoKeep.UI.MainPages
                                 RunnerLoopsCompleted[result.EventSpecificId] :
                                 result.Occurrence;
                     }
-                    List<Division> divs = database.GetDivisions(theEvent.Identifier);
-                    foreach (Division d in divs)
+                    List<Distance> divs = database.GetDistances(theEvent.Identifier);
+                    foreach (Distance d in divs)
                     {
-                        DivisionDistancePerLoop[d.Name] = d.Distance;
+                        DivisionDistancePerLoop[d.Name] = d.DistanceValue;
                         DivisionDistanceType[d.Name] = d.DistanceUnit == Constants.Distances.MILES ? "Miles" :
                             d.DistanceUnit == Constants.Distances.FEET ? "Feet" :
                             d.DistanceUnit == Constants.Distances.KILOMETERS ? "Kilometers" :

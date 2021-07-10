@@ -27,10 +27,9 @@ namespace ChronoKeep.UI.MainPages
         private IMainWindow mWindow;
         private IDBInterface database;
         private Event theEvent;
-        private List<BibGroup> bibGroups;
-        private List<Division> divisions;
-        private Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
-        private Dictionary<int, List<Division>> subDivisionDictionary = new Dictionary<int, List<Division>>();
+        private List<Distance> divisions;
+        private Dictionary<int, Distance> divisionDictionary = new Dictionary<int, Distance>();
+        private Dictionary<int, List<Distance>> subDivisionDictionary = new Dictionary<int, List<Distance>>();
         private HashSet<int> divisionsChanged = new HashSet<int>();
         private bool UpdateTimingWorker = false;
         private int DivisionCount = 1;
@@ -41,11 +40,6 @@ namespace ChronoKeep.UI.MainPages
             this.mWindow = mWindow;
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
-            if (theEvent != null)
-            {
-                bibGroups = database.GetBibGroups(theEvent.Identifier);
-                bibGroups.Insert(0, new BibGroup(theEvent.Identifier));
-            }
             UpdateView();
         }
 
@@ -56,20 +50,20 @@ namespace ChronoKeep.UI.MainPages
                 return;
             }
             DivisionsBox.Items.Clear();
-            divisions = database.GetDivisions(theEvent.Identifier);
+            divisions = database.GetDistances(theEvent.Identifier);
             DivisionCount = 1;
             divisions.Sort();
             divisionDictionary.Clear();
             subDivisionDictionary.Clear();
-            List<Division> superDivs = new List<Division>();
-            foreach (Division div in divisions)
+            List<Distance> superDivs = new List<Distance>();
+            foreach (Distance div in divisions)
             {
                 // Check if we're a linked division
                 if (div.LinkedDivision > 0)
                 {
                     if (!subDivisionDictionary.ContainsKey(div.LinkedDivision))
                     {
-                        subDivisionDictionary[div.LinkedDivision] = new List<Division>();
+                        subDivisionDictionary[div.LinkedDivision] = new List<Distance>();
                     }
                     subDivisionDictionary[div.LinkedDivision].Add(div);
                 }
@@ -78,16 +72,16 @@ namespace ChronoKeep.UI.MainPages
                     superDivs.Add(div);
                 }
             }
-            foreach (Division div in superDivs)
+            foreach (Distance div in superDivs)
             {
                 divisionDictionary[div.Identifier] = div;
-                ADivision parent = new ADivision(this, div, theEvent.FinishMaxOccurrences, bibGroups, divisions, divisionDictionary, theEvent);
+                ADivision parent = new ADivision(this, div, theEvent.FinishMaxOccurrences, divisions, divisionDictionary, theEvent);
                 DivisionsBox.Items.Add(parent);
                 DivisionCount = div.Identifier > DivisionCount - 1 ? div.Identifier + 1 : DivisionCount;
                 // Add linked divisions
                 if (subDivisionDictionary.ContainsKey(div.Identifier))
                 {
-                    foreach (Division sub in subDivisionDictionary[div.Identifier])
+                    foreach (Distance sub in subDivisionDictionary[div.Identifier])
                     {
                         DivisionsBox.Items.Add(new ASubDivision(this, sub, parent));
                         DivisionCount = sub.Identifier > DivisionCount - 1 ? sub.Identifier + 1 : DivisionCount;
@@ -103,7 +97,7 @@ namespace ChronoKeep.UI.MainPages
             {
                 UpdateDatabase();
             }
-            database.AddDivision(new Division("New Division " + DivisionCount, theEvent.Identifier, 0));
+            database.AddDistance(new Distance("New Division " + DivisionCount, theEvent.Identifier, 0));
             UpdateTimingWorker = true;
             UpdateView();
         }
@@ -121,22 +115,22 @@ namespace ChronoKeep.UI.MainPages
             UpdateView();
         }
 
-        internal void RemoveDivision(Division division)
+        internal void RemoveDivision(Distance division)
         {
             Log.D("Remove division clicked.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
-            database.RemoveDivision(division);
+            database.RemoveDistance(division);
             UpdateTimingWorker = true;
             UpdateView();
         }
 
         public void UpdateDatabase()
         {
-            Dictionary<int, Division> oldDivisions = new Dictionary<int, Division>();
-            foreach (Division division in database.GetDivisions(theEvent.Identifier))
+            Dictionary<int, Distance> oldDivisions = new Dictionary<int, Distance>();
+            foreach (Distance division in database.GetDistances(theEvent.Identifier))
             {
                 oldDivisions[division.Identifier] = division;
             }
@@ -152,7 +146,7 @@ namespace ChronoKeep.UI.MainPages
                     divisionsChanged.Add(divId);
                     UpdateTimingWorker = true;
                 }
-                database.UpdateDivision(listDiv.GetDivision());
+                database.UpdateDistance(listDiv.GetDivision());
             }
         }
 
@@ -187,34 +181,34 @@ namespace ChronoKeep.UI.MainPages
             }
         }
 
-        public void UpdateDivision(Division division)
+        public void UpdateDivision(Distance division)
         {
             int divId = division.Identifier;
-            Division oldDiv = database.GetDivision(divId);
+            Distance oldDiv = database.GetDistance(divId);
             if (oldDiv.StartOffsetSeconds != division.StartOffsetSeconds ||
                 oldDiv.StartOffsetMilliseconds != division.StartOffsetMilliseconds
                 || oldDiv.FinishOccurrence != division.FinishOccurrence)
             {
                 divisionsChanged.Add(divId);
             }
-            database.UpdateDivision(division);
+            database.UpdateDistance(division);
             UpdateView();
         }
 
-        public void AddSubDivision(Division theDivision)
+        public void AddSubDivision(Distance theDivision)
         {
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
-            database.AddDivision(new Division(theDivision.Name + " Linked " + DivisionCount, theDivision.EventIdentifier, theDivision.Identifier, Constants.Timing.DIVISION_TYPE_EARLY, 1, theDivision.Wave, theDivision.StartOffsetSeconds, theDivision.StartOffsetMilliseconds));
+            database.AddDistance(new Distance(theDivision.Name + " Linked " + DivisionCount, theDivision.EventIdentifier, theDivision.Identifier, Constants.Timing.DIVISION_TYPE_EARLY, 1, theDivision.Wave, theDivision.StartOffsetSeconds, theDivision.StartOffsetMilliseconds));
             UpdateTimingWorker = true;
             UpdateView();
         }
 
         private interface ADivisionInterface
         {
-            Division GetDivision();
+            Distance GetDivision();
             void UpdateDivision();
         }
 
@@ -230,14 +224,14 @@ namespace ChronoKeep.UI.MainPages
             private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
 
             readonly DivisionsPage page;
-            public Division theDivision;
+            public Distance theDivision;
 
             private ADivision parent;
 
             private readonly Regex allowedWithDot = new Regex("[^0-9.]");
             private readonly Regex allowedChars = new Regex("[^0-9]");
 
-            public ASubDivision(DivisionsPage page, Division division, ADivision parent)
+            public ASubDivision(DivisionsPage page, Distance division, ADivision parent)
             {
                 this.page = page;
                 this.parent = parent;
@@ -417,7 +411,7 @@ namespace ChronoKeep.UI.MainPages
                 src.SelectAll();
             }
 
-            public Division GetDivision()
+            public Distance GetDivision()
             {
                 return theDivision;
             }
@@ -426,10 +420,10 @@ namespace ChronoKeep.UI.MainPages
             {
                 Log.D("Updating sub division.");
                 parent.UpdateDivision();
-                Division parentDiv = parent.GetDivision();
+                Distance parentDiv = parent.GetDivision();
                 theDivision.Name = DivisionName.Text;
                 theDivision.Cost = parentDiv.Cost;
-                theDivision.Distance = parentDiv.Distance;
+                theDivision.DistanceValue = parentDiv.DistanceValue;
                 theDivision.EndSeconds = parentDiv.EndSeconds;
                 theDivision.FinishOccurrence = parent.GetDivision().FinishOccurrence;
                 theDivision.Type = TypeBox.SelectedIndex == 0 ? Constants.Timing.DIVISION_TYPE_EARLY : Constants.Timing.DIVISION_TYPE_UNOFFICIAL;
@@ -482,17 +476,17 @@ namespace ChronoKeep.UI.MainPages
             private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
             private const string LimitFormat = "{0:D2}:{1:D2}:{2:D2}";
             readonly DivisionsPage page;
-            public Division theDivision;
-            private Dictionary<int, Division> divisionDictionary;
+            public Distance theDivision;
+            private Dictionary<int, Distance> divisionDictionary;
             private int waveType = 1;
 
             private readonly Regex allowedWithDot = new Regex("[^0-9.]");
             private readonly Regex allowedChars = new Regex("[^0-9]");
 
-            public ADivision(DivisionsPage page, Division division, int maxOccurrences, List<BibGroup> bibGroups,
-                List<Division> divisions, Dictionary<int, Division> divisionDictionary, Event theEvent)
+            public ADivision(DivisionsPage page, Distance division, int maxOccurrences,
+                List<Distance> divisions, Dictionary<int, Distance> divisionDictionary, Event theEvent)
             {
-                List<Division> otherDivisions = new List<Division>(divisions);
+                List<Distance> otherDivisions = new List<Distance>(divisions);
                 this.divisionDictionary = divisionDictionary;
                 otherDivisions.Remove(division);
                 this.page = page;
@@ -551,7 +545,7 @@ namespace ChronoKeep.UI.MainPages
                     Content = "",
                     Uid = "-1"
                 });
-                foreach (Division div in otherDivisions)
+                foreach (Distance div in otherDivisions)
                 {
                     CopyFromBox.Items.Add(new ComboBoxItem()
                     {
@@ -607,7 +601,7 @@ namespace ChronoKeep.UI.MainPages
                 });
                 Distance = new TextBox()
                 {
-                    Text = theDivision.Distance.ToString(),
+                    Text = theDivision.DistanceValue.ToString(),
                     FontSize = 16,
                     Margin = new Thickness(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
@@ -883,7 +877,7 @@ namespace ChronoKeep.UI.MainPages
                 waveType *= -1;
             }
 
-            public Division GetDivision()
+            public Distance GetDivision()
             {
                 return theDivision;
             }
@@ -921,7 +915,7 @@ namespace ChronoKeep.UI.MainPages
                 }
                 if (dist != 0.0)
                 {
-                    theDivision.Distance = dist;
+                    theDivision.DistanceValue = dist;
                 }
                 theDivision.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
                 if (FinishOccurrence != null && FinishOccurrence.SelectedItem != null)
@@ -979,11 +973,11 @@ namespace ChronoKeep.UI.MainPages
                     && int.TryParse(((ComboBoxItem)CopyFromBox.SelectedItem).Uid, out int newDivId)
                     && divisionDictionary.ContainsKey(newDivId))
                 {
-                    Division newDiv = divisionDictionary[newDivId];
+                    Distance newDiv = divisionDictionary[newDivId];
                     theDivision.Name = DivisionName.Text;
                     theDivision.BibGroupNumber = newDiv.BibGroupNumber;
                     theDivision.Cost = newDiv.Cost;
-                    theDivision.Distance = newDiv.Distance;
+                    theDivision.DistanceValue = newDiv.DistanceValue;
                     theDivision.DistanceUnit = newDiv.DistanceUnit;
                     theDivision.FinishOccurrence = newDiv.FinishOccurrence;
                     theDivision.Wave = newDiv.Wave;

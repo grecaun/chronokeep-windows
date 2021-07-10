@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChronoKeep.Objects
 {
-    public class DivisionStats
+    public class DistanceStat
     {
         public string DivisionName { get; set; }
         public int DivisionID { get; set; }

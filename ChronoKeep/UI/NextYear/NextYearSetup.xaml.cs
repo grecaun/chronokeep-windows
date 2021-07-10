@@ -52,11 +52,11 @@ namespace ChronoKeep
             // Add new event for next year
             newEvent = new Event(newEventName, date, shirtOptional, shirtPrice, yearCode);
             // Add divisions to new event. Same as last year. User can edit these later.
-            List<Division> divs = database.GetDivisions(oldEvent.Identifier);
+            List<Distance> divs = database.GetDistances(oldEvent.Identifier);
             NYFrame.Content = new NextYearSetupPage3(divs, this);
         }
 
-        public void GoToPage4(List<Division> divs)
+        public void GoToPage4(List<Distance> divs)
         {
             try
             {
@@ -68,9 +68,9 @@ namespace ChronoKeep
                 this.Close();
             }
             newEvent = database.GetEvent(database.GetEventID(newEvent));
-            foreach (Division d in divs)
+            foreach (Distance d in divs)
             {
-                database.AddDivision(new Division(d.Name, newEvent.Identifier, d.Cost));
+                database.AddDistance(new Distance(d.Name, newEvent.Identifier, d.Cost));
             }
             List<TimingLocation> locations = database.GetTimingLocations(oldEvent.Identifier);
             foreach (TimingLocation loc in locations)
