@@ -27,7 +27,7 @@ namespace ChronoKeep.UI.MainPages
         private IDBInterface database;
         private Event theEvent;
         private List<TimingLocation> locations;
-        private List<Distance> divisions;
+        private List<Distance> distances;
 
         private bool UpdateTimingWorker = false;
 
@@ -53,8 +53,8 @@ namespace ChronoKeep.UI.MainPages
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 1, theEvent.StartWindow));
                 }
-                divisions = database.GetDistances(theEvent.Identifier);
-                divisions.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
+                distances = database.GetDistances(theEvent.Identifier);
+                distances.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
             }
             UpdateSegments();
         }
@@ -66,11 +66,11 @@ namespace ChronoKeep.UI.MainPages
                 return;
             }
             List<ListBoxItem> items = new List<ListBoxItem>();
-            if (theEvent.DivisionSpecificSegments)
+            if (theEvent.DistanceSpecificSegments)
             {
-                foreach (Distance div in divisions)
+                foreach (Distance d in distances)
                 {
-                    ADivisionSegmentHolder newHolder = new ADivisionSegmentHolder(theEvent, this, div, divisions, allSegments[div.Identifier], locations);
+                    ADistanceSegmentHolder newHolder = new ADistanceSegmentHolder(theEvent, this, d, distances, allSegments[d.Identifier], locations);
                     items.Add(newHolder);
                     foreach (ListBoxItem item in newHolder.SegmentItems)
                     {
@@ -80,7 +80,7 @@ namespace ChronoKeep.UI.MainPages
             }
             else
             {
-                ADivisionSegmentHolder newHolder = new ADivisionSegmentHolder(theEvent, this, null, divisions, allSegments[Constants.Timing.COMMON_SEGMENTS_DIVISIONID], locations);
+                ADistanceSegmentHolder newHolder = new ADistanceSegmentHolder(theEvent, this, null, distances, allSegments[Constants.Timing.COMMON_SEGMENTS_DISTANCEID], locations);
                 items.Add(newHolder);
                 foreach (ListBoxItem item in newHolder.SegmentItems)
                 {
@@ -94,28 +94,28 @@ namespace ChronoKeep.UI.MainPages
         {
             allSegments.Clear();
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
-            if (theEvent.DivisionSpecificSegments)
+            if (theEvent.DistanceSpecificSegments)
             {
                 foreach (Segment seg in segments)
                 {
-                    if (!allSegments.ContainsKey(seg.DivisionId))
+                    if (!allSegments.ContainsKey(seg.DistanceId))
                     {
-                        allSegments[seg.DivisionId] = new List<Segment>();
+                        allSegments[seg.DistanceId] = new List<Segment>();
                     }
-                    allSegments[seg.DivisionId].Add(seg);
+                    allSegments[seg.DistanceId].Add(seg);
                 }
-                foreach (Distance div in divisions)
+                foreach (Distance d in distances)
                 {
-                    if (!allSegments.ContainsKey(div.Identifier))
+                    if (!allSegments.ContainsKey(d.Identifier))
                     {
-                        allSegments[div.Identifier] = new List<Segment>();
+                        allSegments[d.Identifier] = new List<Segment>();
                     }
                 }
             }
             else
             {
-                allSegments[Constants.Timing.COMMON_SEGMENTS_DIVISIONID] = segments;
-                allSegments[Constants.Timing.COMMON_SEGMENTS_DIVISIONID].RemoveAll(x => x.DivisionId != Constants.Timing.COMMON_SEGMENTS_DIVISIONID);
+                allSegments[Constants.Timing.COMMON_SEGMENTS_DISTANCEID] = segments;
+                allSegments[Constants.Timing.COMMON_SEGMENTS_DISTANCEID].RemoveAll(x => x.DistanceId != Constants.Timing.COMMON_SEGMENTS_DISTANCEID);
             }
         }
 
@@ -133,7 +133,7 @@ namespace ChronoKeep.UI.MainPages
                     {
                         occurrence_error = true;
                     }
-                    Log.D("Division ID " + ((ASegment)seg).mySegment.DivisionId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                    Log.D("Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
                 }
             }
             if (occurrence_error)
@@ -153,7 +153,7 @@ namespace ChronoKeep.UI.MainPages
         {
             Log.D("Removing segment.");
             SegmentsToRemove.Add(mySegment);
-            allSegments[mySegment.DivisionId].Remove(mySegment);
+            allSegments[mySegment.DistanceId].Remove(mySegment);
             UpdateView();
         }
 
@@ -167,7 +167,7 @@ namespace ChronoKeep.UI.MainPages
                     ((ASegment)seg).UpdateSegment();
                     Segment thisSegment = ((ASegment)seg).mySegment;
                     segments.Add(thisSegment);
-                    Log.D("Division ID " + ((ASegment)seg).mySegment.DivisionId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                    Log.D("Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
                 }
             }
             SegmentsToAdd.RemoveAll(x => x.Occurrence >= theEvent.FinishMaxOccurrences);
@@ -211,7 +211,7 @@ namespace ChronoKeep.UI.MainPages
                         {
                             occurrence_error = true;
                         }
-                        Log.D("Division ID " + ((ASegment)seg).mySegment.DivisionId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                        Log.D("Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
                     }
                 }
                 if (occurrence_error)
@@ -227,35 +227,35 @@ namespace ChronoKeep.UI.MainPages
             }
         }
 
-        public void AddSegment(int divisionId, int occurrence)
+        public void AddSegment(int distanceId, int occurrence)
         {
             Log.D("Adding segment.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
-            Segment newSeg = new Segment(theEvent.Identifier, divisionId, Constants.Timing.LOCATION_FINISH, occurrence, 0.0, 0.0, Constants.Distances.MILES, "Finish " + occurrence);
+            Segment newSeg = new Segment(theEvent.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, occurrence, 0.0, 0.0, Constants.Distances.MILES, "Finish " + occurrence);
             SegmentsToAdd.Add(newSeg);
-            allSegments[divisionId].Add(newSeg);
+            allSegments[distanceId].Add(newSeg);
             UpdateView();
         }
 
-        public void CopyFromDivision(int intoDivision, int fromDivision)
+        public void CopyFromDistance(int intoDistance, int fromDistance)
         {
             Log.D("Copying segments.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
-            SegmentsToRemove.AddRange(allSegments[intoDivision]);
-            allSegments[intoDivision].Clear();
-            foreach (Segment seg in allSegments[fromDivision])
+            SegmentsToRemove.AddRange(allSegments[intoDistance]);
+            allSegments[intoDistance].Clear();
+            foreach (Segment seg in allSegments[fromDistance])
             {
                 Segment newSeg = new Segment(seg);
-                newSeg.DivisionId = intoDivision;
-                allSegments[intoDivision].Add(newSeg);
+                newSeg.DistanceId = intoDistance;
+                allSegments[intoDistance].Add(newSeg);
             }
-            SegmentsToAdd.AddRange(allSegments[intoDivision]);
+            SegmentsToAdd.AddRange(allSegments[intoDistance]);
             UpdateView();
         }
 
@@ -264,25 +264,25 @@ namespace ChronoKeep.UI.MainPages
             UpdateView();
         }
 
-        private class ADivisionSegmentHolder : ListBoxItem
+        private class ADistanceSegmentHolder : ListBoxItem
         {
             private SegmentsPage page;
-            private ComboBox copyFromDivision = null;
+            private ComboBox copyFromDistance = null;
             private int finish_occurrences;
-            private List<Distance> otherDivisions;
+            private List<Distance> otherDistances;
             public List<ListBoxItem> SegmentItems = new List<ListBoxItem>();
             private TextBox numAdd;
 
             //public ListBox segmentHolder;
-            public Distance division;
+            public Distance distance;
 
-            public ADivisionSegmentHolder(Event theEvent, SegmentsPage page, Distance division,
-                List<Distance> divisions, List<Segment> segments, List<TimingLocation> locations)
+            public ADistanceSegmentHolder(Event theEvent, SegmentsPage page, Distance distance,
+                List<Distance> distances, List<Segment> segments, List<TimingLocation> locations)
             {
-                this.division = division;
+                this.distance = distance;
                 this.page = page;
-                otherDivisions = new List<Distance>(divisions);
-                otherDivisions.RemoveAll(x => x.Identifier == (division == null ? -1 : division.Identifier));
+                otherDistances = new List<Distance>(distances);
+                otherDistances.RemoveAll(x => x.Identifier == (distance == null ? -1 : distance.Identifier));
                 StackPanel thePanel = new StackPanel();
                 this.Content = thePanel;
                 this.IsTabStop = false;
@@ -290,20 +290,20 @@ namespace ChronoKeep.UI.MainPages
                 namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
                 namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(85) });
-                if (division != null)
+                if (distance != null)
                 {
                     namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(250) });
                 }
-                Label divName = new Label()
+                Label distanceName = new Label()
                 {
-                    Content = division == null ? "All Divisions" : division.Name,
+                    Content = distance == null ? "All Distances" : distance.Name,
                     FontSize = 20,
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                divName.IsTabStop = false;
-                namePanel.Children.Add(divName);
-                Grid.SetColumn(divName, 0);
+                distanceName.IsTabStop = false;
+                namePanel.Children.Add(distanceName);
+                Grid.SetColumn(distanceName, 0);
                 numAdd = new TextBox
                 {
                     Text = "1",
@@ -333,7 +333,7 @@ namespace ChronoKeep.UI.MainPages
                 addButton.Click += new RoutedEventHandler(this.AddClick);
                 namePanel.Children.Add(addButton);
                 Grid.SetColumn(addButton, 2);
-                if (division != null)
+                if (distance != null)
                 {
                     DockPanel copyPanel = new DockPanel();
                     copyPanel.Children.Add(new Label()
@@ -346,7 +346,7 @@ namespace ChronoKeep.UI.MainPages
                         Margin = new Thickness(10, 0, 2, 0),
                         IsTabStop = false
                     });
-                    copyFromDivision = new ComboBox()
+                    copyFromDistance = new ComboBox()
                     {
                         FontSize = 14,
                         Height = 25,
@@ -354,22 +354,22 @@ namespace ChronoKeep.UI.MainPages
                         VerticalContentAlignment = VerticalAlignment.Center,
                         Margin = new Thickness(0, 0, 10, 0)
                     };
-                    copyFromDivision.Items.Add(new ComboBoxItem()
+                    copyFromDistance.Items.Add(new ComboBoxItem()
                     {
                         Content = "",
                         Uid = "-1"
                     });
-                    foreach (Distance div in otherDivisions)
+                    foreach (Distance d in otherDistances)
                     {
-                        copyFromDivision.Items.Add(new ComboBoxItem()
+                        copyFromDistance.Items.Add(new ComboBoxItem()
                         {
-                            Content = div.Name,
-                            Uid = div.Identifier.ToString()
+                            Content = d.Name,
+                            Uid = d.Identifier.ToString()
                         });
                     }
-                    copyFromDivision.SelectedIndex = 0;
-                    copyFromDivision.SelectionChanged += new SelectionChangedEventHandler(this.CopyFromDivisionSelected);
-                    copyPanel.Children.Add(copyFromDivision);
+                    copyFromDistance.SelectedIndex = 0;
+                    copyFromDistance.SelectionChanged += new SelectionChangedEventHandler(this.CopyFromDistanceSelected);
+                    copyPanel.Children.Add(copyFromDistance);
                     namePanel.Children.Add(copyPanel);
                     Grid.SetColumn(copyPanel, 3);
                 }
@@ -416,27 +416,27 @@ namespace ChronoKeep.UI.MainPages
             private void AddClick(Object sender, RoutedEventArgs e)
             {
                 Log.D("Add segment clicked.");
-                int selectedDiv = Constants.Timing.COMMON_SEGMENTS_DIVISIONID;
-                if (division != null)
+                int selectedDistance = Constants.Timing.COMMON_SEGMENTS_DISTANCEID;
+                if (distance != null)
                 {
-                    selectedDiv = division.Identifier;
+                    selectedDistance = distance.Identifier;
                 }
                 int count;
                 int.TryParse(numAdd.Text, out count);
                 for (int i = 0; i < count; i++)
                 {
-                    page.AddSegment(selectedDiv, finish_occurrences + i);
+                    page.AddSegment(selectedDistance, finish_occurrences + i);
                 }
             }
 
-            private void CopyFromDivisionSelected(Object sender, SelectionChangedEventArgs e)
+            private void CopyFromDistanceSelected(Object sender, SelectionChangedEventArgs e)
             {
-                Log.D("Copy from division changed.");
-                if (division == null || copyFromDivision.SelectedIndex < 1)
+                Log.D("Copy from distance changed.");
+                if (distance == null || copyFromDistance.SelectedIndex < 1)
                 {
                     return;
                 }
-                page.CopyFromDivision(division.Identifier, Convert.ToInt32(((ComboBoxItem)copyFromDivision.SelectedItem).Uid));
+                page.CopyFromDistance(distance.Identifier, Convert.ToInt32(((ComboBoxItem)copyFromDistance.SelectedItem).Uid));
             }
         }
 

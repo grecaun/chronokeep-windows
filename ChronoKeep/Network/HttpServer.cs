@@ -73,10 +73,10 @@ namespace ChronoKeep.Network
                 RunnerLoopsCompleted.Clear();
                 foreach (TimeResult result in finishResults)
                 {
-                    if (!maxLoops.ContainsKey(result.DivisionName)) {
-                        maxLoops[result.DivisionName] = result.Occurrence;
+                    if (!maxLoops.ContainsKey(result.DistanceName)) {
+                        maxLoops[result.DistanceName] = result.Occurrence;
                     }
-                    maxLoops[result.DivisionName] = result.Occurrence > maxLoops[result.DivisionName] ? result.Occurrence : maxLoops[result.DivisionName];
+                    maxLoops[result.DistanceName] = result.Occurrence > maxLoops[result.DistanceName] ? result.Occurrence : maxLoops[result.DistanceName];
                     LoopResults[(result.EventSpecificId, result.Occurrence)] = result;
                     if (!RunnerLoopsCompleted.ContainsKey(result.EventSpecificId))
                     {

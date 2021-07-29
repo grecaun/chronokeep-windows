@@ -14,11 +14,11 @@ namespace ChronoKeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO divisions (division_name, event_id, division_cost, division_distance, division_distance_unit," +
-                "division_start_location, division_start_within, division_finish_location, division_finish_occurance, division_wave, bib_group_number," +
-                "division_start_offset_seconds, division_start_offset_milliseconds, division_end_offset_seconds, division_early_start_offset_seconds, " +
-                "division_linked_id, division_type, division_ranking_order) " +
-                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@bgn,@soffsec,@soffmill,@endSec,@esdiff,@linked,@type,@rank)";
+            command.CommandText = "INSERT INTO distances (distance_name, event_id, distance_cost, distance_distance, distance_distance_unit," +
+                "distance_start_location, distance_start_within, distance_finish_location, distance_finish_occurance, distance_wave, " +
+                "distance_start_offset_seconds, distance_start_offset_milliseconds, distance_end_offset_seconds, " +
+                "distance_linked_id, distance_type, distance_ranking_order) " +
+                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@soffsec,@soffmill,@endSec,@linked,@type,@rank)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", d.Name),
                 new SQLiteParameter("@event_id", d.EventIdentifier),
@@ -30,12 +30,10 @@ namespace ChronoKeep.Database.SQLite
                 new SQLiteParameter("@finishloc", d.FinishLocation),
                 new SQLiteParameter("@finishocc", d.FinishOccurrence),
                 new SQLiteParameter("@wave", d.Wave),
-                new SQLiteParameter("@bgn", d.BibGroupNumber),
                 new SQLiteParameter("@soffsec", d.StartOffsetSeconds),
                 new SQLiteParameter("@soffmill", d.StartOffsetMilliseconds),
                 new SQLiteParameter("@endSec", d.EndSeconds),
-                new SQLiteParameter("@esdiff", d.EarlyStartOffsetSeconds),
-                new SQLiteParameter("@linked", d.LinkedDivision),
+                new SQLiteParameter("@linked", d.LinkedDistance),
                 new SQLiteParameter("@type", d.Type),
                 new SQLiteParameter("@rank", d.Ranking)
             });
@@ -47,7 +45,7 @@ namespace ChronoKeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = " DELETE FROM segments WHERE division_id=@id; DELETE FROM divisions WHERE division_id=@id";
+            command.CommandText = " DELETE FROM segments WHERE distance_id=@id; DELETE FROM distances WHERE distance_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@id", identifier) });
             command.ExecuteNonQuery();
@@ -57,12 +55,12 @@ namespace ChronoKeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE divisions SET division_name=@name, event_id=@event, division_cost=@cost, division_distance=@distance," +
-                "division_distance_unit=@unit, division_start_location=@startloc, division_start_within=@within, division_finish_location=@finishloc," +
-                "division_finish_occurance=@occurance, division_wave=@wave, bib_group_number=@bgn, division_start_offset_seconds=@soffsec, " +
-                "division_start_offset_milliseconds=@soffmill, division_end_offset_seconds=@endSec, division_early_start_offset_seconds=@esdiff," +
-                "division_linked_id=@linked, division_type=@type, division_ranking_order=@rank " +
-                "WHERE division_id=@id";
+            command.CommandText = "UPDATE distances SET distance_name=@name, event_id=@event, distance_cost=@cost, distance_distance=@distance," +
+                "distance_distance_unit=@unit, distance_start_location=@startloc, distance_start_within=@within, distance_finish_location=@finishloc," +
+                "distance_finish_occurance=@occurance, distance_wave=@wave, distance_start_offset_seconds=@soffsec, " +
+                "distance_start_offset_milliseconds=@soffmill, distance_end_offset_seconds=@endSec, " +
+                "distance_linked_id=@linked, distance_type=@type, distance_ranking_order=@rank " +
+                "WHERE distance_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", d.Name),
                 new SQLiteParameter("@event", d.EventIdentifier),
@@ -74,13 +72,11 @@ namespace ChronoKeep.Database.SQLite
                 new SQLiteParameter("@finishloc", d.FinishLocation),
                 new SQLiteParameter("@occurance", d.FinishOccurrence),
                 new SQLiteParameter("@wave", d.Wave),
-                new SQLiteParameter("@bgn", d.BibGroupNumber),
                 new SQLiteParameter("@soffsec", d.StartOffsetSeconds),
                 new SQLiteParameter("@soffmill", d.StartOffsetMilliseconds),
                 new SQLiteParameter("@id", d.Identifier),
                 new SQLiteParameter("@endSec", d.EndSeconds),
-                new SQLiteParameter("@esdiff", d.EarlyStartOffsetSeconds),
-                new SQLiteParameter("@linked", d.LinkedDivision),
+                new SQLiteParameter("@linked", d.LinkedDistance),
                 new SQLiteParameter("@type", d.Type),
                 new SQLiteParameter("@rank", d.Ranking)
             });
@@ -91,29 +87,27 @@ namespace ChronoKeep.Database.SQLite
         {
             List<Distance> output = new List<Distance>();
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM divisions";
+            command.CommandText = "SELECT * FROM distances";
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Distance(Convert.ToInt32(reader["division_id"]),
-                    reader["division_name"].ToString(),
+                output.Add(new Distance(Convert.ToInt32(reader["distance_id"]),
+                    reader["distance_name"].ToString(),
                     Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["division_cost"]),
-                    Convert.ToDouble(reader["division_distance"]),
-                    Convert.ToInt32(reader["division_distance_unit"]),
-                    Convert.ToInt32(reader["division_finish_location"]),
-                    Convert.ToInt32(reader["division_finish_occurance"]),
-                    Convert.ToInt32(reader["division_start_location"]),
-                    Convert.ToInt32(reader["division_start_within"]),
-                    Convert.ToInt32(reader["division_wave"]),
-                    Convert.ToInt32(reader["bib_group_number"]),
-                    Convert.ToInt32(reader["division_start_offset_seconds"]),
-                    Convert.ToInt32(reader["division_start_offset_milliseconds"]),
-                    Convert.ToInt32(reader["division_end_offset_seconds"]),
-                    Convert.ToInt32(reader["division_early_start_offset_seconds"]),
-                    Convert.ToInt32(reader["division_linked_id"]),
-                    Convert.ToInt32(reader["division_type"]),
-                    Convert.ToInt32(reader["division_ranking_order"])
+                    Convert.ToInt32(reader["distance_cost"]),
+                    Convert.ToDouble(reader["distance_distance"]),
+                    Convert.ToInt32(reader["distance_distance_unit"]),
+                    Convert.ToInt32(reader["distance_finish_location"]),
+                    Convert.ToInt32(reader["distance_finish_occurance"]),
+                    Convert.ToInt32(reader["distance_start_location"]),
+                    Convert.ToInt32(reader["distance_start_within"]),
+                    Convert.ToInt32(reader["distance_wave"]),
+                    Convert.ToInt32(reader["distance_start_offset_seconds"]),
+                    Convert.ToInt32(reader["distance_start_offset_milliseconds"]),
+                    Convert.ToInt32(reader["distance_end_offset_seconds"]),
+                    Convert.ToInt32(reader["distance_linked_id"]),
+                    Convert.ToInt32(reader["distance_type"]),
+                    Convert.ToInt32(reader["distance_ranking_order"])
                     ));
             }
             reader.Close();
@@ -128,29 +122,27 @@ namespace ChronoKeep.Database.SQLite
                 return output;
             }
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM divisions WHERE event_id = " + eventId;
+            command.CommandText = "SELECT * FROM distances WHERE event_id = " + eventId;
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Distance(Convert.ToInt32(reader["division_id"]),
-                    reader["division_name"].ToString(),
+                output.Add(new Distance(Convert.ToInt32(reader["distance_id"]),
+                    reader["distance_name"].ToString(),
                     Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["division_cost"]),
-                    Convert.ToDouble(reader["division_distance"]),
-                    Convert.ToInt32(reader["division_distance_unit"]),
-                    Convert.ToInt32(reader["division_finish_location"]),
-                    Convert.ToInt32(reader["division_finish_occurance"]),
-                    Convert.ToInt32(reader["division_start_location"]),
-                    Convert.ToInt32(reader["division_start_within"]),
-                    Convert.ToInt32(reader["division_wave"]),
-                    Convert.ToInt32(reader["bib_group_number"]),
-                    Convert.ToInt32(reader["division_start_offset_seconds"]),
-                    Convert.ToInt32(reader["division_start_offset_milliseconds"]),
-                    Convert.ToInt32(reader["division_end_offset_seconds"]),
-                    Convert.ToInt32(reader["division_early_start_offset_seconds"]),
-                    Convert.ToInt32(reader["division_linked_id"]),
-                    Convert.ToInt32(reader["division_type"]),
-                    Convert.ToInt32(reader["division_ranking_order"])
+                    Convert.ToInt32(reader["distance_cost"]),
+                    Convert.ToDouble(reader["distance_distance"]),
+                    Convert.ToInt32(reader["distance_distance_unit"]),
+                    Convert.ToInt32(reader["distance_finish_location"]),
+                    Convert.ToInt32(reader["distance_finish_occurance"]),
+                    Convert.ToInt32(reader["distance_start_location"]),
+                    Convert.ToInt32(reader["distance_start_within"]),
+                    Convert.ToInt32(reader["distance_wave"]),
+                    Convert.ToInt32(reader["distance_start_offset_seconds"]),
+                    Convert.ToInt32(reader["distance_start_offset_milliseconds"]),
+                    Convert.ToInt32(reader["distance_end_offset_seconds"]),
+                    Convert.ToInt32(reader["distance_linked_id"]),
+                    Convert.ToInt32(reader["distance_type"]),
+                    Convert.ToInt32(reader["distance_ranking_order"])
                     ));
             }
             reader.Close();
@@ -160,7 +152,7 @@ namespace ChronoKeep.Database.SQLite
         internal static int GetDistanceID(Distance d, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT division_id FROM divisions WHERE division_name=@name AND event_id=@eventid";
+            command.CommandText = "SELECT distance_id FROM distances WHERE distance_name=@name AND event_id=@eventid";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@name", d.Name),
@@ -170,7 +162,7 @@ namespace ChronoKeep.Database.SQLite
             int output = -1;
             if (reader.Read())
             {
-                output = Convert.ToInt32(reader["division_id"]);
+                output = Convert.ToInt32(reader["distance_id"]);
             }
             reader.Close();
             return output;
@@ -179,7 +171,7 @@ namespace ChronoKeep.Database.SQLite
         internal static Distance GetDistance(int distanceId, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM divisions WHERE division_id=@div";
+            command.CommandText = "SELECT * FROM distances WHERE distance_id=@div";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@div", distanceId)
@@ -188,25 +180,23 @@ namespace ChronoKeep.Database.SQLite
             Distance output = null;
             if (reader.Read())
             {
-                output = new Distance(Convert.ToInt32(reader["division_id"]),
-                    reader["division_name"].ToString(),
+                output = new Distance(Convert.ToInt32(reader["distance_id"]),
+                    reader["distance_name"].ToString(),
                     Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["division_cost"]),
-                    Convert.ToDouble(reader["division_distance"]),
-                    Convert.ToInt32(reader["division_distance_unit"]),
-                    Convert.ToInt32(reader["division_finish_location"]),
-                    Convert.ToInt32(reader["division_finish_occurance"]),
-                    Convert.ToInt32(reader["division_start_location"]),
-                    Convert.ToInt32(reader["division_start_within"]),
-                    Convert.ToInt32(reader["division_wave"]),
-                    Convert.ToInt32(reader["bib_group_number"]),
-                    Convert.ToInt32(reader["division_start_offset_seconds"]),
-                    Convert.ToInt32(reader["division_start_offset_milliseconds"]),
-                    Convert.ToInt32(reader["division_end_offset_seconds"]),
-                    Convert.ToInt32(reader["division_early_start_offset_seconds"]),
-                    Convert.ToInt32(reader["division_linked_id"]),
-                    Convert.ToInt32(reader["division_type"]),
-                    Convert.ToInt32(reader["division_ranking_order"])
+                    Convert.ToInt32(reader["distance_cost"]),
+                    Convert.ToDouble(reader["distance_distance"]),
+                    Convert.ToInt32(reader["distance_distance_unit"]),
+                    Convert.ToInt32(reader["distance_finish_location"]),
+                    Convert.ToInt32(reader["distance_finish_occurance"]),
+                    Convert.ToInt32(reader["distance_start_location"]),
+                    Convert.ToInt32(reader["distance_start_within"]),
+                    Convert.ToInt32(reader["distance_wave"]),
+                    Convert.ToInt32(reader["distance_start_offset_seconds"]),
+                    Convert.ToInt32(reader["distance_start_offset_milliseconds"]),
+                    Convert.ToInt32(reader["distance_end_offset_seconds"]),
+                    Convert.ToInt32(reader["distance_linked_id"]),
+                    Convert.ToInt32(reader["distance_type"]),
+                    Convert.ToInt32(reader["distance_ranking_order"])
                     );
             }
             reader.Close();
@@ -218,8 +208,8 @@ namespace ChronoKeep.Database.SQLite
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "UPDATE divisions SET division_start_offset_seconds=@seconds," +
-                    " division_start_offset_milliseconds=@milli WHERE event_id=@event AND division_wave=@wave;";
+                command.CommandText = "UPDATE distances SET distance_start_offset_seconds=@seconds," +
+                    " distance_start_offset_milliseconds=@milli WHERE event_id=@event AND distance_wave=@wave;";
                 command.Parameters.AddRange(new SQLiteParameter[]
                 {
                     new SQLiteParameter("@event", eventId),

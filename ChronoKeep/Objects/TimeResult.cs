@@ -15,7 +15,7 @@ namespace ChronoKeep
             ageGroupId, chipMilliseconds, status, early, uploaded, type;
         private long chipSeconds;
         private string time, locationName, segmentName, firstName, lastName,
-            divisionName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday, linked_division_name = "";
+            distanceName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday, linked_distance_name = "";
         DateTime systemTime;
 
         public static readonly Regex timeRegex = new Regex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})");
@@ -26,10 +26,10 @@ namespace ChronoKeep
 
         // database constructor
         public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
-            string time, int occurrence, string first, string last, string division, int bib,
+            string time, int occurrence, string first, string last, string distance, int bib,
             int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
             int agePlace, int genderPlace, string gender, int status, int early, string split,
-            int ageGroupId, string ageGroupName, int uploaded, string birthday, int type, string linked_division_name)
+            int ageGroupId, string ageGroupName, int uploaded, string birthday, int type, string linked_distance_name)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -57,7 +57,7 @@ namespace ChronoKeep
             }
             this.firstName = first;
             this.lastName = last;
-            this.divisionName = division;
+            this.distanceName = distance;
             this.bib = bib;
             this.unknownId = unknownId;
             this.readId = readId;
@@ -89,9 +89,9 @@ namespace ChronoKeep
             // Type is never set to 1 in a version of Chronokeep that uses type.
             if (this.early == 1)
             {
-                this.type = Constants.Timing.DIVISION_TYPE_EARLY;
+                this.type = Constants.Timing.DISTANCE_TYPE_EARLY;
             }
-            this.linked_division_name = linked_division_name;
+            this.linked_distance_name = linked_distance_name;
         }
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
@@ -159,9 +159,9 @@ namespace ChronoKeep
         public string First { get => firstName; set => firstName = value; }
         public string Last { get => lastName; set => lastName = value; }
         public string ParticipantName { get => String.Format("{0} {1}", firstName, lastName).Trim(); }
-        public string DivisionName { get => linked_division_name == "" ? divisionName : linked_division_name; }
-        public string RealDivisionName { get => divisionName; }
-        public string DivisionNameWithEarly { get => DivisionName + (early == 1 ? " Early" : ""); }
+        public string DistanceName { get => linked_distance_name == "" ? distanceName : linked_distance_name; }
+        public string RealDistanceName { get => distanceName; }
+        public string DistanceNameWithEarly { get => DistanceName + (early == 1 ? " Early" : ""); }
         public int Bib { get => bib; set => bib = value; }
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public string UnknownId { get => unknownId; set => unknownId = value; }
@@ -174,7 +174,7 @@ namespace ChronoKeep
         public string GenderPlaceStr { get => genderPlace < 1 ? "" : genderPlace.ToString(); }
         public int Type { get => type; set => type = value; }
         public string Identifier { get => unknownId; }
-        public string PrettyType { get => type == Constants.Timing.DIVISION_TYPE_EARLY ? "E" : type == Constants.Timing.DIVISION_TYPE_UNOFFICIAL ? "U" : ""; }
+        public string PrettyType { get => type == Constants.Timing.DISTANCE_TYPE_EARLY ? "E" : type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL ? "U" : ""; }
 
         public DateTime SystemTime { get => systemTime; set => systemTime = value; }
 
@@ -251,7 +251,7 @@ namespace ChronoKeep
         public static int CompareByAgeGroup(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
-            if (one.DivisionName.Equals(two.DivisionName))
+            if (one.DistanceName.Equals(two.DistanceName))
             {
                 if (one.AgeGroupId == two.AgeGroupId)
                 {
@@ -263,13 +263,13 @@ namespace ChronoKeep
                 }
                 return one.AgeGroupId.CompareTo(two.AgeGroupId);
             }
-            return one.DivisionName.CompareTo(two.DivisionName);
+            return one.DistanceName.CompareTo(two.DistanceName);
         }
 
         public static int CompareByGender(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
-            if (one.DivisionName.Equals(two.DivisionName))
+            if (one.DistanceName.Equals(two.DistanceName))
             {
                 if (one.Gender.Equals(two.Gender))
                 {
@@ -277,7 +277,7 @@ namespace ChronoKeep
                 }
                 return one.Gender.CompareTo(two.Gender);
             }
-            return one.DivisionName.CompareTo(two.DivisionName);
+            return one.DistanceName.CompareTo(two.DistanceName);
         }
 
         public static int CompareBySystemTime(TimeResult one, TimeResult two)
@@ -296,14 +296,14 @@ namespace ChronoKeep
             return one.Bib.CompareTo(two.Bib);
         }
 
-        public static int CompareByDivision(TimeResult one, TimeResult two)
+        public static int CompareByDistance(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
-            if (one.DivisionName.Equals(two.DivisionName))
+            if (one.DistanceName.Equals(two.DistanceName))
             {
                 return one.systemTime.CompareTo(two.systemTime);
             }
-            return one.DivisionName.CompareTo(two.DivisionName);
+            return one.DistanceName.CompareTo(two.DistanceName);
         }
 
         public int CompareChip(TimeResult other)
@@ -316,10 +316,10 @@ namespace ChronoKeep
             return this.chipSeconds.CompareTo(other.chipSeconds);
         }
 
-        public static int CompareByDivisionChip(TimeResult one, TimeResult two)
+        public static int CompareByDistanceChip(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
-            if (one.DivisionName.Equals(two.DivisionName))
+            if (one.DistanceName.Equals(two.DistanceName))
             {
                 if (one.chipSeconds == two.chipSeconds)
                 {
@@ -327,13 +327,13 @@ namespace ChronoKeep
                 }
                 return one.chipSeconds.CompareTo(two.chipSeconds);
             }
-            return one.DivisionName.CompareTo(two.DivisionName);
+            return one.DistanceName.CompareTo(two.DistanceName);
         }
 
-        public static int CompareByDivisionPlace(TimeResult one, TimeResult two)
+        public static int CompareByDistancePlace(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
-            if (one.DivisionName.Equals(two.DivisionName))
+            if (one.DistanceName.Equals(two.DistanceName))
             {
                 if (one.Place == two.Place)
                 {
@@ -341,27 +341,27 @@ namespace ChronoKeep
                 }
                 return one.Place.CompareTo(two.Place);
             }
-            return one.DivisionName.CompareTo(two.DivisionName);
+            return one.DistanceName.CompareTo(two.DistanceName);
         }
 
-        public static int CompareByDivisionGenderPlace(TimeResult one, TimeResult two)
+        public static int CompareByDistanceGenderPlace(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
-            if (one.DivisionName.Equals(two.DivisionName))
+            if (one.DistanceName.Equals(two.DistanceName))
             {
                 return one.GenderPlace.CompareTo(two.GenderPlace);
             }
-            return one.DivisionName.CompareTo(two.DivisionName);
+            return one.DistanceName.CompareTo(two.DistanceName);
         }
 
-        public static int CompareByDivisionAgeGroupPlace(TimeResult one, TimeResult two)
+        public static int CompareByDistanceAgeGroupPlace(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
-            if (one.DivisionName.Equals(two.DivisionName))
+            if (one.DistanceName.Equals(two.DistanceName))
             {
                 return one.AgePlace.CompareTo(two.AgePlace);
             }
-            return one.DivisionName.CompareTo(two.DivisionName);
+            return one.DistanceName.CompareTo(two.DistanceName);
         }
 
         public static bool IsNotKnown(TimeResult one)

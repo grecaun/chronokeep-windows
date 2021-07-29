@@ -11,7 +11,7 @@ namespace ChronoKeep.IO.HtmlTemplates
     public partial class HtmlResultsTemplate
     {
         private Event theEvent;
-        private Dictionary<string, List<TimeResult>> divisionResults = new Dictionary<string, List<TimeResult>>();
+        private Dictionary<string, List<TimeResult>> distanceResults = new Dictionary<string, List<TimeResult>>();
         private Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
 
         public HtmlResultsTemplate(Event theEvent,
@@ -20,14 +20,14 @@ namespace ChronoKeep.IO.HtmlTemplates
         {
             this.theEvent = theEvent;
             resultList.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
-            resultList.Sort(TimeResult.CompareByDivisionPlace);
+            resultList.Sort(TimeResult.CompareByDistancePlace);
             foreach (TimeResult result in resultList)
             {
-                if (!divisionResults.ContainsKey(result.DivisionName))
+                if (!distanceResults.ContainsKey(result.DistanceName))
                 {
-                    divisionResults[result.DivisionName] = new List<TimeResult>();
+                    distanceResults[result.DistanceName] = new List<TimeResult>();
                 }
-                divisionResults[result.DivisionName].Add(result);
+                distanceResults[result.DistanceName].Add(result);
             }
             this.participantDictionary = participantDictionary;
         }
@@ -36,7 +36,7 @@ namespace ChronoKeep.IO.HtmlTemplates
     public partial class HtmlResultsTemplateTime
     {
         private Event theEvent;
-        private Dictionary<string, List<TimeResult>> divisionResults = new Dictionary<string, List<TimeResult>>();
+        private Dictionary<string, List<TimeResult>> distanceResults = new Dictionary<string, List<TimeResult>>();
         private Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
         private Dictionary<string, int> maxLoops = new Dictionary<string, int>();
         private Dictionary<(int, int), TimeResult> LoopResults = new Dictionary<(int, int), TimeResult>();
@@ -58,14 +58,14 @@ namespace ChronoKeep.IO.HtmlTemplates
             this.theEvent = theEvent;
             finalLoopList.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
             finalLoopList.RemoveAll(x => !RunnerLoopsCompleted.ContainsKey(x.EventSpecificId) || RunnerLoopsCompleted[x.EventSpecificId] != x.Occurrence);
-            finalLoopList.Sort(TimeResult.CompareByDivisionPlace);
+            finalLoopList.Sort(TimeResult.CompareByDistancePlace);
             foreach (TimeResult result in finalLoopList)
             {
-                if (!divisionResults.ContainsKey(result.DivisionName))
+                if (!distanceResults.ContainsKey(result.DistanceName))
                 {
-                    divisionResults[result.DivisionName] = new List<TimeResult>();
+                    distanceResults[result.DistanceName] = new List<TimeResult>();
                 }
-                divisionResults[result.DivisionName].Add(result);
+                distanceResults[result.DistanceName].Add(result);
             }
             this.LoopResults = LoopResults;
             this.participantDictionary = participantDictionary;

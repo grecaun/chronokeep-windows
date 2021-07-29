@@ -13,12 +13,12 @@ namespace ChronoKeep.Database.SQLite
         internal static void AddAgeGroup(AgeGroup group, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO age_groups (event_id, division_id, start_age, end_age)" +
-                " VALUES (@event, @division, @start, @end);";
+            command.CommandText = "INSERT INTO age_groups (event_id, distance_id, start_age, end_age)" +
+                " VALUES (@event, @distance, @start, @end);";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                     new SQLiteParameter("@event", group.EventId),
-                    new SQLiteParameter("@division", group.DivisionId),
+                    new SQLiteParameter("@distance", group.DistanceId),
                     new SQLiteParameter("@start", group.StartAge),
                     new SQLiteParameter("@end", group.EndAge)
             });
@@ -30,12 +30,12 @@ namespace ChronoKeep.Database.SQLite
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "UPDATE age_groups SET event_id=@event, division_id=@division, " +
+                command.CommandText = "UPDATE age_groups SET event_id=@event, distance_id=@distance, " +
                     "start_age=@start, end_age=@end WHERE group_id=@group;";
                 command.Parameters.AddRange(new SQLiteParameter[]
                 {
                     new SQLiteParameter("@event", group.EventId),
-                    new SQLiteParameter("@division", group.DivisionId),
+                    new SQLiteParameter("@distance", group.DistanceId),
                     new SQLiteParameter("@start", group.StartAge),
                     new SQLiteParameter("@end", group.EndAge),
                     new SQLiteParameter("@group", group.GroupId)
@@ -60,16 +60,16 @@ namespace ChronoKeep.Database.SQLite
             }
         }
 
-        internal static void RemoveAgeGroups(int eventId, int divisionId, SQLiteConnection connection)
+        internal static void RemoveAgeGroups(int eventId, int distanceId, SQLiteConnection connection)
         {
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM age_groups WHERE event_id=@event AND division_id=@division;";
+                command.CommandText = "DELETE FROM age_groups WHERE event_id=@event AND distance_id=@distance;";
                 command.Parameters.AddRange(new SQLiteParameter[]
                 {
                     new SQLiteParameter("@event", eventId),
-                    new SQLiteParameter("@division", divisionId),
+                    new SQLiteParameter("@distance", distanceId),
                 });
                 command.ExecuteNonQuery();
                 transaction.Commit();
@@ -107,27 +107,27 @@ namespace ChronoKeep.Database.SQLite
             while (reader.Read())
             {
                 output.Add(new AgeGroup(Convert.ToInt32(reader["group_id"]), Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["division_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"]), Convert.ToInt32(reader["last_group"])));
+                    Convert.ToInt32(reader["distance_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"]), Convert.ToInt32(reader["last_group"])));
             }
             reader.Close();
             return output;
         }
 
-        internal static List<AgeGroup> GetAgeGroups(int eventId, int divisionId, SQLiteConnection connection)
+        internal static List<AgeGroup> GetAgeGroups(int eventId, int distanceId, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM age_groups WHERE event_id=@event AND division_id=@division;";
+            command.CommandText = "SELECT * FROM age_groups WHERE event_id=@event AND distance_id=@distance;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                     new SQLiteParameter("@event", eventId),
-                    new SQLiteParameter("@division", divisionId)
+                    new SQLiteParameter("@distance", distanceId)
             });
             SQLiteDataReader reader = command.ExecuteReader();
             List<AgeGroup> output = new List<AgeGroup>();
             while (reader.Read())
             {
                 output.Add(new AgeGroup(Convert.ToInt32(reader["group_id"]), Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["division_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"]),
+                    Convert.ToInt32(reader["distance_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"]),
                     Convert.ToInt32(reader["last_group"])));
             }
             reader.Close();

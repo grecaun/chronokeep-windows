@@ -9,34 +9,34 @@ namespace ChronoKeep.Objects
 {
     public class AgeGroup : IEquatable<AgeGroup>, IComparable<AgeGroup>
     {
-        private int group_id, event_id, division_id, start_age, end_age, last_group = Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
+        private int group_id, event_id, distance_id, start_age, end_age, last_group = Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
 
         private static Dictionary<(int, int), AgeGroup> CurrentGroups = null;
         private static Dictionary<int, AgeGroup> LastAgeGroup = null;
         private static Mutex AGMutex = new Mutex();
 
-        public AgeGroup(int eventId, int divisionId, int startAge, int endAge)
+        public AgeGroup(int eventId, int distanceId, int startAge, int endAge)
         {
             this.group_id = -1;
             this.event_id = eventId;
-            this.division_id = divisionId;
+            this.distance_id = distanceId;
             this.start_age = startAge;
             this.end_age = endAge;
             this.last_group = Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
         }
 
-        public AgeGroup(int groupId, int eventId, int divisionId, int startAge, int endAge, int last_group)
+        public AgeGroup(int groupId, int eventId, int distanceId, int startAge, int endAge, int last_group)
         {
             this.group_id = groupId;
             this.event_id = eventId;
-            this.division_id = divisionId;
+            this.distance_id = distanceId;
             this.start_age = startAge;
             this.end_age = endAge;
             this.last_group = last_group;
         }
 
         public int EventId { get => event_id; set => event_id = value; }
-        public int DivisionId { get => division_id; set => division_id = value; }
+        public int DistanceId { get => distance_id; set => distance_id = value; }
         public int StartAge { get => start_age; set => start_age = value; }
         public int EndAge { get => end_age; set => end_age = value; }
         public int GroupId { get => group_id; set => group_id = value; }
@@ -51,9 +51,9 @@ namespace ChronoKeep.Objects
             {
                 return this.event_id.CompareTo(other.event_id);
             }
-            if (this.division_id != other.division_id)
+            if (this.distance_id != other.distance_id)
             {
-                return this.division_id.CompareTo(other.division_id);
+                return this.distance_id.CompareTo(other.distance_id);
             }
             return this.start_age.CompareTo(other.start_age);
         }
@@ -91,18 +91,18 @@ namespace ChronoKeep.Objects
             {
                 for (int i = group.StartAge; i <= group.EndAge; i++)
                 {
-                    CurrentGroups[(group.DivisionId, i)] = group;
+                    CurrentGroups[(group.DistanceId, i)] = group;
                 }
-                if (!LastAgeGroup.ContainsKey(group.DivisionId) || LastAgeGroup[group.DivisionId].StartAge < group.StartAge)
+                if (!LastAgeGroup.ContainsKey(group.DistanceId) || LastAgeGroup[group.DistanceId].StartAge < group.StartAge)
                 {
-                    LastAgeGroup[group.DivisionId] = group;
+                    LastAgeGroup[group.DistanceId] = group;
                 }
             }
         }
 
         public bool Equals(AgeGroup that)
         {
-            return this.event_id == that.event_id && this.division_id == that.division_id && this.start_age == that.start_age && this.end_age == that.start_age;
+            return this.event_id == that.event_id && this.distance_id == that.distance_id && this.start_age == that.start_age && this.end_age == that.start_age;
         }
     }
 }

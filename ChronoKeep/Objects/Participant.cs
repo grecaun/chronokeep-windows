@@ -503,7 +503,7 @@ namespace ChronoKeep
         // Event Specific binding stuffs
         public int EventIdentifier { get => eventSpecific.EventIdentifier; }
         public int Bib { get => eventSpecific.Bib; }
-        public string Division { get => eventSpecific.DivisionName; }
+        public string Distance { get => eventSpecific.DistanceName; }
         public string CheckedIn { get => eventSpecific.CheckedIn == 0 ? "No" : "Yes"; }
         public bool IsCheckedIn { get => EventSpecific.CheckedIn == 1; }
         public string Owes { get => eventSpecific.Owes; }
@@ -534,7 +534,7 @@ namespace ChronoKeep
         public int CompareTo(Participant other)
         {
             if (other == null) return 1;
-            if (this.EventSpecific.DivisionIdentifier == other.EventSpecific.DivisionIdentifier)
+            if (this.EventSpecific.DistanceIdentifier == other.EventSpecific.DistanceIdentifier)
             {
                 if (this.LastName == other.LastName)
                 {
@@ -542,7 +542,7 @@ namespace ChronoKeep
                 }
                 return this.LastName.CompareTo(other.LastName);
             }
-            return this.EventSpecific.DivisionName.CompareTo(other.EventSpecific.DivisionName);
+            return this.EventSpecific.DistanceName.CompareTo(other.EventSpecific.DistanceName);
         }
 
         public bool Equals(Participant other)
@@ -592,7 +592,7 @@ namespace ChronoKeep
             return numYears;
         }
 
-        public static int CompareByDivision(Participant one, Participant two)
+        public static int CompareByDistance(Participant one, Participant two)
         {
             if (two == null || one == null) return 1;
             return one.CompareTo(two);

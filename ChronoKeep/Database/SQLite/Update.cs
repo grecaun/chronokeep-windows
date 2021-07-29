@@ -15,8 +15,10 @@ namespace ChronoKeep.Database.SQLite
             throw new InvalidDatabaseVersion(dbVersion, maxVersion);
         }
 
-        internal static void UpdateDatabase(int oldversion, int newversion, SQLiteConnection connection)
+        internal static void UpdateDatabase(int oldversion, int newversion, string connectionInfo)
         {
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             using (var transaction = connection.BeginTransaction())
             {
@@ -980,9 +982,215 @@ namespace ChronoKeep.Database.SQLite
                             "ALTER TABLE divisions ADD COLUMN division_ranking_order INTEGER NOT NULL DEFAULT 0;" +
                             "UPDATE settings SET value='44' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
                         command.ExecuteNonQuery();
+                        goto case 44;
+                    case 44:
+                        command = connection.CreateCommand();
+                        command.CommandText = "DROP TABLE dayof_participant; DROP TABLE kiosk; DROP TABLE eventspecific_apparel; " +
+                            "DROP TABLE changes; DROP TABLE bib_group; DROP TABLE available_bibs; " +
+                            "CREATE TABLE IF NOT EXISTS distances (" +
+                                "distance_id INTEGER PRIMARY KEY," +
+                                "distance_name VARCHAR(100) NOT NULL," +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "distance_cost INTEGER DEFAULT 7000," +
+                                "distance_value DECIMAL(10,2) DEFAULT 0.0," +
+                                "distance_unit INTEGER DEFAULT 0," +
+                                "distance_start_location INTEGER DEFAULT -2," +
+                                "distance_start_within INTEGER DEFAULT -1," +
+                                "distance_finish_location INTEGER DEFAULT -1," +
+                                "distance_finish_occurance INTEGER DEFAULT 1," +
+                                "distance_wave INTEGER NOT NULL DEFAULT 1," +
+                                "distance_start_offset_seconds INTEGER NOT NULL DEFAULT 0," +
+                                "distance_start_offset_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                                "distance_end_offset_seconds INTEGER NOT NULL DEFAULT 0," +
+                                "distance_linked_id INTEGER NOT NULL REFERENCES divisions(distance_id) DEFAULT -1," +
+                                "distance_type INTEGER NOT NULL DEFAULT 0," +
+                                "distance_ranking_order INTEGER NOT NULL DEFAULT 0, " +
+                                "UNIQUE (distance_name, event_id) ON CONFLICT IGNORE" +
+                                ");" +
+                            "INSERT INTO distances SELECT division_id, division_name, event_id, division_cost, division_distance, division_distance_unit, " +
+                                "division_start_location, division_start_within, division_finish_location, division_finish_occurance, division_wave, " +
+                                "division_start_offset_seconds, division_start_offset_milliseconds, division_end_offset_seconds, division_linked_id, " +
+                                "division_type, division_ranking_order FROM divisions;" +
+                            "DROP TABLE divisions; " +
+                            "ALTER TABLE age_groups RENAME TO age_groups_old; " +
+                            "CREATE TABLE IF NOT EXISTS age_groups (" +
+                                "group_id INTEGER PRIMARY KEY," +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "distance_id INTEGER NOT NULL DEFAULT -1," +
+                                "start_age INTEGER NOT NULL," +
+                                "end_age INTEGER NOT NULL," +
+                                "last_group INTEGER DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + " NOT NULL);" +
+                            "INSERT INTO age_groups SELECT * FROM age_groups_old;" +
+                            "DROP TABLE age_groups_old; " +
+                            "ALTER TABLE segments RENAME TO segments_old;" +
+                            "CREATE TABLE IF NOT EXISTS segments (" +
+                                "segment_id INTEGER PRIMARY KEY," +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "distance_id INTEGER DEFAULT -1," +
+                                "location_id INTEGER DEFAULT -1," +
+                                "location_occurance INTEGER DEFAULT 1," +
+                                "name VARCHAR DEFAULT ''," +
+                                "distance_segment DECIMAL (10,2) DEFAULT 0.0," +
+                                "distance_cumulative DECIMAL (10,2) DEFAULT 0.0," +
+                                "distance_unit INTEGER DEFAULT 0," +
+                                "UNIQUE (event_id, distance_id, location_id, location_occurance) ON CONFLICT IGNORE" +
+                                "); " +
+                            "INSERT INTO segments SELECT * FROM segments_old; " +
+                            "DROP TABLE segments_old; " +
+                            "ALTER TABLE eventspecific RENAME TO eventspecific_old; " +
+                            "CREATE TABLE IF NOT EXISTS eventspecific (" +
+                                "eventspecific_id INTEGER PRIMARY KEY," +
+                                "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "distance_id INTEGER NOT NULL REFERENCES distance(distance_id)," +
+                                "eventspecific_bib INTEGER," +
+                                "eventspecific_checkedin INTEGER DEFAULT 0," +
+                                "eventspecific_comments VARCHAR," +
+                                "eventspecific_owes VARCHAR(50)," +
+                                "eventspecific_other VARCHAR," +
+                                "eventspecific_earlystart INTEGER DEFAULT 0," +
+                                "eventspecific_next_year INTEGER DEFAULT 0," +
+                                "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
+                                "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + "," +
+                                "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
+                                "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110'," +
+                                "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE," +
+                                "UNIQUE (event_id, eventspecific_bib) ON CONFLICT REPLACE" +
+                                ");" +
+                            "INSERT INTO eventspecific SELECT * FROM eventspecific_old;" +
+                            "DROP TABLE eventspecific_old;" +
+                            "ALTER TABLE events RENAME TO events_old;" +
+                            "CREATE TABLE IF NOT EXISTS events (" +
+                                "event_id INTEGER PRIMARY KEY," +
+                                "event_name VARCHAR(100) NOT NULL," +
+                                "event_date VARCHAR(15) NOT NULL," +
+                                "event_yearcode VARCHAR(10) NOT NULL DEFAULT ''," +
+                                "event_shirt_optional INTEGER DEFAULT 1," +
+                                "event_shirt_price INTEGER DEFAULT 0," +
+                                "event_rank_by_gun INTEGER DEFAULT 1," +
+                                "event_common_age_groups INTEGER DEFAULT 1," +
+                                "event_common_start_finish INTEGER DEFAULT 1," +
+                                "event_distance_specific_segments INTEGER DEFAULT 0," +
+                                "event_start_time_seconds INTEGER NOT NULL DEFAULT -1," +
+                                "event_start_time_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                                "event_finish_max_occurances INTEGER NOT NULL DEFAULT 1," +
+                                "event_finish_ignore_within INTEGER NOT NULL DEFAULT 0," +
+                                "event_start_window INTEGER NOT NULL DEFAULT -1," +
+                                "event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Settings.TIMING_RFID + "'," +
+                                "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
+                                "api_id INTEGER REFERENCES results_api(api_id) NOT NULL DEFAULT -1," +
+                                "api_event_id VARCHAR(200) NOT NULL DEFAULT ''," +
+                                "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
+                                ");" +
+                            "INSERT INTO events SELECT event_id, event_name, event_date, event_yearcode, event_shirt_optional," +
+                                "event_shirt_price, event_rank_by_gun, event_common_age_groups, event_common_start_finish, event_division_specific_segments," +
+                                "event_start_time_seconds, event_start_time_milliseconds, event_finish_max_occurances, event_finish_ignore_within," +
+                                "event_start_window, event_timing_system, event_type, api_id, api_event_id FROM events_old;" +
+                            "DROP TABLE events_old;" + // This next line creates linked divisions that are early start divisions if there are people set to early start
+                            "INSERT INTO distances (distance_name, event_id, distance_cost, distance_value, distance_unit, distance_start_location, " +
+                                "distance_start_within, distance_finish_location, distance_finish_occurance, distance_wave, distance_start_offset_seconds, " +
+                                "distance_start_offset_milliseconds, distance_end_offset_seconds, distance_linked_id, distance_type, distance_ranking_order) " +
+                                "SELECT b.distance_name || ' Early Created' AS new_distance_name, b.event_id, b.distance_cost, b.distance_value, " +
+                                    "b.distance_unit, b.distance_start_location, b.distance_start_within, b.distance_finish_location, " +
+                                    "b.distance_finish_occurance, b.distance_wave, b.distance_start_offset_seconds, b.distance_start_offset_milliseconds, " +
+                                    "b.distance_end_offset_seconds, b.distance_id, " + Constants.Timing.DISTANCE_TYPE_EARLY + ", 1 " +
+                                    "FROM distances AS b JOIN " +
+                                        "(SELECT DISTINCT(d.distance_id) AS unique_distance_id " +
+                                            "FROM distances AS d JOIN eventspecific AS e ON e.distance_id=d.distance_id " +
+                                            "WHERE e.eventspecific_earlystart != 0) " +
+                                        "ON unique_distance_id=b.distance_id;" +
+                            "UPDATE settings SET value='44' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
+                        command.ExecuteNonQuery();
+                        // Get all Distances and make a dictionary based on names.
+                        command = connection.CreateCommand();
+                        command.CommandText = "SELECT * FROM distances;";
+                        reader = command.ExecuteReader();
+                        List<Distance> distances = new List<Distance>();
+                        while (reader.Read())
+                        {
+                            distances.Add(new Distance(Convert.ToInt32(reader["distance_id"]),
+                                reader["distance_name"].ToString(),
+                                Convert.ToInt32(reader["event_id"]),
+                                Convert.ToInt32(reader["distance_cost"]),
+                                Convert.ToDouble(reader["distance_value"]),
+                                Convert.ToInt32(reader["distance_unit"]),
+                                Convert.ToInt32(reader["distance_finish_location"]),
+                                Convert.ToInt32(reader["distance_finish_occurance"]),
+                                Convert.ToInt32(reader["distance_start_location"]),
+                                Convert.ToInt32(reader["distance_start_within"]),
+                                Convert.ToInt32(reader["distance_wave"]),
+                                Convert.ToInt32(reader["distance_start_offset_seconds"]),
+                                Convert.ToInt32(reader["distance_start_offset_milliseconds"]),
+                                Convert.ToInt32(reader["distance_end_offset_seconds"]),
+                                Convert.ToInt32(reader["distance_linked_id"]),
+                                Convert.ToInt32(reader["distance_type"]),
+                                Convert.ToInt32(reader["distance_ranking_order"])
+                                ));
+                        }
+                        reader.Close();
+                        // (string, int) is a key for the Distance Name and Linked Division, we need to find a
+                        // DISTANCE NAME + " Early Created" with the right linked division ID;
+                        Dictionary<(string, int), Distance> distDict = new Dictionary<(string, int), Distance>();
+                        foreach (Distance d in distances)
+                        {
+                            distDict[(d.Name, d.LinkedDistance)] = d;
+                        }
+                        // Get all participants and update those who're early start
+                        command = connection.CreateCommand();
+                        command.CommandText = "SELECT * FROM eventspecific e JOIN participants p ON e.participant_id=p.participant_id " +
+                            "JOIN distances d ON d.distance_id=e.distance_id WHERE eventspecific_earlystart != 0;";
+                        reader = command.ExecuteReader();
+                        List<Participant> people = new List<Participant>();
+                        while (reader.Read())
+                        {
+                            people.Add(new Participant(
+                                Convert.ToInt32(reader["participant_id"]),
+                                reader["participant_first"].ToString(),
+                                reader["participant_last"].ToString(),
+                                reader["participant_street"].ToString(),
+                                reader["participant_city"].ToString(),
+                                reader["participant_state"].ToString(),
+                                reader["participant_zip"].ToString(),
+                                reader["participant_birthday"].ToString(),
+                                new EventSpecific(
+                                    Convert.ToInt32(reader["eventspecific_id"]),
+                                    Convert.ToInt32(reader["event_id"]),
+                                    Convert.ToInt32(reader["distance_id"]),
+                                    reader["distance_name"].ToString(),
+                                    Convert.ToInt32(reader["eventspecific_bib"]),
+                                    Convert.ToInt32(reader["eventspecific_checkedin"]),
+                                    reader["eventspecific_comments"].ToString(),
+                                    reader["eventspecific_owes"].ToString(),
+                                    reader["eventspecific_other"].ToString(),
+                                    Convert.ToInt32(reader["eventspecific_earlystart"]),
+                                    Convert.ToInt32(reader["eventspecific_next_year"]),
+                                    Convert.ToInt32(reader["eventspecific_status"]),
+                                    reader["eventspecific_age_group_name"].ToString(),
+                                    Convert.ToInt32(reader["eventspecific_age_group_id"])
+                                    ),
+                                reader["participant_email"].ToString(),
+                                reader["participant_mobile"].ToString(),
+                                reader["participant_parent"].ToString(),
+                                reader["participant_country"].ToString(),
+                                reader["participant_street2"].ToString(),
+                                reader["participant_gender"].ToString(),
+                                reader["emergencycontact_name"].ToString(),
+                                reader["emergencycontact_phone"].ToString()
+                                ));
+                        }
+                        // Go through each participant and update their division/distance.
+                        foreach (Participant p in people)
+                        {
+                            if (distDict.ContainsKey((p.EventSpecific.DistanceName + " Early Created", p.EventSpecific.DistanceIdentifier)))
+                            {
+                                p.EventSpecific.DistanceIdentifier = distDict[(p.EventSpecific.DistanceName + " Early Created", p.EventSpecific.DistanceIdentifier)].Identifier;
+                                Participants.UpdateParticipant(p, connection);
+                            }
+                        }
                         break;
                 }
                 transaction.Commit();
+                connection.Close();
             }
         }
     }

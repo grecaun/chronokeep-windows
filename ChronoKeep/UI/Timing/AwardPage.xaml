@@ -10,8 +10,8 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <StackPanel HorizontalAlignment="Center">
-            <Label Content="Divisions" FontSize="16" HorizontalAlignment="Center" />
-            <ListBox Name="DivisionsBox" Height="Auto" FontSize="12" SelectionMode="Extended">
+            <Label Content="Distances" FontSize="16" HorizontalAlignment="Center" />
+            <ListBox Name="DistancesBox" Height="Auto" FontSize="12" SelectionMode="Extended">
                 <ListBoxItem Content="All" IsSelected="True"/>
             </ListBox>
             <Label Content="Overall" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,5"/>

@@ -39,7 +39,7 @@ namespace ChronoKeep.IO
             style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
             style.ParagraphFormat.SpaceBefore = 1;
 
-            style = document.Styles.AddStyle("DivisionName", "Heading2");
+            style = document.Styles.AddStyle("DistanceName", "Heading2");
             style.ParagraphFormat.OutlineLevel = OutlineLevel.Level1;
             style.ParagraphFormat.SpaceBefore = Unit.FromMillimeter(2.5);
 

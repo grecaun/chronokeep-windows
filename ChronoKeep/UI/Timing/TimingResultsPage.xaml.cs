@@ -101,9 +101,9 @@ namespace ChronoKeep.UI.Timing
             {
                 newResults.Sort(TimeResult.CompareByGunTime);
             }
-            else if (sortType == SortType.DIVISION)
+            else if (sortType == SortType.DISTANCE)
             {
-                newResults.Sort(TimeResult.CompareByDivision);
+                newResults.Sort(TimeResult.CompareByDistance);
             }
             else if (sortType == SortType.AGEGROUP)
             {
@@ -115,7 +115,7 @@ namespace ChronoKeep.UI.Timing
             }
             else if (sortType == SortType.PLACE)
             {
-                newResults.Sort(TimeResult.CompareByDivisionPlace);
+                newResults.Sort(TimeResult.CompareByDistancePlace);
             }
             else
             {

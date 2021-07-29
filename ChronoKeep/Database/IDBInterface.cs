@@ -39,9 +39,9 @@ namespace ChronoKeep
         Event GetEvent(int id);
         List<Event> GetEvents();
 
-        // Division Functions
+        // Distance Functions
         void AddDistance(Distance div);
-        void AddDistances(List<Distance> divisions);
+        void AddDistances(List<Distance> distances);
         void RemoveDistance(int identifier);
         void RemoveDistance(Distance div);
         void UpdateDistance(Distance div);
@@ -86,7 +86,7 @@ namespace ChronoKeep
         int GetParticipantID(Participant person);
         List<Participant> GetParticipants();
         List<Participant> GetParticipants(int eventId);
-        List<Participant> GetParticipants(int eventId, int divisionId);
+        List<Participant> GetParticipants(int eventId, int distanceId);
         Participant GetParticipant(int eventIdentifier, int identifier);
         Participant GetParticipant(int eventIdentifier, Participant unknown);
         Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId);
@@ -115,7 +115,7 @@ namespace ChronoKeep
 
         // Timing analytics... sort of
         List<DistanceStat> GetDistanceStats(int eventId);
-        Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int divisionId);
+        Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int distanceId);
 
         // Reset functions for ChipReads/TimeResults
         void ResetTimingResultsEvent(int eventId);                      // event based reset
@@ -138,10 +138,10 @@ namespace ChronoKeep
         void AddAgeGroups(List<AgeGroup> groups);
         void UpdateAgeGroup(AgeGroup group);
         void RemoveAgeGroup(AgeGroup group);
-        void RemoveAgeGroups(int eventId, int divisionId);
+        void RemoveAgeGroups(int eventId, int distanceId);
         void RemoveAgeGroups(List<AgeGroup> groups);
         List<AgeGroup> GetAgeGroups(int eventId);
-        List<AgeGroup> GetAgeGroups(int eventId, int divisionId);
+        List<AgeGroup> GetAgeGroups(int eventId, int distanceId);
 
         // Timing Systems
         void AddTimingSystem(TimingSystem system);

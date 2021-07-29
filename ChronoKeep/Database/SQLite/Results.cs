@@ -76,7 +76,7 @@ namespace ChronoKeep.Database.SQLite
                     Convert.ToInt32(reader["timeresult_occurance"]),
                     reader["participant_first"] == DBNull.Value ? "" : reader["participant_first"].ToString(),
                     reader["participant_last"] == DBNull.Value ? "" : reader["participant_last"].ToString(),
-                    reader["division_name"] == DBNull.Value ? "" : reader["division_name"].ToString(),
+                    reader["distance_name"] == DBNull.Value ? "" : reader["distance_name"].ToString(),
                     bib,
                     Convert.ToInt32(reader["read_id"]),
                     reader["timeresult_unknown_id"].ToString(),
@@ -94,8 +94,8 @@ namespace ChronoKeep.Database.SQLite
                     reader["eventspecific_age_group_name"] == DBNull.Value ? "" : reader["eventspecific_age_group_name"].ToString(),
                     Convert.ToInt32(reader["timeresult_uploaded"]),
                     reader["participant_birthday"] == DBNull.Value ? "" : reader["participant_birthday"].ToString(),
-                    reader["division_type"] == DBNull.Value ? Constants.Timing.DIVISION_TYPE_NORMAL : Convert.ToInt32(reader["division_type"]),
-                    reader["linked_division_name"] == DBNull.Value ? "" : reader["linked_division_name"].ToString()
+                    reader["distance_type"] == DBNull.Value ? Constants.Timing.DISTANCE_TYPE_NORMAL : Convert.ToInt32(reader["distance_type"]),
+                    reader["linked_distance_name"] == DBNull.Value ? "" : reader["linked_distance_name"].ToString()
                     ));
             }
             reader.Close();
@@ -114,7 +114,7 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_occurance," +
                     "participant_first," +
                     "participant_last," +
-                    "d.division_name," +
+                    "d.distance_name," +
                     "eventspecific_bib," +
                     "r.read_id," +
                     "timeresult_unknown_id," +
@@ -132,15 +132,15 @@ namespace ChronoKeep.Database.SQLite
                     "eventspecific_age_group_name," +
                     "timeresult_uploaded," +
                     "participant_birthday," +
-                    "d.division_type," +
-                    "y.division_name AS linked_division_name, " +
+                    "d.distance_type," +
+                    "y.distance_name AS linked_distance_name, " +
                     "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
@@ -160,7 +160,7 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_occurance," +
                     "participant_first," +
                     "participant_last," +
-                    "d.division_name," +
+                    "d.distance_name," +
                     "eventspecific_bib," +
                     "r.read_id," +
                     "timeresult_unknown_id," +
@@ -178,15 +178,15 @@ namespace ChronoKeep.Database.SQLite
                     "eventspecific_age_group_name," +
                     "timeresult_uploaded," +
                     "participant_birthday," +
-                    "d.division_type," +
-                    "y.division_name AS linked_division_name, " +
+                    "d.distance_type," +
+                    "y.distance_name AS linked_distance_name, " +
                     "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
@@ -210,7 +210,7 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_occurance," +
                     "participant_first," +
                     "participant_last," +
-                    "d.division_name," +
+                    "d.distance_name," +
                     "eventspecific_bib," +
                     "r.read_id," +
                     "timeresult_unknown_id," +
@@ -228,15 +228,15 @@ namespace ChronoKeep.Database.SQLite
                     "eventspecific_age_group_name," +
                     "timeresult_uploaded," +
                     "participant_birthday," +
-                    "d.division_type," +
-                    "y.division_name AS linked_division_name, " +
+                    "d.distance_type," +
+                    "y.distance_name AS linked_distance_name, " +
                     "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
@@ -260,7 +260,7 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_occurance," +
                     "participant_first," +
                     "participant_last," +
-                    "d.division_name," +
+                    "d.distance_name," +
                     "eventspecific_bib," +
                     "r.read_id," +
                     "timeresult_unknown_id," +
@@ -278,15 +278,15 @@ namespace ChronoKeep.Database.SQLite
                     "eventspecific_age_group_name," +
                     "timeresult_uploaded," +
                     "participant_birthday," +
-                    "d.division_type," +
-                    "y.division_name AS linked_division_name, " +
+                    "d.distance_type," +
+                    "y.distance_name AS linked_distance_name, " +
                     "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
                 "LEFT JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
@@ -346,7 +346,7 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_occurance," +
                     "participant_first," +
                     "participant_last," +
-                    "d.division_name," +
+                    "d.distance_name," +
                     "eventspecific_bib," +
                     "r.read_id," +
                     "timeresult_unknown_id," +
@@ -364,15 +364,15 @@ namespace ChronoKeep.Database.SQLite
                     "eventspecific_age_group_name," +
                     "timeresult_uploaded," +
                     "participant_birthday," +
-                    "d.division_type," +
-                    "y.division_name AS linked_division_name, " +
+                    "d.distance_type," +
+                    "y.distance_name AS linked_distance_name, " +
                     "b.bib " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
                 "JOIN (eventspecific e " +
                 "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (divisions d LEFT JOIN divisions y ON d.division_linked_id=y.division_id) ON d.division_id=e.division_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid AND r.timeresult_uploaded=@uploaded;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {

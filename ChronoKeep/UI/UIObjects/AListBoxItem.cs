@@ -115,52 +115,52 @@ namespace ChronoKeep
         }
     }
 
-    internal class DivisionListBoxItemAlternate : ListBoxItem
+    internal class DistanceListBoxItemAlternate : ListBoxItem
     {
-        public Label DivisionName { get; private set; }
-        public ComboBox Divisions { get; private set; }
+        public Label DistanceName { get; private set; }
+        public ComboBox Distances { get; private set; }
 
-        public DivisionListBoxItemAlternate(String name, List<Distance> divisions)
+        public DistanceListBoxItemAlternate(String name, List<Distance> distances)
         {
             this.IsTabStop = false;
             Grid theGrid = new Grid();
             this.Content = theGrid;
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            DivisionName = new Label
+            DistanceName = new Label
             {
                 Content = name
             };
-            theGrid.Children.Add(DivisionName);
-            Grid.SetColumn(DivisionName, 0);
-            Divisions = new ComboBox();
-            Divisions.Items.Add(new ComboBoxItem()
+            theGrid.Children.Add(DistanceName);
+            Grid.SetColumn(DistanceName, 0);
+            Distances = new ComboBox();
+            Distances.Items.Add(new ComboBoxItem()
             {
                 Content = "Auto",
                 Uid = "-1"
             });
-            foreach (Distance d in divisions)
+            foreach (Distance d in distances)
             {
-                Divisions.Items.Add(new ComboBoxItem()
+                Distances.Items.Add(new ComboBoxItem()
                 {
                     Content = d.Name,
                     Uid = d.Identifier.ToString()
                 });
             }
-            Divisions.SelectedIndex = 0;
-            theGrid.Children.Add(Divisions);
-            Grid.SetColumn(Divisions, 1);
+            Distances.SelectedIndex = 0;
+            theGrid.Children.Add(Distances);
+            Grid.SetColumn(Distances, 1);
         }
 
         public string NameFromFile()
         {
-            return DivisionName.Content.ToString().Trim();
+            return DistanceName.Content.ToString().Trim();
         }
 
-        public int DivisionId()
+        public int DistanceId()
         {
             int output = -1;
-            int.TryParse(((ComboBoxItem)Divisions.SelectedItem).Uid, out output);
+            int.TryParse(((ComboBoxItem)Distances.SelectedItem).Uid, out output);
             return output;
         }
     }
@@ -170,7 +170,7 @@ namespace ChronoKeep
         public CheckBox Keep { get; private set; }
         public Label Existing { get; private set; }
         public Label Bib { get; private set; }
-        public Label Division { get; private set; }
+        public Label Distance { get; private set; }
         public Label PartName { get; private set; }
         public Label Age { get; private set; }
         public Label Sex { get; private set; }
@@ -204,12 +204,12 @@ namespace ChronoKeep
             };
             theGrid.Children.Add(Bib);
             Grid.SetColumn(Bib, 2);
-            Division = new Label
+            Distance = new Label
             {
-                Content = person.Division
+                Content = person.Distance
             };
-            theGrid.Children.Add(Division);
-            Grid.SetColumn(Division, 3);
+            theGrid.Children.Add(Distance);
+            Grid.SetColumn(Distance, 3);
             PartName = new Label
             {
                 Content = String.Format("{0} {1}", person.FirstName, person.LastName)
@@ -231,42 +231,42 @@ namespace ChronoKeep
         }
     }
 
-    internal class DivisionListBoxItem : ListBoxItem
+    internal class DistanceListBoxItem : ListBoxItem
     {
-        public Label DivisionName { get; private set; }
-        public TextBox DivisionCost { get; private set; }
+        public Label DistanceName { get; private set; }
+        public TextBox DistanceCost { get; private set; }
 
-        public DivisionListBoxItem(String name, int cost)
+        public DistanceListBoxItem(string name, int cost)
         {
             this.IsTabStop = false;
             Grid theGrid = new Grid();
             this.Content = theGrid;
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            DivisionName = new Label
+            DistanceName = new Label
             {
                 Content = name
             };
-            theGrid.Children.Add(DivisionName);
-            Grid.SetColumn(DivisionName, 0);
-            DivisionCost = new TextBox
+            theGrid.Children.Add(DistanceName);
+            Grid.SetColumn(DistanceName, 0);
+            DistanceCost = new TextBox
             {
                 Text = String.Format("{0}.{1:D2}", cost / 100, cost % 100)
             };
-            theGrid.Children.Add(DivisionCost);
-            Grid.SetColumn(DivisionCost, 1);
-            DivisionCost.GotFocus += new RoutedEventHandler(SelectAll);
+            theGrid.Children.Add(DistanceCost);
+            Grid.SetColumn(DistanceCost, 1);
+            DistanceCost.GotFocus += new RoutedEventHandler(SelectAll);
         }
 
         public void SelectAll(object sender, RoutedEventArgs e)
         {
-            DivisionCost.SelectAll();
+            DistanceCost.SelectAll();
         }
 
         public int Cost()
         {
             int output = 70;
-            string[] priceVals = DivisionCost.Text.Split('.');
+            string[] priceVals = DistanceCost.Text.Split('.');
             if (priceVals.Length > 0)
             {
                 int.TryParse(priceVals[0], out output);
@@ -286,46 +286,46 @@ namespace ChronoKeep
 
         public string DivName()
         {
-            return DivisionName.Content.ToString().Trim();
+            return DistanceName.Content.ToString().Trim();
         }
     }
 
-    internal class DivisionListBoxItem2 : ListBoxItem
+    internal class DistanceListBoxItem2 : ListBoxItem
     {
-        public TextBox DivisionName { get; private set; }
-        public TextBox DivisionCost { get; private set; }
+        public TextBox DistanceName { get; private set; }
+        public TextBox DistanceCost { get; private set; }
 
-        public DivisionListBoxItem2(String name, int cost)
+        public DistanceListBoxItem2(string name, int cost)
         {
             this.IsTabStop = false;
             Grid theGrid = new Grid();
             this.Content = theGrid;
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            DivisionName = new TextBox
+            DistanceName = new TextBox
             {
                 Text = name
             };
-            theGrid.Children.Add(DivisionName);
-            Grid.SetColumn(DivisionName, 0);
-            DivisionCost = new TextBox
+            theGrid.Children.Add(DistanceName);
+            Grid.SetColumn(DistanceName, 0);
+            DistanceCost = new TextBox
             {
                 Text = String.Format("{0}.{1:D2}", cost / 100, cost % 100)
             };
-            theGrid.Children.Add(DivisionCost);
-            Grid.SetColumn(DivisionCost, 1);
-            DivisionCost.GotFocus += new RoutedEventHandler(SelectAll);
+            theGrid.Children.Add(DistanceCost);
+            Grid.SetColumn(DistanceCost, 1);
+            DistanceCost.GotFocus += new RoutedEventHandler(SelectAll);
         }
 
         public void SelectAll(object sender, RoutedEventArgs e)
         {
-            DivisionCost.SelectAll();
+            DistanceCost.SelectAll();
         }
 
         public int Cost()
         {
             int output = 70;
-            string[] priceVals = DivisionCost.Text.Split('.');
+            string[] priceVals = DistanceCost.Text.Split('.');
             if (priceVals.Length > 0)
             {
                 int.TryParse(priceVals[0], out output);
@@ -345,7 +345,7 @@ namespace ChronoKeep
 
         public string DivName()
         {
-            return DivisionName.Text.ToString().Trim();
+            return DistanceName.Text.ToString().Trim();
         }
     }
 }

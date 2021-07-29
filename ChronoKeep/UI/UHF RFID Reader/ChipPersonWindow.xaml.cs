@@ -39,7 +39,7 @@ namespace ChronoKeep
                 Last.Content = "Last: " + person.LastName;
                 Age.Content = "Age: " + person.Age(eventDate);
                 Gender.Content = "Gender: " + person.Gender;
-                Division.Content = "Division: " + person.EventSpecific.DivisionName;
+                Distance.Content = "Distance: " + person.EventSpecific.DistanceName;
                 Unknown.Content = "";
             }
             else
@@ -50,7 +50,7 @@ namespace ChronoKeep
                 Last.Content = "";
                 Age.Content = "";
                 Gender.Content = "";
-                Division.Content = "";
+                Distance.Content = "";
                 Unknown.Content = "Information not found.";
             }
             await Task.Run(() =>
@@ -66,7 +66,7 @@ namespace ChronoKeep
             Last.Content = "";
             Age.Content = "";
             Gender.Content = "";
-            Division.Content = "";
+            Distance.Content = "";
             Unknown.Content = "";
         }
 

@@ -36,7 +36,7 @@ namespace ChronoKeep.UI.Participants
             if (person == null)
             {
                 Add.Click += new RoutedEventHandler(this.Add_Click);
-                UpdateDivisions();
+                UpdateDistances();
             }
             else
             {
@@ -58,7 +58,7 @@ namespace ChronoKeep.UI.Participants
             {
                 BibBox.Text = Bib.ToString();
                 Add.Click += new RoutedEventHandler(this.Add_Click);
-                UpdateDivisions();
+                UpdateDistances();
             }
             else
             {
@@ -73,22 +73,22 @@ namespace ChronoKeep.UI.Participants
             return new ModifyParticipantWindow(window, database, person);
         }
 
-        private void UpdateDivisions()
+        private void UpdateDistances()
         {
             if (theEvent == null || theEvent.Identifier < 0)
                 return;
             List<Distance> divs = database.GetDistances(theEvent.Identifier);
-            DivisionBox.Items.Clear();
+            DistanceBox.Items.Clear();
             divs.Sort();
             foreach (Distance d in divs)
             {
-                DivisionBox.Items.Add(new ComboBoxItem()
+                DistanceBox.Items.Add(new ComboBoxItem()
                 {
                     Content = d.Name,
                     Uid = d.Identifier.ToString()
                 });
             }
-            DivisionBox.SelectedIndex = 0;
+            DistanceBox.SelectedIndex = 0;
             GenderBox.SelectedIndex = 0;
         }
 
@@ -97,7 +97,7 @@ namespace ChronoKeep.UI.Participants
             if (person == null || theEvent == null || theEvent.Identifier < 0)
                 return;
             List<Distance> divs = database.GetDistances(theEvent.Identifier);
-            DivisionBox.Items.Clear();
+            DistanceBox.Items.Clear();
             divs.Sort();
             ComboBoxItem selected = null;
             foreach (Distance d in divs)
@@ -107,13 +107,13 @@ namespace ChronoKeep.UI.Participants
                     Content = d.Name,
                     Uid = d.Identifier.ToString()
                 };
-                if (d.Identifier == person.EventSpecific.DivisionIdentifier)
+                if (d.Identifier == person.EventSpecific.DistanceIdentifier)
                 {
                     selected = item;
                 }
-                DivisionBox.Items.Add(item);
+                DistanceBox.Items.Add(item);
             }
-            DivisionBox.SelectedItem = selected;
+            DistanceBox.SelectedItem = selected;
             BibBox.Text = person.Bib.ToString();
             FirstBox.Text = person.FirstName;
             LastBox.Text = person.LastName;
@@ -140,7 +140,7 @@ namespace ChronoKeep.UI.Participants
 
         private void Clear()
         {
-            DivisionBox.SelectedItem = 0;
+            DistanceBox.SelectedItem = 0;
             BibBox.Text = "";
             FirstBox.Text = "";
             LastBox.Text = "";
@@ -309,7 +309,7 @@ namespace ChronoKeep.UI.Participants
                 new EventSpecific(
                     eventSpecificId,
                     theEvent.Identifier,
-                    Convert.ToInt32(((ComboBoxItem)DivisionBox.SelectedItem).Uid),
+                    Convert.ToInt32(((ComboBoxItem)DistanceBox.SelectedItem).Uid),
                     "",
                     bib,
                     checkedin,
@@ -330,7 +330,7 @@ namespace ChronoKeep.UI.Participants
                 gender,
                 ECNameBox.Text,
                 ECPhoneBox.Text);
-            int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DIVISIONID : output.EventSpecific.DivisionIdentifier;
+            int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DISTANCEID : output.EventSpecific.DistanceIdentifier;
             if (AgeGroups == null || age < 0)
             {
                 output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;

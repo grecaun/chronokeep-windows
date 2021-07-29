@@ -688,8 +688,8 @@ namespace ChronoKeep.UI.MainPages
                     return SortType.GUNTIME;
                 case "Bib":
                     return SortType.BIB;
-                case "Division":
-                    return SortType.DIVISION;
+                case "Distance":
+                    return SortType.DISTANCE;
                 case "Age Group":
                     return SortType.AGEGROUP;
                 case "Gender":
@@ -746,8 +746,8 @@ namespace ChronoKeep.UI.MainPages
         private void StatsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             DistanceStat selected = (DistanceStat)statsListView.SelectedItem;
-            Log.D("Stats double cliked. Division is " + selected.DivisionName);
-            subPage = new DivisionStatsPage(this, database, selected.DivisionID, selected.DivisionName);
+            Log.D("Stats double cliked. Distance is " + selected.DistanceName);
+            subPage = new DistanceStatsPage(this, database, selected.DistanceID, selected.DistanceName);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
 
@@ -784,11 +784,11 @@ namespace ChronoKeep.UI.MainPages
                     Dictionary<string, string> DivisionDistanceType = new Dictionary<string, string>();
                     foreach (TimeResult result in finishResults)
                     {
-                        if (!maxLoops.ContainsKey(result.DivisionName))
+                        if (!maxLoops.ContainsKey(result.DistanceName))
                         {
-                            maxLoops[result.DivisionName] = result.Occurrence;
+                            maxLoops[result.DistanceName] = result.Occurrence;
                         }
-                        maxLoops[result.DivisionName] = result.Occurrence > maxLoops[result.DivisionName] ? result.Occurrence : maxLoops[result.DivisionName];
+                        maxLoops[result.DistanceName] = result.Occurrence > maxLoops[result.DistanceName] ? result.Occurrence : maxLoops[result.DistanceName];
                         LoopResults[(result.EventSpecificId, result.Occurrence)] = result;
                         if (!RunnerLoopsCompleted.ContainsKey(result.EventSpecificId))
                         {

@@ -20,7 +20,7 @@ namespace ChronoKeep
          * HIGHEST MUTEX ID = 132
          * NEXT AVAILABLE   = 133
          */
-        private readonly int version = 44;
+        private readonly int version = 45;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -42,7 +42,7 @@ namespace ChronoKeep
         }
 
         /*
-         * Divisions
+         * Distances
          */
 
         public void AddDistance(Distance d)
@@ -559,7 +559,7 @@ namespace ChronoKeep
             return output;
         }
 
-        public List<Participant> GetParticipants(int eventId, int divisionId)
+        public List<Participant> GetParticipants(int eventId, int distanceId)
         {
             Log.D("Getting all participants for event with id of " + eventId);
             Log.D("Attempting to grab Mutex: ID 132");
@@ -570,7 +570,7 @@ namespace ChronoKeep
             }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<Participant> output = Participants.GetParticipants(eventId, divisionId, connection);
+            List<Participant> output = Participants.GetParticipants(eventId, distanceId, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -894,7 +894,7 @@ namespace ChronoKeep
                 Log.D("Segments count is " + segments.Count);
                 foreach (Segment seg in segments)
                 {
-                    Log.D("Division ID " + seg.DivisionId + " Segment Name " + seg.Name + " Segment ID " + seg.Identifier);
+                    Log.D("Distance ID " + seg.DistanceId + " Segment Name " + seg.Name + " Segment ID " + seg.Identifier);
                     Segments.UpdateSegment(seg, connection);
                 }
                 transaction.Commit();
@@ -1669,7 +1669,7 @@ namespace ChronoKeep
             mutex.ReleaseMutex();
         }
 
-        public void RemoveAgeGroups(int eventId, int divisionId)
+        public void RemoveAgeGroups(int eventId, int distanceId)
         {
             Log.D("Attempting to grab Mutex: ID 111");
             if (!mutex.WaitOne(3000))
@@ -1679,7 +1679,7 @@ namespace ChronoKeep
             }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            AgeGroups.RemoveAgeGroups(eventId, divisionId, connection);
+            AgeGroups.RemoveAgeGroups(eventId, distanceId, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
@@ -1715,7 +1715,7 @@ namespace ChronoKeep
             return output;
         }
 
-        public List<AgeGroup> GetAgeGroups(int eventId, int divisionId)
+        public List<AgeGroup> GetAgeGroups(int eventId, int distanceId)
         {
             Log.D("Attempting to grab Mutex: ID 122");
             if (!mutex.WaitOne(3000))
@@ -1725,7 +1725,7 @@ namespace ChronoKeep
             }
             SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<AgeGroup> output = AgeGroups.GetAgeGroups(eventId, divisionId, connection);
+            List<AgeGroup> output = AgeGroups.GetAgeGroups(eventId, distanceId, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -1833,10 +1833,10 @@ namespace ChronoKeep
             return output;
         }
 
-        public Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int divisionId)
+        public Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int distanceId)
         {
             Dictionary<int, List<Participant>> output = new Dictionary<int, List<Participant>>();
-            List<Participant> parts = (divisionId == -1) ? GetParticipants(eventId) : GetParticipants(eventId, divisionId);
+            List<Participant> parts = (distanceId == -1) ? GetParticipants(eventId) : GetParticipants(eventId, distanceId);
             foreach (Participant person in parts)
             {
                 if (!output.ContainsKey(person.Status))

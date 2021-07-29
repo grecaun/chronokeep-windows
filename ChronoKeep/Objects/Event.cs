@@ -8,9 +8,8 @@ namespace ChronoKeep
 {
     public class Event : IEquatable<Event>, IComparable<Event>
     {
-        private int identifier, nextYear = -1, shirtOptional = 1, shirtPrice = 2000;
-        private int common_age_groups = 1, common_start_finish = 1, division_specific_segments = 0, rank_by_gun = 1;
-        private int allow_early_start = 0;
+        private int identifier, shirtOptional = 1, shirtPrice = 2000;
+        private int common_age_groups = 1, common_start_finish = 1, distance_specific_segments = 0, rank_by_gun = 1;
         private int finish_max_occurrences = 1, finish_ignore_within = 0, start_window = -1;
         private int event_type = Constants.Timing.EVENT_TYPE_DISTANCE;
         private string name, date, yearcode = "", timing_system = Constants.Settings.TIMING_RFID;
@@ -38,9 +37,8 @@ namespace ChronoKeep
             this.yearcode = yearcode;
         }
 
-        public Event(int id, string n, long d, int ny, int so, int price)
+        public Event(int id, string n, long d, int so, int price)
         {
-            this.nextYear = ny;
             this.identifier = id;
             this.shirtOptional = so;
             this.name = n;
@@ -56,13 +54,12 @@ namespace ChronoKeep
             this.shirtPrice = price;
             this.common_age_groups = age;
             this.common_start_finish = start;
-            this.division_specific_segments = seg;
+            this.distance_specific_segments = seg;
             this.rank_by_gun = gun;
         }
 
-        public Event(int id, string n, long d, int ny, int so, int price, int age, int start, int seg, int gun)
+        public Event(int id, string n, long d, int so, int price, int age, int start, int seg, int gun)
         {
-            this.nextYear = ny;
             this.identifier = id;
             this.shirtOptional = so;
             this.name = n;
@@ -70,15 +67,14 @@ namespace ChronoKeep
             this.shirtPrice = price;
             this.common_age_groups = age;
             this.common_start_finish = start;
-            this.division_specific_segments = seg;
+            this.distance_specific_segments = seg;
             this.rank_by_gun = gun;
         }
 
-        public Event(int id, string n, string d, int ny, int so, int price, int age, int start, int seg,
-            int gun, string yearcode, int early, int maxOcc, int ignWith, int window,
+        public Event(int id, string n, string d, int so, int price, int age, int start, int seg,
+            int gun, string yearcode, int maxOcc, int ignWith, int window,
             long startsec, int startmill, string system, int type, int api_id, string api_event_id)
         {
-            this.nextYear = ny;
             this.identifier = id;
             this.shirtOptional = so;
             this.name = n;
@@ -86,10 +82,9 @@ namespace ChronoKeep
             this.shirtPrice = price;
             this.common_age_groups = age;
             this.common_start_finish = start;
-            this.division_specific_segments = seg;
+            this.distance_specific_segments = seg;
             this.rank_by_gun = gun;
             this.yearcode = yearcode;
-            this.allow_early_start = early;
             this.finish_max_occurrences = maxOcc;
             this.finish_ignore_within = ignWith;
             this.start_window = window;
@@ -102,17 +97,15 @@ namespace ChronoKeep
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public int NextYear { get => nextYear; set => nextYear = value; }
         public string Name { get => name; set => name = value; }
         public string Date { get => date; set => date = value; }
         public int ShirtOptional { get => shirtOptional; set => shirtOptional = value; }
         public int ShirtPrice { get => shirtPrice; set => shirtPrice = value; }
         public bool CommonAgeGroups { get => common_age_groups != 0; set => common_age_groups = value ? 1 : 0; }
         public bool CommonStartFinish { get => common_start_finish != 0; set => common_start_finish = value ? 1 : 0; }
-        public bool DivisionSpecificSegments { get => division_specific_segments != 0; set => division_specific_segments = value ? 1 : 0; }
+        public bool DistanceSpecificSegments { get => distance_specific_segments != 0; set => distance_specific_segments = value ? 1 : 0; }
         public bool RankByGun { get => rank_by_gun != 0; set => rank_by_gun = value ? 1 : 0; }
         public string YearCode { get => yearcode; set => yearcode = value; }
-        public bool AllowEarlyStart { get => allow_early_start != 0; set => allow_early_start = value ? 1 : 0; }
         public int StartWindow { get => start_window; set => start_window = value; }
         public int FinishMaxOccurrences { get => finish_max_occurrences; set => finish_max_occurrences = value; }
         public int FinishIgnoreWithin { get => finish_ignore_within; set => finish_ignore_within = value; }

@@ -46,7 +46,7 @@
                     <ComboBoxItem Content="System Time" IsSelected="True" />
                     <ComboBoxItem Content="Gun Time" />
                     <ComboBoxItem Content="Bib"/>
-                    <ComboBoxItem Content="Division"/>
+                    <ComboBoxItem Content="Distance"/>
                     <ComboBoxItem Content="Place"/>
                     <ComboBoxItem Content="Age Group"/>
                     <ComboBoxItem Content="Gender"/>
@@ -55,7 +55,7 @@
                     <ListView x:Name="statsListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" FontSize="10" MouseDoubleClick="StatsListView_MouseDoubleClick">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Group" Width="75" DisplayMemberBinding="{Binding DivisionName}" />
+                                <GridViewColumn Header="Group" Width="75" DisplayMemberBinding="{Binding DistanceName}" />
                                 <GridViewColumn Header="Tot" Width="35" DisplayMemberBinding="{Binding Total}" />
                                 <GridViewColumn Header="DNS" Width="35" DisplayMemberBinding="{Binding DNS}" />
                                 <GridViewColumn Header="DNF" Width="35" DisplayMemberBinding="{Binding DNF}" />

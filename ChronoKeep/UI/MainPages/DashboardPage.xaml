@@ -48,9 +48,9 @@
             </DockPanel>
             <Separator Margin="5,5,5,5" />
             <CheckBox Name="rankByGunCheckBox" Content="Rank By Gun Time" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-            <CheckBox Name="commonAgeCheckBox" Content="Common Age Groups for Divisions" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+            <CheckBox Name="commonAgeCheckBox" Content="Common Age Groups for Distances" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <CheckBox Name="commonStartCheckBox" Content="Common Start/Finish Location" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-            <CheckBox Name="segmentCheckBox" Content="Division Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+            <CheckBox Name="segmentCheckBox" Content="Distance Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <DockPanel Margin="10,5,10,5">
                 <Label Content="Event Type" FontSize="16"/>
                 <ComboBox Name="TypeBox" Margin="10,0,0,0" VerticalContentAlignment="Center" IsEnabled="False">

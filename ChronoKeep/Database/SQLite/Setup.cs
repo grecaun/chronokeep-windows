@@ -82,18 +82,12 @@ namespace ChronoKeep.Database.SQLite
                     "event_name VARCHAR(100) NOT NULL," +
                     "event_date VARCHAR(15) NOT NULL," +
                     "event_yearcode VARCHAR(10) NOT NULL DEFAULT ''," +
-                    "event_registration_open INTEGER DEFAULT 0," +
-                    "event_results_open INTEGER DEFAULT 0," +
-                    "event_announce_available INTEGER DEFAULT 0," +
-                    "event_allow_early_start INTEGER DEFAULT 0," +
-                    "event_kiosk INTEGER DEFAULT 0," +
-                    "event_next_year_event_id INTEGER DEFAULT -1," +
                     "event_shirt_optional INTEGER DEFAULT 1," +
                     "event_shirt_price INTEGER DEFAULT 0," +
                     "event_rank_by_gun INTEGER DEFAULT 1," +
                     "event_common_age_groups INTEGER DEFAULT 1," +
                     "event_common_start_finish INTEGER DEFAULT 1," +
-                    "event_division_specific_segments INTEGER DEFAULT 0," +
+                    "event_distance_specific_segments INTEGER DEFAULT 0," +
                     "event_start_time_seconds INTEGER NOT NULL DEFAULT -1," +
                     "event_start_time_milliseconds INTEGER NOT NULL DEFAULT 0," +
                     "event_finish_max_occurances INTEGER NOT NULL DEFAULT 1," +
@@ -105,57 +99,25 @@ namespace ChronoKeep.Database.SQLite
                     "api_event_id VARCHAR(200) NOT NULL DEFAULT ''," +
                     "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                     ");");
-                queries.Add("CREATE TABLE IF NOT EXISTS dayof_participant (" +
-                    "dop_id INTEGER PRIMARY KEY," +
+                queries.Add("CREATE TABLE IF NOT EXISTS distances (" +
+                    "distance_id INTEGER PRIMARY KEY," +
+                    "distance_name VARCHAR(100) NOT NULL," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "division_id INTEGER NOT NULL REFERENCES divisions(division_id)," +
-                    "dop_first VARCHAR NOT NULL," +
-                    "dop_last VARCHAR NOT NULL," +
-                    "dop_street VARCHAR," +
-                    "dop_city VARCHAR," +
-                    "dop_state VARCHAR," +
-                    "dop_zip VARCHAR," +
-                    "dop_birthday VARCHAR NOT NULL," +
-                    "dop_email VARCHAR," +
-                    "dop_mobile VARCHAR," +
-                    "dop_parent VARCHAR," +
-                    "dop_country VARCHAR," +
-                    "dop_street2 VARCHAR," +
-                    "dop_gender VARCHAR," +
-                    "dop_comments VARCHAR," +
-                    "dop_other VARCHAR," +
-                    "dop_other2 VARCHAR," +
-                    "dop_emergency_name VARCHAR NOT NULL," +
-                    "dop_emergency_phone VARCHAR NOT NULL," +
-                    "UNIQUE (event_id, dop_first, dop_last, dop_street, dop_zip, dop_birthday) ON CONFLICT IGNORE" +
-                    ");");
-                queries.Add("CREATE TABLE IF NOT EXISTS kiosk (" +
-                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "kiosk_waiver_text VARCHAR NOT NULL," +
-                    "kiosk_print_new INTEGER DEFAULT 0," +
-                    "UNIQUE (event_id) ON CONFLICT IGNORE" +
-                    ");");
-                queries.Add("CREATE TABLE IF NOT EXISTS divisions (" +
-                    "division_id INTEGER PRIMARY KEY," +
-                    "division_name VARCHAR(100) NOT NULL," +
-                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "division_cost INTEGER DEFAULT 7000," +
-                    "division_distance DECIMAL(10,2) DEFAULT 0.0," +
-                    "division_distance_unit INTEGER DEFAULT 0," +
-                    "division_start_location INTEGER DEFAULT -2," +
-                    "division_start_within INTEGER DEFAULT -1," +
-                    "division_finish_location INTEGER DEFAULT -1," +
-                    "division_finish_occurance INTEGER DEFAULT 1," +
-                    "division_wave INTEGER NOT NULL DEFAULT 1," +
-                    "bib_group_number INTEGER NOT NULL DEFAULT -1," +
-                    "division_start_offset_seconds INTEGER NOT NULL DEFAULT 0," +
-                    "division_start_offset_milliseconds INTEGER NOT NULL DEFAULT 0," +
-                    "division_end_offset_seconds INTEGER NOT NULL DEFAULT 0," +
-                    "division_early_start_offset_seconds INTEGER NOT NULL DEFAULT 0," +
-                    "division_linked_id INTEGER NOT NULL REFERENCES divisions(division_id) DEFAULT -1," +
-                    "division_type INTEGER NOT NULL DEFAULT 0," +
-                    "division_ranking_order INTEGER NOT NULL DEFAULT 0, " +
-                    "UNIQUE (division_name, event_id) ON CONFLICT IGNORE" +
+                    "distance_cost INTEGER DEFAULT 7000," +
+                    "distance_value DECIMAL(10,2) DEFAULT 0.0," +
+                    "distance_unit INTEGER DEFAULT 0," +
+                    "distance_start_location INTEGER DEFAULT -2," +
+                    "distance_start_within INTEGER DEFAULT -1," +
+                    "distance_finish_location INTEGER DEFAULT -1," +
+                    "distance_finish_occurance INTEGER DEFAULT 1," +
+                    "distance_wave INTEGER NOT NULL DEFAULT 1," +
+                    "distance_start_offset_seconds INTEGER NOT NULL DEFAULT 0," +
+                    "distance_start_offset_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                    "distance_end_offset_seconds INTEGER NOT NULL DEFAULT 0," +
+                    "distance_linked_id INTEGER NOT NULL REFERENCES distances(distance_id) DEFAULT -1," +
+                    "distance_type INTEGER NOT NULL DEFAULT 0," +
+                    "distance_ranking_order INTEGER NOT NULL DEFAULT 0, " +
+                    "UNIQUE (distance_name, event_id) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS timing_locations (" +
                     "location_id INTEGER PRIMARY KEY," +
@@ -188,7 +150,7 @@ namespace ChronoKeep.Database.SQLite
                     "eventspecific_id INTEGER PRIMARY KEY," +
                     "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "division_id INTEGER NOT NULL REFERENCES divisions(division_id)," +
+                    "distance_id INTEGER NOT NULL REFERENCES distances(distance_id)," +
                     "eventspecific_bib INTEGER," +
                     "eventspecific_checkedin INTEGER DEFAULT 0," +
                     "eventspecific_comments VARCHAR," +
@@ -200,26 +162,20 @@ namespace ChronoKeep.Database.SQLite
                     "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + "," +
                     "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
                     "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110'," +
-                    "UNIQUE (participant_id, event_id, division_id) ON CONFLICT REPLACE," +
+                    "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE," +
                     "UNIQUE (event_id, eventspecific_bib) ON CONFLICT REPLACE" +
-                    ");");
-                queries.Add("CREATE TABLE IF NOT EXISTS eventspecific_apparel (" +
-                    "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
-                    "name VARCHAR NOT NULL," +
-                    "value VARCHAR NOT NULL," +
-                    "UNIQUE (eventspecific_id, name) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS segments (" +
                     "segment_id INTEGER PRIMARY KEY," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "division_id INTEGER DEFAULT -1," +
+                    "distance_id INTEGER DEFAULT -1," +
                     "location_id INTEGER DEFAULT -1," +
                     "location_occurance INTEGER DEFAULT 1," +
                     "name VARCHAR DEFAULT ''," +
                     "distance_segment DECIMAL (10,2) DEFAULT 0.0," +
                     "distance_cumulative DECIMAL (10,2) DEFAULT 0.0," +
                     "distance_unit INTEGER DEFAULT 0," +
-                    "UNIQUE (event_id, division_id, location_id, location_occurance) ON CONFLICT IGNORE" +
+                    "UNIQUE (event_id, distance_id, location_id, location_occurance) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS chipreads (" +
                     "read_id INTEGER PRIMARY KEY," +
@@ -263,65 +219,6 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_uploaded INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_UPLOADED_FALSE + "," +
                     "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
                     ");");
-                queries.Add("CREATE TABLE IF NOT EXISTS changes (" +
-                    "change_id INTEGER PRIMARY KEY, " +
-                    "old_participant_id INTEGER NOT NULL," +
-                    "old_first VARCHAR(50) NOT NULL," +
-                    "old_last VARCHAR(75) NOT NULL," +
-                    "old_street VARCHAR(150)," +
-                    "old_city VARCHAR(75)," +
-                    "old_state VARCHAR(25)," +
-                    "old_zip VARCHAR(10)," +
-                    "old_birthday VARCHAR(15) NOT NULL," +
-                    "old_email VARCHAR(150)," +
-                    "old_emergency_id INTEGER DEFAULT -1," +
-                    "old_emergency_name VARCHAR(150)," +
-                    "old_emergency_email VARCHAR(150)," +
-                    "old_event_spec_id INTEGER DEFAULT -1," +
-                    "old_event_spec_event_id INTEGER DEFAULT -1," +
-                    "old_event_spec_division_id INTEGER DEFAULT -1," +
-                    "old_event_spec_bib INTEGER," +
-                    "old_event_spec_checkedin INTEGER DEFAULT -1," +
-                    "old_event_spec_comments VARCHAR," +
-                    "old_mobile VARCHAR(20)," +
-                    "old_parent VARCHAR(150)," +
-                    "old_country VARCHAR(50)," +
-                    "old_street2 VARCHAR(50)," +
-                    "old_owes VARCHAR(50)," +
-                    "old_other VARCHAR," +
-                    "old_gender VARCHAR(10)," +
-                    "old_earlystart INTEGER DEFAULT -1," +
-                    "old_next_year INTEGER DEFAULT 0," +
-
-                    "new_participant_id INTEGER NOT NULL," +
-                    "new_first VARCHAR(50) NOT NULL," +
-                    "new_last VARCHAR(75) NOT NULL," +
-                    "new_street VARCHAR(150)," +
-                    "new_city VARCHAR(75)," +
-                    "new_state VARCHAR(25)," +
-                    "new_zip VARCHAR(10)," +
-                    "new_birthday VARCHAR(15) NOT NULL," +
-                    "new_email VARCHAR(150)," +
-                    "new_emergency_id INTEGER DEFAULT -1," +
-                    "new_emergency_name VARCHAR(150)," +
-                    "new_emergency_phone VARCHAR(20)," +
-                    "new_emergency_email VARCHAR(150)," +
-                    "new_event_spec_id INTEGER DEFAULT -1," +
-                    "new_event_spec_event_id INTEGER DEFAULT -1," +
-                    "new_event_spec_division_id INTEGER DEFAULT -1," +
-                    "new_event_spec_bib INTEGER DEFAULT -1," +
-                    "new_event_spec_checkedin INTEGER DEFAULT -1," +
-                    "new_event_spec_comments VARCHAR," +
-                    "new_mobile VARCHAR(20)," +
-                    "new_parent VARCHAR(150)," +
-                    "new_country VARCHAR(50)," +
-                    "new_street2 VARCHAR(50)," +
-                    "new_owes VARCHAR(50)," +
-                    "new_other VARCHAR," +
-                    "new_gender VARCHAR(10)," +
-                    "new_earlystart INTEGER DEFAULT -1," +
-                    "new_next_year INTEGER DEFAULT 0" +
-                    ");");
                 queries.Add("INSERT INTO participants (participant_id, participant_first, participant_last," +
                     " participant_birthday) VALUES (0, 'J', 'Doe', '01/01/1901');");
                 queries.Add("CREATE TABLE IF NOT EXISTS settings (" +
@@ -331,21 +228,10 @@ namespace ChronoKeep.Database.SQLite
                     ");" +
                     "INSERT INTO settings (setting, value) VALUES " +
                     "('" + Constants.Settings.DATABASE_VERSION + "','" + version + "');");
-                queries.Add("CREATE TABLE IF NOT EXISTS bib_group (" +
-                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "bib_group_number INTEGER NOT NULL," +
-                    "bib_group_name VARCHAR NOT NULL," +
-                    "UNIQUE (event_id, bib_group_number) ON CONFLICT REPLACE," +
-                    "UNIQUE (event_id, bib_group_name) ON CONFLICT REPLACE);");
-                queries.Add("CREATE TABLE IF NOT EXISTS available_bibs (" +
-                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "bib_group_number INTEGER NOT NULL DEFAULT -1," +
-                    "bib INTEGER NOT NULL," +
-                    "UNIQUE (event_id, bib) ON CONFLICT REPLACE);");
                 queries.Add("CREATE TABLE IF NOT EXISTS age_groups (" +
                     "group_id INTEGER PRIMARY KEY," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "division_id INTEGER NOT NULL DEFAULT -1," +
+                    "distance_id INTEGER NOT NULL DEFAULT -1," +
                     "start_age INTEGER NOT NULL," +
                     "end_age INTEGER NOT NULL," +
                     "last_group INTEGER DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + " NOT NULL);");
@@ -361,7 +247,7 @@ namespace ChronoKeep.Database.SQLite
                 using (var transaction = connection.BeginTransaction())
                 {
                     int counter = 1;
-                    foreach (String q in queries)
+                    foreach (string q in queries)
                     {
                         Log.D("Table query number " + counter++ + " Query string is: " + q);
                         command = new SQLiteCommand(q, connection);
@@ -387,7 +273,7 @@ namespace ChronoKeep.Database.SQLite
             reader.Close();
             connection.Close();
             if (oldVersion == -1) Log.D("Unable to get a version number. Something is terribly wrong.");
-            else if (oldVersion < version) Update.UpdateDatabase(oldVersion, version, connection);
+            else if (oldVersion < version) Update.UpdateDatabase(oldVersion, version, connectionInfo);
             else if (oldVersion > version) Update.UpdateClient(oldVersion, version);
         }
     }

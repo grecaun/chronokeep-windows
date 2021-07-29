@@ -172,31 +172,30 @@ namespace ChronoKeep.UI.Timing
                 if (NetTimeButton.IsChecked == true)
                 {
                     List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-                    List<Distance> divisions = database.GetDistances(theEvent.Identifier);
-                    // Store the offset start values for each division by division ID
-                    Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
-                    Dictionary<int, int> divisionEarlyStartOffsetDictionary = new Dictionary<int, int>();
+                    List<Distance> distances = database.GetDistances(theEvent.Identifier);
+                    // Store the offset start values for each distance by distance ID
+                    Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = new Dictionary<int, (int, int)>();
+                    Dictionary<int, int> distanceEarlyStartOffsetDictionary = new Dictionary<int, int>();
                     // Store participants by their bib number
                     Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
-                    foreach (Distance div in divisions)
+                    foreach (Distance div in distances)
                     {
-                        divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
-                        divisionEarlyStartOffsetDictionary[div.Identifier] = div.EarlyStartOffsetSeconds;
+                        distanceStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
                     }
                     foreach (Participant part in participants)
                     {
                         participantsDictionary[part.EventSpecific.Bib] = part;
                     }
                     (int seconds, int milliseconds) startOffset = (0, 0);
-                    // Check if the bib corresponds to a person, then if that person has a valid division ID
-                    if (participantsDictionary.ContainsKey(bib) && divisionStartOffsetDictionary
-                        .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
+                    // Check if the bib corresponds to a person, then if that person has a valid distance ID
+                    if (participantsDictionary.ContainsKey(bib) && distanceStartOffsetDictionary
+                        .ContainsKey(participantsDictionary[bib].EventSpecific.DistanceIdentifier))
                     {
-                        startOffset = divisionStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
-                        if (participantsDictionary[bib].IsEarlyStart && divisionEarlyStartOffsetDictionary
-                            .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
+                        startOffset = distanceStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DistanceIdentifier];
+                        if (participantsDictionary[bib].IsEarlyStart && distanceEarlyStartOffsetDictionary
+                            .ContainsKey(participantsDictionary[bib].EventSpecific.DistanceIdentifier))
                         {
-                            startOffset.seconds -= divisionEarlyStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
+                            startOffset.seconds -= distanceEarlyStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DistanceIdentifier];
                         }
                     }
                     time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
@@ -262,32 +261,25 @@ namespace ChronoKeep.UI.Timing
             if (NetTimeButton.IsChecked == true)
             {
                 List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-                List<Distance> divisions = database.GetDistances(theEvent.Identifier);
-                // Store the offset start values for each division by division ID
-                Dictionary<int, (int seconds, int milliseconds)> divisionStartOffsetDictionary = new Dictionary<int, (int, int)>();
-                Dictionary<int, int> divisionEarlyStartOffsetDictionary = new Dictionary<int, int>();
+                List<Distance> distances = database.GetDistances(theEvent.Identifier);
+                // Store the offset start values for each distance by distance ID
+                Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = new Dictionary<int, (int, int)>();
                 // Store participants by their bib number
                 Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
-                foreach (Distance div in divisions)
+                foreach (Distance div in distances)
                 {
-                    divisionStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
-                    divisionEarlyStartOffsetDictionary[div.Identifier] = div.EarlyStartOffsetSeconds;
+                    distanceStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
                 }
                 foreach (Participant part in participants)
                 {
                     participantsDictionary[part.EventSpecific.Bib] = part;
                 }
                 (int seconds, int milliseconds) startOffset = (0, 0);
-                // Check if the bib corresponds to a person, then if that person has a valid division ID
-                if (participantsDictionary.ContainsKey(bib) && divisionStartOffsetDictionary
-                    .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
+                // Check if the bib corresponds to a person, then if that person has a valid distance ID
+                if (participantsDictionary.ContainsKey(bib) && distanceStartOffsetDictionary
+                    .ContainsKey(participantsDictionary[bib].EventSpecific.DistanceIdentifier))
                 {
-                    startOffset = divisionStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
-                    if (participantsDictionary[bib].IsEarlyStart && divisionEarlyStartOffsetDictionary
-                        .ContainsKey(participantsDictionary[bib].EventSpecific.DivisionIdentifier))
-                    {
-                        startOffset.seconds -= divisionEarlyStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DivisionIdentifier];
-                    }
+                    startOffset = distanceStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DistanceIdentifier];
                 }
                 time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
                 milliseconds += theEvent.StartMilliseconds + startOffset.milliseconds;

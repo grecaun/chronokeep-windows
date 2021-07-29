@@ -64,7 +64,7 @@ namespace ChronoKeep.UI.MainPages
             rankByGunCheckBox.IsChecked = theEvent.RankByGun;
             commonAgeCheckBox.IsChecked = theEvent.CommonAgeGroups;
             commonStartCheckBox.IsChecked = theEvent.CommonStartFinish;
-            segmentCheckBox.IsChecked = theEvent.DivisionSpecificSegments;
+            segmentCheckBox.IsChecked = theEvent.DistanceSpecificSegments;
             ComboBoxItem eventType = null;
             foreach (ComboBoxItem item in TypeBox.Items)
             {
@@ -114,7 +114,7 @@ namespace ChronoKeep.UI.MainPages
                 theEvent.RankByGun = (rankByGunCheckBox.IsChecked ?? false);
                 theEvent.CommonAgeGroups = (commonAgeCheckBox.IsChecked ?? false);
                 theEvent.CommonStartFinish = (commonStartCheckBox.IsChecked ?? false);
-                theEvent.DivisionSpecificSegments = (segmentCheckBox.IsChecked ?? false);
+                theEvent.DistanceSpecificSegments = (segmentCheckBox.IsChecked ?? false);
                 theEvent.EventType = Constants.Timing.EVENT_TYPE_DISTANCE;
                 if (((ComboBoxItem)TypeBox.SelectedItem).Content.Equals("Time Based"))
                 {
@@ -123,9 +123,9 @@ namespace ChronoKeep.UI.MainPages
                 Log.D("Updating database.");
                 // Check if we've changed the segment option
                 Event oldEvent = database.GetCurrentEvent();
-                if (oldEvent.DivisionSpecificSegments != theEvent.DivisionSpecificSegments)
+                if (oldEvent.DistanceSpecificSegments != theEvent.DistanceSpecificSegments)
                 {
-                    Log.D("Division Specific Segments value has changed.");
+                    Log.D("Distance Specific Segments value has changed.");
                     database.ResetSegments(theEvent.Identifier);
                 }
                 database.UpdateEvent(theEvent);
@@ -201,7 +201,6 @@ namespace ChronoKeep.UI.MainPages
                 {
                     int oldEventId = ev.Identifier, newEventId = -1;
                     ev.Identifier = -1;
-                    ev.NextYear = -1;
                     database.AddEvent(ev);
                     newEventId = database.GetEventID(ev);
                     lastID = newEventId;
@@ -215,12 +214,12 @@ namespace ChronoKeep.UI.MainPages
                     database.AddAgeGroups(ageGroups);
                     List<BibChipAssociation> bibChipAssociations = savedDatabase.GetBibChips(oldEventId);
                     database.AddBibChipAssociation(newEventId, bibChipAssociations);
-                    List<Distance> divisions = savedDatabase.GetDistances(oldEventId);
-                    foreach (Distance item in divisions)
+                    List<Distance> distances = savedDatabase.GetDistances(oldEventId);
+                    foreach (Distance item in distances)
                     {
                         item.EventIdentifier = newEventId;
                     }
-                    database.AddDistances(divisions);
+                    database.AddDistances(distances);
                     List<Segment> segments = savedDatabase.GetSegments(oldEventId);
                     foreach (Segment item in segments)
                     {
@@ -378,7 +377,6 @@ namespace ChronoKeep.UI.MainPages
                 Event theEvent = database.GetCurrentEvent();
                 int oldEventId = theEvent.Identifier, newEventId = -1;
                 theEvent.Identifier = -1;
-                theEvent.NextYear = -1;
                 savedDatabase.AddEvent(theEvent);
                 newEventId = savedDatabase.GetEventID(theEvent);
                 // Get all of the parts that don't depend on other parts, then parts that do.
@@ -391,12 +389,12 @@ namespace ChronoKeep.UI.MainPages
                 savedDatabase.AddAgeGroups(ageGroups);
                 List<BibChipAssociation> bibChipAssociations = database.GetBibChips(oldEventId);
                 savedDatabase.AddBibChipAssociation(newEventId, bibChipAssociations);
-                List<Distance> divisions = database.GetDistances(oldEventId);
-                foreach (Distance item in divisions)
+                List<Distance> distances = database.GetDistances(oldEventId);
+                foreach (Distance item in distances)
                 {
                     item.EventIdentifier = newEventId;
                 }
-                savedDatabase.AddDistances(divisions);
+                savedDatabase.AddDistances(distances);
                 List<Segment> segments = database.GetSegments(oldEventId);
                 foreach (Segment item in segments)
                 {

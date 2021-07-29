@@ -30,6 +30,6 @@
         <Label FontSize="60" Name="Unknown" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="2" />
         <Label FontSize="60" Name="Age" HorizontalAlignment="Center" Grid.Column="0" Grid.Row="3"/>
         <Label FontSize="60" Name="Gender" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="3"/>
-        <Label FontSize="60" Name="Division" HorizontalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4"/>
+        <Label FontSize="60" Name="Distance" HorizontalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4"/>
     </Grid>
 </Window>

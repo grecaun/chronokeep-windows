@@ -12,7 +12,7 @@
         <Label Name="nothing" Content="Event not set. Please choose an event before selecting this option." Visibility="Collapsed" />
         <Grid Name="everything">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0" Name="DivisionRow"/>
+                <RowDefinition Height="0" Name="DistanceRow"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
@@ -20,7 +20,7 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
-            <ComboBox Name="Divisions" FontSize="16" Margin="10,10,10,10" Height="35" Width="250" SelectionChanged="Divisions_SelectionChanged" VerticalContentAlignment="Center"/>
+            <ComboBox Name="Distances" FontSize="16" Margin="10,10,10,10" Height="35" Width="250" SelectionChanged="Distances_SelectionChanged" VerticalContentAlignment="Center"/>
             <ListBox Name="AgeGroupsBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" Grid.Row="1" ScrollViewer.CanContentScroll="False" PreviewMouseWheel="AgeGroupsBox_PreviewMouseWheel">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">

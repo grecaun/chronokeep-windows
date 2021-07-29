@@ -13,12 +13,12 @@ namespace ChronoKeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO segments (event_id, division_id, location_id, location_occurance, name, distance_segment, " +
+            command.CommandText = "INSERT INTO segments (event_id, distance_id, location_id, location_occurance, name, distance_segment, " +
                 "distance_cumulative, distance_unit) " +
-                "VALUES (@event,@division,@location,@occurance,@name,@dseg,@dcum,@dunit)";
+                "VALUES (@event,@distance,@location,@occurance,@name,@dseg,@dcum,@dunit)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event",seg.EventId),
-                new SQLiteParameter("@division",seg.DivisionId),
+                new SQLiteParameter("@distance",seg.DistanceId),
                 new SQLiteParameter("@location",seg.LocationId),
                 new SQLiteParameter("@occurance",seg.Occurrence),
                 new SQLiteParameter("@name",seg.Name),
@@ -41,12 +41,12 @@ namespace ChronoKeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE segments SET event_id=@event, division_id=@division, location_id=@location, " +
+            command.CommandText = "UPDATE segments SET event_id=@event, distance_id=@distance, location_id=@location, " +
                 "location_occurance=@occurance, name=@name, distance_segment=@dseg, distance_cumulative=@dcum, distance_unit=@dunit " +
                 "WHERE segment_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event",seg.EventId),
-                new SQLiteParameter("@division",seg.DivisionId),
+                new SQLiteParameter("@distance",seg.DistanceId),
                 new SQLiteParameter("@location",seg.LocationId),
                 new SQLiteParameter("@occurance",seg.Occurrence),
                 new SQLiteParameter("@name",seg.Name),
@@ -60,7 +60,7 @@ namespace ChronoKeep.Database.SQLite
         internal static int GetSegmentId(Segment seg, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM segments WHERE event_id=@event, division_id=@division, location_id=@location, occurance=@occurance;";
+            command.CommandText = "SELECT * FROM segments WHERE event_id=@event, distance_id=@distance, location_id=@location, occurance=@occurance;";
             SQLiteDataReader reader = command.ExecuteReader();
             int output = -1;
             if (reader.Read())
@@ -81,7 +81,7 @@ namespace ChronoKeep.Database.SQLite
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Segment(Convert.ToInt32(reader["segment_id"]), Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["division_id"]),
+                output.Add(new Segment(Convert.ToInt32(reader["segment_id"]), Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["distance_id"]),
                     Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["location_occurance"]), Convert.ToDouble(reader["distance_segment"]),
                     Convert.ToDouble(reader["distance_cumulative"]), Convert.ToInt32(reader["distance_unit"]), reader["name"].ToString()));
             }
@@ -107,8 +107,8 @@ namespace ChronoKeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT MAX(seg_count) max_segments FROM" +
-                " (SELECT COUNT(segment_id) seg_count, division_id FROM segments" +
-                " WHERE event_id=@event GROUP BY division_id);";
+                " (SELECT COUNT(segment_id) seg_count, distance_id FROM segments" +
+                " WHERE event_id=@event GROUP BY distance_id);";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
             int output = 0;

@@ -17,7 +17,7 @@ namespace ChronoKeep.Objects.API
             this.Age = result.Age(theEvent.Date);
             this.Gender = result.Gender;
             this.AgeGroup = result.AgeGroupName;
-            this.Distance = result.DivisionName;
+            this.Distance = result.DistanceName;
             this.ChipSeconds = (int)result.ChipSeconds;
             this.ChipMilliseconds = result.ChipMilliseconds;
             this.Segment = result.SegmentName;

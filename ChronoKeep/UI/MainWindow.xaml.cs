@@ -151,15 +151,15 @@ namespace ChronoKeep.UI
             SwitchPage(new ChipAssigmentPage(this, database), true);
         }
 
-        private void DivisionsButton_Click(object sender, RoutedEventArgs e)
+        private void DistancesButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Divisions button clicked.");
-            if (page is DivisionsPage)
+            Log.D("Distances button clicked.");
+            if (page is DistancesPage)
             {
-                Log.D("Divisions page already displayed.");
+                Log.D("Distances page already displayed.");
                 return;
             }
-            SwitchPage(new DivisionsPage(this, database), true);
+            SwitchPage(new DistancesPage(this, database), true);
         }
 
         private void LocationsButton_Click(object sender, RoutedEventArgs e)
@@ -369,7 +369,7 @@ namespace ChronoKeep.UI
                 participantsButton.IsEnabled = false;
                 chipsButton.IsEnabled = false;
                 reportsButton.IsEnabled = false;
-                divisionsButton.IsEnabled = false;
+                distancesButton.IsEnabled = false;
                 locationsButton.IsEnabled = false;
                 segmentsButton.IsEnabled = false;
                 agegroupsButton.IsEnabled = false;
@@ -380,7 +380,7 @@ namespace ChronoKeep.UI
                 participantsButton.IsEnabled = true;
                 chipsButton.IsEnabled = true;
                 reportsButton.IsEnabled = false;  // REPORTS DISABLED FOR NOW
-                divisionsButton.IsEnabled = true;
+                distancesButton.IsEnabled = true;
                 locationsButton.IsEnabled = true;
                 segmentsButton.IsEnabled = true;
                 agegroupsButton.IsEnabled = true;

@@ -40,7 +40,7 @@ namespace ChronoKeep
             "Owes",
             "Comments",
             "Other",
-            "Division",
+            "Distance",
             "Emergency Contact Name",
             "Emergency Contact Phone",
             "Age",
@@ -64,7 +64,7 @@ namespace ChronoKeep
         private static readonly int OWES = 15;
         private static readonly int COMMENTS = 16;
         private static readonly int OTHER = 17;
-        private static readonly int DIVISION = 18;
+        private static readonly int DISTANCE = 18;
         private static readonly int EMERGENCYNAME = 19;
         private static readonly int EMERGENCYPHONE = 20;
         private static readonly int AGE = 21;
@@ -165,7 +165,7 @@ namespace ChronoKeep
             else if (page2 != null)
             {
                 Log.D("Importing participants.");
-                ImportWork(((ImportFilePage2Alt)page2).GetDivisions());
+                ImportWork(((ImportFilePage2Alt)page2).GetDistances());
             }
             else if (multiplesPage != null)
             {
@@ -200,15 +200,15 @@ namespace ChronoKeep
                 }
             }
             ImportData data = importer.Data;
-            string[] divisionsFromFile = data.GetDivisionNames(keys[DIVISION]);
-            Log.D("Division key is " + keys[DIVISION] + " with a header name of " + headerListBoxItems[keys[DIVISION]-1].HeaderLabel.Content + " number of divisions found is " + divisionsFromFile.Length);
-            if (divisionsFromFile.Length <= 0)
+            string[] distancesFromFile = data.GetDistanceNames(keys[DISTANCE]);
+            Log.D("Distance key is " + keys[DISTANCE] + " with a header name of " + headerListBoxItems[keys[DISTANCE]-1].HeaderLabel.Content + " number of distances found is " + distancesFromFile.Length);
+            if (distancesFromFile.Length <= 0)
             {
-                MessageBox.Show("No divisions found in file, or nothing selected for divisions/distance.  Please correct this or cancel.");
+                MessageBox.Show("No distances found in file, or nothing selected for distance.  Please correct this or cancel.");
                 return;
             }
-            StringBuilder sb = new StringBuilder("Division names are");
-            foreach (String s in divisionsFromFile)
+            StringBuilder sb = new StringBuilder("Distance names are");
+            foreach (String s in distancesFromFile)
             {
                 sb.Append(" '" + s + "'");
             }
@@ -220,14 +220,14 @@ namespace ChronoKeep
                 Log.E("No event selected.");
                 this.Close();
             }
-            List<Distance> divisionsFromDatabase = database.GetDistances(theEvent.Identifier);
-            page2 = new ImportFilePage2Alt(divisionsFromFile, divisionsFromDatabase);
+            List<Distance> distancesFromDatabase = database.GetDistances(theEvent.Identifier);
+            page2 = new ImportFilePage2Alt(distancesFromFile, distancesFromDatabase);
             SheetsBox.Visibility = Visibility.Collapsed;
             eventLabel.Width = 460;
             Frame.Content = page2;
         }
 
-        private async void ImportWork(List<ImportDivision> fileDivisions)
+        private async void ImportWork(List<ImportDistance> fileDistances)
         {
             HashSet<Participant> multiples = new HashSet<Participant>();
             await Task.Run(() =>
@@ -237,16 +237,16 @@ namespace ChronoKeep
                 Hashtable divHashName = new Hashtable(500);
                 Hashtable divHashId = new Hashtable(500);
                 Hashtable divHash = new Hashtable(500);
-                List<Distance> divisions = database.GetDistances(theEvent.Identifier);
-                foreach (Distance d in divisions)
+                List<Distance> distances = database.GetDistances(theEvent.Identifier);
+                foreach (Distance d in distances)
                 {
                     divHashName.Add(d.Name, d);
                     divHashId.Add(d.Identifier, d);
                 }
                 Distance theDiv;
-                foreach (ImportDivision id in fileDivisions)
+                foreach (ImportDistance id in fileDistances)
                 {
-                    if (id.DivisionId == -1)
+                    if (id.DistanceId == -1)
                     {
                         theDiv = (Distance)divHashName[id.NameFromFile];
                         if (theDiv == null)
@@ -264,14 +264,14 @@ namespace ChronoKeep
                     }
                     else
                     {
-                        theDiv = (Distance)divHashId[id.DivisionId];
+                        theDiv = (Distance)divHashId[id.DistanceId];
                         if (theDiv != null)
                         {
                             divHash.Add(id.NameFromFile, theDiv);
                         }
                         else
                         {
-                            Log.E("Division doesn't exist in the database...");
+                            Log.E("Distance doesn't exist in the database...");
                         }
                     }
                 }
@@ -279,10 +279,10 @@ namespace ChronoKeep
                 importParticipants = new List<Participant>();
                 for (int counter = 0; counter < numEntries; counter++)
                 {
-                    if (data.Data[counter][keys[DIVISION]] != null && data.Data[counter][keys[DIVISION]].Length > 0)
+                    if (data.Data[counter][keys[DISTANCE]] != null && data.Data[counter][keys[DISTANCE]].Length > 0)
                     {
-                        Log.D("Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[DIVISION]].ToLower()));
-                        Distance thisDiv = (Distance)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DIVISION]].Trim().ToLower())];
+                        Log.D("Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].ToLower()));
+                        Distance thisDiv = (Distance)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].Trim().ToLower())];
                         string birthday = "01/01/1900";
                         int age = -1;
                         if (keys[BIRTHDAY] == 0 && keys[AGE] != 0) // birthday not set but age is
@@ -325,7 +325,7 @@ namespace ChronoKeep
                             data.Data[counter][keys[EMERGENCYNAME]], // Emergency Name
                             data.Data[counter][keys[EMERGENCYPHONE]]  // Emergency Phone
                             );
-                        int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DIVISIONID : output.EventSpecific.DivisionIdentifier;
+                        int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DISTANCEID : output.EventSpecific.DistanceIdentifier;
                         age = output.GetAge(theEvent.Date);
                         if (AgeGroups == null || age < 0)
                         {
@@ -370,7 +370,7 @@ namespace ChronoKeep
                         {
                             // if they're a duplicate and not just a multiple
                             if (importParticipants[inner].Bib == importParticipants[outer].Bib
-                                && importParticipants[inner].Division.Equals(importParticipants[outer].Division, StringComparison.OrdinalIgnoreCase))
+                                && importParticipants[inner].Distance.Equals(importParticipants[outer].Distance, StringComparison.OrdinalIgnoreCase))
                             {
                                 duplicatesImport.Add(importParticipants[inner]);
                             }
@@ -389,7 +389,7 @@ namespace ChronoKeep
                             // check if its someone who's already in the database thus we don't need to add to multiples and
                             // we can remove them from the import
                             if (importParticipants[inner].Bib == part.Bib 
-                                && importParticipants[inner].Division.Equals(part.Division, StringComparison.OrdinalIgnoreCase))
+                                && importParticipants[inner].Distance.Equals(part.Distance, StringComparison.OrdinalIgnoreCase))
                             {
                                 duplicatesImport.Add(importParticipants[inner]);
                             }
@@ -403,7 +403,7 @@ namespace ChronoKeep
                 }
                 // Remove anyone that was deemed a duplicate
                 // This can happen if there was an X, Y, and Z in the import where X and Y are duplicates
-                // but Z is the same person with diff bib/division.
+                // but Z is the same person with diff bib/distance.
                 // This can also happen if there are X and Z in the import but Y in the database,
                 // where the situation is as above
                 foreach (Participant dup in duplicatesImport)
@@ -566,7 +566,7 @@ namespace ChronoKeep
             {
                 return PARENT;
             }
-            else if (s.IndexOf("Bib", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (s.IndexOf("Bib", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("pinney", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return BIB;
             }
@@ -596,7 +596,7 @@ namespace ChronoKeep
             }
             else if (s.IndexOf("Division", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("Distance", StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                return DIVISION;
+                return DISTANCE;
             }
             else if ((s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("name", StringComparison.OrdinalIgnoreCase) >= 0) || String.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
             {

@@ -281,10 +281,7 @@
     <Compile Include="Objects\ChronoKeepAPI\Requests.cs" />
     <Compile Include="Objects\ChronoKeepAPI\Responses.cs" />
     <Compile Include="Objects\ChronoKeepAPI\APIResult.cs" />
-    <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
-    <Compile Include="Objects\AvailableBib.cs" />
-    <Compile Include="Objects\BibGroup.cs" />
     <Compile Include="Objects\ChipRead.cs" />
     <Compile Include="Objects\DistanceStat.cs" />
     <Compile Include="Objects\Range.cs" />
@@ -438,25 +435,9 @@
       <DependentUpon>ImportFileWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\UHF RFID Reader\NewReader.cs" />
-    <Compile Include="UI\NextYear\NextYearSetupPage0.xaml.cs">
-      <DependentUpon>NextYearSetupPage0.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\NextYear\NextYearSetupPage1.xaml.cs">
-      <DependentUpon>NextYearSetupPage1.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Objects\Helpers\Log.cs" />
     <Compile Include="UI\EventWindows\NewEventWindow.xaml.cs">
       <DependentUpon>NewEventWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Objects\Change.cs" />
-    <Compile Include="UI\NextYear\NextYearSetup.xaml.cs">
-      <DependentUpon>NextYearSetup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\NextYear\NextYearSetupPage2.xaml.cs">
-      <DependentUpon>NextYearSetupPage2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\NextYear\NextYearSetupPage3.xaml.cs">
-      <DependentUpon>NextYearSetupPage3.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Timing\RFID\RFIDSettings.xaml.cs">
@@ -640,31 +621,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\NextYear\NextYearSetupPage0.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\NextYear\NextYearSetupPage1.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UI\EventWindows\NewEventWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\NextYear\NextYearSetup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\NextYear\NextYearSetupPage2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\NextYear\NextYearSetupPage3.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
