@@ -63,24 +63,6 @@ namespace ChronoKeep
         {
             string nameString = nameBox.Text.Trim();
             string yearString = yearCodeBox.Text.Trim();
-            int shirtPrice = -1, shirtOptionalVal = shirtOptional.IsChecked == true ? 1 : 0;
-            string[] parts = shirtPriceBox.Text.Split('.');
-            shirtPrice = 20;
-            if (parts.Length > 0)
-            {
-                int.TryParse(parts[0].Trim(), out shirtPrice);
-            }
-            shirtPrice = shirtPrice * 100;
-            int cents = 0;
-            if (parts.Length > 1)
-            {
-                int.TryParse(parts[1].Trim(), out cents);
-            }
-            while (cents > 100)
-            {
-                cents = cents / 100;
-            }
-            shirtPrice += cents;
             long dateVal = DateTime.Now.Date.Ticks;
             if (datePicker.SelectedDate != null)
             {
@@ -95,7 +77,7 @@ namespace ChronoKeep
             else
             {
                 int oldEventId = Convert.ToInt32(((ComboBoxItem)oldEvent.SelectedItem).Uid);
-                Event newEvent = new Event(nameString, dateVal, shirtOptionalVal, shirtPrice, yearString);
+                Event newEvent = new Event(nameString, dateVal, yearString);
                 database.AddEvent(newEvent);
                 newEvent.Identifier = database.GetEventID(newEvent);
                 // Copy all values from old event.
@@ -177,7 +159,7 @@ namespace ChronoKeep
                 }
                 else
                 {
-                    database.AddDistance(new Distance("Default Distance", newEvent.Identifier, 0));
+                    database.AddDistance(new Distance("Default Distance", newEvent.Identifier));
                 }
                 database.SetAppSetting(Constants.Settings.CURRENT_EVENT, newEvent.Identifier.ToString());
                 window.WindowFinalize(this);

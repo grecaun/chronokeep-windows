@@ -289,9 +289,13 @@
     <Compile Include="Objects\Segment.cs" />
     <Compile Include="Objects\TimingSystem.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
+    <Compile Include="Timing\Announcer\AnnouncerThread.cs" />
     <Compile Include="Timing\Interfaces\IpicoInterface.cs" />
     <Compile Include="Timing\TimingController.cs" />
     <Compile Include="Timing\TimingWorker.cs" />
+    <Compile Include="UI\AnnouncerWindow\AnnouncerWindow.xaml.cs">
+      <DependentUpon>AnnouncerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\API\APIErrorPage.xaml.cs">
       <DependentUpon>APIErrorPage.xaml</DependentUpon>
     </Compile>
@@ -336,8 +340,8 @@
     <Compile Include="UI\MainPages\ChipAssigmentPage.xaml.cs">
       <DependentUpon>ChipAssigmentPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MainPages\DivisionsPage.xaml.cs">
-      <DependentUpon>DivisionsPage.xaml</DependentUpon>
+    <Compile Include="UI\MainPages\DistancesPage.xaml.cs">
+      <DependentUpon>DistancesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainPages\LocationsPage.xaml.cs">
       <DependentUpon>LocationsPage.xaml</DependentUpon>
@@ -449,6 +453,10 @@
     <Compile Include="Objects\TimeResult.cs" />
     <Compile Include="Objects\TimingLocation.cs" />
     <Compile Include="Objects\Helpers\Utils.cs" />
+    <Page Include="UI\AnnouncerWindow\AnnouncerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\API\APIErrorPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -505,7 +513,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainPages\DivisionsPage.xaml">
+    <Page Include="UI\MainPages\DistancesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

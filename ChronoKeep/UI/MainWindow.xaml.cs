@@ -262,7 +262,6 @@ namespace ChronoKeep.UI
                 Log.D("Stopping Timing Worker.");
                 TimingWorker.Shutdown();
                 TimingWorker.Notify();
-                if (TimingWorkerThread != null) TimingWorkerThread.Join();
             }
             catch
             {
@@ -282,8 +281,6 @@ namespace ChronoKeep.UI
             {
                 Log.D("Stopping Timing Controller.");
                 if (TimingController != null) TimingController.Shutdown();
-                if (TimingControllerThread != null) TimingControllerThread.Abort();
-                if (TimingControllerThread != null) TimingControllerThread.Join();
             }
             catch
             {
@@ -298,16 +295,12 @@ namespace ChronoKeep.UI
             {
                 Log.D("Stopping API Controller");
                 if (APIController != null) APIController.Shutdown();
-                if (APIControllerThread != null)
-                {
-                    APIControllerThread.Abort();
-                    APIControllerThread.Join();
-                }
             }
             catch
             {
                 return false;
             }
+            page.UpdateView();
             return true;
         }
 
@@ -326,7 +319,7 @@ namespace ChronoKeep.UI
 
         public bool IsAPIControllerRunning()
         {
-            return APIController.IsRunning();
+            return APIController == null ? false : APIController.IsRunning();
         }
 
         public void WindowFinalize(Window w)

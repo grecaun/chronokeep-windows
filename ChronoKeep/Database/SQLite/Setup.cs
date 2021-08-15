@@ -82,8 +82,6 @@ namespace ChronoKeep.Database.SQLite
                     "event_name VARCHAR(100) NOT NULL," +
                     "event_date VARCHAR(15) NOT NULL," +
                     "event_yearcode VARCHAR(10) NOT NULL DEFAULT ''," +
-                    "event_shirt_optional INTEGER DEFAULT 1," +
-                    "event_shirt_price INTEGER DEFAULT 0," +
                     "event_rank_by_gun INTEGER DEFAULT 1," +
                     "event_common_age_groups INTEGER DEFAULT 1," +
                     "event_common_start_finish INTEGER DEFAULT 1," +
@@ -103,9 +101,8 @@ namespace ChronoKeep.Database.SQLite
                     "distance_id INTEGER PRIMARY KEY," +
                     "distance_name VARCHAR(100) NOT NULL," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "distance_cost INTEGER DEFAULT 7000," +
-                    "distance_value DECIMAL(10,2) DEFAULT 0.0," +
-                    "distance_unit INTEGER DEFAULT 0," +
+                    "distance_distance DECIMAL(10,2) DEFAULT 0.0," +
+                    "distance_distance_unit INTEGER DEFAULT 0," +
                     "distance_start_location INTEGER DEFAULT -2," +
                     "distance_start_within INTEGER DEFAULT -1," +
                     "distance_finish_location INTEGER DEFAULT -1," +
@@ -156,8 +153,6 @@ namespace ChronoKeep.Database.SQLite
                     "eventspecific_comments VARCHAR," +
                     "eventspecific_owes VARCHAR(50)," +
                     "eventspecific_other VARCHAR," +
-                    "eventspecific_earlystart INTEGER DEFAULT 0," +
-                    "eventspecific_next_year INTEGER DEFAULT 0," +
                     "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
                     "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + "," +
                     "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +

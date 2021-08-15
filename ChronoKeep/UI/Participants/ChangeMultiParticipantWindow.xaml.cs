@@ -51,14 +51,7 @@ namespace ChronoKeep.UI.Participants
             int distanceId = Convert.ToInt32(((ComboBoxItem)DistanceBox.SelectedItem).Uid);
             foreach (Participant part in toChange)
             {
-                if (SwitchDistance.IsChecked == true)
-                {
-                    part.EventSpecific.DistanceIdentifier = distanceId;
-                }
-                if (CheckIn.IsChecked == true)
-                {
-                    part.EventSpecific.CheckedIn = CheckedInTrue.IsChecked == true ? 1 : 0;
-                }
+                part.EventSpecific.DistanceIdentifier = distanceId;
             }
             database.UpdateParticipants(toChange);
             database.ResetTimingResultsEvent(theEvent.Identifier);

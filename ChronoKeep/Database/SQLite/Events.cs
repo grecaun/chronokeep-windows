@@ -14,17 +14,15 @@ namespace ChronoKeep.Database.SQLite
             Log.D("Attempting to grab Mutex: ID 9");
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO events(event_name, event_date, event_shirt_optional, event_shirt_price," +
+            command.CommandText = "INSERT INTO events(event_name, event_date," +
                 "event_common_age_groups, event_common_start_finish, event_rank_by_gun, event_distance_specific_segments, event_yearcode, " +
                 "event_start_time_seconds, " +
                 "event_start_time_milliseconds, event_timing_system, event_type)" +
-                " values(@name,@date,@so,@price,@age,@start,@gun,@sepseg,@yearcode,@startsec,@startmill,@system," +
+                " values(@name,@date,@age,@start,@gun,@sepseg,@yearcode,@startsec,@startmill,@system," +
                 "@type)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
-                new SQLiteParameter("@so", anEvent.ShirtOptional),
-                new SQLiteParameter("@price", anEvent.ShirtPrice),
                 new SQLiteParameter("@age", anEvent.CommonAgeGroups),
                 new SQLiteParameter("@start", anEvent.CommonStartFinish),
                 new SQLiteParameter("@gun", anEvent.RankByGun),
@@ -50,8 +48,7 @@ namespace ChronoKeep.Database.SQLite
                     "DELETE FROM segments WHERE event_id=@event; DELETE FROM chipreads WHERE event_id=@event;" +
                     "DELETE FROM age_groups WHERE event_id=@event;" +
                     "DELETE FROM distances WHERE event_id=@event; DELETE FROM timing_locations WHERE event_id=@event;" +
-                    "DELETE FROM eventspecific WHERE event_id=@event; DELETE FROM events WHERE event_id=@event;" +
-                    "UPDATE events SET event_next_year_event_id='-1' WHERE event_next_year_event_id=@event";
+                    "DELETE FROM eventspecific WHERE event_id=@event; DELETE FROM events WHERE event_id=@event;";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@event", identifier) });
                 command.ExecuteNonQuery();
@@ -64,8 +61,7 @@ namespace ChronoKeep.Database.SQLite
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE events SET event_name=@name, event_date=@date, event_yearcode=@yearcode," +
-                "event_shirt_optional=@so," +
-                "event_shirt_price=@price, event_common_age_groups=@age, event_common_start_finish=@start, event_rank_by_gun=@gun, " +
+                "event_common_age_groups=@age, event_common_start_finish=@start, event_rank_by_gun=@gun, " +
                 "event_distance_specific_segments=@seg, " +
                 "event_start_time_seconds=@startsec, event_start_time_milliseconds=@startmill, " +
                 "event_timing_system=@system, event_type=@type," +
@@ -76,8 +72,6 @@ namespace ChronoKeep.Database.SQLite
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
                 new SQLiteParameter("@yearcode", anEvent.YearCode),
-                new SQLiteParameter("@so", anEvent.ShirtOptional),
-                new SQLiteParameter("@price", anEvent.ShirtPrice),
                 new SQLiteParameter("@age", anEvent.CommonAgeGroups),
                 new SQLiteParameter("@start", anEvent.CommonStartFinish),
                 new SQLiteParameter("@gun", anEvent.RankByGun),
@@ -107,8 +101,6 @@ namespace ChronoKeep.Database.SQLite
                 output.Add(new Event(Convert.ToInt32(reader["event_id"]),
                     reader["event_name"].ToString(),
                     reader["event_date"].ToString(),
-                    Convert.ToInt32(reader["event_shirt_optional"]),
-                    Convert.ToInt32(reader["event_shirt_price"]),
                     Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]),
                     Convert.ToInt32(reader["event_distance_specific_segments"]),
@@ -164,8 +156,6 @@ namespace ChronoKeep.Database.SQLite
                 output = new Event(Convert.ToInt32(reader["event_id"]),
                     reader["event_name"].ToString(),
                     reader["event_date"].ToString(),
-                    Convert.ToInt32(reader["event_shirt_optional"]),
-                    Convert.ToInt32(reader["event_shirt_price"]),
                     Convert.ToInt32(reader["event_common_age_groups"]),
                     Convert.ToInt32(reader["event_common_start_finish"]),
                     Convert.ToInt32(reader["event_distance_specific_segments"]),

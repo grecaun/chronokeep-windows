@@ -131,7 +131,6 @@ namespace ChronoKeep.UI.Participants
             ParentBox.Text = person.Parent;
             CommentsBox.Text = person.Comments;
             OtherBox.Text = person.Other;
-            CheckedInBox.IsChecked = person.IsCheckedIn;
             ECNameBox.Text = person.ECName;
             ECPhoneBox.Text = person.ECPhone;
             Add.Content = "Update";
@@ -158,7 +157,6 @@ namespace ChronoKeep.UI.Participants
             ParentBox.Text = "";
             CommentsBox.Text = "";
             OtherBox.Text = "";
-            CheckedInBox.IsChecked = false;
             ECNameBox.Text = "";
             ECPhoneBox.Text = "";
         }
@@ -265,12 +263,11 @@ namespace ChronoKeep.UI.Participants
             {
                 return null;
             }
-            int eventSpecificId = -1, participantId = -1, nextYear = -1;
+            int eventSpecificId = -1, participantId = -1;
             if (person != null)
             {
                 eventSpecificId = person.EventSpecific.Identifier;
                 participantId = person.Identifier;
-                nextYear = person.EventSpecific.NextYear;
             }
             int bib = Constants.Timing.CHIPREAD_DUMMYBIB;
             try
@@ -283,11 +280,7 @@ namespace ChronoKeep.UI.Participants
             {
                 gender = ((ComboBoxItem)GenderBox.SelectedItem).Content.ToString();
             }
-            int earlystart = 0, checkedin = 0;
-            if (CheckedInBox.IsChecked ?? false)
-            {
-                checkedin = 1;
-            }
+            int checkedin = 0;
             int.TryParse(AgeBox.Text, out int age);
             string birthdate = BirthdayBox.Text;
             if (age != 0 && birthdate.Length < 1)
@@ -316,8 +309,6 @@ namespace ChronoKeep.UI.Participants
                     CommentsBox.Text,
                     "",
                     OtherBox.Text,
-                    earlystart,
-                    nextYear,
                     Constants.Timing.EVENTSPECIFIC_NOSHOW,
                     "0-110",
                     Constants.Timing.TIMERESULT_DUMMYAGEGROUP

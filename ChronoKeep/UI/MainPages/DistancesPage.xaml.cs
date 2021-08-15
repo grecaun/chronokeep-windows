@@ -97,7 +97,7 @@ namespace ChronoKeep.UI.MainPages
             {
                 UpdateDatabase();
             }
-            database.AddDistance(new Distance("New Distance " + DistanceCount, theEvent.Identifier, 0));
+            database.AddDistance(new Distance("New Distance " + DistanceCount, theEvent.Identifier));
             UpdateTimingWorker = true;
             UpdateView();
         }
@@ -216,6 +216,7 @@ namespace ChronoKeep.UI.MainPages
         {
             public TextBox DistanceName { get; private set; }
             public TextBox Wave { get; private set; }
+            public Image WaveTypeImg { get; private set; }
             public TextBox Ranking { get; private set; }
             public MaskedTextBox StartOffset { get; private set; }
             public ComboBox TypeBox { get; private set; }
@@ -227,6 +228,7 @@ namespace ChronoKeep.UI.MainPages
             public Distance theDistance;
 
             private ADistance parent;
+            private int waveType = 1;
 
             private readonly Regex allowedWithDot = new Regex("[^0-9.]");
             private readonly Regex allowedChars = new Regex("[^0-9]");
@@ -317,6 +319,24 @@ namespace ChronoKeep.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Right
                 });
+                Uri imgUri = new Uri("pack://application:,,,/img/plus.png");
+                waveType = 1;
+                if (theDistance.StartOffsetSeconds < 0)
+                {
+                    Log.D("Setting type to negative and making seconds/milliseconds positive for offset textbox.");
+                    waveType = -1;
+                    imgUri = new Uri("pack://application:,,,/img/dash.png");
+                    theDistance.StartOffsetSeconds *= -1;
+                    theDistance.StartOffsetMilliseconds *= -1;
+                }
+                WaveTypeImg = new Image()
+                {
+                    Width = 25,
+                    Margin = new Thickness(0, 0, 3, 0),
+                    Source = new BitmapImage(imgUri),
+                };
+                WaveTypeImg.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
+                wavePanel.Children.Add(WaveTypeImg);
                 Wave = new TextBox()
                 {
                     Text = theDistance.Wave.ToString(),
@@ -411,6 +431,24 @@ namespace ChronoKeep.UI.MainPages
                 src.SelectAll();
             }
 
+            private void SwapWaveType_Click(object sender, RoutedEventArgs e)
+            {
+                Log.D("Plus/Minus sign clicked. WaveType is: " + waveType);
+                if (waveType < 0)
+                {
+                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/plus.png"));
+                }
+                else if (waveType > 0)
+                {
+                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/dash.png"));
+                }
+                else
+                {
+                    Log.E("Something went wrong and the wave type was set to 0.");
+                }
+                waveType *= -1;
+            }
+
             public Distance GetDistance()
             {
                 return theDistance;
@@ -422,7 +460,6 @@ namespace ChronoKeep.UI.MainPages
                 parent.UpdateDistance();
                 Distance parentDiv = parent.GetDistance();
                 theDistance.Name = DistanceName.Text;
-                theDistance.Cost = parentDiv.Cost;
                 theDistance.DistanceValue = parentDiv.DistanceValue;
                 theDistance.EndSeconds = parentDiv.EndSeconds;
                 theDistance.FinishOccurrence = parent.GetDistance().FinishOccurrence;
@@ -460,7 +497,6 @@ namespace ChronoKeep.UI.MainPages
         {
             public TextBox DistanceName { get; private set; }
             public ComboBox CopyFromBox { get; private set; }
-            public TextBox Cost { get; private set; }
             public TextBox Distance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
             public ComboBox FinishOccurrence { get; private set; } = null;
@@ -558,35 +594,12 @@ namespace ChronoKeep.UI.MainPages
                 Grid.SetColumn(copyPanel, 1);
                 thePanel.Children.Add(nameGrid);
 
-                // Cost - Distance - DistanceUnit - Occurrence
+                // Distance - DistanceUnit - Occurrence
                 Grid settingsGrid = new Grid();
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                DockPanel costPanel = new DockPanel();
-                costPanel.Children.Add(new Label()
-                {
-                    Content = "Price",
-                    Width = 55,
-                    FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
-                });
-                string costStr = String.Format("{0:D1}.{1:D2}", theDistance.Cost / 100, theDistance.Cost % 100);
-                Cost = new TextBox()
-                {
-                    Text = costStr,
-                    FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
-                    VerticalContentAlignment = VerticalAlignment.Center
-                };
-                Cost.GotFocus += new RoutedEventHandler(this.SelectAll);
-                Cost.PreviewTextInput += new TextCompositionEventHandler(this.DotValidation);
-                costPanel.Children.Add(Cost);
-                settingsGrid.Children.Add(costPanel);
-                Grid.SetColumn(costPanel, 0);
                 DockPanel distPanel = new DockPanel();
                 distPanel.Children.Add(new Label()
                 {
@@ -884,24 +897,6 @@ namespace ChronoKeep.UI.MainPages
             {
                 Log.D("Updating distance.");
                 theDistance.Name = DistanceName.Text;
-                string[] costVals = Cost.Text.Split('.');
-                int cost = 0;
-                if (costVals.Length > 0)
-                {
-                    int.TryParse(costVals[0].Trim(), out cost);
-                }
-                cost = cost * 100;
-                int cents = 0;
-                if (costVals.Length > 1)
-                {
-                    int.TryParse(costVals[1].Trim(), out cents);
-                }
-                while (cents > 100)
-                {
-                    cents = cents / 100;
-                }
-                cost += cents;
-                theDistance.Cost = cost;
                 double dist = 0.0;
                 try
                 {
@@ -972,7 +967,6 @@ namespace ChronoKeep.UI.MainPages
                 {
                     Distance newDiv = distanceDictionary[newDivId];
                     theDistance.Name = DistanceName.Text;
-                    theDistance.Cost = newDiv.Cost;
                     theDistance.DistanceValue = newDiv.DistanceValue;
                     theDistance.DistanceUnit = newDiv.DistanceUnit;
                     theDistance.FinishOccurrence = newDiv.FinishOccurrence;

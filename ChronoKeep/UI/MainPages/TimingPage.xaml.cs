@@ -313,10 +313,12 @@ namespace ChronoKeep.UI.MainPages
             if (mWindow.IsAPIControllerRunning())
             {
                 AutoAPIButton.Content = "Stop Uploads";
+                ManualAPIButton.IsEnabled = false;
             }
             else
             {
                 AutoAPIButton.Content = "Auto Upload";
+                ManualAPIButton.IsEnabled = true;
             }
             subPage.UpdateView();
         }
@@ -858,10 +860,12 @@ namespace ChronoKeep.UI.MainPages
             Log.D("Auto API clicked.");
             if ((string)AutoAPIButton.Content == "Auto Upload")
             {
+                AutoAPIButton.Content = "Starting...";
                 mWindow.StartAPIController();
             }
             else
             {
+                AutoAPIButton.Content = "Stopping...";
                 mWindow.StopAPIController();
             }
         }

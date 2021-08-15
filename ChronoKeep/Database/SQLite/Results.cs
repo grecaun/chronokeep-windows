@@ -88,7 +88,6 @@ namespace ChronoKeep.Database.SQLite
                     Convert.ToInt32(reader["timeresult_gender_place"]),
                     reader["participant_gender"] == DBNull.Value ? "" : reader["participant_gender"].ToString(),
                     Convert.ToInt32(reader["timeresult_status"]),
-                    reader["eventspecific_earlystart"] == DBNull.Value ? 0 : Convert.ToInt32(reader["eventspecific_earlystart"]),
                     reader["timeresult_splittime"].ToString(),
                     reader["eventspecific_age_group_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_age_group_id"]),
                     reader["eventspecific_age_group_name"] == DBNull.Value ? "" : reader["eventspecific_age_group_name"].ToString(),
@@ -126,7 +125,6 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_gender_place," +
                     "participant_gender," +
                     "timeresult_status," +
-                    "eventspecific_earlystart," +
                     "timeresult_splittime," +
                     "eventspecific_age_group_id," +
                     "eventspecific_age_group_name," +
@@ -172,7 +170,6 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_gender_place," +
                     "participant_gender," +
                     "timeresult_status," +
-                    "eventspecific_earlystart," +
                     "timeresult_splittime," +
                     "eventspecific_age_group_id," +
                     "eventspecific_age_group_name," +
@@ -222,7 +219,6 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_gender_place," +
                     "participant_gender," +
                     "timeresult_status," +
-                    "eventspecific_earlystart," +
                     "timeresult_splittime," +
                     "eventspecific_age_group_id," +
                     "eventspecific_age_group_name," +
@@ -272,7 +268,6 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_gender_place," +
                     "participant_gender," +
                     "timeresult_status," +
-                    "eventspecific_earlystart," +
                     "timeresult_splittime," +
                     "eventspecific_age_group_id," +
                     "eventspecific_age_group_name," +
@@ -358,7 +353,6 @@ namespace ChronoKeep.Database.SQLite
                     "timeresult_gender_place," +
                     "participant_gender," +
                     "timeresult_status," +
-                    "eventspecific_earlystart," +
                     "timeresult_splittime," +
                     "eventspecific_age_group_id," +
                     "eventspecific_age_group_name," +

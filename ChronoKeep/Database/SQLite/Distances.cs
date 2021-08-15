@@ -14,15 +14,14 @@ namespace ChronoKeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO distances (distance_name, event_id, distance_cost, distance_distance, distance_distance_unit," +
+            command.CommandText = "INSERT INTO distances (distance_name, event_id, distance_distance, distance_distance_unit," +
                 "distance_start_location, distance_start_within, distance_finish_location, distance_finish_occurance, distance_wave, " +
                 "distance_start_offset_seconds, distance_start_offset_milliseconds, distance_end_offset_seconds, " +
                 "distance_linked_id, distance_type, distance_ranking_order) " +
-                "values (@name,@event_id,@cost,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@soffsec,@soffmill,@endSec,@linked,@type,@rank)";
+                "values (@name,@event_id,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@soffsec,@soffmill,@endSec,@linked,@type,@rank)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", d.Name),
                 new SQLiteParameter("@event_id", d.EventIdentifier),
-                new SQLiteParameter("@cost", d.Cost),
                 new SQLiteParameter("@distance", d.DistanceValue),
                 new SQLiteParameter("@unit", d.DistanceUnit),
                 new SQLiteParameter("@startloc", d.StartLocation),
@@ -55,7 +54,7 @@ namespace ChronoKeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE distances SET distance_name=@name, event_id=@event, distance_cost=@cost, distance_distance=@distance," +
+            command.CommandText = "UPDATE distances SET distance_name=@name, event_id=@event, distance_distance=@distance," +
                 "distance_distance_unit=@unit, distance_start_location=@startloc, distance_start_within=@within, distance_finish_location=@finishloc," +
                 "distance_finish_occurance=@occurance, distance_wave=@wave, distance_start_offset_seconds=@soffsec, " +
                 "distance_start_offset_milliseconds=@soffmill, distance_end_offset_seconds=@endSec, " +
@@ -64,7 +63,6 @@ namespace ChronoKeep.Database.SQLite
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", d.Name),
                 new SQLiteParameter("@event", d.EventIdentifier),
-                new SQLiteParameter("@cost", d.Cost),
                 new SQLiteParameter("@distance", d.DistanceValue),
                 new SQLiteParameter("@unit", d.DistanceUnit),
                 new SQLiteParameter("@startloc", d.StartLocation),
@@ -94,7 +92,6 @@ namespace ChronoKeep.Database.SQLite
                 output.Add(new Distance(Convert.ToInt32(reader["distance_id"]),
                     reader["distance_name"].ToString(),
                     Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["distance_cost"]),
                     Convert.ToDouble(reader["distance_distance"]),
                     Convert.ToInt32(reader["distance_distance_unit"]),
                     Convert.ToInt32(reader["distance_finish_location"]),
@@ -129,7 +126,6 @@ namespace ChronoKeep.Database.SQLite
                 output.Add(new Distance(Convert.ToInt32(reader["distance_id"]),
                     reader["distance_name"].ToString(),
                     Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["distance_cost"]),
                     Convert.ToDouble(reader["distance_distance"]),
                     Convert.ToInt32(reader["distance_distance_unit"]),
                     Convert.ToInt32(reader["distance_finish_location"]),
@@ -183,7 +179,6 @@ namespace ChronoKeep.Database.SQLite
                 output = new Distance(Convert.ToInt32(reader["distance_id"]),
                     reader["distance_name"].ToString(),
                     Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["distance_cost"]),
                     Convert.ToDouble(reader["distance_distance"]),
                     Convert.ToInt32(reader["distance_distance_unit"]),
                     Convert.ToInt32(reader["distance_finish_location"]),

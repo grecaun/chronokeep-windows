@@ -9,7 +9,7 @@ namespace ChronoKeep
     public class EventSpecific
     {
         private int identifier, eventIdentifier, distanceIdentifier, bib,
-            checkedIn = 0, earlystart = 0, nextyear = 0, chip = -1,
+            checkedIn = 0, chip = -1,
             status = Constants.Timing.EVENTSPECIFIC_NOSHOW, ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
         private string comments, distanceName, owes, other, ageGroupName = "0-110";
 
@@ -24,9 +24,7 @@ namespace ChronoKeep
             int ci,
             string comments,
             string owes,
-            string other,
-            int earlystart,
-            int nextyear
+            string other
             )
         {
             this.eventIdentifier = eid;
@@ -37,8 +35,6 @@ namespace ChronoKeep
             this.comments = comments ?? "";
             this.owes = owes ?? "";
             this.other = other ?? "";
-            this.earlystart = earlystart == 0 ? 0 : 1;
-            this.nextyear = nextyear;
         }
 
         // Constructor the database uses
@@ -52,8 +48,6 @@ namespace ChronoKeep
             string comments,
             string owes,
             string other,
-            int earlystart,
-            int nextyear,
             int status,
             string ageGroupName,
             int ageGroupId
@@ -68,8 +62,6 @@ namespace ChronoKeep
             this.comments = comments ?? "";
             this.owes = owes ?? "";
             this.other = other ?? "";
-            this.earlystart = earlystart != 0 ? 1 : 0;
-            this.nextyear = nextyear;
             this.status = status;
             this.ageGroupName = ageGroupName;
             this.ageGroupId = ageGroupId;
@@ -85,7 +77,7 @@ namespace ChronoKeep
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, 0, 0, "0-110", Constants.Timing.TIMERESULT_DUMMYAGEGROUP);
+            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, "0-110", Constants.Timing.TIMERESULT_DUMMYAGEGROUP);
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -98,8 +90,6 @@ namespace ChronoKeep
         public string DistanceName { get => distanceName; set => distanceName = value; }
         public string Owes { get => owes; set => owes = value; }
         public string Other { get => other; set => other = value; }
-        public int EarlyStart { get => earlystart; set => earlystart = value; }
-        public int NextYear { get => nextyear; set => nextyear = value; }
         public int Status { get => status; set => status = value; }
         public string StatusStr { get => Constants.Timing.EVENTSPECIFIC_STATUS_NAMES[status]; }
         public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }

@@ -1631,22 +1631,7 @@ namespace ChronoKeep.Timing
                             // Check if we know the participants we're comparing
                             if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
                             {
-                                // Check if they're both either EARLY START or not EARLY START. (DEPRECATED METHOD)
-                                if (participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
-                                {
-                                    return x1.SystemTime.CompareTo(x2.SystemTime);
-                                }
-                                // Sort early starts below non early starts
-                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
-                            }
-                            // Sort by early start values
-                            if (participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
-                            {
-                                return participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart.CompareTo(false);
-                            }
-                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
-                            {
-                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
+                                return x1.SystemTime.CompareTo(x2.SystemTime);
                             }
                         }
                         Log.D("Ranks not the same.");
@@ -1684,21 +1669,7 @@ namespace ChronoKeep.Timing
                             if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
                             {
                             // Check if they're both either EARLY START or not EARLY START. (DEPRECATED METHOD)
-                                if (participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
-                                {
                                     return x1.CompareChip(x2);
-                                }
-                                // Sort early starts below non early starts
-                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
-                            }
-                            // Check if we know one of the two participants and sort based upon their early start value.
-                            if (participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
-                            {
-                                return participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart.CompareTo(false);
-                            }
-                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
-                            {
-                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
                             }
                         }
                         // Ranks not the same

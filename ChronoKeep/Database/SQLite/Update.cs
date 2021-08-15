@@ -991,9 +991,8 @@ namespace ChronoKeep.Database.SQLite
                                 "distance_id INTEGER PRIMARY KEY," +
                                 "distance_name VARCHAR(100) NOT NULL," +
                                 "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                                "distance_cost INTEGER DEFAULT 7000," +
-                                "distance_value DECIMAL(10,2) DEFAULT 0.0," +
-                                "distance_unit INTEGER DEFAULT 0," +
+                                "distance_distance DECIMAL(10,2) DEFAULT 0.0," +
+                                "distance_distance_unit INTEGER DEFAULT 0," +
                                 "distance_start_location INTEGER DEFAULT -2," +
                                 "distance_start_within INTEGER DEFAULT -1," +
                                 "distance_finish_location INTEGER DEFAULT -1," +
@@ -1007,7 +1006,7 @@ namespace ChronoKeep.Database.SQLite
                                 "distance_ranking_order INTEGER NOT NULL DEFAULT 0, " +
                                 "UNIQUE (distance_name, event_id) ON CONFLICT IGNORE" +
                                 ");" +
-                            "INSERT INTO distances SELECT division_id, division_name, event_id, division_cost, division_distance, division_distance_unit, " +
+                            "INSERT INTO distances SELECT division_id, division_name, event_id, division_distance, division_distance_unit, " +
                                 "division_start_location, division_start_within, division_finish_location, division_finish_occurance, division_wave, " +
                                 "division_start_offset_seconds, division_start_offset_milliseconds, division_end_offset_seconds, division_linked_id, " +
                                 "division_type, division_ranking_order FROM divisions;" +
@@ -1087,11 +1086,11 @@ namespace ChronoKeep.Database.SQLite
                                 "event_start_time_seconds, event_start_time_milliseconds, event_finish_max_occurances, event_finish_ignore_within," +
                                 "event_start_window, event_timing_system, event_type, api_id, api_event_id FROM events_old;" +
                             "DROP TABLE events_old;" + // This next line creates linked divisions that are early start divisions if there are people set to early start
-                            "INSERT INTO distances (distance_name, event_id, distance_cost, distance_value, distance_unit, distance_start_location, " +
+                            "INSERT INTO distances (distance_name, event_id, distance_distance, distance_distance_unit, distance_start_location, " +
                                 "distance_start_within, distance_finish_location, distance_finish_occurance, distance_wave, distance_start_offset_seconds, " +
                                 "distance_start_offset_milliseconds, distance_end_offset_seconds, distance_linked_id, distance_type, distance_ranking_order) " +
-                                "SELECT b.distance_name || ' Early Created' AS new_distance_name, b.event_id, b.distance_cost, b.distance_value, " +
-                                    "b.distance_unit, b.distance_start_location, b.distance_start_within, b.distance_finish_location, " +
+                                "SELECT b.distance_name || ' Early Created' AS new_distance_name, b.event_id, b.distance_distance, " +
+                                    "b.distance_distance_unit, b.distance_start_location, b.distance_start_within, b.distance_finish_location, " +
                                     "b.distance_finish_occurance, b.distance_wave, b.distance_start_offset_seconds, b.distance_start_offset_milliseconds, " +
                                     "b.distance_end_offset_seconds, b.distance_id, " + Constants.Timing.DISTANCE_TYPE_EARLY + ", 1 " +
                                     "FROM distances AS b JOIN " +
@@ -1099,7 +1098,7 @@ namespace ChronoKeep.Database.SQLite
                                             "FROM distances AS d JOIN eventspecific AS e ON e.distance_id=d.distance_id " +
                                             "WHERE e.eventspecific_earlystart != 0) " +
                                         "ON unique_distance_id=b.distance_id;" +
-                            "UPDATE settings SET value='44' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
+                            "UPDATE settings SET value='45' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
                         command.ExecuteNonQuery();
                         // Get all Distances and make a dictionary based on names.
                         command = connection.CreateCommand();
@@ -1111,9 +1110,8 @@ namespace ChronoKeep.Database.SQLite
                             distances.Add(new Distance(Convert.ToInt32(reader["distance_id"]),
                                 reader["distance_name"].ToString(),
                                 Convert.ToInt32(reader["event_id"]),
-                                Convert.ToInt32(reader["distance_cost"]),
-                                Convert.ToDouble(reader["distance_value"]),
-                                Convert.ToInt32(reader["distance_unit"]),
+                                Convert.ToDouble(reader["distance_distance"]),
+                                Convert.ToInt32(reader["distance_distance_unit"]),
                                 Convert.ToInt32(reader["distance_finish_location"]),
                                 Convert.ToInt32(reader["distance_finish_occurance"]),
                                 Convert.ToInt32(reader["distance_start_location"]),
@@ -1162,8 +1160,6 @@ namespace ChronoKeep.Database.SQLite
                                     reader["eventspecific_comments"].ToString(),
                                     reader["eventspecific_owes"].ToString(),
                                     reader["eventspecific_other"].ToString(),
-                                    Convert.ToInt32(reader["eventspecific_earlystart"]),
-                                    Convert.ToInt32(reader["eventspecific_next_year"]),
                                     Convert.ToInt32(reader["eventspecific_status"]),
                                     reader["eventspecific_age_group_name"].ToString(),
                                     Convert.ToInt32(reader["eventspecific_age_group_id"])
@@ -1187,6 +1183,59 @@ namespace ChronoKeep.Database.SQLite
                                 Participants.UpdateParticipant(p, connection);
                             }
                         }
+                        goto case 45;
+                    case 45:
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events RENAME TO events_old; " +
+                            "CREATE TABLE IF NOT EXISTS events (" +
+                                "event_id INTEGER PRIMARY KEY," +
+                                "event_name VARCHAR(100) NOT NULL," +
+                                "event_date VARCHAR(15) NOT NULL," +
+                                "event_yearcode VARCHAR(10) NOT NULL DEFAULT ''," +
+                                "event_rank_by_gun INTEGER DEFAULT 1," +
+                                "event_common_age_groups INTEGER DEFAULT 1," +
+                                "event_common_start_finish INTEGER DEFAULT 1," +
+                                "event_distance_specific_segments INTEGER DEFAULT 0," +
+                                "event_start_time_seconds INTEGER NOT NULL DEFAULT -1," +
+                                "event_start_time_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                                "event_finish_max_occurances INTEGER NOT NULL DEFAULT 1," +
+                                "event_finish_ignore_within INTEGER NOT NULL DEFAULT 0," +
+                                "event_start_window INTEGER NOT NULL DEFAULT -1," +
+                                "event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Settings.TIMING_RFID + "'," +
+                                "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
+                                "api_id INTEGER REFERENCES results_api(api_id) NOT NULL DEFAULT -1," +
+                                "api_event_id VARCHAR(200) NOT NULL DEFAULT ''," +
+                                "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
+                                ");" +
+                            "INSERT INTO events SELECT event_id, event_name, event_date, event_yearcode, event_rank_by_gun, event_common_age_groups, " +
+                                "event_common_start_finish, event_distance_specific_segments, event_start_time_seconds, event_start_time_milliseconds, " +
+                                "event_finish_max_occurances, event_finish_ignore_within, event_start_window, event_timing_system, event_type, " +
+                                "api_id, api_event_id FROM events_old;" +
+                            "DROP TABLE events_old;" +
+                            "ALTER TABLE eventspecific RENAME TO eventspecific_old;" +
+                            "CREATE TABLE IF NOT EXISTS eventspecific (" +
+                                "eventspecific_id INTEGER PRIMARY KEY," +
+                                "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "distance_id INTEGER NOT NULL REFERENCES distances(distance_id)," +
+                                "eventspecific_bib INTEGER," +
+                                "eventspecific_checkedin INTEGER DEFAULT 0," +
+                                "eventspecific_comments VARCHAR," +
+                                "eventspecific_owes VARCHAR(50)," +
+                                "eventspecific_other VARCHAR," +
+                                "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
+                                "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + "," +
+                                "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
+                                "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110'," +
+                                "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE," +
+                                "UNIQUE (event_id, eventspecific_bib) ON CONFLICT REPLACE" +
+                                ");" +
+                            "INSERT INTO eventspecific SELECT eventspecific_id, participant_id, event_id, distance_id, eventspecific_bib," +
+                                "eventspecific_checkedin, eventspecific_comments, eventspecific_owes, eventspecific_other, eventspecific_registration_date," +
+                                "eventspecific_status, eventspecific_age_group_id, eventspecific_age_group_name FROM eventspecific_old;" +
+                            "DROP TABLE eventspecific_old;" +
+                            "UPDATE settings SET value='46' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

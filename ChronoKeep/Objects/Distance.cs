@@ -9,7 +9,7 @@ namespace ChronoKeep
     public class Distance : IEquatable<Distance>, IComparable<Distance>
     {
         private String name;
-        private int identifier, eventIdentifier, cost;
+        private int identifier, eventIdentifier;
         private double distance;
         private int distance_unit = Constants.Distances.MILES, finish_location = Constants.Timing.LOCATION_FINISH,
             finish_occurrence = 1, start_location = Constants.Timing.LOCATION_START, start_within = 5,
@@ -19,11 +19,10 @@ namespace ChronoKeep
 
         public Distance() { }
 
-        public Distance(string name, int eventIdentifier, int cost)
+        public Distance(string name, int eventIdentifier)
         {
             this.name = name;
             this.eventIdentifier = eventIdentifier;
-            this.cost = cost;
         }
 
         public Distance(string name, int eventIdentifier, int linkedIdentifier, int type, int ranking, int wave, int start_offset_seconds, int start_offset_milliseconds)
@@ -39,14 +38,13 @@ namespace ChronoKeep
         }
 
         public Distance(int identifier, string name, int eventIdentifier,
-            int cost, double distance, int distance_unit, int finish_location, int finish_occurrence,
+            double distance, int distance_unit, int finish_location, int finish_occurrence,
             int start_location, int start_within, int wave, int start_offset_seconds, int start_offset_milliseconds,
             int endseconds, int linked_distance, int type, int ranking)
         {
             this.identifier = identifier;
             this.name = name;
             this.eventIdentifier = eventIdentifier;
-            this.cost = cost;
             this.distance = distance;
             this.distance_unit = distance_unit;
             this.finish_location = finish_location;
@@ -65,7 +63,6 @@ namespace ChronoKeep
         public int Identifier { get => identifier; set => identifier = value; }
         public string Name { get => name; set => name = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
-        public int Cost { get => cost; set => cost = value; }
         public double DistanceValue { get => distance; set => distance = value; }
         public int DistanceUnit { get => distance_unit; set => distance_unit = value; }
         public int FinishLocation { get => finish_location; set => finish_location = value; }

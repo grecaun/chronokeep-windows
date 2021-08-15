@@ -8,7 +8,7 @@ namespace ChronoKeep
 {
     public class Event : IEquatable<Event>, IComparable<Event>
     {
-        private int identifier, shirtOptional = 1, shirtPrice = 2000;
+        private int identifier;
         private int common_age_groups = 1, common_start_finish = 1, distance_specific_segments = 0, rank_by_gun = 1;
         private int finish_max_occurrences = 1, finish_ignore_within = 0, start_window = -1;
         private int event_type = Constants.Timing.EVENT_TYPE_DISTANCE;
@@ -20,66 +20,54 @@ namespace ChronoKeep
 
         public Event() { }
 
-        public Event(string n, long d, int so, int price)
+        public Event(string n, long d)
         {
-            this.shirtOptional = so;
             this.date = new DateTime(d).ToShortDateString();
             this.name = n;
-            this.shirtPrice = price;
         }
 
-        public Event(string n, long d, int so, int price, string yearcode)
+        public Event(string n, long d, string yearcode)
         {
-            this.shirtOptional = so;
             this.date = new DateTime(d).ToShortDateString();
             this.name = n;
-            this.shirtPrice = price;
             this.yearcode = yearcode;
         }
 
-        public Event(int id, string n, long d, int so, int price)
+        public Event(int id, string n, long d)
         {
             this.identifier = id;
-            this.shirtOptional = so;
             this.name = n;
             this.date = new DateTime(d).ToShortDateString();
-            this.shirtPrice = price;
         }
 
-        public Event(string n, long d, int so, int price, int age, int start, int seg, int gun)
+        public Event(string n, long d, int age, int start, int seg, int gun)
         {
-            this.shirtOptional = so;
             this.date = new DateTime(d).ToShortDateString();
             this.name = n;
-            this.shirtPrice = price;
             this.common_age_groups = age;
             this.common_start_finish = start;
             this.distance_specific_segments = seg;
             this.rank_by_gun = gun;
         }
 
-        public Event(int id, string n, long d, int so, int price, int age, int start, int seg, int gun)
+        public Event(int id, string n, long d, int age, int start, int seg, int gun)
         {
             this.identifier = id;
-            this.shirtOptional = so;
             this.name = n;
             this.date = new DateTime(d).ToShortDateString();
-            this.shirtPrice = price;
             this.common_age_groups = age;
             this.common_start_finish = start;
             this.distance_specific_segments = seg;
             this.rank_by_gun = gun;
         }
 
-        public Event(int id, string n, string d, int so, int price, int age, int start, int seg,
+        public Event(int id, string n, string d, int age, int start, int seg,
             int gun, string yearcode, int maxOcc, int ignWith, int window,
             long startsec, int startmill, string system, int type, int api_id, string api_event_id)
         {
             this.identifier = id;
-            this.shirtOptional = so;
             this.name = n;
             this.date = DateTime.Parse(d).ToShortDateString();
-            this.shirtPrice = price;
             this.common_age_groups = age;
             this.common_start_finish = start;
             this.distance_specific_segments = seg;
@@ -99,8 +87,6 @@ namespace ChronoKeep
         public int Identifier { get => identifier; set => identifier = value; }
         public string Name { get => name; set => name = value; }
         public string Date { get => date; set => date = value; }
-        public int ShirtOptional { get => shirtOptional; set => shirtOptional = value; }
-        public int ShirtPrice { get => shirtPrice; set => shirtPrice = value; }
         public bool CommonAgeGroups { get => common_age_groups != 0; set => common_age_groups = value ? 1 : 0; }
         public bool CommonStartFinish { get => common_start_finish != 0; set => common_start_finish = value ? 1 : 0; }
         public bool DistanceSpecificSegments { get => distance_specific_segments != 0; set => distance_specific_segments = value ? 1 : 0; }

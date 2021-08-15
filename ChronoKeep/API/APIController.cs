@@ -70,6 +70,7 @@ namespace ChronoKeep.API
         {
             if (mut.WaitOne(3000))
             {
+                Log.D("Shutting down API Auto Upload.");
                 KeepAlive = false;
                 waiter.Release();
                 mut.ReleaseMutex();
@@ -86,7 +87,7 @@ namespace ChronoKeep.API
             Log.D("API Controller is now running.");
             if (mut.WaitOne(3000))
             {
-                if (Running == true)
+                if (Running)
                 {
                     Log.D("API Controller thread is already running.");
                     mut.ReleaseMutex();
@@ -109,6 +110,7 @@ namespace ChronoKeep.API
                 // Get API to upload. Exit if not found
                 if (theEvent.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
                 {
+                    Log.D("Unable to find API information.");
                     KeepAlive = false;
                     Running = false;
                     mainWindow.UpdateTimingFromController();
@@ -120,6 +122,7 @@ namespace ChronoKeep.API
                     api = database.GetResultsAPI(theEvent.API_ID);
                 } catch
                 {
+                    Log.D("Database doesn't contain information about the specified API.");
                     KeepAlive = false;
                     Running = false;
                     mainWindow.UpdateTimingFromController();
@@ -129,6 +132,7 @@ namespace ChronoKeep.API
                 string[] event_ids = theEvent.API_Event_ID.Split(',');
                 if (event_ids.Length != 2)
                 {
+                    Log.D("Event ID values for API upload not valid.");
                     KeepAlive = false;
                     Running = false;
                     mainWindow.UpdateTimingFromController();
@@ -158,6 +162,7 @@ namespace ChronoKeep.API
                         }
                         catch
                         {
+                            Log.D("Unable to handle API response. Loop " + i);
                             KeepAlive = false;
                             Running = false;
                             mainWindow.UpdateTimingFromController();
@@ -178,6 +183,7 @@ namespace ChronoKeep.API
                         }
                         catch
                         {
+                            Log.D("Unable to handle API response. Leftovers");
                             KeepAlive = false;
                             Running = false;
                             mainWindow.UpdateTimingFromController();
@@ -205,17 +211,22 @@ namespace ChronoKeep.API
                 // Check if we're supposed to exit the loop
                 if (mut.WaitOne(3000))
                 {
+                    Log.D("Checking keep alive status.");
                     if (!KeepAlive)
                     {
                         Log.D("Exiting API thread.");
                         Running = false;
                         mut.ReleaseMutex();
+                        mainWindow.UpdateTimingFromController();
                         return;
                     }
                     mut.ReleaseMutex();
                 }
                 else
                 {
+                    Log.D("Error with API mutex.");
+                    KeepAlive = false;
+                    Running = false;
                     // Unable to get mutex.
                     return;
                 }

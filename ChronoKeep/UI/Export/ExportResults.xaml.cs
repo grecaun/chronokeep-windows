@@ -23,7 +23,7 @@ namespace ChronoKeep.UI.Export
         List<String> commonHeaders = new List<String>
         {
             "Place", "Age Group Place", "Gender Place",
-            "Bib", "Distance", "Status", "Early Start", "First", "Last", "Birthday",
+            "Bib", "Distance", "Status", "First", "Last", "Birthday",
             "Age", "Gender", "Start", "Street", "Apartment",
             "City", "State", "Zip", "Country", "Mobile", "Email", "Parent", "Comments",
             "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone"
@@ -163,10 +163,6 @@ namespace ChronoKeep.UI.Export
                     if (headerIndex.ContainsKey("Status"))
                     {
                         line[headerIndex["Status"]] = participant.EventSpecific.StatusStr;
-                    }
-                    if (headerIndex.ContainsKey("Early Start"))
-                    {
-                        line[headerIndex["Early Start"]] = participant.EarlyStart;
                     }
                     if (headerIndex.ContainsKey("First"))
                     {

@@ -12,7 +12,7 @@ namespace ChronoKeep
     {
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, bib, readId, place, agePlace, genderPlace,
-            ageGroupId, chipMilliseconds, status, early, uploaded, type;
+            ageGroupId, chipMilliseconds, status, uploaded, type;
         private long chipSeconds;
         private string time, locationName, segmentName, firstName, lastName,
             distanceName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday, linked_distance_name = "";
@@ -28,7 +28,7 @@ namespace ChronoKeep
         public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
             string time, int occurrence, string first, string last, string distance, int bib,
             int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
-            int agePlace, int genderPlace, string gender, int status, int early, string split,
+            int agePlace, int genderPlace, string gender, int status, string split,
             int ageGroupId, string ageGroupName, int uploaded, string birthday, int type, string linked_distance_name)
         {
             this.eventId = eventId;
@@ -80,17 +80,10 @@ namespace ChronoKeep
                 chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
             }
             this.status = status;
-            this.early = early;
             this.splitTime = split;
             this.uploaded = uploaded;
             this.birthday = birthday;
             this.type = type;
-            // Some backwards compatibility here.
-            // Type is never set to 1 in a version of Chronokeep that uses type.
-            if (this.early == 1)
-            {
-                this.type = Constants.Timing.DISTANCE_TYPE_EARLY;
-            }
             this.linked_distance_name = linked_distance_name;
         }
 
@@ -161,7 +154,6 @@ namespace ChronoKeep
         public string ParticipantName { get => String.Format("{0} {1}", firstName, lastName).Trim(); }
         public string DistanceName { get => linked_distance_name == "" ? distanceName : linked_distance_name; }
         public string RealDistanceName { get => distanceName; }
-        public string DistanceNameWithEarly { get => DistanceName + (early == 1 ? " Early" : ""); }
         public int Bib { get => bib; set => bib = value; }
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public string UnknownId { get => unknownId; set => unknownId = value; }
@@ -190,7 +182,6 @@ namespace ChronoKeep
         public string Gender { get => gender; set => gender = value; }
         public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
         public int Status { get => status; set => status = value; }
-        public int Early { get => early; set => early = value; }
         public string LapTime { get => splitTime; set => splitTime = value; }
         public long ChipSeconds { get => chipSeconds; set => chipSeconds = value; }
         public int ChipMilliseconds { get => chipMilliseconds; set => chipMilliseconds = value; }

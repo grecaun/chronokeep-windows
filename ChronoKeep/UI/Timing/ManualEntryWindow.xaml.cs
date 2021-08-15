@@ -175,7 +175,6 @@ namespace ChronoKeep.UI.Timing
                     List<Distance> distances = database.GetDistances(theEvent.Identifier);
                     // Store the offset start values for each distance by distance ID
                     Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = new Dictionary<int, (int, int)>();
-                    Dictionary<int, int> distanceEarlyStartOffsetDictionary = new Dictionary<int, int>();
                     // Store participants by their bib number
                     Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
                     foreach (Distance div in distances)
@@ -192,11 +191,6 @@ namespace ChronoKeep.UI.Timing
                         .ContainsKey(participantsDictionary[bib].EventSpecific.DistanceIdentifier))
                     {
                         startOffset = distanceStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DistanceIdentifier];
-                        if (participantsDictionary[bib].IsEarlyStart && distanceEarlyStartOffsetDictionary
-                            .ContainsKey(participantsDictionary[bib].EventSpecific.DistanceIdentifier))
-                        {
-                            startOffset.seconds -= distanceEarlyStartOffsetDictionary[participantsDictionary[bib].EventSpecific.DistanceIdentifier];
-                        }
                     }
                     time = DateTime.Parse(theEvent.Date + " 00:00:00.000");
                     milliseconds += theEvent.StartMilliseconds + startOffset.milliseconds;

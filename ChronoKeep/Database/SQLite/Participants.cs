@@ -44,8 +44,8 @@ namespace ChronoKeep.Database.SQLite
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, distance_id, eventspecific_bib, " +
                 "eventspecific_checkedin, eventspecific_comments, eventspecific_owes, eventspecific_other, " +
-                "eventspecific_earlystart, eventspecific_next_year, eventspecific_age_group_name, eventspecific_age_group_id) " +
-                "VALUES (@participant,@event,@distance,@bib,@checkedin,@comments,@owes,@other,@earlystart,@nextYear,@ageGroupName,@ageGroupId)";
+                "eventspecific_next_year, eventspecific_age_group_name, eventspecific_age_group_id) " +
+                "VALUES (@participant,@event,@distance,@bib,@checkedin,@comments,@owes,@other,@ageGroupName,@ageGroupId)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@participant", person.Identifier),
                 new SQLiteParameter("@event", person.EventSpecific.EventIdentifier),
@@ -55,8 +55,6 @@ namespace ChronoKeep.Database.SQLite
                 new SQLiteParameter("@comments", person.EventSpecific.Comments),
                 new SQLiteParameter("@owes", person.EventSpecific.Owes),
                 new SQLiteParameter("@other", person.EventSpecific.Other),
-                new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart),
-                new SQLiteParameter("@nextYear", person.EventSpecific.NextYear),
                 new SQLiteParameter("@ageGroupName", person.EventSpecific.AgeGroupName),
                 new SQLiteParameter("@ageGroupId", person.EventSpecific.AgeGroupId)
             });
@@ -120,7 +118,7 @@ namespace ChronoKeep.Database.SQLite
             command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE eventspecific SET distance_id=@distanceId, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
-                "eventspecific_owes=@owes, eventspecific_other=@other, eventspecific_earlystart=@earlystart, eventspecific_next_year=@nextYear," +
+                "eventspecific_owes=@owes, eventspecific_other=@other, " +
                 "eventspecific_comments=@comments, eventspecific_status=@status, eventspecific_age_group_name=@ageGroupName, eventspecific_age_group_id=@ageGroupId " +
                 "WHERE eventspecific_id=@eventspecid";
             command.Parameters.AddRange(new SQLiteParameter[] {
@@ -130,8 +128,6 @@ namespace ChronoKeep.Database.SQLite
                     new SQLiteParameter("@eventspecid", person.EventSpecific.Identifier),
                     new SQLiteParameter("@owes", person.EventSpecific.Owes),
                     new SQLiteParameter("@other", person.EventSpecific.Other),
-                    new SQLiteParameter("@earlystart", person.EventSpecific.EarlyStart),
-                    new SQLiteParameter("@nextYear", person.EventSpecific.NextYear),
                     new SQLiteParameter("@comments", person.EventSpecific.Comments),
                     new SQLiteParameter("@status", person.EventSpecific.Status),
                     new SQLiteParameter("@ageGroupName", person.EventSpecific.AgeGroupName),
@@ -201,8 +197,6 @@ namespace ChronoKeep.Database.SQLite
                         reader["eventspecific_comments"].ToString(),
                         reader["eventspecific_owes"].ToString(),
                         reader["eventspecific_other"].ToString(),
-                        Convert.ToInt32(reader["eventspecific_earlystart"]),
-                        Convert.ToInt32(reader["eventspecific_next_year"]),
                         Convert.ToInt32(reader["eventspecific_status"]),
                         reader["eventspecific_age_group_name"].ToString(),
                         Convert.ToInt32(reader["eventspecific_age_group_id"])
@@ -244,8 +238,6 @@ namespace ChronoKeep.Database.SQLite
                         reader["eventspecific_comments"].ToString(),
                         reader["eventspecific_owes"].ToString(),
                         reader["eventspecific_other"].ToString(),
-                        Convert.ToInt32(reader["eventspecific_earlystart"]),
-                        Convert.ToInt32(reader["eventspecific_next_year"]),
                         Convert.ToInt32(reader["eventspecific_status"]),
                         reader["eventspecific_age_group_name"].ToString(),
                         Convert.ToInt32(reader["eventspecific_age_group_id"])

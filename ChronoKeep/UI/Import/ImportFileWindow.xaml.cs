@@ -251,7 +251,7 @@ namespace ChronoKeep
                         theDiv = (Distance)divHashName[id.NameFromFile];
                         if (theDiv == null)
                         {
-                            Distance div = new Distance(id.NameFromFile, theEvent.Identifier, 0);
+                            Distance div = new Distance(id.NameFromFile, theEvent.Identifier);
                             database.AddDistance(div);
                             div.Identifier = database.GetDistanceID(div);
                             divHash.Add(div.Name, div);
@@ -312,9 +312,7 @@ namespace ChronoKeep
                                 0,                            // checked in
                                 data.Data[counter][keys[COMMENTS]], // comments
                                 data.Data[counter][keys[OWES]], // owes
-                                data.Data[counter][keys[OTHER]], // other
-                                0,                            // early start
-                                0                             // used next year registration option
+                                data.Data[counter][keys[OTHER]] // other
                                 ),
                             data.Data[counter][keys[EMAIL]], // email
                             data.Data[counter][keys[MOBILE]], // mobile
