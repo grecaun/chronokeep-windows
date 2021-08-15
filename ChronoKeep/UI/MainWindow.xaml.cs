@@ -331,6 +331,7 @@ namespace ChronoKeep.UI
         public void UpdateTimingFromController()
         {
             TimingWorker.Notify();
+            // AnnouncerThread.Notify();
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
                 if (page is TimingPage)
@@ -339,6 +340,11 @@ namespace ChronoKeep.UI
                     ((TimingPage)page).NewMessage();
                 }
             }));
+        }
+
+        public void UpdateAnnouncerWindow()
+        {
+            // Let the announcer window know that it has new information.
         }
 
         public void UpdateTiming()

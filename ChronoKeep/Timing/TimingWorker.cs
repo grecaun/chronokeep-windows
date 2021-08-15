@@ -227,7 +227,6 @@ namespace ChronoKeep.Timing
                 Log.D("Entering loop " + counter++);
                 Event theEvent = database.GetCurrentEvent();
                 // ensure the event exists and we've got unprocessed reads
-                Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
                 if (theEvent != null && theEvent.Identifier != -1)
                 {
                     if (ResetDictionariesMutex.WaitOne(3000))
@@ -240,41 +239,39 @@ namespace ChronoKeep.Timing
                         ResetDictionariesMutex.ReleaseMutex();
                     }
                     bool touched = false;
-                    List<TimeResult> results = null;
                     if (database.UnprocessedReadsExist(theEvent.Identifier))
                     {
                         DateTime start = DateTime.Now;
                         // If RACETYPE is DISTANCE
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                         {
-                            results = ProcessDistanceBasedRace(theEvent);
+                            _ = ProcessDistanceBasedRace(theEvent);
                             touched = true;
                         }
                         // Else RACETYPE is TIME
                         else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                         {
-                            results = ProcessTimeBasedRace(theEvent);
+                            _ = ProcessTimeBasedRace(theEvent);
                             touched = true;
                         }
                         DateTime end = DateTime.Now;
                         TimeSpan time = end - start;
                         Log.D(String.Format("Time to process all chip reads was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
                     }
-                    results = null;
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
                     {
                         DateTime start = DateTime.Now;
                         // If RACETYPE if DISTANCE
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                         {
-                            results = ProcessPlacementsDistance(theEvent);
+                            _ = ProcessPlacementsDistance(theEvent);
                             touched = true;
                         }
                         // Else RACETYPE is TIME
                         else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                         {
                             ProcessLapTimes(theEvent);
-                            results = ProcessPlacementsTime(theEvent);
+                            _ = ProcessPlacementsTime(theEvent);
                             touched = true;
                         }
                         DateTime end = DateTime.Now;
@@ -326,7 +323,7 @@ namespace ChronoKeep.Timing
                     sec--;
                     mill += 1000;
                 }
-                currentLap.LapTime = String.Format("{0}:{1:D2}:{2:D2}.{3:D3}", sec / 3600, (sec % 3600) / 60, sec % 60, mill);
+                currentLap.LapTime = Constants.Timing.ToTime((int)sec, mill);
             }
             database.AddTimingResults(laps);
         }
@@ -526,7 +523,7 @@ namespace ChronoKeep.Timing
                                     read.LocationID,
                                     Constants.Timing.SEGMENT_START,
                                     0, // start reads are not an occurrence at the start line
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                    Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                     "Bib:" + bib.ToString(),
                                     "0:00:00.000",
                                     read.Time,
@@ -657,9 +654,9 @@ namespace ChronoKeep.Timing
                                             read.LocationID,
                                             segId,
                                             occurrence,
-                                            String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                            Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                             identifier,
-                                            String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
+                                            Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
                                             read.Time,
                                             bib,
                                             Constants.Timing.TIMERESULT_STATUS_NONE
@@ -696,7 +693,6 @@ namespace ChronoKeep.Timing
                 }
             }
             // process reads that have a chip
-            Dictionary<string, ChipRead> chipStartReadDictionary = new Dictionary<string, ChipRead>();
             foreach (string chip in chipReadPairs.Keys)
             {
                 long startSeconds, maxStartSeconds;
@@ -751,7 +747,7 @@ namespace ChronoKeep.Timing
                                     read.LocationID,
                                     Constants.Timing.SEGMENT_START,
                                     0, // start reads are not an occurrence at the start line
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                    Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                     identifier,
                                     "0:00:00.000",
                                     read.Time,
@@ -853,9 +849,9 @@ namespace ChronoKeep.Timing
                                         read.LocationID,
                                         segId,
                                         occurrence,
-                                        String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                        Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                         identifier,
-                                        String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
+                                        Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
                                         read.Time,
                                         read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                         Constants.Timing.TIMERESULT_STATUS_NONE
@@ -1128,7 +1124,7 @@ namespace ChronoKeep.Timing
                                 read.LocationID,
                                 Constants.Timing.SEGMENT_START,
                                 0, // start reads are not an occurrence at the start line
-                                String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                 "Bib:" + bib.ToString(),
                                 "0:00:00.000",
                                 read.Time,
@@ -1224,9 +1220,9 @@ namespace ChronoKeep.Timing
                                     read.LocationID,
                                     segId,
                                     occurrence,
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                    Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                     identifier,
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
+                                    Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
                                     read.Time,
                                     bib,
                                     Constants.Timing.TIMERESULT_STATUS_NONE
@@ -1297,7 +1293,7 @@ namespace ChronoKeep.Timing
                                 read.LocationID,
                                 Constants.Timing.SEGMENT_START,
                                 0, // start reads are not an occurrence at the start line
-                                String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                 "Chip:" + chip.ToString(),
                                 "0:00:00.000",
                                 read.Time,
@@ -1385,9 +1381,9 @@ namespace ChronoKeep.Timing
                                     read.LocationID,
                                     segId,
                                     occurrence,
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                    Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                     identifier,
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
+                                    Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
                                     read.Time,
                                     read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                     Constants.Timing.TIMERESULT_STATUS_NONE

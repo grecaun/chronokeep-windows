@@ -18,7 +18,7 @@ namespace ChronoKeep.Database.SQLite
                     "DROP TABLE settings; DROP TABLE chipreads;" +
                     "DROP TABLE time_results; DROP TABLE segments; DROP TABLE eventspecific;" +
                     "DROP TABLE participants; DROP TABLE timing_locations; DROP TABLE distances;" +
-                    "DROP TABLE events; DROP TABLE bib_chip_assoc;";
+                    "DROP TABLE events; DROP TABLE bib_chip_assoc; DROP TABLE results_api;";
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
@@ -30,10 +30,10 @@ namespace ChronoKeep.Database.SQLite
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandText = "DELETE FROM timing_systems; DELETE FROM age_groups;" +
-                    " DELETE FROM settings; DELETE FROM chipreads;" +
+                    "DELETE FROM settings; DELETE FROM chipreads;" +
                     "DELETE FROM time_results; DELETE FROM segments; DELETE FROM eventspecific;" +
                     "DELETE FROM participants; DELETE FROM timing_locations; DELETE FROM distances;" +
-                    "DELETE FROM events; DELETE FROM bib_chip_assoc;";
+                    "DELETE FROM events; DELETE FROM bib_chip_assoc; DELETE FROM results_api;";
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }

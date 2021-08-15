@@ -8,8 +8,9 @@ namespace ChronoKeep.Constants
 {
     public class Timing
     {
-        public static readonly int LOCATION_FINISH = -2;
         public static readonly int LOCATION_START = -1;
+        public static readonly int LOCATION_FINISH = -2;
+        public static readonly int LOCATION_ANNOUNCER = -3;
         public static readonly int LOCATION_DUMMY = -12;
 
         public static readonly int SEGMENT_FINISH = -1;
@@ -100,5 +101,15 @@ namespace ChronoKeep.Constants
             { EVENTSPECIFIC_FINISHED, "Finished" },
             { EVENTSPECIFIC_NOFINISH, "DNF" },
         };
+
+        public static string SecondsToTime(long seconds)
+        {
+            return String.Format("{0}:{1:D2}:{2:D2}", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
+        }
+
+        public static string ToTime(long seconds, int milliseconds)
+        {
+            return String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", seconds / 3600, (seconds % 3600) / 60, seconds % 60, milliseconds);
+        }
     }
 }

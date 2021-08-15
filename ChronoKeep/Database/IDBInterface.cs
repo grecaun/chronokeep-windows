@@ -132,6 +132,7 @@ namespace ChronoKeep
         List<ChipRead> GetChipReads();
         List<ChipRead> GetChipReads(int eventId);
         List<ChipRead> GetUsefulChipReads(int eventId);
+        List<ChipRead> GetAnnouncerChipReads(int eventId);
 
         // Age Group Functions
         void AddAgeGroup(AgeGroup group);

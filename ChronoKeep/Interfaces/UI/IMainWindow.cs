@@ -22,6 +22,7 @@ namespace ChronoKeep.Interfaces
         void UpdateTimingFromController();
         void UpdateTiming();
         bool NewTimingInfo();
+        void UpdateAnnouncerWindow();
 
         // Timing System related calls.
         void ConnectTimingSystem(TimingSystem system);
