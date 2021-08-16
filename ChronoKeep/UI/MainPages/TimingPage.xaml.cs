@@ -120,8 +120,7 @@ namespace ChronoKeep.UI.MainPages
             // Check if we've already started the event.  Show a clock if we have.
             if (theEvent != null && theEvent.StartSeconds >= 0)
             {
-                StartTime.Text = String.Format("{0:D2}:{1:D2}:{2:D2}.{3:D3}",
-                    theEvent.StartSeconds / 3600, (theEvent.StartSeconds % 3600) / 60, theEvent.StartSeconds % 60, theEvent.StartMilliseconds);
+                StartTime.Text = Constants.Timing.ToTime(theEvent.StartSeconds, theEvent.StartMilliseconds);
                 UpdateStartTime();
             }
 
@@ -130,11 +129,13 @@ namespace ChronoKeep.UI.MainPages
             locations = database.GetTimingLocations(theEvent.Identifier);
             if (!theEvent.CommonStartFinish)
             {
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
             }
             else
             {
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
             List<TimingSystem> systems = mWindow.GetConnectedSystems();

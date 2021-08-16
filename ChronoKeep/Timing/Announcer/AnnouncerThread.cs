@@ -98,7 +98,8 @@ namespace ChronoKeep.Timing.Announcer
                 if (theEvent != null && theEvent.Identifier != -1)
                 {
                     bool newParticipants = false;
-                    foreach (ChipRead read in database.GetAnnouncerChipReads(theEvent.Identifier))
+                    List<ChipRead> announcerReads = database.GetAnnouncerChipReads(theEvent.Identifier);
+                    foreach (ChipRead read in announcerReads)
                     {
                         // Check to ensure we know the bib of this person
                         if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
@@ -112,7 +113,9 @@ namespace ChronoKeep.Timing.Announcer
                                 participants.Add(new AnnouncerParticipant(participantBibDictionary[read.Bib], read.Seconds));
                             }
                         }
+                        read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_SEEN;
                     }
+                    database.UpdateChipReads(announcerReads);
                     // If we've seen new participants update the window.
                     if (newParticipants)
                     {

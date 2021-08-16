@@ -276,6 +276,7 @@
     <Compile Include="Network\API\APIHandlers.cs" />
     <Compile Include="Network\HttpServer.cs" />
     <Compile Include="Objects\AgeGroup.cs" />
+    <Compile Include="Objects\AnnouncerParticipant.cs" />
     <Compile Include="Objects\ChronoKeepAPI\APIEvent.cs" />
     <Compile Include="Objects\ChronoKeepAPI\APIEventYear.cs" />
     <Compile Include="Objects\ChronoKeepAPI\Requests.cs" />
