@@ -25,21 +25,21 @@ namespace ChronoKeep.Timing
 
         // Dictionaries for storing information about the race.
         private Dictionary<int, TimingLocation> locationDictionary = new Dictionary<int, TimingLocation>();
-        // (DivisionId, LocationId, Occurrence)
+        // (DistanceId, LocationId, Occurrence)
         private Dictionary<(int, int, int), Segment> segmentDictionary = new Dictionary<(int, int, int), Segment>();
         // Participants are stored based upon BIB and EVENTSPECIFICIDENTIFIER because we use both
         private Dictionary<int, Participant> participantBibDictionary = new Dictionary<int, Participant>();
         private Dictionary<int, Participant> participantEventSpecificDictionary = new Dictionary<int, Participant>();
-        // Start times. Item at 0 should always be 00:00:00.000. Key is Division ID
-        private Dictionary<int, (long Seconds, int Milliseconds)> divisionStartDict = new Dictionary<int, (long, int)>();
-        private Dictionary<int, (long Seconds, int Milliseconds)> divisionEndDict = new Dictionary<int, (long, int)>();
-        private Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
+        // Start times. Item at 0 should always be 00:00:00.000. Key is Distance ID
+        private Dictionary<int, (long Seconds, int Milliseconds)> distanceStartDict = new Dictionary<int, (long, int)>();
+        private Dictionary<int, (long Seconds, int Milliseconds)> distanceEndDict = new Dictionary<int, (long, int)>();
+        private Dictionary<int, Distance> distanceDictionary = new Dictionary<int, Distance>();
 
         // Link bibs and chipreads for adding occurence to bib based dnf entry.
         Dictionary<int, string> bibChipDictionary = new Dictionary<int, string>();
 
-        private Dictionary<string, (Division, int)> linkedDivisionDictionary = new Dictionary<string, (Division, int)>();
-        private Dictionary<int, int> linkedDivIdentifierDictionary = new Dictionary<int, int>();
+        private Dictionary<string, (Distance, int)> linkedDistanceDictionary = new Dictionary<string, (Distance, int)>();
+        private Dictionary<int, int> linkedDistanceIdentifierDictionary = new Dictionary<int, int>();
 
         private TimingWorker(IMainWindow window, IDBInterface database)
         {
@@ -126,13 +126,13 @@ namespace ChronoKeep.Timing
             segmentDictionary.Clear();
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
-                if (segmentDictionary.ContainsKey((seg.DivisionId, seg.LocationId, seg.Occurrence)))
+                if (segmentDictionary.ContainsKey((seg.DistanceId, seg.LocationId, seg.Occurrence)))
                 {
                     Log.E("Multiples of a segment found in segment set.");
                 }
-                segmentDictionary[(seg.DivisionId, seg.LocationId, seg.Occurrence)] = seg;
+                segmentDictionary[(seg.DistanceId, seg.LocationId, seg.Occurrence)] = seg;
             }
-            // Participants so we can check their Division.
+            // Participants so we can check their Distance.
             participantBibDictionary.Clear();
             participantEventSpecificDictionary.Clear();
             foreach (Participant part in database.GetParticipants(theEvent.Identifier))
@@ -145,26 +145,26 @@ namespace ChronoKeep.Timing
                 participantEventSpecificDictionary[part.EventSpecific.Identifier] = part;
             }
             // Get the start time for the event. (Net time of 0:00:00.000)
-            divisionStartDict.Clear();
+            distanceStartDict.Clear();
             DateTime startTime = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds);
-            divisionStartDict[0] = (Constants.Timing.DateToEpoch(startTime), theEvent.StartMilliseconds);
+            distanceStartDict[0] = (Constants.Timing.DateToEpoch(startTime), theEvent.StartMilliseconds);
             // And the end time (for time based events)
-            divisionEndDict.Clear();
-            divisionEndDict[0] = divisionStartDict[0];
-            // Divisions so we can get their start offset.
-            divisionDictionary.Clear();
-            List<Division> divs = database.GetDivisions(theEvent.Identifier);
-            foreach (Division div in divs)
+            distanceEndDict.Clear();
+            distanceEndDict[0] = distanceStartDict[0];
+            // Distances so we can get their start offset.
+            distanceDictionary.Clear();
+            List<Distance> distances = database.GetDistances(theEvent.Identifier);
+            foreach (Distance d in distances)
             {
-                if (divisionDictionary.ContainsKey(div.Identifier))
+                if (distanceDictionary.ContainsKey(d.Identifier))
                 {
-                    Log.E("Multiples of a Division found in divisions set.");
+                    Log.E("Multiples of a Distance found in distances set.");
                 }
-                divisionDictionary[div.Identifier] = div;
-                Log.D("Division " + div.Name + " offsets are " + div.StartOffsetSeconds + " " + div.StartOffsetMilliseconds);
-                divisionStartDict[div.Identifier] = (divisionStartDict[0].Seconds + div.StartOffsetSeconds, divisionStartDict[0].Milliseconds + div.StartOffsetMilliseconds);
-                divisionEndDict[div.Identifier] = (divisionStartDict[div.Identifier].Seconds + div.EndSeconds, divisionStartDict[div.Identifier].Milliseconds);
-                divisionEndDict[0] = (divisionEndDict[div.Identifier].Seconds, divisionEndDict[div.Identifier].Milliseconds);
+                distanceDictionary[d.Identifier] = d;
+                Log.D("Distance " + d.Name + " offsets are " + d.StartOffsetSeconds + " " + d.StartOffsetMilliseconds);
+                distanceStartDict[d.Identifier] = (distanceStartDict[0].Seconds + d.StartOffsetSeconds, distanceStartDict[0].Milliseconds + d.StartOffsetMilliseconds);
+                distanceEndDict[d.Identifier] = (distanceStartDict[d.Identifier].Seconds + d.EndSeconds, distanceStartDict[d.Identifier].Milliseconds);
+                distanceEndDict[0] = (distanceEndDict[d.Identifier].Seconds, distanceEndDict[d.Identifier].Milliseconds);
             }
             // Set up bibChipDictionary so we can link bibs to chips
             List<BibChipAssociation> bibChips = database.GetBibChips(theEvent.Identifier);
@@ -172,35 +172,35 @@ namespace ChronoKeep.Timing
             {
                 bibChipDictionary[assoc.Bib] = assoc.Chip;
             }
-            // Dictionary for looking up linked divisions
-            linkedDivisionDictionary.Clear();
-            foreach (Division div in divs)
+            // Dictionary for looking up linked distances
+            linkedDistanceDictionary.Clear();
+            foreach (Distance d in distances)
             {
-                // Check if its a linked division
-                if (div.LinkedDivision > 0)
+                // Check if its a linked distance
+                if (d.LinkedDistance > 0)
                 {
-                    Log.D("Linked division found. " + div.LinkedDivision);
-                    // Verify we know the division its linked to.
-                    if (!divisionDictionary.ContainsKey(div.LinkedDivision))
+                    Log.D("Linked distance found. " + d.LinkedDistance);
+                    // Verify we know the distance its linked to.
+                    if (!distanceDictionary.ContainsKey(d.LinkedDistance))
                     {
-                        Log.E("Unable to find linked division.");
+                        Log.E("Unable to find linked distance.");
                     }
                     else
                     {
-                        Log.D("Setting linked dictionaries. Ranking: " + div.Ranking);
-                        // Set linked division for ranking as the linked division and set ranking int.
-                        linkedDivisionDictionary[div.Name] = (divisionDictionary[div.LinkedDivision], div.Ranking);
-                        linkedDivIdentifierDictionary[div.Identifier] = divisionDictionary[div.LinkedDivision].Identifier;
-                        // Set end time for linked division to linked divisions end time.
-                        divisionEndDict[div.Identifier] = (divisionStartDict[div.Identifier].Seconds + divisionDictionary[div.LinkedDivision].EndSeconds, divisionStartDict[div.Identifier].Milliseconds);
+                        Log.D("Setting linked dictionaries. Ranking: " + d.Ranking);
+                        // Set linked distance for ranking as the linked distance and set ranking int.
+                        linkedDistanceDictionary[d.Name] = (distanceDictionary[d.LinkedDistance], d.Ranking);
+                        linkedDistanceIdentifierDictionary[d.Identifier] = distanceDictionary[d.LinkedDistance].Identifier;
+                        // Set end time for linked distance to linked distances end time.
+                        distanceEndDict[d.Identifier] = (distanceStartDict[d.Identifier].Seconds + distanceDictionary[d.LinkedDistance].EndSeconds, distanceStartDict[d.Identifier].Milliseconds);
                     }
                 }
                 else
                 {
-                    Log.D("Setting linked dictionaries (no linked div found). Ranking: 0");
-                    // No linked division found, use division and 0 as ranking int.
-                    linkedDivisionDictionary[div.Name] = (div, 0);
-                    linkedDivIdentifierDictionary[div.Identifier] = div.Identifier;
+                    Log.D("Setting linked dictionaries (no linked distance found). Ranking: 0");
+                    // No linked distance found, use distance and 0 as ranking int.
+                    linkedDistanceDictionary[d.Name] = (d, 0);
+                    linkedDistanceIdentifierDictionary[d.Identifier] = d.Identifier;
                 }
             }
         }
@@ -227,7 +227,6 @@ namespace ChronoKeep.Timing
                 Log.D("Entering loop " + counter++);
                 Event theEvent = database.GetCurrentEvent();
                 // ensure the event exists and we've got unprocessed reads
-                Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
                 if (theEvent != null && theEvent.Identifier != -1)
                 {
                     if (ResetDictionariesMutex.WaitOne(3000))
@@ -240,54 +239,44 @@ namespace ChronoKeep.Timing
                         ResetDictionariesMutex.ReleaseMutex();
                     }
                     bool touched = false;
-                    List<TimeResult> results = null;
                     if (database.UnprocessedReadsExist(theEvent.Identifier))
                     {
                         DateTime start = DateTime.Now;
                         // If RACETYPE is DISTANCE
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                         {
-                            results = ProcessDistanceBasedRace(theEvent);
+                            _ = ProcessDistanceBasedRace(theEvent);
                             touched = true;
                         }
                         // Else RACETYPE is TIME
                         else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                         {
-                            results = ProcessTimeBasedRace(theEvent);
+                            _ = ProcessTimeBasedRace(theEvent);
                             touched = true;
                         }
                         DateTime end = DateTime.Now;
                         TimeSpan time = end - start;
                         Log.D(String.Format("Time to process all chip reads was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
                     }
-                    if (results != null && results.Count > 0)
-                    {
-                        window.NetworkAddResults(theEvent.Identifier, results);
-                    }
-                    results = null;
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
                     {
                         DateTime start = DateTime.Now;
                         // If RACETYPE if DISTANCE
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                         {
-                            results = ProcessPlacementsDistance(theEvent);
+                            _ = ProcessPlacementsDistance(theEvent);
                             touched = true;
                         }
                         // Else RACETYPE is TIME
                         else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                         {
                             ProcessLapTimes(theEvent);
-                            results = ProcessPlacementsTime(theEvent);
+                            _ = ProcessPlacementsTime(theEvent);
                             touched = true;
                         }
                         DateTime end = DateTime.Now;
                         TimeSpan time = end - start;
                         Log.D(String.Format("Time to process placements was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
-                    }
-                    if (results != null && results.Count > 0)
-                    {
-                        window.NetworkUpdateResults(theEvent.Identifier, results);
                     }
                     if (touched)
                     {
@@ -334,7 +323,7 @@ namespace ChronoKeep.Timing
                     sec--;
                     mill += 1000;
                 }
-                currentLap.LapTime = String.Format("{0}:{1:D2}:{2:D2}.{3:D3}", sec / 3600, (sec % 3600) / 60, sec % 60, mill);
+                currentLap.LapTime = Constants.Timing.ToTime((int)sec, mill);
             }
             database.AddTimingResults(laps);
         }
@@ -467,8 +456,8 @@ namespace ChronoKeep.Timing
                 Participant part = participantBibDictionary.ContainsKey(bib) ?
                     participantBibDictionary[bib] :
                     null;
-                Division div = part != null ?
-                    divisionDictionary[part.EventSpecific.DivisionIdentifier] :
+                Distance d = part != null ?
+                    distanceDictionary[part.EventSpecific.DistanceIdentifier] :
                     null;
                 long startSeconds, maxStartSeconds;
                 int startMilliseconds;
@@ -477,19 +466,15 @@ namespace ChronoKeep.Timing
                 {
                     startResult = startTimes["Bib:" + bib.ToString()];
                 }
-                if (div == null || !divisionStartDict.ContainsKey(div.Identifier))
+                if (d == null || !distanceStartDict.ContainsKey(d.Identifier))
                 {
-                    startSeconds = divisionStartDict[0].Seconds;
-                    startMilliseconds = divisionStartDict[0].Milliseconds;
+                    startSeconds = distanceStartDict[0].Seconds;
+                    startMilliseconds = distanceStartDict[0].Milliseconds;
                 }
                 else
                 {
-                    startSeconds = divisionStartDict[div.Identifier].Seconds;
-                    startMilliseconds = divisionStartDict[div.Identifier].Milliseconds;
-                }
-                if (part != null && part.EventSpecific != null && part.EventSpecific.EarlyStart == 1 && div != null)
-                {
-                    startSeconds = startSeconds - div.EarlyStartOffsetSeconds;
+                    startSeconds = distanceStartDict[d.Identifier].Seconds;
+                    startMilliseconds = distanceStartDict[d.Identifier].Milliseconds;
                 }
                 maxStartSeconds = startSeconds + theEvent.StartWindow;
                 foreach (ChipRead read in bibReadPairs[bib])
@@ -538,7 +523,7 @@ namespace ChronoKeep.Timing
                                     read.LocationID,
                                     Constants.Timing.SEGMENT_START,
                                     0, // start reads are not an occurrence at the start line
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                    Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                     "Bib:" + bib.ToString(),
                                     "0:00:00.000",
                                     read.Time,
@@ -601,10 +586,10 @@ namespace ChronoKeep.Timing
                                     minMilliseconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeMilliseconds;
                                 }
                                 // Check if we're past the max occurances allowed for this spot.
-                                // Also check if we've passed the finish occurrence for the finish line and that division
-                                // which requires an active division and the person's information
+                                // Also check if we've passed the finish occurrence for the finish line and that distance
+                                // which requires an active distance and the person's information
                                 if (occurrence > maxOccurrences ||
-                                    (div != null && Constants.Timing.LOCATION_FINISH == read.LocationID && occurrence > div.FinishOccurrence))
+                                    (d != null && Constants.Timing.LOCATION_FINISH == read.LocationID && occurrence > d.FinishOccurrence))
                                 {
                                     read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
                                 }
@@ -620,26 +605,26 @@ namespace ChronoKeep.Timing
                                     lastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
                                     // Find if there's a segment associated with this combination
                                     int segId = Constants.Timing.SEGMENT_NONE;
-                                    // With linked divisions we want to ensure we use the Finish Occurence and Segments from the linked
-                                    // division instead of the actual division since those aren't set.
-                                    int divId = div == null ? 0 : div.Identifier, divFinOcc = div == null ? 0 : div.FinishOccurrence;
-                                    if (div != null && div.LinkedDivision > 0)
+                                    // With linked distances we want to ensure we use the Finish Occurence and Segments from the linked
+                                    // distance instead of the actual distance since those aren't set.
+                                    int distanceId = d == null ? 0 : d.Identifier, distanceFinOcc = d == null ? 0 : d.FinishOccurrence;
+                                    if (d != null && d.LinkedDistance > 0)
                                     {
-                                        divId = div.LinkedDivision;
-                                        divFinOcc = divisionDictionary.ContainsKey(div.LinkedDivision) ? divisionDictionary[div.LinkedDivision].FinishOccurrence : div.FinishOccurrence;
+                                        distanceId = d.LinkedDistance;
+                                        distanceFinOcc = distanceDictionary.ContainsKey(d.LinkedDistance) ? distanceDictionary[d.LinkedDistance].FinishOccurrence : d.FinishOccurrence;
                                     }
-                                    // First check if we're using Division specific segments
-                                    if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
+                                    // First check if we're using Distance specific segments
+                                    if (theEvent.DistanceSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)))
                                     {
-                                        segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)].Identifier;
+                                        segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)].Identifier;
                                     }
                                     // Then check if we can find a segment
-                                    else if (div != null && segmentDictionary.ContainsKey((divId, read.LocationID, occurrence)))
+                                    else if (d != null && segmentDictionary.ContainsKey((distanceId, read.LocationID, occurrence)))
                                     {
-                                        segId = segmentDictionary[(divId, read.LocationID, occurrence)].Identifier;
+                                        segId = segmentDictionary[(distanceId, read.LocationID, occurrence)].Identifier;
                                     }
-                                    // then check if it's the finish occurence. obviously this doesn't work if we can't find the division
-                                    else if (div != null && occurrence == divFinOcc && Constants.Timing.LOCATION_FINISH == read.LocationID)
+                                    // then check if it's the finish occurence. obviously this doesn't work if we can't find the distance
+                                    else if (d != null && occurrence == distanceFinOcc && Constants.Timing.LOCATION_FINISH == read.LocationID)
                                     {
                                         segId = Constants.Timing.SEGMENT_FINISH;
                                     }
@@ -669,9 +654,9 @@ namespace ChronoKeep.Timing
                                             read.LocationID,
                                             segId,
                                             occurrence,
-                                            String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                            Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                             identifier,
-                                            String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
+                                            Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
                                             read.Time,
                                             bib,
                                             Constants.Timing.TIMERESULT_STATUS_NONE
@@ -708,12 +693,11 @@ namespace ChronoKeep.Timing
                 }
             }
             // process reads that have a chip
-            Dictionary<string, ChipRead> chipStartReadDictionary = new Dictionary<string, ChipRead>();
             foreach (string chip in chipReadPairs.Keys)
             {
                 long startSeconds, maxStartSeconds;
                 int startMilliseconds;
-                (startSeconds, startMilliseconds) = divisionStartDict[0];
+                (startSeconds, startMilliseconds) = distanceStartDict[0];
                 maxStartSeconds = startSeconds + theEvent.StartWindow;
                 TimeResult startResult = null;
                 foreach (ChipRead read in chipReadPairs[chip])
@@ -763,7 +747,7 @@ namespace ChronoKeep.Timing
                                     read.LocationID,
                                     Constants.Timing.SEGMENT_START,
                                     0, // start reads are not an occurrence at the start line
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                    Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                     identifier,
                                     "0:00:00.000",
                                     read.Time,
@@ -834,10 +818,10 @@ namespace ChronoKeep.Timing
                                     chipLastReadDictionary[(chip, read.LocationID)] = (read, occurrence);
                                     // Find if there's a segment associated with this combination
                                     int segId = Constants.Timing.SEGMENT_NONE;
-                                    // First check if we're using Division specific segments
-                                    if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)))
+                                    // First check if we're using Distance specific segments
+                                    if (theEvent.DistanceSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)))
                                     {
-                                        segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, occurrence)].Identifier;
+                                        segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)].Identifier;
                                     }
                                     string identifier = "Chip:" + chip.ToString();
                                     // Create a result for the start value.
@@ -865,9 +849,9 @@ namespace ChronoKeep.Timing
                                         read.LocationID,
                                         segId,
                                         occurrence,
-                                        String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                        Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                         identifier,
-                                        String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
+                                        Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
                                         read.Time,
                                         read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                         Constants.Timing.TIMERESULT_STATUS_NONE
@@ -1078,21 +1062,21 @@ namespace ChronoKeep.Timing
                     part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
                     updateParticipants.Add(part);
                 }
-                Division div = part != null ?
-                    divisionDictionary[part.EventSpecific.DivisionIdentifier] :
+                Distance d = part != null ?
+                    distanceDictionary[part.EventSpecific.DistanceIdentifier] :
                     null;
                 long startSeconds, maxStartSeconds, endSeconds;
                 int startMilliseconds;
                 TimeResult startResult = null;
-                if (div == null || !divisionStartDict.ContainsKey(div.Identifier) || !divisionEndDict.ContainsKey(div.Identifier))
+                if (d == null || !distanceStartDict.ContainsKey(d.Identifier) || !distanceEndDict.ContainsKey(d.Identifier))
                 {
-                    (startSeconds, startMilliseconds) = divisionStartDict[0];
-                    endSeconds = divisionEndDict[0].Seconds;
+                    (startSeconds, startMilliseconds) = distanceStartDict[0];
+                    endSeconds = distanceEndDict[0].Seconds;
                 }
                 else
                 {
-                    (startSeconds, startMilliseconds) = divisionStartDict[div.Identifier];
-                    endSeconds = divisionEndDict[div.Identifier].Seconds;
+                    (startSeconds, startMilliseconds) = distanceStartDict[d.Identifier];
+                    endSeconds = distanceEndDict[d.Identifier].Seconds;
                 }
                 maxStartSeconds = startSeconds + theEvent.StartWindow;
                 bool finished = false;
@@ -1140,7 +1124,7 @@ namespace ChronoKeep.Timing
                                 read.LocationID,
                                 Constants.Timing.SEGMENT_START,
                                 0, // start reads are not an occurrence at the start line
-                                String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                 "Bib:" + bib.ToString(),
                                 "0:00:00.000",
                                 read.Time,
@@ -1197,18 +1181,18 @@ namespace ChronoKeep.Timing
                             {
                                 lastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
                                 int segId = Constants.Timing.SEGMENT_NONE;
-                                // Check for linked division and set divId to the linked division, or to the actual div id.
-                                // Segments are based on the linked division.
-                                int divId = div == null ? 0 : div.LinkedDivision > 0 ? div.LinkedDivision : div.Identifier;
-                                // Check for Division specific segments (Occurrence is always 1 for time based)
-                                if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
+                                // Check for linked distance and set distanceId to the linked distance, or to the actual distance id.
+                                // Segments are based on the linked distance.
+                                int distanceId = d == null ? 0 : d.LinkedDistance > 0 ? d.LinkedDistance : d.Identifier;
+                                // Check for Distance specific segments (Occurrence is always 1 for time based)
+                                if (theEvent.DistanceSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, 1)))
                                 {
-                                    segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
+                                    segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, 1)].Identifier;
                                 }
-                                // Division specific segments
-                                else if (div != null && segmentDictionary.ContainsKey((divId, read.LocationID, 1)))
+                                // Distance specific segments
+                                else if (d != null && segmentDictionary.ContainsKey((distanceId, read.LocationID, 1)))
                                 {
-                                    segId = segmentDictionary[(divId, read.LocationID, 1)].Identifier;
+                                    segId = segmentDictionary[(distanceId, read.LocationID, 1)].Identifier;
                                 }
                                 else if (Constants.Timing.LOCATION_FINISH == read.LocationID)
                                 {
@@ -1236,9 +1220,9 @@ namespace ChronoKeep.Timing
                                     read.LocationID,
                                     segId,
                                     occurrence,
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                    Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                     identifier,
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
+                                    Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
                                     read.Time,
                                     bib,
                                     Constants.Timing.TIMERESULT_STATUS_NONE
@@ -1259,8 +1243,8 @@ namespace ChronoKeep.Timing
             {
                 long startSeconds, maxStartSeconds, endSeconds;
                 int startMilliseconds;
-                (startSeconds, startMilliseconds) = divisionStartDict[0];
-                endSeconds = divisionEndDict[0].Seconds;
+                (startSeconds, startMilliseconds) = distanceStartDict[0];
+                endSeconds = distanceEndDict[0].Seconds;
                 maxStartSeconds = startSeconds + theEvent.StartWindow;
                 TimeResult startResult = null;
                 // keep a boolean so we can notify ourselves if we've marked a person as finished
@@ -1309,7 +1293,7 @@ namespace ChronoKeep.Timing
                                 read.LocationID,
                                 Constants.Timing.SEGMENT_START,
                                 0, // start reads are not an occurrence at the start line
-                                String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                 "Chip:" + chip.ToString(),
                                 "0:00:00.000",
                                 read.Time,
@@ -1366,10 +1350,10 @@ namespace ChronoKeep.Timing
                             {
                                 chipLastReadDictionary[(chip, read.LocationID)] = (read, occurrence);
                                 int segId = Constants.Timing.SEGMENT_NONE;
-                                // Check for Division specific segments (Occurrence is always 1 for time based)
-                                if (theEvent.DivisionSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)))
+                                // Check for Distance specific segments (Occurrence is always 1 for time based)
+                                if (theEvent.DistanceSpecificSegments && segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, 1)))
                                 {
-                                    segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DIVISIONID, read.LocationID, 1)].Identifier;
+                                    segId = segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, 1)].Identifier;
                                 }
                                 else if (Constants.Timing.LOCATION_FINISH == read.LocationID)
                                 {
@@ -1397,9 +1381,9 @@ namespace ChronoKeep.Timing
                                     read.LocationID,
                                     segId,
                                     occurrence,
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", secondsDiff / 3600, (secondsDiff % 3600) / 60, secondsDiff % 60, millisecDiff),
+                                    Constants.Timing.ToTime(secondsDiff, millisecDiff),
                                     identifier,
-                                    String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", chipSecDiff / 3600, (chipSecDiff % 3600) / 60, chipSecDiff % 60, chipMillisecDiff),
+                                    Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
                                     read.Time,
                                     read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                     Constants.Timing.TIMERESULT_STATUS_NONE
@@ -1514,33 +1498,33 @@ namespace ChronoKeep.Timing
                 personResults[result.EventSpecificId].Add(result);
             }
             // Get Dictionaries for storing the last known place (age group, gender)
-            // The key is as follows: (Division ID, Age Group ID, int - Gender ID (M=1,F=2))
+            // The key is as follows: (Distance ID, Age Group ID, int - Gender ID (M=1,F=2))
             // The value stored is the last place given
             Dictionary<(int, int, int), int> ageGroupPlaceDictionary = new Dictionary<(int, int, int), int>();
-            // The key is as follows: (Division ID, Gender ID (M=1, F=2))
+            // The key is as follows: (Distance ID, Gender ID (M=1, F=2))
             // The value stored is the last place given
             Dictionary<(int, int), int> genderPlaceDictionary = new Dictionary<(int, int), int>();
-            // The key is as follows: (Division ID)
+            // The key is as follows: (Distance ID)
             // The value stored is the last place given
             Dictionary<int, int> placeDictionary = new Dictionary<int, int>();
             int ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-            int divisionId = -1;
+            int distanceId = -1;
             int age = -1;
             int gender = -1;
             Participant person = null;
             List<TimeResult> topResults = personLastResult.Values.ToList<TimeResult>();
             topResults.Sort((x1, x2) =>
             {
-                Division div1 = null, div2 = null;
+                Distance distance1 = null, distance2 = null;
                 int rank1 = 0, rank2 = 0;
-                // Get *linked* divisions. (Could be that specific division)
-                if (linkedDivisionDictionary.ContainsKey(x1.RealDivisionName))
+                // Get *linked* distances. (Could be that specific distance)
+                if (linkedDistanceDictionary.ContainsKey(x1.RealDistanceName))
                 {
-                    (div1, rank1) = linkedDivisionDictionary[x1.RealDivisionName];
+                    (distance1, rank1) = linkedDistanceDictionary[x1.RealDistanceName];
                 }
-                if (linkedDivisionDictionary.ContainsKey(x2.RealDivisionName))
+                if (linkedDistanceDictionary.ContainsKey(x2.RealDistanceName))
                 {
-                    (div2, rank2) = linkedDivisionDictionary[x2.RealDivisionName];
+                    (distance2, rank2) = linkedDistanceDictionary[x2.RealDistanceName];
                 }
                 if (rank1 == rank2)
                 {
@@ -1558,16 +1542,16 @@ namespace ChronoKeep.Timing
                 if (participantEventSpecificDictionary.ContainsKey(result.EventSpecificId))
                 {
                     person = participantEventSpecificDictionary[result.EventSpecificId];
-                    // Use a linked division ID for ranking instead of a specific division id.
-                    if (linkedDivIdentifierDictionary.ContainsKey(person.EventSpecific.DivisionIdentifier))
+                    // Use a linked distance ID for ranking instead of a specific distance id.
+                    if (linkedDistanceIdentifierDictionary.ContainsKey(person.EventSpecific.DistanceIdentifier))
                     {
-                        divisionId = linkedDivIdentifierDictionary[person.EventSpecific.DivisionIdentifier];
+                        distanceId = linkedDistanceIdentifierDictionary[person.EventSpecific.DistanceIdentifier];
                     }
                     else
                     {
-                        divisionId = person.EventSpecific.DivisionIdentifier;
+                        distanceId = person.EventSpecific.DistanceIdentifier;
                     }
-                    divisionId = person.EventSpecific.DivisionIdentifier;
+                    distanceId = person.EventSpecific.DistanceIdentifier;
                     age = person.GetAge(theEvent.Date);
                     gender = Constants.Timing.TIMERESULT_GENDER_UNKNOWN;
                     if (person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase)
@@ -1583,21 +1567,21 @@ namespace ChronoKeep.Timing
                     ageGroupId = person.EventSpecific.AgeGroupId;
                     // Since Results were sorted before we started, let's assume that the first item
                     // is the fastest/best and if we can't find the key, add one starting at 0
-                    if (!placeDictionary.ContainsKey(divisionId))
+                    if (!placeDictionary.ContainsKey(distanceId))
                     {
-                        placeDictionary[divisionId] = 0;
+                        placeDictionary[distanceId] = 0;
                     }
-                    result.Place = ++placeDictionary[divisionId];
-                    if (!genderPlaceDictionary.ContainsKey((divisionId, gender)))
+                    result.Place = ++placeDictionary[distanceId];
+                    if (!genderPlaceDictionary.ContainsKey((distanceId, gender)))
                     {
-                        genderPlaceDictionary[(divisionId, gender)] = 0;
+                        genderPlaceDictionary[(distanceId, gender)] = 0;
                     }
-                    result.GenderPlace = ++genderPlaceDictionary[(divisionId, gender)];
-                    if (!ageGroupPlaceDictionary.ContainsKey((divisionId, ageGroupId, gender)))
+                    result.GenderPlace = ++genderPlaceDictionary[(distanceId, gender)];
+                    if (!ageGroupPlaceDictionary.ContainsKey((distanceId, ageGroupId, gender)))
                     {
-                        ageGroupPlaceDictionary[(divisionId, ageGroupId, gender)] = 0;
+                        ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)] = 0;
                     }
-                    result.AgePlace = ++ageGroupPlaceDictionary[(divisionId, ageGroupId, gender)];
+                    result.AgePlace = ++ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)];
                     foreach (TimeResult otherResult in personResults[result.EventSpecificId])
                     {
                         otherResult.Place = result.Place;
@@ -1615,109 +1599,80 @@ namespace ChronoKeep.Timing
         {
             if (theEvent.RankByGun)
             {
-                //segmentResults.Sort(TimeResult.CompareByDivision);
+                //segmentResults.Sort(TimeResult.CompareByDistance);
                 segmentResults.Sort((x1, x2) =>
                 {
                     if (x1 == null || x2 == null) return 1;
-                    Division div1 = null, div2 = null;
+                    Distance distance1 = null, distance2 = null;
                     int rank1 = 0, rank2 = 0;
-                    Log.D("x1 division name: " + x1.RealDivisionName + " -- x2 division name: " + x2.RealDivisionName);
-                    // Get *linked* divisions. (Could be that specific division)
-                    if (linkedDivisionDictionary.ContainsKey(x1.RealDivisionName))
+                    Log.D("x1 distance name: " + x1.RealDistanceName + " -- x2 distance name: " + x2.RealDistanceName);
+                    // Get *linked* distances. (Could be that specific distance)
+                    if (linkedDistanceDictionary.ContainsKey(x1.RealDistanceName))
                     {
-                        (div1, rank1) = linkedDivisionDictionary[x1.RealDivisionName];
+                        (distance1, rank1) = linkedDistanceDictionary[x1.RealDistanceName];
                     }
-                    if (linkedDivisionDictionary.ContainsKey(x2.RealDivisionName))
+                    if (linkedDistanceDictionary.ContainsKey(x2.RealDistanceName))
                     {
-                        (div2, rank2) = linkedDivisionDictionary[x2.RealDivisionName];
+                        (distance2, rank2) = linkedDistanceDictionary[x2.RealDistanceName];
                     }
-                    Log.D((div1 == null || div2 == null) ? "One of the divs not found." : "Rank 1: " + rank1 + " -- Rank 2: " + rank2);
-                    // Check if they're in the same division or a linked division.
-                    if (div1 != null && div2 != null && div1.Identifier == div2.Identifier)
+                    Log.D((distance1 == null || distance2 == null) ? "One of the distances not found." : "Rank 1: " + rank1 + " -- Rank 2: " + rank2);
+                    // Check if they're in the same distance or a linked distance.
+                    if (distance1 != null && distance2 != null && distance1.Identifier == distance2.Identifier)
                     {
-                        // Sort based on rank.  This is the linked division new sorting item.
+                        // Sort based on rank.  This is the linked distance new sorting item.
                         if (rank1 == rank2)
                         {
                             Log.D("Ranks the same.");
-                            // These are the old ways to sort before we've added linked divisions.
+                            // These are the old ways to sort before we've added linked distances.
                             // Check if we know the participants we're comparing
                             if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
                             {
-                                // Check if they're both either EARLY START or not EARLY START. (DEPRECATED METHOD)
-                                if (participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
-                                {
-                                    return x1.SystemTime.CompareTo(x2.SystemTime);
-                                }
-                                // Sort early starts below non early starts
-                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
-                            }
-                            // Sort by early start values
-                            if (participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
-                            {
-                                return participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart.CompareTo(false);
-                            }
-                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
-                            {
-                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
+                                return x1.SystemTime.CompareTo(x2.SystemTime);
                             }
                         }
                         Log.D("Ranks not the same.");
                         // Ranks not the same
                         return rank1.CompareTo(rank2);
                     }
-                    return x1.DivisionName.CompareTo(x2.DivisionName);
+                    return x1.DistanceName.CompareTo(x2.DistanceName);
                 });
             }
             else
             {
-                //segmentResults.Sort(TimeResult.CompareByDivisionChip);
+                //segmentResults.Sort(TimeResult.CompareByDistanceChip);
                 segmentResults.Sort((x1, x2) =>
                 {
                     if (x1 == null || x2 == null) return 1;
-                    Division div1 = null, div2 = null;
+                    Distance distance1 = null, distance2 = null;
                     int rank1 = 0, rank2 = 0;
-                    // Get *linked* divisions. (Could be that specific division)
-                    if (linkedDivisionDictionary.ContainsKey(x1.RealDivisionName))
+                    // Get *linked* distances. (Could be that specific distance)
+                    if (linkedDistanceDictionary.ContainsKey(x1.RealDistanceName))
                     {
-                        (div1, rank1) = linkedDivisionDictionary[x1.RealDivisionName];
+                        (distance1, rank1) = linkedDistanceDictionary[x1.RealDistanceName];
                     }
-                    if (linkedDivisionDictionary.ContainsKey(x2.RealDivisionName))
+                    if (linkedDistanceDictionary.ContainsKey(x2.RealDistanceName))
                     {
-                        (div2, rank2) = linkedDivisionDictionary[x2.RealDivisionName];
+                        (distance2, rank2) = linkedDistanceDictionary[x2.RealDistanceName];
                     }
-                    // Check if they're in the same division or a linked division.
-                    if (div1 != null && div2 != null && div1.Identifier == div2.Identifier)
+                    // Check if they're in the same distance or a linked distance.
+                    if (distance1 != null && distance2 != null && distance1.Identifier == distance2.Identifier)
                     {
-                        // Sort based on rank.  This is the linked division new sorting item.
+                        // Sort based on rank.  This is the linked distance new sorting item.
                         if (rank1 == rank2)
                         {
-                            // These are the old ways to sort before we've added linked divisions.
+                            // These are the old ways to sort before we've added linked distances.
                             // Check if we know the participants we're comparing
                             if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
                             {
                             // Check if they're both either EARLY START or not EARLY START. (DEPRECATED METHOD)
-                                if (participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart == participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart)
-                                {
                                     return x1.CompareChip(x2);
-                                }
-                                // Sort early starts below non early starts
-                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart);
-                            }
-                            // Check if we know one of the two participants and sort based upon their early start value.
-                            if (participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
-                            {
-                                return participantEventSpecificDictionary[x2.EventSpecificId].IsEarlyStart.CompareTo(false);
-                            }
-                            if (participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId))
-                            {
-                                return participantEventSpecificDictionary[x1.EventSpecificId].IsEarlyStart.CompareTo(false);
                             }
                         }
                         // Ranks not the same
                         return rank1.CompareTo(rank2);
                     }
-                    // Default to sorting by division name.
-                    return x1.DivisionName.CompareTo(x2.DivisionName);
+                    // Default to sorting by distance name.
+                    return x1.DistanceName.CompareTo(x2.DistanceName);
                 });
             }
             List<TimeResult> DNFResults = segmentResults.FindAll(x => x.IsDNF());
@@ -1730,35 +1685,35 @@ namespace ChronoKeep.Timing
             int removed = segmentResults.RemoveAll(x => x.IsDNF());
             Log.D(String.Format("{0} Result(s) in DNFResults - {1} Result(s) removed from segmentResults", DNFResults.Count, removed));
             // Get Dictionaries for storing the last known place (age group, gender)
-            // The key is as follows: (Division ID, Age Group ID, int - Gender ID (M=1,F=2))
+            // The key is as follows: (Distance ID, Age Group ID, int - Gender ID (M=1,F=2))
             // The value stored is the last place given
             Dictionary<(int, int, int), int> ageGroupPlaceDictionary = new Dictionary<(int, int, int), int>();
-            // The key is as follows: (Division ID, Gender ID (M=1, F=2))
+            // The key is as follows: (Distance ID, Gender ID (M=1, F=2))
             // The value stored is the last place given
             Dictionary<(int, int), int> genderPlaceDictionary = new Dictionary<(int, int), int>();
-            // The key is as follows: (Division ID)
+            // The key is as follows: (Distance ID)
             // The value stored is the last place given
             Dictionary<int, int> placeDictionary = new Dictionary<int, int>();
             int ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-            int divisionId = -1;
+            int distanceId = -1;
             int age = -1;
             int gender = -1;
             Participant person = null;
             foreach (TimeResult result in segmentResults)
             {
                 // Check if we know who the person is. Can't rank them if we don't know
-                // what division they're in, their age, or their gender
+                // what distance they're in, their age, or their gender
                 if (participantEventSpecificDictionary.ContainsKey(result.EventSpecificId))
                 {
                     person = participantEventSpecificDictionary[result.EventSpecificId];
-                    // Use a linked division ID for ranking instead of a specific division id.
-                    if (linkedDivIdentifierDictionary.ContainsKey(person.EventSpecific.DivisionIdentifier))
+                    // Use a linked distance ID for ranking instead of a specific distance id.
+                    if (linkedDistanceIdentifierDictionary.ContainsKey(person.EventSpecific.DistanceIdentifier))
                     {
-                        divisionId = linkedDivIdentifierDictionary[person.EventSpecific.DivisionIdentifier];
+                        distanceId = linkedDistanceIdentifierDictionary[person.EventSpecific.DistanceIdentifier];
                     }
                     else
                     {
-                        divisionId = person.EventSpecific.DivisionIdentifier;
+                        distanceId = person.EventSpecific.DistanceIdentifier;
                     }
                     age = person.GetAge(theEvent.Date);
                     gender = Constants.Timing.TIMERESULT_GENDER_UNKNOWN;
@@ -1775,21 +1730,21 @@ namespace ChronoKeep.Timing
                     ageGroupId = person.EventSpecific.AgeGroupId;
                     // Since Results were sorted before we started, let's assume that the first item
                     // is the fastest and if we can't find the key, add one starting at 0
-                    if (!placeDictionary.ContainsKey(divisionId))
+                    if (!placeDictionary.ContainsKey(distanceId))
                     {
-                        placeDictionary[divisionId] = 0;
+                        placeDictionary[distanceId] = 0;
                     }
-                    result.Place = ++(placeDictionary[divisionId]);
-                    if (!genderPlaceDictionary.ContainsKey((divisionId, gender)))
+                    result.Place = ++(placeDictionary[distanceId]);
+                    if (!genderPlaceDictionary.ContainsKey((distanceId, gender)))
                     {
-                        genderPlaceDictionary[(divisionId, gender)] = 0;
+                        genderPlaceDictionary[(distanceId, gender)] = 0;
                     }
-                    result.GenderPlace = ++(genderPlaceDictionary[(divisionId, gender)]);
-                    if (!ageGroupPlaceDictionary.ContainsKey((divisionId, ageGroupId, gender)))
+                    result.GenderPlace = ++(genderPlaceDictionary[(distanceId, gender)]);
+                    if (!ageGroupPlaceDictionary.ContainsKey((distanceId, ageGroupId, gender)))
                     {
-                        ageGroupPlaceDictionary[(divisionId, ageGroupId, gender)] = 0;
+                        ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)] = 0;
                     }
-                    result.AgePlace = ++(ageGroupPlaceDictionary[(divisionId, ageGroupId, gender)]);
+                    result.AgePlace = ++(ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)]);
                 }
             }
             segmentResults.AddRange(DNFResults);

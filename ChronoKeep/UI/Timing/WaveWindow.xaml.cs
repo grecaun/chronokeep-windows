@@ -25,7 +25,7 @@ namespace ChronoKeep.UI.Timing
         IMainWindow window;
         IDBInterface database;
         Event theEvent;
-        Dictionary<int, Division> divisionDictionary = new Dictionary<int, Division>();
+        Dictionary<int, Distance> distanceDictionary = new Dictionary<int, Distance>();
         Dictionary<int, (long seconds, int milliseconds)> waveTimes = new Dictionary<int, (long, int)>();
         HashSet<int> waves = new HashSet<int>();
 
@@ -38,9 +38,9 @@ namespace ChronoKeep.UI.Timing
             this.database = database;
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier == -1) return;
-            foreach (Division div in database.GetDivisions(theEvent.Identifier))
+            foreach (Distance div in database.GetDistances(theEvent.Identifier))
             {
-                divisionDictionary[div.Identifier] = div;
+                distanceDictionary[div.Identifier] = div;
                 waves.Add(div.Wave);
                 waveTimes[div.Wave] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
             }
@@ -78,13 +78,13 @@ namespace ChronoKeep.UI.Timing
                 }
                 database.SetWaveTimes(theEvent.Identifier, waveNo, seconds, milliseconds);
             }
-            List<Division> newDivisions = database.GetDivisions(theEvent.Identifier);
+            List<Distance> newDistances = database.GetDistances(theEvent.Identifier);
             bool update = false;
-            foreach (Division div in newDivisions)
+            foreach (Distance div in newDistances)
             {
-                if (!divisionDictionary.ContainsKey(div.Identifier)
-                    || divisionDictionary[div.Identifier].StartOffsetSeconds != div.StartOffsetSeconds
-                    || divisionDictionary[div.Identifier].StartOffsetMilliseconds != div.StartOffsetMilliseconds)
+                if (!distanceDictionary.ContainsKey(div.Identifier)
+                    || distanceDictionary[div.Identifier].StartOffsetSeconds != div.StartOffsetSeconds
+                    || distanceDictionary[div.Identifier].StartOffsetMilliseconds != div.StartOffsetMilliseconds)
                 {
                     update = true;
                 }

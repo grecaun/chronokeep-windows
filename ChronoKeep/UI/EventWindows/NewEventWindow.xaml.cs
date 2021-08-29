@@ -63,24 +63,6 @@ namespace ChronoKeep
         {
             string nameString = nameBox.Text.Trim();
             string yearString = yearCodeBox.Text.Trim();
-            int shirtPrice = -1, shirtOptionalVal = shirtOptional.IsChecked == true ? 1 : 0;
-            string[] parts = shirtPriceBox.Text.Split('.');
-            shirtPrice = 20;
-            if (parts.Length > 0)
-            {
-                int.TryParse(parts[0].Trim(), out shirtPrice);
-            }
-            shirtPrice = shirtPrice * 100;
-            int cents = 0;
-            if (parts.Length > 1)
-            {
-                int.TryParse(parts[1].Trim(), out cents);
-            }
-            while (cents > 100)
-            {
-                cents = cents / 100;
-            }
-            shirtPrice += cents;
             long dateVal = DateTime.Now.Date.Ticks;
             if (datePicker.SelectedDate != null)
             {
@@ -95,7 +77,7 @@ namespace ChronoKeep
             else
             {
                 int oldEventId = Convert.ToInt32(((ComboBoxItem)oldEvent.SelectedItem).Uid);
-                Event newEvent = new Event(nameString, dateVal, shirtOptionalVal, shirtPrice, yearString);
+                Event newEvent = new Event(nameString, dateVal, yearString);
                 database.AddEvent(newEvent);
                 newEvent.Identifier = database.GetEventID(newEvent);
                 // Copy all values from old event.
@@ -109,33 +91,32 @@ namespace ChronoKeep
                     newEvent.FinishMaxOccurrences = oldEvent.FinishMaxOccurrences;
                     newEvent.CommonAgeGroups = oldEvent.CommonAgeGroups;
                     newEvent.CommonStartFinish = oldEvent.CommonStartFinish;
-                    newEvent.DivisionSpecificSegments = oldEvent.DivisionSpecificSegments;
-                    newEvent.AllowEarlyStart = oldEvent.AllowEarlyStart;
+                    newEvent.DistanceSpecificSegments = oldEvent.DistanceSpecificSegments;
                     newEvent.RankByGun = oldEvent.RankByGun;
                     // Update database with current values.
                     database.UpdateEvent(newEvent);
-                    // Get divisions from old event
-                    List<Division> divisions = database.GetDivisions(oldEventId);
-                    List<Division> newDivs = new List<Division>();
-                    // DivDict translates a division name into the old division identifier.
-                    Dictionary<string, int> DivDict = new Dictionary<string, int>();
-                    // DivTranslationDict holds a new division id and translates it from the old division with the same name.
-                    Dictionary<int, int> DivTranslationDict = new Dictionary<int, int>();
-                    foreach (Division d in divisions)
+                    // Get distances from old event
+                    List<Distance> distances = database.GetDistances(oldEventId);
+                    List<Distance> newDistances = new List<Distance>();
+                    // DistanceDict translates a distance name into the old distance identifier.
+                    Dictionary<string, int> DistanceDict = new Dictionary<string, int>();
+                    // DistanceTranslationDict holds a new distance id and translates it from the old distance with the same name.
+                    Dictionary<int, int> DistanceTranslationDict = new Dictionary<int, int>();
+                    foreach (Distance d in distances)
                     {
-                        DivDict[d.Name] = d.Identifier;
-                        d.Identifier = Constants.Timing.DIVISION_DUMMYIDENTIFIER;
+                        DistanceDict[d.Name] = d.Identifier;
+                        d.Identifier = Constants.Timing.DISTANCE_DUMMYIDENTIFIER;
                         d.EventIdentifier = newEvent.Identifier;
-                        newDivs.Add(d);
+                        newDistances.Add(d);
                     }
-                    // Update database with new divisions.
-                    database.AddDivisions(newDivs);
-                    // Retrieve newly added divisions.
-                    newDivs = database.GetDivisions(newEvent.Identifier);
-                    foreach (Division newD in newDivs)
+                    // Update database with new distances.
+                    database.AddDistances(newDistances);
+                    // Retrieve newly added distances.
+                    newDistances = database.GetDistances(newEvent.Identifier);
+                    foreach (Distance newD in newDistances)
                     {
                         // Set up a translation dictionary.
-                        DivTranslationDict[DivDict[newD.Name]] = newD.Identifier;
+                        DistanceTranslationDict[DistanceDict[newD.Name]] = newD.Identifier;
                     }
                     // Get locations from old event.
                     List<TimingLocation> locations = database.GetTimingLocations(oldEventId);
@@ -153,9 +134,9 @@ namespace ChronoKeep
                     foreach (Segment s in segments)
                     {
                         s.EventId = newEvent.Identifier;
-                        if (newEvent.DivisionSpecificSegments && DivTranslationDict.ContainsKey(s.DivisionId))
+                        if (newEvent.DistanceSpecificSegments && DistanceTranslationDict.ContainsKey(s.DistanceId))
                         {
-                            s.DivisionId = DivTranslationDict[s.DivisionId];
+                            s.DistanceId = DistanceTranslationDict[s.DistanceId];
                         }
                         newSegments.Add(s);
                     }
@@ -167,9 +148,9 @@ namespace ChronoKeep
                     foreach (AgeGroup ag in ageGroups)
                     {
                         ag.EventId = newEvent.Identifier;
-                        if (!newEvent.CommonAgeGroups && DivTranslationDict.ContainsKey(ag.DivisionId))
+                        if (!newEvent.CommonAgeGroups && DistanceTranslationDict.ContainsKey(ag.DistanceId))
                         {
-                            ag.DivisionId = DivTranslationDict[ag.DivisionId];
+                            ag.DistanceId = DistanceTranslationDict[ag.DistanceId];
                         }
                         newAgeGroups.Add(ag);
                     }
@@ -178,7 +159,7 @@ namespace ChronoKeep
                 }
                 else
                 {
-                    database.AddDivision(new Division("Default Division", newEvent.Identifier, 0));
+                    database.AddDistance(new Distance("Default Distance", newEvent.Identifier));
                 }
                 database.SetAppSetting(Constants.Settings.CURRENT_EVENT, newEvent.Identifier.ToString());
                 window.WindowFinalize(this);

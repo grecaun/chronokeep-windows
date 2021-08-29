@@ -59,7 +59,6 @@ namespace ChronoKeep.UI.MainPages
             CompanyNameBox.Text = database.GetAppSetting(Constants.Settings.COMPANY_NAME).value;
             ContactEmailBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).value;
             DefaultExportDirBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value;
-            DefaultWaiverBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_WAIVER).value;
             UpdatePage.IsChecked = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE;
             ExitNoPrompt.IsChecked = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_TRUE;
         }
@@ -111,7 +110,6 @@ namespace ChronoKeep.UI.MainPages
             database.SetAppSetting(Constants.Settings.CONTACT_EMAIL, ContactEmailBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM, ((ComboBoxItem)DefaultTimingBox.SelectedItem).Uid);
             database.SetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR, DefaultExportDirBox.Text.Trim());
-            database.SetAppSetting(Constants.Settings.DEFAULT_WAIVER, DefaultWaiverBox.Text);
             database.SetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE, UpdatePage.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.EXIT_NO_PROMPT, ExitNoPrompt.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             UpdateView();

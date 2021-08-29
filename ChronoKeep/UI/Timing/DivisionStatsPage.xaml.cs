@@ -20,26 +20,26 @@ using System.Windows.Shapes;
 namespace ChronoKeep.UI.Timing
 {
     /// <summary>
-    /// Interaction logic for DivisionStatsPage.xaml
+    /// Interaction logic for DistanceStatsPage.xaml
     /// </summary>
-    public partial class DivisionStatsPage : ISubPage
+    public partial class DistanceStatsPage : ISubPage
     {
         IDBInterface database;
         TimingPage parent;
         Event theEvent;
-        int divisionId;
+        int distanceId;
 
         private ObservableCollection<Participant> activeParticipants = new ObservableCollection<Participant>();
         private ObservableCollection<Participant> dnsParticipants = new ObservableCollection<Participant>();
         private ObservableCollection<Participant> dnfParticipants = new ObservableCollection<Participant>();
         private ObservableCollection<Participant> finishedParticipants = new ObservableCollection<Participant>();
 
-        public DivisionStatsPage(TimingPage parent, IDBInterface database, int divisionId, string DivisionName)
+        public DistanceStatsPage(TimingPage parent, IDBInterface database, int distanceId, string DistanceName)
         {
             InitializeComponent();
             this.parent = parent;
             this.database = database;
-            this.divisionId = divisionId;
+            this.distanceId = distanceId;
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
@@ -50,7 +50,7 @@ namespace ChronoKeep.UI.Timing
             dnsListView.ItemsSource = dnsParticipants;
             dnfListView.ItemsSource = dnfParticipants;
             finishedListView.ItemsSource = finishedParticipants;
-            this.DivisionName.Content = DivisionName;
+            this.DistanceName.Content = DistanceName;
             UpdateView();
         }
 
@@ -76,7 +76,7 @@ namespace ChronoKeep.UI.Timing
             dnsParticipants.Clear();
             dnfParticipants.Clear();
             finishedParticipants.Clear();
-            Dictionary<int, List<Participant>> partDict = database.GetDivisionParticipantsStatus(theEvent.Identifier, divisionId);
+            Dictionary<int, List<Participant>> partDict = database.GetDistanceParticipantsStatus(theEvent.Identifier, distanceId);
             if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_STARTED)) // ACTIVE
             {
                 activePanel.Visibility = Visibility.Visible;

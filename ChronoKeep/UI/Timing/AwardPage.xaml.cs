@@ -45,11 +45,11 @@ namespace ChronoKeep.UI.Timing
                 return;
             }
             customGroupsListView.ItemsSource = customAgeGroups;
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
-            divisions.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
-            foreach (Division d in divisions)
+            List<Distance> distances = database.GetDistances(theEvent.Identifier);
+            distances.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
+            foreach (Distance d in distances)
             {
-                DivisionsBox.Items.Add(new ListBoxItem()
+                DistancesBox.Items.Add(new ListBoxItem()
                 {
                     Content = d.Name
                 });
@@ -71,7 +71,7 @@ namespace ChronoKeep.UI.Timing
                 int end = Convert.ToInt32(endCustom.Text);
                 if (start > -1 || end < 111)
                 {
-                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, Constants.Timing.AGEGROUPS_CUSTOM_DIVISIONID, start, end));
+                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID, start, end));
                     UpdateView();
                     startCustom.Text = "";
                     endCustom.Text = "";
@@ -115,7 +115,7 @@ namespace ChronoKeep.UI.Timing
             };
             AwardOptions options = GetOptions();
             List<string> divsToPrint = new List<string>();
-            foreach (ListBoxItem divItem in DivisionsBox.SelectedItems)
+            foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
             {
                 if (divItem.Content.Equals("All"))
                 {
@@ -183,7 +183,7 @@ namespace ChronoKeep.UI.Timing
             };
             AwardOptions options = GetOptions();
             List<string> divsToPrint = new List<string>();
-            foreach (ListBoxItem divItem in DivisionsBox.SelectedItems)
+            foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
             {
                 if (divItem.Content.Equals("All"))
                 {
@@ -238,7 +238,7 @@ namespace ChronoKeep.UI.Timing
         public void UpdateView()
         {
             customAgeGroups.Clear();
-            foreach (AgeGroup age in database.GetAgeGroups(theEvent.Identifier, Constants.Timing.AGEGROUPS_CUSTOM_DIVISIONID))
+            foreach (AgeGroup age in database.GetAgeGroups(theEvent.Identifier, Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID))
             {
                 customAgeGroups.Add(age);
             }
@@ -252,14 +252,13 @@ namespace ChronoKeep.UI.Timing
 
         public void Keyboard_Ctrl_Z() { }
 
-        private Document GetAwardsPrintableDocumentTime(List<string> divisions, AwardOptions options)
+        private Document GetAwardsPrintableDocumentTime(List<string> distances, AwardOptions options)
         {
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
-
             return document;
         }
 
-        private Document GetAwardsPrintableDocumentDistance(List<string> divisions, AwardOptions options)
+        private Document GetAwardsPrintableDocumentDistance(List<string> distances, AwardOptions options)
         {
             // Ensure we were given options
             if (options == null)
@@ -274,55 +273,55 @@ namespace ChronoKeep.UI.Timing
             // and all results that are not finish results
             // TODO - Make anonymouse entries possible.
             results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId) || x.SegmentId != Constants.Timing.SEGMENT_FINISH);
-            // Remove some participants if we don't want their division.
-            if (divisions != null)
+            // Remove some participants if we don't want their distance.
+            if (distances != null)
             {
-                results.RemoveAll(x => !divisions.Contains(x.DivisionName));
+                results.RemoveAll(x => !distances.Contains(x.DistanceName));
             }
-            // Separate them based upon division.
-            Dictionary<string, List<TimeResult>> divisionResults = new Dictionary<string, List<TimeResult>>();
+            // Separate them based upon distance.
+            Dictionary<string, List<TimeResult>> distanceResults = new Dictionary<string, List<TimeResult>>();
             foreach (TimeResult result in results)
             {
-                if (!divisionResults.ContainsKey(result.DivisionName))
+                if (!distanceResults.ContainsKey(result.DistanceName))
                 {
-                    divisionResults[result.DivisionName] = new List<TimeResult>();
+                    distanceResults[result.DistanceName] = new List<TimeResult>();
                 }
-                divisionResults[result.DivisionName].Add(result);
+                distanceResults[result.DistanceName].Add(result);
             }
             // Get a list of all our age groups + our custom age groups
             Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier).ToDictionary(x => x.GroupId, x => x);
             // Add an age group for our unknown age people/
-            ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new AgeGroup(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DIVISIONID, 0, 3000);
+            ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new AgeGroup(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, 0, 3000);
             Dictionary<int, AgeGroup> customAgeGroups = new Dictionary<int, AgeGroup>();
             foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
             {
-                if (Constants.Timing.AGEGROUPS_CUSTOM_DIVISIONID == group.DivisionId)
+                if (Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID == group.DistanceId)
                 {
                     customAgeGroups[group.GroupId] = group;
                 }
             }
-            Dictionary<string, Division> divisionsDictionary = new Dictionary<string, Division>();
-            foreach (Division div in database.GetDivisions(theEvent.Identifier))
+            Dictionary<string, Distance> distancesDictionary = new Dictionary<string, Distance>();
+            foreach (Distance div in database.GetDistances(theEvent.Identifier))
             {
-                divisionsDictionary[div.Name] = div;
+                distancesDictionary[div.Name] = div;
             }
             // Create document to output.
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
-            foreach (string divName in divisionResults.Keys.OrderBy(i => i))
+            foreach (string divName in distanceResults.Keys.OrderBy(i => i))
             {
                 // Create a dictionary for storing lists of award winners based upon category.
                 // this is either OVERALL, AG<GROUP_ID>, or CUSTOM<GROUP_ID>
-                Dictionary<string, List<TimeResult>> divisionAwards = new Dictionary<string, List<TimeResult>>();
+                Dictionary<string, List<TimeResult>> distanceAwards = new Dictionary<string, List<TimeResult>>();
                 // Create three lists of results for each type (OVERALL, AGEGROUPS, CUSTOM)
-                divisionResults[divName].Sort(TimeResult.CompareByDivisionPlace);
-                List<TimeResult> ageGroupResults = new List<TimeResult>(divisionResults[divName]);
-                ageGroupResults.Sort(TimeResult.CompareByDivisionPlace);
-                List<TimeResult> customResults = new List<TimeResult>(divisionResults[divName]);
-                customResults.Sort(TimeResult.CompareByDivisionPlace);
-                // Check the number of winners we need for overall and remove all but those from divisionResults[divName]
+                distanceResults[divName].Sort(TimeResult.CompareByDistancePlace);
+                List<TimeResult> ageGroupResults = new List<TimeResult>(distanceResults[divName]);
+                ageGroupResults.Sort(TimeResult.CompareByDistancePlace);
+                List<TimeResult> customResults = new List<TimeResult>(distanceResults[divName]);
+                customResults.Sort(TimeResult.CompareByDistancePlace);
+                // Check the number of winners we need for overall and remove all but those from distanceResults[divName]
                 // Sort them into a gender based dictionary
                 Dictionary<string, List<TimeResult>> overallResultDictionary = new Dictionary<string, List<TimeResult>>();
-                foreach (TimeResult result in divisionResults[divName])
+                foreach (TimeResult result in distanceResults[divName])
                 {
                     if (!overallResultDictionary.ContainsKey(result.Gender))
                     {
@@ -402,7 +401,7 @@ namespace ChronoKeep.UI.Timing
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
                 curPara = header.AddParagraph(divName);
-                curPara.Style = "DivisionName";
+                curPara.Style = "DistanceName";
                 List<(string subheading, List<TimeResult> results)> maleResults = new List<(string subheading, List<TimeResult> results)>();
                 List<(string subheading, List<TimeResult> results)> femaleResults = new List<(string subheading, List<TimeResult> results)>();
                 // check if we're printing overall

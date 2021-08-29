@@ -52,13 +52,13 @@ namespace ChronoKeep.UI.Timing
                 });
             }
 
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
-            divisions.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
-            foreach (Division d in divisions)
+            List<Distance> distances = database.GetDistances(theEvent.Identifier);
+            distances.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
+            foreach (Distance d in distances)
             {
-                if (d.LinkedDivision <= 0)
+                if (d.LinkedDistance <= 0)
                 {
-                    DivisionsBox.Items.Add(new ListBoxItem()
+                    DistancesBox.Items.Add(new ListBoxItem()
                     {
                         Content = d.Name
                     });
@@ -70,7 +70,7 @@ namespace ChronoKeep.UI.Timing
 
         private enum ValuesType { FINISHONLY, STARTFINISH, ALL, TIME_ALL, TIME_TOTAL }
 
-        private Document GetOverallPrintableDocumentTime(List<string> divisions, ValuesType type)
+        private Document GetOverallPrintableDocumentTime(List<string> distances, ValuesType type)
         {
             // Get all participants for the race and categorize them by their event specific identifier;
             Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
@@ -80,37 +80,37 @@ namespace ChronoKeep.UI.Timing
             // TODO - Make anonymous entries possible.
             results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
             // REMOVE SOME DEPENDING ON WHO THEY WANT
-            if (divisions != null)
+            if (distances != null)
             {
-                results.RemoveAll(x => !divisions.Contains(x.DivisionName));
+                results.RemoveAll(x => !distances.Contains(x.DistanceName));
             }
-            Dictionary<string, string> linkedDivisionDictionary = new Dictionary<string, string>();
-            Dictionary<string, List<TimeResult>> divisionResults = new Dictionary<string, List<TimeResult>>();
+            Dictionary<string, string> linkedDistanceDictionary = new Dictionary<string, string>();
+            Dictionary<string, List<TimeResult>> distanceResults = new Dictionary<string, List<TimeResult>>();
             foreach (TimeResult result in results)
             {
-                if (!divisionResults.ContainsKey(result.DivisionName))
+                if (!distanceResults.ContainsKey(result.DistanceName))
                 {
-                    divisionResults[result.DivisionName] = new List<TimeResult>();
+                    distanceResults[result.DistanceName] = new List<TimeResult>();
                 }
-                divisionResults[result.DivisionName].Add(result);
+                distanceResults[result.DistanceName].Add(result);
             }
             Dictionary<int, List<Segment>> segmentsDictionary = new Dictionary<int, List<Segment>>();
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
-                if (!segmentsDictionary.ContainsKey(seg.DivisionId))
+                if (!segmentsDictionary.ContainsKey(seg.DistanceId))
                 {
-                    segmentsDictionary[seg.DivisionId] = new List<Segment>();
+                    segmentsDictionary[seg.DistanceId] = new List<Segment>();
                 }
-                segmentsDictionary[seg.DivisionId].Add(seg);
+                segmentsDictionary[seg.DistanceId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> distanceDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
             int maxLoops = 0;
 
-            foreach (string divName in divisionResults.Keys.OrderBy(i => i))
+            foreach (string divName in distanceResults.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 int LoopStart = 8;
@@ -129,7 +129,7 @@ namespace ChronoKeep.UI.Timing
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
                 curPara = header.AddParagraph(divName);
-                curPara.Style = "DivisionName";
+                curPara.Style = "DistanceName";
                 // Create a tabel to display the results.
                 Table table = new Table();
                 table.Borders.Width = 0.0;
@@ -147,7 +147,7 @@ namespace ChronoKeep.UI.Timing
                 int max = 0;
                 if (type == ValuesType.TIME_ALL)
                 {
-                    foreach (TimeResult result in divisionResults[divName])
+                    foreach (TimeResult result in distanceResults[divName])
                     {
                         if (result.LocationId == Constants.Timing.LOCATION_FINISH && max < result.Occurrence)
                         {
@@ -196,7 +196,7 @@ namespace ChronoKeep.UI.Timing
                 Dictionary<(string, int), TimeResult> personFinishResultDictionary = new Dictionary<(string, int), TimeResult>();
                 // and their final loop result;
                 Dictionary<string, TimeResult> personFinalLoopDictionary = new Dictionary<string, TimeResult>();
-                foreach (TimeResult result in divisionResults[divName])
+                foreach (TimeResult result in distanceResults[divName])
                 {
                     if (result.SegmentId == Constants.Timing.SEGMENT_START)
                     {
@@ -212,7 +212,7 @@ namespace ChronoKeep.UI.Timing
                     }
                 }
                 List<TimeResult> finalResults = new List<TimeResult>(personFinalLoopDictionary.Values);
-                finalResults.Sort(TimeResult.CompareByDivisionPlace);
+                finalResults.Sort(TimeResult.CompareByDistancePlace);
                 foreach (TimeResult result in finalResults)
                 {
                     row = table.AddRow();
@@ -291,7 +291,7 @@ namespace ChronoKeep.UI.Timing
             return document;
         }
 
-        private Document GetGenderPrintableDocumentTime(List<string> divisions, ValuesType type)
+        private Document GetGenderPrintableDocumentTime(List<string> distances, ValuesType type)
         {
             // Get all participants for the race and categorize them by their event specific identifier;
             Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
@@ -300,36 +300,36 @@ namespace ChronoKeep.UI.Timing
             // Remove all results where we don't have the person's information.
             results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
             // REMOVE SOME DEPENDING ON WHO THEY WANT
-            if (divisions != null)
+            if (distances != null)
             {
-                results.RemoveAll(x => !divisions.Contains(x.DivisionName));
+                results.RemoveAll(x => !distances.Contains(x.DistanceName));
             }
-            Dictionary<string, List<TimeResult>> divisionResult = new Dictionary<string, List<TimeResult>>();
+            Dictionary<string, List<TimeResult>> distanceResult = new Dictionary<string, List<TimeResult>>();
             foreach (TimeResult result in results)
             {
-                if (!divisionResult.ContainsKey(result.DivisionName))
+                if (!distanceResult.ContainsKey(result.DistanceName))
                 {
-                    divisionResult[result.DivisionName] = new List<TimeResult>();
+                    distanceResult[result.DistanceName] = new List<TimeResult>();
                 }
-                divisionResult[result.DivisionName].Add(result);
+                distanceResult[result.DistanceName].Add(result);
             }
             Dictionary<int, List<Segment>> segmentsDictionary = new Dictionary<int, List<Segment>>();
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
-                if (!segmentsDictionary.ContainsKey(seg.DivisionId))
+                if (!segmentsDictionary.ContainsKey(seg.DistanceId))
                 {
-                    segmentsDictionary[seg.DivisionId] = new List<Segment>();
+                    segmentsDictionary[seg.DistanceId] = new List<Segment>();
                 }
-                segmentsDictionary[seg.DivisionId].Add(seg);
+                segmentsDictionary[seg.DistanceId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> distanceDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
             int maxLoops = 0;
 
-            foreach (string divName in divisionResult.Keys.OrderBy(i => i))
+            foreach (string divName in distanceResult.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
@@ -347,10 +347,10 @@ namespace ChronoKeep.UI.Timing
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
                 curPara = header.AddParagraph(divName);
-                curPara.Style = "DivisionName";
+                curPara.Style = "DistanceName";
                 // Separate each gender into their own little world.
                 Dictionary<string, List<TimeResult>> genderResultDictionary = new Dictionary<string, List<TimeResult>>();
-                foreach (TimeResult result in divisionResult[divName])
+                foreach (TimeResult result in distanceResult[divName])
                 {
                     if (!genderResultDictionary.ContainsKey(result.Gender))
                     {
@@ -442,7 +442,7 @@ namespace ChronoKeep.UI.Timing
                         }
                     }
                     List<TimeResult> finalResults = new List<TimeResult>(personFinalLoopDictionary.Values);
-                    finalResults.Sort(TimeResult.CompareByDivisionPlace);
+                    finalResults.Sort(TimeResult.CompareByDistancePlace);
                     foreach (TimeResult result in finalResults)
                     {
                         row = table.AddRow();
@@ -520,7 +520,7 @@ namespace ChronoKeep.UI.Timing
             return document;
         }
 
-        private Document GetAgeGroupPrintableDocumentTime(List<string> divisions, ValuesType type)
+        private Document GetAgeGroupPrintableDocumentTime(List<string> distances, ValuesType type)
         {
             // Get all participants for the race and categorize them by their event specific identifier;
             Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
@@ -531,36 +531,36 @@ namespace ChronoKeep.UI.Timing
             // Remove all results where we don't have the person's information.
             results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
             // REMOVE SOME DEPENDING ON WHO THEY WANT
-            if (divisions != null)
+            if (distances != null)
             {
-                results.RemoveAll(x => !divisions.Contains(x.DivisionName));
+                results.RemoveAll(x => !distances.Contains(x.DistanceName));
             }
-            Dictionary<string, List<TimeResult>> divisionResult = new Dictionary<string, List<TimeResult>>();
+            Dictionary<string, List<TimeResult>> distanceResult = new Dictionary<string, List<TimeResult>>();
             foreach (TimeResult result in results)
             {
-                if (!divisionResult.ContainsKey(result.DivisionName))
+                if (!distanceResult.ContainsKey(result.DistanceName))
                 {
-                    divisionResult[result.DivisionName] = new List<TimeResult>();
+                    distanceResult[result.DistanceName] = new List<TimeResult>();
                 }
-                divisionResult[result.DivisionName].Add(result);
+                distanceResult[result.DistanceName].Add(result);
             }
             Dictionary<int, List<Segment>> segmentsDictionary = new Dictionary<int, List<Segment>>();
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
-                if (!segmentsDictionary.ContainsKey(seg.DivisionId))
+                if (!segmentsDictionary.ContainsKey(seg.DistanceId))
                 {
-                    segmentsDictionary[seg.DivisionId] = new List<Segment>();
+                    segmentsDictionary[seg.DistanceId] = new List<Segment>();
                 }
-                segmentsDictionary[seg.DivisionId].Add(seg);
+                segmentsDictionary[seg.DistanceId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> distanceDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
             int maxLoops = 0;
 
-            foreach (string divName in divisionResult.Keys.OrderBy(i => i))
+            foreach (string divName in distanceResult.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
@@ -578,10 +578,10 @@ namespace ChronoKeep.UI.Timing
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
                 curPara = header.AddParagraph(divName);
-                curPara.Style = "DivisionName";
+                curPara.Style = "DistanceName";
                 // Separate each age group into their own little world
                 Dictionary<(int, string), List<TimeResult>> ageGroupResultsDictionary = new Dictionary<(int, string), List<TimeResult>>();
-                foreach (TimeResult result in divisionResult[divName])
+                foreach (TimeResult result in distanceResult[divName])
                 {
                     if (!ageGroupResultsDictionary.ContainsKey((result.AgeGroupId, result.Gender)))
                     {
@@ -676,7 +676,7 @@ namespace ChronoKeep.UI.Timing
                         }
                     }
                     List<TimeResult> finalResults = new List<TimeResult>(personFinalLoopDictionary.Values);
-                    finalResults.Sort(TimeResult.CompareByDivisionPlace);
+                    finalResults.Sort(TimeResult.CompareByDistancePlace);
                     foreach (TimeResult result in finalResults)
                     {
                         row = table.AddRow();
@@ -759,7 +759,7 @@ namespace ChronoKeep.UI.Timing
             return document;
         }
 
-        private Document GetOverallPrintableDocument(List<string> divisions, ValuesType type)
+        private Document GetOverallPrintableDocument(List<string> distances, ValuesType type)
         {
             // Get all participants for the race and categorize them by their event specific identifier;
             Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
@@ -769,34 +769,34 @@ namespace ChronoKeep.UI.Timing
             // TODO - Make anonymous entries possible.
             results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
             // REMOVE SOME DEPENDING ON WHO THEY WANT
-            if (divisions != null)
+            if (distances != null)
             {
-                results.RemoveAll(x => !divisions.Contains(x.DivisionName));
+                results.RemoveAll(x => !distances.Contains(x.DistanceName));
             }
-            Dictionary<string, List<TimeResult>> divisionResults = new Dictionary<string, List<TimeResult>>();
+            Dictionary<string, List<TimeResult>> distanceResults = new Dictionary<string, List<TimeResult>>();
             foreach (TimeResult result in results)
             {
-                if (!divisionResults.ContainsKey(result.DivisionName))
+                if (!distanceResults.ContainsKey(result.DistanceName))
                 {
-                    divisionResults[result.DivisionName] = new List<TimeResult>();
+                    distanceResults[result.DistanceName] = new List<TimeResult>();
                 }
-                divisionResults[result.DivisionName].Add(result);
+                distanceResults[result.DistanceName].Add(result);
             }
             Dictionary<int, List<Segment>> segmentsDictionary = new Dictionary<int, List<Segment>>();
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
-                if (!segmentsDictionary.ContainsKey(seg.DivisionId))
+                if (!segmentsDictionary.ContainsKey(seg.DistanceId))
                 {
-                    segmentsDictionary[seg.DivisionId] = new List<Segment>();
+                    segmentsDictionary[seg.DistanceId] = new List<Segment>();
                 }
-                segmentsDictionary[seg.DivisionId].Add(seg);
+                segmentsDictionary[seg.DistanceId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> distanceDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
-            foreach (string divName in divisionResults.Keys.OrderBy(i => i))
+            foreach (string divName in distanceResults.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 int FinishIndex = 8;
@@ -815,7 +815,7 @@ namespace ChronoKeep.UI.Timing
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
                 curPara = header.AddParagraph(divName);
-                curPara.Style = "DivisionName";
+                curPara.Style = "DistanceName";
                 // Create a tabel to display the results.
                 Table table = new Table();
                 table.Borders.Width = 0.0;
@@ -835,10 +835,10 @@ namespace ChronoKeep.UI.Timing
                     FinishIndex++;
                 }
                 // Check if we're doing all of the segments.
-                bool distanceSegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(divisionDictionary[divName]);
+                bool distanceSegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(distanceDictionary[divName]);
                 if (distanceSegments)
                 {
-                    foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                    foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                     {
                         segmentIndexDictionary[s.Identifier] = FinishIndex++;
                         table.AddColumn(Unit.FromCentimeter(2.3));
@@ -864,7 +864,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 if (distanceSegments)
                 {
-                    foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                    foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                     {
                         row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(s.Name);
                     }
@@ -872,13 +872,13 @@ namespace ChronoKeep.UI.Timing
                 row.Cells[FinishIndex].AddParagraph("Finish Gun");
                 row.Cells[FinishIndex + 1].AddParagraph("Finish Chip");
                 List<TimeResult> finishTimes = new List<TimeResult>();
-                finishTimes.AddRange(divisionResults[divName]);
+                finishTimes.AddRange(distanceResults[divName]);
                 finishTimes.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
-                finishTimes.Sort(TimeResult.CompareByDivisionPlace);
+                finishTimes.Sort(TimeResult.CompareByDistancePlace);
                 // The key is (EVENTSPECIFICID, SEGMENTID) and is used to identify segment results
                 // such as the start chip read and any other reads there may be other than finish.
                 Dictionary<(int, int), TimeResult> personSegmentResultDictionary = new Dictionary<(int, int), TimeResult>();
-                foreach (TimeResult result in divisionResults[divName])
+                foreach (TimeResult result in distanceResults[divName])
                 {
                     personSegmentResultDictionary[(result.EventSpecificId, result.SegmentId)] = result;
                 }
@@ -905,7 +905,7 @@ namespace ChronoKeep.UI.Timing
                     }
                     if (distanceSegments)
                     {
-                        foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                        foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                         {
                             string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
                                 ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
@@ -934,7 +934,7 @@ namespace ChronoKeep.UI.Timing
                             ? personSegmentResultDictionary[(identifier, Constants.Timing.SEGMENT_START)] : null;
                         if (result == null)
                         {
-                            foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                            foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                             {
                                 result = personSegmentResultDictionary.ContainsKey((identifier, s.Identifier))
                               ? personSegmentResultDictionary[(identifier, s.Identifier)] : null;
@@ -961,7 +961,7 @@ namespace ChronoKeep.UI.Timing
                         }
                         if (distanceSegments)
                         {
-                            foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                            foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                             {
                                 string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
                                     ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
@@ -979,7 +979,7 @@ namespace ChronoKeep.UI.Timing
             return document;
         }
 
-        private Document GetGenderPrintableDocument(List<string> divisions, ValuesType type)
+        private Document GetGenderPrintableDocument(List<string> distances, ValuesType type)
         {
             // Get all participants for the race and categorize them by their event specific identifier;
             Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
@@ -988,34 +988,34 @@ namespace ChronoKeep.UI.Timing
             // Remove all results where we don't have the person's information.
             results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
             // REMOVE SOME DEPENDING ON WHO THEY WANT
-            if (divisions != null)
+            if (distances != null)
             {
-                results.RemoveAll(x => !divisions.Contains(x.DivisionName));
+                results.RemoveAll(x => !distances.Contains(x.DistanceName));
             }
-            Dictionary<string, List<TimeResult>> divisionResult = new Dictionary<string, List<TimeResult>>();
+            Dictionary<string, List<TimeResult>> distanceResult = new Dictionary<string, List<TimeResult>>();
             foreach (TimeResult result in results)
             {
-                if (!divisionResult.ContainsKey(result.DivisionName))
+                if (!distanceResult.ContainsKey(result.DistanceName))
                 {
-                    divisionResult[result.DivisionName] = new List<TimeResult>();
+                    distanceResult[result.DistanceName] = new List<TimeResult>();
                 }
-                divisionResult[result.DivisionName].Add(result);
+                distanceResult[result.DistanceName].Add(result);
             }
             Dictionary<int, List<Segment>> segmentsDictionary = new Dictionary<int, List<Segment>>();
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
-                if (!segmentsDictionary.ContainsKey(seg.DivisionId))
+                if (!segmentsDictionary.ContainsKey(seg.DistanceId))
                 {
-                    segmentsDictionary[seg.DivisionId] = new List<Segment>();
+                    segmentsDictionary[seg.DistanceId] = new List<Segment>();
                 }
-                segmentsDictionary[seg.DivisionId].Add(seg);
+                segmentsDictionary[seg.DistanceId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> distanceDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
-            foreach (string divName in divisionResult.Keys.OrderBy(i => i))
+            foreach (string divName in distanceResult.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
@@ -1033,10 +1033,10 @@ namespace ChronoKeep.UI.Timing
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
                 curPara = header.AddParagraph(divName);
-                curPara.Style = "DivisionName";
+                curPara.Style = "DistanceName";
                 // Separate each gender into their own little world.
                 Dictionary<string, List<TimeResult>> genderResultDictionary = new Dictionary<string, List<TimeResult>>();
-                foreach (TimeResult result in divisionResult[divName])
+                foreach (TimeResult result in distanceResult[divName])
                 {
                     if (!genderResultDictionary.ContainsKey(result.Gender))
                     {
@@ -1065,10 +1065,10 @@ namespace ChronoKeep.UI.Timing
                         table.AddColumn(Unit.FromCentimeter(2.3)); // start
                         FinishIndex++;
                     }
-                    bool distanceSegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(divisionDictionary[divName]);
+                    bool distanceSegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(distanceDictionary[divName]);
                     if (distanceSegments)
                     {
-                        foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                        foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                         {
                             segmentIndexDictionary[s.Identifier] = FinishIndex++;
                             table.AddColumn(Unit.FromCentimeter(2.3));
@@ -1093,7 +1093,7 @@ namespace ChronoKeep.UI.Timing
                     }
                     if (distanceSegments)
                     {
-                        foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                        foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                         {
                             row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(s.Name);
                         }
@@ -1104,7 +1104,7 @@ namespace ChronoKeep.UI.Timing
                     List<TimeResult> finishTimes = new List<TimeResult>();
                     finishTimes.AddRange(genderResultDictionary[gender]);
                     finishTimes.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
-                    finishTimes.Sort(TimeResult.CompareByDivisionGenderPlace);
+                    finishTimes.Sort(TimeResult.CompareByDistanceGenderPlace);
                     // The key is (EVENTSPECIFICID, SEGMENTID) and is used to identify segment results
                     // such as the start chip read and any other reads there may be other than finish.
                     Dictionary<(int, int), TimeResult> personSegmentResultDictionary = new Dictionary<(int, int), TimeResult>();
@@ -1134,7 +1134,7 @@ namespace ChronoKeep.UI.Timing
                         }
                         if (distanceSegments)
                         {
-                            foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                            foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                             {
                                 string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
                                     ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
@@ -1163,7 +1163,7 @@ namespace ChronoKeep.UI.Timing
                                 ? personSegmentResultDictionary[(identifier, Constants.Timing.SEGMENT_START)] : null;
                             if (result == null)
                             {
-                                foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                                 {
                                     result = personSegmentResultDictionary.ContainsKey((identifier, s.Identifier))
                                   ? personSegmentResultDictionary[(identifier, s.Identifier)] : null;
@@ -1189,7 +1189,7 @@ namespace ChronoKeep.UI.Timing
                             }
                             if (distanceSegments)
                             {
-                                foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                                 {
                                     string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
                                         ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
@@ -1208,47 +1208,47 @@ namespace ChronoKeep.UI.Timing
             return document;
         }
 
-        private Document GetAgeGroupPrintableDocument(List<string> divisions, ValuesType type)
+        private Document GetAgeGroupPrintableDocument(List<string> distances, ValuesType type)
         {
             // Get all participants for the race and categorize them by their event specific identifier;
             Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
             // Get all of the age groups for the race
             Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier).ToDictionary(x => x.GroupId, x => x);
             // Add an age group for our unknown age people/
-            ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new AgeGroup(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DIVISIONID, 0, 3000);
+            ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new AgeGroup(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, 0, 3000);
             // Get all finish results for the race
             List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
             // Remove all results where we don't have the person's information.
             results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
             // REMOVE SOME DEPENDING ON WHO THEY WANT
-            if (divisions != null)
+            if (distances != null)
             {
-                results.RemoveAll(x => !divisions.Contains(x.DivisionName));
+                results.RemoveAll(x => !distances.Contains(x.DistanceName));
             }
-            Dictionary<string, List<TimeResult>> divisionResult = new Dictionary<string, List<TimeResult>>();
+            Dictionary<string, List<TimeResult>> distanceResult = new Dictionary<string, List<TimeResult>>();
             foreach (TimeResult result in results)
             {
-                if (!divisionResult.ContainsKey(result.DivisionName))
+                if (!distanceResult.ContainsKey(result.DistanceName))
                 {
-                    divisionResult[result.DivisionName] = new List<TimeResult>();
+                    distanceResult[result.DistanceName] = new List<TimeResult>();
                 }
-                divisionResult[result.DivisionName].Add(result);
+                distanceResult[result.DistanceName].Add(result);
             }
             Dictionary<int, List<Segment>> segmentsDictionary = new Dictionary<int, List<Segment>>();
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
-                if (!segmentsDictionary.ContainsKey(seg.DivisionId))
+                if (!segmentsDictionary.ContainsKey(seg.DistanceId))
                 {
-                    segmentsDictionary[seg.DivisionId] = new List<Segment>();
+                    segmentsDictionary[seg.DistanceId] = new List<Segment>();
                 }
-                segmentsDictionary[seg.DivisionId].Add(seg);
+                segmentsDictionary[seg.DistanceId].Add(seg);
             }
-            Dictionary<string, int> divisionDictionary = database.GetDivisions(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
+            Dictionary<string, int> distanceDictionary = database.GetDistances(theEvent.Identifier).ToDictionary(x => x.Name, x => x.Identifier);
 
             // Create document to output;
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
 
-            foreach (string divName in divisionResult.Keys.OrderBy(i => i))
+            foreach (string divName in distanceResult.Keys.OrderBy(i => i))
             {
                 Dictionary<int, int> segmentIndexDictionary = new Dictionary<int, int>();
                 // Set margins to really small
@@ -1266,10 +1266,10 @@ namespace ChronoKeep.UI.Timing
                 curPara = header.AddParagraph(theEvent.Date);
                 curPara.Style = "Heading3";
                 curPara = header.AddParagraph(divName);
-                curPara.Style = "DivisionName";
+                curPara.Style = "DistanceName";
                 // Separate each age group into their own little world
                 Dictionary<(int, string), List<TimeResult>> ageGroupResultsDictionary = new Dictionary<(int, string), List<TimeResult>>();
-                foreach (TimeResult result in divisionResult[divName])
+                foreach (TimeResult result in distanceResult[divName])
                 {
                     if (!ageGroupResultsDictionary.ContainsKey((result.AgeGroupId, result.Gender)))
                     {
@@ -1320,10 +1320,10 @@ namespace ChronoKeep.UI.Timing
                             table.AddColumn(Unit.FromCentimeter(2.3)); // start
                             FinishIndex++;
                         }
-                        bool distanceSegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(divisionDictionary[divName]);
+                        bool distanceSegments = type == ValuesType.ALL && segmentsDictionary.ContainsKey(distanceDictionary[divName]);
                         if (distanceSegments)
                         {
-                            foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                            foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                             {
                                 segmentIndexDictionary[s.Identifier] = FinishIndex++;
                                 table.AddColumn(Unit.FromCentimeter(2.3));
@@ -1348,7 +1348,7 @@ namespace ChronoKeep.UI.Timing
                         }
                         if (distanceSegments)
                         {
-                            foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                            foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                             {
                                 row.Cells[segmentIndexDictionary[s.Identifier]].AddParagraph(s.Name);
                             }
@@ -1359,7 +1359,7 @@ namespace ChronoKeep.UI.Timing
                         List<TimeResult> finishTimes = new List<TimeResult>();
                         finishTimes.AddRange(ageGroupResultsDictionary[(AgeGroupID, gender)]);
                         finishTimes.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
-                        finishTimes.Sort(TimeResult.CompareByDivisionAgeGroupPlace);
+                        finishTimes.Sort(TimeResult.CompareByDistanceAgeGroupPlace);
                         // The key is (EVENTSPECIFICID, SEGMENTID) and is used to identify segment results
                         // such as the start chip read and any other reads there may be other than finish.
                         Dictionary<(int, int), TimeResult> personSegmentResultDictionary = new Dictionary<(int, int), TimeResult>();
@@ -1389,7 +1389,7 @@ namespace ChronoKeep.UI.Timing
                             }
                             if (distanceSegments)
                             {
-                                foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                                 {
                                     string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
                                         ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
@@ -1418,7 +1418,7 @@ namespace ChronoKeep.UI.Timing
                                     ? personSegmentResultDictionary[(identifier, Constants.Timing.SEGMENT_START)] : null;
                                 if (result == null)
                                 {
-                                    foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                    foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                                     {
                                         result = personSegmentResultDictionary.ContainsKey((identifier, s.Identifier))
                                       ? personSegmentResultDictionary[(identifier, s.Identifier)] : null;
@@ -1444,7 +1444,7 @@ namespace ChronoKeep.UI.Timing
                                 }
                                 if (distanceSegments)
                                 {
-                                    foreach (Segment s in segmentsDictionary[divisionDictionary[divName]])
+                                    foreach (Segment s in segmentsDictionary[distanceDictionary[divName]])
                                     {
                                         string value = personSegmentResultDictionary.ContainsKey((result.EventSpecificId, s.Identifier))
                                             ? personSegmentResultDictionary[(result.EventSpecificId, s.Identifier)].Time
@@ -1498,7 +1498,7 @@ namespace ChronoKeep.UI.Timing
                 UseEXDialog = true
             };
             List<string> divsToPrint = new List<string>();
-            foreach (ListBoxItem divItem in DivisionsBox.SelectedItems)
+            foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
             {
                 if (divItem.Content.Equals("All"))
                 {
@@ -1601,7 +1601,7 @@ namespace ChronoKeep.UI.Timing
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             List<string> divsToPrint = new List<string>();
-            foreach (ListBoxItem divItem in DivisionsBox.SelectedItems)
+            foreach (ListBoxItem divItem in DistancesBox.SelectedItems)
             {
                 if (divItem.Content.Equals("All"))
                 {

@@ -15,6 +15,7 @@ namespace ChronoKeep
         void ResetDatabase();
         void HardResetDatabase();
 
+        // Settings functions
         AppSetting GetAppSetting(string name);
         void SetAppSetting(string name, string value);
         void SetAppSetting(AppSetting setting);
@@ -32,23 +33,21 @@ namespace ChronoKeep
         void RemoveEvent(Event anEvent);
         void UpdateEvent(Event anEvent);
         int GetEventID(Event anEvent);
-        void SetEventOptions(int eventId, List<JsonOption> options);
         void SetStartWindow(Event anEvent);
         void SetFinishOptions(Event anEvent);
         Event GetCurrentEvent();
         Event GetEvent(int id);
         List<Event> GetEvents();
-        List<JsonOption> GetEventOptions(int eventId);
 
-        // Division Functions
-        void AddDivision(Division div);
-        void AddDivisions(List<Division> divisions);
-        void RemoveDivision(int identifier);
-        void RemoveDivision(Division div);
-        void UpdateDivision(Division div);
-        int GetDivisionID(Division div);
-        List<Division> GetDivisions(int eventId);
-        Division GetDivision(int divId);
+        // Distance Functions
+        void AddDistance(Distance div);
+        void AddDistances(List<Distance> distances);
+        void RemoveDistance(int identifier);
+        void RemoveDistance(Distance div);
+        void UpdateDistance(Distance div);
+        int GetDistanceID(Distance div);
+        List<Distance> GetDistances(int eventId);
+        Distance GetDistance(int divId);
         void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds);
 
         // Timing Location Functions
@@ -85,13 +84,9 @@ namespace ChronoKeep
         void UpdateParticipant(Participant person);
         void UpdateParticipants(List<Participant> participants);
         int GetParticipantID(Participant person);
-        void CheckInParticipant(int eventId, int identifier, int checkedIn);
-        void CheckInParticipant(Participant person);
-        void SetEarlyStartParticipant(int eventId, int identifier, int earlystart);
-        void SetEarlyStartParticipant(Participant person);
         List<Participant> GetParticipants();
         List<Participant> GetParticipants(int eventId);
-        List<Participant> GetParticipants(int eventId, int divisionId);
+        List<Participant> GetParticipants(int eventId, int distanceId);
         Participant GetParticipant(int eventIdentifier, int identifier);
         Participant GetParticipant(int eventIdentifier, Participant unknown);
         Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId);
@@ -104,20 +99,6 @@ namespace ChronoKeep
         void RemoveBibChipAssociation(int eventId, string chip);
         void RemoveBibChipAssociation(BibChipAssociation assoc);
         void RemoveBibChipAssociations(List<BibChipAssociation> assocs);
-
-        // Bib Functions
-        void AddBibs(int eventId, int group, List<int> bibs);
-        void AddBibs(int eventId, List<AvailableBib> bibs);
-        void AddBib(int eventId, int group, int bib);
-        List<AvailableBib> GetBibs(int eventId);
-        void RemoveBib(int eventId, int bib);
-        void RemoveBibs(List<AvailableBib> bibs);
-        int LargestBib(int eventId);
-
-        // Bib Group Functions
-        void AddBibGroup(int eventId, BibGroup group);
-        List<BibGroup> GetBibGroups(int eventId);
-        void RemoveBibGroup(BibGroup group);
 
         // Timing Result Functions
         void AddTimingResult(TimeResult tr);
@@ -133,29 +114,12 @@ namespace ChronoKeep
         List<TimeResult> GetNonUploadedResults(int eventId);
 
         // Timing analytics... sort of
-        List<DivisionStats> GetDivisionStats(int eventId);
-        Dictionary<int, List<Participant>> GetDivisionParticipantsStatus(int eventId, int divisionId);
+        List<DistanceStat> GetDistanceStats(int eventId);
+        Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int distanceId);
 
         // Reset functions for ChipReads/TimeResults
         void ResetTimingResultsEvent(int eventId);                      // event based reset
         void ResetTimingResultsPlacements(int eventId);
-
-        // Day of Participant / Kiosk Functions
-        void AddDayOfParticipant(DayOfParticipant part);
-        void AddDayOfParticipants(List<DayOfParticipant> participants);
-        DayOfParticipant GetDayOfParticipant(DayOfParticipant part);
-        List<DayOfParticipant> GetDayOfParticipants(int eventId);
-        List<DayOfParticipant> GetDayOfParticipants();
-        bool ApproveDayOfParticipant(int eventId, int identifier, int Bib, int earlystart);
-        bool ApproveDayOfParticipant(DayOfParticipant part, int Bib, int earlystart);
-        void SetLiabilityWaiver(int eventId, String waiver);
-        String GetLiabilityWaiver(int eventId);
-        void SetPrintOption(int eventId, int print);
-        int GetPrintOption(int eventId);
-
-        // Change Functions
-        void AddChange(Participant newParticipant, Participant oldParticipant);
-        List<Change> GetChanges();
 
         // Chip Read Functions
         void AddChipRead(ChipRead read);
@@ -168,16 +132,17 @@ namespace ChronoKeep
         List<ChipRead> GetChipReads();
         List<ChipRead> GetChipReads(int eventId);
         List<ChipRead> GetUsefulChipReads(int eventId);
+        List<ChipRead> GetAnnouncerChipReads(int eventId);
 
         // Age Group Functions
         void AddAgeGroup(AgeGroup group);
         void AddAgeGroups(List<AgeGroup> groups);
         void UpdateAgeGroup(AgeGroup group);
         void RemoveAgeGroup(AgeGroup group);
-        void RemoveAgeGroups(int eventId, int divisionId);
+        void RemoveAgeGroups(int eventId, int distanceId);
         void RemoveAgeGroups(List<AgeGroup> groups);
         List<AgeGroup> GetAgeGroups(int eventId);
-        List<AgeGroup> GetAgeGroups(int eventId, int divisionId);
+        List<AgeGroup> GetAgeGroups(int eventId, int distanceId);
 
         // Timing Systems
         void AddTimingSystem(TimingSystem system);

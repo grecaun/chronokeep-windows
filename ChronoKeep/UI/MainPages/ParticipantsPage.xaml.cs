@@ -40,25 +40,25 @@ namespace ChronoKeep.UI.MainPages
             {
                 return;
             }
-            int divisionId = -1;
+            int distanceId = -1;
             try
             {
-                divisionId = Convert.ToInt32(((ComboBoxItem)DivisionBox.SelectedItem).Uid);
+                distanceId = Convert.ToInt32(((ComboBoxItem)DistanceBox.SelectedItem).Uid);
             }
             catch
             {
-                divisionId = -1;
+                distanceId = -1;
             }
             List<Participant> newParts = new List<Participant>();
             await Task.Run(() =>
             {
-                if (divisionId == -1)
+                if (distanceId == -1)
                 {
                     newParts.AddRange(database.GetParticipants(theEvent.Identifier));
                 }
                 else
                 {
-                    newParts.AddRange(database.GetParticipants(theEvent.Identifier, divisionId));
+                    newParts.AddRange(database.GetParticipants(theEvent.Identifier, distanceId));
                 }
             });
             participants.Clear();
@@ -83,12 +83,12 @@ namespace ChronoKeep.UI.MainPages
             Log.D("Participants updated.");
         }
 
-        public void UpdateDivisionsBox()
+        public void UpdateDistancesBox()
         {
-            Log.D("Updating divisions box.");
+            Log.D("Updating distances box.");
             theEvent = database.GetCurrentEvent();
-            DivisionBox.Items.Clear();
-            DivisionBox.Items.Add(new ComboBoxItem()
+            DistanceBox.Items.Clear();
+            DistanceBox.Items.Add(new ComboBoxItem()
             {
                 Content = "All",
                 Uid = "-1"
@@ -97,17 +97,17 @@ namespace ChronoKeep.UI.MainPages
             {
                 return;
             }
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
-            divisions.Sort();
-            foreach (Division d in divisions)
+            List<Distance> distances = database.GetDistances(theEvent.Identifier);
+            distances.Sort();
+            foreach (Distance d in distances)
             {
-                DivisionBox.Items.Add(new ComboBoxItem()
+                DistanceBox.Items.Add(new ComboBoxItem()
                 {
                     Content = d.Name,
                     Uid = d.Identifier.ToString()
                 });
             }
-            DivisionBox.SelectedIndex = 0;
+            DistanceBox.SelectedIndex = 0;
         }
 
         private void UpdateImportOptions()
@@ -232,7 +232,7 @@ namespace ChronoKeep.UI.MainPages
             UpdateView();
         }
 
-        private void DivisionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void DistanceBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateView();
         }
@@ -257,7 +257,6 @@ namespace ChronoKeep.UI.MainPages
                             "Bib",
                             "Distance",
                             "Status",
-                            "Early Start",
                             "First",
                             "Last",
                             "Birthday",
@@ -276,17 +275,15 @@ namespace ChronoKeep.UI.MainPages
                             "Other",
                             "Owes",
                             "Emergency Contact Name",
-                            "Emergency Contact Phone",
-                            "Division"
+                            "Emergency Contact Phone"
                         };
                         List<object[]> data = new List<object[]>();
                         foreach (Participant p in parts)
                         {
                             data.Add(new object[] {
                                 p.Bib,
-                                p.Division,
+                                p.Distance,
                                 p.EventSpecific.StatusStr,
-                                p.EarlyStart,
                                 p.FirstName,
                                 p.LastName,
                                 p.Birthdate,
@@ -306,8 +303,6 @@ namespace ChronoKeep.UI.MainPages
                                 p.Owes,
                                 p.ECName,
                                 p.ECPhone,
-                                p.Division +
-                                (p.EventSpecific.EarlyStart == 1 ? " Early Start" : "")
                             });
                         }
                         IDataExporter exporter = null;
@@ -394,7 +389,7 @@ namespace ChronoKeep.UI.MainPages
         private void ParticipantsList_Loaded(object sender, RoutedEventArgs e)
         {
             Log.D("Participant list loaded.");
-            UpdateDivisionsBox();
+            UpdateDistancesBox();
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)

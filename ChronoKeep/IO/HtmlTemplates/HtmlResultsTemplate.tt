@@ -14,12 +14,12 @@
 			<div class='text-important table-header'><h2><#= theEvent.YearCode #> <#= theEvent.Name #></h2></div>
 			<div class='events-panel panel panel-default'>
 				<div class='events-btn-wrapper'>
-					<# foreach (string d in divisionResults.Keys)
+					<# foreach (string d in distanceResults.Keys)
 					{ #>
 					<button class="btn btn-default events-btn collapsed" type="button" data-toggle="collapse" data-parent="#results" data-target="#<#= theEvent.YearCode #>-results-<#= d.Replace(' ', '-') #>" aria-expanded="false" aria-controls="<#= theEvent.YearCode #>-results-<#= d.Replace(' ', '-') #>"><#= d #></button>
 					<# } #>
 				</div>
-				<# foreach (string d in divisionResults.Keys)
+				<# foreach (string d in distanceResults.Keys)
 				{ #>
 				<div class="collapse" id="<#= theEvent.YearCode #>-results-<#= d.Replace(' ', '-') #>">
 					<div class='well'>
@@ -35,7 +35,7 @@
 							   <td class="overflow-hidden text-important table-label">Gun Time</td>
 							   <td class="text-important table-label">Time</td>
 							</tr>
-							<# foreach (TimeResult r in divisionResults[d])
+							<# foreach (TimeResult r in distanceResults[d])
 							{ #>
 							<tr>
 							   <td class="overflow-hidden"><#= r.PlaceStr #></td>

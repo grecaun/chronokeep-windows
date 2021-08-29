@@ -5,15 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChronoKeep.UI.Participants"
         mc:Ignorable="d"
-        Title="Participant" Height="560" MinHeight="560" Width="520" MinWidth="520" Closing="Window_Closing" ResizeMode="NoResize">
+        Title="Participant" Height="530" MinHeight="530" Width="520" MinWidth="520" Closing="Window_Closing" ResizeMode="NoResize">
     <StackPanel>
         <DockPanel>
             <Label Content="Bib" FontSize="16" Margin="5,0,5,0" Width="100" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
             <TextBox Name="BibBox" FontSize="16" Margin="0,5,5,5" Width="100" VerticalContentAlignment="Center" KeyDown="Box_KeyDown"/>
-            <ComboBox Name="DivisionBox" FontSize="16" Margin="0,5,5,5"/>
-        </DockPanel>
-        <DockPanel LastChildFill="False" HorizontalAlignment="Center">
-            <CheckBox Name="CheckedInBox" Content="Checked In" FontSize="16" Margin="5,0,10,0" Width="Auto" VerticalContentAlignment="Center" />
+            <ComboBox Name="DistanceBox" FontSize="16" Margin="0,5,5,5"/>
         </DockPanel>
         <DockPanel>
             <Label Content="First" FontSize="16" Margin="5,0,5,0" Width="100" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>

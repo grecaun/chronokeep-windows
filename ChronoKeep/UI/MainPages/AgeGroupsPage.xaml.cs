@@ -37,9 +37,9 @@ namespace ChronoKeep.UI.MainPages
             UpdateView();
         }
 
-        private void Divisions_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Distances_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Log.D("Division changed.");
+            Log.D("Distance changed.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
@@ -52,34 +52,34 @@ namespace ChronoKeep.UI.MainPages
             theEvent = database.GetCurrentEvent();
             if (theEvent.CommonAgeGroups)
             {
-                DivisionRow.Height = new GridLength(0);
+                DistanceRow.Height = new GridLength(0);
                 UpdateAgeGroupsList();
             }
             else
             {
-                DivisionRow.Height = new GridLength(55);
-                UpdateDivisionsBox();
+                DistanceRow.Height = new GridLength(55);
+                UpdateDistancesBox();
             }
         }
 
-        private void UpdateDivisionsBox()
+        private void UpdateDistancesBox()
         {
             if (theEvent == null || theEvent.Identifier < 0)
             {
                 return;
             }
-            Divisions.Items.Clear();
-            List<Division> divisions = database.GetDivisions(theEvent.Identifier);
-            divisions.Sort();
-            foreach (Division d in divisions)
+            Distances.Items.Clear();
+            List<Distance> distances = database.GetDistances(theEvent.Identifier);
+            distances.Sort();
+            foreach (Distance d in distances)
             {
-                Divisions.Items.Add(new ComboBoxItem()
+                Distances.Items.Add(new ComboBoxItem()
                 {
                     Content = d.Name,
                     Uid = d.Identifier.ToString()
                 });
             }
-            Divisions.SelectedIndex = 0;
+            Distances.SelectedIndex = 0;
         }
 
         private void UpdateAgeGroupsList()
@@ -91,7 +91,7 @@ namespace ChronoKeep.UI.MainPages
             AgeGroupsBox.Items.Clear();
             AgeGroupsBox.Items.Add(new ALabel());
             List<AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier);
-            ageGroups.RemoveAll(x => Constants.Timing.AGEGROUPS_CUSTOM_DIVISIONID == x.DivisionId);
+            ageGroups.RemoveAll(x => Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID == x.DistanceId);
             ageGroups.Sort();
             foreach (AgeGroup group in ageGroups)
             {
@@ -102,10 +102,10 @@ namespace ChronoKeep.UI.MainPages
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Adding group.");
-            int divId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
+            int divId = Constants.Timing.COMMON_AGEGROUPS_DISTANCEID;
             if (!theEvent.CommonAgeGroups)
             {
-                divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
+                divId = Convert.ToInt32(((ComboBoxItem)Distances.SelectedItem).Uid);
             }
             AgeGroupsBox.Items.Add(new AAgeGroup(this, new AgeGroup(theEvent.Identifier, divId, 0, 0)));
         }
@@ -113,10 +113,10 @@ namespace ChronoKeep.UI.MainPages
         private void AddDefault_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Add default age groups button clicked.");
-            int divId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
+            int divId = Constants.Timing.COMMON_AGEGROUPS_DISTANCEID;
             if (!theEvent.CommonAgeGroups)
             {
-                divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
+                divId = Convert.ToInt32(((ComboBoxItem)Distances.SelectedItem).Uid);
             }
             database.RemoveAgeGroups(theEvent.Identifier, divId);
             int increment;
@@ -175,12 +175,12 @@ namespace ChronoKeep.UI.MainPages
                     }
                     else if (previous.EndAge != current.StartAge - 1)
                     {
-                        toAdd.Add(new AgeGroup(current.EventId, current.DivisionId, previous.EndAge + 1, current.StartAge - 1));
+                        toAdd.Add(new AgeGroup(current.EventId, current.DistanceId, previous.EndAge + 1, current.StartAge - 1));
                     }
                 }
                 else if (current.StartAge > 1)
                 {
-                    toAdd.Add(new AgeGroup(current.EventId, current.DivisionId, 0, current.StartAge - 1));
+                    toAdd.Add(new AgeGroup(current.EventId, current.DistanceId, 0, current.StartAge - 1));
                 }
                 previous = current;
             }
@@ -194,10 +194,10 @@ namespace ChronoKeep.UI.MainPages
                 return;
             }
             ageGroups.AddRange(toAdd);
-            int divId = Constants.Timing.COMMON_AGEGROUPS_DIVISIONID;
+            int divId = Constants.Timing.COMMON_AGEGROUPS_DISTANCEID;
             if (!theEvent.CommonAgeGroups)
             {
-                divId = Convert.ToInt32(((ComboBoxItem)Divisions.SelectedItem).Uid);
+                divId = Convert.ToInt32(((ComboBoxItem)Distances.SelectedItem).Uid);
             }
             database.RemoveAgeGroups(theEvent.Identifier, divId);
             foreach (AgeGroup age in ageGroups)
@@ -255,7 +255,7 @@ namespace ChronoKeep.UI.MainPages
                 List<Participant> participants = database.GetParticipants(theEvent.Identifier);
                 foreach (Participant person in participants)
                 {
-                    int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DIVISIONID : person.EventSpecific.DivisionIdentifier;
+                    int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DISTANCEID : person.EventSpecific.DistanceIdentifier;
                     int age = person.GetAge(theEvent.Date);
                     if (AgeGroups == null || age < 0)
                     {

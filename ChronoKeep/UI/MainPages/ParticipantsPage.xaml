@@ -18,11 +18,11 @@
                 <Button Name="ImportExcel" Content="Import" FontSize="14" Height="30" Margin="10,5,10,5" Click="ImportExcel_Click"  Visibility="Collapsed"/>
                 <Button Name="Export" Content="Export" FontSize="14" Height="30" Margin="10,5,10,5" Click="Export_Click" />
                 <Label Content="View only" FontSize="16" Margin="10,0,10,0" HorizontalContentAlignment="Center"/>
-                <DockPanel Name="DivisionBoxHolder" />
-                <ComboBox Name="DivisionBox" FontSize="16" Margin="10,0,10,0" SelectionChanged="DivisionBox_SelectionChanged" />
+                <DockPanel Name="DistanceBoxHolder" />
+                <ComboBox Name="DistanceBox" FontSize="16" Margin="10,0,10,0" SelectionChanged="DistanceBox_SelectionChanged" />
                 <Label Content="Sort By" FontSize="16" Margin="10,0,00,0" HorizontalContentAlignment="Center"/>
                 <ComboBox Name="SortBox" FontSize="16" Margin="10,0,10,10" SelectionChanged="SortBox_SelectionChanged" SelectedIndex="0">
-                    <ComboBoxItem Content="Division" />
+                    <ComboBoxItem Content="Distance" />
                     <ComboBoxItem Content="Name" />
                     <ComboBoxItem Content="Bib" />
                 </ComboBox>
@@ -35,7 +35,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Bib" DisplayMemberBinding="{Binding Bib}" />
-                    <GridViewColumn Header="Division" DisplayMemberBinding="{Binding Division}" />
+                    <GridViewColumn Header="Distance" DisplayMemberBinding="{Binding Distance}" />
                     <GridViewColumn Header="First" DisplayMemberBinding="{Binding FirstName}" />
                     <GridViewColumn Header="Last" DisplayMemberBinding="{Binding LastName}" />
                     <GridViewColumn Header="Gender" DisplayMemberBinding="{Binding Gender}" />

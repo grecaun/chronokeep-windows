@@ -60,9 +60,9 @@ namespace ChronoKeep
 #endif
         }
 
-        public string[] GetDivisionNames(int index)
+        public string[] GetDistanceNames(int index)
         {
-            HashSet<String> values = new HashSet<string>();
+            HashSet<string> values = new HashSet<string>();
             foreach (string[] line in Data)
             {
                 if (line[index] != null && line[index].Length > 0)

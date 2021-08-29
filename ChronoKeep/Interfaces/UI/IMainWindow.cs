@@ -11,11 +11,6 @@ namespace ChronoKeep.Interfaces
         void SwitchPage(IMainPage iPage, bool IsMainPage);
         
         // Networking services related calls.
-        bool StartNetworkServices();
-        bool StopNetworkServices();
-        bool NetworkServicesRunning();
-        void NetworkUpdateResults(int eventid, List<TimeResult> results);
-        void NetworkAddResults(int eventid, List<TimeResult> results);
         void NetworkClearResults(int eventid);
         void StartHttpServer();
         void StopHttpServer();
@@ -27,9 +22,7 @@ namespace ChronoKeep.Interfaces
         void UpdateTimingFromController();
         void UpdateTiming();
         bool NewTimingInfo();
-
-        // Event related calls.
-        void UpdateEvent(int identifier, string nameString, long dateVal, int nextYear, int shirtOptionalVal, int shirtPrice);
+        void UpdateAnnouncerWindow();
 
         // Timing System related calls.
         void ConnectTimingSystem(TimingSystem system);

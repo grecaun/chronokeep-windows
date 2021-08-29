@@ -503,15 +503,12 @@ namespace ChronoKeep
         // Event Specific binding stuffs
         public int EventIdentifier { get => eventSpecific.EventIdentifier; }
         public int Bib { get => eventSpecific.Bib; }
-        public string Division { get => eventSpecific.DivisionName; }
+        public string Distance { get => eventSpecific.DistanceName; }
         public string CheckedIn { get => eventSpecific.CheckedIn == 0 ? "No" : "Yes"; }
         public bool IsCheckedIn { get => EventSpecific.CheckedIn == 1; }
         public string Owes { get => eventSpecific.Owes; }
         public string Other { get => eventSpecific.Other; }
         public string Comments { get => eventSpecific.Comments; }
-        public string EarlyStart { get => eventSpecific.EarlyStart == 0 ? "No" : "Yes"; }
-        public bool IsEarlyStart { get => EventSpecific.EarlyStart == 1; }
-        public string NextYear { get => eventSpecific.NextYear == 0 ? "No" : "Yes"; }
         public int Status { get => eventSpecific.Status; set => eventSpecific.Status = value; }
 
         // Emergency Contact binding stuffs
@@ -534,7 +531,7 @@ namespace ChronoKeep
         public int CompareTo(Participant other)
         {
             if (other == null) return 1;
-            if (this.EventSpecific.DivisionIdentifier == other.EventSpecific.DivisionIdentifier)
+            if (this.EventSpecific.DistanceIdentifier == other.EventSpecific.DistanceIdentifier)
             {
                 if (this.LastName == other.LastName)
                 {
@@ -542,7 +539,7 @@ namespace ChronoKeep
                 }
                 return this.LastName.CompareTo(other.LastName);
             }
-            return this.EventSpecific.DivisionName.CompareTo(other.EventSpecific.DivisionName);
+            return this.EventSpecific.DistanceName.CompareTo(other.EventSpecific.DistanceName);
         }
 
         public bool Equals(Participant other)
@@ -592,7 +589,7 @@ namespace ChronoKeep
             return numYears;
         }
 
-        public static int CompareByDivision(Participant one, Participant two)
+        public static int CompareByDistance(Participant one, Participant two)
         {
             if (two == null || one == null) return 1;
             return one.CompareTo(two);

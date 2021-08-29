@@ -8,7 +8,7 @@ namespace ChronoKeep
 {
     public class Segment : IEquatable<Segment>, IComparable<Segment>
     {
-        private int id, event_id, division_id, location_id, occurrence;
+        private int id, event_id, distance_id, location_id, occurrence;
         private double distance_segment, distance_cumulative;
         private int distance_unit;
         private string name;
@@ -17,7 +17,7 @@ namespace ChronoKeep
         {
             this.id = -1;
             this.event_id = seg.event_id;
-            this.division_id = seg.division_id;
+            this.distance_id = seg.distance_id;
             this.location_id = seg.location_id;
             this.occurrence = seg.occurrence;
             this.distance_segment = seg.distance_segment;
@@ -30,7 +30,7 @@ namespace ChronoKeep
         {
             this.id = -1;
             this.event_id = e;
-            this.division_id = d;
+            this.distance_id = d;
             this.location_id = l;
             this.occurrence = occ;
             this.distance_segment = dseg;
@@ -43,7 +43,7 @@ namespace ChronoKeep
         {
             this.id = id;
             this.event_id = e;
-            this.division_id = d;
+            this.distance_id = d;
             this.location_id = l;
             this.occurrence = occ;
             this.distance_segment = dseg;
@@ -57,7 +57,7 @@ namespace ChronoKeep
         public double SegmentDistance { get => distance_segment; set => distance_segment = value; }
         public double CumulativeDistance { get => distance_cumulative; set => distance_cumulative = value; }
         public int EventId { get => event_id; set => event_id = value; }
-        public int DivisionId { get => division_id; set => division_id = value; }
+        public int DistanceId { get => distance_id; set => distance_id = value; }
         public int LocationId { get => location_id; set => location_id = value; }
         public int Occurrence { get => occurrence; set => occurrence = value; }
         public int Identifier { get => id; set => id = value; }
@@ -69,9 +69,9 @@ namespace ChronoKeep
             {
                 return this.event_id.CompareTo(other.event_id);
             } 
-            if (other.division_id != this.division_id)
+            if (other.distance_id != this.distance_id)
             {
-                return this.division_id.CompareTo(other.division_id);
+                return this.distance_id.CompareTo(other.distance_id);
             }
             if (this.location_id != other.location_id)
             {
@@ -82,7 +82,7 @@ namespace ChronoKeep
 
         public bool Equals(Segment other)
         {
-            return this.event_id == other.event_id && this.division_id == other.division_id && this.location_id == other.location_id && this.occurrence == other.occurrence; 
+            return this.event_id == other.event_id && this.distance_id == other.distance_id && this.location_id == other.location_id && this.occurrence == other.occurrence; 
         }
     }
 }

@@ -33,45 +33,25 @@ namespace ChronoKeep.UI.Participants
             this.toChange = toChange;
             theEvent = database.GetCurrentEvent();
             if (theEvent == null) return;
-            foreach (Division div in database.GetDivisions(theEvent.Identifier))
+            foreach (Distance div in database.GetDistances(theEvent.Identifier))
             {
-                DivisionBox.Items.Add(new ComboBoxItem()
+                DistanceBox.Items.Add(new ComboBoxItem()
                 {
                     Content = div.Name,
                     Uid = div.Identifier.ToString()
                 });
             }
-            DivisionBox.SelectedIndex = 0;
-            DivisionBox.Focus();
-            if (theEvent.AllowEarlyStart)
-            {
-                EarlyStartHolder.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                EarlyStartHolder.Visibility = Visibility.Collapsed;
-                EarlyStart.IsChecked = false;
-            }
+            DistanceBox.SelectedIndex = 0;
+            DistanceBox.Focus();
         }
 
         private void Change_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Change clicked.");
-            int divisionId = Convert.ToInt32(((ComboBoxItem)DivisionBox.SelectedItem).Uid);
+            int distanceId = Convert.ToInt32(((ComboBoxItem)DistanceBox.SelectedItem).Uid);
             foreach (Participant part in toChange)
             {
-                if (SwitchDivision.IsChecked == true)
-                {
-                    part.EventSpecific.DivisionIdentifier = divisionId;
-                }
-                if (EarlyStart.IsChecked == true)
-                {
-                    part.EventSpecific.EarlyStart = EarlyStartTrue.IsChecked == true ? 1 : 0;
-                }
-                if (CheckIn.IsChecked == true)
-                {
-                    part.EventSpecific.CheckedIn = CheckedInTrue.IsChecked == true ? 1 : 0;
-                }
+                part.EventSpecific.DistanceIdentifier = distanceId;
             }
             database.UpdateParticipants(toChange);
             database.ResetTimingResultsEvent(theEvent.Identifier);

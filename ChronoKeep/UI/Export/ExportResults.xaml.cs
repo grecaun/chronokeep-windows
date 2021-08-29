@@ -23,10 +23,10 @@ namespace ChronoKeep.UI.Export
         List<String> commonHeaders = new List<String>
         {
             "Place", "Age Group Place", "Gender Place",
-            "Bib", "Distance", "Status", "Early Start", "First", "Last", "Birthday",
+            "Bib", "Distance", "Status", "First", "Last", "Birthday",
             "Age", "Gender", "Start", "Street", "Apartment",
             "City", "State", "Zip", "Country", "Mobile", "Email", "Parent", "Comments",
-            "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone", "Division"
+            "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone"
         };
         List<String> distanceHeaders = new List<string>
         {
@@ -61,13 +61,13 @@ namespace ChronoKeep.UI.Export
                     // Go backwards so we don't have to recalculate where the insert is each lap
                     for (int i = maxNumSegments; i > 0; i--)
                     {
-                        commonHeaders.Insert(10, String.Format("Segment {0} Chip Time", i));
-                        commonHeaders.Insert(10, String.Format("Segment {0} Gun Time", i));
+                        commonHeaders.Insert(10, string.Format("Segment {0} Chip Time", i));
+                        commonHeaders.Insert(10, string.Format("Segment {0} Gun Time", i));
                     }
                     // then do it again so we can add to the end in the right order
                     for (int i = 1; i <= maxNumSegments; i++)
                     {
-                        commonHeaders.Add(String.Format("Segment {0} Name", i));
+                        commonHeaders.Add(string.Format("Segment {0} Name", i));
                     }
                 }
             }
@@ -158,15 +158,11 @@ namespace ChronoKeep.UI.Export
                     }
                     if (headerIndex.ContainsKey("Distance"))
                     {
-                        line[headerIndex["Distance"]] = participant.Division;
+                        line[headerIndex["Distance"]] = participant.Distance;
                     }
                     if (headerIndex.ContainsKey("Status"))
                     {
                         line[headerIndex["Status"]] = participant.EventSpecific.StatusStr;
-                    }
-                    if (headerIndex.ContainsKey("Early Start"))
-                    {
-                        line[headerIndex["Early Start"]] = participant.EarlyStart;
                     }
                     if (headerIndex.ContainsKey("First"))
                     {
@@ -244,10 +240,6 @@ namespace ChronoKeep.UI.Export
                     {
                         line[headerIndex["Emergency Contact Phone"]] = participant.ECPhone;
                     }
-                    if (headerIndex.ContainsKey("Division"))
-                    {
-                        line[headerIndex["Division"]] = participant.Division + (participant.IsEarlyStart ? "Early" : "");
-                    }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                     {
                         if (resultDictionary.ContainsKey(participant.EventSpecific.Bib))
@@ -287,17 +279,17 @@ namespace ChronoKeep.UI.Export
                                 }
                                 else if (Constants.Timing.SEGMENT_NONE != result.SegmentId)
                                 {
-                                    string key = String.Format("Segment {0} Chip Time", segmentNum);
+                                    string key = string.Format("Segment {0} Chip Time", segmentNum);
                                     if (headerIndex.ContainsKey(key))
                                     {
                                         line[headerIndex[key]] = result.ChipTime;
                                     }
-                                    key = String.Format("Segment {0} Gun Time", segmentNum);
+                                    key = string.Format("Segment {0} Gun Time", segmentNum);
                                     if (headerIndex.ContainsKey(key))
                                     {
                                         line[headerIndex[key]] = result.Time;
                                     }
-                                    key = String.Format("Segment {0} Name", segmentNum++);
+                                    key = string.Format("Segment {0} Name", segmentNum++);
                                     if (headerIndex.ContainsKey(key))
                                     {
                                         line[headerIndex[key]] = result.SegmentName;
@@ -315,7 +307,7 @@ namespace ChronoKeep.UI.Export
                         }
                         for (int i=1; i<=maxLaps; i++)
                         {
-                            string key = String.Format("Lap {0}", i);
+                            string key = string.Format("Lap {0}", i);
                             if (occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Bib, i)))
                             {
                                 finalLap = i;

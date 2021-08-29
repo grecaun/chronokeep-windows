@@ -232,9 +232,24 @@
     <Compile Include="Constants\ResultsAPI.cs" />
     <Compile Include="Constants\Timing.cs" />
     <Compile Include="Constants\Distances.cs" />
-    <Compile Include="Constants\JsonOptions.cs" />
     <Compile Include="Constants\Settings.cs" />
     <Compile Include="Database\InvalidDatabaseVersion.cs" />
+    <Compile Include="Database\SQLite\AgeGroups.cs" />
+    <Compile Include="Database\SQLite\BibChips.cs" />
+    <Compile Include="Database\SQLite\ChipReads.cs" />
+    <Compile Include="Database\SQLite\DatabaseHelpers.cs" />
+    <Compile Include="Database\SQLite\Distances.cs" />
+    <Compile Include="Database\SQLite\DistanceStats.cs" />
+    <Compile Include="Database\SQLite\Events.cs" />
+    <Compile Include="Database\SQLite\Participants.cs" />
+    <Compile Include="Database\SQLite\Results.cs" />
+    <Compile Include="Database\SQLite\ResultsAPIs.cs" />
+    <Compile Include="Database\SQLite\Segments.cs" />
+    <Compile Include="Database\SQLite\Settings.cs" />
+    <Compile Include="Database\SQLite\Setup.cs" />
+    <Compile Include="Database\SQLite\TimingLocations.cs" />
+    <Compile Include="Database\SQLite\TimingSystems.cs" />
+    <Compile Include="Database\SQLite\Update.cs" />
     <Compile Include="Interfaces\IO\IDataExporter.cs" />
     <Compile Include="Interfaces\UI\ISubPage.cs" />
     <Compile Include="Interfaces\Timing\ITimingSystemInterface.cs" />
@@ -261,25 +276,27 @@
     <Compile Include="Network\API\APIHandlers.cs" />
     <Compile Include="Network\HttpServer.cs" />
     <Compile Include="Objects\AgeGroup.cs" />
+    <Compile Include="Objects\AnnouncerParticipant.cs" />
     <Compile Include="Objects\ChronoKeepAPI\APIEvent.cs" />
     <Compile Include="Objects\ChronoKeepAPI\APIEventYear.cs" />
     <Compile Include="Objects\ChronoKeepAPI\Requests.cs" />
     <Compile Include="Objects\ChronoKeepAPI\Responses.cs" />
     <Compile Include="Objects\ChronoKeepAPI\APIResult.cs" />
-    <Compile Include="Objects\Apparel.cs" />
     <Compile Include="Objects\AppSetting.cs" />
-    <Compile Include="Objects\AvailableBib.cs" />
-    <Compile Include="Objects\BibGroup.cs" />
     <Compile Include="Objects\ChipRead.cs" />
-    <Compile Include="Objects\DivisionStats.cs" />
+    <Compile Include="Objects\DistanceStat.cs" />
     <Compile Include="Objects\Range.cs" />
     <Compile Include="Objects\ResultsAPI.cs" />
     <Compile Include="Objects\Segment.cs" />
     <Compile Include="Objects\TimingSystem.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
+    <Compile Include="Timing\Announcer\AnnouncerThread.cs" />
     <Compile Include="Timing\Interfaces\IpicoInterface.cs" />
     <Compile Include="Timing\TimingController.cs" />
     <Compile Include="Timing\TimingWorker.cs" />
+    <Compile Include="UI\AnnouncerWindow\AnnouncerWindow.xaml.cs">
+      <DependentUpon>AnnouncerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\API\APIErrorPage.xaml.cs">
       <DependentUpon>APIErrorPage.xaml</DependentUpon>
     </Compile>
@@ -321,14 +338,11 @@
     <Compile Include="UI\MainPages\APIPage.xaml.cs">
       <DependentUpon>APIPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MainPages\BibAssignmentPage.xaml.cs">
-      <DependentUpon>BibAssignmentPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\MainPages\ChipAssigmentPage.xaml.cs">
       <DependentUpon>ChipAssigmentPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\MainPages\DivisionsPage.xaml.cs">
-      <DependentUpon>DivisionsPage.xaml</DependentUpon>
+    <Compile Include="UI\MainPages\DistancesPage.xaml.cs">
+      <DependentUpon>DistancesPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainPages\LocationsPage.xaml.cs">
       <DependentUpon>LocationsPage.xaml</DependentUpon>
@@ -404,7 +418,6 @@
     <Compile Include="UI\ChipAssignment\BibChipAssociationWindow.xaml.cs">
       <DependentUpon>BibChipAssociationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Objects\ChangeParticipant.cs" />
     <Compile Include="UI\UHF RFID Reader\ChipPersonWindow.xaml.cs">
       <DependentUpon>ChipPersonWindow.xaml</DependentUpon>
     </Compile>
@@ -412,15 +425,10 @@
       <DependentUpon>ChipReaderWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="IO\CSVImporter.cs" />
-    <Compile Include="Objects\DayOfParticipant.cs" />
-    <Compile Include="UI\Kiosk\ExampleLiabilityWaiver.xaml.cs">
-      <DependentUpon>ExampleLiabilityWaiver.xaml</DependentUpon>
-    </Compile>
     <Compile Include="IO\ExcelImporter.cs" />
-    <Compile Include="Interfaces\UI\IChangeUpdater.cs" />
     <Compile Include="Interfaces\IO\IDataImporter.cs" />
     <Compile Include="Database\IDBInterface.cs" />
-    <Compile Include="Objects\Division.cs" />
+    <Compile Include="Objects\Distance.cs" />
     <Compile Include="Objects\Event.cs" />
     <Compile Include="Objects\EventSpecific.cs" />
     <Compile Include="Interfaces\IEDConnection.cs" />
@@ -431,46 +439,11 @@
     <Compile Include="UI\Import\ImportFileWindow.xaml.cs">
       <DependentUpon>ImportFileWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Network\JsonHandler.cs" />
-    <Compile Include="Objects\JsonObjects.cs" />
-    <Compile Include="UI\Kiosk\KioskSetup.xaml.cs">
-      <DependentUpon>KioskSetup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Kiosk\KioskSetupPage1.xaml.cs">
-      <DependentUpon>KioskSetupPage1.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\UHF RFID Reader\NewReader.cs" />
-    <Compile Include="UI\NextYear\NextYearSetupPage0.xaml.cs">
-      <DependentUpon>NextYearSetupPage0.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\NextYear\NextYearSetupPage1.xaml.cs">
-      <DependentUpon>NextYearSetupPage1.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Kiosk\KioskSetupPage2.xaml.cs">
-      <DependentUpon>KioskSetupPage2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Kiosk\KioskSetupPage3.xaml.cs">
-      <DependentUpon>KioskSetupPage3.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Kiosk\KioskSetupPage4.xaml.cs">
-      <DependentUpon>KioskSetupPage4.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Objects\Helpers\Log.cs" />
-    <Compile Include="Network\NetCore.cs" />
     <Compile Include="UI\EventWindows\NewEventWindow.xaml.cs">
       <DependentUpon>NewEventWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Objects\Change.cs" />
-    <Compile Include="UI\NextYear\NextYearSetup.xaml.cs">
-      <DependentUpon>NextYearSetup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\NextYear\NextYearSetupPage2.xaml.cs">
-      <DependentUpon>NextYearSetupPage2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\NextYear\NextYearSetupPage3.xaml.cs">
-      <DependentUpon>NextYearSetupPage3.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="IO\Printerface.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\Timing\RFID\RFIDSettings.xaml.cs">
       <DependentUpon>RFIDSettings.xaml</DependentUpon>
@@ -478,11 +451,13 @@
     <Compile Include="Timing\Interfaces\RFIDUltraInterface.cs" />
     <Compile Include="UI\UHF RFID Reader\RFIDSerial.cs" />
     <Compile Include="Database\SQLiteInterface.cs" />
-    <Compile Include="Network\TCPServer.cs" />
     <Compile Include="Objects\TimeResult.cs" />
     <Compile Include="Objects\TimingLocation.cs" />
     <Compile Include="Objects\Helpers\Utils.cs" />
-    <Compile Include="Network\ZeroConf.cs" />
+    <Page Include="UI\AnnouncerWindow\AnnouncerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\API\APIErrorPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -535,15 +510,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainPages\BibAssignmentPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\MainPages\ChipAssigmentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\MainPages\DivisionsPage.xaml">
+    <Page Include="UI\MainPages\DistancesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -651,10 +622,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Kiosk\ExampleLiabilityWaiver.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\Import\ImportFilePage1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -663,51 +630,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Kiosk\KioskSetup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Kiosk\KioskSetupPage1.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\NextYear\NextYearSetupPage0.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\NextYear\NextYearSetupPage1.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\Kiosk\KioskSetupPage2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Kiosk\KioskSetupPage3.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Kiosk\KioskSetupPage4.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UI\EventWindows\NewEventWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\NextYear\NextYearSetup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\NextYear\NextYearSetupPage2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\NextYear\NextYearSetupPage3.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -786,9 +713,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\BibAssignment\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="version.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

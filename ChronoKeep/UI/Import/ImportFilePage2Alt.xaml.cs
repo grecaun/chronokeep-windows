@@ -20,33 +20,33 @@ namespace ChronoKeep.UI.Import
     /// </summary>
     public partial class ImportFilePage2Alt : Page
     {
-        public ImportFilePage2Alt(string[] fileDivisions, List<Division> dbDivisions)
+        public ImportFilePage2Alt(string[] fileDistances, List<Distance> dbDistances)
         {
             InitializeComponent();
-            foreach (string div in fileDivisions)
+            foreach (string distance in fileDistances)
             {
-                divisionListBox.Items.Add(new DivisionListBoxItemAlternate(div, dbDivisions));
+                distanceListBox.Items.Add(new DistanceListBoxItemAlternate(distance, dbDistances));
             }
         }
 
-        public List<ImportDivision> GetDivisions()
+        public List<ImportDistance> GetDistances()
         {
-            List<ImportDivision> output = new List<ImportDivision>();
-            foreach (DivisionListBoxItemAlternate divItem in divisionListBox.Items)
+            List<ImportDistance> output = new List<ImportDistance>();
+            foreach (DistanceListBoxItemAlternate distanceItem in distanceListBox.Items)
             {
-                output.Add(new ImportDivision()
+                output.Add(new ImportDistance()
                 {
-                    NameFromFile = divItem.NameFromFile(),
-                    DivisionId = divItem.DivisionId()
+                    NameFromFile = distanceItem.NameFromFile(),
+                    DistanceId = distanceItem.DistanceId()
                 });
             }
             return output;
         }
 
-        public class ImportDivision
+        public class ImportDistance
         {
             public string NameFromFile { get; set; }
-            public int DivisionId { get; set; }
+            public int DistanceId { get; set; }
         }
     }
 }

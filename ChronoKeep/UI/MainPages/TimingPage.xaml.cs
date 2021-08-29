@@ -48,7 +48,7 @@ namespace ChronoKeep.UI.MainPages
         private Boolean TimerStarted = false;
         private SetTimeWindow timeWindow = null;
 
-        ObservableCollection<DivisionStats> stats = new ObservableCollection<DivisionStats>();
+        ObservableCollection<DistanceStat> stats = new ObservableCollection<DistanceStat>();
 
         int total = 4, connected = 0;
 
@@ -120,8 +120,7 @@ namespace ChronoKeep.UI.MainPages
             // Check if we've already started the event.  Show a clock if we have.
             if (theEvent != null && theEvent.StartSeconds >= 0)
             {
-                StartTime.Text = String.Format("{0:D2}:{1:D2}:{2:D2}.{3:D3}",
-                    theEvent.StartSeconds / 3600, (theEvent.StartSeconds % 3600) / 60, theEvent.StartSeconds % 60, theEvent.StartMilliseconds);
+                StartTime.Text = Constants.Timing.ToTime(theEvent.StartSeconds, theEvent.StartMilliseconds);
                 UpdateStartTime();
             }
 
@@ -130,11 +129,13 @@ namespace ChronoKeep.UI.MainPages
             locations = database.GetTimingLocations(theEvent.Identifier);
             if (!theEvent.CommonStartFinish)
             {
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
             }
             else
             {
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
             List<TimingSystem> systems = mWindow.GetConnectedSystems();
@@ -160,9 +161,9 @@ namespace ChronoKeep.UI.MainPages
             total = ReadersBox.Items.Count;
             subPage = new TimingResultsPage(this, database);
             TimingFrame.Content = subPage;
-            List<DivisionStats> inStats = database.GetDivisionStats(theEvent.Identifier);
+            List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
             statsListView.ItemsSource = stats;
-            foreach (DivisionStats s in inStats)
+            foreach (DistanceStat s in inStats)
             {
                 stats.Add(s);
             }
@@ -284,9 +285,9 @@ namespace ChronoKeep.UI.MainPages
                 }
             }
 
-            List<DivisionStats> inStats = database.GetDivisionStats(theEvent.Identifier);
+            List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
             stats.Clear();
-            foreach (DivisionStats s in inStats)
+            foreach (DistanceStat s in inStats)
             {
                 stats.Add(s);
             }
@@ -313,10 +314,12 @@ namespace ChronoKeep.UI.MainPages
             if (mWindow.IsAPIControllerRunning())
             {
                 AutoAPIButton.Content = "Stop Uploads";
+                ManualAPIButton.IsEnabled = false;
             }
             else
             {
                 AutoAPIButton.Content = "Auto Upload";
+                ManualAPIButton.IsEnabled = true;
             }
             subPage.UpdateView();
         }
@@ -331,9 +334,9 @@ namespace ChronoKeep.UI.MainPages
             if (updates)
             {
                 Log.D("Updates available.");
-                List<DivisionStats> inStats = database.GetDivisionStats(theEvent.Identifier);
+                List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
                 stats.Clear();
-                foreach (DivisionStats s in inStats)
+                foreach (DistanceStat s in inStats)
                 {
                     stats.Add(s);
                 }
@@ -688,8 +691,8 @@ namespace ChronoKeep.UI.MainPages
                     return SortType.GUNTIME;
                 case "Bib":
                     return SortType.BIB;
-                case "Division":
-                    return SortType.DIVISION;
+                case "Distance":
+                    return SortType.DISTANCE;
                 case "Age Group":
                     return SortType.AGEGROUP;
                 case "Gender":
@@ -745,9 +748,9 @@ namespace ChronoKeep.UI.MainPages
 
         private void StatsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            DivisionStats selected = (DivisionStats)statsListView.SelectedItem;
-            Log.D("Stats double cliked. Division is " + selected.DivisionName);
-            subPage = new DivisionStatsPage(this, database, selected.DivisionID, selected.DivisionName);
+            DistanceStat selected = (DistanceStat)statsListView.SelectedItem;
+            Log.D("Stats double cliked. Distance is " + selected.DistanceName);
+            subPage = new DistanceStatsPage(this, database, selected.DistanceID, selected.DistanceName);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
 
@@ -784,11 +787,11 @@ namespace ChronoKeep.UI.MainPages
                     Dictionary<string, string> DivisionDistanceType = new Dictionary<string, string>();
                     foreach (TimeResult result in finishResults)
                     {
-                        if (!maxLoops.ContainsKey(result.DivisionName))
+                        if (!maxLoops.ContainsKey(result.DistanceName))
                         {
-                            maxLoops[result.DivisionName] = result.Occurrence;
+                            maxLoops[result.DistanceName] = result.Occurrence;
                         }
-                        maxLoops[result.DivisionName] = result.Occurrence > maxLoops[result.DivisionName] ? result.Occurrence : maxLoops[result.DivisionName];
+                        maxLoops[result.DistanceName] = result.Occurrence > maxLoops[result.DistanceName] ? result.Occurrence : maxLoops[result.DistanceName];
                         LoopResults[(result.EventSpecificId, result.Occurrence)] = result;
                         if (!RunnerLoopsCompleted.ContainsKey(result.EventSpecificId))
                         {
@@ -799,10 +802,10 @@ namespace ChronoKeep.UI.MainPages
                                 RunnerLoopsCompleted[result.EventSpecificId] :
                                 result.Occurrence;
                     }
-                    List<Division> divs = database.GetDivisions(theEvent.Identifier);
-                    foreach (Division d in divs)
+                    List<Distance> divs = database.GetDistances(theEvent.Identifier);
+                    foreach (Distance d in divs)
                     {
-                        DivisionDistancePerLoop[d.Name] = d.Distance;
+                        DivisionDistancePerLoop[d.Name] = d.DistanceValue;
                         DivisionDistanceType[d.Name] = d.DistanceUnit == Constants.Distances.MILES ? "Miles" :
                             d.DistanceUnit == Constants.Distances.FEET ? "Feet" :
                             d.DistanceUnit == Constants.Distances.KILOMETERS ? "Kilometers" :
@@ -858,10 +861,12 @@ namespace ChronoKeep.UI.MainPages
             Log.D("Auto API clicked.");
             if ((string)AutoAPIButton.Content == "Auto Upload")
             {
+                AutoAPIButton.Content = "Starting...";
                 mWindow.StartAPIController();
             }
             else
             {
+                AutoAPIButton.Content = "Stopping...";
                 mWindow.StopAPIController();
             }
         }

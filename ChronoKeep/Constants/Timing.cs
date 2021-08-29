@@ -8,8 +8,9 @@ namespace ChronoKeep.Constants
 {
     public class Timing
     {
-        public static readonly int LOCATION_FINISH = -2;
         public static readonly int LOCATION_START = -1;
+        public static readonly int LOCATION_FINISH = -2;
+        public static readonly int LOCATION_ANNOUNCER = -3;
         public static readonly int LOCATION_DUMMY = -12;
 
         public static readonly int SEGMENT_FINISH = -1;
@@ -26,6 +27,7 @@ namespace ChronoKeep.Constants
         public static readonly int CHIPREAD_STATUS_UNKNOWN = 7; // Unknown chip read
         public static readonly int CHIPREAD_STATUS_STARTTIME = 8;
         public static readonly int CHIPREAD_STATUS_DNF = 9;
+        public static readonly int CHIPREAD_STATUS_ANNOUNCER_SEEN = 10;
 
         public static readonly int TIMERESULT_STATUS_NONE = 0;
         public static readonly int TIMERESULT_STATUS_DNF = 1;
@@ -50,12 +52,10 @@ namespace ChronoKeep.Constants
         public static readonly int EVENTSPECIFIC_FINISHED = 2;
         public static readonly int EVENTSPECIFIC_NOFINISH = 3;
 
-        public static readonly int DEFAULT_BIB_GROUP = -1;
+        public static readonly int COMMON_SEGMENTS_DISTANCEID = -1;
+        public static readonly int COMMON_AGEGROUPS_DISTANCEID = -1;
 
-        public static readonly int COMMON_SEGMENTS_DIVISIONID = -1;
-        public static readonly int COMMON_AGEGROUPS_DIVISIONID = -1;
-
-        public static readonly int AGEGROUPS_CUSTOM_DIVISIONID = -8;
+        public static readonly int AGEGROUPS_CUSTOM_DISTANCEID = -8;
         public static readonly int AGEGROUPS_LASTGROUP_TRUE = 1;
         public static readonly int AGEGROUPS_LASTGROUP_FALSE = 0;
 
@@ -65,12 +65,12 @@ namespace ChronoKeep.Constants
         public static readonly int TIMINGSYSTEM_UNKNOWN = -1;
 
         public static readonly int PARTICIPANT_DUMMYIDENTIFIER = -1;
-        public static readonly int DIVISION_DUMMYIDENTIFIER = -1;
+        public static readonly int DISTANCE_DUMMYIDENTIFIER = -1;
 
         // These values are what are sent in the API Result and indicate the type of the result.
-        public static readonly int DIVISION_TYPE_NORMAL = 0;
-        public static readonly int DIVISION_TYPE_UNOFFICIAL = 1;
-        public static readonly int DIVISION_TYPE_EARLY = 2;
+        public static readonly int DISTANCE_TYPE_NORMAL = 0;
+        public static readonly int DISTANCE_TYPE_EARLY = 1;
+        public static readonly int DISTANCE_TYPE_UNOFFICIAL = 2;
         public static readonly int API_TYPE_DNF = 3;
         public static readonly int API_TYPE_DNS = 4;
 
@@ -102,5 +102,15 @@ namespace ChronoKeep.Constants
             { EVENTSPECIFIC_FINISHED, "Finished" },
             { EVENTSPECIFIC_NOFINISH, "DNF" },
         };
+
+        public static string SecondsToTime(long seconds)
+        {
+            return String.Format("{0}:{1:D2}:{2:D2}", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
+        }
+
+        public static string ToTime(long seconds, int milliseconds)
+        {
+            return String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", seconds / 3600, (seconds % 3600) / 60, seconds % 60, milliseconds);
+        }
     }
 }

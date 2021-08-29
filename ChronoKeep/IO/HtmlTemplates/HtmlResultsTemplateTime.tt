@@ -11,7 +11,7 @@
 	</head>
 	<body>
 		<div class='text-important table-header'><h2><#= theEvent.YearCode #> <#= theEvent.Name #></h2></div>
-		<# foreach (string d in divisionResults.Keys)
+		<# foreach (string d in distanceResults.Keys)
 		{ #>
 			<div class="table-header text-important"><#= d #></div>
 			<div class="table-overflow">
@@ -33,7 +33,7 @@
 						<# } #>
 						<td class="text-important table-label">Final Time (Chip)</td>
 					</tr>
-					<# foreach (TimeResult r in divisionResults[d])
+					<# foreach (TimeResult r in distanceResults[d])
 					{ #>
 					<tr>
 						<td><#= r.PlaceStr #></td>

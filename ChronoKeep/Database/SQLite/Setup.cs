@@ -1,0 +1,275 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data.SQLite;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ChronoKeep.Database.SQLite
+{
+    class Setup
+    {
+        internal static void Initialize(int version, string connectionInfo)
+        {
+            ArrayList queries = new ArrayList();
+            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SQLiteCommand command = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'", connection);
+            SQLiteDataReader reader = command.ExecuteReader();
+            int oldVersion = -1;
+            if (reader.Read())
+            {
+                Log.D("Tables do not need to be made.");
+                try
+                {
+                    // As of version 43 we've changed how we store settings values to something more sensible.
+                    command = new SQLiteCommand("SELECT value FROM settings WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';", connection);
+                    // If we've got an upgraded version then command.ExecuteReader will throw an exception.
+                    using (SQLiteDataReader versionChecker = command.ExecuteReader())
+                    {
+                        if (versionChecker.Read())
+                        {
+                            oldVersion = Convert.ToInt32(versionChecker["value"]);
+                        }
+                        else
+                        {
+                            Log.D("Tables made, database version not found.");
+                        }
+                        versionChecker.Close();
+                    }
+                }
+                catch
+                {
+                    // Check for an older version
+                    Log.D("We may have a database older than version 43.");
+                    command = new SQLiteCommand("SELECT version FROM settings;", connection);
+                    using (SQLiteDataReader v2Checker = command.ExecuteReader())
+                    {
+                        if (v2Checker.Read())
+                        {
+                            oldVersion = Convert.ToInt32(v2Checker["version"]);
+                        }
+                        else
+                        {
+                            Log.D("Tables made, database version not found.");
+                        }
+                        v2Checker.Close();
+                    }
+                }
+                Log.D("Old Version: " + oldVersion.ToString());
+            }
+            else
+            {
+                Log.D("Tables haven't been created. Doing so now.");
+                command = new SQLiteCommand("PRAGMA foreign_keys = ON;", connection); // Ensure Foreign key constraints work.
+                command.ExecuteNonQuery();
+                queries.Add("CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "bib INTEGER NOT NULL," +
+                    "chip VARCHAR NOT NULL," +
+                    "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS results_api(" +
+                    "api_id INTEGER PRIMARY KEY," +
+                    "api_type VARCHAR(50) NOT NULL," +
+                    "api_url VARCHAR(150) NOT NULL," +
+                    "api_auth_token VARCHAR(100) NOT NULL," +
+                    "api_nickname VARCHAR(75) NOT NULL," +
+                    "UNIQUE (api_url, api_auth_token) ON CONFLICT REPLACE);");
+                queries.Add("CREATE TABLE IF NOT EXISTS events (" +
+                    "event_id INTEGER PRIMARY KEY," +
+                    "event_name VARCHAR(100) NOT NULL," +
+                    "event_date VARCHAR(15) NOT NULL," +
+                    "event_yearcode VARCHAR(10) NOT NULL DEFAULT ''," +
+                    "event_rank_by_gun INTEGER DEFAULT 1," +
+                    "event_common_age_groups INTEGER DEFAULT 1," +
+                    "event_common_start_finish INTEGER DEFAULT 1," +
+                    "event_distance_specific_segments INTEGER DEFAULT 0," +
+                    "event_start_time_seconds INTEGER NOT NULL DEFAULT -1," +
+                    "event_start_time_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                    "event_finish_max_occurances INTEGER NOT NULL DEFAULT 1," +
+                    "event_finish_ignore_within INTEGER NOT NULL DEFAULT 0," +
+                    "event_start_window INTEGER NOT NULL DEFAULT -1," +
+                    "event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Settings.TIMING_RFID + "'," +
+                    "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
+                    "api_id INTEGER REFERENCES results_api(api_id) NOT NULL DEFAULT -1," +
+                    "api_event_id VARCHAR(200) NOT NULL DEFAULT ''," +
+                    "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS distances (" +
+                    "distance_id INTEGER PRIMARY KEY," +
+                    "distance_name VARCHAR(100) NOT NULL," +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "distance_distance DECIMAL(10,2) DEFAULT 0.0," +
+                    "distance_distance_unit INTEGER DEFAULT 0," +
+                    "distance_start_location INTEGER DEFAULT -2," +
+                    "distance_start_within INTEGER DEFAULT -1," +
+                    "distance_finish_location INTEGER DEFAULT -1," +
+                    "distance_finish_occurance INTEGER DEFAULT 1," +
+                    "distance_wave INTEGER NOT NULL DEFAULT 1," +
+                    "distance_start_offset_seconds INTEGER NOT NULL DEFAULT 0," +
+                    "distance_start_offset_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                    "distance_end_offset_seconds INTEGER NOT NULL DEFAULT 0," +
+                    "distance_linked_id INTEGER NOT NULL REFERENCES distances(distance_id) DEFAULT -1," +
+                    "distance_type INTEGER NOT NULL DEFAULT 0," +
+                    "distance_ranking_order INTEGER NOT NULL DEFAULT 0, " +
+                    "UNIQUE (distance_name, event_id) ON CONFLICT IGNORE" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS timing_locations (" +
+                    "location_id INTEGER PRIMARY KEY," +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "location_name VARCHAR(100) NOT NULL," +
+                    "location_max_occurances INTEGER NOT NULL DEFAULT 1," +
+                    "location_ignore_within INTEGER NOT NULL DEFAULT -1," +
+                    "UNIQUE (event_id, location_name) ON CONFLICT IGNORE" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS participants (" +
+                    "participant_id INTEGER PRIMARY KEY," +
+                    "participant_first VARCHAR(50) NOT NULL," +
+                    "participant_last VARCHAR(75) NOT NULL," +
+                    "participant_street VARCHAR(150)," +
+                    "participant_city VARCHAR(75)," +
+                    "participant_state VARCHAR(25)," +
+                    "participant_zip VARCHAR(10)," +
+                    "participant_birthday VARCHAR(15) NOT NULL," +
+                    "participant_email VARCHAR(150)," +
+                    "participant_mobile VARCHAR(20)," +
+                    "participant_parent VARCHAR(150)," +
+                    "participant_country VARCHAR(50)," +
+                    "participant_street2 VARCHAR(50)," +
+                    "participant_gender VARCHAR(10)," +
+                    "emergencycontact_name VARCHAR(150) NOT NULL DEFAULT '911'," +
+                    "emergencycontact_phone VARCHAR(20)," +
+                    "UNIQUE (participant_first, participant_last, participant_street, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS eventspecific (" +
+                    "eventspecific_id INTEGER PRIMARY KEY," +
+                    "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "distance_id INTEGER NOT NULL REFERENCES distances(distance_id)," +
+                    "eventspecific_bib INTEGER," +
+                    "eventspecific_checkedin INTEGER DEFAULT 0," +
+                    "eventspecific_comments VARCHAR," +
+                    "eventspecific_owes VARCHAR(50)," +
+                    "eventspecific_other VARCHAR," +
+                    "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
+                    "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + "," +
+                    "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
+                    "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110'," +
+                    "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE," +
+                    "UNIQUE (event_id, eventspecific_bib) ON CONFLICT REPLACE" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS segments (" +
+                    "segment_id INTEGER PRIMARY KEY," +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "distance_id INTEGER DEFAULT -1," +
+                    "location_id INTEGER DEFAULT -1," +
+                    "location_occurance INTEGER DEFAULT 1," +
+                    "name VARCHAR DEFAULT ''," +
+                    "distance_segment DECIMAL (10,2) DEFAULT 0.0," +
+                    "distance_cumulative DECIMAL (10,2) DEFAULT 0.0," +
+                    "distance_unit INTEGER DEFAULT 0," +
+                    "UNIQUE (event_id, distance_id, location_id, location_occurance) ON CONFLICT IGNORE" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS chipreads (" +
+                    "read_id INTEGER PRIMARY KEY," +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "read_status INTEGER NOT NULL DEFAULT 0," +
+                    "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                    "read_chipnumber VARCHAR NOT NULL," +
+                    "read_seconds INTEGER NOT NULL," +
+                    "read_milliseconds INTEGER NOT NULL," +
+                    "read_antenna INTEGER NOT NULL," +
+                    "read_reader TEXT NOT NULL," +
+                    "read_box TEXT NOT NULL," +
+                    "read_logindex INTEGER NOT NULL," +
+                    "read_rssi INTEGER NOT NULL," +
+                    "read_isrewind INTEGER NOT NULL," +
+                    "read_readertime TEXT NOT NULL," +
+                    "read_starttime INTEGER NOT NULL," +
+                    "read_time_seconds INTEGER NOT NULL," +
+                    "read_time_milliseconds INTEGER NOT NULL," +
+                    "read_split_seconds INTEGER NOT NULL DEFAULT 0," +
+                    "read_split_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                    "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
+                    "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
+                    "UNIQUE (event_id, read_chipnumber, read_bib, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS time_results (" +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
+                    "read_id INTEGER NOT NULL REFERENCES chipreads(read_id)," +
+                    "location_id INTEGER NOT NULL," +
+                    "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
+                    "timeresult_occurance INTEGER NOT NULL," +
+                    "timeresult_time TEXT NOT NULL," +
+                    "timeresult_splittime TEXT NOT NULL DEFAULT ''," +
+                    "timeresult_chiptime TEXT NOT NULL," +
+                    "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
+                    "timeresult_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                    "timeresult_age_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                    "timeresult_gender_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                    "timeresult_status INT NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_STATUS_NONE + "," +
+                    "timeresult_uploaded INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_UPLOADED_FALSE + "," +
+                    "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
+                    ");");
+                queries.Add("INSERT INTO participants (participant_id, participant_first, participant_last," +
+                    " participant_birthday) VALUES (0, 'J', 'Doe', '01/01/1901');");
+                queries.Add("CREATE TABLE IF NOT EXISTS settings (" +
+                    "setting VARCHAR NOT NULL," +
+                    "value VARCHAR NOT NULL," +
+                    "UNIQUE (setting) ON CONFLICT REPLACE" +
+                    ");" +
+                    "INSERT INTO settings (setting, value) VALUES " +
+                    "('" + Constants.Settings.DATABASE_VERSION + "','" + version + "');");
+                queries.Add("CREATE TABLE IF NOT EXISTS age_groups (" +
+                    "group_id INTEGER PRIMARY KEY," +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                    "distance_id INTEGER NOT NULL DEFAULT -1," +
+                    "start_age INTEGER NOT NULL," +
+                    "end_age INTEGER NOT NULL," +
+                    "last_group INTEGER DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + " NOT NULL);");
+                queries.Add("CREATE TABLE IF NOT EXISTS timing_systems (" +
+                    "ts_identifier INTEGER PRIMARY KEY," +
+                    "ts_ip TEXT NOT NULL," +
+                    "ts_port INTEGER NOT NULL," +
+                    "ts_location INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                    "ts_type TEXT NOT NULL," +
+                    "UNIQUE (ts_ip, ts_location) ON CONFLICT REPLACE);");
+                queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
+
+                using (var transaction = connection.BeginTransaction())
+                {
+                    int counter = 1;
+                    foreach (string q in queries)
+                    {
+                        Log.D("Table query number " + counter++ + " Query string is: " + q);
+                        command = new SQLiteCommand(q, connection);
+                        command.ExecuteNonQuery();
+                    }
+                    transaction.Commit();
+                }
+
+                command = new SQLiteCommand("SELECT value FROM settings WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';", connection);
+                using (SQLiteDataReader versionChecker = command.ExecuteReader())
+                {
+                    if (versionChecker.Read())
+                    {
+                        oldVersion = Convert.ToInt32(versionChecker["value"]);
+                    }
+                    else
+                    {
+                        Log.D("Something went wrong when checking the version...");
+                    }
+                    versionChecker.Close();
+                }
+            }
+            reader.Close();
+            connection.Close();
+            if (oldVersion == -1) Log.D("Unable to get a version number. Something is terribly wrong.");
+            else if (oldVersion < version) Update.UpdateDatabase(oldVersion, version, connectionInfo);
+            else if (oldVersion > version) Update.UpdateClient(oldVersion, version);
+        }
+    }
+}

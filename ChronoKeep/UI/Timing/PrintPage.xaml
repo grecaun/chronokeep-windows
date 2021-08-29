@@ -17,7 +17,7 @@
                     <ColumnDefinition Width="80" />
                 </Grid.ColumnDefinitions>
                 <Label Content="Times" FontSize="16" Grid.Column="0" HorizontalContentAlignment="Center"/>
-                <Label Content="Divisions" FontSize="16" Grid.Column="1" HorizontalContentAlignment="Center"/>
+                <Label Content="Distances" FontSize="16" Grid.Column="1" HorizontalContentAlignment="Center"/>
                 <Label Content="Type" FontSize="16" Grid.Column="2" HorizontalContentAlignment="Center"/>
             </Grid>
             <Grid Margin="5,5,5,5">
@@ -31,7 +31,7 @@
                     <ListBoxItem Content="Start &amp; Finish"/>
                     <ListBoxItem Content="All"/>
                 </ListBox>
-                <ListBox Grid.Column="1" Name="DivisionsBox" Height="104" FontSize="12" SelectionMode="Extended">
+                <ListBox Grid.Column="1" Name="DistancesBox" Height="104" FontSize="12" SelectionMode="Extended">
                     <ListBoxItem Content="All" IsSelected="True"/>
                 </ListBox>
                 <ListBox Grid.Column="2" Name="PlacementType" Height="104" FontSize="12" SelectionMode="Single">
