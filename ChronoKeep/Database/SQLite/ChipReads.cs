@@ -143,13 +143,14 @@ namespace ChronoKeep.Database.SQLite
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
                 "AND e.eventspecific_bib != @dummybib) " +
                 "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND " +
-                "c.location_id=@announcer AND read_status=@none;";
+                "c.location_id=@announcer AND (read_status=@none OR read_status=@used);";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
                 new SQLiteParameter("@none", Constants.Timing.CHIPREAD_STATUS_NONE),
                 new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB),
-                new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER)
+                new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER),
+                new SQLiteParameter("@used", Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
             });
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChronoKeep.Objects
 {
-    class AnnouncerParticipant
+    public class AnnouncerParticipant
     {
         private Participant person;
         private long seconds;
@@ -18,7 +18,7 @@ namespace ChronoKeep.Objects
         }
 
         public Participant Person { get => person; }
-        public string When { get => Constants.Timing.SecondsToTime(seconds); }
+        public DateTime When { get => Constants.Timing.EpochToDate(seconds); }
 
         public int CompareTo(AnnouncerParticipant other)
         {

@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace ChronoKeep.Timing.Announcer
 {
-    class AnnouncerThread
+    public class AnnouncerWorker
     {
         private readonly IDBInterface database;
         private readonly IMainWindow window;
-        private static AnnouncerThread announcer;
+        private static AnnouncerWorker announcer;
 
         private static readonly Semaphore semaphore = new Semaphore(0, 2);
         private static readonly Mutex mutex = new Mutex();
@@ -22,17 +22,17 @@ namespace ChronoKeep.Timing.Announcer
         private static List<AnnouncerParticipant> participants = new List<AnnouncerParticipant>();
         private static HashSet<int> bibSeen = new HashSet<int>();
 
-        private AnnouncerThread(IMainWindow window, IDBInterface database)
+        private AnnouncerWorker(IMainWindow window, IDBInterface database)
         {
             this.window = window;
             this.database = database;
         }
 
-        public static AnnouncerThread NewAnnouncer(IMainWindow window, IDBInterface database)
+        public static AnnouncerWorker NewAnnouncer(IMainWindow window, IDBInterface database)
         {
             if (announcer == null)
             {
-                announcer = new AnnouncerThread(window, database);
+                announcer = new AnnouncerWorker(window, database);
             }
             return announcer;
         }
@@ -52,6 +52,17 @@ namespace ChronoKeep.Timing.Announcer
             if (mutex.WaitOne(3000))
             {
                 output.AddRange(participants);
+                mutex.ReleaseMutex();
+            }
+            return output;
+        }
+
+        public static bool Running()
+        {
+            bool output = false;
+            if (mutex.WaitOne(3000))
+            {
+                output = !QuittingTime;
                 mutex.ReleaseMutex();
             }
             return output;

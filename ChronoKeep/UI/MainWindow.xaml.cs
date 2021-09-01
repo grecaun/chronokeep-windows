@@ -533,5 +533,10 @@ namespace ChronoKeep.UI
         {
             return httpServer != null;
         }
+
+        public bool AnnouncerConnected()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

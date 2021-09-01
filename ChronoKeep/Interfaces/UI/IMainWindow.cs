@@ -32,6 +32,9 @@ namespace ChronoKeep.Interfaces
         List<TimingSystem> GetConnectedSystems();
         void NotifyTimingWorker();
 
+        // Announcer related calls.
+        bool AnnouncerConnected();
+
         // API System related calls.
         void StartAPIController();
         bool StopAPIController();

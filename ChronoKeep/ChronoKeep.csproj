@@ -290,7 +290,7 @@
     <Compile Include="Objects\Segment.cs" />
     <Compile Include="Objects\TimingSystem.cs" />
     <Compile Include="Properties\VersionInfo.cs" />
-    <Compile Include="Timing\Announcer\AnnouncerThread.cs" />
+    <Compile Include="Timing\Announcer\AnnouncerWorker.cs" />
     <Compile Include="Timing\Interfaces\IpicoInterface.cs" />
     <Compile Include="Timing\TimingController.cs" />
     <Compile Include="Timing\TimingWorker.cs" />
