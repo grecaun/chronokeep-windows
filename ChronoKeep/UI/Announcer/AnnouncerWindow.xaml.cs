@@ -16,7 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.AnnouncerWindow
+namespace ChronoKeep.UI.Announcer
 {
     /// <summary>
     /// Interaction logic for AnnouncerWindow.xaml
@@ -44,8 +44,8 @@ namespace ChronoKeep.UI.AnnouncerWindow
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (window != null) window.WindowFinalize(this);
             if (announcerWorker != null) AnnouncerWorker.Shutdown();
+            if (window != null) window.AnnouncerClosing();
         }
 
         public void UpdateView()
@@ -64,19 +64,19 @@ namespace ChronoKeep.UI.AnnouncerWindow
             // Get our list of people to display. Remove anything older than 45 seconds.
             List<AnnouncerParticipant> participants = AnnouncerWorker.GetList();
             DateTime now = DateTime.Now.AddSeconds(SecondGap);
-            List<AnnouncerParticipant> display = new List<AnnouncerParticipant>();
-            List<AnnouncerParticipant> stackDisplay = new List<AnnouncerParticipant>();
+            AnnouncerBox.Items.Clear();
             foreach (AnnouncerParticipant part in participants)
             {
                 // If 0 then they're equal, if greater then 0 then now came before the when.
                 // Only display participants that have shown up within the SecondGap window.
                 if (DateTime.Compare(now, part.When) >= 0)
                 {
-                    display.Add(part);
-                    stackDisplay.Insert(0, part);
+                    // Display in order they came in in the last 45 seconds.
+                    AnnouncerBox.Items.Add(new AnAnnouncerItem(part, theEvent));
+                    // Display the last person in first.
+                    //AnnouncerBox.Items.Insert(0, new AnAnnouncerItem(part, theEvent));
                 }
             }
-            AnnouncerBox.ItemsSource = display;
         }
 
         private class AnAnnouncerItem : ListBoxItem {

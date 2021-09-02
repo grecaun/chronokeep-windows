@@ -5,8 +5,7 @@ using ChronoKeep.Network;
 using ChronoKeep.Objects;
 using ChronoKeep.Timing;
 using ChronoKeep.UI.MainPages;
-using ChronoKeep.UI.Timing;
-using ChronoKeep.UI.Timing.Import;
+using ChronoKeep.UI.Announcer;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -41,6 +40,9 @@ namespace ChronoKeep.UI
         Thread APIControllerThread = null;
         APIController APIController = null;
 
+        // Announcer objects
+        AnnouncerWindow announcerWindow = null;
+
         List<Window> openWindows = new List<Window>();
 
         // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
@@ -58,9 +60,9 @@ namespace ChronoKeep.UI
                 this.Close();
             }
             release = true;
-            
-            String dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
-            String path = System.IO.Path.Combine(dirPath, dbName);
+
+            string dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
+            string path = System.IO.Path.Combine(dirPath, dbName);
             Log.D("Looking for database file.");
             if (!Directory.Exists(dirPath))
             {
@@ -331,7 +333,6 @@ namespace ChronoKeep.UI
         public void UpdateTimingFromController()
         {
             TimingWorker.Notify();
-            // AnnouncerThread.Notify();
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
                 if (page is TimingPage)
@@ -345,6 +346,10 @@ namespace ChronoKeep.UI
         public void UpdateAnnouncerWindow()
         {
             // Let the announcer window know that it has new information.
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            {
+                if (announcerWindow != null) announcerWindow.UpdateView();
+            }));
         }
 
         public void UpdateTiming()
@@ -407,6 +412,7 @@ namespace ChronoKeep.UI
                 TimingController.ConnectTimingSystem(system);
             });
             UpdateTiming();
+            if (announcerWindow != null) announcerWindow.UpdateView();
             await Task.Run(() =>
             {
                 if (!TimingController.IsRunning())
@@ -424,6 +430,7 @@ namespace ChronoKeep.UI
                 TimingController.DisconnectTimingSystem(system);
             });
             UpdateTiming();
+            if (announcerWindow != null) announcerWindow.UpdateView();
         }
 
         public void ShutdownTimingController()
@@ -447,6 +454,7 @@ namespace ChronoKeep.UI
                 MessageBox.Show("Reader at " + system.LocationName + " has unexpectedly disconnected. IP Address was " + system.IPAddress + ".");
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
                 UpdateTiming();
+                if (announcerWindow != null) announcerWindow.UpdateView();
             }));
         }
 
@@ -476,7 +484,11 @@ namespace ChronoKeep.UI
 
         private void Announcer_Click(object sender, RoutedEventArgs e)
         {
-
+            if (announcerWindow != null)
+            {
+                return;
+            }
+            announcerWindow = new AnnouncerWindow(this, database);
         }
 
         public void NetworkUpdateResults(int eventid, List<TimeResult> results)
@@ -536,7 +548,19 @@ namespace ChronoKeep.UI
 
         public bool AnnouncerConnected()
         {
-            throw new NotImplementedException();
+            foreach (TimingSystem system in TimingController.GetConnectedSystems())
+            {
+                if (system.LocationID == Constants.Timing.LOCATION_ANNOUNCER)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AnnouncerClosing()
+        {
+            if (announcerWindow != null) announcerWindow = null;
         }
     }
 }

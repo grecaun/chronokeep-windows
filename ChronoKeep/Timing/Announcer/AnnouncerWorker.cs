@@ -122,9 +122,15 @@ namespace ChronoKeep.Timing.Announcer
                                 newParticipants = true;
                                 bibSeen.Add(read.Bib);
                                 participants.Add(new AnnouncerParticipant(participantBibDictionary[read.Bib], read.Seconds));
+                                // Mark this chipread as USED
+                                read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED;
                             }
                         }
-                        read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_SEEN;
+                        // Don't clobber over ANNOUNCER_USED statuses.
+                        if (read.Status != Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
+                        {
+                            read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_SEEN;
+                        }
                     }
                     database.UpdateChipReads(announcerReads);
                     // If we've seen new participants update the window.
