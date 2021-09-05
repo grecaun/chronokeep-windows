@@ -489,6 +489,7 @@ namespace ChronoKeep.UI
                 return;
             }
             announcerWindow = new AnnouncerWindow(this, database);
+            announcerWindow.Show();
         }
 
         public void NetworkUpdateResults(int eventid, List<TimeResult> results)

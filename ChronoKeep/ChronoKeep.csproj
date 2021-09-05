@@ -61,10 +61,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>B60A6DAD95E0E4F6B6D7175BD828EEF82F99FA2F</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>623A465AD4BEDC39D25BF8D31C245AFFB99C7059</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>ChronoKeep_2_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>ChronoKeep_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -82,8 +82,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>ChronoKeep_1_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x64|AnyCPU'">
     <OutputPath>bin\x64\</OutputPath>
@@ -257,15 +256,15 @@
     <Compile Include="Interfaces\UI\IMainWindow.cs" />
     <Compile Include="Interfaces\UI\IWindowCallback.cs" />
     <Compile Include="IO\HtmlTemplates\HTMLCreator.cs" />
-    <Compile Include="IO\HtmlTemplates\HtmlResultsTemplateTime.cs">
-      <DependentUpon>HtmlResultsTemplateTime.tt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="IO\HtmlTemplates\HtmlResultsTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>HtmlResultsTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="IO\HtmlTemplates\HtmlResultsTemplateTime.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HtmlResultsTemplateTime.tt</DependentUpon>
     </Compile>
     <Compile Include="IO\LogImporter.cs" />
     <Compile Include="IO\PrintingInterface.cs" />
@@ -659,7 +658,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="ChronoKeep_2_TemporaryKey.pfx" />
+    <None Include="ChronoKeep_1_TemporaryKey.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
