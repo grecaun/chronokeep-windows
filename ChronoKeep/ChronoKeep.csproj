@@ -294,7 +294,7 @@
     <Compile Include="Timing\Interfaces\IpicoInterface.cs" />
     <Compile Include="Timing\TimingController.cs" />
     <Compile Include="Timing\TimingWorker.cs" />
-    <Compile Include="UI\AnnouncerWindow\AnnouncerWindow.xaml.cs">
+    <Compile Include="UI\Announcer\AnnouncerWindow.xaml.cs">
       <DependentUpon>AnnouncerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\API\APIErrorPage.xaml.cs">
@@ -454,7 +454,7 @@
     <Compile Include="Objects\TimeResult.cs" />
     <Compile Include="Objects\TimingLocation.cs" />
     <Compile Include="Objects\Helpers\Utils.cs" />
-    <Page Include="UI\AnnouncerWindow\AnnouncerWindow.xaml">
+    <Page Include="UI\Announcer\AnnouncerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
