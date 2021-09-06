@@ -26,8 +26,8 @@
                 <Label Content="To" FontSize="14" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0" Margin="5,5,10,5"/>
                 <DatePicker Name="FromDate" FontSize="14" VerticalContentAlignment="Center" Grid.Column="0" Grid.Row="1" Margin="10,5,5,5"/>
                 <DatePicker Name="ToDate" FontSize="14" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1" Margin="5,5,10,5"/>
-                <xctf:MaskedTextBox Name="FromTime" FontSize="14" Mask="00:00:00" ValueDataType="{x:Type s:string}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0" Grid.Row="2" Margin="10,5,5,5"/>
-                <xctf:MaskedTextBox Name="ToTime" FontSize="14" Mask="00:00:00" ValueDataType="{x:Type s:string}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="2" Margin="5,5,10,5"/>
+                <xctf:MaskedTextBox Name="FromTime" FontSize="14" Mask="00:00:00" ValueDataType="{x:Type s:String}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0" Grid.Row="2" Margin="10,5,5,5"/>
+                <xctf:MaskedTextBox Name="ToTime" FontSize="14" Mask="00:00:00" ValueDataType="{x:Type s:String}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="2" Margin="5,5,10,5"/>
                 <RadioButton x:Name="Reader1" Content="Reader 1" GroupName="Readers" IsChecked="True" Grid.Column="0" Grid.Row="3"  VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="10,5,5,5" Visibility="Collapsed"/>
                 <RadioButton x:Name="Reader2" Content="Reader 2" GroupName="Readers" Grid.Column="1" Grid.Row="3"  VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="5,5,10,5" Visibility="Collapsed"/>
             </Grid>

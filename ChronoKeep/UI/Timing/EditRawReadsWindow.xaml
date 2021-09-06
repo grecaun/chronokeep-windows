@@ -23,7 +23,7 @@
         <Label Content="Days" FontSize="14" Grid.Column="0" Grid.Row="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
         <Label Content="Time" FontSize="14" Grid.Column="1" Grid.Row="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
         <TextBox Name="DaysBox" FontSize="14" Grid.Column="0" Grid.Row="2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="5,5,5,5" KeyDown="Enter_KeyDown" PreviewTextInput="DaysBox_PreviewTextInput"/>
-        <xctk:MaskedTextBox Name="TimeBox" FontSize="14" Grid.Column="1" Grid.Row="2" ValueDataType="{x:Type s:string}" Mask="00:00:00.000" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="5,5,5,5" KeyDown="Enter_KeyDown"/>
+        <xctk:MaskedTextBox Name="TimeBox" FontSize="14" Grid.Column="1" Grid.Row="2" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="5,5,5,5" KeyDown="Enter_KeyDown"/>
         <Grid Grid.Row="3" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
