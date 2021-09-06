@@ -68,13 +68,14 @@ namespace ChronoKeep.UI.Announcer
             }
             // Get our list of people to display. Remove anything older than 45 seconds.
             List<AnnouncerParticipant> participants = AnnouncerWorker.GetList();
-            DateTime now = DateTime.Now.AddSeconds(Constants.Timing.ANNOUNCER_DISPLAY_WINDOW);
+            participants.Sort((x1, x2) => x1.CompareTo(x2));
+            DateTime cutoff = DateTime.Now.AddSeconds(Constants.Timing.ANNOUNCER_DISPLAY_WINDOW);
             AnnouncerBox.Items.Clear();
             foreach (AnnouncerParticipant part in participants)
             {
                 // If 0 then they're equal, if greater then 0 then now came before the when.
                 // Only display participants that have shown up within the SecondGap window.
-                if (DateTime.Compare(now, part.When) >= 0)
+                if (DateTime.Compare(cutoff, part.When) <= 0)
                 {
                     // Display in order they came in in the last 45 seconds.
                     AnnouncerBox.Items.Add(new AnAnnouncerItem(part, theEvent));
@@ -102,8 +103,8 @@ namespace ChronoKeep.UI.Announcer
                 namePanel.Children.Add(new Label()
                 {
                     Content = part.When.ToString("HH:mm:ss"),
-                    FontSize = 14,
-                    Width = 50,
+                    FontSize = 16,
+                    Width = 80,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -113,7 +114,17 @@ namespace ChronoKeep.UI.Announcer
                 {
                     Content = part.Person.Distance,
                     FontSize = 16,
-                    Width = 50,
+                    Width = 60,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Bib
+                namePanel.Children.Add(new Label()
+                {
+                    Content = part.Person.Bib,
+                    FontSize = 20,
+                    Width = 80,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -122,8 +133,8 @@ namespace ChronoKeep.UI.Announcer
                 namePanel.Children.Add(new Label()
                 {
                     Content = string.Format("{0} {1}", part.Person.FirstName, part.Person.LastName),
-                    FontSize = 18,
-                    Width = 150,
+                    FontSize = 20,
+                    Width = 200,
                     Margin = new Thickness(0,0,5,0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -134,8 +145,8 @@ namespace ChronoKeep.UI.Announcer
                     namePanel.Children.Add(new Label()
                     {
                         Content = part.Person.City,
-                        FontSize = 18,
-                        Width = 150,
+                        FontSize = 20,
+                        Width = 175,
                         Margin = new Thickness(0, 0, 5, 0),
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center
@@ -145,8 +156,7 @@ namespace ChronoKeep.UI.Announcer
                 namePanel.Children.Add(new Label()
                 {
                     Content = string.Format("{0} {1}", part.Person.Age(theEvent.Date), part.Person.Gender),
-                    FontSize = 18,
-                    Width = 50,
+                    FontSize = 20,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -158,8 +168,7 @@ namespace ChronoKeep.UI.Announcer
                     mainPanel.Children.Add(new Label()
                     {
                         Content = part.Person.Comments,
-                        FontSize = 18,
-                        Width = 50,
+                        FontSize = 20,
                         Margin = new Thickness(5, 0, 5, 0),
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center

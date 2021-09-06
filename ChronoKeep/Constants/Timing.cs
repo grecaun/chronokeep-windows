@@ -79,7 +79,7 @@ namespace ChronoKeep.Constants
         public static readonly int API_LOOP_COUNT = 20;
 
         // Announcer variables
-        public static readonly int ANNOUNCER_LOOP_TIMER = 5;
+        public static readonly int ANNOUNCER_LOOP_TIMER = 2;
         public static readonly int ANNOUNCER_DISPLAY_WINDOW = -45;
 
         public static long DateToEpoch(DateTime date)
