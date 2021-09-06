@@ -306,6 +306,14 @@ namespace ChronoKeep
                 {
                     return "DNF";
                 }
+                if (Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_SEEN == Status)
+                {
+                    return "A-Seen";
+                }
+                if (Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED == Status)
+                {
+                    return "A-Used";
+                }
                 return "Unknown";
             }
         }

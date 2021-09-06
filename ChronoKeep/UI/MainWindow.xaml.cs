@@ -13,6 +13,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using ChronoKeep.Timing.Announcer;
 
 namespace ChronoKeep.UI
 {
@@ -378,6 +379,7 @@ namespace ChronoKeep.UI
                 segmentsButton.IsEnabled = false;
                 agegroupsButton.IsEnabled = false;
                 timingButton.IsEnabled = false;
+                announcer.IsEnabled = false;
             }
             else
             {
@@ -389,6 +391,7 @@ namespace ChronoKeep.UI
                 segmentsButton.IsEnabled = true;
                 agegroupsButton.IsEnabled = true;
                 timingButton.IsEnabled = true;
+                announcer.IsEnabled = true;
             }
         }
 
@@ -463,6 +466,8 @@ namespace ChronoKeep.UI
             Log.D("MainWindow notifying timer.");
             TimingWorker.ResetDictionaries();
             TimingWorker.Notify();
+            // Let the AnnouncerWorker know there are new reads (potentially).
+            AnnouncerWorker.Notify();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -484,6 +489,7 @@ namespace ChronoKeep.UI
 
         private void Announcer_Click(object sender, RoutedEventArgs e)
         {
+            Log.D("Announer window button clicked.");
             if (announcerWindow != null)
             {
                 return;
@@ -561,7 +567,25 @@ namespace ChronoKeep.UI
 
         public void AnnouncerClosing()
         {
-            if (announcerWindow != null) announcerWindow = null;
+            if (announcerWindow != null)
+            {
+                announcerWindow = null;
+                Log.D("Announcer Window has closed.");
+            }
+            else
+            {
+                Log.D("Announcer Window was supposed to close but did not.");
+            }
+        }
+
+        public bool AnnouncerOpen()
+        {
+            return announcerWindow != null;
+        }
+
+        public void ShutdownAnnouncer()
+        {
+            if (announcerWindow != null) announcerWindow.Close();
         }
     }
 }

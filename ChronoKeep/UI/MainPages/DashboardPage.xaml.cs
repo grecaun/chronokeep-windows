@@ -179,6 +179,19 @@ namespace ChronoKeep.UI.MainPages
                     return;
                 }
             }
+            if (mWindow.AnnouncerOpen())
+            {
+                MessageBoxResult result = MessageBox.Show("You currently have the announcer window open.  Do you wish to close this window and create a new event?",
+                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    mWindow.ShutdownAnnouncer();
+                }
+                else
+                {
+                    return;
+                }
+            }
             NewEventWindow newEventWindow = NewEventWindow.NewWindow(mWindow, database);
             if (newEventWindow != null)
             {
@@ -190,6 +203,32 @@ namespace ChronoKeep.UI.MainPages
         private void ImportEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import event clicked.");
+            if (TimingController.IsRunning())
+            {
+                MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and import a new event?",
+                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    mWindow.ShutdownTimingController();
+                }
+                else
+                {
+                    return;
+                }
+            }
+            if (mWindow.AnnouncerOpen())
+            {
+                MessageBoxResult result = MessageBox.Show("You currently have the announcer window open.  Do you wish to close this window and import a new event?",
+                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    mWindow.ShutdownAnnouncer();
+                }
+                else
+                {
+                    return;
+                }
+            }
             OpenFileDialog openFileDialog = new OpenFileDialog() { Filter = "SQLite Database Files (*.sqlite)|*.sqlite;|All files|*" };
             if (openFileDialog.ShowDialog() == true)
             {
@@ -272,6 +311,19 @@ namespace ChronoKeep.UI.MainPages
                     return;
                 }
             }
+            if (mWindow.AnnouncerOpen())
+            {
+                MessageBoxResult result = MessageBox.Show("You currently have the announcer window open.  Do you wish to close this window and change the viewed event?",
+                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    mWindow.ShutdownAnnouncer();
+                }
+                else
+                {
+                    return;
+                }
+            }
             ChangeEventWindow changeEventWindow = ChangeEventWindow.NewWindow(mWindow, database);
             if (changeEventWindow != null)
             {
@@ -290,6 +342,19 @@ namespace ChronoKeep.UI.MainPages
                 if (result == MessageBoxResult.Yes)
                 {
                     mWindow.ShutdownTimingController();
+                }
+                else
+                {
+                    return;
+                }
+            }
+            if (mWindow.AnnouncerOpen())
+            {
+                MessageBoxResult result = MessageBox.Show("You currently have the announcer window open.  Do you wish to close this window and delete this event?",
+                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    mWindow.ShutdownAnnouncer();
                 }
                 else
                 {

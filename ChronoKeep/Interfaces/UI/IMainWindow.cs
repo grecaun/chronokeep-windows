@@ -35,6 +35,8 @@ namespace ChronoKeep.Interfaces
         // Announcer related calls.
         bool AnnouncerConnected();
         void AnnouncerClosing();
+        bool AnnouncerOpen();
+        void ShutdownAnnouncer();
 
         // API System related calls.
         void StartAPIController();

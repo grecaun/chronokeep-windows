@@ -80,8 +80,51 @@ namespace ChronoKeep.Timing.Announcer
             }
         }
 
+        private bool ProcessReads(List<ChipRead> announcerReads, Dictionary<int, Participant> participantBibDictionary)
+        {
+            bool newParticipants = false;
+            foreach (ChipRead read in announcerReads)
+            {
+                // Check to ensure we know the bib of this person
+                if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                {
+                    // Check if we've already seen the bib.
+                    // Only work if we've not seen it before.
+                    if (!bibSeen.Contains(read.Bib) && participantBibDictionary.ContainsKey(read.Bib))
+                    {
+                        newParticipants = true;
+                        bibSeen.Add(read.Bib);
+                        participants.Add(new AnnouncerParticipant(participantBibDictionary[read.Bib], read.Seconds));
+                        // Mark this chipread as USED
+                        read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED;
+                    }
+                }
+                // Don't clobber over ANNOUNCER_USED statuses.
+                if (read.Status != Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_SEEN;
+                }
+            }
+            database.UpdateChipReads(announcerReads);
+            return newParticipants;
+        }
+
         public void Run()
         {
+            // Get the event we're looking at and fill the participant bib dictionary.
+            Event theEvent = database.GetCurrentEvent();
+            Dictionary<int, Participant> participantBibDictionary = new Dictionary<int, Participant>();
+            foreach (Participant part in database.GetParticipants(theEvent.Identifier))
+            {
+                if (participantBibDictionary.ContainsKey(part.Bib))
+                {
+                    Log.E("Multiples of a Bib found in participants set. " + part.Bib);
+                }
+                participantBibDictionary[part.Bib] = part;
+            }
+            // Process any announcer reads that we've already used so we don't announce them later.
+            ProcessReads(database.GetAnnouncerUsedChipReads(theEvent.Identifier), participantBibDictionary);
+            // Loop while waiting for work.
             while (true)
             {
                 semaphore.WaitOne();
@@ -95,46 +138,19 @@ namespace ChronoKeep.Timing.Announcer
                     }
                     mutex.ReleaseMutex();
                 }
-                Event theEvent = database.GetCurrentEvent();
-                Dictionary<int, Participant> participantBibDictionary = new Dictionary<int, Participant>();
-                foreach (Participant part in database.GetParticipants(theEvent.Identifier))
+                Event ev2 = database.GetCurrentEvent();
+                // verify that we both ev2 and theevent are not null and they match
+                if (ev2 == null || theEvent == null || ev2.Identifier != theEvent.Identifier)
                 {
-                    if (participantBibDictionary.ContainsKey(part.Bib))
-                    {
-                        Log.E("Multiples of a Bib found in participants set. " + part.Bib);
-                    }
-                    participantBibDictionary[part.Bib] = part;
+                    QuittingTime = true;
+                    Log.E("The event changed while the announcer window is open.");
+                    return;
                 }
                 // Ensure the event exists.
-                if (theEvent != null && theEvent.Identifier != -1)
+                if (theEvent.Identifier != -1)
                 {
-                    bool newParticipants = false;
-                    List<ChipRead> announcerReads = database.GetAnnouncerChipReads(theEvent.Identifier);
-                    foreach (ChipRead read in announcerReads)
-                    {
-                        // Check to ensure we know the bib of this person
-                        if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                        {
-                            // Check if we've already seen the bib.
-                            // Only work if we've not seen it before.
-                            if (!bibSeen.Contains(read.Bib) && participantBibDictionary.ContainsKey(read.Bib))
-                            {
-                                newParticipants = true;
-                                bibSeen.Add(read.Bib);
-                                participants.Add(new AnnouncerParticipant(participantBibDictionary[read.Bib], read.Seconds));
-                                // Mark this chipread as USED
-                                read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED;
-                            }
-                        }
-                        // Don't clobber over ANNOUNCER_USED statuses.
-                        if (read.Status != Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
-                        {
-                            read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_SEEN;
-                        }
-                    }
-                    database.UpdateChipReads(announcerReads);
                     // If we've seen new participants update the window.
-                    if (newParticipants)
+                    if (ProcessReads(database.GetAnnouncerChipReads(theEvent.Identifier), participantBibDictionary))
                     {
                         window.UpdateAnnouncerWindow();
                     }

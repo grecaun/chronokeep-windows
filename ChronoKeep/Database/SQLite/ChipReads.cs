@@ -143,11 +143,30 @@ namespace ChronoKeep.Database.SQLite
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
                 "AND e.eventspecific_bib != @dummybib) " +
                 "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND " +
-                "c.location_id=@announcer AND (read_status=@none OR read_status=@used);";
+                "c.location_id=@announcer AND read_status=@none;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
                 new SQLiteParameter("@none", Constants.Timing.CHIPREAD_STATUS_NONE),
+                new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB),
+                new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
+            return output;
+        }
+
+        internal static List<ChipRead> GetAnnouncerUsedChipReads(int eventId, Event theEvent, SQLiteConnection connection)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on (c.read_chipnumber=b.chip AND c.event_id=b.event_id) " +
+                "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
+                "AND e.eventspecific_bib != @dummybib) " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND " +
+                "c.location_id=@announcer AND read_status=@used;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
                 new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB),
                 new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER),
                 new SQLiteParameter("@used", Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
@@ -168,11 +187,13 @@ namespace ChronoKeep.Database.SQLite
             if (theEvent != null) locations.AddRange(TimingLocations.GetTimingLocations(theEvent.Identifier, connection));
             if (theEvent != null && !theEvent.CommonStartFinish)
             {
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
             }
             else
             {
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent == null ? -1 : theEvent.Identifier, "Start/Finish", theEvent == null ? 1 : theEvent.FinishMaxOccurrences, theEvent == null ? 0 : theEvent.FinishIgnoreWithin));
             }
             Dictionary<int, string> locDict = new Dictionary<int, string>();
