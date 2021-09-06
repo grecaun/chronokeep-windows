@@ -25,10 +25,10 @@ namespace ChronoKeep.UI.IO
             {
                 using (var outWriter = new StreamWriter(outFile))
                 {
-                    outWriter.WriteLine(String.Format(format, headers));
+                    outWriter.WriteLine(string.Format(format, headers));
                     foreach (object[] line in data)
                     {
-                        outWriter.WriteLine(String.Format(format, line.Select(x => x != null ? x.ToString() : "").ToArray()));
+                        outWriter.WriteLine(string.Format(format, line.Select(x => x != null ? x.ToString() : "").ToArray()));
                     }
                 }
             }

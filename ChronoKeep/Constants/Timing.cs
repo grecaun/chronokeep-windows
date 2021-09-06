@@ -78,6 +78,10 @@ namespace ChronoKeep.Constants
         // API Upload Count
         public static readonly int API_LOOP_COUNT = 20;
 
+        // Announcer variables
+        public static readonly int ANNOUNCER_LOOP_TIMER = 5;
+        public static readonly int ANNOUNCER_DISPLAY_WINDOW = -45;
+
         public static long DateToEpoch(DateTime date)
         {
             var ticks = date.Ticks - new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
@@ -106,12 +110,12 @@ namespace ChronoKeep.Constants
 
         public static string SecondsToTime(long seconds)
         {
-            return String.Format("{0}:{1:D2}:{2:D2}", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
+            return string.Format("{0}:{1:D2}:{2:D2}", seconds / 3600, (seconds % 3600) / 60, seconds % 60);
         }
 
         public static string ToTime(long seconds, int milliseconds)
         {
-            return String.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", seconds / 3600, (seconds % 3600) / 60, seconds % 60, milliseconds);
+            return string.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", seconds / 3600, (seconds % 3600) / 60, seconds % 60, milliseconds);
         }
     }
 }

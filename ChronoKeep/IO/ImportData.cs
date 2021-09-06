@@ -10,10 +10,10 @@ namespace ChronoKeep
 {
     public class ImportData
     {
-        public String FileName { get; private set; }
+        public string FileName { get; private set; }
         public FileType Type { get; private set; }
         public string[] Headers { get; private set; }
-        public List<String[]> Data { get; private set; }
+        public List<string[]> Data { get; private set; }
         Regex regex = new Regex("[^\\\\]*\\.");
 
 
@@ -32,7 +32,7 @@ namespace ChronoKeep
             }
             Log.D(sb.ToString());
 #endif
-            Data = new List<String[]>();
+            Data = new List<string[]>();
             Headers = newheaders;
         }
 

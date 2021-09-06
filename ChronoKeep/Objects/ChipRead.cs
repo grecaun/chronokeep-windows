@@ -140,7 +140,7 @@ namespace ChronoKeep
             this.ReadBib = readbib;
             this.Type = type;
             this.ChipBib = chipbib;
-            this.Name = String.Format("{0} {1}", first, last).Trim();
+            this.Name = string.Format("{0} {1}", first, last).Trim();
             this.Start = start;
             this.LocationName = locationName;
         }
@@ -246,7 +246,7 @@ namespace ChronoKeep
             get
             {
                 TimeSpan ellapsed = Time - Start;
-                return String.Format("{0}:{1:D2}:{2:D2}.{3:D3}",
+                return string.Format("{0}:{1:D2}:{2:D2}.{3:D3}",
                     ellapsed.Days * 24 + ellapsed.Hours,
                     Math.Abs(ellapsed.Minutes),
                     Math.Abs(ellapsed.Seconds),

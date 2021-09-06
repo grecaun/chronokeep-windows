@@ -20,7 +20,7 @@ namespace ChronoKeep.UI.Export
         Event theEvent;
 
         int maxNumSegments;
-        List<String> commonHeaders = new List<String>
+        List<string> commonHeaders = new List<string>
         {
             "Place", "Age Group Place", "Gender Place",
             "Bib", "Distance", "Status", "First", "Last", "Birthday",
@@ -28,11 +28,11 @@ namespace ChronoKeep.UI.Export
             "City", "State", "Zip", "Country", "Mobile", "Email", "Parent", "Comments",
             "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone"
         };
-        List<String> distanceHeaders = new List<string>
+        List<string> distanceHeaders = new List<string>
         {
             "Gun Finish", "Chip Finish"
         };
-        List<String> timeHeaders = new List<string>
+        List<string> timeHeaders = new List<string>
         {
             "Laps Completed", "Ellapsed Time (Gun)", "Ellapsed Time (Chip)"
         };
@@ -86,10 +86,10 @@ namespace ChronoKeep.UI.Export
                 }
                 for (int i = maxNumSegments; i > 0; i--)
                 {
-                    commonHeaders.Insert(10, String.Format("Lap {0}", i));
+                    commonHeaders.Insert(10, string.Format("Lap {0}", i));
                 }
             }
-            foreach (String name in commonHeaders)
+            foreach (string name in commonHeaders)
             {
                 headersList.Items.Add(new AHeaderBox(name));
             }
@@ -396,17 +396,17 @@ namespace ChronoKeep.UI.Export
                                     }
                                     else if (Constants.Timing.SEGMENT_NONE != result.SegmentId)
                                     {
-                                        string key = String.Format("Segment {0} Chip Time", segmentNum);
+                                        string key = string.Format("Segment {0} Chip Time", segmentNum);
                                         if (headerIndex.ContainsKey(key))
                                         {
                                             line[headerIndex[key]] = result.ChipTime;
                                         }
-                                        key = String.Format("Segment {0} Gun Time", segmentNum);
+                                        key = string.Format("Segment {0} Gun Time", segmentNum);
                                         if (headerIndex.ContainsKey(key))
                                         {
                                             line[headerIndex[key]] = result.Time;
                                         }
-                                        key = String.Format("Segment {0} Name", segmentNum++);
+                                        key = string.Format("Segment {0} Name", segmentNum++);
                                         if (headerIndex.ContainsKey(key))
                                         {
                                             line[headerIndex[key]] = result.SegmentName;
@@ -424,7 +424,7 @@ namespace ChronoKeep.UI.Export
                             }
                             for (int i = 1; i <= maxLaps; i++)
                             {
-                                string key = String.Format("Lap {0}", i);
+                                string key = string.Format("Lap {0}", i);
                                 if (occurrenceResultDictionary.ContainsKey((bib, i)))
                                 {
                                     finalLap = i;
@@ -467,7 +467,7 @@ namespace ChronoKeep.UI.Export
                 }
                 IDataExporter exporter;
                 string extension = Path.GetExtension(saveFileDialog.FileName);
-                Log.D(String.Format("Extension is '{0}'", extension));
+                Log.D(string.Format("Extension is '{0}'", extension));
                 if (extension.IndexOf("xls") != -1)
                 {
                     exporter = new ExcelExporter();
@@ -482,7 +482,7 @@ namespace ChronoKeep.UI.Export
                         format.Append("}\",");
                     }
                     format.Remove(format.Length - 1, 1);
-                    Log.D(String.Format("The format is '{0}'", format.ToString()));
+                    Log.D(string.Format("The format is '{0}'", format.ToString()));
                     exporter = new CSVExporter(format.ToString());
                 }
                 exporter.SetData(headers, data);

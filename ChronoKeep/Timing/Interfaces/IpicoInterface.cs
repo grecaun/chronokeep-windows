@@ -144,7 +144,7 @@ namespace ChronoKeep.Timing.Interfaces
                     int dayVal = int.Parse(day);
                     string time = message.Substring(16, 8);
                     string year = message.Substring(29, 4);
-                    string dateStr = String.Format("{0:D2} {1} {2}  {3}", dayVal, month, year, time);
+                    string dateStr = string.Format("{0:D2} {1} {2}  {3}", dayVal, month, year, time);
                     Log.D("IpicoInterface -- date string is " + dateStr);
                     output[MessageType.TIME] = new List<string>();
                     output[MessageType.TIME].Add(dateStr);
@@ -199,7 +199,7 @@ namespace ChronoKeep.Timing.Interfaces
                 int num_recvd = rewindSocket.Receive(recvd);
                 while (num_recvd > 0)
                 {
-                    String msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
+                    string msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
                     Log.D("IpicoInterface -- Rewind -- message :" + msg);
                     Log.D("Timing System - Message is :" + msg.Trim());
                     Dictionary<MessageType, List<string>> messageTypes = ParseMessages(msg, rewindSocket);

@@ -22,7 +22,7 @@
                 <Label Name="EllapsedTime" Content="00:00:00" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,0,0,0" FontWeight="Bold" FontSize="40"/>
                 <Grid Height="40" HorizontalAlignment="Center">
                     <Label Name="StartTimeLabel" Content="Start Time" Width="75" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Right" Margin="0,0,0,0" />
-                    <xctk:MaskedTextBox Name="StartTime" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="80,0,0,0" FontWeight="Bold" FontSize="16" KeyDown="StartTimeKeyDown" LostFocus="StartTimeLostFocus"/>
+                    <xctk:MaskedTextBox Name="StartTime" ValueDataType="{x:Type s:string}" Mask="00:00:00.000" Width="100" Height="25" VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="80,0,0,0" FontWeight="Bold" FontSize="16" KeyDown="StartTimeKeyDown" LostFocus="StartTimeLostFocus"/>
                 </Grid>
                 <Button Name="StartRace" Content="Start Race" Width="150" Height="25" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,0" Click="StartRaceClick" />
                 <Button Name="WaveButton" Content="Set Wave Times" Width="150" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="ChangeWaves"/>

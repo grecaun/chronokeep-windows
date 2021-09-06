@@ -23,8 +23,6 @@ namespace ChronoKeep.UI.Announcer
     /// </summary>
     public partial class AnnouncerWindow : Window
     {
-        private readonly int SecondGap = -45;
-
         IMainWindow window = null;
         AnnouncerWorker announcerWorker = null;
         Thread announcerThread = null;
@@ -63,7 +61,7 @@ namespace ChronoKeep.UI.Announcer
             }
             // Get our list of people to display. Remove anything older than 45 seconds.
             List<AnnouncerParticipant> participants = AnnouncerWorker.GetList();
-            DateTime now = DateTime.Now.AddSeconds(SecondGap);
+            DateTime now = DateTime.Now.AddSeconds(Constants.Timing.ANNOUNCER_DISPLAY_WINDOW);
             AnnouncerBox.Items.Clear();
             foreach (AnnouncerParticipant part in participants)
             {

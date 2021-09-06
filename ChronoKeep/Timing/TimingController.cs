@@ -167,7 +167,7 @@ namespace ChronoKeep.Timing
                         }
                         else
                         {
-                            String msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
+                            string msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
                             Log.D("Timing System - Message is :" + msg.Trim());
                             Dictionary<MessageType, List<string>> messageTypes = TimingSystemDict[sock].SystemInterface.ParseMessages(msg, sock);
                             foreach (MessageType type in messageTypes.Keys)

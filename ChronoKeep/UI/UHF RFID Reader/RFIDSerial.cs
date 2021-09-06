@@ -12,7 +12,7 @@ namespace ChronoKeep
 {
     class RFIDSerial
     {
-        private String ComPort = "N/A";
+        private string ComPort = "N/A";
         private int BaudRate = 0;
         private SerialPort Port;
 
@@ -24,7 +24,7 @@ namespace ChronoKeep
             this.BaudRate = BaudRate;
         }
 
-        public Error DeviceInit(String ComPort, int BaudRate)
+        public Error DeviceInit(string ComPort, int BaudRate)
         {
             this.ComPort = ComPort;
             this.BaudRate = BaudRate;

@@ -15,7 +15,7 @@
         </DockPanel>
         <DockPanel>
             <Label Content="Time" Margin="10,10,0,10" FontSize="16" Width="80" HorizontalContentAlignment="Right"/>
-            <xctk:MaskedTextBox Name="TimeBox" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" FontSize="16" Margin="5,10,10,10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" KeyUp="Enter_KeyDown"/>
+            <xctk:MaskedTextBox Name="TimeBox" ValueDataType="{x:Type s:string}" Mask="00:00:00.000" FontSize="16" Margin="5,10,10,10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" KeyUp="Enter_KeyDown"/>
         </DockPanel>
         <DockPanel Name="DatePanel" Visibility="Collapsed">
             <Label Content="Date" Margin="10,10,0,10" FontSize="16" Width="80" HorizontalContentAlignment="Right"/>

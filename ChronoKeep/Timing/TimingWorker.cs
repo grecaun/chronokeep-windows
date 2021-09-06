@@ -256,7 +256,7 @@ namespace ChronoKeep.Timing
                         }
                         DateTime end = DateTime.Now;
                         TimeSpan time = end - start;
-                        Log.D(String.Format("Time to process all chip reads was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
+                        Log.D(string.Format("Time to process all chip reads was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
                     }
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
                     {
@@ -276,7 +276,7 @@ namespace ChronoKeep.Timing
                         }
                         DateTime end = DateTime.Now;
                         TimeSpan time = end - start;
-                        Log.D(String.Format("Time to process placements was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
+                        Log.D(string.Format("Time to process placements was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
                     }
                     if (touched)
                     {
@@ -1683,7 +1683,7 @@ namespace ChronoKeep.Timing
                 res.GenderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             }
             int removed = segmentResults.RemoveAll(x => x.IsDNF());
-            Log.D(String.Format("{0} Result(s) in DNFResults - {1} Result(s) removed from segmentResults", DNFResults.Count, removed));
+            Log.D(string.Format("{0} Result(s) in DNFResults - {1} Result(s) removed from segmentResults", DNFResults.Count, removed));
             // Get Dictionaries for storing the last known place (age group, gender)
             // The key is as follows: (Distance ID, Age Group ID, int - Gender ID (M=1,F=2))
             // The value stored is the last place given

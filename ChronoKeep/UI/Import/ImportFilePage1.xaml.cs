@@ -32,12 +32,12 @@ namespace ChronoKeep
             }
         }
 
-        internal List<String> RepeatHeaders()
+        internal List<string> RepeatHeaders()
         {
             Log.D("Checking for repeat headers in user selection.");
             int[] check = new int[ImportFileWindow.human_fields.Length];
             bool repeat = false;
-            List<String> output = new List<String>();
+            List<string> output = new List<string>();
             foreach (ListBoxItem item in headerListBox.Items)
             {
                 int val = ((HeaderListBoxItem)item).HeaderBox.SelectedIndex;

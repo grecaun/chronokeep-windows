@@ -14,7 +14,7 @@ namespace ChronoKeep
         public ComboBox HeaderBox { get; private set; }
         public int Index { get; private set; }
 
-        public HeaderListBoxItem(String s, int ix)
+        public HeaderListBoxItem(string s, int ix)
         {
             this.IsTabStop = false;
             Index = ix;
@@ -44,7 +44,7 @@ namespace ChronoKeep
         public ComboBox HeaderBox { get; private set; }
         public int Index { get; private set; }
 
-        public LogListBoxItem(String s, int ix, string[] human_fields, int selectedIx)
+        public LogListBoxItem(string s, int ix, string[] human_fields, int selectedIx)
         {
             this.IsTabStop = false;
             Index = ix;
@@ -79,7 +79,7 @@ namespace ChronoKeep
             "Chip"
         };
 
-        public BibChipHeaderListBoxItem(String s, int ix)
+        public BibChipHeaderListBoxItem(string s, int ix)
         {
             this.IsTabStop = false;
             Index = ix;
@@ -103,11 +103,11 @@ namespace ChronoKeep
         }
 
         internal int GetHeaderBoxIndex(string s) {
-            if (String.Equals(s, "bib", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(s, "bib", StringComparison.OrdinalIgnoreCase))
             {
                 return 1;
             }
-            else if (String.Equals(s, "chip", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "chip", StringComparison.OrdinalIgnoreCase))
             {
                 return 2;
             }
@@ -120,7 +120,7 @@ namespace ChronoKeep
         public Label DistanceName { get; private set; }
         public ComboBox Distances { get; private set; }
 
-        public DistanceListBoxItemAlternate(String name, List<Distance> distances)
+        public DistanceListBoxItemAlternate(string name, List<Distance> distances)
         {
             this.IsTabStop = false;
             Grid theGrid = new Grid();
@@ -212,7 +212,7 @@ namespace ChronoKeep
             Grid.SetColumn(Distance, 3);
             PartName = new Label
             {
-                Content = String.Format("{0} {1}", person.FirstName, person.LastName)
+                Content = string.Format("{0} {1}", person.FirstName, person.LastName)
             };
             theGrid.Children.Add(PartName);
             Grid.SetColumn(PartName, 4);
@@ -251,7 +251,7 @@ namespace ChronoKeep
             Grid.SetColumn(DistanceName, 0);
             DistanceCost = new TextBox
             {
-                Text = String.Format("{0}.{1:D2}", cost / 100, cost % 100)
+                Text = string.Format("{0}.{1:D2}", cost / 100, cost % 100)
             };
             theGrid.Children.Add(DistanceCost);
             Grid.SetColumn(DistanceCost, 1);
@@ -310,7 +310,7 @@ namespace ChronoKeep
             Grid.SetColumn(DistanceName, 0);
             DistanceCost = new TextBox
             {
-                Text = String.Format("{0}.{1:D2}", cost / 100, cost % 100)
+                Text = string.Format("{0}.{1:D2}", cost / 100, cost % 100)
             };
             theGrid.Children.Add(DistanceCost);
             Grid.SetColumn(DistanceCost, 1);

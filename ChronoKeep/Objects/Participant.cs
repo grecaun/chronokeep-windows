@@ -471,7 +471,7 @@ namespace ChronoKeep
             return val.Equals(val.ToUpper());
         }
 
-        internal string CapitalizeFirst(String val)
+        internal string CapitalizeFirst(string val)
         {
             string outval = val;
             if (AllCaps(val))
@@ -489,7 +489,7 @@ namespace ChronoKeep
             return outval.Substring(0, 1).ToUpper() + outval.Substring(1, outval.Length - 1);
         }
 
-        internal string CapitalizeFirstAll(String val)
+        internal string CapitalizeFirstAll(string val)
         {
             string[] tmp = val.Split(' ');
             StringBuilder output = new StringBuilder();
@@ -565,7 +565,7 @@ namespace ChronoKeep
                 && this.Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
         }
 
-        public String Age(String eventDate)
+        public string Age(string eventDate)
         {
             DateTime eventDateTime = Convert.ToDateTime(eventDate);
             DateTime myDateTime = Convert.ToDateTime(birthdate);
@@ -577,7 +577,7 @@ namespace ChronoKeep
             return Convert.ToString(numYears);
         }
 
-        public int GetAge(String eventDate)
+        public int GetAge(string eventDate)
         {
             DateTime eventDateTime = Convert.ToDateTime(eventDate);
             DateTime myDateTime = Convert.ToDateTime(birthdate);

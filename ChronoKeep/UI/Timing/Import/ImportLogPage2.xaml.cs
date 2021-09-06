@@ -44,12 +44,12 @@ namespace ChronoKeep.UI.Timing.Import
             }
         }
         
-        internal List<String> RepeatHeaders()
+        internal List<string> RepeatHeaders()
         {
             Log.D("Checking for repeat headers in user selection.");
             int[] check = new int[human_fields.Length];
             bool repeat = false;
-            List<String> output = new List<String>();
+            List<string> output = new List<string>();
             foreach (LogListBoxItem item in itemListBox.Items)
             {
                 int val = item.HeaderBox.SelectedIndex;
@@ -72,11 +72,11 @@ namespace ChronoKeep.UI.Timing.Import
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Import clicked.");
-            List<String> repeats = RepeatHeaders();
+            List<string> repeats = RepeatHeaders();
             if (repeats != null)
             {
                 StringBuilder message = new StringBuilder("The following are repeats:\n");
-                foreach (String s in repeats)
+                foreach (string s in repeats)
                 {
                     message.Append(s);
                     message.Append("\n");

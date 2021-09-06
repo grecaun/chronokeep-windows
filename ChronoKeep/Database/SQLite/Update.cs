@@ -17,7 +17,7 @@ namespace ChronoKeep.Database.SQLite
 
         internal static void UpdateDatabase(int oldversion, int newversion, string connectionInfo)
         {
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = connection.CreateCommand();
             using (var transaction = connection.BeginTransaction())

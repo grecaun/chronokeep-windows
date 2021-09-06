@@ -146,7 +146,7 @@ namespace ChronoKeep
             Log.D("Import - Done button clicked.");
             if (page1 != null)
             {
-                List<String> repeats = ((ImportFilePage1)page1).RepeatHeaders();
+                List<string> repeats = ((ImportFilePage1)page1).RepeatHeaders();
                 if (repeats != null)
                 {
                     StringBuilder sb = new StringBuilder("Repeats for the following headers were found:");
@@ -208,7 +208,7 @@ namespace ChronoKeep
                 return;
             }
             StringBuilder sb = new StringBuilder("Distance names are");
-            foreach (String s in distancesFromFile)
+            foreach (string s in distancesFromFile)
             {
                 sb.Append(" '" + s + "'");
             }
@@ -287,10 +287,10 @@ namespace ChronoKeep
                         int age = -1;
                         if (keys[BIRTHDAY] == 0 && keys[AGE] != 0) // birthday not set but age is
                         {
-                            Log.D(String.Format("Counter is {0} and keys[AGE] is {1}", counter, keys[AGE]));
+                            Log.D(string.Format("Counter is {0} and keys[AGE] is {1}", counter, keys[AGE]));
                             Log.D("Age of participant is " + data.Data[counter][keys[AGE]]);
                             age = Convert.ToInt32(data.Data[counter][keys[AGE]]);
-                            birthday = String.Format("01/01/{0,4}", thisYear - age);
+                            birthday = string.Format("01/01/{0,4}", thisYear - age);
                         }
                         else if (keys[BIRTHDAY] != 0)
                         {
@@ -334,13 +334,13 @@ namespace ChronoKeep
                         {
                             AgeGroup group = AgeGroups[(agDivId, age)];
                             output.EventSpecific.AgeGroupId = group.GroupId;
-                            output.EventSpecific.AgeGroupName = String.Format("{0}-{1}", group.StartAge, group.EndAge);
+                            output.EventSpecific.AgeGroupName = string.Format("{0}-{1}", group.StartAge, group.EndAge);
                         }
                         else if (LastAgeGroup.ContainsKey(agDivId))
                         {
                             AgeGroup group = LastAgeGroup[agDivId];
                             output.EventSpecific.AgeGroupId = group.GroupId;
-                            output.EventSpecific.AgeGroupName = String.Format("{0}-{1}", group.StartAge, group.EndAge);
+                            output.EventSpecific.AgeGroupName = string.Format("{0}-{1}", group.StartAge, group.EndAge);
                         }
                         else
                         {
@@ -363,7 +363,7 @@ namespace ChronoKeep
                     // Check against others imported
                     for (int outer=inner+1; outer<importParticipants.Count; outer++)
                     {
-                        Log.D(String.Format("inner {1} outer {0}", outer, inner));
+                        Log.D(string.Format("inner {1} outer {0}", outer, inner));
                         if (importParticipants[inner].Is(importParticipants[outer]))
                         {
                             // if they're a duplicate and not just a multiple
@@ -452,7 +452,7 @@ namespace ChronoKeep
                     {
                         if (!ExistingParticipants[import.Bib].Is(import))
                         {
-                            Log.D(String.Format("We've found {0} {1} and {2} {3} for bib {4}", import.FirstName, import.LastName, ExistingParticipants[import.Bib].FirstName, ExistingParticipants[import.Bib].LastName, import.Bib));
+                            Log.D(string.Format("We've found {0} {1} and {2} {3} for bib {4}", import.FirstName, import.LastName, ExistingParticipants[import.Bib].FirstName, ExistingParticipants[import.Bib].LastName, import.Bib));
                             if (!BibConflicts.ContainsKey(import.Bib))
                             {
                                 BibConflicts[import.Bib] = new HashSet<Participant>();
@@ -512,55 +512,55 @@ namespace ChronoKeep
         internal static int GetHeaderBoxIndex(string s)
         {
             Log.D("Looking for a value for: " + s);
-            if (String.Equals(s, "First Name", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "First", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(s, "First Name", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "First", StringComparison.OrdinalIgnoreCase))
             {
                 return FIRST;
             }
-            else if (String.Equals(s, "Last Name", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Last", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Last Name", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Last", StringComparison.OrdinalIgnoreCase))
             {
                 return LAST;
             }
-            else if (String.Equals(s, "Gender", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Gender", StringComparison.OrdinalIgnoreCase))
             {
                 return GENDER;
             }
-            else if (String.Equals(s, "Birthday", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Birthdate", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "DOB", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Birthday", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Birthdate", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "DOB", StringComparison.OrdinalIgnoreCase))
             {
                 return BIRTHDAY;
             }
-            else if (String.Equals(s, "Street", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Address", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Street", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Address", StringComparison.OrdinalIgnoreCase))
             {
                 return STREET;
             }
-            else if (String.Equals(s, "Street 2", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Address 2", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Street 2", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Address 2", StringComparison.OrdinalIgnoreCase))
             {
                 return STREET2;
             }
-            else if (String.Equals(s, "City", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "City", StringComparison.OrdinalIgnoreCase))
             {
                 return CITY;
             }
-            else if (String.Equals(s, "State", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "State", StringComparison.OrdinalIgnoreCase))
             {
                 return STATE;
             }
-            else if (String.Equals(s, "Zip", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Zip Code", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Zip", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Zip Code", StringComparison.OrdinalIgnoreCase))
             {
                 return ZIP;
             }
-            else if (String.Equals(s, "Country", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Country", StringComparison.OrdinalIgnoreCase))
             {
                 return COUNTRY;
             }
-            else if (String.Equals(s, "Phone", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Phone Number", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Mobile", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Mobile Phone Number", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Phone", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Phone Number", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Mobile", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Mobile Phone Number", StringComparison.OrdinalIgnoreCase))
             {
                 return MOBILE;
             }
-            else if (String.Equals(s, "Email", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Email Address", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Email", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Email Address", StringComparison.OrdinalIgnoreCase))
             {
                 return EMAIL;
             }
-            else if (String.Equals(s, "Parent", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Parent", StringComparison.OrdinalIgnoreCase))
             {
                 return PARENT;
             }
@@ -568,27 +568,27 @@ namespace ChronoKeep
             {
                 return BIB;
             }
-            else if (String.Equals(s, "Shirt Size", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Shirt", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "T-Shirt", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "TShirt", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Shirt Size", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Shirt", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "T-Shirt", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "TShirt", StringComparison.OrdinalIgnoreCase))
             {
                 return APPARELITEM;
             }
-            else if (String.Equals(s, "Owes", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Owes", StringComparison.OrdinalIgnoreCase))
             {
                 return OWES;
             }
-            else if (String.Equals(s, "Comments", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "Notes", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Comments", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Notes", StringComparison.OrdinalIgnoreCase))
             {
                 return COMMENTS;
             }
-            else if (String.Equals(s, "Second Shirt", StringComparison.OrdinalIgnoreCase) || String.Equals(s, "2nd Shirt", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Second Shirt", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "2nd Shirt", StringComparison.OrdinalIgnoreCase))
             {
                 return APPARELITEM;
             }
-            else if (String.Equals(s, "Hat", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Hat", StringComparison.OrdinalIgnoreCase))
             {
                 return APPARELITEM;
             }
-            else if (String.Equals(s, "Other", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Other", StringComparison.OrdinalIgnoreCase))
             {
                 return OTHER;
             }
@@ -596,7 +596,7 @@ namespace ChronoKeep
             {
                 return DISTANCE;
             }
-            else if ((s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("name", StringComparison.OrdinalIgnoreCase) >= 0) || String.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
+            else if ((s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("name", StringComparison.OrdinalIgnoreCase) >= 0) || string.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
             {
                 return EMERGENCYNAME;
             }
@@ -604,15 +604,15 @@ namespace ChronoKeep
             {
                 return EMERGENCYPHONE;
             }
-            else if (String.Equals(s, "Fleece", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Fleece", StringComparison.OrdinalIgnoreCase))
             {
                 return APPARELITEM;
             }
-            else if (String.Equals(s, "Age", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Age", StringComparison.OrdinalIgnoreCase))
             {
                 return AGE;
             }
-            else if (String.Equals(s, "Registration Date", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Registration Date", StringComparison.OrdinalIgnoreCase))
             {
                 return REGISTRATIONDATE;
             }

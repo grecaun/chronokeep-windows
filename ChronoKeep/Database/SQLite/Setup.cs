@@ -13,7 +13,7 @@ namespace ChronoKeep.Database.SQLite
         internal static void Initialize(int version, string connectionInfo)
         {
             ArrayList queries = new ArrayList();
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             SQLiteCommand command = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'", connection);
             SQLiteDataReader reader = command.ExecuteReader();

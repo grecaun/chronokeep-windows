@@ -39,7 +39,7 @@
 						<td><#= r.PlaceStr #></td>
 						<td><#= r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) #></td>
 						<td><#= RunnerLoopsCompleted.ContainsKey(r.EventSpecificId) ? RunnerLoopsCompleted[r.EventSpecificId].ToString() : "" #></td>
-						<td><#= RunnerLoopsCompleted.ContainsKey(r.EventSpecificId) ? String.Format("{0:0.#}", RunnerLoopsCompleted[r.EventSpecificId] * DivisionDistancePerLoop[d]) : "" #></td>
+						<td><#= RunnerLoopsCompleted.ContainsKey(r.EventSpecificId) ? string.Format("{0:0.#}", RunnerLoopsCompleted[r.EventSpecificId] * DivisionDistancePerLoop[d]) : "" #></td>
 						<td><#= participantDictionary[r.EventSpecificId].FirstName #></td>
 						<td><#= participantDictionary[r.EventSpecificId].LastName #></td>
 						<td><#= r.GenderPlaceStr #></td>

@@ -155,7 +155,7 @@ namespace ChronoKeep.UI.Timing
                 MessageBox.Show("Invalid bib value given.");
                 return;
             }
-            String timeVal = TimeBox.Text.Replace('_', '0');
+            string timeVal = TimeBox.Text.Replace('_', '0');
             int locationId = Constants.Timing.LOCATION_FINISH;
             DateTime time;
             long hours, minutes, seconds, milliseconds;
@@ -239,7 +239,7 @@ namespace ChronoKeep.UI.Timing
                 MessageBox.Show("Invalid bib value given.");
                 return;
             }
-            String timeVal = TimeBox.Text.Replace('_', '0');
+            string timeVal = TimeBox.Text.Replace('_', '0');
             int locationId = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem).Uid);
             DateTime time;
             long hours, minutes, seconds, milliseconds;

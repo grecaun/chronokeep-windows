@@ -18,7 +18,7 @@ namespace ChronoKeep
         public List<string> SheetNames { get; private set; }
         public int NumSheets { get; private set; }
 
-        public ExcelImporter(String filename)
+        public ExcelImporter(string filename)
         {
             Log.D("Creating importer object.");
             FilePath = filename;

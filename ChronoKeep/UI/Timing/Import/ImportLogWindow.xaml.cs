@@ -167,7 +167,7 @@ namespace ChronoKeep.UI.Timing.Import
                     DateTime date;
                     if (!dateIncluded)
                     {
-                        date = DateTime.Parse(String.Format("{0} {1}", theEvent.Date, data.Headers[time]));
+                        date = DateTime.Parse(string.Format("{0} {1}", theEvent.Date, data.Headers[time]));
                     }
                     else
                     {
@@ -179,7 +179,7 @@ namespace ChronoKeep.UI.Timing.Import
                     {
                         if (!dateIncluded)
                         {
-                            date = DateTime.Parse(String.Format("{0} {1}", theEvent.Date, data.Data[counter][time]));
+                            date = DateTime.Parse(string.Format("{0} {1}", theEvent.Date, data.Data[counter][time]));
                         }
                         else
                         {

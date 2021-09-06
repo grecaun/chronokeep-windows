@@ -127,7 +127,7 @@ namespace ChronoKeep.Timing.Announcer
             // Loop while waiting for work.
             while (true)
             {
-                semaphore.WaitOne();
+                bool notified = semaphore.WaitOne(1000 * Constants.Timing.ANNOUNCER_LOOP_TIMER);
                 if (mutex.WaitOne(3000))
                 {
                     if (QuittingTime)
@@ -138,22 +138,29 @@ namespace ChronoKeep.Timing.Announcer
                     }
                     mutex.ReleaseMutex();
                 }
-                Event ev2 = database.GetCurrentEvent();
-                // verify that we both ev2 and theevent are not null and they match
-                if (ev2 == null || theEvent == null || ev2.Identifier != theEvent.Identifier)
+                if (notified)
                 {
-                    QuittingTime = true;
-                    Log.E("The event changed while the announcer window is open.");
-                    return;
-                }
-                // Ensure the event exists.
-                if (theEvent.Identifier != -1)
-                {
-                    // If we've seen new participants update the window.
-                    if (ProcessReads(database.GetAnnouncerChipReads(theEvent.Identifier), participantBibDictionary))
+                    Event ev2 = database.GetCurrentEvent();
+                    // verify that we both ev2 and theevent are not null and they match
+                    if (ev2 == null || theEvent == null || ev2.Identifier != theEvent.Identifier)
                     {
-                        window.UpdateAnnouncerWindow();
+                        QuittingTime = true;
+                        Log.E("The event changed while the announcer window is open.");
+                        return;
                     }
+                    // Ensure the event exists.
+                    if (theEvent.Identifier != -1)
+                    {
+                        // If we've seen new participants update the window.
+                        if (ProcessReads(database.GetAnnouncerChipReads(theEvent.Identifier), participantBibDictionary))
+                        {
+                            window.UpdateAnnouncerWindow();
+                        }
+                    }
+                }
+                else
+                {
+                    window.UpdateAnnouncerWindow();
                 }
             }
         }

@@ -307,7 +307,7 @@ namespace ChronoKeep.UI.MainPages
                         }
                         IDataExporter exporter = null;
                         string extension = Path.GetExtension(saveFileDialog.FileName);
-                        Log.D(String.Format("Extension is '{0}'", extension));
+                        Log.D(string.Format("Extension is '{0}'", extension));
                         if (extension.IndexOf("xls") != -1)
                         {
                             exporter = new ExcelExporter();
@@ -322,7 +322,7 @@ namespace ChronoKeep.UI.MainPages
                                 format.Append("}\",");
                             }
                             format.Remove(format.Length - 1, 1);
-                            Log.D(String.Format("The format is '{0}'", format.ToString()));
+                            Log.D(string.Format("The format is '{0}'", format.ToString()));
                             exporter = new CSVExporter(format.ToString());
                         }
                         if (exporter != null)

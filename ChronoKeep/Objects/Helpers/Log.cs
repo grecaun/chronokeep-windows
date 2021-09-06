@@ -10,24 +10,24 @@ namespace ChronoKeep
 {
     class Log
     {
-        public static void D(String msg)
+        public static void D(string msg)
         {
 #if DEBUG
             Console.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + " LOGOUTPUT - d - " + msg);
 #endif
         }
 
-        public static void F(String msg)
+        public static void F(string msg)
         {
             Console.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + " LOGOUTPUT - f - " + msg);
         }
 
-        public static void E(String msg)
+        public static void E(string msg)
         {
             Console.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + " LOGOUTPUT - e - " + msg);
         }
 
-        public static void WriteFile(String path, String[] msgs)
+        public static void WriteFile(string path, string[] msgs)
         {
             using (var outWriter = File.AppendText(path))
             {

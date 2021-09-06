@@ -55,12 +55,12 @@ namespace ChronoKeep
             return new BibChipAssociationWindow(window, importer, database);
         }
 
-        internal List<String> RepeatHeaders()
+        internal List<string> RepeatHeaders()
         {
             Log.D("Checking for repeat headers in user selection.");
             int[] check = new int[ImportFileWindow.human_fields.Length];
             bool repeat = false;
-            List<String> output = new List<String>();
+            List<string> output = new List<string>();
             foreach (ListBoxItem item in headerListBox.Items)
             {
                 int val = ((BibChipHeaderListBoxItem)item).HeaderBox.SelectedIndex;
@@ -117,7 +117,7 @@ namespace ChronoKeep
         private async void Done_Click(object sender, RoutedEventArgs e)
         {
             Log.D("Bib Chip Association = Done Clicked.");
-            List<String> headers = RepeatHeaders();
+            List<string> headers = RepeatHeaders();
             int eventId = -1;
             eventId = database.GetCurrentEvent().Identifier;
             if (headers == null)
@@ -176,7 +176,7 @@ namespace ChronoKeep
                         StringBuilder error = new StringBuilder("There were conflicts found in the import file. Please confirm you want to clobber current values.");
                         foreach (BibChipAssociation assoc in conflicts)
                         {
-                            error.Append(String.Format("\nChip {0} - Bib {1}", assoc.Chip, assoc.Bib));
+                            error.Append(string.Format("\nChip {0} - Bib {1}", assoc.Chip, assoc.Bib));
                         }
                         MessageBoxResult result = MessageBox.Show(error.ToString(), "Clobber?", MessageBoxButton.YesNo, MessageBoxImage.Question);
                         if (result == MessageBoxResult.No)

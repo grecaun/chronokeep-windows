@@ -266,13 +266,13 @@ namespace ChronoKeep.UI.MainPages
                     {
                         AgeGroup group = AgeGroups[(agDivId, age)];
                         person.EventSpecific.AgeGroupId = group.GroupId;
-                        person.EventSpecific.AgeGroupName = String.Format("{0}-{1}", group.StartAge, group.EndAge);
+                        person.EventSpecific.AgeGroupName = string.Format("{0}-{1}", group.StartAge, group.EndAge);
                     }
                     else if (LastAgeGroup.ContainsKey(agDivId))
                     {
                         AgeGroup group = LastAgeGroup[agDivId];
                         person.EventSpecific.AgeGroupId = group.GroupId;
-                        person.EventSpecific.AgeGroupName = String.Format("{0}-{1}", group.StartAge, group.EndAge);
+                        person.EventSpecific.AgeGroupName = string.Format("{0}-{1}", group.StartAge, group.EndAge);
                     }
                     else
                     {

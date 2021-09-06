@@ -8,7 +8,7 @@ namespace ChronoKeep
 {
     public class AppSetting
     {
-        public String name { get; set; }
-        public String value { get; set; }
+        public string name { get; set; }
+        public string value { get; set; }
     }
 }

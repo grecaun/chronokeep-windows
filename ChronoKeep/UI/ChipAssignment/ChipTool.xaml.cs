@@ -71,7 +71,7 @@ namespace ChronoKeep.UI.ChipAssignment
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 StartBib = new TextBox
                 {
-                    Text = String.Format("{0}", lastEndBib + 1),
+                    Text = string.Format("{0}", lastEndBib + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(2, 2, 2, 2)
                 };
@@ -80,7 +80,7 @@ namespace ChronoKeep.UI.ChipAssignment
                 StartBib.KeyDown += new KeyEventHandler(this.KeyPressHandler);
                 EndBib = new TextBox
                 {
-                    Text = String.Format("{0}", lastEndBib + 1),
+                    Text = string.Format("{0}", lastEndBib + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(2, 2, 2, 2)
                 };
@@ -89,7 +89,7 @@ namespace ChronoKeep.UI.ChipAssignment
                 EndBib.KeyDown += new KeyEventHandler(this.KeyPressHandler);
                 StartChip = new TextBox
                 {
-                    Text = String.Format("{0}", lastEndChip + 1),
+                    Text = string.Format("{0}", lastEndChip + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(2, 2, 2, 2)
                 };
@@ -98,7 +98,7 @@ namespace ChronoKeep.UI.ChipAssignment
                 StartChip.KeyDown += new KeyEventHandler(this.KeyPressHandler);
                 EndChip = new Label
                 {
-                    Content = String.Format("{0}", lastEndChip + 1),
+                    Content = string.Format("{0}", lastEndChip + 1),
                     Margin = new Thickness(2, 2, 2, 2),
                     IsTabStop = false
                 };

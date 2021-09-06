@@ -17,8 +17,8 @@ namespace ChronoKeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 133
-         * NEXT AVAILABLE   = 134
+         * HIGHEST MUTEX ID = 134
+         * NEXT AVAILABLE   = 135
          */
         private readonly int version = 46;
         readonly string connectionInfo;
@@ -53,7 +53,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 1");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Distances.AddDistance(d, connection);
             connection.Close();
@@ -68,7 +68,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 117");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             foreach (Distance dis in distances)
             {
@@ -86,7 +86,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 2");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Distances.RemoveDistance(identifier, connection);
             connection.Close();
@@ -106,7 +106,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 3");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Distances.UpdateDistance(d, connection);
             connection.Close();
@@ -121,7 +121,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 4");
                 return new List<Distance>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<Distance> output = Distances.GetDistances(connection);
             connection.Close();
@@ -137,7 +137,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 5");
                 return new List<Distance>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<Distance> output = Distances.GetDistances(eventId, connection);
             connection.Close();
@@ -153,7 +153,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 6");
                 return -1;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
 
             int output = Distances.GetDistanceID(d, connection);
@@ -170,7 +170,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 7");
                 return null;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Distance output = Distances.GetDistance(distanceId, connection);
             connection.Close();
@@ -186,8 +186,8 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 8");
                 return;
             }
-            Log.D(String.Format("Setting wave {0} for event {1}", wave, eventId));
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            Log.D(string.Format("Setting wave {0} for event {1}", wave, eventId));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Distances.SetWaveTimes(eventId, wave, seconds, milliseconds, connection);
             connection.Close();
@@ -206,7 +206,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 9");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Events.AddEvent(anEvent, connection);
             connection.Close();
@@ -226,7 +226,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 10");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Events.RemoveEvent(identifier, connection);
             connection.Close();
@@ -241,7 +241,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 11");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Events.UpdateEvent(anEvent, connection);
             connection.Close();
@@ -256,7 +256,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 12");
                 return new List<Event>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<Event> output = Events.GetEvents(connection);
             mutex.ReleaseMutex();
@@ -271,7 +271,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 13");
                 return -1;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             int output = Events.GetEventID(anEvent, connection);
             connection.Close();
@@ -301,7 +301,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 14");
                 return null;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Event output = Events.GetEvent(id, connection);
             connection.Close();
@@ -317,7 +317,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 17");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Events.SetStartWindow(anEvent, connection);
             connection.Close();
@@ -332,7 +332,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 18");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Events.SetFinishOptions(anEvent, connection);
             connection.Close();
@@ -351,7 +351,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 19");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -370,7 +370,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 20");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -392,7 +392,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 21");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Participants.RemoveParticipant(identifier, connection);
             connection.Close();
@@ -407,7 +407,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 124");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -426,7 +426,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 22");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -448,7 +448,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 23");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Participants.RemoveEntry(eventId, participantId, connection);
             connection.Close();
@@ -468,7 +468,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 24");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -491,7 +491,7 @@ namespace ChronoKeep
                 return;
             }
             person.FormatData();
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -510,7 +510,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 26");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -534,7 +534,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 29");
                 return new List<Participant>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<Participant> output = Participants.GetParticipants(connection);
             connection.Close();
@@ -551,7 +551,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 131");
                 return new List<Participant>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<Participant> output = Participants.GetParticipants(eventId, connection);
             connection.Close();
@@ -568,7 +568,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 132");
                 return new List<Participant>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<Participant> output = Participants.GetParticipants(eventId, distanceId, connection);
             connection.Close();
@@ -584,7 +584,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 30");
                 return null;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Participant output = Participants.GetParticipantEventSpecific(eventIdentifier, eventSpecificId, connection);
             connection.Close();
@@ -600,7 +600,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 31");
                 return null;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Participant output = Participants.GetParticipantBib(eventIdentifier, bib, connection);
             connection.Close();
@@ -616,7 +616,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 32");
                 return null;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Participant output = Participants.GetParticipant(eventId, identifier, connection);
             connection.Close();
@@ -632,7 +632,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 33");
                 return null;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Participant output = Participants.GetParticipant(eventId, unknown, connection);
             connection.Close();
@@ -648,7 +648,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 34");
                 return -1;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             int output = Participants.GetParticipantID(person, connection);
             connection.Close();
@@ -668,7 +668,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 35");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             TimingLocations.AddTimingLocation(tl, connection);
             connection.Close();
@@ -682,7 +682,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 118");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             foreach (TimingLocation tl in locations)
             {
@@ -705,7 +705,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 36");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             TimingLocations.RemoveTimingLocation(identifier, connection);
             connection.Close();
@@ -720,7 +720,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 37");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             TimingLocations.UpdateTimingLocation(tl, connection);
             connection.Close();
@@ -735,7 +735,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 38");
                 return new List<TimingLocation>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<TimingLocation> output = TimingLocations.GetTimingLocations(eventId, connection);
             connection.Close();
@@ -751,7 +751,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 39");
                 return -1;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             int output = TimingLocations.GetTimingLocationID(tl, connection);
             connection.Close();
@@ -771,7 +771,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 40");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -790,7 +790,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 41");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -812,7 +812,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 42");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Segments.RemoveSegment(seg.Identifier, connection);
             connection.Close();
@@ -827,7 +827,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 43");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -846,7 +846,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 44");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -868,7 +868,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 45");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -887,7 +887,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 46");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -911,7 +911,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 47");
                 return -1;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             int output = Segments.GetSegmentId(seg, connection);
             connection.Close();
@@ -927,7 +927,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 48");
                 return new List<Segment>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<Segment> output = Segments.GetSegments(eventId, connection);
             connection.Close();
@@ -943,7 +943,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 49");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Segments.ResetSegments(eventId, connection);
             connection.Close();
@@ -958,7 +958,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 50");
                 return 0;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             int output = Segments.GetMaxSegments(eventId, connection);
             connection.Close();
@@ -978,7 +978,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 51");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Results.AddTimingResult(result, connection);
             connection.Close();
@@ -997,7 +997,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 52");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1019,7 +1019,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 53");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Results.RemoveTimingResult(tr, connection);
             connection.Close();
@@ -1035,7 +1035,7 @@ namespace ChronoKeep
                 return new List<TimeResult>();
             }
             Log.D("Getting timing results for event id of " + eventId);
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<TimeResult> output = Results.GetTimingResults(eventId, connection);
             mutex.ReleaseMutex();
@@ -1051,7 +1051,7 @@ namespace ChronoKeep
                 return new List<TimeResult>();
             }
             Log.D("Getting finish times for event id of " + eventId);
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<TimeResult> output = Results.GetFinishTimes(eventId, connection);
             connection.Close();
@@ -1068,7 +1068,7 @@ namespace ChronoKeep
                 return new List<TimeResult>();
             }
             Log.D("Getting start times for event id of " + eventId);
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<TimeResult> output = Results.GetStartTimes(eventId, connection);
             connection.Close();
@@ -1085,7 +1085,7 @@ namespace ChronoKeep
                 return new List<TimeResult>();
             }
             Log.D("Getting segment times for event id of " + eventId);
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<TimeResult> output = Results.GetSegmentTimes(eventId, segmentId, connection);
             connection.Close();
@@ -1101,7 +1101,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 57");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Results.UpdateTimingResult(oldResult, newTime, connection);
             connection.Close();
@@ -1116,7 +1116,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 129");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Results.SetUploadedTimingResults(results, connection);
             connection.Close();
@@ -1132,7 +1132,7 @@ namespace ChronoKeep
                 return new List<TimeResult>();
             }
             Log.D("Getting non-uploaded results for event id of " + eventId);
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<TimeResult> output = Results.GetNonUploadedResults(eventId, connection);
             connection.Close();
@@ -1149,7 +1149,7 @@ namespace ChronoKeep
                 return false;
             }
             Log.D("Checking for unprocessed reads.");
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             long output = Results.UnprocessedReadsExist(eventId, connection);
             connection.Close();
@@ -1166,7 +1166,7 @@ namespace ChronoKeep
                 return false;
             }
             Log.D("Checking for unprocessed results.");
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             long output = Results.UnprocessedResultsExist(eventId, connection);
             connection.Close();
@@ -1187,7 +1187,7 @@ namespace ChronoKeep
                 return;
             }
             Log.D("Resetting timing results for event " + eventId);
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Results.ResetTimingResultsEvent(eventId, connection);
             connection.Close();
@@ -1203,7 +1203,7 @@ namespace ChronoKeep
                 return;
             }
             Log.D("Resetting timing result placements for event " + eventId);
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Results.ResetTimingResultsPlacements(eventId, connection);
             connection.Close();
@@ -1272,7 +1272,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 78");
                 return new List<BibChipAssociation>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<BibChipAssociation> output = BibChips.GetBibChips(connection);
             connection.Close();
@@ -1288,7 +1288,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 79");
                 return new List<BibChipAssociation>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<BibChipAssociation> output = BibChips.GetBibChips(eventId, connection);
             connection.Close();
@@ -1304,7 +1304,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 80");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             BibChips.RemoveBibChipAssociation(eventId, chip, connection);
             connection.Close();
@@ -1324,7 +1324,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 81");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             if (assoc != null) BibChips.RemoveBibChipAssociation(assoc.EventId, assoc.Chip, connection);
             connection.Close();
@@ -1339,7 +1339,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 82");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1367,7 +1367,7 @@ namespace ChronoKeep
             }
             Log.D("Database - Add chip read. Box " + read.Box + " Antenna " + read.Antenna + " Chip " + read.ChipNumber
                 + " LogId " + read.LogId + " Time Given " + read.TimeString);
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1386,7 +1386,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 84");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1408,7 +1408,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 85");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1427,7 +1427,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 86");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1449,7 +1449,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 87");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1472,7 +1472,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 88");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1495,7 +1495,7 @@ namespace ChronoKeep
                 return;
             }
             if (reads.Count < 1) return;
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             ChipReads.DeleteChipReads(reads, connection);
             connection.Close();
@@ -1510,7 +1510,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 90");
                 return new List<ChipRead>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<ChipRead> output = ChipReads.GetChipReads(GetCurrentEvent(), connection);
             connection.Close();
@@ -1526,7 +1526,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 91");
                 return new List<ChipRead>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<ChipRead> output = ChipReads.GetChipReads(eventId, GetCurrentEvent(), connection);
             connection.Close();
@@ -1542,7 +1542,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 92");
                 return new List<ChipRead>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<ChipRead> output = ChipReads.GetUsefulChipReads(eventId, GetCurrentEvent(), connection);
             connection.Close();
@@ -1558,9 +1558,25 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 133");
                 return new List<ChipRead>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<ChipRead> output = ChipReads.GetAnnouncerChipReads(eventId, GetCurrentEvent(), connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
+        public List<ChipRead> GetAnnouncerUsedChipReads(int eventId)
+        {
+            Log.D("Attempting to grab Mutex: ID 134");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("Failed to grab Mutex: ID 134");
+                return new List<ChipRead>();
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            List<ChipRead> output = ChipReads.GetAnnouncerUsedChipReads(eventId, GetCurrentEvent(), connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -1578,7 +1594,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 95");
                 return null;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             AppSetting output = Settings.GetAppSetting(name, connection);
             connection.Close();
@@ -1604,7 +1620,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 96");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Settings.SetAppSetting(setting, connection);
             connection.Close();
@@ -1622,7 +1638,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 107");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1641,7 +1657,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 108");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
@@ -1663,7 +1679,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 109");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             AgeGroups.UpdateAgeGroup(group, connection);
             connection.Close();
@@ -1678,7 +1694,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 110");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             AgeGroups.RemoveAgeGroup(group, connection);
             connection.Close();
@@ -1693,7 +1709,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 111");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             AgeGroups.RemoveAgeGroups(eventId, distanceId, connection);
             connection.Close();
@@ -1708,7 +1724,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 123");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             AgeGroups.RemoveAgeGroups(groups, connection);
             connection.Close();
@@ -1723,7 +1739,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 112");
                 return new List<AgeGroup>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<AgeGroup> output = AgeGroups.GetAgeGroups(eventId, connection);
             connection.Close();
@@ -1739,7 +1755,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 122");
                 return new List<AgeGroup>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<AgeGroup> output = AgeGroups.GetAgeGroups(eventId, distanceId, connection);
             connection.Close();
@@ -1760,7 +1776,7 @@ namespace ChronoKeep
                 return;
             }
             Log.D("Database - Add Timing System");
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             TimingSystems.AddTimingSystem(system, connection);
             connection.Close();
@@ -1775,7 +1791,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 114");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             TimingSystems.UpdateTimingSystem(system, connection);
             connection.Close();
@@ -1790,7 +1806,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 115");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             TimingSystems.SetTimingSystems(systems, connection);
             connection.Close();
@@ -1810,7 +1826,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 116");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             TimingSystems.RemoveTimingSystem(systemId, connection);
             connection.Close();
@@ -1825,7 +1841,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 117");
                 return new List<TimingSystem>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<TimingSystem> output = TimingSystems.GetTimingSystems(connection);
             connection.Close();
@@ -1841,7 +1857,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 121");
                 return new List<DistanceStat>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<DistanceStat> output = DistanceStats.GetDistanceStats(eventId, connection);
             connection.Close();
@@ -1876,7 +1892,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 125");
                 return -1;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             int outVal = ResultsAPIs.AddResultsAPI(anAPI, connection);
             connection.Close();
@@ -1892,7 +1908,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 126");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             ResultsAPIs.UpdateResultsAPI(anAPI, connection);
             connection.Close();
@@ -1907,7 +1923,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 127");
                 return;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             ResultsAPIs.RemoveResultsAPI(identifier, connection);
             connection.Close();
@@ -1926,7 +1942,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 128");
                 return null;
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             ResultsAPI output = ResultsAPIs.GetResultsAPI(identifier, connection);
             connection.Close();
@@ -1942,7 +1958,7 @@ namespace ChronoKeep
                 Log.D("Failed to grab Mutex: ID 129");
                 return new List<ResultsAPI>();
             }
-            SQLiteConnection connection = new SQLiteConnection(String.Format("Data Source={0};Version=3", connectionInfo));
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<ResultsAPI> output = ResultsAPIs.GetAllResultsAPI(connection);
             connection.Close();

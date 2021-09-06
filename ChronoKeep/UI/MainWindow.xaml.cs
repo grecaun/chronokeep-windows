@@ -24,7 +24,7 @@ namespace ChronoKeep.UI
     {
         IDBInterface database;
         IMainPage page;
-        String dbName = "ChronoKeep.sqlite";
+        string dbName = "ChronoKeep.sqlite";
         bool excelEnabled = false;
 
         // Network objects

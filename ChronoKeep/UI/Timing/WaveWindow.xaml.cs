@@ -50,7 +50,7 @@ namespace ChronoKeep.UI.Timing
             {
                 long seconds = waveTimes[waveNum].seconds;
                 int milliseconds = waveTimes[waveNum].milliseconds;
-                Log.D(String.Format("Seconds {0} - Milliseconds {1}", seconds, milliseconds));
+                Log.D(string.Format("Seconds {0} - Milliseconds {1}", seconds, milliseconds));
                 WaveList.Items.Add(new AWave(waveNum, waveTimes[waveNum].seconds, waveTimes[waveNum].milliseconds));
             }
         }

@@ -151,7 +151,7 @@ namespace ChronoKeep
         public string SegmentName { get => segmentName; set => segmentName = value; }
         public string First { get => firstName; set => firstName = value; }
         public string Last { get => lastName; set => lastName = value; }
-        public string ParticipantName { get => String.Format("{0} {1}", firstName, lastName).Trim(); }
+        public string ParticipantName { get => string.Format("{0} {1}", firstName, lastName).Trim(); }
         public string DistanceName { get => linked_distance_name == "" ? distanceName : linked_distance_name; }
         public string RealDistanceName { get => distanceName; }
         public int Bib { get => bib; set => bib = value; }

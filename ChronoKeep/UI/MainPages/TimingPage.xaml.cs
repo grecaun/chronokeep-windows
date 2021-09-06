@@ -145,10 +145,10 @@ namespace ChronoKeep.UI.MainPages
                 Log.D(systems.Count + " systems found.");
                 for (int i = 0; i < 3 - numSystems; i++)
                 {
-                    systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID));
+                    systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID));
                 }
             }
-            systems.Add(new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID));
+            systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID));
             connected = 0;
             foreach (TimingSystem sys in systems)
             {
@@ -220,7 +220,7 @@ namespace ChronoKeep.UI.MainPages
             {
                 box.UpdateReader();
                 if (box.reader.IPAddress != "0.0.0.0" && box.reader.IPAddress.Length > 7 &&
-                    box.reader.IPAddress != String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]))
+                    box.reader.IPAddress != string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]))
                 {
                     ourSystems.Add(box.reader);
                 }
@@ -281,7 +281,7 @@ namespace ChronoKeep.UI.MainPages
                     ReadersBox.Items.Add(new AReaderBox(
                         this,
                         new TimingSystem(
-                            String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
+                            string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
                             Constants.Settings.TIMING_RFID),
                         locations));
                 }
@@ -354,7 +354,7 @@ namespace ChronoKeep.UI.MainPages
         private void Timer_Click(object sender, EventArgs e)
         {
             TimeSpan ellapsed = DateTime.Now - startTime;
-            EllapsedTime.Content = String.Format("{0:D2}:{1:D2}:{2:D2}", Math.Abs(ellapsed.Days) * 24 + Math.Abs(ellapsed.Hours), Math.Abs(ellapsed.Minutes), Math.Abs(ellapsed.Seconds));
+            EllapsedTime.Content = string.Format("{0:D2}:{1:D2}:{2:D2}", Math.Abs(ellapsed.Days) * 24 + Math.Abs(ellapsed.Hours), Math.Abs(ellapsed.Minutes), Math.Abs(ellapsed.Seconds));
         }
 
         private void StartRaceClick(object sender, RoutedEventArgs e)
@@ -479,7 +479,7 @@ namespace ChronoKeep.UI.MainPages
                 TimerStarted = true;
                 Timer.Start();
             }
-            String startTimeValue = StartTime.Text.Replace('_', '0');
+            string startTimeValue = StartTime.Text.Replace('_', '0');
             StartRace.IsEnabled = false;
             StartTime.Text = startTimeValue;
             Log.D("Start time is " + startTimeValue);
@@ -545,7 +545,7 @@ namespace ChronoKeep.UI.MainPages
             Log.D(connected + " systems connected or trying to connect.");
             if (connected >= total)
             {
-                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(String.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID), locations));
+                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID), locations));
                 total = ReadersBox.Items.Count;
             }
             return sys.Status != SYSTEM_STATUS.DISCONNECTED;
@@ -776,7 +776,7 @@ namespace ChronoKeep.UI.MainPages
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                String content = "";
+                string content = "";
                 List<TimeResult> finishResults = database.GetFinishTimes(theEvent.Identifier);
                 Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
                 // if event is TIME BASED
@@ -1014,7 +1014,7 @@ namespace ChronoKeep.UI.MainPages
                     format.Append("}\",");
                 }
                 format.Remove(format.Length - 1, 1);
-                Log.D(String.Format("The format is '{0}'", format.ToString()));
+                Log.D(string.Format("The format is '{0}'", format.ToString()));
                 if (locationReadDict.Keys.Count == 1)
                 {
                     List<object[]> data = new List<object[]>();
@@ -1348,7 +1348,7 @@ namespace ChronoKeep.UI.MainPages
 
             private void Connect(object sender, RoutedEventArgs e)
             {
-                if ("Connect" != (String)ConnectButton.Content)
+                if ("Connect" != (string)ConnectButton.Content)
                 {
                     Log.D("Disconnect pressed.");
                     reader.Status = SYSTEM_STATUS.WORKING;
