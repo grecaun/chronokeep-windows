@@ -224,7 +224,7 @@ namespace ChronoKeep.UI
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_FALSE &&
-                TimingController.IsRunning())
+                (TimingController.IsRunning() || AnnouncerOpen()))
             {
                 MessageBoxResult result = MessageBox.Show("Are you sure you wish to exit?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.No)
@@ -233,9 +233,26 @@ namespace ChronoKeep.UI
                     return;
                 }
             }
-            StopTimingController();
-            StopTimingWorker();
-            StopAPIController();
+            try
+            {
+                StopTimingController();
+            }
+            catch { }
+            try
+            {
+                StopTimingWorker();
+            }
+            catch { }
+            try
+            {
+                StopAPIController();
+            }
+            catch { }
+            try
+            {
+                StopAnnouncer();
+            }
+            catch { }
             if (httpServer != null)
             {
                 httpServer.Stop();
@@ -583,7 +600,7 @@ namespace ChronoKeep.UI
             return announcerWindow != null;
         }
 
-        public void ShutdownAnnouncer()
+        public void StopAnnouncer()
         {
             if (announcerWindow != null) announcerWindow.Close();
         }

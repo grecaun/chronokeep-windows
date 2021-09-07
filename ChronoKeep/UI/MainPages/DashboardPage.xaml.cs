@@ -185,7 +185,7 @@ namespace ChronoKeep.UI.MainPages
                     "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
-                    mWindow.ShutdownAnnouncer();
+                    mWindow.StopAnnouncer();
                 }
                 else
                 {
@@ -222,7 +222,7 @@ namespace ChronoKeep.UI.MainPages
                     "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
-                    mWindow.ShutdownAnnouncer();
+                    mWindow.StopAnnouncer();
                 }
                 else
                 {
@@ -317,7 +317,7 @@ namespace ChronoKeep.UI.MainPages
                     "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
-                    mWindow.ShutdownAnnouncer();
+                    mWindow.StopAnnouncer();
                 }
                 else
                 {
@@ -354,7 +354,7 @@ namespace ChronoKeep.UI.MainPages
                     "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
-                    mWindow.ShutdownAnnouncer();
+                    mWindow.StopAnnouncer();
                 }
                 else
                 {
