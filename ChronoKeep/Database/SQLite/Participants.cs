@@ -44,7 +44,7 @@ namespace ChronoKeep.Database.SQLite
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, distance_id, eventspecific_bib, " +
                 "eventspecific_checkedin, eventspecific_comments, eventspecific_owes, eventspecific_other, " +
-                "eventspecific_next_year, eventspecific_age_group_name, eventspecific_age_group_id) " +
+                "eventspecific_age_group_name, eventspecific_age_group_id) " +
                 "VALUES (@participant,@event,@distance,@bib,@checkedin,@comments,@owes,@other,@ageGroupName,@ageGroupId)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@participant", person.Identifier),

@@ -17,10 +17,10 @@
                 <Button Name="ImportCSV" Content="Import" FontSize="14" Height="30" Margin="10,10,10,5" Click="ImportCSV_Click"/>
                 <Button Name="ImportExcel" Content="Import" FontSize="14" Height="30" Margin="10,5,10,5" Click="ImportExcel_Click"  Visibility="Collapsed"/>
                 <Button Name="Export" Content="Export" FontSize="14" Height="30" Margin="10,5,10,5" Click="Export_Click" />
-                <Label Content="View only" FontSize="16" Margin="10,0,10,0" HorizontalContentAlignment="Center"/>
+                <Label Content="View" FontSize="16" Margin="10,0,10,0" HorizontalContentAlignment="Center"/>
                 <DockPanel Name="DistanceBoxHolder" />
                 <ComboBox Name="DistanceBox" FontSize="16" Margin="10,0,10,0" SelectionChanged="DistanceBox_SelectionChanged" />
-                <Label Content="Sort By" FontSize="16" Margin="10,0,00,0" HorizontalContentAlignment="Center"/>
+                <Label Content="Sort By" FontSize="16" Margin="10,0,10,0" HorizontalContentAlignment="Center"/>
                 <ComboBox Name="SortBox" FontSize="16" Margin="10,0,10,10" SelectionChanged="SortBox_SelectionChanged" SelectedIndex="0">
                     <ComboBoxItem Content="Distance" />
                     <ComboBoxItem Content="Name" />
