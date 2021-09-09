@@ -61,8 +61,8 @@ namespace ChronoKeep.UI.IO
         {
             this.headers = headers;
             this.data = data;
-            Log.D("Headers " + this.headers);
-            Log.D("Data " + this.data);
+            Log.D("IO.ExcelExporter", "Headers " + this.headers);
+            Log.D("IO.ExcelExporter", "Data " + this.data);
         }
     }
 }

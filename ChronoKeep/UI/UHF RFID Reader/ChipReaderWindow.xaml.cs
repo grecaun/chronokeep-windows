@@ -48,7 +48,7 @@ namespace ChronoKeep
             }
             catch
             {
-                Log.E("Already dead.");
+                Log.E("ChipReaderWindow", "Already dead.");
             }
         }
 
@@ -142,7 +142,7 @@ namespace ChronoKeep
             }
             catch
             {
-                Log.E("Window not open.");
+                Log.E("ChipReaderWindow", "Window not open.");
             }
             try
             {
@@ -150,7 +150,7 @@ namespace ChronoKeep
             }
             catch
             {
-                Log.E("Things are already closed.");
+                Log.E("ChipReaderWindow", "Things are already closed.");
             }
             if (window != null) window.WindowFinalize(this);
         }

@@ -143,7 +143,7 @@ namespace ChronoKeep
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Import - Done button clicked.");
+            Log.D("ImportFileWindow", "Import - Done button clicked.");
             if (page1 != null)
             {
                 List<string> repeats = ((ImportFilePage1)page1).RepeatHeaders();
@@ -158,28 +158,28 @@ namespace ChronoKeep
                 }
                 else
                 {
-                    Log.D("No repeat headers found.");
+                    Log.D("ImportFileWindow", "No repeat headers found.");
                     StartImport(((ImportFilePage1)page1).GetListBoxItems());
                 }
             }
             else if (page2 != null)
             {
-                Log.D("Importing participants.");
+                Log.D("ImportFileWindow", "Importing participants.");
                 ImportWork(((ImportFilePage2Alt)page2).GetDistances());
             }
             else if (multiplesPage != null)
             {
-                Log.D("Processing multiples to keep/remove.");
+                Log.D("ImportFileWindow", "Processing multiples to keep/remove.");
                 ProcessMultiplestoRemove(((ImportFilePageConflicts)multiplesPage).GetParticipantsToRemove());
             }
             else if (bibConflictsPage != null)
             {
-                Log.D("Processing bib conflicts to remove.");
+                Log.D("ImportFileWindow", "Processing bib conflicts to remove.");
                 ProcessBibConflicts(((ImportFilePageConflicts)bibConflictsPage).GetParticipantsToRemove());
             }
             else
             {
-                Log.D("Abort! Abort! Something went terribly wrong.");
+                Log.D("ImportFileWindow", "Abort! Abort! Something went terribly wrong.");
             }
         }
 
@@ -193,7 +193,7 @@ namespace ChronoKeep
             }
             foreach (HeaderListBoxItem item in headerListBoxItems)
             {
-                Log.D("Header is " + item.HeaderLabel.Content);
+                Log.D("ImportFileWindow", "Header is " + item.HeaderLabel.Content);
                 if (item.HeaderBox.SelectedIndex != 0)
                 {
                     keys[item.HeaderBox.SelectedIndex] = item.Index;
@@ -201,7 +201,7 @@ namespace ChronoKeep
             }
             ImportData data = importer.Data;
             string[] distancesFromFile = data.GetDistanceNames(keys[DISTANCE]);
-            Log.D("Distance key is " + keys[DISTANCE] + " with a header name of " + headerListBoxItems[keys[DISTANCE]-1].HeaderLabel.Content + " number of distances found is " + distancesFromFile.Length);
+            Log.D("ImportFileWindow", "Distance key is " + keys[DISTANCE] + " with a header name of " + headerListBoxItems[keys[DISTANCE]-1].HeaderLabel.Content + " number of distances found is " + distancesFromFile.Length);
             if (distancesFromFile.Length <= 0)
             {
                 MessageBox.Show("No distances found in file, or nothing selected for distance.  Please correct this or cancel.");
@@ -212,12 +212,12 @@ namespace ChronoKeep
             {
                 sb.Append(" '" + s + "'");
             }
-            Log.D(sb.ToString());
+            Log.D("ImportFileWindow", sb.ToString());
             page1 = null;
             Event theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
-                Log.E("No event selected.");
+                Log.E("IO.ImportFileWindow", "No event selected.");
                 this.Close();
             }
             List<Distance> distancesFromDatabase = database.GetDistances(theEvent.Identifier);
@@ -255,7 +255,7 @@ namespace ChronoKeep
                             database.AddDistance(div);
                             div.Identifier = database.GetDistanceID(div);
                             divHash.Add(div.Name, div);
-                            Log.D("Div name is " + div.Name);
+                            Log.D("ImportFileWindow", "Div name is " + div.Name);
                         }
                         else
                         {
@@ -271,7 +271,7 @@ namespace ChronoKeep
                         }
                         else
                         {
-                            Log.E("Distance doesn't exist in the database...");
+                            Log.E("IO.ImportFileWindow", "Distance doesn't exist in the database...");
                         }
                     }
                 }
@@ -281,14 +281,14 @@ namespace ChronoKeep
                 {
                     if (data.Data[counter][keys[DISTANCE]] != null && data.Data[counter][keys[DISTANCE]].Length > 0)
                     {
-                        Log.D("Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].ToLower()));
+                        Log.D("ImportFileWindow", "Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].ToLower()));
                         Distance thisDiv = (Distance)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].Trim().ToLower())];
                         string birthday = "01/01/1900";
                         int age = -1;
                         if (keys[BIRTHDAY] == 0 && keys[AGE] != 0) // birthday not set but age is
                         {
-                            Log.D(string.Format("Counter is {0} and keys[AGE] is {1}", counter, keys[AGE]));
-                            Log.D("Age of participant is " + data.Data[counter][keys[AGE]]);
+                            Log.D("ImportFileWindow", string.Format("Counter is {0} and keys[AGE] is {1}", counter, keys[AGE]));
+                            Log.D("ImportFileWindow", "Age of participant is " + data.Data[counter][keys[AGE]]);
                             age = Convert.ToInt32(data.Data[counter][keys[AGE]]);
                             birthday = string.Format("01/01/{0,4}", thisYear - age);
                         }
@@ -363,7 +363,7 @@ namespace ChronoKeep
                     // Check against others imported
                     for (int outer=inner+1; outer<importParticipants.Count; outer++)
                     {
-                        Log.D(string.Format("inner {1} outer {0}", outer, inner));
+                        Log.D("ImportFileWindow", string.Format("inner {1} outer {0}", outer, inner));
                         if (importParticipants[inner].Is(importParticipants[outer]))
                         {
                             // if they're a duplicate and not just a multiple
@@ -452,7 +452,7 @@ namespace ChronoKeep
                     {
                         if (!ExistingParticipants[import.Bib].Is(import))
                         {
-                            Log.D(string.Format("We've found {0} {1} and {2} {3} for bib {4}", import.FirstName, import.LastName, ExistingParticipants[import.Bib].FirstName, ExistingParticipants[import.Bib].LastName, import.Bib));
+                            Log.D("ImportFileWindow", string.Format("We've found {0} {1} and {2} {3} for bib {4}", import.FirstName, import.LastName, ExistingParticipants[import.Bib].FirstName, ExistingParticipants[import.Bib].LastName, import.Bib));
                             if (!BibConflicts.ContainsKey(import.Bib))
                             {
                                 BibConflicts[import.Bib] = new HashSet<Participant>();
@@ -491,12 +491,12 @@ namespace ChronoKeep
                 // Remove those we didn't select to keep from our import list
                 // no need to remove from the existing because we're not re-adding those
                 importParticipants.RemoveAll(x => toRemove.Contains(x));
-                Log.D("Removing old participants we were told to.");
+                Log.D("ImportFileWindow", "Removing old participants we were told to.");
                 database.RemoveParticipantEntries(existingToRemoveParticipants);
-                Log.D("Adding new participants.");
+                Log.D("ImportFileWindow", "Adding new participants.");
                 database.AddParticipants(importParticipants);
             });
-            Log.D("All done with the import.");
+            Log.D("ImportFileWindow", "All done with the import.");
             database.ResetTimingResultsEvent(theEvent.Identifier);
             window.NetworkClearResults(theEvent.Identifier);
             window.NotifyTimingWorker();
@@ -505,13 +505,13 @@ namespace ChronoKeep
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Import - Cancel button clicked.");
+            Log.D("ImportFileWindow", "Import - Cancel button clicked.");
             this.Close();
         }
 
         internal static int GetHeaderBoxIndex(string s)
         {
-            Log.D("Looking for a value for: " + s);
+            Log.D("ImportFileWindow", "Looking for a value for: " + s);
             if (string.Equals(s, "First Name", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "First", StringComparison.OrdinalIgnoreCase))
             {
                 return FIRST;
@@ -629,7 +629,7 @@ namespace ChronoKeep
         {
             if (init) { return; }
             int selection = ((ComboBox)sender).SelectedIndex;
-            Log.D("You've selected number " + selection);
+            Log.D("ImportFileWindow", "You've selected number " + selection);
             if (page1 != null)
             {
                 ((ImportFilePage1)page1).UpdateSheetNo(selection);

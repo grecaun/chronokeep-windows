@@ -36,13 +36,13 @@ namespace ChronoKeep.UI.MainPages
 
         public void Keyboard_Ctrl_A()
         {
-            Log.D("Ctrl + A Passed to this page.");
+            Log.D("UI.MainPages.APIPage", "Ctrl + A Passed to this page.");
             Add_Click(null, null);
         }
 
         public void Keyboard_Ctrl_S()
         {
-            Log.D("Ctrl + S Passed to this page.");
+            Log.D("UI.MainPages.APIPage", "Ctrl + S Passed to this page.");
             UpdateResultsAPI();
             UpdateView();
         }
@@ -72,7 +72,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Add api clicked.");
+            Log.D("UI.MainPages.APIPage", "Add api clicked.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateResultsAPI();
@@ -83,14 +83,14 @@ namespace ChronoKeep.UI.MainPages
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Update clicked.");
+            Log.D("UI.MainPages.APIPage", "Update clicked.");
             UpdateResultsAPI();
             UpdateView();
         }
 
         private void Revert_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Revert clicked.");
+            Log.D("UI.MainPages.APIPage", "Revert clicked.");
             UpdateView();
         }
 
@@ -285,13 +285,13 @@ namespace ChronoKeep.UI.MainPages
 
             private void Remove_Click(object sender, RoutedEventArgs e)
             {
-                Log.D("Removing api.");
+                Log.D("UI.MainPages.APIPage", "Removing api.");
                 this.page.RemoveAPI(theAPI);
             }
 
             public void UpdateResultsAPI()
             {
-                Log.D("Updating api.");
+                Log.D("UI.MainPages.APIPage", "Updating api.");
                 theAPI.Nickname = APINickname.Text;
                 theAPI.URL = APIURL.Text;
                 theAPI.AuthToken = APIToken.Text;
@@ -306,7 +306,7 @@ namespace ChronoKeep.UI.MainPages
 
             private void APIType_SelectionChanged(object sender, SelectionChangedEventArgs e)
             {
-                Log.D("Changing API Type!");
+                Log.D("UI.MainPages.APIPage", "Changing API Type!");
                 // Ensure we've got something selected, and then change the URL if they've selected Chronokeep.
                 if (APIType.SelectedItem != null)
                 {

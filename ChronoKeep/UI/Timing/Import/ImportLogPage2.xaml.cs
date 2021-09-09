@@ -46,7 +46,7 @@ namespace ChronoKeep.UI.Timing.Import
         
         internal List<string> RepeatHeaders()
         {
-            Log.D("Checking for repeat headers in user selection.");
+            Log.D("UI.Timing.ImportLog", "Checking for repeat headers in user selection.");
             int[] check = new int[human_fields.Length];
             bool repeat = false;
             List<string> output = new List<string>();
@@ -71,7 +71,7 @@ namespace ChronoKeep.UI.Timing.Import
 
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Import clicked.");
+            Log.D("UI.Timing.ImportLog", "Import clicked.");
             List<string> repeats = RepeatHeaders();
             if (repeats != null)
             {
@@ -105,7 +105,7 @@ namespace ChronoKeep.UI.Timing.Import
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Cancel clicked.");
+            Log.D("UI.Timing.ImportLog", "Cancel clicked.");
             parent.Cancel();
         }
     }

@@ -65,7 +65,7 @@ namespace ChronoKeep.UI.MainPages
 
         private async void ResetDB_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Reset button clicked.");
+            Log.D("UI.MainPages.SettingsPage", "Reset button clicked.");
             MessageBoxResult result = MessageBox.Show("This deletes all of the data stored in the database.  You cannot recover" +
                 " any of the data in the database after this step.\n\nAre you sure you wish to continue?",
                                                         "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -85,7 +85,7 @@ namespace ChronoKeep.UI.MainPages
 
         private async void RebuildDB_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Rebuild button clicked.");
+            Log.D("UI.MainPages.SettingsPage", "Rebuild button clicked.");
             MessageBoxResult result = MessageBox.Show("This deletes all of the tables and values in the database, then rebuilds all of the tables." +
                 "  You cannot recover any of the data in the database after this step.\n\nAre you sure you wish to continue?",
                                                         "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
@@ -105,7 +105,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Save button clicked.");
+            Log.D("UI.MainPages.SettingsPage", "Save button clicked.");
             database.SetAppSetting(Constants.Settings.COMPANY_NAME, CompanyNameBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.CONTACT_EMAIL, ContactEmailBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM, ((ComboBoxItem)DefaultTimingBox.SelectedItem).Uid);
@@ -117,7 +117,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void ChangeExport_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Change export directory button clicked.");
+            Log.D("UI.MainPages.SettingsPage", "Change export directory button clicked.");
             try
             {
                 using (var dialog = new CommonOpenFileDialog())
@@ -143,7 +143,7 @@ namespace ChronoKeep.UI.MainPages
             }
             catch
             {
-                Log.E("Something went wrong with the dialog.");
+                Log.E("UI.MainPages.SettingsPage", "Something went wrong with the dialog.");
             }
         }
 

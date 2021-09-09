@@ -38,7 +38,7 @@ namespace ChronoKeep.UI.MainPages
                     gitVersion = reader.ReadToEnd();
                 }
             }
-            Log.D("Version: " + gitVersion);
+            Log.D("UI.MainPages.AboutPage", "Version: " + gitVersion);
             VersionLabel.Content = gitVersion;
         }
 

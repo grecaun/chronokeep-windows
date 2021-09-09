@@ -106,7 +106,7 @@ namespace ChronoKeep.UI.API
 
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("DateTime: " + Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss"));
+            Log.D("UI.API.APIPage3", "DateTime: " + Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss"));
             string year = ((ComboBoxItem)YearBox.SelectedItem).Uid;
             if (year == "NEW")
             {

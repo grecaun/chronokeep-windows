@@ -97,7 +97,7 @@ namespace ChronoKeep.UI.Export
 
         private void Done_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Done clicked.");
+            Log.D("UI.Export.ExportResults", "Done clicked.");
             List<string> headersToOutput = new List<string>();
             Dictionary<string, int> headerIndex = new Dictionary<string, int>();
             foreach (AHeaderBox headerBox in headersList.Items)
@@ -467,7 +467,7 @@ namespace ChronoKeep.UI.Export
                 }
                 IDataExporter exporter;
                 string extension = Path.GetExtension(saveFileDialog.FileName);
-                Log.D(string.Format("Extension is '{0}'", extension));
+                Log.D("UI.Export.ExportResults", string.Format("Extension is '{0}'", extension));
                 if (extension.IndexOf("xls") != -1)
                 {
                     exporter = new ExcelExporter();
@@ -482,7 +482,7 @@ namespace ChronoKeep.UI.Export
                         format.Append("}\",");
                     }
                     format.Remove(format.Length - 1, 1);
-                    Log.D(string.Format("The format is '{0}'", format.ToString()));
+                    Log.D("UI.Export.ExportResults", string.Format("The format is '{0}'", format.ToString()));
                     exporter = new CSVExporter(format.ToString());
                 }
                 exporter.SetData(headers, data);
@@ -493,7 +493,7 @@ namespace ChronoKeep.UI.Export
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Cancel clicked.");
+            Log.D("UI.Export.ExportResults", "Cancel clicked.");
             this.Close();
         }
 

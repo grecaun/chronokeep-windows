@@ -20,7 +20,7 @@ namespace ChronoKeep.Database.SQLite
             int oldVersion = -1;
             if (reader.Read())
             {
-                Log.D("Tables do not need to be made.");
+                Log.D("SQLite.Setup", "Tables do not need to be made.");
                 try
                 {
                     // As of version 43 we've changed how we store settings values to something more sensible.
@@ -34,7 +34,7 @@ namespace ChronoKeep.Database.SQLite
                         }
                         else
                         {
-                            Log.D("Tables made, database version not found.");
+                            Log.D("SQLite.Setup", "Tables made, database version not found.");
                         }
                         versionChecker.Close();
                     }
@@ -42,7 +42,7 @@ namespace ChronoKeep.Database.SQLite
                 catch
                 {
                     // Check for an older version
-                    Log.D("We may have a database older than version 43.");
+                    Log.D("SQLite.Setup", "We may have a database older than version 43.");
                     command = new SQLiteCommand("SELECT version FROM settings;", connection);
                     using (SQLiteDataReader v2Checker = command.ExecuteReader())
                     {
@@ -52,16 +52,16 @@ namespace ChronoKeep.Database.SQLite
                         }
                         else
                         {
-                            Log.D("Tables made, database version not found.");
+                            Log.D("SQLite.Setup", "Tables made, database version not found.");
                         }
                         v2Checker.Close();
                     }
                 }
-                Log.D("Old Version: " + oldVersion.ToString());
+                Log.D("SQLite.Setup", "Old Version: " + oldVersion.ToString());
             }
             else
             {
-                Log.D("Tables haven't been created. Doing so now.");
+                Log.D("SQLite.Setup", "Tables haven't been created. Doing so now.");
                 command = new SQLiteCommand("PRAGMA foreign_keys = ON;", connection); // Ensure Foreign key constraints work.
                 command.ExecuteNonQuery();
                 queries.Add("CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
@@ -244,7 +244,7 @@ namespace ChronoKeep.Database.SQLite
                     int counter = 1;
                     foreach (string q in queries)
                     {
-                        Log.D("Table query number " + counter++ + " Query string is: " + q);
+                        Log.D("SQLite.Setup", "Table query number " + counter++ + " Query string is: " + q);
                         command = new SQLiteCommand(q, connection);
                         command.ExecuteNonQuery();
                     }
@@ -260,14 +260,14 @@ namespace ChronoKeep.Database.SQLite
                     }
                     else
                     {
-                        Log.D("Something went wrong when checking the version...");
+                        Log.D("SQLite.Setup", "Something went wrong when checking the version...");
                     }
                     versionChecker.Close();
                 }
             }
             reader.Close();
             connection.Close();
-            if (oldVersion == -1) Log.D("Unable to get a version number. Something is terribly wrong.");
+            if (oldVersion == -1) Log.D("SQLite.Setup", "Unable to get a version number. Something is terribly wrong.");
             else if (oldVersion < version) Update.UpdateDatabase(oldVersion, version, connectionInfo);
             else if (oldVersion > version) Update.UpdateClient(oldVersion, version);
         }

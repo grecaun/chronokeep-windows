@@ -139,7 +139,7 @@ namespace ChronoKeep.UI.Timing
 
         private void AddDNF()
         {
-            Log.D("DNF entry detected.");
+            Log.D("UI.Timing.ManualEntryWindow", "DNF entry detected.");
             int bib = -1;
             try
             {
@@ -215,7 +215,7 @@ namespace ChronoKeep.UI.Timing
                 time = time.AddMilliseconds(milliseconds);
             }
             ChipRead newEntry = new ChipRead(theEvent.Identifier, locationId, bib, time, Constants.Timing.CHIPREAD_STATUS_DNF);
-            Log.D("Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
+            Log.D("UI.Timing.ManualEntryWindow", "Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
             database.AddChipRead(newEntry);
             bibsAdded.Add(bib);
             ClearBib();
@@ -223,7 +223,7 @@ namespace ChronoKeep.UI.Timing
 
         private void AddEntry()
         {
-            Log.D("Manual entry detected.");
+            Log.D("UI.Timing.ManualEntryWindow", "Manual entry detected.");
             int bib = -1;
             try
             {
@@ -297,7 +297,7 @@ namespace ChronoKeep.UI.Timing
             time = time.AddSeconds(seconds);
             time = time.AddMilliseconds(milliseconds);
             ChipRead newEntry = new ChipRead(theEvent.Identifier, locationId, bib, time, Constants.Timing.CHIPREAD_STATUS_NONE);
-            Log.D("Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
+            Log.D("UI.Timing.ManualEntryWindow", "Bib " + BibBox + " LocationId " + locationId + " Time " + newEntry.TimeString);
             database.AddChipRead(newEntry);
             bibsAdded.Add(bib);
             ClearBib();

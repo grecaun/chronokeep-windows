@@ -17,7 +17,7 @@ namespace ChronoKeep.Database.SQLite
                 command.CommandText = "INSERT INTO bib_chip_assoc (event_id, bib, chip) VALUES (@eventId, @bib, @chip);";
                 foreach (BibChipAssociation item in assoc)
                 {
-                    Log.D("Event id " + eventId + " Bib " + item.Bib + " Chip " + item.Chip);
+                    Log.D("Database.SQLite.BibChips", "Event id " + eventId + " Bib " + item.Bib + " Chip " + item.Chip);
                     command.Parameters.AddRange(new SQLiteParameter[]
                     {
                         new SQLiteParameter("@eventId", eventId),

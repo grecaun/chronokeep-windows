@@ -68,7 +68,7 @@ namespace ChronoKeep
             {
                 dateVal = datePicker.SelectedDate.Value.Date.Ticks;
             }
-            Log.D("Name given for event: '" + nameString + "' Date Given: " + dateVal + " Date Value: " + dateVal);
+            Log.D("NewEventWindow", "Name given for event: '" + nameString + "' Date Given: " + dateVal + " Date Value: " + dateVal);
             if (nameString == "")
             {
                 MessageBox.Show("Please input a value in the name box.");

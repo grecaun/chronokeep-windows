@@ -36,7 +36,7 @@ namespace ChronoKeep.Database.SQLite
                 new SQLiteParameter("@type", d.Type),
                 new SQLiteParameter("@rank", d.Ranking)
             });
-            Log.D("SQL query: '" + command.CommandText + "'");
+            Log.D("Database.SQLite.Distances", "SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
         }
 

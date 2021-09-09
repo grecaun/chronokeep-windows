@@ -41,7 +41,7 @@ namespace ChronoKeep.UI.Timing
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
-                Log.E("Something went wrong and no proper event was returned.");
+                Log.E("UI.Timing.AwardPage", "Something went wrong and no proper event was returned.");
                 return;
             }
             customGroupsListView.ItemsSource = customAgeGroups;
@@ -64,7 +64,7 @@ namespace ChronoKeep.UI.Timing
 
         private void AddCustom_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Add custom group clicked.");
+            Log.D("UI.Timing.AwardPage", "Add custom group clicked.");
             try
             {
                 int start = Convert.ToInt32(startCustom.Text);
@@ -90,7 +90,7 @@ namespace ChronoKeep.UI.Timing
 
         private void DeleteCustom_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Deleting some entries... maybe.");
+            Log.D("UI.Timing.AwardPage", "Deleting some entries... maybe.");
             List<AgeGroup> items = new List<AgeGroup>();
             IList selected = customGroupsListView.SelectedItems;
             if (selected.Count < 1)
@@ -107,7 +107,7 @@ namespace ChronoKeep.UI.Timing
 
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Print clicked.");
+            Log.D("UI.Timing.AwardPage", "Print clicked.");
             System.Windows.Forms.PrintDialog printDialog = new System.Windows.Forms.PrintDialog
             {
                 AllowSomePages = true,
@@ -175,7 +175,7 @@ namespace ChronoKeep.UI.Timing
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Save clicked.");
+            Log.D("UI.Timing.AwardPage", "Save clicked.");
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 Filter = "PDF (*.pdf)|*.pdf",
@@ -223,7 +223,7 @@ namespace ChronoKeep.UI.Timing
 
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Done clicked.");
+            Log.D("UI.Timing.AwardPage", "Done clicked.");
             parent.LoadMainDisplay();
         }
 

@@ -50,14 +50,14 @@ namespace ChronoKeep.UI.Timing
             {
                 long seconds = waveTimes[waveNum].seconds;
                 int milliseconds = waveTimes[waveNum].milliseconds;
-                Log.D(string.Format("Seconds {0} - Milliseconds {1}", seconds, milliseconds));
+                Log.D("UI.Timing.WaveWindow", string.Format("Seconds {0} - Milliseconds {1}", seconds, milliseconds));
                 WaveList.Items.Add(new AWave(waveNum, waveTimes[waveNum].seconds, waveTimes[waveNum].milliseconds));
             }
         }
 
         private void SetButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Aye aye! Updating!");
+            Log.D("UI.Timing.WaveWindow", "Aye aye! Updating!");
             foreach (AWave wave in WaveList.Items)
             {
                 (int waveNo, long seconds, int milliseconds) = wave.GetValues();
@@ -100,7 +100,7 @@ namespace ChronoKeep.UI.Timing
 
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("We don't really want to set the wave times.");
+            Log.D("UI.Timing.WaveWindow", "We don't really want to set the wave times.");
             this.Close();
         }
 
@@ -111,7 +111,7 @@ namespace ChronoKeep.UI.Timing
 
         private void NetTimeButton_Checked(object sender, RoutedEventArgs e)
         {
-            Log.D("Net Time Selected.");
+            Log.D("UI.Timing.WaveWindow", "Net Time Selected.");
             foreach (AWave wave in WaveList.Items)
             {
                 int waveId = wave.GetWave();
@@ -121,7 +121,7 @@ namespace ChronoKeep.UI.Timing
 
         private void TimeofDayButton_Checked(object sender, RoutedEventArgs e)
         {
-            Log.D("Time of day selected.");
+            Log.D("UI.Timing.WaveWindow", "Time of day selected.");
             foreach (AWave wave in WaveList.Items)
             {
                 int waveId = wave.GetWave();
@@ -153,7 +153,7 @@ namespace ChronoKeep.UI.Timing
                 waveType = 1;
                 if (startSeconds < 0)
                 {
-                    Log.D("Setting type to negative and making seconds/milliseconds positive for offset textbox.");
+                    Log.D("UI.Timing.WaveWindow", "Setting type to negative and making seconds/milliseconds positive for offset textbox.");
                     waveType = -1;
                     imgUri = new Uri("pack://application:,,,/img/dash.png");
                     startSeconds *= -1;
@@ -196,7 +196,7 @@ namespace ChronoKeep.UI.Timing
 
             private void SwapWaveType_Click(object sender, RoutedEventArgs e)
             {
-                Log.D("Plus/Minus sign clicked. WaveType is: " + waveType);
+                Log.D("UI.Timing.WaveWindow", "Plus/Minus sign clicked. WaveType is: " + waveType);
                 if (waveType < 0)
                 {
                     WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/plus.png"));
@@ -207,7 +207,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 else
                 {
-                    Log.E("Something went wrong and the wave type was set to 0.");
+                    Log.E("UI.Timing.WaveWindow", "Something went wrong and the wave type was set to 0.");
                 }
                 waveType *= -1;
             }
@@ -225,7 +225,7 @@ namespace ChronoKeep.UI.Timing
                     seconds = (hours * 3600) + (minutes * 60) + seconds;
                     if (waveType < 0)
                     {
-                        Log.D("Negative wave, setting values to match.");
+                        Log.D("UI.Timing.WaveWindow", "Negative wave, setting values to match.");
                         seconds *= -1;
                         milliseconds *= -1;
                     }
@@ -233,7 +233,7 @@ namespace ChronoKeep.UI.Timing
                 }
                 catch
                 {
-                    Log.D("Error evaluating values.");
+                    Log.D("UI.Timing.WaveWindow", "Error evaluating values.");
                 }
                 return (Wave, 0, 0);
             }

@@ -11,7 +11,6 @@ namespace ChronoKeep.Database.SQLite
     {
         internal static void AddEvent(Event anEvent, SQLiteConnection connection)
         {
-            Log.D("Attempting to grab Mutex: ID 9");
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO events(event_name, event_date, event_yearcode, event_rank_by_gun, " +
@@ -36,7 +35,6 @@ namespace ChronoKeep.Database.SQLite
                 new SQLiteParameter("@system", anEvent.TimingSystem),
                 new SQLiteParameter("@type", anEvent.EventType)
             });
-            Log.D("SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
         }
 

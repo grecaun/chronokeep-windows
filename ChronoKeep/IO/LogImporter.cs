@@ -21,20 +21,20 @@ namespace ChronoKeep.IO
         public void FindType()
         {
             string headerLine = file.ReadLine();
-            Log.D("HeaderLine: " + headerLine);
+            Log.D("IO.LogImporter", "HeaderLine: " + headerLine);
             if (rfid.IsMatch(headerLine))
             {
-                Log.D("Found a match! RFID");
+                Log.D("IO.LogImporter", "Found a match! RFID");
                 type = Type.RFID;
             }
             if (ipico.IsMatch(headerLine))
             {
-                Log.D("Found a match! Ipico");
+                Log.D("IO.LogImporter", "Found a match! Ipico");
                 type = Type.IPICO;
             }
             if (chronokeep.IsMatch(headerLine))
             {
-                Log.D("Found a match! Chronokeep");
+                Log.D("IO.LogImporter", "Found a match! Chronokeep");
                 type = Type.CHRONOKEEP;
             }
             ProcessFirstLine(headerLine);

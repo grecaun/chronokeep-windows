@@ -21,7 +21,7 @@ namespace ChronoKeep
         {
             this.Type = type;
             FileName = regex.Match(filename).Value.TrimEnd('.');
-            Log.D(FileName + " is the filename.");
+            Log.D("IO.ImportData", FileName + " is the filename.");
             string[] newheaders = new string[headers.Length + 1];
             Array.Copy(headers, 0, newheaders, 1, headers.Length);
 #if DEBUG
@@ -30,7 +30,7 @@ namespace ChronoKeep
             {
                 sb.Append(" '" + s + "'");
             }
-            Log.D(sb.ToString());
+            Log.D("IO.ImportData", sb.ToString());
 #endif
             Data = new List<string[]>();
             Headers = newheaders;
@@ -47,7 +47,7 @@ namespace ChronoKeep
             Array.Copy(data, 0, newdata, 1, data.Length);
             if (Headers.Length != newdata.Length)
             {
-                Log.E("Wrong count! It's burning! AHHHHHHH! " + Headers.Length + " - " + newdata.Length);
+                Log.E("IO.ImportData", "Wrong count! It's burning! AHHHHHHH! " + Headers.Length + " - " + newdata.Length);
             }
             Data.Add(newdata);
 #if DEBUG
@@ -56,7 +56,7 @@ namespace ChronoKeep
             {
                 sb.Append(" '" + s + "'");
             }
-            Log.D(sb.ToString());
+            Log.D("IO.ImportData", sb.ToString());
 #endif
         }
 

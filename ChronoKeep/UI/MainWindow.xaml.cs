@@ -64,15 +64,15 @@ namespace ChronoKeep.UI
 
             string dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
             string path = System.IO.Path.Combine(dirPath, dbName);
-            Log.D("Looking for database file.");
+            Log.D("UI.MainWindow", "Looking for database file.");
             if (!Directory.Exists(dirPath))
             {
-                Log.D("Creating directory.");
+                Log.D("UI.MainWindow", "Creating directory.");
                 Directory.CreateDirectory(dirPath);
             }
             if (!File.Exists(path))
             {
-                Log.D("Creating database file.");
+                Log.D("UI.MainWindow", "Creating database file.");
                 SQLiteConnection.CreateFile(path);
             }
             database = new SQLiteInterface(path);
@@ -112,10 +112,10 @@ namespace ChronoKeep.UI
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Dashboard button clicked.");
+            Log.D("UI.MainWindow", "Dashboard button clicked.");
             if (page is DashboardPage)
             {
-                Log.D("Dashboard page already displayed.");
+                Log.D("UI.MainWindow", "Dashboard page already displayed.");
                 return;
             }
             SwitchPage(new DashboardPage(this, database), true);
@@ -123,10 +123,10 @@ namespace ChronoKeep.UI
 
         private void ReportsButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Reports button clicked.");
+            Log.D("UI.MainWindow", "Reports button clicked.");
             if (page is ReportsPage)
             {
-                Log.D("Reports page already displayed");
+                Log.D("UI.MainWindow", "Reports page already displayed");
                 return;
             }
             //SwitchPage(new ReportsPage(this, database), true);
@@ -134,10 +134,10 @@ namespace ChronoKeep.UI
 
         private void ParticipantsButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Participants button clicked.");
+            Log.D("UI.MainWindow", "Participants button clicked.");
             if (page is ParticipantsPage)
             {
-                Log.D("Participants page already displayed.");
+                Log.D("UI.MainWindow", "Participants page already displayed.");
                 return;
             }
             SwitchPage(new ParticipantsPage(this, database), true);
@@ -145,10 +145,10 @@ namespace ChronoKeep.UI
 
         private void ChipsButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Chips button clicked.");
+            Log.D("UI.MainWindow", "Chips button clicked.");
             if (page is ChipAssigmentPage)
             {
-                Log.D("Chips page already displayed.");
+                Log.D("UI.MainWindow", "Chips page already displayed.");
                 return;
             }
             SwitchPage(new ChipAssigmentPage(this, database), true);
@@ -156,10 +156,10 @@ namespace ChronoKeep.UI
 
         private void DistancesButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Distances button clicked.");
+            Log.D("UI.MainWindow", "Distances button clicked.");
             if (page is DistancesPage)
             {
-                Log.D("Distances page already displayed.");
+                Log.D("UI.MainWindow", "Distances page already displayed.");
                 return;
             }
             SwitchPage(new DistancesPage(this, database), true);
@@ -167,10 +167,10 @@ namespace ChronoKeep.UI
 
         private void LocationsButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Locations button clicked.");
+            Log.D("UI.MainWindow", "Locations button clicked.");
             if (page is LocationsPage)
             {
-                Log.D("Locations page already displayed.");
+                Log.D("UI.MainWindow", "Locations page already displayed.");
                 return;
             }
             SwitchPage(new LocationsPage(this, database), true);
@@ -178,10 +178,10 @@ namespace ChronoKeep.UI
 
         private void SegmentsButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Segments button clicked.");
+            Log.D("UI.MainWindow", "Segments button clicked.");
             if (page is SegmentsPage)
             {
-                Log.D("Segments page already displayed.");
+                Log.D("UI.MainWindow", "Segments page already displayed.");
                 return;
             }
             SwitchPage(new SegmentsPage(this, database), true);
@@ -189,10 +189,10 @@ namespace ChronoKeep.UI
 
         private void AgegroupsButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Age Groups button clicked.");
+            Log.D("UI.MainWindow", "Age Groups button clicked.");
             if (page is AgeGroupsPage)
             {
-                Log.D("Age groups page already displayed.");
+                Log.D("UI.MainWindow", "Age groups page already displayed.");
                 return;
             }
             SwitchPage(new AgeGroupsPage(this, database), true);
@@ -200,10 +200,10 @@ namespace ChronoKeep.UI
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Settings button clicked.");
+            Log.D("UI.MainWindow", "Settings button clicked.");
             if (page is SettingsPage)
             {
-                Log.D("Settings page already displayed.");
+                Log.D("UI.MainWindow", "Settings page already displayed.");
                 return;
             }
             SwitchPage(new SettingsPage(this, database), true);
@@ -211,10 +211,10 @@ namespace ChronoKeep.UI
 
         private void TimingButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Timing button clicked.");
+            Log.D("UI.MainWindow", "Timing button clicked.");
             if (page is TimingPage)
             {
-                Log.D("Timing page already displayed.");
+                Log.D("UI.MainWindow", "Timing page already displayed.");
                 ((TimingPage)page).LoadMainDisplay();
                 return;
             }
@@ -265,7 +265,7 @@ namespace ChronoKeep.UI
                 }
                 catch
                 {
-                    Log.D("Oh well!");
+                    Log.D("UI.MainWindow", "Oh well!");
                 }
             }
             if (page != null) page.Closing();
@@ -279,7 +279,7 @@ namespace ChronoKeep.UI
         {
             try
             {
-                Log.D("Stopping Timing Worker.");
+                Log.D("UI.MainWindow", "Stopping Timing Worker.");
                 TimingWorker.Shutdown();
                 TimingWorker.Notify();
             }
@@ -299,7 +299,7 @@ namespace ChronoKeep.UI
         {
             try
             {
-                Log.D("Stopping Timing Controller.");
+                Log.D("UI.MainWindow", "Stopping Timing Controller.");
                 if (TimingController != null) TimingController.Shutdown();
             }
             catch
@@ -313,7 +313,7 @@ namespace ChronoKeep.UI
         {
             try
             {
-                Log.D("Stopping API Controller");
+                Log.D("UI.MainWindow", "Stopping API Controller");
                 if (APIController != null) APIController.Shutdown();
             }
             catch
@@ -480,7 +480,7 @@ namespace ChronoKeep.UI
 
         public void NotifyTimingWorker()
         {
-            Log.D("MainWindow notifying timer.");
+            Log.D("UI.MainWindow", "MainWindow notifying timer.");
             TimingWorker.ResetDictionaries();
             TimingWorker.Notify();
             // Let the AnnouncerWorker know there are new reads (potentially).
@@ -506,7 +506,7 @@ namespace ChronoKeep.UI
 
         private void Announcer_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Announer window button clicked.");
+            Log.D("UI.MainWindow", "Announer window button clicked.");
             if (announcerWindow != null)
             {
                 return;
@@ -537,10 +537,10 @@ namespace ChronoKeep.UI
 
         private void AboutButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("About button clicked.");
+            Log.D("UI.MainWindow", "About button clicked.");
             if (page is AboutPage)
             {
-                Log.D("About page already displayed.");
+                Log.D("UI.MainWindow", "About page already displayed.");
                 return;
             }
             SwitchPage(new AboutPage(this), true);
@@ -587,11 +587,11 @@ namespace ChronoKeep.UI
             if (announcerWindow != null)
             {
                 announcerWindow = null;
-                Log.D("Announcer Window has closed.");
+                Log.D("UI.MainWindow", "Announcer Window has closed.");
             }
             else
             {
-                Log.D("Announcer Window was supposed to close but did not.");
+                Log.D("UI.MainWindow", "Announcer Window was supposed to close but did not.");
             }
         }
 

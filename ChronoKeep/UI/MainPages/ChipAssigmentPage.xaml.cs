@@ -49,7 +49,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void BibChipList_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Log.D("BibChipList size has changed.");
+            Log.D("UI.MainPages.ChipAssignmentPage", "BibChipList size has changed.");
             ListView listView = sender as ListView;
             GridView gView = listView.View as GridView;
 
@@ -134,7 +134,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void SaveSingleButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Save Single clicked.");
+            Log.D("UI.MainPages.ChipAssignmentPage", "Save Single clicked.");
             long chip = -1, bib = -1;
             long.TryParse(SingleBibBox.Text, out bib);
             if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
@@ -145,7 +145,7 @@ namespace ChronoKeep.UI.MainPages
             {
                 long.TryParse(SingleChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out chip);
             }
-            Log.D("Bib " + bib + " Chip " + chip);
+            Log.D("UI.MainPages.ChipAssignmentPage", "Bib " + bib + " Chip " + chip);
             if (chip == -1 || bib == -1)
             {
                 MessageBox.Show("The bib or chip is not valid.");
@@ -168,7 +168,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void SaveRangeButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Save Range clicked.");
+            Log.D("UI.MainPages.ChipAssignmentPage", "Save Range clicked.");
             long startChip = -1, endChip = -1, startBib = -1, endBib = -1;
             long.TryParse(RangeStartBibBox.Text, out startBib);
             long.TryParse(RangeEndBibBox.Text, out endBib);
@@ -182,7 +182,7 @@ namespace ChronoKeep.UI.MainPages
                 long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip);
                 long.TryParse(RangeEndChipLabel.Content.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip);
             }
-            Log.D("StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
+            Log.D("UI.MainPages.ChipAssignmentPage", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
             if (startChip == -1 || endChip == -1 || startBib == -1 || endBib == -1)
             {
                 MessageBox.Show("One or more values is not valid.");
@@ -206,7 +206,7 @@ namespace ChronoKeep.UI.MainPages
 
         private async void FileImport_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Import from file clicked.");
+            Log.D("UI.MainPages.ChipAssignmentPage", "Import from file clicked.");
             OpenFileDialog bib_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv,*.txt)|*.csv;*.txt|All files|*" };
             if (bib_dialog.ShowDialog() == true) {
                 try
@@ -229,17 +229,17 @@ namespace ChronoKeep.UI.MainPages
                 }
                 catch (Exception ex)
                 {
-                    Log.E("Something went wrong when trying to read the CSV file.");
-                    Log.E(ex.StackTrace);
+                    Log.E("UI.MainPages.ChipAssignmentPage", "Something went wrong when trying to read the CSV file.");
+                    Log.E("UI.MainPages.ChipAssignmentPage", ex.StackTrace);
                 }
             }
         }
 
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Copy clicked.");
+            Log.D("UI.MainPages.ChipAssignmentPage", "Copy clicked.");
             int oldEventId = Convert.ToInt32(((ComboBoxItem)previousEvents.SelectedItem).Uid);
-            Log.D("Old event Id is " + oldEventId);
+            Log.D("UI.MainPages.ChipAssignmentPage", "Old event Id is " + oldEventId);
             if (oldEventId > 0)
             {
                 List<BibChipAssociation> assocs = database.GetBibChips(oldEventId);
@@ -251,8 +251,8 @@ namespace ChronoKeep.UI.MainPages
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Delete clicked.");
-            Log.D("Attempting to delete.");
+            Log.D("UI.MainPages.ChipAssignmentPage", "Delete clicked.");
+            Log.D("UI.MainPages.ChipAssignmentPage", "Attempting to delete.");
             IList selected = bibChipList.SelectedItems;
             List<BibChipAssociation> items = new List<BibChipAssociation>();
             foreach (BibChipAssociation b in selected)
@@ -266,7 +266,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void UseTool_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Use Tool clicked.");
+            Log.D("UI.MainPages.ChipAssignmentPage", "Use Tool clicked.");
             ChipTool chipTool = ChipTool.NewWindow(mWindow, database);
             if (chipTool != null)
             {
@@ -337,7 +337,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Export_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Export clicked.");
+            Log.D("UI.MainPages.ChipAssignmentPage", "Export clicked.");
             bool excel = mWindow.ExcelEnabled();
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
@@ -356,7 +356,7 @@ namespace ChronoKeep.UI.MainPages
                 }
                 IDataExporter exporter;
                 string extension = Path.GetExtension(saveFileDialog.FileName);
-                Log.D(string.Format("Extension is '{0}'", extension));
+                Log.D("UI.MainPages.ChipAssignmentPage", string.Format("Extension is '{0}'", extension));
                 if (extension.IndexOf("xls") != -1)
                 {
                     exporter = new ExcelExporter();
@@ -371,7 +371,7 @@ namespace ChronoKeep.UI.MainPages
                         format.Append("}\",");
                     }
                     format.Remove(format.Length - 1, 1);
-                    Log.D(string.Format("The format is '{0}'", format.ToString()));
+                    Log.D("UI.MainPages.ChipAssignmentPage", string.Format("The format is '{0}'", format.ToString()));
                     exporter = new CSVExporter(format.ToString());
                 }
                 exporter.SetData(headers, data);

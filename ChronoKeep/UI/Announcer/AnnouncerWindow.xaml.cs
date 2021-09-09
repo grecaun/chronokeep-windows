@@ -42,7 +42,7 @@ namespace ChronoKeep.UI.Announcer
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Log.D("Announcer window is closing!");
+            Log.D("UI.Announcer.AnnouncerWindow", "Announcer window is closing!");
             if (announcerWorker != null)
             {
                 AnnouncerWorker.Shutdown();

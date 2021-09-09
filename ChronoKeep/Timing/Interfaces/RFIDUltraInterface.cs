@@ -45,7 +45,7 @@ namespace ChronoKeep.Timing.Interfaces
         {
             List<Socket> output = new List<Socket>();
             sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            Log.D("Attempting to connect to " + IpAddress + ":" + Port.ToString());
+            Log.D("Timing.Interfaces.RFIDUltraInterface", "Attempting to connect to " + IpAddress + ":" + Port.ToString());
             try
             {
                 sock.Connect(IpAddress, Port);
@@ -53,10 +53,10 @@ namespace ChronoKeep.Timing.Interfaces
             }
             catch
             {
-                Log.D("Unable to connect.");
+                Log.D("Timing.Interfaces.RFIDUltraInterface", "Unable to connect.");
                 return null;
             }
-            Log.D("Connected. Returning socket.");
+            Log.D("Timing.Interfaces.RFIDUltraInterface", "Connected. Returning socket.");
             return output;
         }
 
@@ -165,7 +165,7 @@ namespace ChronoKeep.Timing.Interfaces
                 // If "HH:MM:SS DD-MM-YYYY" then it's a time message
                 else if (time.IsMatch(message))
                 {
-                    Log.D("It's a time message.");
+                    Log.D("Timing.Interfaces.RFIDUltraInterface", "It's a time message.");
                     Match match = time.Match(message);
                     if (!output.ContainsKey(MessageType.TIME))
                     {
@@ -661,7 +661,7 @@ namespace ChronoKeep.Timing.Interfaces
 
         private void SendMessage(string msg)
         {
-            Log.D("Sending message '" + msg + "'");
+            Log.D("Timing.Interfaces.RFIDUltraInterface", "Sending message '" + msg + "'");
             sock.Send(Encoding.ASCII.GetBytes(msg + "\n"));
         }
 

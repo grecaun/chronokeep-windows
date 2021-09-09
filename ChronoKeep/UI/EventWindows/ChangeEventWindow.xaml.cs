@@ -44,16 +44,16 @@ namespace ChronoKeep.UI
 
         private void ChangeButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Change Button Clicked.");
+            Log.D("UI.ChangeEventWindow", "Change Button Clicked.");
             Event one = (Event)eventList.SelectedItem;
             if (one != null)
             {
-                Log.D("Selected event has ID of " + one.Identifier);
+                Log.D("UI.ChangeEventWindow", "Selected event has ID of " + one.Identifier);
                 database.SetAppSetting(Constants.Settings.CURRENT_EVENT, one.Identifier.ToString());
             }
             else
             {
-                Log.D("No event selected.");
+                Log.D("UI.ChangeEventWindow", "No event selected.");
             }
             this.Close();
 
@@ -61,13 +61,13 @@ namespace ChronoKeep.UI
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Cancel button clicked.");
+            Log.D("UI.ChangeEventWindow", "Cancel button clicked.");
             this.Close();
         }
 
         private void EventList_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Log.D("EventList size has changed.");
+            Log.D("UI.ChangeEventWindow", "EventList size has changed.");
             ListView listView = sender as ListView;
             GridView gView = listView.View as GridView;
 

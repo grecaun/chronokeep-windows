@@ -34,7 +34,7 @@ namespace ChronoKeep.UI.MainPages
 
         public async void UpdateView()
         {
-            Log.D("Updating Participants Page.");
+            Log.D("UI.MainPages.ParticipantsPage", "Updating Participants Page.");
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
@@ -80,12 +80,12 @@ namespace ChronoKeep.UI.MainPages
             ParticipantsList.SelectedItems.Clear();
             ParticipantsList.ItemsSource = newParts;
             ParticipantsList.Items.Refresh();
-            Log.D("Participants updated.");
+            Log.D("UI.MainPages.ParticipantsPage", "Participants updated.");
         }
 
         public void UpdateDistancesBox()
         {
-            Log.D("Updating distances box.");
+            Log.D("UI.MainPages.ParticipantsPage", "Updating distances box.");
             theEvent = database.GetCurrentEvent();
             DistanceBox.Items.Clear();
             DistanceBox.Items.Add(new ComboBoxItem()
@@ -114,13 +114,13 @@ namespace ChronoKeep.UI.MainPages
         {
             if (mWindow.ExcelEnabled())
             {
-                Log.D("Excel is allowed.");
+                Log.D("UI.MainPages.ParticipantsPage", "Excel is allowed.");
                 ImportExcel.Visibility = Visibility.Visible;
                 ImportCSV.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Log.D("Excel is not allowed.");
+                Log.D("UI.MainPages.ParticipantsPage", "Excel is not allowed.");
                 ImportExcel.Visibility = Visibility.Collapsed;
                 ImportCSV.Visibility = Visibility.Visible;
             }
@@ -128,7 +128,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void ImportExcel_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Import Excel clicked.");
+            Log.D("UI.MainPages.ParticipantsPage", "Import Excel clicked.");
             OpenFileDialog excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.csv)|*.xlsx;*.csv|All files|*" };
             if (excel_dialog.ShowDialog() == true)
             {
@@ -146,15 +146,15 @@ namespace ChronoKeep.UI.MainPages
                 catch (Exception ex)
                 {
                     MessageBox.Show("There was a problem importing the file.");
-                    Log.E("Something went wrong when trying to read the Excel file.");
-                    Log.E(ex.StackTrace);
+                    Log.E("UI.MainPages.ParticipantsPage", "Something went wrong when trying to read the Excel file.");
+                    Log.E("UI.MainPages.ParticipantsPage", ex.StackTrace);
                 }
             }
         }
 
         private void ImportCSV_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Import CSV clicked.");
+            Log.D("UI.MainPages.ParticipantsPage", "Import CSV clicked.");
             OpenFileDialog csv_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv)|*.csv|All files|*" };
             if (csv_dialog.ShowDialog() == true)
             {
@@ -172,15 +172,15 @@ namespace ChronoKeep.UI.MainPages
                 catch (Exception ex)
                 {
                     MessageBox.Show("There was a problem importing the file.");
-                    Log.E("Something went wrong when trying to read the CSV file.");
-                    Log.E(ex.StackTrace);
+                    Log.E("UI.MainPages.ParticipantsPage", "Something went wrong when trying to read the CSV file.");
+                    Log.E("UI.MainPages.ParticipantsPage", ex.StackTrace);
                 }
             }
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Add clicked.");
+            Log.D("UI.MainPages.ParticipantsPage", "Add clicked.");
             ModifyParticipantWindow addParticipant = ModifyParticipantWindow.NewWindow(mWindow, database);
             if (addParticipant != null)
             {
@@ -191,13 +191,13 @@ namespace ChronoKeep.UI.MainPages
 
         private void Modify_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Modify clicked.");
+            Log.D("UI.MainPages.ParticipantsPage", "Modify clicked.");
             List<Participant> selected = new List<Participant>();
             foreach (Participant p in ParticipantsList.SelectedItems)
             {
                 selected.Add(p);
             }
-            Log.D(selected.Count + " participants selected.");
+            Log.D("UI.MainPages.ParticipantsPage", selected.Count + " participants selected.");
             if (selected.Count > 1)
             {
                 ChangeMultiParticipantWindow changeMultiParticipantWindow = new ChangeMultiParticipantWindow(mWindow, database, selected);
@@ -221,7 +221,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Remove clicked.");
+            Log.D("UI.MainPages.ParticipantsPage", "Remove clicked.");
             IList selected = ParticipantsList.SelectedItems;
             List<Participant> parts = new List<Participant>();
             foreach (Participant p in selected)
@@ -239,7 +239,7 @@ namespace ChronoKeep.UI.MainPages
 
         private async void Export_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Export clicked."); bool excel = mWindow.ExcelEnabled();
+            Log.D("UI.MainPages.ParticipantsPage", "Export clicked."); bool excel = mWindow.ExcelEnabled();
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = mWindow.ExcelEnabled() ? "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv" : "CSV (*.csv)|*.csv",
@@ -251,7 +251,7 @@ namespace ChronoKeep.UI.MainPages
                 {
                     await Task.Run(() =>
                     {
-                        Log.D("Event has name " + theEvent.Name + " and date of " + theEvent.Date + " and finally has ID " + theEvent.Identifier);
+                        Log.D("UI.MainPages.ParticipantsPage", "Event has name " + theEvent.Name + " and date of " + theEvent.Date + " and finally has ID " + theEvent.Identifier);
                         List<Participant> parts = database.GetParticipants(theEvent.Identifier);
                         string[] headers = new string[] {
                             "Bib",
@@ -307,7 +307,7 @@ namespace ChronoKeep.UI.MainPages
                         }
                         IDataExporter exporter = null;
                         string extension = Path.GetExtension(saveFileDialog.FileName);
-                        Log.D(string.Format("Extension is '{0}'", extension));
+                        Log.D("UI.MainPages.ParticipantsPage", string.Format("Extension is '{0}'", extension));
                         if (extension.IndexOf("xls") != -1)
                         {
                             exporter = new ExcelExporter();
@@ -322,7 +322,7 @@ namespace ChronoKeep.UI.MainPages
                                 format.Append("}\",");
                             }
                             format.Remove(format.Length - 1, 1);
-                            Log.D(string.Format("The format is '{0}'", format.ToString()));
+                            Log.D("UI.MainPages.ParticipantsPage", string.Format("The format is '{0}'", format.ToString()));
                             exporter = new CSVExporter(format.ToString());
                         }
                         if (exporter != null)
@@ -348,7 +348,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void SortBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Log.D("Sort style changed.");
+            Log.D("UI.MainPages.ParticipantsPage", "Sort style changed.");
             if (participants != null)
             {
                 switch (((ComboBoxItem)SortBox.SelectedItem).Content)
@@ -370,7 +370,7 @@ namespace ChronoKeep.UI.MainPages
                     ParticipantsList.Items.Refresh();
                 }
             }
-            Log.D("Done");
+            Log.D("UI.MainPages.ParticipantsPage", "Done");
         }
 
         public void Closing()
@@ -383,12 +383,12 @@ namespace ChronoKeep.UI.MainPages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            Log.D("Page loaded.");
+            Log.D("UI.MainPages.ParticipantsPage", "Page loaded.");
         }
 
         private void ParticipantsList_Loaded(object sender, RoutedEventArgs e)
         {
-            Log.D("Participant list loaded.");
+            Log.D("UI.MainPages.ParticipantsPage", "Participant list loaded.");
             UpdateDistancesBox();
         }
 

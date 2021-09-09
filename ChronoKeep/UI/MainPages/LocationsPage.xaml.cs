@@ -59,7 +59,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Add Location clicked.");
+            Log.D("UI.MainPages.LocationsPage", "Add Location clicked.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
@@ -71,14 +71,14 @@ namespace ChronoKeep.UI.MainPages
 
         internal void RemoveLocation(TimingLocation location)
         {
-            Log.D("Removing a location.");
+            Log.D("UI.MainPages.LocationsPage", "Removing a location.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
             if (location.Identifier == Constants.Timing.LOCATION_FINISH || location.Identifier == Constants.Timing.LOCATION_START)
             {
-                Log.E("Somehow they told us to delete the start/finish location.");
+                Log.E("UI.MainPages.LocationsPage", "Somehow they told us to delete the start/finish location.");
             }
             else
             {
@@ -90,7 +90,7 @@ namespace ChronoKeep.UI.MainPages
 
         public void Update_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Update all clicked.");
+            Log.D("UI.MainPages.LocationsPage", "Update all clicked.");
             UpdateDatabase();
             UpdateView();
         }
@@ -263,13 +263,13 @@ namespace ChronoKeep.UI.MainPages
 
             private void Remove_Click(object sender, EventArgs e)
             {
-                Log.D("Removing an item.");
+                Log.D("UI.MainPages.LocationsPage", "Removing an item.");
                 this.page.RemoveLocation(myLocation);
             }
 
             public void UpdateLocation()
             {
-                Log.D("Updating location.");
+                Log.D("UI.MainPages.LocationsPage", "Updating location.");
                 try
                 {
                     myLocation.Name = LocationName.Text;

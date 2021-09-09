@@ -123,7 +123,7 @@ namespace ChronoKeep.UI.ChipAssignment
 
             private void Remove_Click(object sender, EventArgs e)
             {
-                Log.D("Removing an item.");
+                Log.D("UI.ChipAssignment.ChipTool", "Removing an item.");
                 try
                 {
                     parent.Items.Remove(this);
@@ -228,7 +228,7 @@ namespace ChronoKeep.UI.ChipAssignment
                 int.TryParse(tag.EndBib.Text, out endBib);
                 int.TryParse(tag.StartChip.Text, out startChip);
                 int.TryParse(tag.EndChip.Content.ToString(), out endChip);
-                Log.D("StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
+                Log.D("UI.ChipAssignment.ChipTool", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
                 Range curRange = new Range
                 {
                     StartBib = startBib,

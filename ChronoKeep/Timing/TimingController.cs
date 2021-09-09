@@ -69,12 +69,12 @@ namespace ChronoKeep.Timing
 
         public void ConnectTimingSystem(TimingSystem system)
         {
-            Log.D("-- UPDATE -- Creating interface for communication with timing system.");
+            Log.D("Timing.TimingController", "-- UPDATE -- Creating interface for communication with timing system.");
             system.CreateTimingSystemInterface(database);
             List<Socket> sockets = system.Connect();
             if (sockets == null)
             {
-                Log.D("No sockets returned.");
+                Log.D("Timing.TimingController", "No sockets returned.");
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
             }
             else
@@ -82,11 +82,11 @@ namespace ChronoKeep.Timing
                 int i = 1;
                 foreach (Socket sock in sockets)
                 {
-                    Log.D("Socket " + i++);
+                    Log.D("Timing.TimingController", "Socket " + i++);
                     TimingSystemDict[sock] = system;
                     if (sock.Connected)
                     {
-                        Log.D("Connected to " + system.IPAddress);
+                        Log.D("Timing.TimingController", "Connected to " + system.IPAddress);
                         TimingSystemSockets.Add(sock);
                         TimingSystemDict[sock].SetLastCommunicationTime();
                         TimingSystemDict[sock].Status = SYSTEM_STATUS.CONNECTED;
@@ -125,12 +125,12 @@ namespace ChronoKeep.Timing
 
         public void Run()
         {
-            Log.D("Timing Controller is now running.");
+            Log.D("Timing.TimingController", "Timing Controller is now running.");
             if (mut.WaitOne(3000))
             {
                 if (Running == true)
                 {
-                    Log.D("Timing Controller Thread already running.");
+                    Log.D("Timing.TimingController", "Timing Controller Thread already running.");
                     mut.ReleaseMutex();
                     return;
                 }
@@ -139,7 +139,7 @@ namespace ChronoKeep.Timing
             }
             else
             {
-                Log.D("Unable to aquire mutex.");
+                Log.D("Timing.TimingController", "Unable to aquire mutex.");
                 return;
             }
             bool UpdateTiming = false;
@@ -159,7 +159,7 @@ namespace ChronoKeep.Timing
                         int num_recvd = sock.Receive(recvd);
                         if (num_recvd == 0)
                         {
-                            Log.D("No longer connected to Timing System");
+                            Log.D("Timing.TimingController", "No longer connected to Timing System");
                             TimingSystem disconnected = TimingSystemDict[sock];
                             TimingSystemSockets.Remove(sock);
                             TimingSystemDict.Remove(sock);
@@ -168,45 +168,45 @@ namespace ChronoKeep.Timing
                         else
                         {
                             string msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
-                            Log.D("Timing System - Message is :" + msg.Trim());
+                            Log.D("Timing.TimingController", "Timing System - Message is :" + msg.Trim());
                             Dictionary<MessageType, List<string>> messageTypes = TimingSystemDict[sock].SystemInterface.ParseMessages(msg, sock);
                             foreach (MessageType type in messageTypes.Keys)
                             {
                                 switch (type)
                                 {
                                     case MessageType.CONNECTED:
-                                        Log.D("Timing system successfully connected.");
+                                        Log.D("Timing.TimingController", "Timing system successfully connected.");
                                         TimingSystemDict[sock].Status = SYSTEM_STATUS.CONNECTED;
                                         UpdateTiming = true;
                                         break;
                                     case MessageType.CHIPREAD:
-                                        Log.D("Chipreads found");
+                                        Log.D("Timing.TimingController", "Chipreads found");
                                         ChipRead = true;
                                         break;
                                     case MessageType.SETTINGCHANGE:
-                                        Log.D("Setting value changed.");
+                                        Log.D("Timing.TimingController", "Setting value changed.");
                                         break;
                                     case MessageType.SETTINGVALUE:
-                                        Log.D("Setting value given.");
+                                        Log.D("Timing.TimingController", "Setting value given.");
                                         break;
                                     case MessageType.VOLTAGENORMAL:
-                                        Log.D("System voltage normal.");
+                                        Log.D("Timing.TimingController", "System voltage normal.");
                                         break;
                                     case MessageType.VOLTAGELOW:
-                                        Log.D("System voltage low.");
+                                        Log.D("Timing.TimingController", "System voltage low.");
                                         break;
                                     case MessageType.TIME:
-                                        Log.D("Time value received.");
+                                        Log.D("Timing.TimingController", "Time value received.");
                                         TimingSystemDict[sock].SystemTime = messageTypes[MessageType.TIME].First<string>();
                                         UpdateTiming = true;
                                         break;
                                     case MessageType.STATUS:
-                                        Log.D("Status message received.");
+                                        Log.D("Timing.TimingController", "Status message received.");
                                         TimingSystemDict[sock].SystemStatus = messageTypes[MessageType.STATUS].Last<string>();
                                         UpdateTiming = true;
                                         break;
                                     case MessageType.ERROR:
-                                        Log.D("Error from timing system.");
+                                        Log.D("Timing.TimingController", "Error from timing system.");
                                         break;
                                 }
                             }
@@ -227,14 +227,14 @@ namespace ChronoKeep.Timing
                     {
                         if (TimingSystemDict.ContainsKey(sock))
                         {
-                            Log.D("Socket errored on us.");
+                            Log.D("Timing.TimingController", "Socket errored on us.");
                             TimingSystemSockets.Remove(sock);
                             TimingSystem disconnected = TimingSystemDict[sock];
                             TimingSystemDict.Remove(sock);
                             mainWindow.TimingSystemDisconnected(disconnected);
                         } else
                         {
-                            Log.D("Successful disconnect.");
+                            Log.D("Timing.TimingController", "Successful disconnect.");
                         }
                     }
                 }

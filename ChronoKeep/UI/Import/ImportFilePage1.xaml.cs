@@ -34,7 +34,7 @@ namespace ChronoKeep
 
         internal List<string> RepeatHeaders()
         {
-            Log.D("Checking for repeat headers in user selection.");
+            Log.D("UI.ImportFilePage1", "Checking for repeat headers in user selection.");
             int[] check = new int[ImportFileWindow.human_fields.Length];
             bool repeat = false;
             List<string> output = new List<string>();

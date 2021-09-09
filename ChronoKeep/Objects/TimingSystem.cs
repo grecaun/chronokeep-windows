@@ -65,9 +65,9 @@ namespace ChronoKeep.Objects
             {
                 return null;
             }
-            Log.D("TimingSystem class calling connect on interface.");
+            Log.D("Objects.TimingSystem", "TimingSystem class calling connect on interface.");
             Sockets = SystemInterface.Connect(IPAddress, Port);
-            Log.D("TimingSystem class returning output from Connect.");
+            Log.D("Objects.TimingSystem", "TimingSystem class returning output from Connect.");
             return Sockets;
         }
 
@@ -96,12 +96,12 @@ namespace ChronoKeep.Objects
         {
             if (this.Type == Constants.Settings.TIMING_RFID)
             {
-                Log.D("System interface is RFID.");
+                Log.D("Objects.TimingSystem", "System interface is RFID.");
                 SystemInterface = new RFIDUltraInterface(database, LocationID);
             }
             else if (this.Type == Constants.Settings.TIMING_IPICO || this.Type == Constants.Settings.TIMING_IPICO_LITE)
             {
-                Log.D("System interface is IPICO.");
+                Log.D("Objects.TimingSystem", "System interface is IPICO.");
                 SystemInterface = new IpicoInterface(database, LocationID, this.Type);
             }
         }

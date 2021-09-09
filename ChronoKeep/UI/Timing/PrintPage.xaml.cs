@@ -1491,7 +1491,7 @@ namespace ChronoKeep.UI.Timing
 
         private void Print_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("All times - print clicked.");
+            Log.D("UI.Timing.PrintPage", "All times - print clicked.");
             System.Windows.Forms.PrintDialog printDialog = new System.Windows.Forms.PrintDialog
             {
                 AllowSomePages = true,
@@ -1594,7 +1594,7 @@ namespace ChronoKeep.UI.Timing
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("All times - save clicked.");
+            Log.D("UI.Timing.PrintPage", "All times - save clicked.");
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 Filter = "PDF (*.pdf)|*.pdf",

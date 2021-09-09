@@ -54,7 +54,7 @@ namespace ChronoKeep.Timing.Announcer
                 output.AddRange(participants);
                 mutex.ReleaseMutex();
             }
-            Log.D(string.Format("Returning {0} participants to announce.", output.Count));
+            Log.D("Timing.Announcer.AnnouncerWorker", string.Format("Returning {0} participants to announce.", output.Count));
             return output;
         }
 
@@ -77,13 +77,13 @@ namespace ChronoKeep.Timing.Announcer
             }
             catch
             {
-                Log.D("Unable to release, release is most likely full.");
+                Log.D("Timing.Announcer.AnnouncerWorker", "Unable to release, release is most likely full.");
             }
         }
 
         private bool ProcessReads(List<ChipRead> announcerReads, Dictionary<int, Participant> participantBibDictionary)
         {
-            Log.D("Processing chip reads.");
+            Log.D("Timing.Announcer.AnnouncerWorker", "Processing chip reads.");
             bool newParticipants = false;
             foreach (ChipRead read in announcerReads)
             {
@@ -120,7 +120,7 @@ namespace ChronoKeep.Timing.Announcer
             {
                 if (participantBibDictionary.ContainsKey(part.Bib))
                 {
-                    Log.E("Multiples of a Bib found in participants set. " + part.Bib);
+                    Log.E("Timing.Announcer.AnnouncerWorker", "Multiples of a Bib found in participants set. " + part.Bib);
                 }
                 participantBibDictionary[part.Bib] = part;
             }
@@ -135,20 +135,20 @@ namespace ChronoKeep.Timing.Announcer
                     if (QuittingTime)
                     {
                         mutex.ReleaseMutex();
-                        Log.D("Exiting announcer thread.");
+                        Log.D("Timing.Announcer.AnnouncerWorker", "Exiting announcer thread.");
                         return;
                     }
                     mutex.ReleaseMutex();
                 }
                 if (notified)
                 {
-                    Log.D("New chip reads found!");
+                    Log.D("Timing.Announcer.AnnouncerWorker", "New chip reads found!");
                     Event ev2 = database.GetCurrentEvent();
                     // verify that we both ev2 and theevent are not null and they match
                     if (ev2 == null || theEvent == null || ev2.Identifier != theEvent.Identifier)
                     {
                         QuittingTime = true;
-                        Log.E("The event changed while the announcer window is open.");
+                        Log.E("Timing.Announcer.AnnouncerWorker", "The event changed while the announcer window is open.");
                         return;
                     }
                     // Ensure the event exists.
@@ -157,14 +157,14 @@ namespace ChronoKeep.Timing.Announcer
                         // If we've seen new participants update the window.
                         if (ProcessReads(database.GetAnnouncerChipReads(theEvent.Identifier), participantBibDictionary))
                         {
-                            Log.D("There are people to announce.");
+                            Log.D("Timing.Announcer.AnnouncerWorker", "There are people to announce.");
                             window.UpdateAnnouncerWindow();
                         }
                     }
                 }
                 else
                 {
-                    Log.D("Update window expired.");
+                    Log.D("Timing.Announcer.AnnouncerWorker", "Update window expired.");
                     window.UpdateAnnouncerWindow();
                 }
             }

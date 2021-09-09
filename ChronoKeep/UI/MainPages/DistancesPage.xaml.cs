@@ -92,7 +92,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Add distance clicked.");
+            Log.D("UI.MainPages.DistancesPage", "Add distance clicked.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
@@ -104,20 +104,20 @@ namespace ChronoKeep.UI.MainPages
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Update clicked.");
+            Log.D("UI.MainPages.DistancesPage", "Update clicked.");
             UpdateDatabase();
             UpdateView();
         }
 
         private void Revert_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Revert clicked.");
+            Log.D("UI.MainPages.DistancesPage", "Revert clicked.");
             UpdateView();
         }
 
         internal void RemoveDistance(Distance distance)
         {
-            Log.D("Remove distance clicked.");
+            Log.D("UI.MainPages.DistancesPage", "Remove distance clicked.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
@@ -152,13 +152,13 @@ namespace ChronoKeep.UI.MainPages
 
         public void Keyboard_Ctrl_A()
         {
-            Log.D("Ctrl + A Passed to this page.");
+            Log.D("UI.MainPages.DistancesPage", "Ctrl + A Passed to this page.");
             Add_Click(null, null);
         }
 
         public void Keyboard_Ctrl_S()
         {
-            Log.D("Ctrl + S Passed to this page.");
+            Log.D("UI.MainPages.DistancesPage", "Ctrl + S Passed to this page.");
             UpdateDatabase();
             UpdateView();
         }
@@ -323,7 +323,7 @@ namespace ChronoKeep.UI.MainPages
                 waveType = 1;
                 if (theDistance.StartOffsetSeconds < 0)
                 {
-                    Log.D("Setting type to negative and making seconds/milliseconds positive for offset textbox.");
+                    Log.D("UI.MainPages.DistancesPage", "Setting type to negative and making seconds/milliseconds positive for offset textbox.");
                     waveType = -1;
                     imgUri = new Uri("pack://application:,,,/img/dash.png");
                     theDistance.StartOffsetSeconds *= -1;
@@ -411,7 +411,7 @@ namespace ChronoKeep.UI.MainPages
 
             private void Remove_Click(object sender, RoutedEventArgs e)
             {
-                Log.D("Removing distance.");
+                Log.D("UI.MainPages.DistancesPage", "Removing distance.");
                 this.page.RemoveDistance(theDistance);
             }
 
@@ -433,7 +433,7 @@ namespace ChronoKeep.UI.MainPages
 
             private void SwapWaveType_Click(object sender, RoutedEventArgs e)
             {
-                Log.D("Plus/Minus sign clicked. WaveType is: " + waveType);
+                Log.D("UI.MainPages.DistancesPage", "Plus/Minus sign clicked. WaveType is: " + waveType);
                 if (waveType < 0)
                 {
                     WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/plus.png"));
@@ -444,7 +444,7 @@ namespace ChronoKeep.UI.MainPages
                 }
                 else
                 {
-                    Log.E("Something went wrong and the wave type was set to 0.");
+                    Log.E("UI.MainPages.DistancesPage", "Something went wrong and the wave type was set to 0.");
                 }
                 waveType *= -1;
             }
@@ -456,7 +456,7 @@ namespace ChronoKeep.UI.MainPages
 
             public void UpdateDistance()
             {
-                Log.D("Updating sub distance.");
+                Log.D("UI.MainPages.DistancesPage", "Updating sub distance.");
                 parent.UpdateDistance();
                 Distance parentDiv = parent.GetDistance();
                 theDistance.Name = DistanceName.Text;
@@ -797,7 +797,7 @@ namespace ChronoKeep.UI.MainPages
                 waveType = 1;
                 if (theDistance.StartOffsetSeconds < 0)
                 {
-                    Log.D("Setting type to negative and making seconds/milliseconds positive for offset textbox.");
+                    Log.D("UI.MainPages.DistancesPage", "Setting type to negative and making seconds/milliseconds positive for offset textbox.");
                     waveType = -1;
                     imgUri = new Uri("pack://application:,,,/img/dash.png");
                     theDistance.StartOffsetSeconds *= -1;
@@ -862,19 +862,19 @@ namespace ChronoKeep.UI.MainPages
 
             private void AddSub_Click(object sender, RoutedEventArgs e)
             {
-                Log.D("Adding sub distance.");
+                Log.D("UI.MainPages.DistancesPage", "Adding sub distance.");
                 this.page.AddSubDistance(theDistance);
             }
 
             private void Remove_Click(object sender, RoutedEventArgs e)
             {
-                Log.D("Removing distance.");
+                Log.D("UI.MainPages.DistancesPage", "Removing distance.");
                 this.page.RemoveDistance(theDistance);
             }
 
             private void SwapWaveType_Click(object sender, RoutedEventArgs e)
             {
-                Log.D("Plus/Minus sign clicked. WaveType is: " + waveType);
+                Log.D("UI.MainPages.DistancesPage", "Plus/Minus sign clicked. WaveType is: " + waveType);
                 if (waveType < 0)
                 {
                     WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/plus.png"));
@@ -883,7 +883,7 @@ namespace ChronoKeep.UI.MainPages
                     WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/dash.png"));
                 } else
                 {
-                    Log.E("Something went wrong and the wave type was set to 0.");
+                    Log.E("UI.MainPages.DistancesPage", "Something went wrong and the wave type was set to 0.");
                 }
                 waveType *= -1;
             }
@@ -895,7 +895,7 @@ namespace ChronoKeep.UI.MainPages
 
             public void UpdateDistance()
             {
-                Log.D("Updating distance.");
+                Log.D("UI.MainPages.DistancesPage", "Updating distance.");
                 theDistance.Name = DistanceName.Text;
                 double dist = 0.0;
                 try
@@ -944,7 +944,7 @@ namespace ChronoKeep.UI.MainPages
                 }
                 if (waveType < 0)
                 {
-                    Log.D("Recording negative values.");
+                    Log.D("UI.MainPages.DistancesPage", "Recording negative values.");
                     theDistance.StartOffsetSeconds *= -1;
                     theDistance.StartOffsetMilliseconds *= -1;
                 }
@@ -958,7 +958,7 @@ namespace ChronoKeep.UI.MainPages
 
             private void CopyFromBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
             {
-                Log.D("Attempting to copy from a different distance! Here we go!");
+                Log.D("UI.MainPages.DistancesPage", "Attempting to copy from a different distance! Here we go!");
                 // Ensure we've got something selected, it has a parseable UID,
                 // and there's a distance related to it
                 if (CopyFromBox.SelectedItem != null

@@ -42,7 +42,7 @@ namespace ChronoKeep.UI.Timing
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Submit clicked.");
+            Log.D("UI.Timing.EditRawReadsWindow", "Submit clicked.");
             // Keep track of any bibs/chips we've changed.
             HashSet<int> bibsChanged = new HashSet<int>();
             HashSet<string> chipsChanged = new HashSet<string>();
@@ -61,7 +61,7 @@ namespace ChronoKeep.UI.Timing
             }
             catch
             {
-                Log.D("Somehow the time value wasn't valid.");
+                Log.D("UI.Timing.EditRawReadsWindow", "Somehow the time value wasn't valid.");
                 MessageBox.Show("Something went wrong trying to figure out that time value.");
                 return;
             }
@@ -103,7 +103,7 @@ namespace ChronoKeep.UI.Timing
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Cancel clicked.");
+            Log.D("UI.Timing.EditRawReadsWindow", "Cancel clicked.");
             this.Close();
         }
 

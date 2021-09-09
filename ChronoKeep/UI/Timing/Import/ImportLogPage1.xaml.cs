@@ -58,7 +58,7 @@ namespace ChronoKeep.UI.Timing.Import
 
         public void UpdateLocations(List<TimingLocation> locations)
         {
-            Log.D("Updating locations in import log page 1.");
+            Log.D("UI.Timing.ImportLog", "Updating locations in import log page 1.");
             int locationId = -12;
             if (LocationHolder.SelectedItem != null)
             {
@@ -91,9 +91,9 @@ namespace ChronoKeep.UI.Timing.Import
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Next Button Clicked.");
+            Log.D("UI.Timing.ImportLog", "Next Button Clicked.");
             int locationId = Convert.ToInt32(((ComboBoxItem)LocationHolder.SelectedItem).Uid);
-            Log.D("Location ID is: " + locationId + " name of: " + ((ComboBoxItem)LocationHolder.SelectedItem).Content.ToString());
+            Log.D("UI.Timing.ImportLog", "Location ID is: " + locationId + " name of: " + ((ComboBoxItem)LocationHolder.SelectedItem).Content.ToString());
             if (((ComboBoxItem)TypeHolder.SelectedItem).Uid == LogImporter.Type.CUSTOM.ToString())
             {
                 parent.Next(locationId);
@@ -110,13 +110,13 @@ namespace ChronoKeep.UI.Timing.Import
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Cancel Button Clicked.");
+            Log.D("UI.Timing.ImportLog", "Cancel Button Clicked.");
             parent.Cancel();
         }
 
         private void TypeHolder_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Log.D("Type changed.");
+            Log.D("UI.Timing.ImportLog", "Type changed.");
             if (((ComboBoxItem)TypeHolder.SelectedItem).Uid == LogImporter.Type.CUSTOM.ToString()) {
                 NextButton.Content = "Next";
             }

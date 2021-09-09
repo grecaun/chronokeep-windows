@@ -39,7 +39,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Distances_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Log.D("Distance changed.");
+            Log.D("UI.MainPages.AgeGroupsPage", "Distance changed.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
@@ -101,7 +101,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Adding group.");
+            Log.D("UI.MainPages.AgeGroupsPage", "Adding group.");
             int divId = Constants.Timing.COMMON_AGEGROUPS_DISTANCEID;
             if (!theEvent.CommonAgeGroups)
             {
@@ -112,7 +112,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void AddDefault_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Add default age groups button clicked.");
+            Log.D("UI.MainPages.AgeGroupsPage", "Add default age groups button clicked.");
             int divId = Constants.Timing.COMMON_AGEGROUPS_DISTANCEID;
             if (!theEvent.CommonAgeGroups)
             {
@@ -151,7 +151,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Update_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Update age groups button clicked.");
+            Log.D("UI.MainPages.AgeGroupsPage", "Update age groups button clicked.");
             List<AgeGroup> ageGroups = new List<AgeGroup>();
             List<AgeGroup> toAdd = new List<AgeGroup>();
             foreach (ListBoxItem aAge in AgeGroupsBox.Items)
@@ -215,7 +215,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void RemoveAgeGroup(AAgeGroup group)
         {
-            Log.D("Removing Age Group from view.");
+            Log.D("UI.MainPages.AgeGroupsPage", "Removing Age Group from view.");
             AgeGroupsBox.Items.Remove(group);
         }
 
@@ -388,7 +388,7 @@ namespace ChronoKeep.UI.MainPages
 
             private void Remove_Click(object sender, RoutedEventArgs e)
             {
-                Log.D("Removing.");
+                Log.D("UI.MainPages.AgeGroupsPage", "Removing.");
                 page.RemoveAgeGroup(this);
             }
 

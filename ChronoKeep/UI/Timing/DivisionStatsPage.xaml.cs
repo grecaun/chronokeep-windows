@@ -43,7 +43,7 @@ namespace ChronoKeep.UI.Timing
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
-                Log.E("Something went wrong and no proper event was returned.");
+                Log.E("UI.Timing.DivisionStatsPage", "Something went wrong and no proper event was returned.");
                 return;
             }
             activeListView.ItemsSource = activeParticipants;
@@ -129,7 +129,7 @@ namespace ChronoKeep.UI.Timing
 
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Done button clicked.");
+            Log.D("UI.Timing.DistanceStatsPage", "Done button clicked.");
             parent.LoadMainDisplay();
         }
     }

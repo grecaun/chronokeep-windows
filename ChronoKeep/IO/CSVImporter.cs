@@ -19,14 +19,14 @@ namespace ChronoKeep
 
         public CSVImporter(string filePath)
         {
-            Log.D("Opening file.");
+            Log.D("IO.CSVImporter", "Opening file.");
             file = new StreamReader(filePath);
             FilePath = filePath;
         }
 
         public void FetchHeaders()
         {
-            Log.D("Getting headers from file.");
+            Log.D("IO.CSVImporter", "Getting headers from file.");
             ProcessFirstLine(file.ReadLine());
         }
 
@@ -44,7 +44,7 @@ namespace ChronoKeep
 
         public void FetchData()
         {
-            Log.D("Getting data from file.");
+            Log.D("IO.CSVImporter", "Getting data from file.");
             string line;
             while ((line = file.ReadLine()) != null)
             {
@@ -68,13 +68,13 @@ namespace ChronoKeep
             {
                 try
                 {
-                    Log.D("Closing file.");
+                    Log.D("IO.CSVImporter", "Closing file.");
                     file.Close();
                     file = null;
                 }
                 catch
                 {
-                    Log.D("Already closed.");
+                    Log.D("IO.CSVImporter", "Already closed.");
                 }
             }
         }

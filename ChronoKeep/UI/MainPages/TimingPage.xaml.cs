@@ -89,8 +89,8 @@ namespace ChronoKeep.UI.MainPages
                             if (ipinfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                             {
                                 IPAdd.Content = ipinfo.Address;
-                                Log.D("IP Address :" + ipinfo.Address);
-                                Log.D("IPv4 Mask  :" + ipinfo.IPv4Mask);
+                                Log.D("UI.MainPages.TimingPage", "IP Address :" + ipinfo.Address);
+                                Log.D("UI.MainPages.TimingPage", "IPv4 Mask  :" + ipinfo.IPv4Mask);
                                 string[] ipParts = ipinfo.Address.ToString().Split('.');
                                 string[] maskParts = ipinfo.IPv4Mask.ToString().Split('.');
                                 if (ipParts.Length == 4 && maskParts.Length == 4)
@@ -142,7 +142,7 @@ namespace ChronoKeep.UI.MainPages
             int numSystems = systems.Count;
             if (numSystems < 3)
             {
-                Log.D(systems.Count + " systems found.");
+                Log.D("UI.MainPages.TimingPage", systems.Count + " systems found.");
                 for (int i = 0; i < 3 - numSystems; i++)
                 {
                     systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID));
@@ -240,7 +240,7 @@ namespace ChronoKeep.UI.MainPages
 
         public void UpdateView()
         {
-            Log.D("Updating timing information.");
+            Log.D("UI.MainPages.TimingPage", "Updating timing information.");
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier == -1)
             {
@@ -335,7 +335,7 @@ namespace ChronoKeep.UI.MainPages
             });
             if (updates)
             {
-                Log.D("Updates available.");
+                Log.D("UI.MainPages.TimingPage", "Updates available.");
                 List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
                 stats.Clear();
                 foreach (DistanceStat s in inStats)
@@ -359,7 +359,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void StartRaceClick(object sender, RoutedEventArgs e)
         {
-            Log.D("Starting race.");
+            Log.D("UI.MainPages.TimingPage", "Starting race.");
             StartTime.Text = DateTime.Now.ToString("HH:mm:ss.fff");
             StartRace.IsEnabled = false;
             StartTimeChanged();
@@ -367,7 +367,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void ChangeWaves(object sender, RoutedEventArgs e)
         {
-            Log.D("Set Wave Times clicked.");
+            Log.D("UI.MainPages.TimingPage", "Set Wave Times clicked.");
             WaveWindow waves = new WaveWindow(mWindow, database);
             mWindow.AddWindow(waves);
             waves.ShowDialog();
@@ -375,7 +375,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void ManualEntry(object sender, RoutedEventArgs e)
         {
-            Log.D("Manual Entry selected.");
+            Log.D("UI.MainPages.TimingPage", "Manual Entry selected.");
             ManualEntryWindow manualEntryWindow = ManualEntryWindow.NewWindow(mWindow, database, locations);
             if (manualEntryWindow != null)
             {
@@ -386,7 +386,7 @@ namespace ChronoKeep.UI.MainPages
 
         private async void LoadLog(object sender, RoutedEventArgs e)
         {
-            Log.D("Loading from log.");
+            Log.D("UI.MainPages.TimingPage", "Loading from log.");
             OpenFileDialog csv_dialog = new OpenFileDialog() { Filter = "Log Files (*.csv,*.txt,*.log)|*.csv;*.txt;*.log|All Files|*" };
             if (csv_dialog.ShowDialog() == true)
             {
@@ -406,8 +406,8 @@ namespace ChronoKeep.UI.MainPages
                 }
                 catch (Exception ex)
                 {
-                    Log.E("Something went wrong when trying to read the CSV file.");
-                    Log.E(ex.StackTrace);
+                    Log.E("UI.MainPages.TimingPage", "Something went wrong when trying to read the CSV file.");
+                    Log.E("UI.MainPages.TimingPage", ex.StackTrace);
                 }
             }
         }
@@ -419,7 +419,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Search()
         {
-            Log.D("Searching");
+            Log.D("UI.MainPages.TimingPage", "Searching");
             if (cts != null)
             {
                 cts.Cancel();
@@ -432,7 +432,7 @@ namespace ChronoKeep.UI.MainPages
             }
             catch
             {
-                Log.D("Search cancelled.");
+                Log.D("UI.MainPages.TimingPage", "Search cancelled.");
             }
             finally
             {
@@ -444,14 +444,14 @@ namespace ChronoKeep.UI.MainPages
         {
             if (e.Key == Key.Return)
             {
-                Log.D("Start Time Box return key found.");
+                Log.D("UI.MainPages.TimingPage", "Start Time Box return key found.");
                 UpdateStartTime();
             }
         }
 
         private void StartTimeLostFocus(object sender, RoutedEventArgs e)
         {
-            Log.D("Start Time Box has lost focus.");
+            Log.D("UI.MainPages.TimingPage", "Start Time Box has lost focus.");
             StartTimeChanged();
         }
 
@@ -482,9 +482,9 @@ namespace ChronoKeep.UI.MainPages
             string startTimeValue = StartTime.Text.Replace('_', '0');
             StartRace.IsEnabled = false;
             StartTime.Text = startTimeValue;
-            Log.D("Start time is " + startTimeValue);
+            Log.D("UI.MainPages.TimingPage", "Start time is " + startTimeValue);
             startTime = DateTime.ParseExact(startTimeValue + DateTime.Parse(theEvent.Date).ToString("ddMMyyyy"), "HH:mm:ss.fffddMMyyyy", null);
-            Log.D("Start time is " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            Log.D("UI.MainPages.TimingPage", "Start time is " + startTime.ToString("yyyy-MM-dd HH:mm:ss.fff"));
         }
 
         public void NewMessage()
@@ -497,7 +497,7 @@ namespace ChronoKeep.UI.MainPages
 
         public void OpenTimeWindow(TimingSystem system)
         {
-            Log.D("Opening Set Time Window.");
+            Log.D("UI.MainPages.TimingPage", "Opening Set Time Window.");
             timeWindow = new SetTimeWindow(this, system);
             timeWindow.ShowDialog();
             timeWindow = null;
@@ -542,7 +542,7 @@ namespace ChronoKeep.UI.MainPages
             {
                 connected++;
             }
-            Log.D(connected + " systems connected or trying to connect.");
+            Log.D("UI.MainPages.TimingPage", connected + " systems connected or trying to connect.");
             if (connected >= total)
             {
                 ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID), locations));
@@ -558,7 +558,7 @@ namespace ChronoKeep.UI.MainPages
             {
                 connected--;
             }
-            Log.D(connected + " systems connected or trying to connect/disconnect.");
+            Log.D("UI.MainPages.TimingPage", connected + " systems connected or trying to connect/disconnect.");
             if (total > 4 && connected < total - 1)
             {
                 AReaderBox removeMe = null;
@@ -578,7 +578,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void RawReads_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Raw Reads selected.");
+            Log.D("UI.MainPages.TimingPage", "Raw Reads selected.");
             subPage = new TimingRawReadsPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -586,7 +586,7 @@ namespace ChronoKeep.UI.MainPages
 
         public void LoadMainDisplay()
         {
-            Log.D("Going back to main display.");
+            Log.D("UI.MainPages.TimingPage", "Going back to main display.");
             subPage = new TimingResultsPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -594,7 +594,7 @@ namespace ChronoKeep.UI.MainPages
 
         private async void Recalculate_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Recalculate results clicked.");
+            Log.D("UI.MainPages.TimingPage", "Recalculate results clicked.");
             if ((string)recalculateButton.Content == "Working...")
             {
                 return;
@@ -604,12 +604,12 @@ namespace ChronoKeep.UI.MainPages
             try
             {
                 api = database.GetResultsAPI(theEvent.API_ID);
-                Log.D("API found.");
+                Log.D("UI.MainPages.TimingPage", "API found.");
             }
             catch {}
             // Get the event id values. Exit if not valid.
             string[] event_ids = theEvent.API_Event_ID.Split(',');
-            Log.D("Event Id's found: " + event_ids.Length + " API is null? " + (api == null).ToString());
+            Log.D("UI.MainPages.TimingPage", "Event Id's found: " + event_ids.Length + " API is null? " + (api == null).ToString());
             // Create a bool for checking if we've grabbed the APIController's mutex so we release it later
             bool mutexGrabbed = false;
             if (event_ids.Length == 2 && api != null && APIController.GrabMutex(15000))
@@ -617,7 +617,7 @@ namespace ChronoKeep.UI.MainPages
                 mutexGrabbed = true;
                 try
                 {
-                    Log.D("Deleting results from API.");
+                    Log.D("UI.MainPages.TimingPage", "Deleting results from API.");
                     await APIController.DeleteResults(api, event_ids[0], event_ids[1]);
                 }
                 catch (APIException ex)
@@ -717,7 +717,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Export_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Export clicked.");
+            Log.D("UI.MainPages.TimingPage", "Export clicked.");
             ExportResults exportResults = new ExportResults(mWindow, database);
             mWindow.AddWindow(exportResults);
             exportResults.ShowDialog();
@@ -725,7 +725,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Print_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Print clicked.");
+            Log.D("UI.MainPages.TimingPage", "Print clicked.");
             subPage = new PrintPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -733,13 +733,13 @@ namespace ChronoKeep.UI.MainPages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            Log.D("Starting TimingPage Update Timer.");
+            Log.D("UI.MainPages.TimingPage", "Starting TimingPage Update Timer.");
             ViewUpdateTimer.Start();
         }
 
         private void AddDNF_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Add DNF Entry clicked.");
+            Log.D("UI.MainPages.TimingPage", "Add DNF Entry clicked.");
             ManualEntryWindow manualEntryWindow = ManualEntryWindow.NewWindow(mWindow, database);
             if (manualEntryWindow != null)
             {
@@ -751,7 +751,7 @@ namespace ChronoKeep.UI.MainPages
         private void StatsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             DistanceStat selected = (DistanceStat)statsListView.SelectedItem;
-            Log.D("Stats double cliked. Distance is " + selected.DistanceName);
+            Log.D("UI.MainPages.TimingPage", "Stats double cliked. Distance is " + selected.DistanceName);
             subPage = new DistanceStatsPage(this, database, selected.DistanceID, selected.DistanceName);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -760,7 +760,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void Award_Click (object sender, RoutedEventArgs e)
         {
-            Log.D("Awards clicked.");
+            Log.D("UI.MainPages.TimingPage", "Awards clicked.");
             subPage = new AwardPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -768,7 +768,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void CreateHTML_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Create HTML clicked.");
+            Log.D("UI.MainPages.TimingPage", "Create HTML clicked.");
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "HTML file (*.htm,*.html)|*.htm;*.html",
@@ -860,7 +860,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void AutoAPI_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Auto API clicked.");
+            Log.D("UI.MainPages.TimingPage", "Auto API clicked.");
             if ((string)AutoAPIButton.Content == "Auto Upload")
             {
                 AutoAPIButton.Content = "Starting...";
@@ -875,15 +875,15 @@ namespace ChronoKeep.UI.MainPages
 
         private void ManualAPI_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Manual API clicked.");
+            Log.D("UI.MainPages.TimingPage", "Manual API clicked.");
             if (ManualAPIButton.Content.ToString() != "Uploading")
             {
-                Log.D("Uploading data.");
+                Log.D("UI.MainPages.TimingPage", "Uploading data.");
                 ManualAPIButton.Content = "Uploading";
                 UploadResults();
                 return;
             }
-            Log.D("Already uploading.");
+            Log.D("UI.MainPages.TimingPage", "Already uploading.");
         }
 
         private async void UploadResults()
@@ -905,19 +905,19 @@ namespace ChronoKeep.UI.MainPages
             List<TimeResult> results = database.GetNonUploadedResults(theEvent.Identifier);
             if (results.Count < 1)
             {
-                Log.D("Nothing to upload.");
+                Log.D("UI.MainPages.TimingPage", "Nothing to upload.");
                 ManualAPIButton.Content = "Manual Upload";
                 return;
             }
             // Change TimeResults to APIResults
             List<APIResult> upRes = new List<APIResult>();
-            Log.D("Results count: " + results.Count.ToString());
+            Log.D("UI.MainPages.TimingPage", "Results count: " + results.Count.ToString());
             foreach (TimeResult tr in results)
             {
                 tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
                 upRes.Add(new APIResult(theEvent, tr));
             }
-            Log.D("Attempting to upload " + upRes.Count.ToString() + " results.");
+            Log.D("UI.MainPages.TimingPage", "Attempting to upload " + upRes.Count.ToString() + " results.");
             int total = 0;
             int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
             AddResultsResponse response;
@@ -936,7 +936,7 @@ namespace ChronoKeep.UI.MainPages
                 if (response != null)
                 {
                     total += response.Count;
-                    Log.D("Total: " + total + " Count: " + response.Count);
+                    Log.D("UI.MainPages.TimingPage", "Total: " + total + " Count: " + response.Count);
                 }
             }
             int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
@@ -955,13 +955,13 @@ namespace ChronoKeep.UI.MainPages
                 if (response != null)
                 {
                     total += response.Count;
-                    Log.D("Total: " + total + " Count: " + response.Count);
+                    Log.D("UI.MainPages.TimingPage", "Total: " + total + " Count: " + response.Count);
                 }
-                Log.D("Upload finished. Count total: " + total);
+                Log.D("UI.MainPages.TimingPage", "Upload finished. Count total: " + total);
             }
             if (results.Count == total)
             {
-                Log.D("Count matches, updating records.");
+                Log.D("UI.MainPages.TimingPage", "Count matches, updating records.");
                 database.AddTimingResults(results);
             }
             ManualAPIButton.Content = "Manual Upload";
@@ -969,7 +969,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void SaveLog(object sender, RoutedEventArgs e)
         {
-            Log.D("Save Log clicked.");
+            Log.D("UI.MainPages.TimingPage", "Save Log clicked.");
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "CSV (*.csv)|*.csv",
@@ -1014,7 +1014,7 @@ namespace ChronoKeep.UI.MainPages
                     format.Append("}\",");
                 }
                 format.Remove(format.Length - 1, 1);
-                Log.D(string.Format("The format is '{0}'", format.ToString()));
+                Log.D("UI.MainPages.TimingPage", string.Format("The format is '{0}'", format.ToString()));
                 if (locationReadDict.Keys.Count == 1)
                 {
                     List<object[]> data = new List<object[]>();
@@ -1072,7 +1072,7 @@ namespace ChronoKeep.UI.MainPages
                         }
                         IDataExporter exporter = new CSVExporter(format.ToString());
                         exporter.SetData(headers, data);
-                        Log.D("Saving file to: " + Path.GetDirectoryName(saveFileDialog.FileName) + "\\" + Regex.Replace(key.ToLower(), @"[^a-z0-9\-]", "") + "-" + Path.GetFileName(saveFileDialog.FileName));
+                        Log.D("UI.MainPages.TimingPage", "Saving file to: " + Path.GetDirectoryName(saveFileDialog.FileName) + "\\" + Regex.Replace(key.ToLower(), @"[^a-z0-9\-]", "") + "-" + Path.GetFileName(saveFileDialog.FileName));
                         exporter.ExportData(Path.GetDirectoryName(saveFileDialog.FileName) + "\\" + Regex.Replace(key.ToLower(), @"[^a-z0-9\-]", "") + "-" + Path.GetFileName(saveFileDialog.FileName));
                     }
                 }
@@ -1330,16 +1330,16 @@ namespace ChronoKeep.UI.MainPages
 
             private void ReaderTypeChanged(object sender, SelectionChangedEventArgs args)
             {
-                Log.D("Reader type has changed.");
+                Log.D("UI.MainPages.TimingPage", "Reader type has changed.");
                 string type = ((ComboBoxItem)ReaderType.SelectedItem).Uid;
-                Log.D("Updating to type: " + Constants.Timing.SYSTEM_NAMES[type]);
+                Log.D("UI.MainPages.TimingPage", "Updating to type: " + Constants.Timing.SYSTEM_NAMES[type]);
                 reader.UpdateSystemType(type);
                 ReaderPort.Text = reader.Port.ToString();
             }
 
             private void Remove(object sender, RoutedEventArgs e)
             {
-                Log.D("Remove button for a timing system has been clicked.");
+                Log.D("UI.MainPages.TimingPage", "Remove button for a timing system has been clicked.");
                 if (reader.Saved())
                 {
                     parent.RemoveSystem(reader);
@@ -1350,13 +1350,13 @@ namespace ChronoKeep.UI.MainPages
             {
                 if ("Connect" != (string)ConnectButton.Content)
                 {
-                    Log.D("Disconnect pressed.");
+                    Log.D("UI.MainPages.TimingPage", "Disconnect pressed.");
                     reader.Status = SYSTEM_STATUS.WORKING;
                     parent.DisconnectSystem(reader);
                     UpdateStatus();
                     return;
                 }
-                Log.D("Connect button pressed. IP is " + ReaderIP.Text);
+                Log.D("UI.MainPages.TimingPage", "Connect button pressed. IP is " + ReaderIP.Text);
                 // Check if IP is a valid IP address
                 if (!Regex.IsMatch(ReaderIP.Text.Trim(), IPPattern))
                 {
@@ -1426,14 +1426,14 @@ namespace ChronoKeep.UI.MainPages
 
             private void Rewind(object sender, RoutedEventArgs e)
             {
-                Log.D("Settings button pressed. IP is " + ReaderIP.Text);
+                Log.D("UI.MainPages.TimingPage", "Settings button pressed. IP is " + ReaderIP.Text);
                 RewindWindow rewind = new RewindWindow(reader);
                 rewind.ShowDialog();
             }
 
             private void Clock(object sender, RoutedEventArgs e)
             {
-                Log.D("Clock button pressed. IP is " + ReaderIP.Text);
+                Log.D("UI.MainPages.TimingPage", "Clock button pressed. IP is " + ReaderIP.Text);
                 parent.OpenTimeWindow(reader);
             }
 

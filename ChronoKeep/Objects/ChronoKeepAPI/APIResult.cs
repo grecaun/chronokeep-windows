@@ -38,7 +38,7 @@ namespace ChronoKeep.Objects.API
             {
                 string[] split1 = result.Time.Split('.');
                 string[] split2 = split1[0].Split(':');
-                Log.D(string.Format("Time is {0} - Split1 {1} - Split2 length {2}", result.Time, split1[0], split2.Length));
+                Log.D("Objects.API.APIResult", string.Format("Time is {0} - Split1 {1} - Split2 length {2}", result.Time, split1[0], split2.Length));
                 switch (split2.Length)
                 {
                     case 3:

@@ -94,10 +94,10 @@ namespace ChronoKeep.UI.MainPages
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Edit Button Clicked.");
+            Log.D("UI.DashboardPage", "Edit Button Clicked.");
             if (editButton.Content.ToString() == Constants.DashboardLabels.EDIT)
             {
-                Log.D("Editing.");
+                Log.D("UI.DashboardPage", "Editing.");
                 editButton.Content = Constants.DashboardLabels.WORKING;
                 EnableEditableFields();
                 editButton.Content = Constants.DashboardLabels.SAVE;
@@ -105,7 +105,7 @@ namespace ChronoKeep.UI.MainPages
             }
             else if (editButton.Content.ToString() == Constants.DashboardLabels.SAVE)
             {
-                Log.D("Saving");
+                Log.D("UI.DashboardPage", "Saving");
                 editButton.Content = Constants.DashboardLabels.WORKING;
                 DisableEditableFields();
                 theEvent.Name = eventNameTextBox.Text;
@@ -120,22 +120,22 @@ namespace ChronoKeep.UI.MainPages
                 {
                     theEvent.EventType = Constants.Timing.EVENT_TYPE_TIME;
                 }
-                Log.D("Updating database.");
+                Log.D("UI.DashboardPage", "Updating database.");
                 // Check if we've changed the segment option
                 Event oldEvent = database.GetCurrentEvent();
                 if (oldEvent.DistanceSpecificSegments != theEvent.DistanceSpecificSegments)
                 {
-                    Log.D("Distance Specific Segments value has changed.");
+                    Log.D("UI.DashboardPage", "Distance Specific Segments value has changed.");
                     database.ResetSegments(theEvent.Identifier);
                 }
                 database.UpdateEvent(theEvent);
-                Log.D("Updating view.");
+                Log.D("UI.DashboardPage", "Updating view.");
                 mWindow.NotifyTimingWorker(); ;
                 UpdateView();
             }
             else
             {
-                Log.D("Crying.");
+                Log.D("UI.DashboardPage", "Crying.");
             }
         }
 
@@ -165,7 +165,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void NewEvent_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("New event clicked.");
+            Log.D("UI.DashboardPage", "New event clicked.");
             if (TimingController.IsRunning())
             {
                 MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and create a new event?",
@@ -202,7 +202,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void ImportEvent_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Import event clicked.");
+            Log.D("UI.DashboardPage", "Import event clicked.");
             if (TimingController.IsRunning())
             {
                 MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and import a new event?",
@@ -265,11 +265,11 @@ namespace ChronoKeep.UI.MainPages
                 // Get all of the parts that don't depend on other parts, then parts that do.
                 // Order of operation matters here.
                 // Bib chip associations do not have any linked ID's.
-                Log.D("Adding bib chip associations.");
+                Log.D("UI.DashboardPage", "Adding bib chip associations.");
                 List<BibChipAssociation> bibChipAssociations = loadFrom.GetBibChips(oldEventId);
                 saveTo.AddBibChipAssociation(newEventId, bibChipAssociations);
                 // Distances can link to themselves. DistanceID is also used by EVENTSPECIFIC, SEGMENTS, and AGE_GROUPS
-                Log.D("Adding distances.");
+                Log.D("UI.DashboardPage", "Adding distances.");
                 Dictionary<int, int> distanceIDTranslation = new Dictionary<int, int>();
                 Dictionary<string, int> oldDistanceIDDictionary = new Dictionary<string, int>();
                 List<Distance> normalDistances = new List<Distance>();
@@ -315,7 +315,7 @@ namespace ChronoKeep.UI.MainPages
                 saveTo.AddDistances(linkedDistances);
                 // Age groups rely only on the event, and the distance.
                 // Age group id is used by EVENTSPECIFIC
-                Log.D("Adding age groups.");
+                Log.D("UI.DashboardPage", "Adding age groups.");
                 List<AgeGroup> ageGroups = new List<AgeGroup>();
                 Dictionary<int, int> ageGroupIDTranslation = new Dictionary<int, int>();
                 // Key is START AGE
@@ -347,7 +347,7 @@ namespace ChronoKeep.UI.MainPages
                     }
                 }
                 // Locations are relied upon by SEGMENTS, CHIPREADS, and TIMERESULTS
-                Log.D("Adding locations.");
+                Log.D("UI.DashboardPage", "Adding locations.");
                 List<TimingLocation> locations = loadFrom.GetTimingLocations(oldEventId);
                 Dictionary<int, int> locationIDTranslation = new Dictionary<int, int>();
                 Dictionary<string, int> oldLocationDictionary = new Dictionary<string, int>();
@@ -371,7 +371,7 @@ namespace ChronoKeep.UI.MainPages
                 locationIDTranslation[Constants.Timing.LOCATION_DUMMY] = Constants.Timing.LOCATION_DUMMY;
                 // Segments rely on Locations and Distances
                 // Segment ids are used by TIME_RESULTS
-                Log.D("Adding segments");
+                Log.D("UI.DashboardPage", "Adding segments");
                 List<Segment> segments = new List<Segment>();
                 Dictionary<int, int> segmentIDTranslator = new Dictionary<int, int>();
                 // key here is DISTANCE_ID, LOCATION_ID, OCCURRENCE (new values)
@@ -415,7 +415,7 @@ namespace ChronoKeep.UI.MainPages
                 segmentIDTranslator[Constants.Timing.SEGMENT_NONE] = Constants.Timing.SEGMENT_NONE;
                 // Participants contain EVENTSPECIFIC which relies on distance and age groups.
                 // Eventspecific ID is used by TIME_RESULT
-                Log.D("Adding participants.");
+                Log.D("UI.DashboardPage", "Adding participants.");
                 List<Participant> participants = new List<Participant>();
                 Dictionary<int, int> eventspecificIDTranslation = new Dictionary<int, int>();
                 // Bib is the key here
@@ -442,7 +442,7 @@ namespace ChronoKeep.UI.MainPages
                     }
                 }
                 // Chipreads depend on location_id.
-                Log.D("Adding chipreads.");
+                Log.D("UI.DashboardPage", "Adding chipreads.");
                 List<ChipRead> chipReads = new List<ChipRead>();
                 Dictionary<int, int> readIDTranslation = new Dictionary<int, int>();
                 // (CHIPNUMBER, BIB, SECONDS, MILLISECONDS) for the key
@@ -475,7 +475,7 @@ namespace ChronoKeep.UI.MainPages
                     }
                 }
                 // Results rely upon read_id, location_id, and segment_id.
-                Log.D("Adding results.");
+                Log.D("UI.DashboardPage", "Adding results.");
                 List<TimeResult> results = new List<TimeResult>();
                 foreach (TimeResult item in loadFrom.GetTimingResults(oldEventId))
                 {
@@ -497,7 +497,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void ChangeEvent_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Change event clicked.");
+            Log.D("UI.DashboardPage", "Change event clicked.");
             if (TimingController.IsRunning())
             {
                 MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and change the viewed event?",
@@ -534,7 +534,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void DeleteEvent_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Delete event clicked.");
+            Log.D("UI.DashboardPage", "Delete event clicked.");
             if (TimingController.IsRunning())
             {
                 MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and delete this event?",
@@ -563,7 +563,7 @@ namespace ChronoKeep.UI.MainPages
             }
             try
             {
-                Log.D("Attempting to delete.");
+                Log.D("UI.DashboardPage", "Attempting to delete.");
                 MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this event? This cannot be undone.",
                                                             "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
@@ -574,7 +574,7 @@ namespace ChronoKeep.UI.MainPages
             }
             catch
             {
-                Log.D("Unable to remove the event.");
+                Log.D("UI.DashboardPage", "Unable to remove the event.");
                 MessageBox.Show("Unable to remove the event.");
             }
             UpdateView();
@@ -583,7 +583,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Cancel clicked.");
+            Log.D("UI.DashboardPage", "Cancel clicked.");
             DisableEditableFields();
             UpdateView();
             editButton.Content = Constants.DashboardLabels.EDIT;
@@ -592,7 +592,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void TagTesterButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Tag Tester clicked.");
+            Log.D("UI.DashboardPage", "Tag Tester clicked.");
             ChipReaderWindow crWindow = ChipReaderWindow.NewWindow(mWindow, database);
             if (crWindow != null)
             {
@@ -619,7 +619,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void SaveEvent_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Saving event.");
+            Log.D("UI.DashboardPage", "Saving event.");
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "SQLite Database File (*.sqlite)|*.sqlite",
@@ -627,7 +627,7 @@ namespace ChronoKeep.UI.MainPages
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                Log.D("Creating database file.");
+                Log.D("UI.DashboardPage", "Creating database file.");
                 try
                 {
                     SQLiteConnection.CreateFile(saveFileDialog.FileName);
@@ -641,14 +641,14 @@ namespace ChronoKeep.UI.MainPages
                 savedDatabase.Initialize();
                 Event theEvent = database.GetCurrentEvent();
                 SaveEvent(theEvent, database, savedDatabase);
-                Log.D("Done saving file.");
+                Log.D("UI.DashboardPage", "Done saving file.");
                 MessageBox.Show("Event saved successfully.");
             }
         }
 
         private void apiLinkButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Link to API Event.");
+            Log.D("UI.DashboardPage", "Link to API Event.");
             APIWindow apiWindow = APIWindow.NewWindow(mWindow, database);
             if (apiWindow != null) {
                 mWindow.AddWindow(apiWindow);
@@ -659,7 +659,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void apiPageButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Results API button clicked.");
+            Log.D("UI.DashboardPage", "Results API button clicked.");
             mWindow.SwitchPage(new APIPage(mWindow, database), true);
         }
     }

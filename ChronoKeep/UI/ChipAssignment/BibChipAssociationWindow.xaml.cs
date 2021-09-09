@@ -57,7 +57,7 @@ namespace ChronoKeep
 
         internal List<string> RepeatHeaders()
         {
-            Log.D("Checking for repeat headers in user selection.");
+            Log.D("UI.BibChipAssociationWindow", "Checking for repeat headers in user selection.");
             int[] check = new int[ImportFileWindow.human_fields.Length];
             bool repeat = false;
             List<string> output = new List<string>();
@@ -91,7 +91,7 @@ namespace ChronoKeep
         {
             if (init) { return; }
             int selection = ((ComboBox)sender).SelectedIndex;
-            Log.D("You've selected number " + selection);
+            Log.D("UI.BibChipAssociationWindow", "You've selected number " + selection);
             ExcelImporter excelImporter = (ExcelImporter)importer;
             excelImporter.ChangeSheet(selection + 1);
             excelImporter.FetchHeaders();
@@ -110,13 +110,13 @@ namespace ChronoKeep
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             importer.Finish();
-            Log.D("Bib Chip Association - Cancel Button clicked.");
+            Log.D("UI.BibChipAssociationWindow", "Bib Chip Association - Cancel Button clicked.");
             ImportComplete = false;
         }
 
         private async void Done_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Bib Chip Association = Done Clicked.");
+            Log.D("UI.BibChipAssociationWindow", "Bib Chip Association = Done Clicked.");
             List<string> headers = RepeatHeaders();
             int eventId = -1;
             eventId = database.GetCurrentEvent().Identifier;
@@ -158,7 +158,7 @@ namespace ChronoKeep
                         }
                         catch
                         {
-                            Log.E("One or more values not an integer.");
+                            Log.E("UI.BibChipAssociationWindow", "One or more values not an integer.");
                         }
                     }
                     // Check new associations against old ones.
@@ -186,7 +186,7 @@ namespace ChronoKeep
                     }
                     database.AddBibChipAssociation(eventId, items);
                 });
-                Log.D("All done with bib chip associations.");
+                Log.D("UI.BibChipAssociationWindow", "All done with bib chip associations.");
                 ImportComplete = true;
                 this.Close();
             }

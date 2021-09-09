@@ -138,7 +138,7 @@ namespace ChronoKeep.Database.SQLite
 
         internal static List<Participant> GetParticipants(SQLiteConnection connection)
         {
-            Log.D("Getting all participants for all events.");
+            Log.D("SQLite.Participants", "Getting all participants for all events.");
             return GetParticipantsWorker("SELECT * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id ORDER BY p.participant_last ASC, p.participant_first ASC", -1, -1, connection);
@@ -146,7 +146,7 @@ namespace ChronoKeep.Database.SQLite
 
         internal static List<Participant> GetParticipants(int eventId, SQLiteConnection connection)
         {
-            Log.D("Getting all participants for event with id of " + eventId);
+            Log.D("SQLite.Participants", "Getting all participants for event with id of " + eventId);
             return GetParticipantsWorker("SELECT * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id " +
@@ -155,7 +155,7 @@ namespace ChronoKeep.Database.SQLite
 
         internal static List<Participant> GetParticipants(int eventId, int distanceId, SQLiteConnection connection)
         {
-            Log.D("Getting all participants for event with id of " + eventId);
+            Log.D("SQLite.Participants", "Getting all participants for event with id of " + eventId);
             return GetParticipantsWorker("SELECT * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id " +

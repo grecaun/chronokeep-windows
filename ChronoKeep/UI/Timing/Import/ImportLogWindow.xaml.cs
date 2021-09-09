@@ -48,7 +48,7 @@ namespace ChronoKeep.UI.Timing.Import
         {
             if (Frame.Content.GetType() == typeof(ImportLogPage1))
             {
-                Log.D("Updating locations on page.");
+                Log.D("UI.Timing.Import.ImportLogWindow", "Updating locations on page.");
                 List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
                 if (!theEvent.CommonStartFinish)
                 {
@@ -82,7 +82,7 @@ namespace ChronoKeep.UI.Timing.Import
 
         public async void Import(LogImporter.Type type, int iLocationId, int ChipColumn, int TimeColumn)
         {
-            Log.D("Type is " + type.ToString() + " ChipIx " + ChipColumn + " TimeIx " + TimeColumn);
+            Log.D("UI.Timing.Import.ImportLogWindow", "Type is " + type.ToString() + " ChipIx " + ChipColumn + " TimeIx " + TimeColumn);
             await Task.Run(() =>
             {
                 importer.FetchData();

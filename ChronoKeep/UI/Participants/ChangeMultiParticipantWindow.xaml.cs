@@ -47,7 +47,7 @@ namespace ChronoKeep.UI.Participants
 
         private void Change_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Change clicked.");
+            Log.D("UI.Participants.ChangeMultiParticipantWindow", "Change clicked.");
             int distanceId = Convert.ToInt32(((ComboBoxItem)DistanceBox.SelectedItem).Uid);
             foreach (Participant part in toChange)
             {
@@ -61,7 +61,7 @@ namespace ChronoKeep.UI.Participants
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Cancel clicked.");
+            Log.D("UI.Participants.ChangeMultiParticipantWindow", "Cancel clicked.");
             this.Close();
         }
 

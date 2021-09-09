@@ -30,7 +30,7 @@ namespace ChronoKeep.UI.Timing
 
         private void IgnoreButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Ignore Button clicked.");
+            Log.D("UI.Timing.TimingRawReadsPage", "Ignore Button clicked.");
             List<ChipRead> newChipReads = new List<ChipRead>();
             foreach (ChipRead read in updateListView.SelectedItems)
             {
@@ -64,13 +64,13 @@ namespace ChronoKeep.UI.Timing
 
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Done Button clicked.");
+            Log.D("UI.Timing.TimingRawReadsPage", "Done Button clicked.");
             parent.LoadMainDisplay();
         }
 
         private void Shift_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Shift button clicked.");
+            Log.D("UI.Timing.TimingRawReadsPage", "Shift button clicked.");
             List<ChipRead> localReads = new List<ChipRead>();
             foreach (ChipRead read in updateListView.SelectedItems)
             {
@@ -162,7 +162,7 @@ namespace ChronoKeep.UI.Timing
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("Delete clicked.");
+            Log.D("UI.Timing.TimingRawReadsPage", "Delete clicked.");
             if (MessageBoxResult.Yes == MessageBox.Show("Are you sure you wish to delete these records? They " +
                 "cannot be recovered if you have no other record of them.", "Confirmation",
                 MessageBoxButton.YesNo, MessageBoxImage.Hand))

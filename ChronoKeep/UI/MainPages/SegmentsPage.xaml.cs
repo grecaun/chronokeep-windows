@@ -133,7 +133,7 @@ namespace ChronoKeep.UI.MainPages
                     {
                         occurrence_error = true;
                     }
-                    Log.D("Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
                 }
             }
             if (occurrence_error)
@@ -151,7 +151,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void RemoveSegment(Segment mySegment)
         {
-            Log.D("Removing segment.");
+            Log.D("UI.MainPages.SegmentsPage", "Removing segment.");
             SegmentsToRemove.Add(mySegment);
             allSegments[mySegment.DistanceId].Remove(mySegment);
             UpdateView();
@@ -167,18 +167,18 @@ namespace ChronoKeep.UI.MainPages
                     ((ASegment)seg).UpdateSegment();
                     Segment thisSegment = ((ASegment)seg).mySegment;
                     segments.Add(thisSegment);
-                    Log.D("Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
                 }
             }
             SegmentsToAdd.RemoveAll(x => x.Occurrence >= theEvent.FinishMaxOccurrences);
             database.AddSegments(SegmentsToAdd);
             database.RemoveSegments(SegmentsToRemove);
-            Log.D("Segments to remove count is " + SegmentsToRemove.Count);
+            Log.D("UI.MainPages.SegmentsPage", "Segments to remove count is " + SegmentsToRemove.Count);
             UpdateTimingWorker = true;
             segments.RemoveAll(x => (SegmentsToAdd.Contains(x) || SegmentsToRemove.Contains(x)));
             segments.RemoveAll(x => x.Occurrence >= theEvent.FinishMaxOccurrences);
             database.UpdateSegments(segments);
-            Log.D("Segments to update count is " + segments.Count);
+            Log.D("UI.MainPages.SegmentsPage", "Segments to update count is " + segments.Count);
             SegmentsToAdd.Clear();
             SegmentsToRemove.Clear();
         }
@@ -211,7 +211,7 @@ namespace ChronoKeep.UI.MainPages
                         {
                             occurrence_error = true;
                         }
-                        Log.D("Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                        Log.D("UI.MainPages.SegmentsPage", "Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
                     }
                 }
                 if (occurrence_error)
@@ -229,7 +229,7 @@ namespace ChronoKeep.UI.MainPages
 
         public void AddSegment(int distanceId, int occurrence)
         {
-            Log.D("Adding segment.");
+            Log.D("UI.MainPages.SegmentsPage", "Adding segment.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
@@ -242,7 +242,7 @@ namespace ChronoKeep.UI.MainPages
 
         public void CopyFromDistance(int intoDistance, int fromDistance)
         {
-            Log.D("Copying segments.");
+            Log.D("UI.MainPages.SegmentsPage", "Copying segments.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
@@ -415,7 +415,7 @@ namespace ChronoKeep.UI.MainPages
 
             private void AddClick(Object sender, RoutedEventArgs e)
             {
-                Log.D("Add segment clicked.");
+                Log.D("UI.MainPages.SegmentsPage", "Add segment clicked.");
                 int selectedDistance = Constants.Timing.COMMON_SEGMENTS_DISTANCEID;
                 if (distance != null)
                 {
@@ -431,7 +431,7 @@ namespace ChronoKeep.UI.MainPages
 
             private void CopyFromDistanceSelected(Object sender, SelectionChangedEventArgs e)
             {
-                Log.D("Copy from distance changed.");
+                Log.D("UI.MainPages.SegmentsPage", "Copy from distance changed.");
                 if (distance == null || copyFromDistance.SelectedIndex < 1)
                 {
                     return;
@@ -731,13 +731,13 @@ namespace ChronoKeep.UI.MainPages
 
             private void Remove_Click(object sender, EventArgs e)
             {
-                Log.D("Removing an item.");
+                Log.D("UI.MainPages.SegmentsPage", "Removing an item.");
                 this.page.RemoveSegment(mySegment);
             }
 
             public void UpdateSegment()
             {
-                Log.D("Segments - Save clicked.");
+                Log.D("UI.MainPages.SegmentsPage", "Segments - Save clicked.");
                 try
                 {
                     mySegment.Name = SegName.Text;

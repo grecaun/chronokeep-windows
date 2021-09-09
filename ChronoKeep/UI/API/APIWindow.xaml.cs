@@ -39,7 +39,7 @@ namespace ChronoKeep.UI.API
             List<ResultsAPI> apis = database.GetAllResultsAPI();
             if (theEvent == null || theEvent.Identifier < 1 || apis.Count < 1)
             {
-                Log.E("event not found or no apis set up");
+                Log.E("UI.API.APIWindow", "event not found or no apis set up");
                 APIFrame.Content = new APIErrorPage(this, apis.Count < 1);
             } else
             {

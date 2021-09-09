@@ -10,21 +10,21 @@ namespace ChronoKeep
 {
     class Log
     {
-        public static void D(string msg)
+        public static void D(string ns, string msg)
         {
 #if DEBUG
-            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + " LOGOUTPUT - d - " + msg);
+            Console.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "d", ns, msg));
 #endif
         }
 
-        public static void F(string msg)
+        public static void F(string ns, string msg)
         {
-            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + " LOGOUTPUT - f - " + msg);
+            Console.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "f", ns, msg));
         }
 
-        public static void E(string msg)
+        public static void E(string ns, string msg)
         {
-            Console.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + " LOGOUTPUT - e - " + msg);
+            Console.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "e", ns, msg));
         }
 
         public static void WriteFile(string path, string[] msgs)

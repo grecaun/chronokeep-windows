@@ -20,11 +20,11 @@ namespace ChronoKeep
 
         public ExcelImporter(string filename)
         {
-            Log.D("Creating importer object.");
+            Log.D("IO.ExcelImporter", "Creating importer object.");
             FilePath = filename;
             try
             {
-                Log.D("Opening workbook.");
+                Log.D("IO.ExcelImporter", "Opening workbook.");
                 workBook = Utils.GetExcelApp().Workbooks.Open(FilePath, ReadOnly: true);
                 NumSheets = workBook.Sheets.Count;
                 if (NumSheets > 0)
@@ -36,13 +36,13 @@ namespace ChronoKeep
                 {
                     string name = ((Worksheet)workBook.Sheets[i]).Name;
                     SheetNames.Add(name);
-                    Log.D("Sheet name is " + name);
+                    Log.D("IO.ExcelImporter", "Sheet name is " + name);
                 }
             }
             catch (Exception excep)
             {
-                Log.E("Something went wrong when trying to open workseet.");
-                Log.E(excep.StackTrace);
+                Log.E("IO.ExcelImporter", "Something went wrong when trying to open workseet.");
+                Log.E("IO.ExcelImporter", excep.StackTrace);
             }
         }
 
@@ -57,22 +57,22 @@ namespace ChronoKeep
             }
             catch
             {
-                Log.E("Hmm, can't get that worksheet. Sorry.");
+                Log.E("IO.ExcelImporter", "Hmm, can't get that worksheet. Sorry.");
             }
         }
 
         public void FetchHeaders()
         {
-            Log.D("Getting headers from excel file.");
+            Log.D("IO.ExcelImporter", "Getting headers from excel file.");
             try
             {
                 Range excelRange = currentSheet.UsedRange;
-                Log.D("Used range set.");
+                Log.D("IO.ExcelImporter", "Used range set.");
                 object[,] valueArray = (object[,])excelRange.get_Value(XlRangeValueDataType.xlRangeValueDefault);
-                Log.D("Value array populated.");
+                Log.D("IO.ExcelImporter", "Value array populated.");
                 int numHeaders = valueArray.GetUpperBound(1);
                 int numDataRows = valueArray.GetUpperBound(0);
-                Log.D("Rows " + numDataRows + " Columns " + numHeaders);
+                Log.D("IO.ExcelImporter", "Rows " + numDataRows + " Columns " + numHeaders);
                 string[] headers = new string[numHeaders];
                 for (int i=0; i<numHeaders; i++)
                 {
@@ -82,8 +82,8 @@ namespace ChronoKeep
             }
             catch (Exception excep)
             {
-                Log.E("Something went wrong when trying to get headers.");
-                Log.E(excep.StackTrace);
+                Log.E("IO.ExcelImporter", "Something went wrong when trying to get headers.");
+                Log.E("IO.ExcelImporter", excep.StackTrace);
                 string[] headers = new string[0];
                 Data = new ImportData(headers, FilePath, ImportData.FileType.EXCEL);
             }
@@ -91,14 +91,14 @@ namespace ChronoKeep
 
         public void FetchData()
         {
-            Log.D("Getting data from excel file.");
+            Log.D("IO.ExcelImporter", "Getting data from excel file.");
             try
             {
                 Range excelRange = currentSheet.UsedRange;
                 object[,] valueArray = (object[,])excelRange.get_Value(XlRangeValueDataType.xlRangeValueDefault);
                 int numHeaders = valueArray.GetUpperBound(1);
                 int numDataRows = valueArray.GetUpperBound(0);
-                Log.D("Rows " + numDataRows + " Columns " + numHeaders);
+                Log.D("IO.ExcelImporter", "Rows " + numDataRows + " Columns " + numHeaders);
                 for (int row = 2; row <= numDataRows; row++)
                 {
                     string[] dataLine = new string[numHeaders];
@@ -112,14 +112,14 @@ namespace ChronoKeep
             }
             catch (Exception excep)
             {
-                Log.E("Couldn't get data.");
-                Log.E(excep.StackTrace);
+                Log.E("IO.ExcelImporter", "Couldn't get data.");
+                Log.E("IO.ExcelImporter", excep.StackTrace);
             }
         }
 
         public void Finish()
         {
-            Log.D("Closing file.");
+            Log.D("IO.ExcelImporter", "Closing file.");
             try
             {
                 if (currentSheet != null)
@@ -137,7 +137,7 @@ namespace ChronoKeep
             }
             catch
             {
-                Log.D("Something went wrong when trying to close excel file.");
+                Log.D("IO.ExcelImporter", "Something went wrong when trying to close excel file.");
             }
         }
     }

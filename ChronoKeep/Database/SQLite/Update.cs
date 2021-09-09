@@ -25,19 +25,19 @@ namespace ChronoKeep.Database.SQLite
                 switch (oldversion)
                 {
                     case 1:
-                        Log.D("Updating from version 1.");
+                        Log.D("Database.SQLite.Update", "Updating from version 1.");
                         command.CommandText = "ALTER TABLE divisions ADD division_cost INTEGER DEFAULT 7000; ALTER TABLE eventspecific ADD eventspecific_fleece VARCHAR DEFAULT '';" +
                                 "ALTER TABLE changes ADD old_fleece VARCHAR DEFAULT ''; ALTER TABLE changes ADD new_fleece VARCHAR DEFAULT '';UPDATE settings SET version=2 WHERE version=1;";
                         command.ExecuteNonQuery();
                         goto case 2;
                     case 2:
-                        Log.D("Updating from version 2.");
+                        Log.D("Database.SQLite.Update", "Updating from version 2.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE settings ADD name VARCHAR DEFAULT 'Northwest Endurance Events'; ALTER TABLE events ADD event_kiosk INTEGER DEFAULT 0; CREATE TABLE IF NOT EXISTS kiosk (event_id INTEGER NOT NULL, kiosk_waiver_text VARCHAR NOT NULL, UNIQUE (event_id) ON CONFLICT IGNORE);UPDATE settings SET version=3 WHERE version=2;";
                         command.ExecuteNonQuery();
                         goto case 3;
                     case 3:
-                        Log.D("Updating from version 3");
+                        Log.D("Database.SQLite.Update", "Updating from version 3");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS dayof_participant (" +
                             "dop_id INTEGER PRIMARY KEY," +
@@ -66,37 +66,37 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 4;
                     case 4:
-                        Log.D("Updating from version 4.");
+                        Log.D("Database.SQLite.Update", "Updating from version 4.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE dayof_participant ADD dop_division_id INTEGER NOT NULL DEFAULT -1;UPDATE settings SET version=5 WHERE version=4;";
                         command.ExecuteNonQuery();
                         goto case 5;
                     case 5:
-                        Log.D("Updating from version 5.");
+                        Log.D("Database.SQLite.Update", "Updating from version 5.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE kiosk ADD kiosk_print_new INTEGER DEFAULT 0; UPDATE settings SET version=6 WHERE version=5;";
                         command.ExecuteNonQuery();
                         goto case 6;
                     case 6:
-                        Log.D("Updating from version 6.");
+                        Log.D("Database.SQLite.Update", "Updating from version 6.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD event_next_year_event_id INTEGER DEFAULT -1; ALTER TABLE events ADD event_shirt_optional INTEGER DEFAULT 1; ALTER TABLE eventspecific ADD eventspecific_next_year INTEGER DEFAULT 0; ALTER TABLE changes ADD old_next_year INTEGER DEFAULT 0; ALTER TABLE changes ADD new_next_year INTEGER DEFAULT 0; UPDATE settings SET version=7 WHERE version=6;";
                         command.ExecuteNonQuery();
                         goto case 7;
                     case 7:
-                        Log.D("Updating from version 7.");
+                        Log.D("Database.SQLite.Update", "Updating from version 7.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD event_shirt_price INTEGER DEFAULT 0; UPDATE settings SET version=8 WHERE version=7;";
                         command.ExecuteNonQuery();
                         goto case 8;
                     case 8:
-                        Log.D("Updating from version 8.");
+                        Log.D("Database.SQLite.Update", "Updating from version 8.");
                         command = connection.CreateCommand();
                         command.CommandText = "UPDATE settings SET version=9 WHERE version=8;";
                         command.ExecuteNonQuery();
                         goto case 9;
                     case 9:
-                        Log.D("Updating from version 9.");
+                        Log.D("Database.SQLite.Update", "Updating from version 9.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE eventspecific RENAME TO old_eventspecific;" +
                             "CREATE TABLE IF NOT EXISTS eventspecific(" +
@@ -125,7 +125,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 10;
                     case 10:
-                        Log.D("Updating from version 10.");
+                        Log.D("Database.SQLite.Update", "Updating from version 10.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO old_bib_chip_assoc;" +
                             "CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
@@ -138,7 +138,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 11;
                     case 11:
-                        Log.D("Updating from version 11.");
+                        Log.D("Database.SQLite.Update", "Updating from version 11.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO old_old_bib_chip_assoc;" +
                             "CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
@@ -151,7 +151,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 12;
                     case 12:
-                        Log.D("Updating from version 12.");
+                        Log.D("Database.SQLite.Update", "Updating from version 12.");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS chipreads (" +
                             "read_id INTEGER NOT NULL PRIMARY KEY," +
@@ -217,24 +217,24 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 13;
                     case 13:
-                        Log.D("Updating from version 13.");
+                        Log.D("Database.SQLite.Update", "Updating from version 13.");
                         command = connection.CreateCommand();
                         command.CommandText = "DELETE FROM old_eventspecific; DROP TABLE old_eventspecific; DELETE FROM older_eventspecific; DROP TABLE older_eventspecific;" +
                             "DELETE FROM old_participants; DROP TABLE old_participants; DELETE FROM emergencycontacts; DROP TABLE emergencycontacts;" +
                             "UPDATE settings SET version=14 WHERE version=13;";
-                        Log.D("Executing query.");
+                        Log.D("Database.SQLite.Update", "Executing query.");
                         command.ExecuteNonQuery();
-                        Log.D("Done deleting.");
+                        Log.D("Database.SQLite.Update", "Done deleting.");
                         goto case 14;
                     case 14:
-                        Log.D("Updating from version 14.");
+                        Log.D("Database.SQLite.Update", "Updating from version 14.");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS app_settings (setting VARCHAR NOT NULL, value VARCHAR NOT NULL, UNIQUE (setting) ON CONFLICT REPLACE); ALTER TABLE events ADD " +
                         "event_rank_by_gun INTEGER DEFAULT 1;UPDATE settings SET version=15 WHERE version=14;";
                         command.ExecuteNonQuery();
                         goto case 15;
                     case 15:
-                        Log.D("Updating from version 15.");
+                        Log.D("Database.SQLite.Update", "Updating from version 15.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD event_common_age_groups INTEGER DEFAULT 1;" +
                             "ALTER TABLE events ADD event_common_start_finish INTEGER DEFAULT 1;" +
@@ -428,18 +428,18 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 16;
                     case 16:
-                        Log.D("Upgrading from verison 16.");
+                        Log.D("Database.SQLite.Update", "Upgrading from verison 16.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE timing_locations ADD location_max_occurances INTEGER NOT NULL DEFAULT 1;" +
                                 "ALTER TABLE timing_locations ADD location_ignore_within INTEGER NOT NULL DEFAULT -1;" +
                                 "ALTER TABLE events ADD event_yearcode VARCHAR(10) NOT NULL DEFAULT '';" +
                                 "ALTER TABLE events ADD event_early_start_difference INTEGER NOT NULL DEFAULT 0;" +
                                 "UPDATE settings SET version=17 WHERE version=16;";
-                        Log.D(command.CommandText);
+                        Log.D("Database.SQLite.Update", command.CommandText);
                         command.ExecuteNonQuery();
                         goto case 17;
                     case 17:
-                        Log.D("Upgrading from version 17.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 17.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE divisions ADD bib_group_number INTEGER NOT NULL DEFAULT -1; " +
                             "ALTER TABLE divisions ADD division_wave INTEGER NOT NULL DEFAULT 1;" +
@@ -453,7 +453,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 18;
                     case 18:
-                        Log.D("Upgrading from version 18.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 18.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD event_start_time_seconds INTEGER NOT NULL DEFAULT -1;" +
                             "ALTER TABLE events ADD event_start_time_milliseconds INTEGER NOT NULL DEFAULT 0;" +
@@ -464,7 +464,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 19;
                     case 19:
-                        Log.D("Upgrading from version 19.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 19.");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS available_bibs (" +
                             "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
@@ -475,7 +475,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 20;
                     case 20:
-                        Log.D("Upgrading from version 20.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 20.");
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE old_eventspecific; DROP TABLE old_participants;" +
                             "ALTER TABLE eventspecific RENAME TO old_eventspecific;" +
@@ -499,7 +499,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 21;
                     case 21:
-                        Log.D("Upgrading from version 21.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 21.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD event_finish_max_occurances INTEGER NOT NULL DEFAULT 1;" +
                             "ALTER TABLE events ADD event_finish_ignore_within INTEGER NOT NULL DEFAULT 0;" +
@@ -508,7 +508,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 22;
                     case 22:
-                        Log.D("Upgrading from version 22.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 22.");
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE segments;" +
                             "CREATE TABLE IF NOT EXISTS segments(" +
@@ -526,7 +526,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 23;
                     case 23:
-                        Log.D("Upgrading from version 23.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 23.");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS age_groups (" +
                             "group_id INTEGER PRIMARY KEY," +
@@ -538,7 +538,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 24;
                     case 24:
-                        Log.D("Upgrading from version 24.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 24.");
                         command = connection.CreateCommand();
                         command.CommandText = "UPDATE events SET event_start_time_seconds=-1 WHERE event_start_time_seconds=0;" +
                             "ALTER TABLE events ADD event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Settings.TIMING_RFID + "';" +
@@ -546,7 +546,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 25;
                     case 25:
-                        Log.D("Upgrading from version 25.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 25.");
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE time_results; DROP TABLE chipreads;" +
                             "CREATE TABLE IF NOT EXISTS time_results (" +
@@ -589,7 +589,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 26;
                     case 26:
-                        Log.D("Upgrading from version 26.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 26.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE chipreads ADD read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + ";" +
                             "ALTER TABLE chipreads ADD read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + ";" +
@@ -597,7 +597,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 27;
                     case 27:
-                        Log.D("Upgrading from version 27.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 27.");
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE chipreads;" +
                             "CREATE TABLE IF NOT EXISTS chipreads (" +
@@ -624,7 +624,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 28;
                     case 28:
-                        Log.D("Upgrading from version 28.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 28.");
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE time_results;" +
                             "CREATE TABLE IF NOT EXISTS time_results (" +
@@ -640,7 +640,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 29;
                     case 29:
-                        Log.D("Upgrading from version 29.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 29.");
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE time_results;" +
                             "CREATE TABLE IF NOT EXISTS time_results (" +
@@ -658,14 +658,14 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 30;
                     case 30:
-                        Log.D("Upgrading from version 30.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 30.");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);" +
                             "UPDATE settings SET version=31 WHERE version=30;";
                         command.ExecuteNonQuery();
                         goto case 31;
                     case 31:
-                        Log.D("Upgrading from version 31.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 31.");
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE time_results; UPDATE chipreads SET read_status=" +
                             Constants.Timing.CHIPREAD_STATUS_NONE + " WHERE read_status<>" +
@@ -691,7 +691,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 32;
                     case 32:
-                        Log.D("Upgrading from version 32.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 32.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD " +
                             "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + ";" +
@@ -700,7 +700,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 33;
                     case 33:
-                        Log.D("Upgrading from version 33.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 33.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE chipreads RENAME TO chipreads_old;" +
                             "CREATE TABLE IF NOT EXISTS chipreads (" +
@@ -763,7 +763,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 34;
                     case 34:
-                        Log.D("Upgrading from version 34.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 34.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE time_results ADD " +
                             "timeresult_splittime TEXT NOT NULL DEFAULT '';" +
@@ -771,7 +771,7 @@ namespace ChronoKeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 35;
                     case 35:
-                        Log.D("Upgrading from version 35.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 35.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO " +
                             "old_bib_chip_assoc; ALTER TABLE chipreads RENAME TO " +

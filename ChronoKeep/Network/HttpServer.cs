@@ -53,10 +53,10 @@ namespace ChronoKeep.Network
 
         public void UpdateInformation()
         {
-            Log.D("Updating information for HttpServer.");
+            Log.D("Network.HttpServer", "Updating information for HttpServer.");
             if (!info_mutex.WaitOne(3000))
             {
-                Log.D("Unable to get mutex.");
+                Log.D("Network.HttpServer", "Unable to get mutex.");
                 return;
             }
             theEvent = database.GetCurrentEvent();
@@ -124,7 +124,7 @@ namespace ChronoKeep.Network
         private void Process(HttpListenerContext context)
         {
             string filename = context.Request.Url.AbsolutePath;
-            Log.D(filename + " requested.");
+            Log.D("Network.HttpServer", filename + " requested.");
             filename = filename.Substring(1);
 
             string message = "";
@@ -135,7 +135,7 @@ namespace ChronoKeep.Network
                 // Serve up HtmlResultsTemplace
                 if (!info_mutex.WaitOne(3000))
                 {
-                    Log.D("Unable to get mutex for outputting results page.");
+                    Log.D("Network.HttpServer", "Unable to get mutex for outputting results page.");
                     message = "";
                 }
                 else
@@ -145,7 +145,7 @@ namespace ChronoKeep.Network
                         HtmlResultsTemplate results = new HtmlResultsTemplate(theEvent, finishResults, participantDictionary);
                         message = results.TransformText();
                         context.Response.ContentType = "text/html";
-                        Log.D("Results html");
+                        Log.D("Network.HttpServer", "Results html");
                     }
                     else
                     {
@@ -153,7 +153,7 @@ namespace ChronoKeep.Network
                             maxLoops, LoopResults, RunnerLoopsCompleted, DivisionDistancePerLoop, DivisionDistanceType);
                         message = results.TransformText();
                         context.Response.ContentType = "text/html";
-                        Log.D("Results html");
+                        Log.D("Network.HttpServer", "Results html");
                     }
                     info_mutex.ReleaseMutex();
                 }
@@ -171,7 +171,7 @@ namespace ChronoKeep.Network
                     }
                 }
                 context.Response.ContentType = "text/css";
-                Log.D("Style css");
+                Log.D("Network.HttpServer", "Style css");
             }
             else if (filename.Equals("bootstrap.min.css", StringComparison.OrdinalIgnoreCase) || filename.Equals("bootstrap.css", StringComparison.OrdinalIgnoreCase))
             {
@@ -186,7 +186,7 @@ namespace ChronoKeep.Network
                     }
                 }
                 context.Response.ContentType = "text/css";
-                Log.D("Bootstrap css");
+                Log.D("Network.HttpServer", "Bootstrap css");
             }
             else if (filename.Equals("bootstrap.min.js", StringComparison.OrdinalIgnoreCase) || filename.Equals("bootstrap.js", StringComparison.OrdinalIgnoreCase))
             {
@@ -201,7 +201,7 @@ namespace ChronoKeep.Network
                     }
                 }
                 context.Response.ContentType = "text/javascript";
-                Log.D("Bootstrap js");
+                Log.D("Network.HttpServer", "Bootstrap js");
             }
             else if (filename.Equals("jquery.min.js", StringComparison.OrdinalIgnoreCase) || filename.Equals("jquery.js", StringComparison.OrdinalIgnoreCase))
             {
@@ -216,7 +216,7 @@ namespace ChronoKeep.Network
                     }
                 }
                 context.Response.ContentType = "text/javascript";
-                Log.D("jquery js");
+                Log.D("Network.HttpServer", "jquery js");
             }
             if (answer)
             {

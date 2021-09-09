@@ -49,7 +49,7 @@ namespace ChronoKeep.UI.API
             });
             int ix = 0;
             int count = 1;
-            Log.D("Adding events to combo box.");
+            Log.D("UI.API.APIPage2", "Adding events to combo box.");
             if (events.Events != null)
             {
                 foreach (APIEvent ev in events.Events)

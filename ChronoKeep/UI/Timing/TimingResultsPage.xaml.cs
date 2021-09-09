@@ -72,7 +72,7 @@ namespace ChronoKeep.UI.Timing
             {
                 if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                 {
-                    Log.D("Time based event.");
+                    Log.D("UI.Timing.TimingResultsPage", "Time based event.");
                     Dictionary<int, TimeResult> validResults = new Dictionary<int, TimeResult>();
                     foreach (TimeResult result in newResults)
                     {
