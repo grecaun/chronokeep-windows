@@ -14,22 +14,25 @@ namespace ChronoKeep.Database.SQLite
             Log.D("Attempting to grab Mutex: ID 9");
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO events(event_name, event_date," +
-                "event_common_age_groups, event_common_start_finish, event_rank_by_gun, event_distance_specific_segments, event_yearcode, " +
-                "event_start_time_seconds, " +
-                "event_start_time_milliseconds, event_timing_system, event_type)" +
-                " values(@name,@date,@age,@start,@gun,@sepseg,@yearcode,@startsec,@startmill,@system," +
-                "@type)";
+            command.CommandText = "INSERT INTO events(event_name, event_date, event_yearcode, event_rank_by_gun, " +
+                "event_common_age_groups, event_common_start_finish, event_distance_specific_segments, " +
+                "event_start_time_seconds, event_start_time_milliseconds, event_finish_max_occurances, event_finish_ignore_within, " +
+                "event_start_window, event_timing_system, event_type)" +
+                " VALUES(@name,@date,@yearcode,@gun,@age,@start,@sepseg,@startsec,@startmill,@occ,@ign,@window," +
+                "@system,@type)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
+                new SQLiteParameter("@yearcode", anEvent.YearCode),
+                new SQLiteParameter("@gun", anEvent.RankByGun),
                 new SQLiteParameter("@age", anEvent.CommonAgeGroups),
                 new SQLiteParameter("@start", anEvent.CommonStartFinish),
-                new SQLiteParameter("@gun", anEvent.RankByGun),
                 new SQLiteParameter("@sepseg", anEvent.DistanceSpecificSegments),
-                new SQLiteParameter("@yearcode", anEvent.YearCode),
                 new SQLiteParameter("@startsec", anEvent.StartSeconds),
                 new SQLiteParameter("@startmill", anEvent.StartMilliseconds),
+                new SQLiteParameter("@occ", anEvent.FinishMaxOccurrences),
+                new SQLiteParameter("@ign", anEvent.FinishIgnoreWithin),
+                new SQLiteParameter("@window", anEvent.StartWindow),
                 new SQLiteParameter("@system", anEvent.TimingSystem),
                 new SQLiteParameter("@type", anEvent.EventType)
             });

@@ -39,7 +39,6 @@ namespace ChronoKeep.Database.SQLite
                 new SQLiteParameter("@type", read.Type)
             });
             command.ExecuteNonQuery();
-            Log.D("EventID " + read.EventId);
         }
 
         internal static void UpdateChipRead(ChipRead read, SQLiteConnection connection)
