@@ -238,6 +238,9 @@ namespace ChronoKeep.UI.MainPages
                 int lastID = -1;
                 foreach (Event ev in events)
                 {
+                    // Make some modifications, note that we cannot guarantee API compatibility between events.
+                    ev.API_Event_ID = Constants.ResultsAPI.NULL_EVENT_ID;
+                    ev.API_ID = Constants.ResultsAPI.NULL_ID;
                     int oldEventId = ev.Identifier, newEventId = -1;
                     ev.Identifier = -1;
                     database.AddEvent(ev);
@@ -245,44 +248,53 @@ namespace ChronoKeep.UI.MainPages
                     lastID = newEventId;
                     // Get all of the parts that don't depend on other parts, then parts that do.
                     // Order of operation matters here.
+                    Log.D("Adding age groups.");
                     List<AgeGroup> ageGroups = savedDatabase.GetAgeGroups(oldEventId);
                     foreach (AgeGroup item in ageGroups)
                     {
                         item.EventId = newEventId;
                     }
                     database.AddAgeGroups(ageGroups);
+                    Log.D("Adding bib chip associations.");
                     List<BibChipAssociation> bibChipAssociations = savedDatabase.GetBibChips(oldEventId);
                     database.AddBibChipAssociation(newEventId, bibChipAssociations);
+                    Log.D("Adding distances.");
                     List<Distance> distances = savedDatabase.GetDistances(oldEventId);
                     foreach (Distance item in distances)
                     {
                         item.EventIdentifier = newEventId;
+                        item.LinkedDistance = Constants.Timing.DISTANCE_NO_LINKED_ID;
                     }
                     database.AddDistances(distances);
+                    Log.D("Adding segments");
                     List<Segment> segments = savedDatabase.GetSegments(oldEventId);
                     foreach (Segment item in segments)
                     {
                         item.EventId = newEventId;
                     }
                     database.AddSegments(segments);
+                    Log.D("Adding locations.");
                     List<TimingLocation> locations = savedDatabase.GetTimingLocations(oldEventId);
                     foreach (TimingLocation item in locations)
                     {
                         item.EventIdentifier = newEventId;
                     }
                     database.AddTimingLocations(locations);
+                    Log.D("Adding participants.");
                     List<Participant> participants = savedDatabase.GetParticipants(oldEventId);
                     foreach (Participant item in participants)
                     {
                         item.EventSpecific.EventIdentifier = newEventId;
                     }
                     database.AddParticipants(participants);
+                    Log.D("Adding chipreads.");
                     List<ChipRead> chipReads = savedDatabase.GetChipReads(oldEventId);
                     foreach (ChipRead item in chipReads)
                     {
                         item.EventId = newEventId;
                     }
                     database.AddChipReads(chipReads);
+                    Log.D("Adding results.");
                     List<TimeResult> results = savedDatabase.GetTimingResults(oldEventId);
                     foreach (TimeResult item in results)
                     {
@@ -292,6 +304,7 @@ namespace ChronoKeep.UI.MainPages
                 }
                 database.SetAppSetting(Constants.Settings.CURRENT_EVENT, lastID.ToString());
                 UpdateView();
+                mWindow.UpdateStatus();
             }
         }
 

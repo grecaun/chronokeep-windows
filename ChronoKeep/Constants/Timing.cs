@@ -67,6 +67,7 @@ namespace ChronoKeep.Constants
 
         public static readonly int PARTICIPANT_DUMMYIDENTIFIER = -1;
         public static readonly int DISTANCE_DUMMYIDENTIFIER = -1;
+        public static readonly int DISTANCE_NO_LINKED_ID = -1;
 
         // These values are what are sent in the API Result and indicate the type of the result.
         public static readonly int DISTANCE_TYPE_NORMAL = 0;

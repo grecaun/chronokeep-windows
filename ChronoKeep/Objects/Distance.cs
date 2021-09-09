@@ -15,7 +15,7 @@ namespace ChronoKeep
             finish_occurrence = 1, start_location = Constants.Timing.LOCATION_START, start_within = 5,
             end_seconds = 0;
         private int wave = 1, start_offset_seconds = 0, start_offset_milliseconds = 0;
-        private int linked_distance = -1, type = 0, ranking = 0;
+        private int linked_distance = Constants.Timing.DISTANCE_NO_LINKED_ID, type = 0, ranking = 0;
 
         public Distance() { }
 
@@ -73,7 +73,7 @@ namespace ChronoKeep
         public int StartOffsetSeconds { get => start_offset_seconds; set => start_offset_seconds = value; }
         public int StartOffsetMilliseconds { get => start_offset_milliseconds; set => start_offset_milliseconds = value; }
         public int EndSeconds { get => end_seconds; set => end_seconds = value; }
-        public int LinkedDistance { get => linked_distance; set => LinkedDistance = value; }
+        public int LinkedDistance { get => linked_distance; set => linked_distance = value; }
         public int Type { get => type; set => type = value; }
         public int Ranking { get => ranking; set => ranking = value; }
 

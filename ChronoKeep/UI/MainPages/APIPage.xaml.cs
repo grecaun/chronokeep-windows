@@ -235,19 +235,14 @@ namespace ChronoKeep.UI.MainPages
                 Grid.SetColumn(urlPanel, 2);
 
                 int ix = 0;
-                switch (theAPI.Type)
+                if (theAPI.Type == Constants.ResultsAPI.CHRONOKEEP_SELF)
                 {
-                    case Constants.ResultsAPI.CHRONOKEEP:
-                        ix = 0;
-                        APIURL.IsEnabled = false;
-                        break;
-                    case Constants.ResultsAPI.CHRONOKEEP_SELF:
-                        ix = 1;
-                        APIURL.IsEnabled = true;
-                        break;
-                    default:
-                        ix = 0;
-                        break;
+                    ix = 1;
+                    APIURL.IsEnabled = true;
+                }
+                else
+                {
+                    APIURL.IsEnabled = false;
                 }
                 APIType.SelectedIndex = ix;
                 APIType.SelectionChanged += new SelectionChangedEventHandler(this.APIType_SelectionChanged);
