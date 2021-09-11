@@ -141,9 +141,9 @@ namespace ChronoKeep.UI.Announcer
                 });
                 namePanel.Children.Add(new Label()
                 {
-                    Content = part.Person.City,
+                    Content = string.Format("{0}, {1}", part.Person.City, part.Person.State),
                     FontSize = 20,
-                    Width = 175,
+                    Width = 200,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -230,9 +230,9 @@ namespace ChronoKeep.UI.Announcer
                 });
                 namePanel.Children.Add(new Label()
                 {
-                    Content = "City",
+                    Content = "City, State",
                     FontSize = 20,
-                    Width = 175,
+                    Width = 200,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
