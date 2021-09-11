@@ -7,8 +7,12 @@
         mc:Ignorable="d"
         Title="Announcer" Height="450" Width="800" Closing="Window_Closing">
     <Grid>
-        <Label Name="NoAnnouncer" Content="No Announcer Reader Set" FontSize="54" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible"/>
-        <ScrollViewer>
+        <Grid.RowDefinitions>
+            <RowDefinition x:Name="NoAnnouncer" Height="100" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Content="No Announcer Reader Set" FontSize="54" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Visible"/>
+        <ScrollViewer Grid.Row="1">
             <ListBox x:Name="AnnouncerBox" Visibility="Visible" />
         </ScrollViewer>
     </Grid>

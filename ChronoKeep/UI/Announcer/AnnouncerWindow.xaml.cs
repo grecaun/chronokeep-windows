@@ -58,19 +58,18 @@ namespace ChronoKeep.UI.Announcer
             // Check if we've got an announcer reader connected.
             if (!window.AnnouncerConnected())
             {
-                NoAnnouncer.Visibility = Visibility.Visible;
-                AnnouncerBox.Visibility = Visibility.Hidden;
+                NoAnnouncer.Height = new GridLength(100);
             }
             else
             {
-                NoAnnouncer.Visibility = Visibility.Hidden;
-                AnnouncerBox.Visibility = Visibility.Visible;
+                NoAnnouncer.Height = new GridLength(0);
             }
             // Get our list of people to display. Remove anything older than 45 seconds.
             List<AnnouncerParticipant> participants = AnnouncerWorker.GetList();
             participants.Sort((x1, x2) => x1.CompareTo(x2));
             DateTime cutoff = DateTime.Now.AddSeconds(Constants.Timing.ANNOUNCER_DISPLAY_WINDOW);
             AnnouncerBox.Items.Clear();
+            AnnouncerBox.Items.Add(new AHeaderItem());
             foreach (AnnouncerParticipant part in participants)
             {
                 // If 0 then they're equal, if greater then 0 then now came before the when.
@@ -80,12 +79,13 @@ namespace ChronoKeep.UI.Announcer
                     // Display in order they came in in the last 45 seconds.
                     AnnouncerBox.Items.Add(new AnAnnouncerItem(part, theEvent));
                     // Display the last person in first.
-                    //AnnouncerBox.Items.Insert(0, new AnAnnouncerItem(part, theEvent));
+                    //AnnouncerBox.Items.Insert(1, new AnAnnouncerItem(part, theEvent));
                 }
             }
         }
 
-        private class AnAnnouncerItem : ListBoxItem {
+        private class AnAnnouncerItem : ListBoxItem
+        {
             public AnAnnouncerItem(AnnouncerParticipant part, Event theEvent)
             {
                 StackPanel mainPanel = new StackPanel()
@@ -114,7 +114,7 @@ namespace ChronoKeep.UI.Announcer
                 {
                     Content = part.Person.Distance,
                     FontSize = 16,
-                    Width = 60,
+                    Width = 100,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -135,23 +135,19 @@ namespace ChronoKeep.UI.Announcer
                     Content = string.Format("{0} {1}", part.Person.FirstName, part.Person.LastName),
                     FontSize = 20,
                     Width = 200,
-                    Margin = new Thickness(0,0,5,0),
+                    Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
-                // City if set
-                if (part.Person.City.Length > 0)
+                namePanel.Children.Add(new Label()
                 {
-                    namePanel.Children.Add(new Label()
-                    {
-                        Content = part.Person.City,
-                        FontSize = 20,
-                        Width = 175,
-                        Margin = new Thickness(0, 0, 5, 0),
-                        VerticalAlignment = VerticalAlignment.Center,
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    });
-                }
+                    Content = part.Person.City,
+                    FontSize = 20,
+                    Width = 175,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
                 // Age && Gender
                 namePanel.Children.Add(new Label()
                 {
@@ -169,11 +165,88 @@ namespace ChronoKeep.UI.Announcer
                     {
                         Content = part.Person.Comments,
                         FontSize = 20,
-                        Margin = new Thickness(5, 0, 5, 0),
+                        Margin = new Thickness(5, 10, 5, 0),
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center
                     });
                 }
+                this.Content = mainPanel;
+            }
+        }
+        private class AHeaderItem : ListBoxItem
+        {
+            public AHeaderItem()
+            {
+                StackPanel mainPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Vertical,
+                    Margin = new Thickness(10, 10, 10, 10)
+                };
+                // Time - Distance - Name - City - Age - Gender
+                StackPanel namePanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+                // When the read occurred
+                namePanel.Children.Add(new Label()
+                {
+                    Content = "When",
+                    FontSize = 16,
+                    Width = 80,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Distance
+                namePanel.Children.Add(new Label()
+                {
+                    Content = "Distance",
+                    FontSize = 16,
+                    Width = 100,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Bib
+                namePanel.Children.Add(new Label()
+                {
+                    Content = "Bib",
+                    FontSize = 20,
+                    Width = 80,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Name
+                namePanel.Children.Add(new Label()
+                {
+                    Content = "Name",
+                    FontSize = 20,
+                    Width = 200,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                namePanel.Children.Add(new Label()
+                {
+                    Content = "City",
+                    FontSize = 20,
+                    Width = 175,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Age && Gender
+                namePanel.Children.Add(new Label()
+                {
+                    Content = "Age G",
+                    FontSize = 20,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                mainPanel.Children.Add(namePanel);
                 this.Content = mainPanel;
             }
         }
