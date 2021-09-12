@@ -116,7 +116,12 @@ namespace ChronoKeep.Constants
 
         public static string ToTime(long seconds, int milliseconds)
         {
-            return string.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", seconds / 3600, (seconds % 3600) / 60, seconds % 60, milliseconds);
+            return string.Format("{0:D}:{1:D2}:{2:D2}.{3:D3}", seconds / 3600, seconds % 3600 / 60, seconds % 60, milliseconds);
+        }
+
+        public static string ToTimeOfDay(long seconds, int milliseconds)
+        {
+            return string.Format("{0:D2}:{1:D2}:{2:D2}.{3:D3}", seconds / 3600, seconds % 3600 / 60, seconds % 60, milliseconds);
         }
     }
 }

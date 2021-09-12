@@ -120,7 +120,7 @@ namespace ChronoKeep.UI.MainPages
             // Check if we've already started the event.  Show a clock if we have.
             if (theEvent != null && theEvent.StartSeconds >= 0)
             {
-                StartTime.Text = Constants.Timing.ToTime(theEvent.StartSeconds, theEvent.StartMilliseconds);
+                StartTime.Text = Constants.Timing.ToTimeOfDay(theEvent.StartSeconds, theEvent.StartMilliseconds);
                 UpdateStartTime();
             }
 
