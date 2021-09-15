@@ -114,7 +114,7 @@ namespace ChronoKeep.UI.Announcer
                 {
                     Content = part.Person.Distance,
                     FontSize = 16,
-                    Width = 100,
+                    Width = 150,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -134,7 +134,7 @@ namespace ChronoKeep.UI.Announcer
                 {
                     Content = string.Format("{0} {1}", part.Person.FirstName, part.Person.LastName),
                     FontSize = 20,
-                    Width = 200,
+                    MinWidth = 250,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -143,7 +143,7 @@ namespace ChronoKeep.UI.Announcer
                 {
                     Content = string.Format("{0}, {1}", part.Person.City, part.Person.State),
                     FontSize = 20,
-                    Width = 200,
+                    MinWidth = 250,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -203,7 +203,7 @@ namespace ChronoKeep.UI.Announcer
                 {
                     Content = "Distance",
                     FontSize = 16,
-                    Width = 100,
+                    Width = 150,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -223,7 +223,7 @@ namespace ChronoKeep.UI.Announcer
                 {
                     Content = "Name",
                     FontSize = 20,
-                    Width = 200,
+                    Width = 250,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
@@ -232,7 +232,7 @@ namespace ChronoKeep.UI.Announcer
                 {
                     Content = "City, State",
                     FontSize = 20,
-                    Width = 200,
+                    Width = 250,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
