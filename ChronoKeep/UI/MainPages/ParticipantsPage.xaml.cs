@@ -298,8 +298,9 @@ namespace ChronoKeep.UI.MainPages
                                 p.Email,
                                 p.Parent,
                                 p.Gender,
-                                p.Comments,
-                                p.Other,
+                                // Get rid of all the quote and newline characters.
+                                p.Comments.Replace('\"', ' ').Replace('\n', ' ').Replace('\r', ' ').Replace('\'', ' '),
+                                p.Other.Replace('\"', ' ').Replace('\n', ' ').Replace('\r', ' ').Replace('\'', ' '),
                                 p.Owes,
                                 p.ECName,
                                 p.ECPhone,
@@ -331,6 +332,7 @@ namespace ChronoKeep.UI.MainPages
                             exporter.ExportData(saveFileDialog.FileName);
                         }
                     });
+                    MessageBox.Show("File saved.");
                 }
             }
         }

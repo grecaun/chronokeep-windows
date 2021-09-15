@@ -532,7 +532,7 @@ namespace ChronoKeep
             {
                 return STREET;
             }
-            else if (string.Equals(s, "Street 2", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Address 2", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Street 2", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Address 2", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Apartment", StringComparison.OrdinalIgnoreCase))
             {
                 return STREET2;
             }
