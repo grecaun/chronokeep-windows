@@ -7,8 +7,8 @@
         xmlns:local="clr-namespace:ChronoKeep.UI.Timing"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Manual Entry" Height="315" Width="300" Closing="Window_Closing">
-    <StackPanel>
+        Title="Manual Entry" Height="345" Width="300" Closing="Window_Closing">
+    <StackPanel VerticalAlignment="Center">
         <DockPanel>
             <Label Content="Bib" Margin="10,10,0,10" FontSize="16" Width="80" HorizontalContentAlignment="Right"/>
             <TextBox Name="BibBox" FontSize="16" Margin="5,10,10,10" TextWrapping="Wrap" KeyUp="Enter_KeyDown" PreviewTextInput="NumberValidation" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>

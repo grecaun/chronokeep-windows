@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:ChronoKeep.UI.Timing"
         xmlns:xctf="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Rewind" Height="300" Width="300" ResizeMode="NoResize">
+        Title="Rewind" Height="330" Width="300" ResizeMode="NoResize">
     <xctf:BusyIndicator Name="busyIndicator">
         <StackPanel VerticalAlignment="Center">
             <Label Content="Rewind" FontSize="18" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>

@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:ChronoKeep.UI.Timing"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Set Time" Height="270" Width="300" ResizeMode="NoResize">
+        Title="Set Time" Height="300" Width="300" ResizeMode="NoResize">
     <StackPanel VerticalAlignment="Center">
         <Label Content="Set Time To" FontSize="18" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
         <RadioButton Name="NowTimeRadioButton" Margin="30,5,30,5" VerticalContentAlignment="Center" GroupName="TimeGroup" Content="Now" FontSize="14" IsChecked="True"/>

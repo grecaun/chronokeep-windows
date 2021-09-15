@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ChronoKeep.UI.Participants"
         mc:Ignorable="d"
-        Title="Participant" Height="530" MinHeight="530" Width="520" MinWidth="520" Closing="Window_Closing" ResizeMode="NoResize">
-    <StackPanel>
+        Title="Participant" Height="575" Width="520" Closing="Window_Closing" ResizeMode="NoResize">
+    <StackPanel VerticalAlignment="Center">
         <DockPanel>
             <Label Content="Bib" FontSize="16" Margin="5,0,5,0" Width="100" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
             <TextBox Name="BibBox" FontSize="16" Margin="0,5,5,5" Width="100" VerticalContentAlignment="Center" KeyDown="Box_KeyDown"/>

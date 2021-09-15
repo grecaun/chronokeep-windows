@@ -223,6 +223,10 @@ namespace ChronoKeep.UI
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (database == null)
+            {
+                return;
+            }
             if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_FALSE &&
                 (TimingController.IsRunning() || AnnouncerOpen()))
             {

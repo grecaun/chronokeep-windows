@@ -319,24 +319,6 @@ namespace ChronoKeep.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Right
                 });
-                Uri imgUri = new Uri("pack://application:,,,/img/plus.png");
-                waveType = 1;
-                if (theDistance.StartOffsetSeconds < 0)
-                {
-                    Log.D("UI.MainPages.DistancesPage", "Setting type to negative and making seconds/milliseconds positive for offset textbox.");
-                    waveType = -1;
-                    imgUri = new Uri("pack://application:,,,/img/dash.png");
-                    theDistance.StartOffsetSeconds *= -1;
-                    theDistance.StartOffsetMilliseconds *= -1;
-                }
-                WaveTypeImg = new Image()
-                {
-                    Width = 25,
-                    Margin = new Thickness(0, 0, 3, 0),
-                    Source = new BitmapImage(imgUri),
-                };
-                WaveTypeImg.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
-                wavePanel.Children.Add(WaveTypeImg);
                 Wave = new TextBox()
                 {
                     Text = theDistance.Wave.ToString(),
@@ -357,6 +339,24 @@ namespace ChronoKeep.UI.MainPages
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalContentAlignment = HorizontalAlignment.Right
                 });
+                Uri imgUri = new Uri("pack://application:,,,/img/plus.png");
+                waveType = 1;
+                if (theDistance.StartOffsetSeconds < 0)
+                {
+                    Log.D("UI.MainPages.DistancesPage", "Setting type to negative and making seconds/milliseconds positive for offset textbox.");
+                    waveType = -1;
+                    imgUri = new Uri("pack://application:,,,/img/dash.png");
+                    theDistance.StartOffsetSeconds *= -1;
+                    theDistance.StartOffsetMilliseconds *= -1;
+                }
+                WaveTypeImg = new Image()
+                {
+                    Width = 25,
+                    Margin = new Thickness(0, 0, 3, 0),
+                    Source = new BitmapImage(imgUri),
+                };
+                WaveTypeImg.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
+                wavePanel.Children.Add(WaveTypeImg);
                 string sOffset = string.Format(TimeFormat, theDistance.StartOffsetSeconds / 3600,
                     (theDistance.StartOffsetSeconds % 3600) / 60, theDistance.StartOffsetSeconds % 60,
                     theDistance.StartOffsetMilliseconds);

@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:ChronoKeep.UI.Timing"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Edit" Height="200" Width="200" ResizeMode="NoResize">
+        Title="Edit" Height="230" Width="200" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="60"/>
