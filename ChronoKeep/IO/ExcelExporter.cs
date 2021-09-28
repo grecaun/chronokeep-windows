@@ -38,6 +38,7 @@ namespace ChronoKeep.UI.IO
             Range startCell = wSheet.Cells[1, 1];
             Range endCell = wSheet.Cells[localData.Count, data[0].Length];
             Range writeRange = wSheet.get_Range(startCell, endCell);
+            writeRange.NumberFormat = "@";
             writeRange.Value2 = outData;
             writeRange.EntireColumn.AutoFit();
             excel.DisplayAlerts = false;

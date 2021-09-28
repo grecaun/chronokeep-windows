@@ -19,6 +19,8 @@ namespace ChronoKeep.UI.Export
         IDBInterface database;
         Event theEvent;
 
+        bool noOpen = false;
+
         int maxNumSegments;
         List<string> commonHeaders = new List<string>
         {
@@ -37,6 +39,11 @@ namespace ChronoKeep.UI.Export
             "Laps Completed", "Ellapsed Time (Gun)", "Ellapsed Time (Chip)"
         };
 
+        public bool SetupError()
+        {
+            return noOpen;
+        }
+
         public ExportResults(IMainWindow window, IDBInterface database)
         {
             InitializeComponent();
@@ -45,7 +52,7 @@ namespace ChronoKeep.UI.Export
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier == -1)
             {
-                this.Close();
+                noOpen = true;
                 return;
             }
             // Check if we're distance based or time based

@@ -719,8 +719,27 @@ namespace ChronoKeep.UI.MainPages
         {
             Log.D("UI.MainPages.TimingPage", "Export clicked.");
             ExportResults exportResults = new ExportResults(mWindow, database);
-            mWindow.AddWindow(exportResults);
-            exportResults.ShowDialog();
+            if (!exportResults.SetupError())
+            {
+                mWindow.AddWindow(exportResults);
+                exportResults.ShowDialog();
+            }
+        }
+
+        private void Export_BAA_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.TimingPage", "Export BAA Clicked.");
+            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
+            {
+                MessageBox.Show("Exporting time based events not supported.");
+                return;
+            }
+            ExportBAAResults exportBAA = new ExportBAAResults(mWindow, database);
+            if (!exportBAA.SetupError())
+            {
+                mWindow.AddWindow(exportBAA);
+                exportBAA.ShowDialog();
+            }
         }
 
         private void Print_Click(object sender, RoutedEventArgs e)

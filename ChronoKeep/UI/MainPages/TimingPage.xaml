@@ -85,6 +85,7 @@
                             <StackPanel Grid.Column="0">
                                 <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Print_Click"/>
                                 <Button Content="Export Results" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Export_Click"/>
+                                <Button Content="Export Boston" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Export_BAA_Click"/>
                                 <Button Name="recalculateButton" Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Recalculate_Click"/>
                                 <Button Content="Create HTML" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="CreateHTML_Click" />
                             </StackPanel>
