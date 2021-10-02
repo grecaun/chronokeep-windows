@@ -156,6 +156,7 @@ namespace ChronoKeep.API
                     AddResultsResponse response;
                     for (int i = 0; i < loops; i += 1)
                     {
+                        Log.D("API.APIController", string.Format("Loop {0}", i));
                         try
                         {
                             response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
