@@ -489,6 +489,12 @@ namespace ChronoKeep.UI.MainPages
                 {
                     System.Windows.MessageBox.Show("Error with values given.");
                 }
+                if (waveType < 0)
+                {
+                    Log.D("UI.MainPages.DistancesPage", "Recording negative values.");
+                    theDistance.StartOffsetSeconds *= -1;
+                    theDistance.StartOffsetMilliseconds *= -1;
+                }
             }
 
         }
