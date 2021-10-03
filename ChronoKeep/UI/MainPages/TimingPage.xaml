@@ -83,13 +83,14 @@
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Print_Click"/>
                                 <Button Content="Export Results" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Export_Click"/>
                                 <Button Content="Export Boston" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Export_BAA_Click"/>
+                                <Button Content="Export UltraSignup" FontSize="9" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Export_US_Click"/>
                                 <Button Name="recalculateButton" Content="Recalculate" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Recalculate_Click"/>
                                 <Button Content="Create HTML" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="CreateHTML_Click" />
                             </StackPanel>
                             <StackPanel Grid.Column="1">
+                                <Button Content="Print" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Print_Click"/>
                                 <Button Content="Awards" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="Award_Click"/>
                                 <Button Content="Raw Data" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="RawReads_Click"/>
                                 <Button x:Name="DNFButton" Content="Add DNF" Width="100" Height="25" HorizontalAlignment="Center" Margin="0,5,0,0" Click="AddDNF_Click"/>
