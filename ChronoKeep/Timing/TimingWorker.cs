@@ -880,7 +880,7 @@ namespace ChronoKeep.Timing
                     finish.Time = "DNF";
                     finish.ChipTime = "DNF";
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
-                    finish.Occurrence = chipLastReadDictionary.ContainsKey((chip, Constants.Timing.LOCATION_FINISH)) ? chipLastReadDictionary[(chip, Constants.Timing.LOCATION_FINISH)].Occurrence + 1 : -1;
+                    finish.Occurrence = theEvent.FinishMaxOccurrences;
                     newResults.Add(finish);
                 }
                 else
@@ -890,7 +890,7 @@ namespace ChronoKeep.Timing
                         Constants.Timing.TIMERESULT_DUMMYPERSON,
                         Constants.Timing.LOCATION_FINISH,
                         Constants.Timing.SEGMENT_FINISH,
-                        chipLastReadDictionary.ContainsKey((chip, Constants.Timing.LOCATION_FINISH)) ? chipLastReadDictionary[(chip, Constants.Timing.LOCATION_FINISH)].Occurrence + 1 : -1,
+                        chipLastReadDictionary.ContainsKey((chip, Constants.Timing.LOCATION_FINISH)) ? chipLastReadDictionary[(chip, Constants.Timing.LOCATION_FINISH)].Occurrence + 1 : 1,
                         "DNF",
                         "Chip:" + chip,
                         "DNF",
@@ -919,6 +919,11 @@ namespace ChronoKeep.Timing
                 else if (bibChipDictionary.ContainsKey(bib) && chipLastReadDictionary.ContainsKey((bibChipDictionary[bib], Constants.Timing.LOCATION_FINISH)))
                 {
                     occurrence = chipLastReadDictionary[(bibChipDictionary[bib], Constants.Timing.LOCATION_FINISH)].Occurrence + 1;
+                }
+                int finishOccurence = distanceDictionary.ContainsKey(part.EventSpecific.DistanceIdentifier) ? distanceDictionary[part.EventSpecific.DistanceIdentifier].FinishOccurrence : 1;
+                if (occurrence > finishOccurence)
+                {
+                    occurrence = finishOccurence;
                 }
                 if (finishTimes.ContainsKey("Bib:" + bib.ToString()))
                 {
