@@ -321,8 +321,8 @@
     </Compile>
     <Compile Include="IO\CSVExporter.cs" />
     <Compile Include="IO\ExcelExporter.cs" />
-    <Compile Include="UI\Export\ExportBAAResults.xaml.cs">
-      <DependentUpon>ExportBAAResults.xaml</DependentUpon>
+    <Compile Include="UI\Export\ExportDistanceResults.xaml.cs">
+      <DependentUpon>ExportDistanceResults.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Export\ExportResults.xaml.cs">
       <DependentUpon>ExportResults.xaml</DependentUpon>
@@ -490,7 +490,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Export\ExportBAAResults.xaml">
+    <Page Include="UI\Export\ExportDistanceResults.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

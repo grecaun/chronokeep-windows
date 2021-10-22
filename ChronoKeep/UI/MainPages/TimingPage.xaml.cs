@@ -736,7 +736,7 @@ namespace ChronoKeep.UI.MainPages
                 MessageBox.Show("Exporting time based events not supported.");
                 return;
             }
-            ExportBAAResults exportBAA = new ExportBAAResults(mWindow, database);
+            ExportDistanceResults exportBAA = new ExportDistanceResults(mWindow, database, OutputType.Boston);
             if (!exportBAA.SetupError())
             {
                 mWindow.AddWindow(exportBAA);
@@ -751,68 +751,12 @@ namespace ChronoKeep.UI.MainPages
                 MessageBox.Show("Exporting time based events not supported.");
                 return;
             }
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            ExportDistanceResults exportUS = new ExportDistanceResults(mWindow, database, OutputType.UltraSignup);
+            if (!exportUS.SetupError())
             {
-                Filter = "CSV (*.csv)|*.csv",
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
-            };
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                string[] headers = new string[]
-                {
-                        "place",
-                        "time",
-                        "first",
-                        "last",
-                        "gender",
-                        "age",
-                        "dob",
-                        "bib",
-                        "city",
-                        "state",
-                        "status"
-                };
-                Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
-                foreach (Participant person in database.GetParticipants(theEvent.Identifier))
-                {
-                    participantDictionary[person.Bib] = person;
-                }
-                List<object[]> data = new List<object[]>();
-                foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
-                {
-                    if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib))
-                    {
-                        data.Add(new object[]
-                        {
-                            result.Place > 0 ? result.Place.ToString() : "",
-                            result.ChipTime,
-                            result.First,
-                            result.Last,
-                            result.Gender,
-                            result.Age(theEvent.Date),
-                            participantDictionary[result.Bib].Birthdate,
-                            result.Bib,
-                            participantDictionary[result.Bib].City,
-                            participantDictionary[result.Bib].State,
-                            Constants.Timing.TIMERESULT_STATUS_DNF == result.Status ? 2 : 1
-                        });
-                    }
-                }
-                IDataExporter exporter;
-                StringBuilder format = new StringBuilder();
-                for (int i = 0; i < headers.Length; i++)
-                {
-                    format.Append("\"{");
-                    format.Append(i);
-                    format.Append("}\",");
-                }
-                format.Remove(format.Length - 1, 1);
-                Log.D("UI.MainPages.TimingPage", string.Format("The format is '{0}'", format.ToString()));
-                exporter = new CSVExporter(format.ToString());
-                exporter.SetData(headers, data);
-                exporter.ExportData(saveFileDialog.FileName);
-                MessageBox.Show("File saved.");
-            }
+                mWindow.AddWindow(exportUS);
+                exportUS.ShowDialog();
+            } 
         }
 
         private void Print_Click(object sender, RoutedEventArgs e)
