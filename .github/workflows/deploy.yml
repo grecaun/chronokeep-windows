@@ -16,7 +16,7 @@ jobs:
     env:
       SigningCertificate: Chronokeep.pfx
       Solution_Path: Chronokeep.sln
-      Project_Directory: Chronokeep\
+      Project_Directory: Chronokeep
       App_Packages_Archive: Chronokeep.zip
       x64_Compile_Path: Chronokeep\bin\x64\Release
       x86_Compile_Path: Chronokeep\bin\x86\Release
@@ -54,11 +54,11 @@ jobs:
         $certificatePath = Join-Path -Path $currentDirectory -ChildPath $env:Project_Directory -AdditionalChildPath $env:SigningCertificate
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
-    # Build the Windows Application Packaging project for Release (x64)
+    # Build the app for Release (x64)
     - name: Build the Windows Application Packaging Project (chronokeep)
       run: msbuild $env:Solution_Path /p:Platform=x64 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:Project_Directory\$env:SigningCertificate /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}"
 
-    # Build the Windows Application Packaging project for Release (x86)
+    # Build the app for Release (x86)
     - name: Build the Windows Application Packaging Project (chronokeep)
       run: msbuild $env:Solution_Path /p:Platform=x86 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:Project_Directory\$env:SigningCertificate /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}"
 
