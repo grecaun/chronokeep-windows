@@ -3,6 +3,8 @@
 name: Chronokeep Continuous Delivery
 
 on:
+  workflow_dispatch:
+
   push:
     tags:
       - '*'
