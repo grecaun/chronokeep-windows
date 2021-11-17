@@ -61,7 +61,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>8CBD24A06693B8435F4048EE8599A9D3D1D0E22D</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>27F45DA7368268D3B9790B934BC952BAB41ECD65</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>Chronokeep.pfx</ManifestKeyFile>
@@ -668,8 +668,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Chronokeep.pfx" />
-    <None Include="ChronoKeep_1_TemporaryKey.pfx" />
-    <None Include="Chronokeep_TemporaryKey.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
