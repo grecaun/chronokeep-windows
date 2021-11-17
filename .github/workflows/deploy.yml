@@ -14,9 +14,8 @@ jobs:
     runs-on: windows-latest
 
     env:
-      SigningCertificate: Chronokeep.pfx
+      SigningCertificate: Chronokeep\Chronokeep.pfx
       Solution_Path: Chronokeep.sln
-      Project_Directory: Chronokeep
       App_Packages_Archive: Chronokeep.zip
       x64_Compile_Path: Chronokeep\bin\x64\Release
       x86_Compile_Path: Chronokeep\bin\x86\Release
@@ -51,20 +50,20 @@ jobs:
       run: |
         $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
         $currentDirectory = Get-Location
-        $certificatePath = Join-Path -Path $currentDirectory -ChildPath $env:Project_Directory -AdditionalChildPath $env:SigningCertificate
+        $certificatePath = Join-Path -Path $currentDirectory -ChildPath $env:SigningCertificate
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
     # Build the app for Release (x64)
     - name: Build the Windows Application Packaging Project (chronokeep)
-      run: msbuild $env:Solution_Path /p:Platform=x64 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:Project_Directory\$env:SigningCertificate /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}"
+      run: msbuild $env:Solution_Path /p:Platform=x64 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}"
 
     # Build the app for Release (x86)
     - name: Build the Windows Application Packaging Project (chronokeep)
-      run: msbuild $env:Solution_Path /p:Platform=x86 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:Project_Directory\$env:SigningCertificate /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}"
+      run: msbuild $env:Solution_Path /p:Platform=x86 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword="${{ secrets.PFX_KEY }}"
 
     # Remove the .pfx
     - name: Remove the .pfx
-      run: Remove-Item -path $env:Project_Directory\$env:SigningCertificate
+      run: Remove-Item -path $env:SigningCertificate
 
     # Archive the package (x64)
     - name: Create archive
