@@ -16,6 +16,7 @@ jobs:
     env:
       SigningCertificate: Chronokeep\Chronokeep.pfx
       Solution_Path: Chronokeep\Chronokeep.csproj
+      Nuget_Path: Chronokeep.sln
       App_Packages_Archive: Chronokeep.zip
       x64_Compile_Path: Chronokeep\bin\x64\Release
       x86_Compile_Path: Chronokeep\bin\x86\Release
@@ -43,7 +44,7 @@ jobs:
 
     # Restore Nuget Packages
     - name: Restore Nuget Packages
-      run: nuget restore $env:Solution_Path
+      run: nuget restore $env:Nuget_Path
 
     ## Decode the Base64 encoded Pfx
     #- name: Decode the Pfx
