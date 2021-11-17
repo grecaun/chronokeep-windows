@@ -46,14 +46,6 @@ jobs:
     - name: Restore Nuget Packages
       run: nuget restore $env:Nuget_Path
 
-    ## Decode the Base64 encoded Pfx
-    #- name: Decode the Pfx
-    #  run: |
-    #    $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
-    #    $currentDirectory = Get-Location
-    #    $certificatePath = Join-Path -Path $currentDirectory -ChildPath $env:SigningCertificate
-    #    [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
-
     # Build the app for Release (x64)
     - name: Build x64
       run: msbuild $env:Solution_Path /p:Platform=x64 /p:Configuration=Release
@@ -61,10 +53,6 @@ jobs:
     # Build the app for Release (x86)
     - name: Build x86
       run: msbuild $env:Solution_Path /p:Platform=x86 /p:Configuration=Release
-
-    # Remove the .pfx
-    - name: Remove the .pfx
-      run: Remove-Item -path $env:SigningCertificate
 
     # Archive the package (x64)
     - name: Create archive x64
