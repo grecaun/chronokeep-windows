@@ -16,6 +16,7 @@ jobs:
     env:
       SigningCertificate: Chronokeep.pfx
       Solution_Path: Chronokeep.sln
+      Project_Directory: Chronokeep\
       App_Packages_Archive: Chronokeep.zip
       x64_Compile_Path: Chronokeep\bin\x64\Release
       x86_Compile_Path: Chronokeep\bin\x86\Release
@@ -42,7 +43,7 @@ jobs:
       run: |
         $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
         $currentDirectory = Get-Location
-        $certificatePath = Join-Path -Path $currentDirectory -ChildPath $env:Wap_Project_Directory -AdditionalChildPath $env:SigningCertificate
+        $certificatePath = Join-Path -Path $currentDirectory -ChildPath $env:Project_Directory -AdditionalChildPath $env:SigningCertificate
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
     # Build the Windows Application Packaging project for Release (x64)
@@ -55,7 +56,7 @@ jobs:
 
     # Remove the .pfx
     - name: Remove the .pfx
-      run: Remove-Item -path $env:Wap_Project_Directory\$env:SigningCertificate
+      run: Remove-Item -path $env:Project_Directory\$env:SigningCertificate
 
     # Archive the package (x64)
     - name: Create archive
