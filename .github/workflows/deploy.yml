@@ -38,9 +38,13 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.1
 
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Restore the application
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Release
+    # Setup Nuget to restore packages
+    - name: Setup Nuget
+      uses: Nuget/setup-nuget@v1
+
+    # Restore Nuget Packages
+    - name: Restore Nuget Packages
+      run: nuget restore $env:Solution_Path
 
     # Decode the Base64 encoded Pfx
     - name: Decode the Pfx
