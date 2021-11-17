@@ -55,11 +55,11 @@ jobs:
 
     # Build the app for Release (x64)
     - name: Build the Windows Application Packaging Project (chronokeep)
-      run: msbuild $env:Solution_Path /p:Platform=x64 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.PFX_KEY }}
+      run: msbuild $env:Solution_Path /p:Platform=x64 /p:Configuration=Release
 
     # Build the app for Release (x86)
     - name: Build the Windows Application Packaging Project (chronokeep)
-      run: msbuild $env:Solution_Path /p:Platform=x86 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.PFX_KEY }}
+      run: msbuild $env:Solution_Path /p:Platform=x86 /p:Configuration=Release
 
     # Remove the .pfx
     - name: Remove the .pfx
