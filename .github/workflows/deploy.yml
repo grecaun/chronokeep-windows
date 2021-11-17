@@ -1,0 +1,112 @@
+# This is a continuous delivery pipeline for github meant to deploy Chronokeep whenever a tag is pushed.
+#
+name: Chronokeep Continuous Delivery
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    env:
+      SigningCertificate: Chronokeep.pfx
+      Solution_Path: Chronokeep.sln
+      App_Packages_Archive: Chronokeep.zip
+      x64_Compile_Path: Chronokeep\bin\x64\Release
+      x86_Compile_Path: Chronokeep\bin\x86\Release
+      Actions_Allow_Unsecure_Commands: true # Allows AddPAth and SetEnv commands
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x'
+
+    # Add  MsBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.1
+
+    # Decode the Base64 encoded Pfx
+    - name: Decode the Pfx
+      run: |
+        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
+        $currentDirectory = Get-Location
+        $certificatePath = Join-Path -Path $currentDirectory -ChildPath $env:Wap_Project_Directory -AdditionalChildPath $env:SigningCertificate
+        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+
+    # Build the Windows Application Packaging project for Release (x64)
+    - name: Build the Windows Application Packaging Project (chronokeep)
+      run: msbuild $env:Solution_Path /p:Platform=x64 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.PFX_KEY }}
+
+    # Build the Windows Application Packaging project for Release (x86)
+    - name: Build the Windows Application Packaging Project (chronokeep)
+      run: msbuild $env:Solution_Path /p:Platform=x86 /p:Configuration=Release /p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.PFX_KEY }}
+
+    # Remove the .pfx
+    - name: Remove the .pfx
+      run: Remove-Item -path $env:Wap_Project_Directory\$env:SigningCertificate
+
+    # Archive the package (x64)
+    - name: Create archive
+      run: Compress-Archive -Path $env:x64_Compile_Path\* -DestinationPath $env:x64_Compile_Path\$env:App_Packages_Archive
+
+    # Archive the package (x86)
+    - name: Create archive
+      run: Compress-Archive -Path $env:x86_Compile_Path\* -DestinationPath $env:x86_Compile_Path\$env:App_Packages_Archive
+
+    # Create the release:  https://github.com/actions/create-release (x64)
+    - name: Create release
+      id: create_release_x64
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}.x64
+        release_name:  ${{ github.ref }}.x64
+        draft: false
+        prerelease: false
+
+    # Upload release asset:   https://github.com/actions/upload-release-asset (x64)
+    - name: Update release asset
+      id: upload-release-asset-x86
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release_x64.outputs.upload_url }}  # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ${{ env:x64_Compile_Path }}\${{ env.App_Packages_Archive }}
+        asset_name: ${{ env.App_Packages_Archive }}
+        asset_content_type: application/zip
+
+    # Create the release:  https://github.com/actions/create-release (x86)
+    - name: Create release
+      id: create_release_x86
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}.x86
+        release_name:  ${{ github.ref }}.x86
+        draft: false
+        prerelease: false
+
+    # Upload release asset:   https://github.com/actions/upload-release-asset (x86)
+    - name: Update release asset
+      id: upload-release-asset-x86
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release_x86.outputs.upload_url }}  # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ${{ env:x86_Compile_Path }}\${{ env.App_Packages_Archive }}
+        asset_name: ${{ env.App_Packages_Archive }}
+        asset_content_type: application/zip
