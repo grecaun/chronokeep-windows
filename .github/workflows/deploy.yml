@@ -34,8 +34,6 @@ jobs:
     # Add  MsBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.1
-      with:
-        vs-version: '17.0'
 
     # Setup Nuget to restore packages
     - name: Setup Nuget
