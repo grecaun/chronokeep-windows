@@ -239,6 +239,7 @@ namespace ChronoKeep.Timing
                         ResetDictionariesMutex.ReleaseMutex();
                     }
                     bool touched = false;
+                    // Process chip reads first.
                     if (database.UnprocessedReadsExist(theEvent.Identifier))
                     {
                         DateTime start = DateTime.Now;
@@ -258,6 +259,7 @@ namespace ChronoKeep.Timing
                         TimeSpan time = end - start;
                         Log.D("Timing.TimingWorker", string.Format("Time to process all chip reads was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
                     }
+                    // Now process Results that aren't ranked.
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
                     {
                         DateTime start = DateTime.Now;
@@ -1420,11 +1422,19 @@ namespace ChronoKeep.Timing
         private List<TimeResult> ProcessPlacementsDistance(Event theEvent)
         {
             List<TimeResult> output = new List<TimeResult>();
+            // Create a dictionary so we can check if placements have changed. (place, location, occurrence, distance)
+            Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = new Dictionary<(int, int, int, string), TimeResult>();
             // Get a list of all segments
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
             Dictionary<int, List<TimeResult>> segmentDictionary = new Dictionary<int, List<TimeResult>>();
             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
             {
+                // We probably have unprocessed results in there, so only worry about results with a place set.
+                // Make sure we're checking based on segmentId as well.
+                if (result.Place > 0)
+                {
+                    PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)] = result;
+                }
                 if (!segmentDictionary.ContainsKey(result.SegmentId))
                 {
                     segmentDictionary[result.SegmentId] = new List<TimeResult>();
@@ -1445,18 +1455,41 @@ namespace ChronoKeep.Timing
             {
                 output.AddRange(ProcessSegmentPlacementsDistance(theEvent, segmentDictionary[Constants.Timing.SEGMENT_FINISH], participantEventSpecificDictionary));
             }
+            // Check if we should be re-uploading results because placements have changed.
+            List<TimeResult> reUpload = new List<TimeResult>();
+            Log.D("Timing.TimingWorker", "Checking for outdated placements.");
+            foreach (TimeResult result in output)
+            {
+                if (PlacementDictionary.ContainsKey((result.Place, result.LocationId, result.Occurrence, result.DistanceName)) && PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].Bib != result.Bib)
+                {
+                    Log.D("Timing.TimingWorker", String.Format("Oudated placement found. {0} && {1}", result.ParticipantName, PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].ParticipantName));
+                    result.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
+                    PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
+                    reUpload.Add(result);
+                    reUpload.Add(PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)]);
+                }
+            }
             database.AddTimingResults(output);
+            database.SetUploadedTimingResults(reUpload);
             return output;
         }
 
         private List<TimeResult> ProcessPlacementsTime(Event theEvent)
         {
             List<TimeResult> output = new List<TimeResult>();
+            // Create a dictionary so we can check if placements have changed. (place, location, occurrence, distance)
+            Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = new Dictionary<(int, int, int, string), TimeResult>();
             // Get a list of all segments
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
             Dictionary<int, List<TimeResult>> segmentDictionary = new Dictionary<int, List<TimeResult>>();
             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
             {
+                // We probably have unprocessed results in there, so only worry about results with a place set.
+                // Make sure we're checking based on segmentId as well.
+                if (result.Place > 0)
+                {
+                    PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)] = result;
+                }
                 if (!segmentDictionary.ContainsKey(result.SegmentId))
                 {
                     segmentDictionary[result.SegmentId] = new List<TimeResult>();
@@ -1477,7 +1510,22 @@ namespace ChronoKeep.Timing
             {
                 output.AddRange(ProcessSegmentPlacementsTime(theEvent, segmentDictionary[Constants.Timing.SEGMENT_FINISH], participantEventSpecificDictionary));
             }
+            // Check if we should be re-uploading results because placements have changed.
+            List<TimeResult> reUpload = new List<TimeResult>();
+            Log.D("Timing.TimingWorker", "Checking for outdated placements.");
+            foreach (TimeResult result in output)
+            {
+                if (PlacementDictionary.ContainsKey((result.Place, result.LocationId, result.Occurrence, result.DistanceName)) && PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].Bib != result.Bib)
+                {
+                    Log.D("Timing.TimingWorker", String.Format("Oudated placement found. {0} && {1}", result.ParticipantName, PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].ParticipantName));
+                    result.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
+                    PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
+                    reUpload.Add(result);
+                    reUpload.Add(PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)]);
+                }
+            }
             database.AddTimingResults(output);
+            database.SetUploadedTimingResults(reUpload);
             return output;
         }
 

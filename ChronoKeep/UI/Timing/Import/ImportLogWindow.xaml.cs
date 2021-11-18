@@ -128,7 +128,7 @@ namespace ChronoKeep.UI.Timing.Import
                         chipreads.Add(new ChipRead(
                             theEvent.Identifier,        // event id
                             locationId,                 // location id
-                            Convert.ToInt32(line[1]),   // status
+                            Constants.Timing.CHIPREAD_STATUS_NONE,   // status
                             line[2].ToString().Trim(),  // chip number
                             Convert.ToInt64(line[3]),   // seconds
                             Convert.ToInt32(line[4]),   // milliseconds
