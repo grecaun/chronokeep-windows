@@ -22,10 +22,10 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Get tag
-        run: echo "RELEASE_VERSION=$(git describe --tag)" >> $GITHUB_ENV
+        run: echo '::set-output name=RELEASE_VERSION::$(git describe --tag)'
+        id: release-version
 
       # Runs a set of commands using the runners shell
       - name: Output version
         run: |
-          echo $RELEASE_VERSION
-          echo ${{ env.RELEASE_VERSION }}
+          echo ${{ steps.release-version.outputs.RELEASE_VERSION }}
