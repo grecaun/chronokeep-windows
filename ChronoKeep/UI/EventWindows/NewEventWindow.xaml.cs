@@ -118,6 +118,15 @@ namespace ChronoKeep
                         // Set up a translation dictionary.
                         DistanceTranslationDict[DistanceDict[newD.Name]] = newD.Identifier;
                     }
+                    // Translate linked distance id's.
+                    foreach (Distance newD in newDistances)
+                    {
+                        if (Constants.Timing.DISTANCE_NO_LINKED_ID != newD.LinkedDistance)
+                        {
+                            newD.LinkedDistance = DistanceTranslationDict[newD.LinkedDistance];
+                            database.UpdateDistance(newD);
+                        }
+                    }
                     // Get locations from old event.
                     List<TimingLocation> locations = database.GetTimingLocations(oldEventId);
                     List<TimingLocation> newLocations = new List<TimingLocation>();

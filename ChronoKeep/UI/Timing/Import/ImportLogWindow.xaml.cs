@@ -129,7 +129,7 @@ namespace ChronoKeep.UI.Timing.Import
                             theEvent.Identifier,        // event id
                             locationId,                 // location id
                             Convert.ToInt32(line[1]),   // status
-                            line[2].ToString(),         // chip number
+                            line[2].ToString().Trim(),  // chip number
                             Convert.ToInt64(line[3]),   // seconds
                             Convert.ToInt32(line[4]),   // milliseconds
                             Convert.ToInt64(line[5]),   // time_seconds

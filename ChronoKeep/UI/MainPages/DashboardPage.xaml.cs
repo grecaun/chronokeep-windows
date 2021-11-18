@@ -46,7 +46,6 @@ namespace ChronoKeep.UI.MainPages
             if (theEvent != null && oldEventId != -1 && oldEventId != theEvent.Identifier)
             {
                 mWindow.NotifyTimingWorker();
-
                 // Setup AgeGroup static variables
                 AgeGroup.SetAgeGroups(database.GetAgeGroups(theEvent.Identifier));
             }

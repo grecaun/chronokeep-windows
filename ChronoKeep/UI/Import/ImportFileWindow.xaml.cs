@@ -76,9 +76,6 @@ namespace ChronoKeep
         Page bibConflictsPage = null;
         int[] keys;
 
-        Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
-        Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
-
         Event theEvent;
 
         /**
@@ -229,6 +226,12 @@ namespace ChronoKeep
 
         private async void ImportWork(List<ImportDistance> fileDistances)
         {
+            // Make sure Age Groups are set properly.
+            AgeGroup.SetAgeGroups(database.GetAgeGroups(theEvent.Identifier));
+            // Make local copies of the Age Groups.
+            Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
+            Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
+
             HashSet<Participant> multiples = new HashSet<Participant>();
             await Task.Run(() =>
             {
