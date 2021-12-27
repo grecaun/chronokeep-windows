@@ -129,7 +129,7 @@ namespace ChronoKeep.UI.MainPages
         private void ImportExcel_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ParticipantsPage", "Import Excel clicked.");
-            OpenFileDialog excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.csv)|*.xlsx;*.csv|All files|*" };
+            OpenFileDialog excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.xls,*.csv)|*.xlsx;*.xls;*.csv|All files|*" };
             if (excel_dialog.ShowDialog() == true)
             {
                 try

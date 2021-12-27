@@ -317,7 +317,7 @@ namespace ChronoKeep.UI.MainPages
             }
             if (mWindow.IsAPIControllerRunning())
             {
-                AutoAPIButton.Content = "Stop Uploads";
+                AutoAPIButton.Content = mWindow.APIErrors() > 0 ? string.Format("Stop Uploads ({0})", mWindow.APIErrors()) : "Stop Uploads";
                 ManualAPIButton.IsEnabled = false;
             }
             else

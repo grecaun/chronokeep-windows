@@ -207,11 +207,28 @@ namespace ChronoKeep.UI.MainPages
         private async void FileImport_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ChipAssignmentPage", "Import from file clicked.");
-            OpenFileDialog bib_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv,*.txt)|*.csv;*.txt|All files|*" };
-            if (bib_dialog.ShowDialog() == true) {
+            OpenFileDialog bib_dialog;
+            if (mWindow.ExcelEnabled())
+            {
+                bib_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.xls,*.csv,*.txt)|*.xlsx;*.xls;*.csv;*.txt|All files|*" };
+            }
+            else
+            {
+                bib_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv,*.txt)|*.csv;*.txt|All files|*" };
+            }
+            if (bib_dialog.ShowDialog() == true)
+            {
                 try
                 {
-                    CSVImporter importer = new CSVImporter(bib_dialog.FileName);
+                    IDataImporter importer;
+                    if (mWindow.ExcelEnabled())
+                    {
+                        importer = new ExcelImporter(bib_dialog.FileName);
+                    }
+                    else
+                    {
+                        importer = new CSVImporter(bib_dialog.FileName);
+                    }
                     await Task.Run(() =>
                     {
                         importer.FetchHeaders();

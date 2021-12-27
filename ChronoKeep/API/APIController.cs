@@ -21,12 +21,15 @@ namespace ChronoKeep.API
         private static bool Running = false;
         private static bool KeepAlive = true;
 
+        public int Errors { get; private set; }
+
         private static readonly int SleepSeconds = 30;
 
         public APIController(IMainWindow mainWindow, IDBInterface database)
         {
             this.database = database;
             this.mainWindow = mainWindow;
+            this.Errors = 0;
         }
 
         public static async Task<AddResultsResponse> DeleteResults(ResultsAPI api, string slug, string year)
@@ -163,9 +166,9 @@ namespace ChronoKeep.API
                         }
                         catch
                         {
+                            // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
                             Log.D("API.APIController", "Unable to handle API response. Loop " + i);
-                            KeepAlive = false;
-                            Running = false;
+                            this.Errors += 1;
                             mainWindow.UpdateTimingFromController();
                             return;
                         }
@@ -184,9 +187,9 @@ namespace ChronoKeep.API
                         }
                         catch
                         {
+                            // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
                             Log.D("API.APIController", "Unable to handle API response. Leftovers");
-                            KeepAlive = false;
-                            Running = false;
+                            this.Errors += 1;
                             mainWindow.UpdateTimingFromController();
                             return;
                         }

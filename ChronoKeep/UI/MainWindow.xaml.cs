@@ -346,6 +346,11 @@ namespace ChronoKeep.UI
             return APIController == null ? false : APIController.IsRunning();
         }
 
+        public int APIErrors()
+        {
+            return APIController.Errors();
+        }
+
         public void WindowFinalize(Window w)
         {
             page.UpdateView();

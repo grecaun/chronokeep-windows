@@ -122,6 +122,15 @@ namespace ChronoKeep.UI.MainPages
             {
                 UpdateDatabase();
             }
+            // Check for and delete linked distances
+            List<Distance> allDistances = database.GetDistances(theEvent.Identifier);
+            foreach (Distance d in allDistances)
+            {
+                if (d.LinkedDistance >= 0 && d.LinkedDistance == distance.Identifier)
+                {
+                    database.RemoveDistance(d);
+                }
+            }
             database.RemoveDistance(distance);
             UpdateTimingWorker = true;
             UpdateView();
