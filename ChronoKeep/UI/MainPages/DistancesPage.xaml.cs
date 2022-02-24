@@ -406,6 +406,12 @@ namespace ChronoKeep.UI.MainPages
                         Content = "Unranked",
                         Uid = Constants.Timing.DISTANCE_TYPE_UNOFFICIAL.ToString()
                     });
+                TypeBox.Items.Add(
+                    new ComboBoxItem
+                    {
+                        Content = "Virtual",
+                        Uid = Constants.Timing.DISTANCE_TYPE_VIRTUAL.ToString()
+                    });
                 if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_EARLY)
                 {
                     TypeBox.SelectedIndex = 0;
@@ -413,6 +419,10 @@ namespace ChronoKeep.UI.MainPages
                 else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL)
                 {
                     TypeBox.SelectedIndex = 1;
+                }
+                else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_VIRTUAL)
+                {
+                    TypeBox.SelectedIndex = 2;
                 }
                 wavePanel.Children.Add(TypeBox);
                 thePanel.Children.Add(wavePanel);

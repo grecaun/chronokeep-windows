@@ -71,10 +71,11 @@ namespace ChronoKeep.Constants
 
         // These values are what are sent in the API Result and indicate the type of the result.
         public static readonly int DISTANCE_TYPE_NORMAL = 0;
-        public static readonly int DISTANCE_TYPE_EARLY = 1;
-        public static readonly int DISTANCE_TYPE_UNOFFICIAL = 2;
-        public static readonly int API_TYPE_DNF = 3;
-        public static readonly int API_TYPE_DNS = 4;
+        public static readonly int DISTANCE_TYPE_EARLY = 11;
+        public static readonly int DISTANCE_TYPE_UNOFFICIAL = 12;
+        public static readonly int DISTANCE_TYPE_VIRTUAL = 13;
+        public static readonly int API_TYPE_DNF = 23;
+        public static readonly int API_TYPE_DNS = 24;
 
         // API Upload Count
         public static readonly int API_LOOP_COUNT = 20;
