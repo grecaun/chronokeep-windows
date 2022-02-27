@@ -348,7 +348,7 @@ namespace ChronoKeep.UI
 
         public int APIErrors()
         {
-            return APIController.Errors();
+            return APIController.Errors;
         }
 
         public void WindowFinalize(Window w)
