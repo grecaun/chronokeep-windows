@@ -16,6 +16,10 @@ namespace ChronoKeep.Constants
 
         public static readonly string CHRONOKEEP_URL = "https://api.chronokeep.com/";
 
+        public const string CHRONOKEEP_EVENT_TYPE_DISTANCE = "distance";
+        public const string CHRONOKEEP_EVENT_TYPE_TIME = "time";
+        public const string CHRONOKEEP_EVENT_TYPE_UNKNOWN = "unknown";
+
         public static readonly Dictionary<string, string> API_TYPE_NAMES = new Dictionary<string, string>()
         {
             { CHRONOKEEP, "Chronokeep" },

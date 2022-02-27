@@ -120,7 +120,7 @@ namespace ChronoKeep.UI.API
                         Image = "",
                         ContactEmail = contactBox.Text,
                         AccessRestricted = (bool)restrictBox.IsChecked ? true : false,
-                        Type = theEvent.EventType == Constants.Timing.EVENT_TYPE_DISTANCE ? "distance" : theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "time" : "unknown"
+                        Type = theEvent.EventType == Constants.Timing.EVENT_TYPE_DISTANCE ? Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_DISTANCE : theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_TIME : Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_UNKNOWN
                     });
                     slug = addResponse.Event.Slug;
                 }
