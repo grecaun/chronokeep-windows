@@ -18,6 +18,8 @@ namespace ChronoKeep
             distanceName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday, linked_distance_name = "";
         DateTime systemTime;
 
+        private static int raceType = Constants.Timing.EVENT_TYPE_DISTANCE;
+
         public static readonly Regex timeRegex = new Regex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})");
 
         public static Dictionary<int, TimingLocation> locations = null;
@@ -54,6 +56,17 @@ namespace ChronoKeep
             else
             {
                 this.segmentName = "";
+            }
+            if (raceType == Constants.Timing.EVENT_TYPE_TIME && Constants.Timing.SEGMENT_FINISH == this.SegmentId)
+            {
+                if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
+                {
+                    this.segmentName = string.Format("Lap {0}", occurrence);
+                }
+                else
+                {
+                    this.segmentName = string.Format("{0} {1}", this.segmentName, occurrence);
+                }
             }
             this.firstName = first;
             this.lastName = last;
@@ -135,6 +148,7 @@ namespace ChronoKeep
             {
                 segments[seg.Identifier] = seg;
             }
+            raceType = theEvent.EventType;
         }
 
         public static void SetupRaceResults(IDBInterface database)
