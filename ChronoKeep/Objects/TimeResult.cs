@@ -63,7 +63,7 @@ namespace ChronoKeep
                 {
                     this.segmentName = string.Format("Lap {0}", occurrence);
                 }
-                else
+                else if (Constants.Timing.SEGMENT_START != this.segmentId)
                 {
                     this.segmentName = string.Format("{0} {1}", this.segmentName, occurrence);
                 }
