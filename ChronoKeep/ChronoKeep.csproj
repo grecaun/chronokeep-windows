@@ -294,7 +294,11 @@
     <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="Timing\Announcer\AnnouncerWorker.cs" />
     <Compile Include="Timing\Interfaces\IpicoInterface.cs" />
+    <Compile Include="Timing\Routines\BackyardUltraRoutine.cs" />
+    <Compile Include="Timing\Routines\DistanceRoutine.cs" />
+    <Compile Include="Timing\Routines\TimeRoutine.cs" />
     <Compile Include="Timing\TimingController.cs" />
+    <Compile Include="Timing\TimingDictionary.cs" />
     <Compile Include="Timing\TimingWorker.cs" />
     <Compile Include="UI\Announcer\AnnouncerWindow.xaml.cs">
       <DependentUpon>AnnouncerWindow.xaml</DependentUpon>
