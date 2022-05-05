@@ -53,9 +53,10 @@
             <CheckBox Name="segmentCheckBox" Content="Distance Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <DockPanel Margin="10,5,10,5">
                 <Label Content="Event Type" FontSize="16"/>
-                <ComboBox Name="TypeBox" Margin="10,0,0,0" VerticalContentAlignment="Center" IsEnabled="False">
+                <ComboBox Name="TypeBox" Margin="10,0,0,0" VerticalContentAlignment="Center" IsEnabled="False" SelectionChanged="TypeBox_SelectionChanged">
                     <ComboBoxItem Content="Distance Based" Uid="0" IsSelected="True"/>
                     <ComboBoxItem Content="Time Based" Uid="1" />
+                    <ComboBoxItem Content="Backyard Ultra" Uid="2" />
                 </ComboBox>
             </DockPanel>
             <Separator Margin="5,5,5,5" />

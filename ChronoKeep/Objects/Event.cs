@@ -109,6 +109,10 @@ namespace ChronoKeep
                 {
                     return "Time Based";
                 }
+                else if (event_type == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
+                {
+                    return "Backyard Ultra";
+                }
                 return "Distance Based";
             }
         }

@@ -142,6 +142,7 @@ namespace ChronoKeep
         void RemoveAgeGroup(AgeGroup group);
         void RemoveAgeGroups(int eventId, int distanceId);
         void RemoveAgeGroups(List<AgeGroup> groups);
+        void ResetAgeGroups(int eventId);
         List<AgeGroup> GetAgeGroups(int eventId);
         List<AgeGroup> GetAgeGroups(int eventId, int distanceId);
 

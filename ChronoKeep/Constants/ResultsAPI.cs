@@ -18,6 +18,7 @@ namespace ChronoKeep.Constants
 
         public const string CHRONOKEEP_EVENT_TYPE_DISTANCE = "distance";
         public const string CHRONOKEEP_EVENT_TYPE_TIME = "time";
+        public const string CHRONOKEEP_EVENT_TYPE_BACKYARD_ULTRA = "backyardultra";
         public const string CHRONOKEEP_EVENT_TYPE_UNKNOWN = "unknown";
 
         public static readonly Dictionary<string, string> API_TYPE_NAMES = new Dictionary<string, string>()

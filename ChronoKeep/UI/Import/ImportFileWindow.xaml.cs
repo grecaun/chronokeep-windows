@@ -246,36 +246,55 @@ namespace ChronoKeep
                     divHashName.Add(d.Name, d);
                     divHashId.Add(d.Identifier, d);
                 }
+                bool BackYardUltra = Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType ? true : false;
                 Distance theDiv;
-                foreach (ImportDistance id in fileDistances)
+                Distance backyardDistance = null;
+                // Ensure we don't add more distances for backyard ultra events.
+                if (!BackYardUltra)
                 {
-                    if (id.DistanceId == -1)
+                    foreach (ImportDistance id in fileDistances)
                     {
-                        theDiv = (Distance)divHashName[id.NameFromFile];
-                        if (theDiv == null)
+                        if (id.DistanceId == -1)
                         {
-                            Distance div = new Distance(id.NameFromFile, theEvent.Identifier);
-                            database.AddDistance(div);
-                            div.Identifier = database.GetDistanceID(div);
-                            divHash.Add(div.Name, div);
-                            Log.D("ImportFileWindow", "Div name is " + div.Name);
+                            theDiv = (Distance)divHashName[id.NameFromFile];
+                            if (theDiv == null)
+                            {
+                                Distance div = new Distance(id.NameFromFile, theEvent.Identifier);
+                                database.AddDistance(div);
+                                div.Identifier = database.GetDistanceID(div);
+                                divHash.Add(div.Name, div);
+                                Log.D("ImportFileWindow", "Div name is " + div.Name);
+                            }
+                            else
+                            {
+                                divHash.Add(id.NameFromFile, theDiv);
+                            }
                         }
                         else
                         {
-                            divHash.Add(id.NameFromFile, theDiv);
+                            theDiv = (Distance)divHashId[id.DistanceId];
+                            if (theDiv != null)
+                            {
+                                divHash.Add(id.NameFromFile, theDiv);
+                            }
+                            else
+                            {
+                                Log.E("IO.ImportFileWindow", "Distance doesn't exist in the database...");
+                            }
                         }
+                    }
+                }
+                else
+                {
+                    if (distances.Count > 0)
+                    {
+                        backyardDistance = distances[0];
                     }
                     else
                     {
-                        theDiv = (Distance)divHashId[id.DistanceId];
-                        if (theDiv != null)
-                        {
-                            divHash.Add(id.NameFromFile, theDiv);
-                        }
-                        else
-                        {
-                            Log.E("IO.ImportFileWindow", "Distance doesn't exist in the database...");
-                        }
+                        backyardDistance = new Distance("Backyard", theEvent.Identifier);
+                        database.AddDistance(backyardDistance);
+                        backyardDistance.Identifier = database.GetDistanceID(backyardDistance);
                     }
                 }
                 int numEntries = data.Data.Count;
@@ -285,7 +304,8 @@ namespace ChronoKeep
                     if (data.Data[counter][keys[DISTANCE]] != null && data.Data[counter][keys[DISTANCE]].Length > 0)
                     {
                         Log.D("ImportFileWindow", "Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].ToLower()));
-                        Distance thisDiv = (Distance)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].Trim().ToLower())];
+                        // Always set distance to our backyard distance if we're importing for a backyard ultra event. Otherwise figure out the proper distance.
+                        Distance thisDiv = BackYardUltra ? backyardDistance : (Distance)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].Trim().ToLower())];
                         string birthday = "01/01/1900";
                         int age = -1;
                         if (keys[BIRTHDAY] == 0 && keys[AGE] != 0) // birthday not set but age is

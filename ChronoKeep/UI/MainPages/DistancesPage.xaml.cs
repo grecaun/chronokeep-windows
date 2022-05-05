@@ -88,6 +88,14 @@ namespace ChronoKeep.UI.MainPages
                     }
                 }
             }
+            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA && distances.Count > 0)
+            {
+                Add.IsEnabled = false;
+            }
+            else
+            {
+                Add.IsEnabled = true;
+            }
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -885,6 +893,15 @@ namespace ChronoKeep.UI.MainPages
                 numGrid.Children.Add(secondGrid);
                 Grid.SetColumn(secondGrid, 1);
                 thePanel.Children.Add(numGrid);
+                if (theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
+                {
+                    wavePanel.Visibility = Visibility.Collapsed;
+                    copyPanel.Visibility = Visibility.Collapsed;
+                    AddSubDistance.Visibility = Visibility.Collapsed;
+                    secondGrid.Children.Remove(Remove);
+                    nameGrid.Children.Add(Remove);
+                    Grid.SetColumn(Remove, 1);
+                }
             }
 
             private void AddSub_Click(object sender, RoutedEventArgs e)

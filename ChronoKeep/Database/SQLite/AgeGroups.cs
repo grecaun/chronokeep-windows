@@ -94,6 +94,21 @@ namespace ChronoKeep.Database.SQLite
             }
         }
 
+        internal static void ResetAgeGroups(int eventId, SQLiteConnection connection)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "DELETE FROM age_groups WHERE event_id=@event;";
+                command.Parameters.AddRange(new SQLiteParameter[]
+                {
+                    new SQLiteParameter("@event", eventId),
+                });
+                command.ExecuteNonQuery();
+                transaction.Commit();
+            }
+        }
+
         internal static List<AgeGroup> GetAgeGroups(int eventId, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();

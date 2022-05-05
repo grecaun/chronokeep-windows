@@ -60,8 +60,9 @@ namespace ChronoKeep.Constants
         public static readonly int AGEGROUPS_LASTGROUP_TRUE = 1;
         public static readonly int AGEGROUPS_LASTGROUP_FALSE = 0;
 
-        public static readonly int EVENT_TYPE_DISTANCE = 0;
-        public static readonly int EVENT_TYPE_TIME = 1;
+        public const int EVENT_TYPE_DISTANCE = 0;
+        public const int EVENT_TYPE_TIME = 1;
+        public const int EVENT_TYPE_BACKYARD_ULTRA = 2;
 
         public static readonly int TIMINGSYSTEM_UNKNOWN = -1;
 

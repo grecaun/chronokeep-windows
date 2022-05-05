@@ -67,7 +67,7 @@ namespace ChronoKeep.UI.MainPages
             ComboBoxItem eventType = null;
             foreach (ComboBoxItem item in TypeBox.Items)
             {
-                if (item.Content.Equals(theEvent.EventTypeString))
+                if (item.Uid == theEvent.EventType.ToString())
                 {
                     eventType = item;
                 }
@@ -114,10 +114,13 @@ namespace ChronoKeep.UI.MainPages
                 theEvent.CommonAgeGroups = commonAgeCheckBox.IsChecked ?? false;
                 theEvent.CommonStartFinish = commonStartCheckBox.IsChecked ?? false;
                 theEvent.DistanceSpecificSegments = segmentCheckBox.IsChecked ?? false;
-                theEvent.EventType = Constants.Timing.EVENT_TYPE_DISTANCE;
-                if (((ComboBoxItem)TypeBox.SelectedItem).Content.Equals("Time Based"))
+                try
                 {
-                    theEvent.EventType = Constants.Timing.EVENT_TYPE_TIME;
+                    theEvent.EventType = int.Parse(((ComboBoxItem)TypeBox.SelectedItem).Uid);
+                }
+                catch
+                {
+                    theEvent.EventType = Constants.Timing.EVENT_TYPE_DISTANCE;
                 }
                 Log.D("UI.DashboardPage", "Updating database.");
                 // Check if we've changed the segment option
@@ -126,6 +129,11 @@ namespace ChronoKeep.UI.MainPages
                 {
                     Log.D("UI.DashboardPage", "Distance Specific Segments value has changed.");
                     database.ResetSegments(theEvent.Identifier);
+                }
+                if (oldEvent.CommonAgeGroups != theEvent.CommonAgeGroups)
+                {
+                    Log.D("UI.DashboardPage", "Common Age Groups value has changed.");
+                    database.ResetAgeGroups(theEvent.Identifier);
                 }
                 database.UpdateEvent(theEvent);
                 Log.D("UI.DashboardPage", "Updating view.");
@@ -156,7 +164,14 @@ namespace ChronoKeep.UI.MainPages
             eventYearCodeTextBox.IsEnabled = true;
             eventDatePicker.IsEnabled = true;
             rankByGunCheckBox.IsEnabled = true;
-            commonAgeCheckBox.IsEnabled = true;
+            if (((ComboBoxItem)TypeBox.SelectedItem).Uid == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA.ToString())
+            {
+                commonAgeCheckBox.IsEnabled = false;
+            }
+            else
+            {
+                commonAgeCheckBox.IsEnabled = true;
+            }
             commonStartCheckBox.IsEnabled = true;
             segmentCheckBox.IsEnabled = true;
             TypeBox.IsEnabled = true;
@@ -660,6 +675,35 @@ namespace ChronoKeep.UI.MainPages
         {
             Log.D("UI.DashboardPage", "Results API button clicked.");
             mWindow.SwitchPage(new APIPage(mWindow, database), true);
+        }
+
+        private void TypeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Log.D("UI.DashboardPage", "TypeBox selection changed.");
+            int eventType = -1;
+            try
+            {
+                eventType = int.Parse(((ComboBoxItem)TypeBox.SelectedItem).Uid);
+            }
+            catch
+            {
+                commonAgeCheckBox.IsEnabled = true;
+            }
+            // Common age groups when backyard ultra is the event type.
+            if (eventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
+            {
+                commonAgeCheckBox.IsEnabled = false;
+                commonAgeCheckBox.IsChecked = true;
+                rankByGunCheckBox.IsEnabled = false;
+                rankByGunCheckBox.IsChecked = true;
+                segmentCheckBox.IsEnabled = false;
+            }
+            else if (editButton != null && editButton.Content.ToString() == Constants.DashboardLabels.SAVE)
+            {
+                commonAgeCheckBox.IsEnabled = true;
+                rankByGunCheckBox.IsEnabled = true;
+                segmentCheckBox.IsEnabled = true;
+            }
         }
     }
 }

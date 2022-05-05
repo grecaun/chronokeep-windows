@@ -112,6 +112,24 @@ namespace ChronoKeep.UI.API
             {
                 try
                 {
+                    string type = "";
+                    switch (theEvent.EventType)
+                    {
+                        case Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA:
+                            type = Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_BACKYARD_ULTRA;
+                            break;
+                        case Constants.Timing.EVENT_TYPE_TIME:
+                            type = Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_TIME;
+                            break;
+                        case Constants.Timing.EVENT_TYPE_DISTANCE:
+                            type = Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_DISTANCE;
+                            break;
+                        default:
+                            type = Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_UNKNOWN;
+                            break;
+
+                    }
+
                     ModifyEventResponse addResponse = await APIHandlers.AddEvent(api, new APIEvent
                     {
                         Name = nameBox.Text,
@@ -120,7 +138,7 @@ namespace ChronoKeep.UI.API
                         Image = "",
                         ContactEmail = contactBox.Text,
                         AccessRestricted = (bool)restrictBox.IsChecked ? true : false,
-                        Type = theEvent.EventType == Constants.Timing.EVENT_TYPE_DISTANCE ? Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_DISTANCE : theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_TIME : Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_UNKNOWN
+                        Type = type
                     });
                     slug = addResponse.Event.Slug;
                 }
