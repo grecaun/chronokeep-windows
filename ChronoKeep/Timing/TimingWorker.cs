@@ -239,6 +239,7 @@ namespace ChronoKeep.Timing
                             _ = Routines.TimeRoutine.ProcessRace(theEvent, database, dictionary);
                             touched = true;
                         }
+                        // Else if RACETYPE if BACKYARD_ULTRA
                         else if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
                         {
                             _ = Routines.BackyardUltraRoutine.ProcessRace(theEvent, database, dictionary);
@@ -258,11 +259,17 @@ namespace ChronoKeep.Timing
                             _ = Routines.DistanceRoutine.ProcessPlacements(theEvent, database, dictionary);
                             touched = true;
                         }
-                        // Else RACETYPE is TIME
+                        // Else if RACETYPE is TIME
                         else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                         {
                             Routines.TimeRoutine.ProcessLapTimes(theEvent, database);
                             _ = Routines.TimeRoutine.ProcessPlacements(theEvent, database, dictionary);
+                            touched = true;
+                        }
+                        // Else if RACETYPE is BACKYARD_ULTRA
+                        else if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
+                        {
+                            _ = Routines.BackyardUltraRoutine.ProcessPlacements(theEvent, database, dictionary);
                             touched = true;
                         }
                         DateTime end = DateTime.Now;

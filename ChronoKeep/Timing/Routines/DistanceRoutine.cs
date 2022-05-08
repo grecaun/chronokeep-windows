@@ -10,7 +10,7 @@ namespace ChronoKeep.Timing.Routines
     {
         public static List<TimeResult> ProcessRace(Event theEvent, IDBInterface database, TimingDictionary dictionary)
         {
-            Log.D("Timing.TimingWorker", "Processing chip reads for a distance based event.");
+            Log.D("Timing.Routines.DistanceRoutine", "Processing chip reads for a distance based event.");
             // Check if there's anything to process.
             // Pre-process information we'll need to fully process chip reads
             // Get start TimeResults
@@ -52,7 +52,7 @@ namespace ChronoKeep.Timing.Routines
                     // results we've already calculated
                     if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
-                        if (!lastReadDictionary.ContainsKey((read.ChipBib, read.LocationID)))
+                        if (!lastReadDictionary.ContainsKey((read.Bib, read.LocationID)))
                         {
                             lastReadDictionary[(read.Bib, read.LocationID)] = (read, 1);
                         }
@@ -66,7 +66,7 @@ namespace ChronoKeep.Timing.Routines
                         (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
                         // If we haven't found anything, let us know what our start time was
-                        if (!lastReadDictionary.ContainsKey((read.ChipBib, read.LocationID)))
+                        if (!lastReadDictionary.ContainsKey((read.Bib, read.LocationID)))
                         {
                             lastReadDictionary[(read.Bib, read.LocationID)] = (read, 0);
                         }
@@ -126,7 +126,6 @@ namespace ChronoKeep.Timing.Routines
                 }
             }
             // Go through each chip read for a single person.
-            // List<ChipRead> updateStatusReads = new List<ChipRead>();
             List<TimeResult> newResults = new List<TimeResult>();
             // Keep a list of participants to update.
             HashSet<Participant> updateParticipants = new HashSet<Participant>();
@@ -238,7 +237,7 @@ namespace ChronoKeep.Timing.Routines
                                 {
                                     if (!dictionary.locationDictionary.ContainsKey(read.LocationID))
                                     {
-                                        Log.E("Timing.TimingWorker", "Somehow the location was not found.");
+                                        Log.E("Timing.Routines.DistanceRoutine", "Somehow the location was not found.");
                                     }
                                     else
                                     {
@@ -454,7 +453,7 @@ namespace ChronoKeep.Timing.Routines
                                 {
                                     if (!dictionary.locationDictionary.ContainsKey(read.LocationID))
                                     {
-                                        Log.E("Timing.TimingWorker", "Somehow the location was not found.");
+                                        Log.E("Timing.Routines.DistanceRoutine", "Somehow the location was not found.");
                                     }
                                     else
                                     {
@@ -669,25 +668,25 @@ namespace ChronoKeep.Timing.Routines
             // process results based upon the segment they're in
             foreach (Segment segment in segments)
             {
-                Log.D("Timing.TimingWorker", "Processing segment " + segment.Name);
+                Log.D("Timing.Routines.DistanceRoutine", "Processing segment " + segment.Name);
                 if (segmentDictionary.ContainsKey(segment.Identifier))
                 {
                     output.AddRange(ProcessSegmentPlacements(theEvent, segmentDictionary[segment.Identifier], dictionary));
                 }
             }
-            Log.D("Timing.TimingWorker", "Processing finish results");
+            Log.D("Timing.Routines.DistanceRoutine", "Processing finish results");
             if (segmentDictionary.ContainsKey(Constants.Timing.SEGMENT_FINISH))
             {
                 output.AddRange(ProcessSegmentPlacements(theEvent, segmentDictionary[Constants.Timing.SEGMENT_FINISH], dictionary));
             }
             // Check if we should be re-uploading results because placements have changed.
             List<TimeResult> reUpload = new List<TimeResult>();
-            Log.D("Timing.TimingWorker", "Checking for outdated placements.");
+            Log.D("Timing.Routines.DistanceRoutine", "Checking for outdated placements.");
             foreach (TimeResult result in output)
             {
                 if (PlacementDictionary.ContainsKey((result.Place, result.LocationId, result.Occurrence, result.DistanceName)) && PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].Bib != result.Bib)
                 {
-                    Log.D("Timing.TimingWorker", String.Format("Oudated placement found. {0} && {1}", result.ParticipantName, PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].ParticipantName));
+                    Log.D("Timing.Routines.DistanceRoutine", String.Format("Oudated placement found. {0} && {1}", result.ParticipantName, PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].ParticipantName));
                     result.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
                     PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
                     reUpload.Add(result);
@@ -712,7 +711,7 @@ namespace ChronoKeep.Timing.Routines
                     if (x1 == null || x2 == null) return 1;
                     Distance distance1 = null, distance2 = null;
                     int rank1 = 0, rank2 = 0;
-                    Log.D("Timing.TimingWorker", "x1 distance name: " + x1.RealDistanceName + " -- x2 distance name: " + x2.RealDistanceName);
+                    Log.D("Timing.Routines.DistanceRoutine", "x1 distance name: " + x1.RealDistanceName + " -- x2 distance name: " + x2.RealDistanceName);
                     // Get *linked* distances. (Could be that specific distance)
                     if (dictionary.linkedDistanceDictionary.ContainsKey(x1.RealDistanceName))
                     {
@@ -722,14 +721,14 @@ namespace ChronoKeep.Timing.Routines
                     {
                         (distance2, rank2) = dictionary.linkedDistanceDictionary[x2.RealDistanceName];
                     }
-                    Log.D("Timing.TimingWorker", (distance1 == null || distance2 == null) ? "One of the distances not found." : "Rank 1: " + rank1 + " -- Rank 2: " + rank2);
+                    Log.D("Timing.Routines.DistanceRoutine", (distance1 == null || distance2 == null) ? "One of the distances not found." : "Rank 1: " + rank1 + " -- Rank 2: " + rank2);
                     // Check if they're in the same distance or a linked distance.
                     if (distance1 != null && distance2 != null && distance1.Identifier == distance2.Identifier)
                     {
                         // Sort based on rank.  This is the linked distance new sorting item.
                         if (rank1 == rank2)
                         {
-                            Log.D("Timing.TimingWorker", "Ranks the same.");
+                            Log.D("Timing.Routines.DistanceRoutine", "Ranks the same.");
                             // These are the old ways to sort before we've added linked distances.
                             // Check if we know the participants we're comparing
                             if (dictionary.participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && dictionary.participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
@@ -737,7 +736,7 @@ namespace ChronoKeep.Timing.Routines
                                 return x1.SystemTime.CompareTo(x2.SystemTime);
                             }
                         }
-                        Log.D("Timing.TimingWorker", "Ranks not the same.");
+                        Log.D("Timing.Routines.DistanceRoutine", "Ranks not the same.");
                         // Ranks not the same
                         return rank1.CompareTo(rank2);
                     }
@@ -790,7 +789,7 @@ namespace ChronoKeep.Timing.Routines
                 res.GenderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             }
             int removed = segmentResults.RemoveAll(x => x.IsDNF());
-            Log.D("Timing.TimingWorker", string.Format("{0} Result(s) in DNFResults - {1} Result(s) removed from segmentResults", DNFResults.Count, removed));
+            Log.D("Timing.Routines.DistanceRoutine", string.Format("{0} Result(s) in DNFResults - {1} Result(s) removed from segmentResults", DNFResults.Count, removed));
             // Get Dictionaries for storing the last known place (age group, gender)
             // The key is as follows: (Distance ID, Age Group ID, int - Gender ID (M=1,F=2))
             // The value stored is the last place given
