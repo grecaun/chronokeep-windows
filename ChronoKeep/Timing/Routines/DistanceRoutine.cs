@@ -141,9 +141,9 @@ namespace ChronoKeep.Timing.Routines
                 long startSeconds, maxStartSeconds;
                 int startMilliseconds;
                 TimeResult startResult = null;
-                if (startTimes.ContainsKey("Bib:" + bib.ToString()))
+                if (startTimes.ContainsKey(TimeResult.BibToIdentifier(bib)))
                 {
-                    startResult = startTimes["Bib:" + bib.ToString()];
+                    startResult = startTimes[TimeResult.BibToIdentifier(bib)];
                 }
                 if (d == null || !dictionary.distanceStartDict.ContainsKey(d.Identifier))
                 {
@@ -203,7 +203,7 @@ namespace ChronoKeep.Timing.Routines
                                     Constants.Timing.SEGMENT_START,
                                     0, // start reads are not an occurrence at the start line
                                     Constants.Timing.ToTime(secondsDiff, millisecDiff),
-                                    "Bib:" + bib.ToString(),
+                                    TimeResult.BibToIdentifier(bib),
                                     "0:00:00.000",
                                     read.Time,
                                     bib,
@@ -307,7 +307,7 @@ namespace ChronoKeep.Timing.Routines
                                     {
                                         segId = Constants.Timing.SEGMENT_FINISH;
                                     }
-                                    string identifier = "Bib:" + bib.ToString();
+                                    string identifier = TimeResult.BibToIdentifier(bib);
                                     // Create a result for the start value.
                                     long secondsDiff = read.TimeSeconds - startSeconds;
                                     int millisecDiff = read.TimeMilliseconds - startMilliseconds;
@@ -411,7 +411,7 @@ namespace ChronoKeep.Timing.Routines
                                     // Remove it if so.
                                     newResults.Remove(startResult);
                                 }
-                                string identifier = "Chip:" + chip;
+                                string identifier = TimeResult.ChipToIdentifier(chip);
                                 // Create a result for the start value.
                                 long secondsDiff = read.TimeSeconds - startSeconds;
                                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
@@ -502,7 +502,7 @@ namespace ChronoKeep.Timing.Routines
                                     {
                                         segId = dictionary.segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)].Identifier;
                                     }
-                                    string identifier = "Chip:" + chip.ToString();
+                                    string identifier = TimeResult.ChipToIdentifier(chip).ToString();
                                     // Create a result for the start value.
                                     long secondsDiff = read.TimeSeconds - startSeconds;
                                     int millisecDiff = read.TimeMilliseconds - startMilliseconds;
@@ -549,12 +549,12 @@ namespace ChronoKeep.Timing.Routines
                     }
                 }
             }
-            // Process the intersection of DNF people and Finish results:
+            // Process the intersection of unknown DNF people and Finish results:
             foreach (string chip in chipDnfDictionary.Keys)
             {
-                if (finishTimes.ContainsKey("Chip:" + chip))
+                if (finishTimes.ContainsKey(TimeResult.ChipToIdentifier(chip)))
                 {
-                    TimeResult finish = finishTimes["Chip:" + chip];
+                    TimeResult finish = finishTimes[TimeResult.ChipToIdentifier(chip)];
                     finish.ReadId = chipDnfDictionary[chip].ReadId;
                     finish.Time = "DNF";
                     finish.ChipTime = "DNF";
@@ -571,7 +571,7 @@ namespace ChronoKeep.Timing.Routines
                         Constants.Timing.SEGMENT_FINISH,
                         chipLastReadDictionary.ContainsKey((chip, Constants.Timing.LOCATION_FINISH)) ? chipLastReadDictionary[(chip, Constants.Timing.LOCATION_FINISH)].Occurrence + 1 : 1,
                         "DNF",
-                        "Chip:" + chip,
+                        TimeResult.ChipToIdentifier(chip),
                         "DNF",
                         chipDnfDictionary[chip].Time,
                         chipDnfDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDnfDictionary[chip].ReadBib : chipDnfDictionary[chip].ChipBib,
@@ -579,7 +579,7 @@ namespace ChronoKeep.Timing.Routines
                         ));
                 }
             }
-            // Process the intersection of DNF people and Finish results:
+            // Process the intersection of known DNF people and Finish results:
             foreach (int bib in dnfDictionary.Keys)
             {
                 Participant part = dictionary.participantBibDictionary.ContainsKey(bib) ?
@@ -604,9 +604,9 @@ namespace ChronoKeep.Timing.Routines
                 {
                     occurrence = finishOccurence;
                 }
-                if (finishTimes.ContainsKey("Bib:" + bib.ToString()))
+                if (finishTimes.ContainsKey(TimeResult.BibToIdentifier(bib)))
                 {
-                    TimeResult finish = finishTimes["Bib:" + bib.ToString()];
+                    TimeResult finish = finishTimes[TimeResult.BibToIdentifier(bib)];
                     finish.ReadId = dnfDictionary[bib].ReadId;
                     finish.Time = "DNF";
                     finish.ChipTime = "DNF";
@@ -623,7 +623,7 @@ namespace ChronoKeep.Timing.Routines
                         Constants.Timing.SEGMENT_FINISH,
                         occurrence,
                         "DNF",
-                        "Bib:" + bib.ToString(),
+                        TimeResult.BibToIdentifier(bib),
                         "DNF",
                         dnfDictionary[bib].Time,
                         bib,

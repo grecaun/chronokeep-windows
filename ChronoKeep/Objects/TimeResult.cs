@@ -201,6 +201,16 @@ namespace ChronoKeep
         public int ChipMilliseconds { get => chipMilliseconds; set => chipMilliseconds = value; }
         public int Uploaded { get => uploaded; set => uploaded = (value == Constants.Timing.TIMERESULT_UPLOADED_FALSE ? Constants.Timing.TIMERESULT_UPLOADED_FALSE : Constants.Timing.TIMERESULT_UPLOADED_TRUE); }
         public string Birthday { get => birthday; set => birthday = value; }
+
+        public static string BibToIdentifier(int bib)
+        {
+            return "Bib:" + bib.ToString();
+        }
+        public static string ChipToIdentifier(string chip)
+        {
+            return "Chip:" + chip;
+        }
+
         public int Age(string eventDate)
         {
             DateTime eventDateTime = Convert.ToDateTime(eventDate);

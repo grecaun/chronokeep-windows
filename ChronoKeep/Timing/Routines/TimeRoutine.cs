@@ -175,7 +175,7 @@ namespace ChronoKeep.Timing.Routines
                                 Constants.Timing.SEGMENT_START,
                                 0, // start reads are not an occurrence at the start line
                                 Constants.Timing.ToTime(secondsDiff, millisecDiff),
-                                "Bib:" + bib.ToString(),
+                                TimeResult.BibToIdentifier(bib),
                                 "0:00:00.000",
                                 read.Time,
                                 bib,
@@ -248,7 +248,7 @@ namespace ChronoKeep.Timing.Routines
                                 {
                                     segId = Constants.Timing.SEGMENT_FINISH;
                                 }
-                                string identifier = "Bib:" + bib.ToString();
+                                string identifier = TimeResult.BibToIdentifier(bib);
                                 // Create a result for the start value
                                 long secondsDiff = read.TimeSeconds - startSeconds;
                                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
@@ -344,7 +344,7 @@ namespace ChronoKeep.Timing.Routines
                                 Constants.Timing.SEGMENT_START,
                                 0, // start reads are not an occurrence at the start line
                                 Constants.Timing.ToTime(secondsDiff, millisecDiff),
-                                "Chip:" + chip.ToString(),
+                                TimeResult.ChipToIdentifier(chip).ToString(),
                                 "0:00:00.000",
                                 read.Time,
                                 read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
@@ -409,7 +409,7 @@ namespace ChronoKeep.Timing.Routines
                                 {
                                     segId = Constants.Timing.SEGMENT_FINISH;
                                 }
-                                string identifier = "Chip:" + chip.ToString();
+                                string identifier = TimeResult.ChipToIdentifier(chip).ToString();
                                 // Create a result for the start value
                                 long secondsDiff = read.TimeSeconds - startSeconds;
                                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
