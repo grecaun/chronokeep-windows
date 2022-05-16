@@ -379,6 +379,25 @@ namespace ChronoKeep
             return one.DistanceName.CompareTo(two.DistanceName);
         }
 
+        public static int CompareByOccurrence(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.Occurrence.Equals(two.Occurrence))
+            {
+                Match oneMatch = timeRegex.Match(one.Time);
+                Match twoMatch = timeRegex.Match(two.Time);
+                if (oneMatch == null || twoMatch == null) return 1;
+                long oneTime = (Convert.ToInt64(oneMatch.Groups[1].Value) * 3600)
+                    + (Convert.ToInt64(oneMatch.Groups[2].Value) * 60)
+                    + Convert.ToInt64(oneMatch.Groups[3].Value);
+                long twoTime = (Convert.ToInt64(twoMatch.Groups[1].Value) * 3600)
+                    + (Convert.ToInt64(twoMatch.Groups[2].Value) * 60)
+                    + Convert.ToInt64(twoMatch.Groups[3].Value);
+                return oneTime.CompareTo(twoTime);
+            }
+            return one.Occurrence.CompareTo(two.Occurrence);
+        }
+
         public static bool IsNotKnown(TimeResult one)
         {
             return one.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON;

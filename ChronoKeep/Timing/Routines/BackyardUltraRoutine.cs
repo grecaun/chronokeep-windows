@@ -16,7 +16,6 @@ namespace ChronoKeep.Timing.Routines
             // Pre-process information we'll need to fully process chip reads
             // Create a dictionary for hour starts and ends.
             Dictionary<(int, string), (TimeResult start, TimeResult end)> backyardResultDictionary = new Dictionary<(int, string), (TimeResult start, TimeResult end)>();
-            Dictionary<(int, string, int), TimeResult> backyardOccurenceDictionary = new Dictionary<(int, string, int), TimeResult>();
             // The initial start times will always be hour 0 start times.
             foreach (TimeResult result in database.GetStartTimes(theEvent.Identifier))
             {
@@ -720,7 +719,180 @@ namespace ChronoKeep.Timing.Routines
 
         public static List<TimeResult> ProcessPlacements(Event theEvent, IDBInterface database, TimingDictionary dictionary)
         {
-            return null;
+            List<TimeResult> output = database.GetTimingResults(theEvent.Identifier);
+            // Dictionary for keeping track of hourly placements.
+            Dictionary<(int, string), (TimeResult start, TimeResult end)> HourlyDictionary = new Dictionary<(int, string), (TimeResult, TimeResult)>();
+            // Dictionaries for keeping track of placements.
+            Dictionary<string, TimeResult> LastLapDictionary = new Dictionary<string, TimeResult>();
+
+            // Create a dictionary so we can check if placements have changed. (place, location, occurrence, distance)
+            Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = new Dictionary<(int, int, int, string), TimeResult>();
+
+            HashSet<string> Finished = new HashSet<string>();
+            HashSet<string> Participants = new HashSet<string>();
+            foreach (TimeResult result in output)
+            {
+                // This check is to ensure we only flag for upload results whose placements change.
+                if (result.Place > 0)
+                {
+                    PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)] = result;
+                }
+                Participants.Add(result.Identifier);
+                if (Constants.Timing.LOCATION_START == result.LocationId || Constants.Timing.LOCATION_FINISH == result.LocationId)
+                {
+                    // finish occurrence
+                    if (result.Occurrence % 2 == 1)
+                    {
+                        (TimeResult start, TimeResult end) time = HourlyDictionary[(result.Occurrence / 2, result.Identifier)];
+                        time.end = result;
+                        HourlyDictionary[(result.Occurrence / 2, result.Identifier)] = time;
+                    }
+                    // start occurrence
+                    else if (result.Occurrence % 2 == 0)
+                    {
+                        (TimeResult start, TimeResult end) time = HourlyDictionary[(result.Occurrence / 2, result.Identifier)];
+                        time.start = result;
+                        HourlyDictionary[(result.Occurrence / 2, result.Identifier)] = time;
+                    }
+                }
+            }
+            // Calculate the current hour.
+            int hour = (int)((Constants.Timing.DateToEpoch(DateTime.Now) - dictionary.distanceStartDict[0].Seconds) / 3600);
+            List<TimeResult> invalid = new List<TimeResult>();
+            // Process every hour from the start of the event until we don't have any more finishers for that hour
+            for (int i = 0; i <= hour; i++)
+            {
+                // Check to make sure that every participant finished/started the last hour.
+                if (i > 0)
+                {
+                    foreach (string participant in Participants)
+                    {
+                        // check if they've started the previous hour
+                        if (!HourlyDictionary.ContainsKey((i - 1, participant)))
+                        {
+                            // they have not, so add them to the finished pile from now on
+                            // TODO add a DNS entry
+                            Finished.Add(participant);
+                        }
+                        else
+                        {
+                            // check to make sure they finished the previous hour
+                            (TimeResult start, TimeResult end) results = HourlyDictionary[(i - 1, participant)];
+                            if (results.end == null)
+                            {
+                                // No finish time, so they're done
+                                // TODO add a DNF entry
+                                Finished.Add(participant);
+                            }
+                        }
+                    }
+                }
+                bool hourlyFinisher = false;
+                foreach (string participant in Participants)
+                {
+                    // Check if they finished this hour
+                    if (HourlyDictionary.ContainsKey((i, participant)))
+                    {
+                        (TimeResult start, TimeResult end) results = HourlyDictionary[(i, participant)];
+                        if (Finished.Contains(participant))
+                        {
+                            Log.E("Timing.Routines.BackyardUltraRoutine", "Participant has finish/start times when they didn't finish the previous hour.");
+                            if (results.start != null)
+                            {
+                                invalid.Add(results.start);
+                            }
+                            if (results.end != null)
+                            {
+                                invalid.Add(results.end);
+                            }
+                        }
+                        if (results.end != null)
+                        {
+                            hourlyFinisher = true;
+                            LastLapDictionary[participant] = results.end;
+                        }
+                    }
+                }
+                // check if we had an hourly finisher in this hour processing period.
+                // since we could run this many hours after finishing, lets make sure we stop processing once we've got past the winner period.
+                if (!hourlyFinisher)
+                {
+                    break;
+                }
+            }
+            List<TimeResult> placementCalculations = new List<TimeResult>(LastLapDictionary.Values);
+            placementCalculations.Sort(TimeResult.CompareByOccurrence);
+            // Get Dictionaries for storing the last known place (age group, gender)
+            // Key is (Age Group ID, int (Gender ID, M=1, F=2))
+            Dictionary<(int, int), int> ageGroupPlaceDictionary = new Dictionary<(int, int), int>();
+            // Key is Gender ID (M=1, F=2)
+            Dictionary<int, int> genderPlaceDictionary = new Dictionary<int, int>();
+            int ageGroupId, age, gender;
+            int place = 0;
+            Participant person = null;
+            // Use the sorted list of results to calculate placements
+            foreach (TimeResult result in placementCalculations)
+            {
+                ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                age = -1;
+                gender = -1;
+                if (dictionary.participantEventSpecificDictionary.ContainsKey(result.EventSpecificId))
+                {
+                    person = dictionary.participantEventSpecificDictionary[result.EventSpecificId];
+                    age = person.GetAge(theEvent.Date);
+                    gender = Constants.Timing.TIMERESULT_GENDER_UNKNOWN;
+                    if (person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase)
+                        || person.Gender.Equals("Male", StringComparison.OrdinalIgnoreCase))
+                    {
+                        gender = Constants.Timing.TIMERESULT_GENDER_MALE;
+                    }
+                    else if (person.Gender.Equals("F", StringComparison.OrdinalIgnoreCase)
+                        || person.Gender.Equals("Female", StringComparison.OrdinalIgnoreCase))
+                    {
+                        gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
+                    }
+                    ageGroupId = person.EventSpecific.AgeGroupId;
+                    result.Place = ++place;
+                    if (!genderPlaceDictionary.ContainsKey(gender))
+                    {
+                        genderPlaceDictionary[gender] = 0;
+                    }
+                    result.GenderPlace = ++(genderPlaceDictionary[gender]);
+                    if (!ageGroupPlaceDictionary.ContainsKey((ageGroupId, gender)))
+                    {
+                        ageGroupPlaceDictionary[(ageGroupId, gender)] = 0;
+                    }
+                    result.AgePlace = ++(ageGroupPlaceDictionary[(ageGroupId, gender)]);
+                }
+            }
+            // Update every result we're outputting with calculated places.
+            foreach (TimeResult result in output)
+            {
+                if (LastLapDictionary.ContainsKey(result.Identifier))
+                {
+                    TimeResult placeResult = LastLapDictionary[result.Identifier];
+                    result.Place = placeResult.Place;
+                    result.GenderPlace = placeResult.GenderPlace;
+                    result.AgePlace = placeResult.AgePlace;
+                }
+            }
+            // Check if we should be re-uploading results because placements have changed.
+            List<TimeResult> reUpload = new List<TimeResult>();
+            Log.D("Timing.Routines.DistanceRoutine", "Checking for outdated placements.");
+            foreach (TimeResult result in output)
+            {
+                if (PlacementDictionary.ContainsKey((result.Place, result.LocationId, result.Occurrence, result.DistanceName)) && PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].Bib != result.Bib)
+                {
+                    Log.D("Timing.Routines.DistanceRoutine", String.Format("Oudated placement found. {0} && {1}", result.ParticipantName, PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].ParticipantName));
+                    result.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
+                    PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)].Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
+                    reUpload.Add(result);
+                    reUpload.Add(PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)]);
+                }
+            }
+            database.AddTimingResults(output);
+            database.SetUploadedTimingResults(reUpload);
+            return output;
         }
     }
 }

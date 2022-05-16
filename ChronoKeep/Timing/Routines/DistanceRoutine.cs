@@ -705,7 +705,6 @@ namespace ChronoKeep.Timing.Routines
         {
             if (theEvent.RankByGun)
             {
-                //segmentResults.Sort(TimeResult.CompareByDistance);
                 segmentResults.Sort((x1, x2) =>
                 {
                     if (x1 == null || x2 == null) return 1;
@@ -745,7 +744,6 @@ namespace ChronoKeep.Timing.Routines
             }
             else
             {
-                //segmentResults.Sort(TimeResult.CompareByDistanceChip);
                 segmentResults.Sort((x1, x2) =>
                 {
                     if (x1 == null || x2 == null) return 1;

@@ -32,6 +32,8 @@ namespace ChronoKeep.Constants
 
         public static readonly int TIMERESULT_STATUS_NONE = 0;
         public static readonly int TIMERESULT_STATUS_DNF = 1;
+        public static readonly int TIMERESULT_STATUS_DNS = 2;
+
         public static readonly int TIMERESULT_UPLOADED_FALSE = 0;
         public static readonly int TIMERESULT_UPLOADED_TRUE = 1;
 
@@ -75,8 +77,9 @@ namespace ChronoKeep.Constants
         public static readonly int DISTANCE_TYPE_EARLY = 11;
         public static readonly int DISTANCE_TYPE_UNOFFICIAL = 12;
         public static readonly int DISTANCE_TYPE_VIRTUAL = 13;
-        public static readonly int API_TYPE_DNF = 23;
-        public static readonly int API_TYPE_DNS = 24;
+        public static readonly int DISTANCE_TYPE_LATE = 14;
+        public static readonly int API_TYPE_DNF = 30;
+        public static readonly int API_TYPE_DNS = 31;
 
         // API Upload Count
         public static readonly int API_LOOP_COUNT = 20;
