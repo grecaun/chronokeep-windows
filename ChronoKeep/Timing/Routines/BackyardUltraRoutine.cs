@@ -727,11 +727,14 @@ namespace ChronoKeep.Timing.Routines
 
             // Create a dictionary so we can check if placements have changed. (place, location, occurrence, distance)
             Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = new Dictionary<(int, int, int, string), TimeResult>();
+            // Dictionary for converting result identifiers into eventspecific id's.
+            Dictionary<string, int> EventSpecificDictionary = new Dictionary<string, int>();
 
             HashSet<string> Finished = new HashSet<string>();
             HashSet<string> Participants = new HashSet<string>();
             foreach (TimeResult result in output)
             {
+                EventSpecificDictionary[result.Identifier] = result.EventSpecificId;
                 // This check is to ensure we only flag for upload results whose placements change.
                 if (result.Place > 0)
                 {
@@ -771,7 +774,25 @@ namespace ChronoKeep.Timing.Routines
                         if (!HourlyDictionary.ContainsKey((i - 1, participant)))
                         {
                             // they have not, so add them to the finished pile from now on
-                            // TODO add a DNS entry
+                            if (EventSpecificDictionary.ContainsKey(participant) && EventSpecificDictionary[participant] != Constants.Timing.TIMERESULT_DUMMYPERSON)
+                            {
+                                TimeResult dnsEntry = new TimeResult(
+                                    theEvent.Identifier,
+                                    Constants.Timing.TIMERESULT_DUMMYREAD,
+                                    EventSpecificDictionary[participant],
+                                    theEvent.CommonStartFinish ? Constants.Timing.LOCATION_FINISH : Constants.Timing.LOCATION_START,
+                                    Constants.Timing.SEGMENT_NONE,
+                                    i * 2,
+                                    String.Format("{0}:00:01.000", i-1),
+                                    participant,
+                                    String.Format("{0}:00:01.000", i-1),
+                                    DateTime.Now,
+                                    dictionary.participantEventSpecificDictionary[EventSpecificDictionary[participant]].Bib,
+                                    Constants.Timing.TIMERESULT_STATUS_DNS
+                                    );
+                                database.AddTimingResult(dnsEntry);
+                                HourlyDictionary[(i - 1, participant)] = (dnsEntry, null);
+                            }
                             Finished.Add(participant);
                         }
                         else
@@ -781,7 +802,26 @@ namespace ChronoKeep.Timing.Routines
                             if (results.end == null)
                             {
                                 // No finish time, so they're done
-                                // TODO add a DNF entry
+                                // TODO maybe create a chipread? ensure that we can use a DUMMYREAD id
+                                if (EventSpecificDictionary.ContainsKey(participant) && EventSpecificDictionary[participant] != Constants.Timing.TIMERESULT_DUMMYPERSON)
+                                {
+                                    TimeResult dnfEntry = new TimeResult(
+                                        theEvent.Identifier,
+                                        Constants.Timing.TIMERESULT_DUMMYREAD,
+                                        EventSpecificDictionary[participant],
+                                        theEvent.CommonStartFinish ? Constants.Timing.LOCATION_FINISH : Constants.Timing.LOCATION_START,
+                                        Constants.Timing.SEGMENT_NONE,
+                                        i * 2,
+                                        String.Format("{0}:59:59.000", i-1),
+                                        participant,
+                                        String.Format("{0}:59:59.000", i-1),
+                                        DateTime.Now,
+                                        dictionary.participantEventSpecificDictionary[EventSpecificDictionary[participant]].Bib,
+                                        Constants.Timing.TIMERESULT_STATUS_DNS
+                                        );
+                                    database.AddTimingResult(dnfEntry);
+                                    HourlyDictionary[(i - 1, participant)] = (results.start, dnfEntry);
+                                }
                                 Finished.Add(participant);
                             }
                         }
@@ -806,7 +846,7 @@ namespace ChronoKeep.Timing.Routines
                                 invalid.Add(results.end);
                             }
                         }
-                        if (results.end != null)
+                        if (results.end != null && Constants.Timing.TIMERESULT_STATUS_DNF != results.end.Status)
                         {
                             hourlyFinisher = true;
                             LastLapDictionary[participant] = results.end;

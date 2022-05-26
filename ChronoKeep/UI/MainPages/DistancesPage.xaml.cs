@@ -491,7 +491,10 @@ namespace ChronoKeep.UI.MainPages
                 theDistance.EndSeconds = parentDiv.EndSeconds;
                 theDistance.FinishOccurrence = parent.GetDistance().FinishOccurrence;
                 int typeVal = 0;
-                int.TryParse(((ComboBoxItem)TypeBox.SelectedItem).Uid, out typeVal);
+                if (TypeBox.SelectedItem != null)
+                {
+                    int.TryParse(((ComboBoxItem)TypeBox.SelectedItem).Uid, out typeVal);
+                }
                 theDistance.Type = typeVal != 0 ? typeVal : Constants.Timing.DISTANCE_TYPE_EARLY;
                 int ranking;
                 int.TryParse(Ranking.Text, out ranking);

@@ -49,6 +49,7 @@ namespace ChronoKeep.Constants
         public static readonly int TIMERESULT_GENDER_FEMALE = 2;
         public static readonly int TIMERESULT_GENDER_UNKNOWN = 3;
         public static readonly int TIMERESULT_DUMMYAGEGROUP = -1;
+        public static readonly int TIMERESULT_DUMMYREAD = -1;
 
         public static readonly int EVENTSPECIFIC_NOSHOW = 0;
         public static readonly int EVENTSPECIFIC_STARTED = 1;
