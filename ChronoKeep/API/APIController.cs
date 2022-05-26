@@ -71,7 +71,7 @@ namespace ChronoKeep.API
 
         public void Shutdown()
         {
-            if (mut.WaitOne(3000))
+            if (mut.WaitOne(6000))
             {
                 Log.D("API.APIController", "Shutting down API Auto Upload.");
                 KeepAlive = false;
@@ -88,7 +88,7 @@ namespace ChronoKeep.API
         public async void Run()
         {
             Log.D("API.APIController", "API Controller is now running.");
-            if (mut.WaitOne(3000))
+            if (mut.WaitOne(6000))
             {
                 if (Running)
                 {
@@ -108,6 +108,8 @@ namespace ChronoKeep.API
             // keep looping until told to stop
             while (true)
             {
+                // Boolean for tracking errors to abort current loot.
+                bool loop_error = false;
                 // Start upload of data to API.
                 Event theEvent = database.GetCurrentEvent();
                 // Get API to upload. Exit if not found
@@ -123,7 +125,8 @@ namespace ChronoKeep.API
                 try
                 {
                     api = database.GetResultsAPI(theEvent.API_ID);
-                } catch
+                }
+                catch
                 {
                     Log.D("API.APIController", "Database doesn't contain information about the specified API.");
                     KeepAlive = false;
@@ -156,7 +159,7 @@ namespace ChronoKeep.API
                     Log.D("API.APIController", "Attempting to upload " + upRes.Count.ToString() + " results.");
                     int total = 0;
                     int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
-                    AddResultsResponse response;
+                    AddResultsResponse response = null;
                     for (int i = 0; i < loops; i += 1)
                     {
                         Log.D("API.APIController", string.Format("Loop {0}", i));
@@ -170,7 +173,8 @@ namespace ChronoKeep.API
                             Log.D("API.APIController", "Unable to handle API response. Loop " + i);
                             this.Errors += 1;
                             mainWindow.UpdateTimingFromController();
-                            return;
+                            loop_error = true;
+                            break;
                         }
                         if (response != null)
                         {
@@ -179,8 +183,9 @@ namespace ChronoKeep.API
                         }
                     }
                     int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
-                    if (leftovers > 0)
+                    if (leftovers > 0 && !loop_error)
                     {
+                        response = null;
                         try
                         {
                             response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
@@ -191,7 +196,7 @@ namespace ChronoKeep.API
                             Log.D("API.APIController", "Unable to handle API response. Leftovers");
                             this.Errors += 1;
                             mainWindow.UpdateTimingFromController();
-                            return;
+                            loop_error = true;
                         }
                         if (response != null)
                         {
@@ -205,6 +210,11 @@ namespace ChronoKeep.API
                         Log.D("API.APIController", "Count matches, updating records.");
                         database.AddTimingResults(results);
                     }
+                    if (!loop_error)
+                    {
+                        this.Errors = 0;
+                    }
+                    mainWindow.UpdateTimingFromController();
                 }
                 // Block with timeout on a semaphore
                 // Use this to allow us to only send information every SleepSeconds seconds.
@@ -213,7 +223,7 @@ namespace ChronoKeep.API
                 Log.D("API.APIController", "Waiting to upload more results.");
                 waiter.WaitOne(SleepSeconds * 1000);
                 // Check if we're supposed to exit the loop
-                if (mut.WaitOne(3000))
+                if (mut.WaitOne(6000))
                 {
                     Log.D("API.APIController", "Checking keep alive status.");
                     if (!KeepAlive)

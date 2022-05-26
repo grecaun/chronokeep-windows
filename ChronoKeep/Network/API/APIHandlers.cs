@@ -17,6 +17,7 @@ namespace ChronoKeep.Network.API
         {
             var handler = new WinHttpHandler();
             var client = new HttpClient(handler);
+            client.Timeout = TimeSpan.FromSeconds(2);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             return client;

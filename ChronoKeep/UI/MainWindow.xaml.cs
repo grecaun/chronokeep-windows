@@ -318,7 +318,11 @@ namespace ChronoKeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Stopping API Controller");
-                if (APIController != null) APIController.Shutdown();
+                if (APIController != null)
+                {
+                    APIController.Shutdown();
+                }
+                APIController = null;
             }
             catch
             {
