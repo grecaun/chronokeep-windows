@@ -97,6 +97,7 @@ namespace ChronoKeep.API
                     return;
                 }
                 Running = true;
+                KeepAlive = true;
                 mut.ReleaseMutex();
             }
             else
