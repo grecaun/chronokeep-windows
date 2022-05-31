@@ -12,8 +12,8 @@ namespace ChronoKeep
     {
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, bib, readId, place, agePlace, genderPlace,
-            ageGroupId, chipMilliseconds, status, uploaded, type;
-        private long chipSeconds;
+            ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds;
+        private long chipSeconds, seconds;
         private string time, locationName, segmentName, firstName, lastName,
             distanceName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday, linked_distance_name = "";
         DateTime systemTime;
@@ -91,6 +91,16 @@ namespace ChronoKeep
                    + (Convert.ToInt64(chipTimeMatch.Groups[2].Value) * 60)
                    + Convert.ToInt64(chipTimeMatch.Groups[3].Value);
                 chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
+            }
+            Match timeMatch = timeRegex.Match(time);
+            seconds = 0;
+            milliseconds = 0;
+            if (timeMatch.Success)
+            {
+                seconds = (Convert.ToInt64(timeMatch.Groups[1].Value) * 3600)
+                   + (Convert.ToInt64(timeMatch.Groups[2].Value) * 60)
+                   + Convert.ToInt64(timeMatch.Groups[3].Value);
+                milliseconds = Convert.ToInt32(timeMatch.Groups[4].Value);
             }
             this.status = status;
             this.splitTime = split;
@@ -199,6 +209,8 @@ namespace ChronoKeep
         public string LapTime { get => splitTime; set => splitTime = value; }
         public long ChipSeconds { get => chipSeconds; set => chipSeconds = value; }
         public int ChipMilliseconds { get => chipMilliseconds; set => chipMilliseconds = value; }
+        public long Seconds { get => seconds; set => seconds = value; }
+        public int Milliseconds { get => milliseconds; set => milliseconds = value; }
         public int Uploaded { get => uploaded; set => uploaded = (value == Constants.Timing.TIMERESULT_UPLOADED_FALSE ? Constants.Timing.TIMERESULT_UPLOADED_FALSE : Constants.Timing.TIMERESULT_UPLOADED_TRUE); }
         public string Birthday { get => birthday; set => birthday = value; }
 

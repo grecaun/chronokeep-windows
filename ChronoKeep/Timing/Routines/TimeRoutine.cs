@@ -611,7 +611,22 @@ namespace ChronoKeep.Timing.Routines
                 {
                     if (x1.Occurrence == x2.Occurrence)
                     {
-                        return x1.SystemTime.CompareTo(x2.SystemTime);
+                        if (theEvent.RankByGun)
+                        {
+                            if (x1.Seconds == x2.Seconds)
+                            {
+                                return x1.Milliseconds.CompareTo(x2.Milliseconds);
+                            }
+                            return x1.Seconds.CompareTo(x2.Seconds);
+                        }
+                        else
+                        {
+                            if (x1.ChipSeconds == x2.ChipSeconds)
+                            {
+                                return x1.ChipMilliseconds.CompareTo(x2.ChipMilliseconds);
+                            }
+                            return x1.ChipSeconds.CompareTo(x2.ChipSeconds);
+                        }
                     }
                     return x2.Occurrence.CompareTo(x1.Occurrence);
                 }

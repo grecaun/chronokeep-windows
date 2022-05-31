@@ -20,7 +20,7 @@ namespace ChronoKeep
          * HIGHEST MUTEX ID = 135
          * NEXT AVAILABLE   = 136
          */
-        private readonly int version = 46;
+        private readonly int version = 47;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 

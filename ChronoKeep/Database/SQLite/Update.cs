@@ -1236,6 +1236,30 @@ namespace ChronoKeep.Database.SQLite
                             "DROP TABLE eventspecific_old;" +
                             "UPDATE settings SET value='46' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
                         command.ExecuteNonQuery();
+                        goto case 46;
+                    case 46:
+                        command = connection.CreateCommand();
+                        command.CommandText = "DROP TABLE time_results; " +
+                            "CREATE TABLE IF NOT EXISTS time_results (" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
+                                "read_id INTEGER," +
+                                "location_id INTEGER NOT NULL," +
+                                "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
+                                "timeresult_occurance INTEGER NOT NULL," +
+                                "timeresult_time TEXT NOT NULL," +
+                                "timeresult_splittime TEXT NOT NULL DEFAULT ''," +
+                                "timeresult_chiptime TEXT NOT NULL," +
+                                "timeresult_unknown_id TEXT NOT NULL DEFAULT ''," +
+                                "timeresult_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                                "timeresult_age_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                                "timeresult_gender_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "," +
+                                "timeresult_status INT NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_STATUS_NONE + "," +
+                                "timeresult_uploaded INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_UPLOADED_FALSE + "," +
+                                "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
+                                ");" +
+                                "UPDATE settings SET value='47' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

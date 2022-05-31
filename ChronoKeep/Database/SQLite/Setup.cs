@@ -199,7 +199,7 @@ namespace ChronoKeep.Database.SQLite
                 queries.Add("CREATE TABLE IF NOT EXISTS time_results (" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
-                    "read_id INTEGER NOT NULL REFERENCES chipreads(read_id)," +
+                    "read_id INTEGER," +
                     "location_id INTEGER NOT NULL," +
                     "segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_NONE + "," +
                     "timeresult_occurance INTEGER NOT NULL," +
