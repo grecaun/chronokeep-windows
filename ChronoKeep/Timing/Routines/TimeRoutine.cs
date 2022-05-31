@@ -607,6 +607,7 @@ namespace ChronoKeep.Timing.Routines
                 {
                     (distance2, rank2) = dictionary.linkedDistanceDictionary[x2.RealDistanceName];
                 }
+                Log.D("Timing.Routines.TimeRoutine", string.Format("rank 1 {0} - rank 2 {1}", rank1, rank2));
                 if (rank1 == rank2)
                 {
                     if (x1.Occurrence == x2.Occurrence)
@@ -617,6 +618,7 @@ namespace ChronoKeep.Timing.Routines
                             {
                                 return x1.Milliseconds.CompareTo(x2.Milliseconds);
                             }
+                            Log.D("Timing.Routines.TimeRoutine", "By Gun");
                             return x1.Seconds.CompareTo(x2.Seconds);
                         }
                         else
@@ -625,11 +627,14 @@ namespace ChronoKeep.Timing.Routines
                             {
                                 return x1.ChipMilliseconds.CompareTo(x2.ChipMilliseconds);
                             }
+                            Log.D("Timing.Routines.TimeRoutine", "By Chip");
                             return x1.ChipSeconds.CompareTo(x2.ChipSeconds);
                         }
                     }
+                    Log.D("Timing.Routines.TimeRoutine", "By Occurrence");
                     return x2.Occurrence.CompareTo(x1.Occurrence);
                 }
+                Log.D("Timing.Routines.TimeRoutine", "By Rank");
                 return rank1.CompareTo(rank2);
             });
             foreach (TimeResult result in topResults)

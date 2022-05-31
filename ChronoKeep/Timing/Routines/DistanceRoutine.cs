@@ -728,11 +728,23 @@ namespace ChronoKeep.Timing.Routines
                         if (rank1 == rank2)
                         {
                             Log.D("Timing.Routines.DistanceRoutine", "Ranks the same.");
-                            // These are the old ways to sort before we've added linked distances.
-                            // Check if we know the participants we're comparing
-                            if (dictionary.participantEventSpecificDictionary.ContainsKey(x1.EventSpecificId) && dictionary.participantEventSpecificDictionary.ContainsKey(x2.EventSpecificId))
+                            if (theEvent.RankByGun)
                             {
-                                return x1.SystemTime.CompareTo(x2.SystemTime);
+                                if (x1.Seconds == x2.Seconds)
+                                {
+                                    return x1.Milliseconds.CompareTo(x2.Milliseconds);
+                                }
+                                Log.D("Timing.Routines.TimeRoutine", "By Gun");
+                                return x1.Seconds.CompareTo(x2.Seconds);
+                            }
+                            else
+                            {
+                                if (x1.ChipSeconds == x2.ChipSeconds)
+                                {
+                                    return x1.ChipMilliseconds.CompareTo(x2.ChipMilliseconds);
+                                }
+                                Log.D("Timing.Routines.TimeRoutine", "By Chip");
+                                return x1.ChipSeconds.CompareTo(x2.ChipSeconds);
                             }
                         }
                         Log.D("Timing.Routines.DistanceRoutine", "Ranks not the same.");
