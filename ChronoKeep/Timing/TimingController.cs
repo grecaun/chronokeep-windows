@@ -32,6 +32,7 @@ namespace ChronoKeep.Timing
         public static bool IsRunning()
         {
             bool output = false;
+            Log.D("Timing.TimingController", "Mutex Wait 01");
             if (mut.WaitOne(6000))
             {
                 output = Running;
@@ -43,6 +44,7 @@ namespace ChronoKeep.Timing
         public static bool NewReadsExist()
         {
             bool output = false;
+            Log.D("Timing.TimingController", "Mutex Wait 02");
             if (ReadsMutex.WaitOne(3000))
             {
                 output = NewReads;
@@ -53,6 +55,7 @@ namespace ChronoKeep.Timing
 
         public static void ResetNewReads()
         {
+            Log.D("Timing.TimingController", "Mutex Wait 03");
             if (ReadsMutex.WaitOne(3000))
             {
                 NewReads = false;
@@ -146,11 +149,13 @@ namespace ChronoKeep.Timing
             bool ChipRead = false;
             while (TimingSystemSockets.Count > 0)
             {
+                Log.D("Timing.TimingController", "Loop start.");
                 readList.Clear();
                 readList.AddRange(TimingSystemSockets);
                 Socket.Select(readList, null, null, 3000000);
                 foreach (Socket sock in readList)
                 {
+                    Log.D("Timing.TimingController", "Reading from socket.");
                     ChipRead = false;
                     UpdateTiming = false;
                     byte[] recvd = new byte[4112];
@@ -216,11 +221,15 @@ namespace ChronoKeep.Timing
                             UpdateTiming = false;
                             mainWindow.UpdateTimingFromController();
                         }
-                        if (ChipRead && ReadsMutex.WaitOne(3000))
+                        if (ChipRead)
                         {
-                            mainWindow.NotifyTimingWorker();
-                            NewReads = true;
-                            ReadsMutex.ReleaseMutex();
+                            Log.D("Timing.TimingController", "Mutex Wait 05");
+                            if (ReadsMutex.WaitOne(3000))
+                            {
+                                NewReads = true;
+                                mainWindow.NotifyTimingWorker();
+                                ReadsMutex.ReleaseMutex();
+                            }
                         }
                     }
                     catch
@@ -259,7 +268,9 @@ namespace ChronoKeep.Timing
                     }
                 }
                 TimingSystemSockets.RemoveAll(i => toRemove.Contains(i));
+                Log.D("Timing.TimingController", "Loop end.");
             }
+            Log.D("Timing.TimingController", "Mutex Wait 06");
             if (mut.WaitOne(6000))
             {
                 Running = false;

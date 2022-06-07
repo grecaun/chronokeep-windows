@@ -42,6 +42,7 @@ namespace ChronoKeep.Timing
 
         public static void Shutdown()
         {
+            Log.D("Timing.TimingWorker", "Mutex Wait 01");
             if (mutex.WaitOne(3000))
             {
                 QuittingTime = true;
@@ -52,6 +53,7 @@ namespace ChronoKeep.Timing
         public static bool NewResultsExist()
         {
             bool output = false;
+            Log.D("Timing.TimingWorker", "Mutex Wait 02");
             if (ResultsMutex.WaitOne(3000))
             {
                 output = NewResults;
@@ -62,6 +64,7 @@ namespace ChronoKeep.Timing
 
         public static void ResetNewResults()
         {
+            Log.D("Timing.TimingWorker", "Mutex Wait 03");
             if (ResultsMutex.WaitOne(3000))
             {
                 NewResults = false;
@@ -84,6 +87,7 @@ namespace ChronoKeep.Timing
         public static void ResetDictionaries()
         {
             Log.D("Timing.TimingWorker", "Resetting dictionaries next go around.");
+            Log.D("Timing.TimingWorker", "Mutex Wait 04");
             if (ResetDictionariesMutex.WaitOne(3000))
             {
                 ResetDictionariesBool = true;
@@ -194,6 +198,7 @@ namespace ChronoKeep.Timing
             int counter = 1;
             do
             {
+                Log.D("Timing.TimingWorker", "Mutex Wait 05");
                 semaphore.WaitOne();        // Wait for work.
                 if (mutex.WaitOne(3000))    // Check if we've been told to quit.
                 {                           // Do that here so we don't try to process another loop after being told to quit.
@@ -213,6 +218,7 @@ namespace ChronoKeep.Timing
                 // ensure the event exists and we've got unprocessed reads
                 if (theEvent != null && theEvent.Identifier != -1)
                 {
+                    Log.D("Timing.TimingWorker", "Mutex Wait 06");
                     if (ResetDictionariesMutex.WaitOne(3000))
                     {
                         if (ResetDictionariesBool)
@@ -278,6 +284,7 @@ namespace ChronoKeep.Timing
                     }
                     if (touched)
                     {
+                        Log.D("Timing.TimingWorker", "Mutex Wait 07");
                         if (ResultsMutex.WaitOne(3000))
                         {
                             NewResults = true;

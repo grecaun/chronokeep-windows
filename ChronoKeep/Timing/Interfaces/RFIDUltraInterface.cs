@@ -202,7 +202,10 @@ namespace ChronoKeep.Timing.Interfaces
                 }
                 m = msg.Match(buffer.ToString());
             }
-            database.AddChipReads(chipReads);
+            if (chipReads.Count > 0)
+            {
+                database.AddChipReads(chipReads);
+            }
             return output;
         }
 

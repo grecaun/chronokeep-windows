@@ -72,6 +72,7 @@ namespace ChronoKeep.UI.MainPages
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
 
             // Setup a timer for updating the view
+            // Updates could be causing issues with search.
             ViewUpdateTimer.Tick += new EventHandler(ViewUpdateTimer_Click);
             ViewUpdateTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
 
@@ -330,6 +331,7 @@ namespace ChronoKeep.UI.MainPages
 
         private async void ViewUpdateTimer_Click(object sender, EventArgs e)
         {
+            Log.D("UI.MainPages.TimingPage", "View Update Timer Click");
             bool updates = false;
             await Task.Run(() =>
             {
