@@ -99,6 +99,12 @@ namespace ChronoKeep.UI
 
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
+
+            // Check for updates.
+            if (database.GetAppSetting(Constants.Settings.CHECK_UPDATES).value == Constants.Settings.SETTING_TRUE)
+            {
+                Updates.Check.Do();
+            }
         }
 
         private async void UpdateImportOptions()

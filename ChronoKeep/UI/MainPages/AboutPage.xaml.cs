@@ -51,5 +51,11 @@ namespace ChronoKeep.UI.MainPages
         public void Keyboard_Ctrl_Z() { }
 
         public void UpdateView() { }
+
+        private void VersionLabel_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.AboutPage", "Version clicked, checking for new version.");
+            Updates.Check.Do();
+        }
     }
 }

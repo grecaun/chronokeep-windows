@@ -22,6 +22,7 @@ namespace ChronoKeep.Constants
         public static readonly string EXIT_NO_PROMPT        = "EXIT_NO_PROMPT";
         public static readonly string DEFAULT_CHIP_TYPE     = "DEFAULT_CHIP_TYPE";
         public static readonly string LAST_USED_API_ID      = "SETTING_LAST_USED_API_ID";
+        public static readonly string CHECK_UPDATES         = "SETTING_CHECK_UPDATES";
 
         public static readonly string NULL_EVENT_ID     = "-1";
 
@@ -73,6 +74,10 @@ namespace ChronoKeep.Constants
             if (database.GetAppSetting(CONTACT_EMAIL) == null)
             {
                 database.SetAppSetting(CONTACT_EMAIL, "");
+            }
+            if (database.GetAppSetting(CHECK_UPDATES) == null)
+            {
+                database.SetAppSetting(CHECK_UPDATES, SETTING_FALSE);
             }
         }
     }

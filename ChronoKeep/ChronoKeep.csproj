@@ -463,6 +463,8 @@
     <Compile Include="Objects\TimeResult.cs" />
     <Compile Include="Objects\TimingLocation.cs" />
     <Compile Include="Objects\Helpers\Utils.cs" />
+    <Compile Include="Updates\Check.cs" />
+    <Compile Include="Updates\GithubRelease.cs" />
     <Page Include="UI\Announcer\AnnouncerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
