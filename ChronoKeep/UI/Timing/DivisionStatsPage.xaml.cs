@@ -54,6 +54,8 @@ namespace ChronoKeep.UI.Timing
             UpdateView();
         }
 
+        public void CancelableUpdateView(CancellationToken token) { }
+
         public void Closing() { }
 
         public void EditSelected() { }
@@ -63,8 +65,6 @@ namespace ChronoKeep.UI.Timing
         public void Keyboard_Ctrl_S() { }
 
         public void Keyboard_Ctrl_Z() { }
-
-        public void Search(string value, CancellationToken token) { }
 
         public void Show(PeopleType type) { }
 

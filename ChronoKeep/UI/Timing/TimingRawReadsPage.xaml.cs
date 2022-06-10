@@ -100,6 +100,12 @@ namespace ChronoKeep.UI.Timing
             updateListView.Items.Refresh();
         }
 
+        public void CancelableUpdateView(CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            UpdateView();
+        }
+
         public void Closing() { }
 
         public void UpdateDatabase() { }
@@ -109,21 +115,6 @@ namespace ChronoKeep.UI.Timing
         public void Keyboard_Ctrl_S() { }
 
         public void Keyboard_Ctrl_Z() { }
-
-        public async void Search(string value, CancellationToken token)
-        {
-            token.ThrowIfCancellationRequested();
-            List<ChipRead> reads = new List<ChipRead>(chipReads);
-            SortType sortType = parent.GetSortType();
-            string search = parent.GetSearchValue();
-            await Task.Run(() =>
-            {
-                SortWorker(reads, sortType, search);
-            });
-            updateListView.SelectedItems.Clear();
-            updateListView.ItemsSource = reads;
-            updateListView.Items.Refresh();
-        }
 
         public void EditSelected() { }
 

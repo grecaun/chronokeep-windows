@@ -50,6 +50,7 @@ namespace ChronoKeep.Timing
             }
         }
 
+        // Checks if new results exist, then resets the variable.
         public static bool NewResultsExist()
         {
             bool output = false;
@@ -57,19 +58,10 @@ namespace ChronoKeep.Timing
             if (ResultsMutex.WaitOne(3000))
             {
                 output = NewResults;
-                ResultsMutex.ReleaseMutex();
-            }
-            return output;
-        }
-
-        public static void ResetNewResults()
-        {
-            Log.D("Timing.TimingWorker", "Mutex Wait 03");
-            if (ResultsMutex.WaitOne(3000))
-            {
                 NewResults = false;
                 ResultsMutex.ReleaseMutex();
             }
+            return output;
         }
 
         public static void Notify()

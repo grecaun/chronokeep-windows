@@ -433,8 +433,6 @@ namespace ChronoKeep.UI
         public bool NewTimingInfo()
         {
             bool output = (TimingWorker.NewResultsExist() || TimingController.NewReadsExist());
-            TimingWorker.ResetNewResults();
-            TimingController.ResetNewReads();
             return output;
         }
 

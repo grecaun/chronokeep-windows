@@ -68,6 +68,8 @@ namespace ChronoKeep.UI.Timing
 
         public void UpdateView() { }
 
+        public void CancelableUpdateView(CancellationToken token) { }
+
         private enum ValuesType { FINISHONLY, STARTFINISH, ALL, TIME_ALL, TIME_TOTAL }
 
         private Document GetOverallPrintableDocumentTime(List<string> distances, ValuesType type)
@@ -1467,8 +1469,6 @@ namespace ChronoKeep.UI.Timing
             }
             return document;
         }
-
-        public void Search(string value, CancellationToken token) { }
 
         public void Show(PeopleType type) { }
 

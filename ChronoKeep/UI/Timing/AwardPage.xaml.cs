@@ -221,13 +221,13 @@ namespace ChronoKeep.UI.Timing
             }
         }
 
+        public void CancelableUpdateView(CancellationToken token) { }
+
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AwardPage", "Done clicked.");
             parent.LoadMainDisplay();
         }
-
-        public void Search(string value, CancellationToken token) { }
 
         public void Show(PeopleType type) { }
 

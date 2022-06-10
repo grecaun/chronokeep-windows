@@ -48,19 +48,10 @@ namespace ChronoKeep.Timing
             if (ReadsMutex.WaitOne(3000))
             {
                 output = NewReads;
-                ReadsMutex.ReleaseMutex();
-            }
-            return output;
-        }
-
-        public static void ResetNewReads()
-        {
-            Log.D("Timing.TimingController", "Mutex Wait 03");
-            if (ReadsMutex.WaitOne(3000))
-            {
                 NewReads = false;
                 ReadsMutex.ReleaseMutex();
             }
+            return output;
         }
 
         public List<TimingSystem> GetConnectedSystems()

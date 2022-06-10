@@ -43,20 +43,6 @@ namespace ChronoKeep.UI.Timing
 
         public void Keyboard_Ctrl_Z() { }
 
-        public async void Search(string value, CancellationToken token)
-        {
-            token.ThrowIfCancellationRequested();
-            List<TimeResult> newResults = new List<TimeResult>(results);
-            PeopleType peopleType = parent.GetPeopleType();
-            SortType sortType = parent.GetSortType();
-            await Task.Run(() =>
-            {
-                Customize(sortType, peopleType, newResults, value);
-            });
-            updateListView.ItemsSource = newResults;
-            updateListView.Items.Refresh();
-        }
-
         private void Customize(SortType sortType, PeopleType peopleType,
             List<TimeResult> newResults, string search = "")
         {
@@ -159,6 +145,12 @@ namespace ChronoKeep.UI.Timing
             updateListView.SelectedIndex = updateListView.Items.Count - 1;
             updateListView.ScrollIntoView(updateListView.SelectedItem);
             updateListView.SelectedItem = null;
+        }
+
+        public void CancelableUpdateView(CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            UpdateView();
         }
 
         public async void Show(PeopleType peopleType)

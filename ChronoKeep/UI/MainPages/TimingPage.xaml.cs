@@ -72,7 +72,6 @@ namespace ChronoKeep.UI.MainPages
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
 
             // Setup a timer for updating the view
-            // Updates could be causing issues with search.
             ViewUpdateTimer.Tick += new EventHandler(ViewUpdateTimer_Click);
             ViewUpdateTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
 
@@ -346,7 +345,27 @@ namespace ChronoKeep.UI.MainPages
                 {
                     stats.Add(s);
                 }
-                subPage.UpdateView();
+                UpdateSubView();
+            }
+        }
+
+        public void UpdateSubView()
+        {
+            Log.D("UI.MainPages.TimingPage", "Updating sub view.");
+            if (cts != null)
+            {
+                cts.Cancel();
+                cts = null;
+            }
+            cts = new CancellationTokenSource();
+            try
+            {
+                subPage.CancelableUpdateView(cts.Token);
+                cts = null;
+            }
+            catch
+            {
+                Log.D("UI.MainPages.TimingPage", "Update cancelled.");
             }
         }
 
@@ -419,29 +438,6 @@ namespace ChronoKeep.UI.MainPages
         public void NotifyTimingWorker()
         {
             mWindow.NotifyTimingWorker();
-        }
-
-        private void Search()
-        {
-            Log.D("UI.MainPages.TimingPage", "Searching");
-            if (cts != null)
-            {
-                cts.Cancel();
-                cts = null;
-            }
-            cts = new CancellationTokenSource();
-            try
-            {
-                subPage.Search(searchBox.Text.Trim(), cts.Token);
-            }
-            catch
-            {
-                Log.D("UI.MainPages.TimingPage", "Search cancelled.");
-            }
-            finally
-            {
-                cts = null;
-            }
         }
 
         private void StartTimeKeyDown(object sender, KeyEventArgs e)
@@ -716,7 +712,7 @@ namespace ChronoKeep.UI.MainPages
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            Search();
+            UpdateSubView();
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)
