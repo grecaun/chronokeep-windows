@@ -135,7 +135,7 @@ namespace ChronoKeep.Updates
             {
                 Log.D("Updates.Check", "Newer version found.");
                 DownloadWindow downloadWindow = new DownloadWindow(latestRelease, latestVersion);
-                downloadWindow.Show();
+                downloadWindow.ShowDialog();
             }
         }
 
