@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoUpdate.Objects
+namespace Uninstall.Objects
 {
     class Log
     {

@@ -1,4 +1,4 @@
-﻿using ChronoUpdate.Objects;
+﻿using Install.Objects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,8 +23,10 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Security.Principal;
 using System.Diagnostics;
+using Microsoft.Win32;
+using System.Reflection;
 
-namespace ChronoUpdate
+namespace Install
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -38,11 +40,13 @@ namespace ChronoUpdate
         private string dbName = "Chronokeep.sqlite";
         private bool installing = false;
 
+        private readonly string InstallID = "A5CD5D3E-0351-478C-A292-B7924CDAD08A";
+
         private bool delete = false;
         private string currentDirectory = Directory.GetCurrentDirectory();
 
-        Regex backupRegex = new Regex("Chronokeep-\\d{4}-\\d{2}-\\d{2}-backup\\.sqlite");
-        Regex updateRegex = new Regex("ChronoUpdate");
+        Regex backupRegex = new Regex(@"Chronokeep-\d{4}-\d{2}-\d{2}-backup\.sqlite");
+        Regex updateRegex = new Regex(@"^Install");
 
         public MainWindow()
         {
@@ -198,6 +202,50 @@ namespace ChronoUpdate
             DirectoryInfo currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
             updateBlock.Text = $"{updateBlock.Text}\nMoving files over.";
             MoveDirectory(currentDirectory, installLocation);
+            // add uninstall directive to registry
+            string version = "";
+            try
+            {
+                updateBlock.Text = $"{updateBlock.Text}\nGetting version number for uninstall registry.";
+                using (Stream? stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
+                {
+                    if (stream != null)
+                    {
+                        using (StreamReader reader = new StreamReader(stream))
+                        {
+                            version = reader.ReadToEnd();
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                updateBlock.Text = $"{updateBlock.Text}\nUnable to get version number.";
+
+            }
+            string softwareRegLoc = @"Software\Microsoft\Windows\CurrentVersion\Uninstall";
+            RegistryKey? regKey = Registry.LocalMachine.OpenSubKey(softwareRegLoc, true);
+            if (regKey != null)
+            {
+                updateBlock.Text = $"{updateBlock.Text}\nAdding uninstall information.";
+                try
+                {
+                    RegistryKey? appKey = regKey.OpenSubKey(InstallID); //regKey.CreateSubKey(InstallID);
+                    if (appKey == null)
+                    {
+                        appKey = regKey.CreateSubKey(InstallID);
+                    }
+                    appKey.SetValue("DisplayName", appName, RegistryValueKind.String);
+                    appKey.SetValue("Publisher", appName, RegistryValueKind.String);
+                    appKey.SetValue("Version", version, RegistryValueKind.String);
+                    appKey.SetValue("InstallLocation", installLocation, RegistryValueKind.String);
+                    appKey.SetValue("UninstallString", System.IO.Path.Combine(installLocation, "Uninstall.exe"), RegistryValueKind.String);
+                }
+                catch (Exception ex)
+                {
+                    updateBlock.Text = $"{updateBlock.Text}\nUnable to add registry key. {ex.Message}";
+                }
+            }
             // set delete to true and let the user exit
             delete = true;
             installing = false;

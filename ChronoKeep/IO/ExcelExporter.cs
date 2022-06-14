@@ -18,7 +18,7 @@ namespace Chronokeep.UI.IO
         {
             Application excel = Utils.GetExcelApp();
             Workbook wBook = excel.Workbooks.Add("");
-            Worksheet wSheet = wBook.ActiveSheet;
+            Worksheet wSheet = (Worksheet)wBook.ActiveSheet;
             List<object[]> localData = new List<object[]>
             {
                 headers
@@ -35,8 +35,8 @@ namespace Chronokeep.UI.IO
                     outData[i, j] = localData[i][j];
                 }
             }
-            Range startCell = wSheet.Cells[1, 1];
-            Range endCell = wSheet.Cells[localData.Count, data[0].Length];
+            Range startCell = (Range)wSheet.Cells[1, 1];
+            Range endCell = (Range)wSheet.Cells[localData.Count, data[0].Length];
             Range writeRange = wSheet.get_Range(startCell, endCell);
             writeRange.NumberFormat = "@";
             writeRange.Value2 = outData;
