@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -25,6 +26,7 @@ namespace Chronokeep.Updates
     {
         private string uri;
         private string download_uri;
+        private string folder_uri;
         private string version;
 
         private CancellationTokenSource cancellationToken = null;
@@ -33,17 +35,13 @@ namespace Chronokeep.Updates
         {
             InitializeComponent();
             DownloadProgress.Visibility = Visibility.Collapsed;
-            download_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\Chronokeep-{version}-{(Is64Bit() ? "x64" : "x86")}.zip";
+            this.version = v.ToString();
+            download_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\Chronokeep-{version}.zip";
+            folder_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\Chronokeep-{version}";
             Log.D("Updates.Check", string.Format("Download URL - {0}", r.Assets[0].BrowserDownloadURL));
             uri = r.Assets[0].BrowserDownloadURL;
-            this.version = v.ToString();
             Activate();
             Topmost = true;
-        }
-
-        private static bool Is64Bit()
-        {
-            return IntPtr.Size == 8;
         }
 
         private static HttpClient GetHttpClient()
@@ -129,6 +127,10 @@ namespace Chronokeep.Updates
                         }
                     }
                 }
+                Log.D("Updates.DownloadWindow", "Extracting files from zip.");
+                ZipFile.ExtractToDirectory(download_uri, folder_uri);
+                Log.D("Updates.DownloadWindow", "Deleting zip.");
+                File.Delete(download_uri);
                 InstallButton.IsEnabled = true;
             }
             else if (((string)InstallButton.Content).Equals("Install", StringComparison.OrdinalIgnoreCase))
