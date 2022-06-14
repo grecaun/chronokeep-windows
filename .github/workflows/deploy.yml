@@ -46,7 +46,7 @@ jobs:
 
     # Build the app for Release
     - name: Build program
-      run: msbuild $env:Solution_Path /p:Platform="AnyCPU" /p:Configuration=Release
+      run: msbuild $env:Solution_Path /p:Platform="Any CPU" /p:Configuration=Release
 
     # Archive the package
     - name: Create archive
