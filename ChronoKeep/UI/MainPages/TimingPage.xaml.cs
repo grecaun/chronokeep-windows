@@ -1,14 +1,14 @@
-﻿using ChronoKeep.API;
-using ChronoKeep.Interfaces;
-using ChronoKeep.IO;
-using ChronoKeep.IO.HtmlTemplates;
-using ChronoKeep.Network.API;
-using ChronoKeep.Objects;
-using ChronoKeep.Objects.API;
-using ChronoKeep.UI.Export;
-using ChronoKeep.UI.IO;
-using ChronoKeep.UI.Timing;
-using ChronoKeep.UI.Timing.Import;
+﻿using Chronokeep.API;
+using Chronokeep.Interfaces;
+using Chronokeep.IO;
+using Chronokeep.IO.HtmlTemplates;
+using Chronokeep.Network.API;
+using Chronokeep.Objects;
+using Chronokeep.Objects.API;
+using Chronokeep.UI.Export;
+using Chronokeep.UI.IO;
+using Chronokeep.UI.Timing;
+using Chronokeep.UI.Timing.Import;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace ChronoKeep.UI.MainPages
+namespace Chronokeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for TimingPage.xaml

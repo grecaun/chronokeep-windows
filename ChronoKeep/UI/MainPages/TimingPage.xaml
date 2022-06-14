@@ -1,11 +1,11 @@
-﻿<Page x:Class="ChronoKeep.UI.MainPages.TimingPage"
+﻿<Page x:Class="Chronokeep.UI.MainPages.TimingPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-      xmlns:local="clr-namespace:ChronoKeep.UI.MainPages"
+      xmlns:local="clr-namespace:Chronokeep.UI.MainPages"
       mc:Ignorable="d"
       d:DesignHeight="650" d:DesignWidth="900"
       Title="TimingPage" Loaded="Page_Loaded">

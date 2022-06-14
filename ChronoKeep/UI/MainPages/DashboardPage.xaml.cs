@@ -1,7 +1,7 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.Objects;
-using ChronoKeep.Timing;
-using ChronoKeep.UI.API;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects;
+using Chronokeep.Timing;
+using Chronokeep.UI.API;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
 
-namespace ChronoKeep.UI.MainPages
+namespace Chronokeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for DashboardPage.xaml

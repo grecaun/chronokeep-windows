@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.IO
+namespace Chronokeep.IO
 {
     class PrintingInterface
     {

@@ -1,5 +1,5 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.Objects;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.MainPages
+namespace Chronokeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for APIPage.xaml

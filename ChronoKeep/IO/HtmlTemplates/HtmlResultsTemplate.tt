@@ -3,7 +3,7 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="ChronoKeep" #>
+<#@ import namespace="Chronokeep" #>
 <html>
 	<head>
 		<link rel='stylesheet' href='bootstrap.css'>

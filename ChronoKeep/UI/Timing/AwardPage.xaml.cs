@@ -1,7 +1,7 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.IO;
-using ChronoKeep.Objects;
-using ChronoKeep.UI.MainPages;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.IO;
+using Chronokeep.Objects;
+using Chronokeep.UI.MainPages;
 using Microsoft.Win32;
 using MigraDoc.DocumentObjectModel;
 using MigraDoc.DocumentObjectModel.Tables;
@@ -18,7 +18,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace ChronoKeep.UI.Timing
+namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for AwardPage.xaml

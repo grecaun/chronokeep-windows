@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.API
+namespace Chronokeep.UI.API
 {
     /// <summary>
     /// Interaction logic for APIErrorPage.xaml

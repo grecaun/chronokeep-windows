@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Objects
+namespace Chronokeep.Objects
 {
     public class ResultsAPI
     {

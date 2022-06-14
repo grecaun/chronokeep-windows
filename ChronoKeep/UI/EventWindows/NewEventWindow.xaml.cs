@@ -1,12 +1,12 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.Objects;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace ChronoKeep
+namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for Window1.xaml

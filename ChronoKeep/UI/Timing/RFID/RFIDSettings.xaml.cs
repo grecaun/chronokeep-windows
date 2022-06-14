@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ChronoKeep
+namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for RFIDSettings.xaml

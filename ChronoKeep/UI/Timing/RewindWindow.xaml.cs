@@ -1,6 +1,6 @@
-﻿using ChronoKeep.Objects;
-using ChronoKeep.Timing.Interfaces;
-using ChronoKeep.UI.MainPages;
+﻿using Chronokeep.Objects;
+using Chronokeep.Timing.Interfaces;
+using Chronokeep.UI.MainPages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,7 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.Timing
+namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for RewindWindow.xaml

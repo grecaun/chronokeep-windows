@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Objects.API
+namespace Chronokeep.Objects.API
 {
     public class APIEvent
     {

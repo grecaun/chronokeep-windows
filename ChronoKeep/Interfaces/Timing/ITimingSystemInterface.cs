@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Interfaces.Timing
+namespace Chronokeep.Interfaces.Timing
 {
     public interface ITimingSystemInterface
     {

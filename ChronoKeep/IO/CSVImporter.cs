@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ChronoKeep
+namespace Chronokeep
 {
     public class CSVImporter : IDataImporter
     {

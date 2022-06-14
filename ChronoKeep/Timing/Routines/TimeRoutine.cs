@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Timing.Routines
+namespace Chronokeep.Timing.Routines
 {
     internal class TimeRoutine
     {

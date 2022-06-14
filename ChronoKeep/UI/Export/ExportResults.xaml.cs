@@ -1,5 +1,5 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.UI.IO;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.IO;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ChronoKeep.UI.Export
+namespace Chronokeep.UI.Export
 {
     /// <summary>
     /// Interaction logic for ExportResults.xaml

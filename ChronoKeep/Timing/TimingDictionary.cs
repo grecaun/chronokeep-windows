@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Timing
+namespace Chronokeep.Timing
 {
     internal class TimingDictionary
     {

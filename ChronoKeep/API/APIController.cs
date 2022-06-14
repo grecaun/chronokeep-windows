@@ -1,7 +1,7 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.Network.API;
-using ChronoKeep.Objects;
-using ChronoKeep.Objects.API;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Network.API;
+using Chronokeep.Objects;
+using Chronokeep.Objects.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.API
+namespace Chronokeep.API
 {
     class APIController
     {

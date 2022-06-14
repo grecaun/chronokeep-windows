@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep
+namespace Chronokeep
 {
     public class TimingLocation : IEquatable<TimingLocation>, IComparable<TimingLocation>
     {

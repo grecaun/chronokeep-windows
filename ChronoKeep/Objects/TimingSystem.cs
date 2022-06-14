@@ -1,5 +1,5 @@
-﻿using ChronoKeep.Interfaces.Timing;
-using ChronoKeep.Timing.Interfaces;
+﻿using Chronokeep.Interfaces.Timing;
+using Chronokeep.Timing.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Objects
+namespace Chronokeep.Objects
 {
     public class TimingSystem : IEquatable<TimingSystem>
     {

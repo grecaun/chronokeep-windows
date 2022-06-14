@@ -1,4 +1,4 @@
-﻿using ChronoKeep.Interfaces;
+﻿using Chronokeep.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.MainPages
+namespace Chronokeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for AboutPage.xaml
@@ -31,7 +31,7 @@ namespace ChronoKeep.UI.MainPages
             this.mWindow = mWindow;
             string gitVersion = "";
 
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChronoKeep." + "version.txt"))
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
             {
                 using (StreamReader reader = new StreamReader(stream))
                 {

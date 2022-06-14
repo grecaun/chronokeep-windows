@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Constants
+namespace Chronokeep.Constants
 {
     class Settings
     {
-        public static readonly string PROGRAM_DIR           = "ChronoKeep";
+        public static readonly string PROGRAM_DIR           = "Chronokeep";
 
         public static readonly string SERVER_NAME           = "SETTING_SERVER_NAME";
         public static readonly string DATABASE_VERSION      = "DATABASE_VERSION";

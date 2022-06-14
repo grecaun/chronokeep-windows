@@ -8,11 +8,11 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using ChronoKeep.Database;
-using ChronoKeep.Database.SQLite;
-using ChronoKeep.Objects;
+using Chronokeep.Database;
+using Chronokeep.Database.SQLite;
+using Chronokeep.Objects;
 
-namespace ChronoKeep
+namespace Chronokeep
 {
     class SQLiteInterface : IDBInterface
     {

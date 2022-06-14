@@ -1,4 +1,4 @@
-﻿using ChronoKeep.Interfaces.Timing;
+﻿using Chronokeep.Interfaces.Timing;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Timing.Interfaces
+namespace Chronokeep.Timing.Interfaces
 {
     class IpicoInterface : ITimingSystemInterface
     {

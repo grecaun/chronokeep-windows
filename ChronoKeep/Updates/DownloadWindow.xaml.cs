@@ -16,7 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.Updates
+namespace Chronokeep.Updates
 {
     /// <summary>
     /// Interaction logic for DownloadWindow.xaml

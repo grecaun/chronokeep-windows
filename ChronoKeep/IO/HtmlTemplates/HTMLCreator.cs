@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.UI;
 
-namespace ChronoKeep.IO.HtmlTemplates
+namespace Chronokeep.IO.HtmlTemplates
 {
     public partial class HtmlResultsTemplate
     {

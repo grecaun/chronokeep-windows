@@ -13,7 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace ChronoKeep.Updates
+namespace Chronokeep.Updates
 {
     public class Version
     {
@@ -70,7 +70,7 @@ namespace ChronoKeep.Updates
         public static async void Do()
         {
             string curVersion;
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChronoKeep." + "version.txt"))
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
             {
                 using (StreamReader reader = new StreamReader(stream))
                 {
@@ -87,7 +87,7 @@ namespace ChronoKeep.Updates
                 current.minor = int.Parse(version[1]);
                 current.patch = int.Parse(version[2]);
             }
-            Log.D("Updates.Check", string.Format("Version found {0}", current.ToString()));
+            Log.D("Updates.Check", string.Format("Current version found {0}", current.ToString()));
             List<GithubRelease> releases = null;
             try
             {
@@ -162,8 +162,7 @@ namespace ChronoKeep.Updates
             }
             catch (Exception ex)
             {
-                Log.D("Updates.Check", "Exception thrown.");
-                throw new Exception("Exception thrown getting releases: " + ex.Message);
+                throw new Exception("Exception thrown getting releases: " + ex.Message + " - " + ex.InnerException);
             }
             throw new Exception(string.Format("Unable to get releases. {0}", content));
         }
@@ -172,8 +171,6 @@ namespace ChronoKeep.Updates
         {
             var handler = new WinHttpHandler();
             var client = new HttpClient(handler);
-            client.Timeout = TimeSpan.FromSeconds(2);
-            client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.UserAgent.TryParseAdd("Chronokeep Desktop Application");
             return client;

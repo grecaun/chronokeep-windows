@@ -1,4 +1,4 @@
-﻿using ChronoKeep.Interfaces;
+﻿using Chronokeep.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 
-namespace ChronoKeep.UI.Timing
+namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for WaveWindow.xaml

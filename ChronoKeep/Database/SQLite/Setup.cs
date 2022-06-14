@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Database.SQLite
+namespace Chronokeep.Database.SQLite
 {
     class Setup
     {

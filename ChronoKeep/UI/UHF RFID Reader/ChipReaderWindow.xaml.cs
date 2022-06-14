@@ -1,11 +1,11 @@
-﻿using ChronoKeep.Interfaces;
+﻿using Chronokeep.Interfaces;
 using System;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ChronoKeep
+namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for ChipReaderWindow.xaml

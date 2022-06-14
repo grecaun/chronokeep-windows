@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.MainPages
+namespace Chronokeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for ReportsPage.xaml

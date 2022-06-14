@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace ChronoKeep.Interfaces
+namespace Chronokeep.Interfaces
 {
     public interface ISubPage : IMainPage
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.IO
+namespace Chronokeep.IO
 {
     public class LogImporter : CSVImporter
     {

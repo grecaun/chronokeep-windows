@@ -7,12 +7,12 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace ChronoKeep.IO.HtmlTemplates
+namespace Chronokeep.IO.HtmlTemplates
 {
     using System.Linq;
     using System.Text;
     using System.Collections.Generic;
-    using ChronoKeep;
+    using Chronokeep;
     using System;
     
     /// <summary>

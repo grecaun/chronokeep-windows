@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ChronoKeep
+namespace Chronokeep
 {
     class RFIDSerial
     {

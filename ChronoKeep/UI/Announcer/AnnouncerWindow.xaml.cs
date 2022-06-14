@@ -1,6 +1,6 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.Objects;
-using ChronoKeep.Timing.Announcer;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects;
+using Chronokeep.Timing.Announcer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.Announcer
+namespace Chronokeep.UI.Announcer
 {
     /// <summary>
     /// Interaction logic for AnnouncerWindow.xaml

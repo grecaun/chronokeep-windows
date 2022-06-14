@@ -1,12 +1,12 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.UI.MainPages;
-using ChronoKeep.UI.Participants;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.MainPages;
+using Chronokeep.UI.Participants;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace ChronoKeep.UI.Timing
+namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for TimingResultsPage.xaml

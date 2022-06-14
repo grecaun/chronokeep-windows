@@ -1,5 +1,5 @@
-﻿using ChronoKeep.Objects.API;
-using ChronoKeep.Objects;
+﻿using Chronokeep.Objects.API;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
 
-namespace ChronoKeep.Network.API
+namespace Chronokeep.Network.API
 {
     public class APIHandlers
     {

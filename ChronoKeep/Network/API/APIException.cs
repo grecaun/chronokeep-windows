@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Network.API
+namespace Chronokeep.Network.API
 {
     class APIException : Exception
     {

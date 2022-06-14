@@ -1,6 +1,6 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.Interfaces.Timing;
-using ChronoKeep.Objects;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.Timing;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 
-namespace ChronoKeep.Timing
+namespace Chronokeep.Timing
 {
     class TimingController
     {

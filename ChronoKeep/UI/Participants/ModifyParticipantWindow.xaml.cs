@@ -1,13 +1,13 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.Objects;
-using ChronoKeep.UI.MainPages;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects;
+using Chronokeep.UI.MainPages;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace ChronoKeep.UI.Participants
+namespace Chronokeep.UI.Participants
 {
     /// <summary>
     /// Interaction logic for ModifyParticipantWindow.xaml

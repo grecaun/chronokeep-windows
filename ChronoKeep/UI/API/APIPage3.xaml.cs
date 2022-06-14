@@ -1,6 +1,6 @@
-﻿using ChronoKeep.Network.API;
-using ChronoKeep.Objects;
-using ChronoKeep.Objects.API;
+﻿using Chronokeep.Network.API;
+using Chronokeep.Objects;
+using Chronokeep.Objects.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.API
+namespace Chronokeep.UI.API
 {
     /// <summary>
     /// Interaction logic for APIPage3.xaml

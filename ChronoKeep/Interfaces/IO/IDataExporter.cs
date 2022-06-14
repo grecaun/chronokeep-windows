@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Interfaces
+namespace Chronokeep.Interfaces
 {
     interface IDataExporter
     {

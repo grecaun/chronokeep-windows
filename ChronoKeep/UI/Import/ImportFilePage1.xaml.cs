@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ChronoKeep
+namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for ImportFilePage1.xaml

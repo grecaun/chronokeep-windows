@@ -1,11 +1,11 @@
-﻿using ChronoKeep.API;
-using ChronoKeep.Database;
-using ChronoKeep.Interfaces;
-using ChronoKeep.Network;
-using ChronoKeep.Objects;
-using ChronoKeep.Timing;
-using ChronoKeep.UI.MainPages;
-using ChronoKeep.UI.Announcer;
+﻿using Chronokeep.API;
+using Chronokeep.Database;
+using Chronokeep.Interfaces;
+using Chronokeep.Network;
+using Chronokeep.Objects;
+using Chronokeep.Timing;
+using Chronokeep.UI.MainPages;
+using Chronokeep.UI.Announcer;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -13,9 +13,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using ChronoKeep.Timing.Announcer;
+using Chronokeep.Timing.Announcer;
 
-namespace ChronoKeep.UI
+namespace Chronokeep.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -24,7 +24,7 @@ namespace ChronoKeep.UI
     {
         IDBInterface database;
         IMainPage page;
-        string dbName = "ChronoKeep.sqlite";
+        string dbName = "Chronokeep.sqlite";
         bool excelEnabled = false;
 
         // Network objects

@@ -1,4 +1,4 @@
-﻿using ChronoKeep.IO;
+﻿using Chronokeep.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.Timing.Import
+namespace Chronokeep.UI.Timing.Import
 {
     /// <summary>
     /// Interaction logic for ImportLogPage1.xaml

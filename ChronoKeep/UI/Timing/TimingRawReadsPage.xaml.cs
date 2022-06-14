@@ -1,11 +1,11 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.UI.MainPages;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.MainPages;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace ChronoKeep.UI.Timing
+namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for TimingRawReadsPage.xaml

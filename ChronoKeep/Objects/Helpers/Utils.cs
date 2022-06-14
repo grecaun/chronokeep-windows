@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Application = Microsoft.Office.Interop.Excel.Application;
 
-namespace ChronoKeep
+namespace Chronokeep
 {
     public class Utils
     {

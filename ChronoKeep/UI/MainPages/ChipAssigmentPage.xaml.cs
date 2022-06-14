@@ -1,6 +1,6 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.UI.ChipAssignment;
-using ChronoKeep.UI.IO;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.ChipAssignment;
+using Chronokeep.UI.IO;
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -14,7 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace ChronoKeep.UI.MainPages
+namespace Chronokeep.UI.MainPages
 {
     /// <summary>
     /// Interaction logic for ChipAssigmentPage.xaml

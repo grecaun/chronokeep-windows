@@ -1,4 +1,4 @@
-﻿using ChronoKeep.Objects;
+﻿using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Database.SQLite
+namespace Chronokeep.Database.SQLite
 {
     class ResultsAPIs
     {

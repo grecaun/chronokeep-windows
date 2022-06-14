@@ -1,10 +1,10 @@
-﻿using ChronoKeep.Interfaces;
+﻿using Chronokeep.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ChronoKeep.UI
+namespace Chronokeep.UI
 {
     /// <summary>
     /// Interaction logic for ChangeEventWindow.xaml

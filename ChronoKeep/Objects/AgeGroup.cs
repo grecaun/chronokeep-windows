@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Objects
+namespace Chronokeep.Objects
 {
     public class AgeGroup : IEquatable<AgeGroup>, IComparable<AgeGroup>
     {

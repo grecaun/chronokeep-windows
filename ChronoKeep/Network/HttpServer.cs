@@ -1,4 +1,4 @@
-﻿using ChronoKeep.IO.HtmlTemplates;
+﻿using Chronokeep.IO.HtmlTemplates;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ChronoKeep.Network
+namespace Chronokeep.Network
 {
     class HttpServer
     {
@@ -163,7 +163,7 @@ namespace ChronoKeep.Network
                 answer = true;
                 // Serve up style.css
                 message = "";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChronoKeep.IO.HtmlTemplates." + "style.min.css"))
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + "style.min.css"))
                 {
                     using (StreamReader reader = new StreamReader(stream))
                     {
@@ -178,7 +178,7 @@ namespace ChronoKeep.Network
                 answer = true;
                 // Serve up bootstrap.min.css
                 message = "";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChronoKeep.IO.HtmlTemplates." + "bootstrap.min.css"))
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + "bootstrap.min.css"))
                 {
                     using (StreamReader reader = new StreamReader(stream))
                     {
@@ -193,7 +193,7 @@ namespace ChronoKeep.Network
                 answer = true;
                 // Serve up bootstrap.min.js
                 message = "";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChronoKeep.IO.HtmlTemplates." + "bootstrap.min.js"))
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + "bootstrap.min.js"))
                 {
                     using (StreamReader reader = new StreamReader(stream))
                     {
@@ -208,7 +208,7 @@ namespace ChronoKeep.Network
                 answer = true;
                 // Serve up jquery-3.4.1.min.js
                 message = "";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ChronoKeep.IO.HtmlTemplates." + "jquery-3.4.1.min.js"))
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + "jquery-3.4.1.min.js"))
                 {
                     using (StreamReader reader = new StreamReader(stream))
                     {

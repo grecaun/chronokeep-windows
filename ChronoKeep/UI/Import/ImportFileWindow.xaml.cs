@@ -1,6 +1,6 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.Objects;
-using ChronoKeep.UI.Import;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects;
+using Chronokeep.UI.Import;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static ChronoKeep.UI.Import.ImportFilePage2Alt;
+using static Chronokeep.UI.Import.ImportFilePage2Alt;
 
-namespace ChronoKeep
+namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for ImportFileWindow.xaml

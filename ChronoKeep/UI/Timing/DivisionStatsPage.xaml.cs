@@ -1,5 +1,5 @@
-﻿using ChronoKeep.Interfaces;
-using ChronoKeep.UI.MainPages;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.MainPages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ChronoKeep.UI.Timing
+namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for DistanceStatsPage.xaml

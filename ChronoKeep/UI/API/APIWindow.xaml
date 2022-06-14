@@ -1,9 +1,9 @@
-﻿<Window x:Class="ChronoKeep.UI.API.APIWindow"
+﻿<Window x:Class="Chronokeep.UI.API.APIWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ChronoKeep.UI.API"
+        xmlns:local="clr-namespace:Chronokeep.UI.API"
         mc:Ignorable="d"
         Title="Link Event" Height="450" Width="300" MinWidth="300">
     <Grid>
