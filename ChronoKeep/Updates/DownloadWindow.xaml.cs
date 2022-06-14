@@ -29,30 +29,16 @@ namespace Chronokeep.Updates
 
         private CancellationTokenSource cancellationToken = null;
 
-        public DownloadWindow(Release release, Version version)
+        public DownloadWindow(GithubRelease r, Version v)
         {
             InitializeComponent();
             DownloadProgress.Visibility = Visibility.Collapsed;
-            this.version = version.ToString();
-            if (Is64Bit())
-            {
-                if (release.x64 != null)
-                {
-                    Log.D("Updates.Check", string.Format("Download URL (64 bit) - {0}", release.x64.Assets[0].BrowserDownloadURL));
-                    uri = release.x64.Assets[0].BrowserDownloadURL;
-                }
-            }
-            else
-            {
-                if (release.x86 != null)
-                {
-                    Log.D("Updates.Check", string.Format("Download URL (32 bit) - {0}", release.x86.Assets[0].BrowserDownloadURL));
-                    uri = release.x86.Assets[0].BrowserDownloadURL;
-                }
-            }
             download_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\Chronokeep-{version}-{(Is64Bit() ? "x64" : "x86")}.zip";
-            this.Activate();
-            this.Topmost = true;
+            Log.D("Updates.Check", string.Format("Download URL - {0}", r.Assets[0].BrowserDownloadURL));
+            uri = r.Assets[0].BrowserDownloadURL;
+            this.version = v.ToString();
+            Activate();
+            Topmost = true;
         }
 
         private static bool Is64Bit()

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Chronokeep.Updates
 {
-    internal class GithubRelease
+    public class GithubRelease
     {
         [JsonProperty("url")]
         public string Url { get; set; }
@@ -43,7 +43,7 @@ namespace Chronokeep.Updates
         public string Body { get; set; }
     }
 
-    internal class Author
+    public class Author
     {
         [JsonProperty("login")]
         public string Login { get; set; }
@@ -83,7 +83,7 @@ namespace Chronokeep.Updates
         public bool SiteAdmin { get; set; }
     }
 
-    internal class Assets
+    public class Assets
     {
         [JsonProperty("url")]
         public string URL { get; set; }

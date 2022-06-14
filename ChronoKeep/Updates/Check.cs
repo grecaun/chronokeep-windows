@@ -57,12 +57,6 @@ namespace Chronokeep.Updates
         }
     }
 
-    public class Release
-    {
-        internal GithubRelease x86 = null;
-        internal GithubRelease x64 = null;
-    }
-
     public class Check
     {
         private static string RepoURL = "https://api.github.com/repos/grecaun/chronokeep-windows/releases";
@@ -81,11 +75,9 @@ namespace Chronokeep.Updates
             string[] version = curVersion.Split('.');
             if (version.Length >= 3)
             {
-                version[0] = version[0].Replace('v', '0');
-                version[2] = version[2].Split('-')[0];
-                current.major = int.Parse(version[0]);
+                current.major = int.Parse(version[0].Replace("v", ""));
                 current.minor = int.Parse(version[1]);
-                current.patch = int.Parse(version[2]);
+                current.patch = int.Parse(version[2].Split('-')[0]);
             }
             Log.D("Updates.Check", string.Format("Current version found {0}", current.ToString()));
             List<GithubRelease> releases = null;
@@ -99,34 +91,24 @@ namespace Chronokeep.Updates
                 MessageBox.Show("Unable to check for update.", "Error");
                 return;
             }
-            Release latestRelease = new Release();
+            GithubRelease latestRelease = null;
             Version latestVersion = new Version();
             foreach (GithubRelease release in releases)
             {
                 Version releaseVersion = new Version();
                 version = release.Name.Split('.');
-                if (version.Length == 4)
+                if (version.Length >= 3)
                 {
-                    version[0] = version[0].Replace('v', '0');
-                    version[2] = version[2].Split('-')[0];
-                    releaseVersion.major = int.Parse(version[0]);
+                    releaseVersion.major = int.Parse(version[0].Replace("v", ""));
                     releaseVersion.minor = int.Parse(version[1]);
-                    releaseVersion.patch = int.Parse(version[2]);
+                    releaseVersion.patch = int.Parse(version[2].Split('-')[0]);
                 }
                 // Check for major version updates
                 // Then minor version updates
                 // patches
-                // check for equal versions because we store both x86 and x64 versions
-                if (releaseVersion.Newer(latestVersion) || releaseVersion.Equal(latestVersion))
+                if (releaseVersion.Newer(latestVersion))
                 {
-                    if (version[3].Equals("x86", StringComparison.OrdinalIgnoreCase))
-                    {
-                        latestRelease.x86 = release;
-                    }
-                    else if (version[3].Equals("x64", StringComparison.OrdinalIgnoreCase))
-                    {
-                        latestRelease.x64 = release;
-                    }
+                    latestRelease = release;
                     latestVersion.Set(releaseVersion);
                 }
             }
