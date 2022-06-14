@@ -17,8 +17,7 @@ jobs:
       SigningCertificate: Chronokeep\Chronokeep.pfx
       Solution_Path: Chronokeep.sln
       App_Packages_Archive: Chronokeep.zip
-      x64_Compile_Path: Chronokeep\bin\x64\Release
-      x86_Compile_Path: Chronokeep\bin\x86\Release
+      Compile_Path: Chronokeep\bin\Release
       Actions_Allow_Unsecure_Commands: true # Allows AddPAth and SetEnv commands
 
     steps:
@@ -45,71 +44,39 @@ jobs:
     - name: Restore Nuget Packages
       run: nuget restore $env:Solution_Path
 
-    # Build the app for Release (x64)
-    - name: Build x64
-      run: msbuild $env:Solution_Path /p:Platform=x64 /p:Configuration=Release
+    # Build the app for Release
+    - name: Build program
+      run: msbuild $env:Solution_Path /p:Platform="AnyCPU" /p:Configuration=Release
 
-    # Build the app for Release (x86)
-    - name: Build x86
-      run: msbuild $env:Solution_Path /p:Platform=x86 /p:Configuration=Release
-
-    # Archive the package (x64)
-    - name: Create archive x64
-      run: Compress-Archive -Path $env:x64_Compile_Path\* -DestinationPath $env:x64_Compile_Path\$env:App_Packages_Archive
-
-    # Archive the package (x86)
-    - name: Create archive x86
-      run: Compress-Archive -Path $env:x86_Compile_Path\* -DestinationPath $env:x86_Compile_Path\$env:App_Packages_Archive
+    # Archive the package
+    - name: Create archive
+      run: Compress-Archive -Path $env:Compile_Path\* -DestinationPath $env:Compile_Path\$env:App_Packages_Archive
 
     # Set an environment variable to the tag we want to use to describe this release.
     - name: Get tag environment variable.
       run: echo "::set-output name=RELEASE_VERSION::$(git describe --tag)"
       id: release-version
 
-    # Create the release:  https://github.com/actions/create-release (x86)
-    - name: Create release x86
-      id: create_release_x86
+    # Create the release:  https://github.com/actions/create-release
+    - name: Create release
+      id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        tag_name: ${{ steps.release-version.outputs.RELEASE_VERSION }}-x86
-        release_name:  ${{ steps.release-version.outputs.RELEASE_VERSION }}-x86
+        tag_name: ${{ steps.release-version.outputs.RELEASE_VERSION }}
+        release_name:  ${{ steps.release-version.outputs.RELEASE_VERSION }}
         draft: false
         prerelease: false
 
-    # Upload release asset:   https://github.com/actions/upload-release-asset (x86)
-    - name: Update release asset x86
-      id: upload-release-asset-x86
+    # Upload release asset:   https://github.com/actions/upload-release-asset
+    - name: Update release asset
+      id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release_x86.outputs.upload_url }}  # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ${{ env.x86_Compile_Path }}\${{ env.App_Packages_Archive }}
-        asset_name: ${{ env.App_Packages_Archive }}
-        asset_content_type: application/zip
-
-    # Create the release:  https://github.com/actions/create-release (x64)
-    - name: Create release x64
-      id: create_release_x64
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ steps.release-version.outputs.RELEASE_VERSION }}-x64
-        release_name:  ${{ steps.release-version.outputs.RELEASE_VERSION }}-x64
-        draft: false
-        prerelease: false
-
-    # Upload release asset:   https://github.com/actions/upload-release-asset (x64)
-    - name: Update release asset x64
-      id: upload-release-asset-x64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release_x64.outputs.upload_url }}  # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: ${{ env.x64_Compile_Path }}\${{ env.App_Packages_Archive }}
+        upload_url: ${{ steps.create_release.outputs.upload_url }}  # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ${{ env.Compile_Path }}\${{ env.App_Packages_Archive }}
         asset_name: ${{ env.App_Packages_Archive }}
         asset_content_type: application/zip
