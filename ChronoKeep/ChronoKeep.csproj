@@ -1,22 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{19A9995C-79B6-4A3C-9906-F391FB1BA33D}</ProjectGuid>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Chronokeep</RootNamespace>
-    <AssemblyName>Chronokeep</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -37,28 +24,16 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+	<UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>27F45DA7368268D3B9790B934BC952BAB41ECD65</ManifestCertificateThumbprint>
@@ -76,62 +51,35 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile>Chronokeep.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x64|AnyCPU'">
     <OutputPath>bin\x64\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
     <DefineConstants>
     </DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x64|x64'">
     <OutputPath>bin\x64\x64\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Debug\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Release\</OutputPath>
-    <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'x64|x86'">
-    <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\x64\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
@@ -139,506 +87,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CustomMarshalers" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="API\APIController.cs" />
-    <Compile Include="Constants\DashboardLabels.cs" />
-    <Compile Include="Constants\ResultsAPI.cs" />
-    <Compile Include="Constants\Timing.cs" />
-    <Compile Include="Constants\Distances.cs" />
-    <Compile Include="Constants\Settings.cs" />
-    <Compile Include="Database\InvalidDatabaseVersion.cs" />
-    <Compile Include="Database\SQLite\AgeGroups.cs" />
-    <Compile Include="Database\SQLite\BibChips.cs" />
-    <Compile Include="Database\SQLite\ChipReads.cs" />
-    <Compile Include="Database\SQLite\DatabaseHelpers.cs" />
-    <Compile Include="Database\SQLite\Distances.cs" />
-    <Compile Include="Database\SQLite\DistanceStats.cs" />
-    <Compile Include="Database\SQLite\Events.cs" />
-    <Compile Include="Database\SQLite\Participants.cs" />
-    <Compile Include="Database\SQLite\Results.cs" />
-    <Compile Include="Database\SQLite\ResultsAPIs.cs" />
-    <Compile Include="Database\SQLite\Segments.cs" />
-    <Compile Include="Database\SQLite\Settings.cs" />
-    <Compile Include="Database\SQLite\Setup.cs" />
-    <Compile Include="Database\SQLite\TimingLocations.cs" />
-    <Compile Include="Database\SQLite\TimingSystems.cs" />
-    <Compile Include="Database\SQLite\Update.cs" />
-    <Compile Include="Interfaces\IO\IDataExporter.cs" />
-    <Compile Include="Interfaces\UI\ISubPage.cs" />
-    <Compile Include="Interfaces\Timing\ITimingSystemInterface.cs" />
-    <Compile Include="Interfaces\UI\IMainPage.cs" />
-    <Compile Include="Interfaces\UI\IMainWindow.cs" />
-    <Compile Include="Interfaces\UI\IWindowCallback.cs" />
-    <Compile Include="IO\HtmlTemplates\HTMLCreator.cs" />
-    <Compile Include="IO\HtmlTemplates\HtmlResultsTemplate.cs">
+    <Compile Update="IO\HtmlTemplates\HtmlResultsTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>HtmlResultsTemplate.tt</DependentUpon>
     </Compile>
-    <Compile Include="IO\HtmlTemplates\HtmlResultsTemplateTime.cs">
+    <Compile Update="IO\HtmlTemplates\HtmlResultsTemplateTime.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>HtmlResultsTemplateTime.tt</DependentUpon>
     </Compile>
-    <Compile Include="IO\LogImporter.cs" />
-    <Compile Include="IO\PrintingInterface.cs" />
-    <Compile Include="MigraDocPrinting\MigraDocPrintDocument.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Network\API\APIException.cs" />
-    <Compile Include="Network\API\APIHandlers.cs" />
-    <Compile Include="Network\HttpServer.cs" />
-    <Compile Include="Objects\AgeGroup.cs" />
-    <Compile Include="Objects\AnnouncerParticipant.cs" />
-    <Compile Include="Objects\ChronoKeepAPI\APIEvent.cs" />
-    <Compile Include="Objects\ChronoKeepAPI\APIEventYear.cs" />
-    <Compile Include="Objects\ChronoKeepAPI\Requests.cs" />
-    <Compile Include="Objects\ChronoKeepAPI\Responses.cs" />
-    <Compile Include="Objects\ChronoKeepAPI\APIResult.cs" />
-    <Compile Include="Objects\AppSetting.cs" />
-    <Compile Include="Objects\ChipRead.cs" />
-    <Compile Include="Objects\DistanceStat.cs" />
-    <Compile Include="Objects\Range.cs" />
-    <Compile Include="Objects\ResultsAPI.cs" />
-    <Compile Include="Objects\Segment.cs" />
-    <Compile Include="Objects\TimingSystem.cs" />
-    <Compile Include="Properties\VersionInfo.cs" />
-    <Compile Include="Timing\Announcer\AnnouncerWorker.cs" />
-    <Compile Include="Timing\Interfaces\IpicoInterface.cs" />
-    <Compile Include="Timing\Routines\BackyardUltraRoutine.cs" />
-    <Compile Include="Timing\Routines\DistanceRoutine.cs" />
-    <Compile Include="Timing\Routines\TimeRoutine.cs" />
-    <Compile Include="Timing\TimingController.cs" />
-    <Compile Include="Timing\TimingDictionary.cs" />
-    <Compile Include="Timing\TimingWorker.cs" />
-    <Compile Include="UI\Announcer\AnnouncerWindow.xaml.cs">
-      <DependentUpon>AnnouncerWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\API\APIErrorPage.xaml.cs">
-      <DependentUpon>APIErrorPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\API\APIPage1.xaml.cs">
-      <DependentUpon>APIPage1.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\API\APIPage2.xaml.cs">
-      <DependentUpon>APIPage2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\API\APIPage3.xaml.cs">
-      <DependentUpon>APIPage3.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\API\APIWindow.xaml.cs">
-      <DependentUpon>APIWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ChipAssignment\ChipTool.xaml.cs">
-      <DependentUpon>ChipTool.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\EventWindows\ChangeEventWindow.xaml.cs">
-      <DependentUpon>ChangeEventWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="IO\CSVExporter.cs" />
-    <Compile Include="IO\ExcelExporter.cs" />
-    <Compile Include="UI\Export\ExportDistanceResults.xaml.cs">
-      <DependentUpon>ExportDistanceResults.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Export\ExportResults.xaml.cs">
-      <DependentUpon>ExportResults.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Import\ImportFilePage2Alt.xaml.cs">
-      <DependentUpon>ImportFilePage2Alt.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Import\ImportFilePageConflicts.xaml.cs">
-      <DependentUpon>ImportFilePageConflicts.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\AboutPage.xaml.cs">
-      <DependentUpon>AboutPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\AgeGroupsPage.xaml.cs">
-      <DependentUpon>AgeGroupsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\APIPage.xaml.cs">
-      <DependentUpon>APIPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\ChipAssigmentPage.xaml.cs">
-      <DependentUpon>ChipAssigmentPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\DistancesPage.xaml.cs">
-      <DependentUpon>DistancesPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\LocationsPage.xaml.cs">
-      <DependentUpon>LocationsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\ParticipantsPage.xaml.cs">
-      <DependentUpon>ParticipantsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\ReportsPage.xaml.cs">
-      <DependentUpon>ReportsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\SegmentsPage.xaml.cs">
-      <DependentUpon>SegmentsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\SettingsPage.xaml.cs">
-      <DependentUpon>SettingsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\TimingPage.xaml.cs">
-      <DependentUpon>TimingPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MainPages\DashboardPage.xaml.cs">
-      <DependentUpon>DashboardPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Participants\ChangeMultiParticipantWindow.xaml.cs">
-      <DependentUpon>ChangeMultiParticipantWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Participants\ModifyParticipantWindow.xaml.cs">
-      <DependentUpon>ModifyParticipantWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\AwardPage.xaml.cs">
-      <DependentUpon>AwardPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\DivisionStatsPage.xaml.cs">
-      <DependentUpon>DivisionStatsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\EditRawReadsWindow.xaml.cs">
-      <DependentUpon>EditRawReadsWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\Import\ImportLogPage1.xaml.cs">
-      <DependentUpon>ImportLogPage1.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\Import\ImportLogPage2.xaml.cs">
-      <DependentUpon>ImportLogPage2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\Import\ImportLogWindow.xaml.cs">
-      <DependentUpon>ImportLogWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\ManualEntryWindow.xaml.cs">
-      <DependentUpon>ManualEntryWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\PrintPage.xaml.cs">
-      <DependentUpon>PrintPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\RewindWindow.xaml.cs">
-      <DependentUpon>RewindWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\SetTimeWindow.xaml.cs">
-      <DependentUpon>SetTimeWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\TimingRawReadsPage.xaml.cs">
-      <DependentUpon>TimingRawReadsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\TimingResultsPage.xaml.cs">
-      <DependentUpon>TimingResultsPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Timing\WaveWindow.xaml.cs">
-      <DependentUpon>WaveWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\UIObjects\AListBoxItem.cs" />
-    <Compile Include="Objects\BibChipAssociation.cs" />
-    <Compile Include="UI\ChipAssignment\BibChipAssociationWindow.xaml.cs">
-      <DependentUpon>BibChipAssociationWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\UHF RFID Reader\ChipPersonWindow.xaml.cs">
-      <DependentUpon>ChipPersonWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\UHF RFID Reader\ChipReaderWindow.xaml.cs">
-      <DependentUpon>ChipReaderWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="IO\CSVImporter.cs" />
-    <Compile Include="IO\ExcelImporter.cs" />
-    <Compile Include="Interfaces\IO\IDataImporter.cs" />
-    <Compile Include="Database\IDBInterface.cs" />
-    <Compile Include="Objects\Distance.cs" />
-    <Compile Include="Objects\Event.cs" />
-    <Compile Include="Objects\EventSpecific.cs" />
-    <Compile Include="Interfaces\IEDConnection.cs" />
-    <Compile Include="IO\ImportData.cs" />
-    <Compile Include="UI\Import\ImportFilePage1.xaml.cs">
-      <DependentUpon>ImportFilePage1.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Import\ImportFileWindow.xaml.cs">
-      <DependentUpon>ImportFileWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\UHF RFID Reader\NewReader.cs" />
-    <Compile Include="Objects\Helpers\Log.cs" />
-    <Compile Include="UI\EventWindows\NewEventWindow.xaml.cs">
-      <DependentUpon>NewEventWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\Timing\RFID\RFIDSettings.xaml.cs">
-      <DependentUpon>RFIDSettings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Timing\Interfaces\RFIDUltraInterface.cs" />
-    <Compile Include="UI\UHF RFID Reader\RFIDSerial.cs" />
-    <Compile Include="Database\SQLiteInterface.cs" />
-    <Compile Include="Objects\TimeResult.cs" />
-    <Compile Include="Objects\TimingLocation.cs" />
-    <Compile Include="Objects\Helpers\Utils.cs" />
-    <Compile Include="Updates\Check.cs" />
-    <Compile Include="Updates\DownloadWindow.xaml.cs">
-      <DependentUpon>DownloadWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Updates\GithubRelease.cs" />
-    <Page Include="UI\Announcer\AnnouncerWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\API\APIErrorPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\API\APIPage1.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\API\APIPage2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\API\APIPage3.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\API\APIWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\ChipAssignment\ChipTool.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\EventWindows\ChangeEventWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Export\ExportDistanceResults.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Export\ExportResults.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Import\ImportFilePage2Alt.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Import\ImportFilePageConflicts.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\AboutPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\AgeGroupsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\APIPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\ChipAssigmentPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\DistancesPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\LocationsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\ParticipantsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\ReportsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\SegmentsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\SettingsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\TimingPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\MainPages\DashboardPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Participants\ChangeMultiParticipantWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Participants\ModifyParticipantWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\AwardPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\DivisionStatsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\EditRawReadsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\Import\ImportLogPage1.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\Import\ImportLogPage2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\Import\ImportLogWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\ManualEntryWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\ChipAssignment\BibChipAssociationWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\PrintPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\RewindWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\SetTimeWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\TimingRawReadsPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\Timing\TimingResultsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\WaveWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\UHF RFID Reader\ChipPersonWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\UHF RFID Reader\ChipReaderWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Import\ImportFilePage1.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Import\ImportFileWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="UI\EventWindows\NewEventWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Timing\RFID\RFIDSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Updates\DownloadWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Objects\Participant.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <None Include="Chronokeep.pfx" />
-    <None Include="Properties\app.manifest" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="VBIDE">
@@ -649,30 +112,24 @@
       <WrapperTool>primary</WrapperTool>
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+      <CopyLocal>True</CopyLocal>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>9</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>00020813-0000-0000-c000-000000000046</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <Private>True</Private>
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Extended.Wpf.Toolkit">
-      <Version>4.3.0</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Office.Interop.Excel">
-      <Version>15.0.4795.1001</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.WindowsAPICodePack-Core">
-      <Version>1.1.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.WindowsAPICodePack-Shell">
-      <Version>1.1.0</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="PDFsharp-MigraDoc-gdi">
-      <Version>1.50.5147</Version>
-    </PackageReference>
-    <PackageReference Include="SharpCompress">
-      <Version>0.31.0</Version>
-    </PackageReference>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.3.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.SQLite.Core">
       <Version>1.0.116</Version>
     </PackageReference>
@@ -682,12 +139,10 @@
     <PackageReference Include="System.Net.Http.WinHttpHandler">
       <Version>6.0.1</Version>
     </PackageReference>
-    <PackageReference Include="System.Text.Encoding.CodePages">
-      <Version>6.0.0</Version>
-    </PackageReference>
     <PackageReference Include="System.ValueTuple">
       <Version>4.5.0</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="version.txt">
@@ -714,9 +169,10 @@
     <Content Include="IO\HtmlTemplates\style.css" />
     <EmbeddedResource Include="IO\HtmlTemplates\style.min.css" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>git describe --tag &gt; "$(ProjectDir)version.txt"</PreBuildEvent>
   </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 </Project>

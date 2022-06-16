@@ -2,17 +2,17 @@
 using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Chronokeep.Network.API
 {
     public class APIHandlers
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         private static HttpClient GetHttpClient()
         {
             var handler = new WinHttpHandler();
@@ -42,12 +42,12 @@ namespace Chronokeep.Network.API
                     {
                         Log.D("Network.API.APIHandlers", "Status code ok.");
                         var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<GetEventsResponse>(json);
+                        var result = JsonSerializer.Deserialize<GetEventsResponse>(json);
                         return result;
                     }
                     Log.D("Network.API.APIHandlers", "Status code not ok.");
                     var errjson = await response.Content.ReadAsStringAsync();
-                    var errresult = JsonConvert.DeserializeObject<ErrorResponse>(errjson);
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
                     content = errresult.Message;
                 }
             }
@@ -72,7 +72,7 @@ namespace Chronokeep.Network.API
                         Method = HttpMethod.Post,
                         RequestUri = new Uri(api.URL + "event-year/event"),
                         Content = new StringContent(
-                            JsonConvert.SerializeObject(new GetEventRequest
+                            JsonSerializer.Serialize(new GetEventRequest
                             {
                                 Slug = slug
                             }),
@@ -86,12 +86,12 @@ namespace Chronokeep.Network.API
                     {
                         Log.D("Network.API.APIHandlers", "Status code ok.");
                         var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<GetEventYearsResponse>(json);
+                        var result = JsonSerializer.Deserialize<GetEventYearsResponse>(json);
                         return result;
                     }
                     Log.D("Network.API.APIHandlers", "Status code not ok.");
                     var errjson = await response.Content.ReadAsStringAsync();
-                    var errresult = JsonConvert.DeserializeObject<ErrorResponse>(errjson);
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
                     content = errresult.Message;
                 }
             }
@@ -116,7 +116,7 @@ namespace Chronokeep.Network.API
                         Method = HttpMethod.Post,
                         RequestUri = new Uri(api.URL + "event/add"),
                         Content = new StringContent(
-                            JsonConvert.SerializeObject(new ModifyEventRequest
+                            JsonSerializer.Serialize(new ModifyEventRequest
                             {
                                 Event = ev
                             }),
@@ -130,12 +130,12 @@ namespace Chronokeep.Network.API
                     {
                         Log.D("Network.API.APIHandlers", "Status code ok.");
                         var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<ModifyEventResponse>(json);
+                        var result = JsonSerializer.Deserialize<ModifyEventResponse>(json);
                         return result;
                     }
                     Log.D("Network.API.APIHandlers", "Status code not ok.");
                     var errjson = await response.Content.ReadAsStringAsync();
-                    var errresult = JsonConvert.DeserializeObject<ErrorResponse>(errjson);
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
                     content = errresult.Message;
                 }
             }
@@ -160,7 +160,7 @@ namespace Chronokeep.Network.API
                         Method = HttpMethod.Post,
                         RequestUri = new Uri(api.URL + "event-year/add"),
                         Content = new StringContent(
-                            JsonConvert.SerializeObject(new ModifyEventYearRequest
+                            JsonSerializer.Serialize(new ModifyEventYearRequest
                             {
                                 Slug = slug,
                                 Year = year
@@ -175,12 +175,12 @@ namespace Chronokeep.Network.API
                     {
                         Log.D("Network.API.APIHandlers", "Status code ok.");
                         var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<EventYearResponse>(json);
+                        var result = JsonSerializer.Deserialize<EventYearResponse>(json);
                         return result;
                     }
                     Log.D("Network.API.APIHandlers", "Status code not ok.");
                     var errjson = await response.Content.ReadAsStringAsync();
-                    var errresult = JsonConvert.DeserializeObject<ErrorResponse>(errjson);
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
                     content = errresult.Message;
                 }
             }
@@ -205,7 +205,7 @@ namespace Chronokeep.Network.API
                         Method = HttpMethod.Post,
                         RequestUri = new Uri(api.URL + "results/add"),
                         Content = new StringContent(
-                            JsonConvert.SerializeObject(new AddResultsRequest
+                            JsonSerializer.Serialize(new AddResultsRequest
                             {
                                 Slug = slug,
                                 Year = year,
@@ -221,12 +221,12 @@ namespace Chronokeep.Network.API
                     {
                         Log.D("Network.API.APIHandlers", "Status code ok.");
                         var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<AddResultsResponse>(json);
+                        var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
                         return result;
                     }
                     Log.D("Network.API.APIHandlers", "Status code not ok.");
                     var errjson = await response.Content.ReadAsStringAsync();
-                    var errresult = JsonConvert.DeserializeObject<ErrorResponse>(errjson);
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
                     content = errresult.Message;
                 }
             }
@@ -251,7 +251,7 @@ namespace Chronokeep.Network.API
                         Method = HttpMethod.Delete,
                         RequestUri = new Uri(api.URL + "results/delete"),
                         Content = new StringContent(
-                            JsonConvert.SerializeObject(new GetResultsRequest
+                            JsonSerializer.Serialize(new GetResultsRequest
                             {
                                 Slug = slug,
                                 Year = year
@@ -266,12 +266,12 @@ namespace Chronokeep.Network.API
                     {
                         Log.D("Network.API.APIHandlers", "Status code ok.");
                         var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<AddResultsResponse>(json);
+                        var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
                         return result;
                     }
                     Log.D("Network.API.APIHandlers", "Status code not ok.");
                     var errjson = await response.Content.ReadAsStringAsync();
-                    var errresult = JsonConvert.DeserializeObject<ErrorResponse>(errjson);
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
                     content = errresult.Message;
                 }
             }

@@ -44,6 +44,7 @@ namespace Chronokeep.Updates
             Topmost = true;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         private static HttpClient GetHttpClient()
         {
             var handler = new WinHttpHandler();

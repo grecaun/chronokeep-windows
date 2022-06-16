@@ -1,6 +1,4 @@
-﻿using Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -23,6 +21,7 @@ namespace Chronokeep
             return new string(charArray);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         public static bool ExcelEnabled()
         {
             try
@@ -55,6 +54,7 @@ namespace Chronokeep
             return ExcelApp;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         public static void QuitExcel()
         {
             if (ExcelApp != null)

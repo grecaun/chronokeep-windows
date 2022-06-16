@@ -31,6 +31,8 @@ namespace Chronokeep.Network
 
         private Mutex info_mutex = new Mutex();
 
+        private bool keepAlive = true;
+
         public int Port
         {
             get { return _port; }
@@ -104,13 +106,13 @@ namespace Chronokeep.Network
 
         public void Stop()
         {
-            _serverThread.Abort();
+            keepAlive = false;
             _listener.Stop();
         }
 
         private void Listen()
         {
-            while (true)
+            while (keepAlive)
             {
                 try
                 {
@@ -238,6 +240,7 @@ namespace Chronokeep.Network
         {
             this.database = database;
             this._port = port;
+            keepAlive = true;
             UpdateInformation();
 
             // Test to ensure we can listen.

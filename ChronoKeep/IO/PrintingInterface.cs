@@ -1,14 +1,8 @@
-﻿using MigraDoc.DocumentObjectModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Chronokeep.IO
+﻿namespace Chronokeep.IO
 {
     class PrintingInterface
     {
+        /*
         public static Document CreateDocument(string year, string eventName, string companyName)
         {
             Document document = new Document();
@@ -17,7 +11,7 @@ namespace Chronokeep.IO
             document.Info.Author = companyName;
 
             // Declare styles
-            MigraDoc.DocumentObjectModel.Style style = document.Styles["Normal"];
+            Style style = document.Styles["Normal"];
             style.Font.Color = Colors.Black;
 
             style = document.Styles["Heading1"];
@@ -75,5 +69,6 @@ namespace Chronokeep.IO
             output.PageSetup.BottomMargin = Unit.FromInch(1.0);
             return output;
         }
+        //*/
     }
 }

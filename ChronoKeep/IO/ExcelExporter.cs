@@ -14,6 +14,7 @@ namespace Chronokeep.UI.IO
         string[] headers = { };
         List<object[]> data;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         public void ExportData(string Path)
         {
             Application excel = Utils.GetExcelApp();
@@ -35,9 +36,9 @@ namespace Chronokeep.UI.IO
                     outData[i, j] = localData[i][j];
                 }
             }
-            Range startCell = (Range)wSheet.Cells[1, 1];
-            Range endCell = (Range)wSheet.Cells[localData.Count, data[0].Length];
-            Range writeRange = wSheet.get_Range(startCell, endCell);
+            Microsoft.Office.Interop.Excel.Range startCell = (Microsoft.Office.Interop.Excel.Range)wSheet.Cells[1, 1];
+            Microsoft.Office.Interop.Excel.Range endCell = (Microsoft.Office.Interop.Excel.Range)wSheet.Cells[localData.Count, data[0].Length];
+            Microsoft.Office.Interop.Excel.Range writeRange = wSheet.get_Range(startCell, endCell);
             writeRange.NumberFormat = "@";
             writeRange.Value2 = outData;
             writeRange.EntireColumn.AutoFit();

@@ -1,27 +1,22 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace Chronokeep.Objects.API
 {
     public class APIEvent
     {
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonProperty("slug")]
+        [JsonPropertyName("slug")]
         public string Slug { get; set; }
-        [JsonProperty("website")]
+        [JsonPropertyName("website")]
         public string Website { get; set; }
-        [JsonProperty("image")]
+        [JsonPropertyName("image")]
         public string Image { get; set; }
-        [JsonProperty("contact_email")]
+        [JsonPropertyName("contact_email")]
         public string ContactEmail { get; set; }
-        [JsonProperty("access_restricted")]
+        [JsonPropertyName("access_restricted")]
         public bool AccessRestricted { get; set; }
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public string Type { get; set; }
     }
 }

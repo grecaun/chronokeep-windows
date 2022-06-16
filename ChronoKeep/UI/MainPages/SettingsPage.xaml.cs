@@ -14,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -122,24 +121,19 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.SettingsPage", "Change export directory button clicked.");
             try
             {
-                using (var dialog = new CommonOpenFileDialog())
+                using (var dialog = new System.Windows.Forms.FolderBrowserDialog
                 {
-                    dialog.Title = "Export Directory";
-                    dialog.IsFolderPicker = true;
-                    dialog.InitialDirectory = DefaultExportDirBox.Text;
+                    Description = "Export Directory",
+                    UseDescriptionForTitle = true,
+                    InitialDirectory = DefaultExportDirBox.Text,
+                    SelectedPath = DefaultExportDirBox.Text,
+                    ShowNewFolderButton = true,
+                })
+                {
 
-                    dialog.AddToMostRecentlyUsedList = false;
-                    dialog.AllowNonFileSystemItems = false;
-                    dialog.DefaultDirectory = DefaultExportDirBox.Text;
-                    dialog.EnsureFileExists = true;
-                    dialog.EnsurePathExists = true;
-                    dialog.EnsureValidNames = true;
-                    dialog.Multiselect = false;
-                    dialog.ShowPlacesList = true;
-
-                    if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                    if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                        DefaultExportDirBox.Text = dialog.FileName;
+                        DefaultExportDirBox.Text = dialog.SelectedPath;
                     }
                 }
             }

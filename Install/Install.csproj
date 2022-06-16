@@ -8,6 +8,8 @@
     <StartupObject>Install.App</StartupObject>
     <Company>$(Authors)</Company>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <IsPublishable>True</IsPublishable>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
 
   <ItemGroup>

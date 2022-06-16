@@ -3,14 +3,7 @@ using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
 using Microsoft.Win32;
-using MigraDoc.DocumentObjectModel;
-using MigraDoc.DocumentObjectModel.Tables;
-using MigraDoc.Rendering;
-using MigraDoc.Rendering.Printing;
-using System;
 using System.Collections.Generic;
-using System.Drawing.Printing;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -72,6 +65,7 @@ namespace Chronokeep.UI.Timing
 
         private enum ValuesType { FINISHONLY, STARTFINISH, ALL, TIME_ALL, TIME_TOTAL }
 
+        /*
         private Document GetOverallPrintableDocumentTime(List<string> distances, ValuesType type)
         {
             // Get all participants for the race and categorize them by their event specific identifier;
@@ -1469,6 +1463,7 @@ namespace Chronokeep.UI.Timing
             }
             return document;
         }
+        //*/
 
         public void Show(PeopleType type) { }
 
@@ -1536,38 +1531,37 @@ namespace Chronokeep.UI.Timing
             }
             if (printDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                PdfDocumentRenderer renderer = new PdfDocumentRenderer();
                 if (PlacementType.SelectedIndex == 0)
                 {
                     if (reportTypeValue == ValuesType.TIME_ALL || reportTypeValue == ValuesType.TIME_TOTAL)
                     {
-                        renderer.Document = GetOverallPrintableDocumentTime(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetOverallPrintableDocumentTime(divsToPrint, reportTypeValue);
                     }
                     else
                     {
-                        renderer.Document = GetOverallPrintableDocument(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetOverallPrintableDocument(divsToPrint, reportTypeValue);
                     }
                 }
                 else if (PlacementType.SelectedIndex == 1)
                 {
                     if (reportTypeValue == ValuesType.TIME_ALL || reportTypeValue == ValuesType.TIME_TOTAL)
                     {
-                        renderer.Document = GetGenderPrintableDocumentTime(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetGenderPrintableDocumentTime(divsToPrint, reportTypeValue);
                     }
                     else
                     {
-                        renderer.Document = GetGenderPrintableDocument(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetGenderPrintableDocument(divsToPrint, reportTypeValue);
                     }
                 }
                 else if (PlacementType.SelectedIndex == 2)
                 {
                     if (reportTypeValue == ValuesType.TIME_ALL || reportTypeValue == ValuesType.TIME_TOTAL)
                     {
-                        renderer.Document = GetAgeGroupPrintableDocumentTime(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetAgeGroupPrintableDocumentTime(divsToPrint, reportTypeValue);
                     }
                     else
                     {
-                        renderer.Document = GetAgeGroupPrintableDocument(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetAgeGroupPrintableDocument(divsToPrint, reportTypeValue);
                     }
                 }
                 else
@@ -1575,7 +1569,7 @@ namespace Chronokeep.UI.Timing
                     MessageBox.Show("Please select a type.");
                     return;
                 }
-                renderer.RenderDocument();
+                /*renderer.RenderDocument();
                 MigraDocPrintDocument printDocument = new MigraDocPrintDocument
                 {
                     Renderer = renderer.DocumentRenderer,
@@ -1588,7 +1582,7 @@ namespace Chronokeep.UI.Timing
                 catch
                 {
                     MessageBox.Show("Something went wrong when attempting to print.");
-                }
+                }//*/
             }
         }
 
@@ -1639,38 +1633,38 @@ namespace Chronokeep.UI.Timing
             }
             if (saveFileDialog.ShowDialog() == true)
             {
-                PdfDocumentRenderer renderer = new PdfDocumentRenderer();
+                //PdfDocumentRenderer renderer = new PdfDocumentRenderer();
                 if (PlacementType.SelectedIndex == 0)
                 {
                     if (reportTypeValue == ValuesType.TIME_ALL || reportTypeValue == ValuesType.TIME_TOTAL)
                     {
-                        renderer.Document = GetOverallPrintableDocumentTime(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetOverallPrintableDocumentTime(divsToPrint, reportTypeValue);
                     }
                     else
                     {
-                        renderer.Document = GetOverallPrintableDocument(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetOverallPrintableDocument(divsToPrint, reportTypeValue);
                     }
                 }
                 else if (PlacementType.SelectedIndex == 1)
                 {
                     if (reportTypeValue == ValuesType.TIME_ALL || reportTypeValue == ValuesType.TIME_TOTAL)
                     {
-                        renderer.Document = GetGenderPrintableDocumentTime(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetGenderPrintableDocumentTime(divsToPrint, reportTypeValue);
                     }
                     else
                     {
-                        renderer.Document = GetGenderPrintableDocument(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetGenderPrintableDocument(divsToPrint, reportTypeValue);
                     }
                 }
                 else if (PlacementType.SelectedIndex == 2)
                 {
                     if (reportTypeValue == ValuesType.TIME_ALL || reportTypeValue == ValuesType.TIME_TOTAL)
                     {
-                        renderer.Document = GetAgeGroupPrintableDocumentTime(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetAgeGroupPrintableDocumentTime(divsToPrint, reportTypeValue);
                     }
                     else
                     {
-                        renderer.Document = GetAgeGroupPrintableDocument(divsToPrint, reportTypeValue);
+                        //renderer.Document = GetAgeGroupPrintableDocument(divsToPrint, reportTypeValue);
                     }
                 }
                 else
@@ -1678,16 +1672,17 @@ namespace Chronokeep.UI.Timing
                     MessageBox.Show("Please select a type.");
                     return;
                 }
-                renderer.RenderDocument();
+                /*
                 try
                 {
+                    renderer.RenderDocument();
                     renderer.PdfDocument.Save(saveFileDialog.FileName);
                     MessageBox.Show("File saved.");
                 }
                 catch
                 {
                     MessageBox.Show("Unable to save file.");
-                }
+                }//*/
             }
         }
     }

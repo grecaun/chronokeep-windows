@@ -1,9 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Chronokeep.Objects.API
 {
@@ -16,42 +12,42 @@ namespace Chronokeep.Objects.API
     // Event specific responses.
     public class GetEventsResponse
     {
-        [JsonProperty("events")]
+        [JsonPropertyName("events")]
         public List<APIEvent> Events { get; set; }
     }
 
     public class ModifyEventResponse
     {
-        [JsonProperty("event")]
+        [JsonPropertyName("event")]
         public APIEvent Event { get; set; }
     }
 
     // Event Year specific responses.
     public class GetEventYearsResponse
     {
-        [JsonProperty("years")]
+        [JsonPropertyName("years")]
         public List<APIEventYear> EventYears { get; set; }
     }
 
     public class EventYearResponse
     {
-        [JsonProperty("event")]
+        [JsonPropertyName("event")]
         public APIEvent Event { get; set; }
-        [JsonProperty("event_year")]
+        [JsonPropertyName("event_year")]
         public APIEventYear EventYear { get; set; }
     }
 
     // Results specific responses.
     public class AddResultsResponse
     {
-        [JsonProperty("count")]
+        [JsonPropertyName("count")]
         public int Count { get; set; }
     }
 
     // Error response.
     public class ErrorResponse
     {
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public string Message { get; set; }
     }
 }

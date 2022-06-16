@@ -1,9 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Chronokeep.Objects.API
 {
@@ -68,43 +64,43 @@ namespace Chronokeep.Objects.API
             }
         }
 
-        [JsonProperty("bib")]
+        [JsonPropertyName("bib")]
         public string Bib { get; set; }
-        [JsonProperty("first")]
+        [JsonPropertyName("first")]
         public string First { get; set; }
-        [JsonProperty("last")]
+        [JsonPropertyName("last")]
         public string Last { get; set; }
-        [JsonProperty("age")]
+        [JsonPropertyName("age")]
         public int Age { get; set; }
-        [JsonProperty("gender")]
+        [JsonPropertyName("gender")]
         public string Gender { get; set; }
-        [JsonProperty("age_group")]
+        [JsonPropertyName("age_group")]
         public string AgeGroup { get; set; }
-        [JsonProperty("distance")]
+        [JsonPropertyName("distance")]
         public string Distance { get; set; }
-        [JsonProperty("seconds")]
+        [JsonPropertyName("seconds")]
         public int Seconds { get; set; }
-        [JsonProperty("milliseconds")]
+        [JsonPropertyName("milliseconds")]
         public int Milliseconds { get; set; }
-        [JsonProperty("chip_seconds")]
+        [JsonPropertyName("chip_seconds")]
         public int ChipSeconds { get; set; }
-        [JsonProperty("chip_milliseconds")]
+        [JsonPropertyName("chip_milliseconds")]
         public int ChipMilliseconds { get; set; }
-        [JsonProperty("segment")]
+        [JsonPropertyName("segment")]
         public string Segment { get; set; }
-        [JsonProperty("location")]
+        [JsonPropertyName("location")]
         public string Location { get; set; }
-        [JsonProperty("occurence")]
+        [JsonPropertyName("occurence")]
         public int Occurence { get; set; }
-        [JsonProperty("ranking")]
+        [JsonPropertyName("ranking")]
         public int Ranking { get; set; }
-        [JsonProperty("age_ranking")]
+        [JsonPropertyName("age_ranking")]
         public int AgeRanking { get; set; }
-        [JsonProperty("gender_ranking")]
+        [JsonPropertyName("gender_ranking")]
         public int GenderRanking { get; set; }
-        [JsonProperty("finish")]
+        [JsonPropertyName("finish")]
         public bool Finish { get; set; }
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public int Type { get; set; }
     }
 }

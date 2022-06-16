@@ -220,7 +220,7 @@ namespace Chronokeep.UI.ChipAssignment
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            List<Range> ranges = new List<Range>();
+            List<Objects.Range> ranges = new List<Objects.Range>();
             foreach (ATagRange tag in correlationBox.Items)
             {
                 int startBib = -1, endBib = -1, startChip = -1, endChip = -1;
@@ -229,7 +229,7 @@ namespace Chronokeep.UI.ChipAssignment
                 int.TryParse(tag.StartChip.Text, out startChip);
                 int.TryParse(tag.EndChip.Content.ToString(), out endChip);
                 Log.D("UI.ChipAssignment.ChipTool", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
-                Range curRange = new Range
+                Objects.Range curRange = new Objects.Range
                 {
                     StartBib = startBib,
                     EndBib = endBib,
@@ -237,7 +237,7 @@ namespace Chronokeep.UI.ChipAssignment
                     EndChip = endChip
                 };
                 bool conflicts = !curRange.IsValid();
-                foreach (Range r in ranges)
+                foreach (Objects.Range r in ranges)
                 {
                     if (r.Violates(curRange))
                     {
@@ -253,7 +253,7 @@ namespace Chronokeep.UI.ChipAssignment
             }
             ranges.Sort();
             List<BibChipAssociation> list = new List<BibChipAssociation>();
-            foreach (Range r in ranges)
+            foreach (Objects.Range r in ranges)
             {
                 for (int bib = r.StartBib, tag = r.StartChip; bib <= r.EndBib && tag <= r.EndChip; bib++, tag++)
                 {

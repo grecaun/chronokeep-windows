@@ -66,7 +66,7 @@ namespace Chronokeep
             Log.D("IO.ExcelImporter", "Getting headers from excel file.");
             try
             {
-                Range excelRange = currentSheet.UsedRange;
+                Microsoft.Office.Interop.Excel.Range excelRange = currentSheet.UsedRange;
                 Log.D("IO.ExcelImporter", "Used range set.");
                 object[,] valueArray = (object[,])excelRange.get_Value(XlRangeValueDataType.xlRangeValueDefault);
                 Log.D("IO.ExcelImporter", "Value array populated.");
@@ -94,7 +94,7 @@ namespace Chronokeep
             Log.D("IO.ExcelImporter", "Getting data from excel file.");
             try
             {
-                Range excelRange = currentSheet.UsedRange;
+                Microsoft.Office.Interop.Excel.Range excelRange = currentSheet.UsedRange;
                 object[,] valueArray = (object[,])excelRange.get_Value(XlRangeValueDataType.xlRangeValueDefault);
                 int numHeaders = valueArray.GetUpperBound(1);
                 int numDataRows = valueArray.GetUpperBound(0);
@@ -117,6 +117,7 @@ namespace Chronokeep
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         public void Finish()
         {
             Log.D("IO.ExcelImporter", "Closing file.");

@@ -1,15 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
-using System.Text;
-using System.Threading;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -135,7 +130,7 @@ namespace Chronokeep.Updates
                     {
                         Log.D("Updates.Check", "Status Code OK");
                         var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonConvert.DeserializeObject<List<GithubRelease>>(json);
+                        var result = JsonSerializer.Deserialize<List<GithubRelease>>(json);
                         return result;
                     }
                     Log.D("Updates.Check", "Status Code not OK");
@@ -149,6 +144,7 @@ namespace Chronokeep.Updates
             throw new Exception(string.Format("Unable to get releases. {0}", content));
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         private static HttpClient GetHttpClient()
         {
             var handler = new WinHttpHandler();

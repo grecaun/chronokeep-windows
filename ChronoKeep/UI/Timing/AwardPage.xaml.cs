@@ -3,10 +3,6 @@ using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
 using Microsoft.Win32;
-using MigraDoc.DocumentObjectModel;
-using MigraDoc.DocumentObjectModel.Tables;
-using MigraDoc.Rendering;
-using MigraDoc.Rendering.Printing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -105,6 +101,7 @@ namespace Chronokeep.UI.Timing
             UpdateView();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AwardPage", "Print clicked.");
@@ -130,17 +127,17 @@ namespace Chronokeep.UI.Timing
             }
             if (printDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                PdfDocumentRenderer renderer = new PdfDocumentRenderer();
+                //PdfDocumentRenderer renderer = new PdfDocumentRenderer();
                 if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                 {
-                    renderer.Document = GetAwardsPrintableDocumentDistance(divsToPrint, options);
+                    //renderer.Document = GetAwardsPrintableDocumentDistance(divsToPrint, options);
                 }
                 else
                 {
                     MessageBox.Show("Award printing for time based races has not been implemented yet.");
                     return;
                 }
-                renderer.RenderDocument();
+                /*renderer.RenderDocument();
                 MigraDocPrintDocument printDocument = new MigraDocPrintDocument
                 {
                     Renderer = renderer.DocumentRenderer,
@@ -153,7 +150,7 @@ namespace Chronokeep.UI.Timing
                 catch
                 {
                     MessageBox.Show("Something went wrong when attempting to print.");
-                }
+                }//*/
             }
         }
 
@@ -198,17 +195,17 @@ namespace Chronokeep.UI.Timing
             }
             if (saveFileDialog.ShowDialog() == true)
             {
-                PdfDocumentRenderer renderer = new PdfDocumentRenderer();
+                //PdfDocumentRenderer renderer = new PdfDocumentRenderer();
                 if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                 {
-                    renderer.Document = GetAwardsPrintableDocumentDistance(divsToPrint, options);
+                    //renderer.Document = GetAwardsPrintableDocumentDistance(divsToPrint, options);
                 }
                 else
                 {
                     MessageBox.Show("Award printing for time based races has not been implemented yet.");
                     return;
                 }
-                renderer.RenderDocument();
+                /*renderer.RenderDocument();
                 try
                 {
                     renderer.PdfDocument.Save(saveFileDialog.FileName);
@@ -217,7 +214,7 @@ namespace Chronokeep.UI.Timing
                 catch
                 {
                     MessageBox.Show("Unable to save file.");
-                }
+                }//*/
             }
         }
 
@@ -252,6 +249,7 @@ namespace Chronokeep.UI.Timing
 
         public void Keyboard_Ctrl_Z() { }
 
+        /*
         private Document GetAwardsPrintableDocumentTime(List<string> distances, AwardOptions options)
         {
             Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
@@ -550,6 +548,7 @@ namespace Chronokeep.UI.Timing
             row = table.AddRow();
             section.Add(table);
         }
+        //*/
 
         private class AwardOptions
         {
