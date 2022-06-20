@@ -101,7 +101,6 @@ namespace Chronokeep.UI.Timing
             UpdateView();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         private void PrintButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AwardPage", "Print clicked.");

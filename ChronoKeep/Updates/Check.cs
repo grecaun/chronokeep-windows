@@ -149,11 +149,9 @@ namespace Chronokeep.Updates
             throw new Exception(string.Format("Unable to get releases. {0}", content));
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         private static HttpClient GetHttpClient()
         {
-            var handler = new WinHttpHandler();
-            var client = new HttpClient(handler);
+            var client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.UserAgent.TryParseAdd("Chronokeep Desktop Application");
             return client;

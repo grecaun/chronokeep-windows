@@ -254,7 +254,6 @@ namespace Chronokeep.UI.Timing
             parent.LoadMainDisplay();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
         private void Print_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.PrintPage", "All times - print clicked.");

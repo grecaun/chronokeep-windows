@@ -12,11 +12,9 @@ namespace Chronokeep.Network.API
 {
     public class APIHandlers
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         private static HttpClient GetHttpClient()
         {
-            var handler = new WinHttpHandler();
-            var client = new HttpClient(handler);
+            var client = new HttpClient();
             client.Timeout = TimeSpan.FromSeconds(2);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
