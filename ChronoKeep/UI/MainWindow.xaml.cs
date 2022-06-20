@@ -25,7 +25,6 @@ namespace Chronokeep.UI
         IDBInterface database;
         IMainPage page;
         string dbName = "Chronokeep.sqlite";
-        bool excelEnabled = false;
 
         // Network objects
         HttpServer httpServer = null;
@@ -85,8 +84,6 @@ namespace Chronokeep.UI
                 MessageBox.Show("Database version greater than the max known by this client. Please update the client.", "fv"+db.FoundVersion+"mv"+db.MaxVersion);
                 this.Close();
             }
-
-            UpdateImportOptions();
             Constants.Settings.SetupSettings(database);
             UpdateStatus();
 
@@ -105,15 +102,6 @@ namespace Chronokeep.UI
             {
                 Updates.Check.Do();
             }
-        }
-
-        private async void UpdateImportOptions()
-        {
-            await Task.Run(() =>
-            {
-                excelEnabled = Utils.ExcelEnabled();
-                Utils.QuitExcel();
-            });
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
@@ -300,11 +288,6 @@ namespace Chronokeep.UI
             return true;
         }
 
-        public void WindowClosed(Window window)
-        {
-            Utils.QuitExcel();
-        }
-
         public bool StopTimingController()
         {
             try
@@ -429,11 +412,6 @@ namespace Chronokeep.UI
                 timingButton.IsEnabled = true;
                 announcer.IsEnabled = true;
             }
-        }
-
-        public bool ExcelEnabled()
-        {
-            return excelEnabled;
         }
 
         public bool NewTimingInfo()

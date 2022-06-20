@@ -18,7 +18,6 @@ namespace Chronokeep.Interfaces
 
         // Tools.
         void UpdateStatus();
-        bool ExcelEnabled();
         void UpdateTimingFromController();
         void UpdateTiming();
         bool NewTimingInfo();

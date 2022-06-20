@@ -67,7 +67,7 @@ namespace Chronokeep
         internal void UpdateSheetNo(int selection)
         {
             ExcelImporter excelImporter = (ExcelImporter)importer;
-            excelImporter.ChangeSheet(selection + 1);
+            excelImporter.ChangeSheet(selection);
             excelImporter.FetchHeaders();
             headerListBox.Items.Clear();
             for (int i = 1; i < importer.Data.GetNumHeaders(); i++)

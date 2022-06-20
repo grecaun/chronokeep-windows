@@ -114,10 +114,9 @@ namespace Chronokeep.UI.Export
                     headersToOutput.Add(headerBox.NameValue);
                 }
             }
-            bool excel = window.ExcelEnabled();
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = window.ExcelEnabled() ? "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv" : "CSV (*.csv)|*.csv",
+                Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)

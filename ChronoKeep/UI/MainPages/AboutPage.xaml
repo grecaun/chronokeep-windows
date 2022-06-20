@@ -9,25 +9,29 @@
       Title="AboutPage">
 
     <Grid>
-        <StackPanel Margin="0,20,0,0">
-            <Label x:Name="ProgramNameLabel" Content="Event Director" FontSize="28px" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,15,0,0"/>
-            <Label x:Name="VersionLabel" Content="v0.1.6" FontSize="14px" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
-            <Button Name="Update" Content="Check for Updates" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-15,0,20" Padding="6" Click="VersionLabel_Click" />
-            <Label x:Name="CreatorLabelLabel" Content="Created by" FontSize="16px" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,-10,0,0" />
-            <Label x:Name="CreatorNameLabel" Content="James Sentinella" FontSize="16px" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,-10,0,0" />
-            <Label x:Name="SoftwareLabel" Content="This program uses the following software:" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0" FontWeight="Bold" />
-            <Label x:Name="SQLiteLabel" Content="SQLite" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0" />
-            <Label x:Name="SQLiteURLLabel" Content="https://system.data.sqlite.org/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0" />
-            <Label x:Name="SQLiteLicenseLabel" Content="System.Data.SQLite is in the public domain." FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0" />
-            <Label Content="wkhtmltopdf" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
-            <Label Content="https://wkhtmltopdf.org/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-            <Label Content="License : https://opensource.org/licenses/LGPL-3.0" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-            <Label Content="Ghostscript" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
-            <Label Content="https://www.ghostscript.com/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-            <Label Content="License information : https://www.gnu.org/licenses/agpl-3.0.html" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-            <Label Content="Extended WPF Toolkit" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
-            <Label Content="https://github.com/xceedsoftware/wpftoolkit" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-            <Label Content="License : https://opensource.org/licenses/MS-PL" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-        </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+            <StackPanel Margin="10,10,10,10">
+                <Label x:Name="ProgramNameLabel" Content="Chronokeep" FontSize="28px" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,0,0"/>
+                <Label x:Name="VersionLabel" Content="v0.1.6" FontSize="14px" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
+                <Button Name="Update" Content="Check for Updates" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10,0,0" Padding="6" Click="VersionLabel_Click" />
+                <Label Content="Created by James Sentinella" FontSize="16px" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,5,0,0" />
+                <Label Content="This program uses the following software:" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0" FontWeight="Bold" />
+                <Label Content="SQLite" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0" />
+                <Label Content="https://system.data.sqlite.org/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0" />
+                <Label Content="System.Data.SQLite is in the public domain." FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0" />
+                <Label Content="wkhtmltopdf" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
+                <Label Content="https://wkhtmltopdf.org/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+                <Label Content="License : https://opensource.org/licenses/LGPL-3.0" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+                <Label Content="Ghostscript" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
+                <Label Content="https://www.ghostscript.com/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+                <Label Content="License information : https://www.gnu.org/licenses/agpl-3.0.html" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+                <Label Content="Extended WPF Toolkit" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
+                <Label Content="https://github.com/xceedsoftware/wpftoolkit" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+                <Label Content="License : https://opensource.org/licenses/MS-PL" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+                <Label Content="EPPlus" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
+                <Label Content="https://www.epplussoftware.com/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+                <Label Content="License : https://polyformproject.org/licenses/noncommercial/1.0.0/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

@@ -93,7 +93,7 @@ namespace Chronokeep
             int selection = ((ComboBox)sender).SelectedIndex;
             Log.D("UI.BibChipAssociationWindow", "You've selected number " + selection);
             ExcelImporter excelImporter = (ExcelImporter)importer;
-            excelImporter.ChangeSheet(selection + 1);
+            excelImporter.ChangeSheet(selection);
             excelImporter.FetchHeaders();
             headerListBox.Items.Clear();
             for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
@@ -112,6 +112,7 @@ namespace Chronokeep
             importer.Finish();
             Log.D("UI.BibChipAssociationWindow", "Bib Chip Association - Cancel Button clicked.");
             ImportComplete = false;
+            Close();
         }
 
         private async void Done_Click(object sender, RoutedEventArgs e)

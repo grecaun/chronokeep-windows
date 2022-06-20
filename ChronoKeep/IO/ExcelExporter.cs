@@ -1,11 +1,6 @@
 ﻿using Chronokeep.Interfaces;
-using Microsoft.Office.Interop.Excel;
-using System;
+using OfficeOpenXml;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Chronokeep.UI.IO
 {
@@ -14,12 +9,12 @@ namespace Chronokeep.UI.IO
         string[] headers = { };
         List<object[]> data;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         public void ExportData(string Path)
         {
-            Application excel = Utils.GetExcelApp();
-            Workbook wBook = excel.Workbooks.Add("");
-            Worksheet wSheet = (Worksheet)wBook.ActiveSheet;
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using ExcelPackage package = new ExcelPackage(Path);
+            using ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+            worksheet.Name = "";
             List<object[]> localData = new List<object[]>
             {
                 headers
@@ -33,25 +28,11 @@ namespace Chronokeep.UI.IO
             {
                 for (int j = 0; j < localData[0].Length; j++)
                 {
-                    outData[i, j] = localData[i][j];
+                    worksheet.Cells[i, j].Value = localData[i][j].ToString();
+                    worksheet.Cells[i, j].Style.Numberformat.Format = "@";
                 }
             }
-            Microsoft.Office.Interop.Excel.Range startCell = (Microsoft.Office.Interop.Excel.Range)wSheet.Cells[1, 1];
-            Microsoft.Office.Interop.Excel.Range endCell = (Microsoft.Office.Interop.Excel.Range)wSheet.Cells[localData.Count, data[0].Length];
-            Microsoft.Office.Interop.Excel.Range writeRange = wSheet.get_Range(startCell, endCell);
-            writeRange.NumberFormat = "@";
-            writeRange.Value2 = outData;
-            writeRange.EntireColumn.AutoFit();
-            excel.DisplayAlerts = false;
-            wBook.SaveAs(Path, XlFileFormat.xlWorkbookDefault, Type.Missing, Type.Missing, false, false, XlSaveAsAccessMode.xlNoChange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-            excel.DisplayAlerts = true;
-            wBook.Close();
-            excel.ScreenUpdating = true;
-            while (Marshal.ReleaseComObject(wSheet) > 0) ;
-            wSheet = null;
-            while (Marshal.ReleaseComObject(wBook) > 0) ;
-            wBook = null;
-            Utils.QuitExcel();
+            package.Save(Path);
         }
 
         public Utils.FileType FileType()
@@ -63,8 +44,7 @@ namespace Chronokeep.UI.IO
         {
             this.headers = headers;
             this.data = data;
-            Log.D("IO.ExcelExporter", "Headers " + this.headers);
-            Log.D("IO.ExcelExporter", "Data " + this.data);
+            Log.D("IO.ExcelExporter", $"Headers {this.headers} Data {this.data}");
         }
     }
 }

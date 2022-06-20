@@ -14,8 +14,7 @@
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1">
-                <Button Name="ImportCSV" Content="Import" FontSize="14" Height="30" Margin="10,10,10,5" Click="ImportCSV_Click"/>
-                <Button Name="ImportExcel" Content="Import" FontSize="14" Height="30" Margin="10,5,10,5" Click="ImportExcel_Click"  Visibility="Collapsed"/>
+                <Button Name="ImportExcel" Content="Import" FontSize="14" Height="30" Margin="10,5,10,5" Click="Import_Click"/>
                 <Button Name="Export" Content="Export" FontSize="14" Height="30" Margin="10,5,10,5" Click="Export_Click" />
                 <Label Content="View" FontSize="16" Margin="10,0,10,0" HorizontalContentAlignment="Center"/>
                 <DockPanel Name="DistanceBoxHolder" />
@@ -43,8 +42,6 @@
                     <GridViewColumn Header="Parent" DisplayMemberBinding="{Binding Parent}" />
                     <GridViewColumn Header="Mobile" DisplayMemberBinding="{Binding Mobile}" />
                     <GridViewColumn Header="Email" DisplayMemberBinding="{Binding Email}" />
-                    <GridViewColumn Header="Check" DisplayMemberBinding="{Binding CheckedIn}" />
-                    <GridViewColumn Header="Early" DisplayMemberBinding="{Binding EarlyStart}" />
                     <GridViewColumn Header="EC Name" DisplayMemberBinding="{Binding ECName}" />
                     <GridViewColumn Header="EC Phone" DisplayMemberBinding="{Binding ECPhone}" />
                     <GridViewColumn Header="Comments" DisplayMemberBinding="{Binding Comments}" />

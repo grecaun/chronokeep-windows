@@ -207,21 +207,14 @@ namespace Chronokeep.UI.MainPages
         private async void FileImport_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ChipAssignmentPage", "Import from file clicked.");
-            OpenFileDialog bib_dialog;
-            if (mWindow.ExcelEnabled())
-            {
-                bib_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.xls,*.csv,*.txt)|*.xlsx;*.xls;*.csv;*.txt|All files|*" };
-            }
-            else
-            {
-                bib_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv,*.txt)|*.csv;*.txt|All files|*" };
-            }
+            OpenFileDialog bib_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.xls,*.csv,*.txt)|*.xlsx;*.xls;*.csv;*.txt|All files|*" };
             if (bib_dialog.ShowDialog() == true)
             {
+                string ext = Path.GetExtension(bib_dialog.FileName);
                 try
                 {
                     IDataImporter importer;
-                    if (mWindow.ExcelEnabled())
+                    if (ext == ".xlsx" || ext == ".xls")
                     {
                         importer = new ExcelImporter(bib_dialog.FileName);
                     }
@@ -246,8 +239,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch (Exception ex)
                 {
-                    Log.E("UI.MainPages.ChipAssignmentPage", "Something went wrong when trying to read the CSV file.");
-                    Log.E("UI.MainPages.ChipAssignmentPage", ex.StackTrace);
+                    Log.E("UI.MainPages.ChipAssignmentPage", $"Something went wrong when trying to read the CSV file. {ex.StackTrace}");
                 }
             }
         }
@@ -355,10 +347,9 @@ namespace Chronokeep.UI.MainPages
         private void Export_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ChipAssignmentPage", "Export clicked.");
-            bool excel = mWindow.ExcelEnabled();
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = mWindow.ExcelEnabled() ? "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv" : "CSV (*.csv)|*.csv",
+                Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)

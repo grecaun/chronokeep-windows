@@ -29,7 +29,6 @@ namespace Chronokeep.UI.MainPages
             InitializeComponent();
             this.mWindow = mainWindow;
             this.database = database;
-            UpdateImportOptions();
         }
 
         public async void UpdateView()
@@ -110,70 +109,37 @@ namespace Chronokeep.UI.MainPages
             DistanceBox.SelectedIndex = 0;
         }
 
-        private void UpdateImportOptions()
-        {
-            if (mWindow.ExcelEnabled())
-            {
-                Log.D("UI.MainPages.ParticipantsPage", "Excel is allowed.");
-                ImportExcel.Visibility = Visibility.Visible;
-                ImportCSV.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                Log.D("UI.MainPages.ParticipantsPage", "Excel is not allowed.");
-                ImportExcel.Visibility = Visibility.Collapsed;
-                ImportCSV.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void ImportExcel_Click(object sender, RoutedEventArgs e)
+        private void Import_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ParticipantsPage", "Import Excel clicked.");
-            OpenFileDialog excel_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.xls,*.csv)|*.xlsx;*.xls;*.csv|All files|*" };
-            if (excel_dialog.ShowDialog() == true)
+            OpenFileDialog open_dialog = new OpenFileDialog() { Filter = "Excel files (*.xlsx,*.xls,*.csv)|*.xlsx;*.xls;*.csv|All files|*" };
+            if (open_dialog.ShowDialog() == true)
             {
+                string ext = Path.GetExtension(open_dialog.FileName);
+                Log.D("UI.MainPages.ParticipantsPage", $"Extension found: {ext}");
                 try
                 {
-                    ExcelImporter excel = new ExcelImporter(excel_dialog.FileName);
-                    excel.FetchHeaders();
-                    ImportFileWindow excelImp = ImportFileWindow.NewWindow(mWindow, excel, database);
-                    if (excelImp != null)
+                    IDataImporter importer;
+                    if (ext == ".xlsx" || ext == ".xls")
                     {
-                        mWindow.AddWindow(excelImp);
-                        excelImp.ShowDialog();
+                        importer = new ExcelImporter(open_dialog.FileName);
                     }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("There was a problem importing the file.");
-                    Log.E("UI.MainPages.ParticipantsPage", "Something went wrong when trying to read the Excel file.");
-                    Log.E("UI.MainPages.ParticipantsPage", ex.StackTrace);
-                }
-            }
-        }
-
-        private void ImportCSV_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainPages.ParticipantsPage", "Import CSV clicked.");
-            OpenFileDialog csv_dialog = new OpenFileDialog() { Filter = "CSV Files (*.csv)|*.csv|All files|*" };
-            if (csv_dialog.ShowDialog() == true)
-            {
-                try
-                {
-                    CSVImporter importer = new CSVImporter(csv_dialog.FileName);
+                    else
+                    {
+                        importer = new CSVImporter(open_dialog.FileName);
+                    }
                     importer.FetchHeaders();
-                    ImportFileWindow excelImp = ImportFileWindow.NewWindow(mWindow, importer, database);
-                    if (excelImp != null)
+                    ImportFileWindow importWindow = ImportFileWindow.NewWindow(mWindow, importer, database);
+                    if (importWindow != null)
                     {
-                        mWindow.AddWindow(excelImp);
-                        excelImp.ShowDialog();
+                        mWindow.AddWindow(importWindow);
+                        importWindow.ShowDialog();
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("There was a problem importing the file.");
-                    Log.E("UI.MainPages.ParticipantsPage", "Something went wrong when trying to read the CSV file.");
-                    Log.E("UI.MainPages.ParticipantsPage", ex.StackTrace);
+                    Log.E("UI.MainPages.ParticipantsPage", $"Something went wrong when trying to read the Excel file. {ex.StackTrace}");
                 }
             }
         }
@@ -239,10 +205,10 @@ namespace Chronokeep.UI.MainPages
 
         private async void Export_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("UI.MainPages.ParticipantsPage", "Export clicked."); bool excel = mWindow.ExcelEnabled();
+            Log.D("UI.MainPages.ParticipantsPage", "Export clicked.");
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = mWindow.ExcelEnabled() ? "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv" : "CSV (*.csv)|*.csv",
+                Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)
