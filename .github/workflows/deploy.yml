@@ -16,8 +16,8 @@ jobs:
     env:
       SigningCertificate: Chronokeep\Chronokeep.pfx
       Solution_Path: Chronokeep.sln
-      App_Packages_Archive: Chronokeep.zip
-      Compile_Path: Chronokeep\bin\Release
+      App_Packages_Archive: chronokeep-setup.exe
+      Compile_Path: Chronokeep\bin\Release\net6.0-windows
       Actions_Allow_Unsecure_Commands: true # Allows AddPAth and SetEnv commands
 
     steps:
@@ -48,14 +48,14 @@ jobs:
     - name: Build program
       run: msbuild $env:Solution_Path /p:Platform="Any CPU" /p:Configuration=Release
 
-    # Archive the package
-    - name: Create archive
-      run: Compress-Archive -Path $env:Compile_Path\* -DestinationPath $env:Compile_Path\$env:App_Packages_Archive
-
     # Set an environment variable to the tag we want to use to describe this release.
     - name: Get tag environment variable.
       run: echo "::set-output name=RELEASE_VERSION::$(git describe --tag)"
       id: release-version
+
+    # Run Inno Setup
+    - name: Create setup with Inno Setup
+      run: .\Inno\ISCC.exe /DMyAppVersion=$steps.release-version.outputs.RELEASE_VERSION /DMyAppDirectory=$env:Compile_Path /O$env:Compile_Path .\install-script.iss
 
     # Create the release:  https://github.com/actions/create-release
     - name: Create release
