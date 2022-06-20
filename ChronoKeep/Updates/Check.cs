@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chronokeep.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -56,7 +57,7 @@ namespace Chronokeep.Updates
     {
         private static string RepoURL = "https://api.github.com/repos/grecaun/chronokeep-windows/releases";
 
-        public static async void Do()
+        public static async void Do(IMainWindow mWindow, bool messageOnNoUpdate = false)
         {
             string curVersion;
             using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
@@ -111,8 +112,12 @@ namespace Chronokeep.Updates
             if (latestVersion.Newer(current))
             {
                 Log.D("Updates.Check", "Newer version found.");
-                DownloadWindow downloadWindow = new DownloadWindow(latestRelease, latestVersion);
+                DownloadWindow downloadWindow = new DownloadWindow(latestRelease, latestVersion, mWindow);
                 downloadWindow.ShowDialog();
+            }
+            else if (messageOnNoUpdate)
+            {
+                MessageBox.Show("No updates found.");
             }
         }
 

@@ -180,9 +180,6 @@
     <Content Include="IO\HtmlTemplates\style.css" />
     <EmbeddedResource Include="IO\HtmlTemplates\style.min.css" />
   </ItemGroup>
-  <PropertyGroup>
-    <PreBuildEvent>git describe --tag &gt; "$(ProjectDir)version.txt"</PreBuildEvent>
-  </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
@@ -206,4 +203,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <Target Name="PreBuild" AfterTargets="PreBuildEvent">
+    <Exec Command="git describe --tag &gt; &quot;$(ProjectDir)version.txt&quot;" />
+  </Target>
 </Project>

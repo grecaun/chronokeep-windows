@@ -100,7 +100,7 @@ namespace Chronokeep.UI
             // Check for updates.
             if (database.GetAppSetting(Constants.Settings.CHECK_UPDATES).value == Constants.Settings.SETTING_TRUE)
             {
-                Updates.Check.Do();
+                Updates.Check.Do(this);
             }
         }
 
@@ -598,6 +598,11 @@ namespace Chronokeep.UI
         public void StopAnnouncer()
         {
             if (announcerWindow != null) announcerWindow.Close();
+        }
+
+        public void Exit()
+        {
+            Close();
         }
     }
 }

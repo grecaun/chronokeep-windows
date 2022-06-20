@@ -9,6 +9,7 @@ namespace Chronokeep.Interfaces
         // Window related calls.
         void AddWindow(Window w);
         void SwitchPage(IMainPage iPage, bool IsMainPage);
+        void Exit();
         
         // Networking services related calls.
         void NetworkClearResults(int eventid);

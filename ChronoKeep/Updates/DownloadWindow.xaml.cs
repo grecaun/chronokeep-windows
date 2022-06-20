@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Chronokeep.Interfaces;
+using System;
+using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Chronokeep.Updates
 {
@@ -26,7 +17,6 @@ namespace Chronokeep.Updates
     {
         private string uri;
         private string download_uri;
-        private string folder_uri;
         private string version;
 
         private string appName = "Chronokeep";
@@ -34,24 +24,24 @@ namespace Chronokeep.Updates
 
         private CancellationTokenSource cancellationToken = null;
 
-        public DownloadWindow(GithubRelease r, Version v)
+        private IMainWindow mWindow;
+
+        public DownloadWindow(GithubRelease r, Version v, IMainWindow mWindow)
         {
             InitializeComponent();
             DownloadProgress.Visibility = Visibility.Collapsed;
             this.version = v.ToString();
-            download_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\Chronokeep-{version}.zip";
-            folder_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\Chronokeep-{version}";
+            download_uri = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\chronokeep-setup-{version}.exe";
             Log.D("Updates.Check", string.Format("Download URL - {0}", r.Assets[0].BrowserDownloadURL));
             uri = r.Assets[0].BrowserDownloadURL;
             Activate();
             Topmost = true;
+            this.mWindow = mWindow;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "Windows Only")]
         private static HttpClient GetHttpClient()
         {
-            var handler = new WinHttpHandler();
-            var client = new HttpClient(handler);
+            var client = new HttpClient();
             client.Timeout = TimeSpan.FromSeconds(2);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -133,16 +123,17 @@ namespace Chronokeep.Updates
                         }
                     }
                 }
-                Log.D("Updates.DownloadWindow", "Extracting files from zip.");
-                ZipFile.ExtractToDirectory(download_uri, folder_uri, true);
-                Log.D("Updates.DownloadWindow", "Deleting zip.");
-                File.Delete(download_uri);
                 InstallButton.IsEnabled = true;
                 BackupDatabaseButton.IsEnabled = true;
             }
             else if (((string)InstallButton.Content).Equals("Install", StringComparison.OrdinalIgnoreCase))
             {
                 Log.D("Updates.DownloadWindow", "Install clicked.");
+                using Process install = new Process();
+                install.StartInfo.FileName = download_uri;
+                install.Start();
+                Close();
+                mWindow.Exit();
             }
             else
             {
