@@ -2,7 +2,6 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Chronokeep"
-#define MyAppVersion "0.3.8"
 #define MyAppPublisher "Chronokeep"
 #define MyAppURL "https://www.chronokeep.com/"
 #define MyAppExeName "Chronokeep.exe"
@@ -34,43 +33,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
-[Files]
-Source: "ChronoKeep\bin\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Chronokeep.application"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Chronokeep.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Chronokeep.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Chronokeep.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Microsoft.Office.Interop.Excel.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Microsoft.WindowsAPICodePack.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Microsoft.WindowsAPICodePack.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Microsoft.WindowsAPICodePack.Shell.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Microsoft.WindowsAPICodePack.ShellExtensions.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Microsoft.WindowsAPICodePack.ShellExtensions.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\MigraDoc.DocumentObjectModel-gdi.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\MigraDoc.Rendering-gdi.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\MigraDoc.RtfRendering-gdi.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\PdfSharp.Charting-gdi.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\PdfSharp-gdi.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\SharpCompress.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\System.Buffers.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\System.Data.SQLite.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\System.Memory.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\System.Net.Http.WinHttpHandler.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\System.Numerics.Vectors.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\System.Runtime.CompilerServices.Unsafe.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\System.Text.Encoding.CodePages.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\System.ValueTuple.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\version.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Xceed.Wpf.AvalonDock.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Xceed.Wpf.AvalonDock.Themes.Aero.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Xceed.Wpf.AvalonDock.Themes.Metro.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Xceed.Wpf.AvalonDock.Themes.VS2010.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Xceed.Wpf.Toolkit.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\Chronokeep.application"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ChronoKeep\bin\Release\x86\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "ChronoKeep\bin\Release\x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+[Files]                                                                                                   
+Source: "{#MyAppDirectory}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

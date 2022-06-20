@@ -86,6 +86,11 @@
     <StartupObject>Chronokeep.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="IO\HtmlTemplates\HtmlResultsPrint.tt" />
+    <None Remove="IO\HtmlTemplates\Printables\ResultsPrintableGender.tt" />
+    <None Remove="IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="CustomMarshalers" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +103,21 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>HtmlResultsTemplateTime.tt</DependentUpon>
+    </Compile>
+    <Compile Update="IO\HtmlTemplates\Printables\ResultsPrintableOverall.cs">
+      <DependentUpon>ResultsPrintableOverall.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="IO\HtmlTemplates\Printables\ResultsPrintableGender.cs">
+      <DependentUpon>ResultsPrintableGender.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="IO\HtmlTemplates\Printables\ResultsPrintableAgeGroup.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ResultsPrintableAgeGroup.tt</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +177,18 @@
     <EmbeddedResource Include="IO\HtmlTemplates\bootstrap.min.js" />
     <Resource Include="img\plus.png" />
     <Resource Include="img\dash.png" />
+    <Content Include="IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt">
+      <LastGenOutput>ResultsPrintableOverall.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </Content>
+    <Content Include="IO\HtmlTemplates\Printables\ResultsPrintableGender.tt">
+      <LastGenOutput>ResultsPrintableGender.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </Content>
+    <Content Include="IO\HtmlTemplates\Printables\ResultsPrintableAgeGroup.tt">
+      <LastGenOutput>ResultsPrintableAgeGroup.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </Content>
     <Content Include="IO\HtmlTemplates\HtmlResultsTemplateTime.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>HtmlResultsTemplateTime.cs</LastGenOutput>
@@ -174,5 +206,25 @@
   </PropertyGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="gs9561w32.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="gsdll32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="gsdll32.lib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="gswin32.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="gswin32c.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="wkhtmltopdf.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

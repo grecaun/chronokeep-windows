@@ -29,6 +29,9 @@ namespace Chronokeep.Updates
         private string folder_uri;
         private string version;
 
+        private string appName = "Chronokeep";
+        private string dbName = "Chronokeep.sqlite";
+
         private CancellationTokenSource cancellationToken = null;
 
         public DownloadWindow(GithubRelease r, Version v)
@@ -106,6 +109,8 @@ namespace Chronokeep.Updates
                 DownloadLabel.Content = $"Downloading {version}";
                 InstallButton.Content = "Install";
                 InstallButton.IsEnabled = false;
+                BackupDatabaseButton.IsEnabled = false;
+                BackupDatabaseButton.Visibility = Visibility.Visible;
                 using (var client = GetHttpClient())
                 {
                     using (var file = new FileStream(download_uri, FileMode.Create))
@@ -129,10 +134,11 @@ namespace Chronokeep.Updates
                     }
                 }
                 Log.D("Updates.DownloadWindow", "Extracting files from zip.");
-                ZipFile.ExtractToDirectory(download_uri, folder_uri);
+                ZipFile.ExtractToDirectory(download_uri, folder_uri, true);
                 Log.D("Updates.DownloadWindow", "Deleting zip.");
                 File.Delete(download_uri);
                 InstallButton.IsEnabled = true;
+                BackupDatabaseButton.IsEnabled = true;
             }
             else if (((string)InstallButton.Content).Equals("Install", StringComparison.OrdinalIgnoreCase))
             {
@@ -153,6 +159,35 @@ namespace Chronokeep.Updates
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (cancellationToken != null) cancellationToken.Cancel();
+        }
+
+        private void BackupDatabaseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("Updates.DownloadWindow", "Backup Database clicked.");
+            UpdatePanel.Visibility = Visibility.Collapsed;
+            BackupDatabaseButton.Visibility = Visibility.Collapsed;
+            BackupPanel.Visibility = Visibility.Visible;
+            backupBlock.Text = $"{backupBlock.Text}\nChecking for old database files.";
+            string dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), appName);
+            string path = System.IO.Path.Combine(dirPath, dbName);
+            Log.D("Updates.DownloadWindow", "Looking for database file.");
+            if (Directory.Exists(dirPath))
+            {
+                if (File.Exists(path))
+                {
+                    string backup = System.IO.Path.Combine(dirPath, $"Chronokeep-{DateTime.Now.ToString("yyyy-MM-dd")}-backup.sqlite");
+                    try
+                    {
+                        backupBlock.Text = $"{backupBlock.Text}\nBacking up database.";
+                        File.Copy(path, backup, false);
+                        backupBlock.Text = $"{backupBlock.Text}\n{backup}";
+                    }
+                    catch
+                    {
+                        backupBlock.Text = $"{backupBlock.Text}\nError backing up database.";
+                    }
+                }
+            }
         }
     }
 }

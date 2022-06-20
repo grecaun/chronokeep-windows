@@ -1,0 +1,126 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Chronokeep" #>
+<html>
+	<head>
+		<style type="text/css">
+			/*
+			 * Set website details.
+			 */
+			.text-center {
+			  text-align: center;
+			}
+			/**
+			 * Table options for results.
+			 */
+			.table-header {
+			  text-align: center;
+			  font-size: 26px;
+			  padding: 0px;
+			  margin-top: 0px;
+			  margin-bottom: 2px;
+			}
+			.table-h3 {
+			  text-align: center;
+			  font-size: 22px;
+			  padding: 0px;
+			  margin-top: 0px;
+			  margin-bottom: 4px;
+			}
+			.table-h4 {
+			  text-align: center;
+			  font-size: 18px;
+			  padding: 0px;
+			  margin-top: 0px;
+			  margin-bottom: 4px;
+			}
+			.table-label {
+			  font-size: 18px;
+			}
+			.table-info {
+			  text-align: center;
+			  padding-top: 4px;
+			}
+			table {
+			  min-width: 360px;
+			  overflow: hidden;
+			  margin-top: 20px;
+			}
+			.panel-center {
+			  text-align: center;
+			}
+			td {
+			  padding: 5px;
+			  text-align: center;
+			  border: 1px solid #E7E7E7;
+			}
+			table {
+			  width: 100%;
+			  border-collapse: collapse;
+			  border-radius: 10px;
+			  border-style: hidden;
+			  box-shadow: 0 0 0 1px #E7E7E7;
+			}
+		</style>
+	</head>
+	<body>
+		<div class='text-important table-header'><#= theEvent.YearCode #> <#= theEvent.Name #></div>
+		<div class='text-important table-h3'>Overall Results</div>
+		<div class='text-important table-h4'><#= theEvent.Date #></div>
+		<div class='events-panel panel panel-default'>
+			<# foreach (string d in distanceResults.Keys.OrderBy(i => i))
+			{ #>
+			<div>
+				<table>
+					<tr><td colspan='10' class='table-header text-important'><#= d #></td></tr>
+					<tr>
+						<td class="text-important table-label">Place</td>
+						<td class="text-important table-label"></td>
+						<td class="text-important table-label">Bib</td>
+						<td class="text-important table-label">Name</td>
+						<td class="text-important table-label">G</td>
+						<td class="text-important table-label">Age</td>
+						<td colspan='2' class="text-important table-label">AG Place</td>
+						<td class="text-important table-label">Finish Gun</td>
+						<td class="text-important table-label">Finish Chip</td>
+					</tr>
+					<# foreach (TimeResult r in distanceResults[d])
+					{ #>
+					<tr>
+						<td><#= r.PlaceStr #></td>
+						<td><#= r.PrettyType #></td>
+						<td><#= r.Bib.ToString() #></td>
+						<td><#= r.ParticipantName #></td>
+						<td><#= participantDictionary[r.EventSpecificId].Gender #></td>
+						<td><#= participantDictionary[r.EventSpecificId].Age(theEvent.Date) #></td>
+						<td><#= r.AgePlaceStr #></td>
+						<td><#= r.AgeGroupName #></td>
+						<td><#= r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) #></td>
+						<td><#= r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length) #></td>
+					</tr>
+					<# } #>
+					<# if (dnfResultsDictionary.ContainsKey(d)) {
+					foreach (TimeResult r in dnfResultsDictionary[d])
+					{ #>
+					<tr>
+						<td></td>
+						<td><#= r.PrettyType #></td>
+						<td><#= r.Bib.ToString() #></td>
+						<td><#= r.ParticipantName #></td>
+						<td><#= participantDictionary[r.EventSpecificId].Gender #></td>
+						<td><#= participantDictionary[r.EventSpecificId].Age(theEvent.Date) #></td>
+						<td></td>
+						<td></td>
+						<td>DNF</td>
+						<td>DNF</td>
+					</tr>
+					<# }} #>
+				</table>
+			</div>
+			<# } #>
+		</div>
+	</body>
+</html>
