@@ -1,5 +1,5 @@
 ﻿using Chronokeep.Interfaces;
-using OfficeOpenXml;
+using ClosedXML.Excel;
 using System.Collections.Generic;
 
 namespace Chronokeep.UI.IO
@@ -11,10 +11,8 @@ namespace Chronokeep.UI.IO
 
         public void ExportData(string Path)
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            using ExcelPackage package = new ExcelPackage(Path);
-            using ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-            worksheet.Name = "";
+            using XLWorkbook workbook = new XLWorkbook();
+            IXLWorksheet worksheet = workbook.Worksheets.Add();
             List<object[]> localData = new List<object[]>
             {
                 headers
@@ -23,16 +21,15 @@ namespace Chronokeep.UI.IO
             {
                 localData.Add(line);
             }
-            object[,] outData = new object[localData.Count, localData[0].Length];
             for (int i = 0; i < localData.Count; i++)
             {
                 for (int j = 0; j < localData[0].Length; j++)
                 {
-                    worksheet.Cells[i, j].Value = localData[i][j].ToString();
-                    worksheet.Cells[i, j].Style.Numberformat.Format = "@";
+                    worksheet.Cell(i + 1, j + 1).Style.NumberFormat.Format = "@";
+                    worksheet.Cell(i+1, j+1).Value = localData[i][j];
                 }
             }
-            package.Save(Path);
+            workbook.SaveAs(Path);
         }
 
         public Utils.FileType FileType()

@@ -1,4 +1,4 @@
-﻿using OfficeOpenXml;
+﻿using ClosedXML.Excel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,9 +10,8 @@ namespace Chronokeep
         public ImportData Data { get; private set; }
         string FilePath;
 
-        ExcelPackage package;
-        ExcelWorksheet worksheet;
-        ExcelWorkbook workbook;
+        XLWorkbook workbook;
+        IXLWorksheet worksheet;
 
         public List<string> SheetNames { get; private set; }
         public int NumSheets { get; private set; }
@@ -24,18 +23,16 @@ namespace Chronokeep
             try
             {
                 Log.D("IO.ExcelImporter", "Opening workbook.");
-                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                package = new ExcelPackage(new FileInfo(filename));
-                workbook = package.Workbook;
+                workbook = new XLWorkbook(filename);
                 NumSheets = workbook.Worksheets.Count;
                 if (NumSheets > 0)
                 {
-                    worksheet = workbook.Worksheets[0];
+                    worksheet = workbook.Worksheets.Worksheet(1);
                 }
                 SheetNames = new List<string>();
-                for (int i = 0; i < NumSheets; i++)
+                for (int i = 1; i <= NumSheets; i++)
                 {
-                    string name = workbook.Worksheets[i].Name;
+                    string name = workbook.Worksheets.Worksheet(i).Name;
                     SheetNames.Add(name);
                     Log.D("IO.ExcelImporter", "Sheet name is " + name);
                 }
@@ -50,9 +47,9 @@ namespace Chronokeep
         {
             try
             {
-                if (ix < NumSheets && ix >= 0)
+                if (ix <= NumSheets && ix >= 0)
                 {
-                    worksheet = workbook.Worksheets[ix];
+                    worksheet = workbook.Worksheets.Worksheet(ix);
                 }
             }
             catch
@@ -67,15 +64,24 @@ namespace Chronokeep
             try
             {
                 Log.D("IO.ExcelImporter", "Used range set.");
-                object[,] valueArray = worksheet.Cells.GetValue<object[,]>();
-                Log.D("IO.ExcelImporter", "Value array populated.");
-                int numHeaders = valueArray.GetUpperBound(1);
-                int numDataRows = valueArray.GetUpperBound(0);
-                Log.D("IO.ExcelImporter", "Rows " + numDataRows + " Columns " + numHeaders);
-                string[] headers = new string[numHeaders];
-                for (int i=0; i<numHeaders; i++)
+                var rows = worksheet.RowsUsed();
+                int numHeaders = 0;
+                int numDataRows = 0;
+                foreach (var row in rows)
                 {
-                    headers[i] = valueArray[0, i] == null ? "" : valueArray[0, i].ToString();
+                    int tmp = 0;
+                    foreach (var col in row.CellsUsed())
+                    {
+                        tmp++;
+                    }
+                    numHeaders = numHeaders > tmp ? numHeaders : tmp;
+                    numDataRows++;
+                }
+                Log.D("IO.ExcelImporter", "Value array populated. Rows " + numDataRows + " Columns " + numHeaders);
+                string[] headers = new string[numHeaders];
+                for (int i=1; i<=numHeaders; i++)
+                {
+                    headers[i-1] = worksheet.Cell(1, i).Value == null ? "" : worksheet.Cell(1,i).Value.ToString();
                 }
                 Data = new ImportData(headers, FilePath, ImportData.FileType.EXCEL);
             }
@@ -92,10 +98,28 @@ namespace Chronokeep
             Log.D("IO.ExcelImporter", "Getting data from excel file.");
             try
             {
-                object[,] valueArray = worksheet.Cells.GetValue<object[,]>();
-                int numHeaders = valueArray.GetUpperBound(1);
-                int numDataRows = valueArray.GetUpperBound(0);
-                Log.D("IO.ExcelImporter", "Rows " + numDataRows + " Columns " + numHeaders);
+                var rows = worksheet.RowsUsed();
+                int numHeaders = 0;
+                int numDataRows = 0;
+                foreach (var row in rows)
+                {
+                    int tmp = 0;
+                    foreach (var col in row.CellsUsed())
+                    {
+                        tmp++;
+                    }
+                    numHeaders = numHeaders > tmp ? numHeaders : tmp;
+                    numDataRows++;
+                }
+                object[,] valueArray = new object[numDataRows, numHeaders];
+                for (int i=1; i<= numDataRows; i++)
+                {
+                    for (int j=1; j<=numHeaders; j++)
+                    {
+                        valueArray[i-1, j-1] = worksheet.Cell(i, j).Value;
+                    }
+                }
+                Log.D("IO.ExcelImporter", "Value array populated. Rows " + numDataRows + " Columns " + numHeaders);
                 for (int row = 1; row < numDataRows; row++)
                 {
                     string[] dataLine = new string[numHeaders];
@@ -120,18 +144,12 @@ namespace Chronokeep
             {
                 if (worksheet != null)
                 {
-                    worksheet.Dispose();
                     worksheet = null;
                 }
                 if (workbook != null)
                 {
                     workbook.Dispose();
                     workbook = null;
-                }
-                if (package != null)
-                {
-                    package.Dispose();
-                    package = null;
                 }
             }
             catch

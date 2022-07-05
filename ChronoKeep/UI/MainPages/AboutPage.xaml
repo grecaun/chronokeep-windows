@@ -28,9 +28,9 @@
                 <Label Content="Extended WPF Toolkit" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
                 <Label Content="https://github.com/xceedsoftware/wpftoolkit" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
                 <Label Content="License : https://opensource.org/licenses/MS-PL" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-                <Label Content="EPPlus" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
-                <Label Content="https://www.epplussoftware.com/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-                <Label Content="License : https://polyformproject.org/licenses/noncommercial/1.0.0/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+                <Label Content="ClosedXML" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
+                <Label Content="https://closedxml.github.io/ClosedXML/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+                <Label Content="License : https://github.com/ClosedXML/ClosedXML/blob/develop/LICENSE" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

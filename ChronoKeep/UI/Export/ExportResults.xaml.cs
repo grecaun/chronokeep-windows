@@ -492,8 +492,16 @@ namespace Chronokeep.UI.Export
                     exporter = new CSVExporter(format.ToString());
                 }
                 exporter.SetData(headers, data);
-                exporter.ExportData(saveFileDialog.FileName);
+                try
+                {
+                    exporter.ExportData(saveFileDialog.FileName);
+                }
+                catch
+                {
+                    MessageBox.Show("Error saving file.");
+                }
             }
+            MessageBox.Show("Results saved.");
             this.Close();
         }
 
