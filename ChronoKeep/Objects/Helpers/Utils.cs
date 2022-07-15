@@ -17,8 +17,6 @@ namespace Chronokeep
             return new string(charArray);
         }
 
-        public static void QuitExcel() { }
-
         public static DependencyObject GetScrollViewer(DependencyObject o)
         {
             if (o is ScrollViewer)

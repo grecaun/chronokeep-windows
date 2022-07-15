@@ -42,7 +42,7 @@ namespace Chronokeep.Updates
         private static HttpClient GetHttpClient()
         {
             var client = new HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(2);
+            client.Timeout = TimeSpan.FromSeconds(5);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.UserAgent.TryParseAdd("Chronokeep Desktop Application");
