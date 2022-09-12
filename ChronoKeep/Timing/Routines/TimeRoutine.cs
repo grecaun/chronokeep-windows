@@ -220,7 +220,7 @@ namespace Chronokeep.Timing.Routines
                             // Check if we've marked the person as finished;
                             if (finished == true)
                             {
-                                read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
+                                read.Status = Constants.Timing.CHIPREAD_STATUS_DNF == read.Status ? read.Status : Constants.Timing.CHIPREAD_STATUS_OVERMAX;
                             }
                             // Check if we're in the ignore within period.
                             else if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))
@@ -389,7 +389,7 @@ namespace Chronokeep.Timing.Routines
                             // Check if we've marked the person as finished;
                             if (finished == true)
                             {
-                                read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
+                                read.Status = Constants.Timing.CHIPREAD_STATUS_DNF == read.Status ? read.Status : Constants.Timing.CHIPREAD_STATUS_OVERMAX;
                             }
                             // Check if we're in the ignore within period.
                             else if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds < minMilliseconds))

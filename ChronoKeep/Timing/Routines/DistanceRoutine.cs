@@ -590,20 +590,7 @@ namespace Chronokeep.Timing.Routines
                     part.Status = Constants.Timing.EVENTSPECIFIC_NOFINISH;
                     updateParticipants.Add(part);
                 }
-                int occurrence = -1;
-                if (lastReadDictionary.ContainsKey((bib, Constants.Timing.LOCATION_FINISH)))
-                {
-                    occurrence = lastReadDictionary[(bib, Constants.Timing.LOCATION_FINISH)].Occurrence + 1;
-                }
-                else if (dictionary.bibChipDictionary.ContainsKey(bib) && chipLastReadDictionary.ContainsKey((dictionary.bibChipDictionary[bib], Constants.Timing.LOCATION_FINISH)))
-                {
-                    occurrence = chipLastReadDictionary[(dictionary.bibChipDictionary[bib], Constants.Timing.LOCATION_FINISH)].Occurrence + 1;
-                }
-                int finishOccurence = dictionary.distanceDictionary.ContainsKey(part.EventSpecific.DistanceIdentifier) ? dictionary.distanceDictionary[part.EventSpecific.DistanceIdentifier].FinishOccurrence : 1;
-                if (occurrence > finishOccurence)
-                {
-                    occurrence = finishOccurence;
-                }
+                int occurrence = dictionary.distanceDictionary.ContainsKey(part.EventSpecific.DistanceIdentifier) ? dictionary.distanceDictionary[part.EventSpecific.DistanceIdentifier].FinishOccurrence : 1;
                 if (finishTimes.ContainsKey(TimeResult.BibToIdentifier(bib)))
                 {
                     TimeResult finish = finishTimes[TimeResult.BibToIdentifier(bib)];
