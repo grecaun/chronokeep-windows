@@ -863,9 +863,9 @@ namespace Chronokeep.Timing.Routines
             List<TimeResult> placementCalculations = new List<TimeResult>(LastLapDictionary.Values);
             placementCalculations.Sort(TimeResult.CompareByOccurrence);
             // Get Dictionaries for storing the last known place (age group, gender)
-            // Key is (Age Group ID, int (Gender ID, M=1, F=2))
+            // Key is (Age Group ID, int (Gender ID, M=1, F=2, U=3, NB=4))
             Dictionary<(int, int), int> ageGroupPlaceDictionary = new Dictionary<(int, int), int>();
-            // Key is Gender ID (M=1, F=2)
+            // Key is Gender ID (M=1, F=2, U=3, NB=4)
             Dictionary<int, int> genderPlaceDictionary = new Dictionary<int, int>();
             int ageGroupId, age, gender;
             int place = 0;
@@ -890,6 +890,11 @@ namespace Chronokeep.Timing.Routines
                         || person.Gender.Equals("Female", StringComparison.OrdinalIgnoreCase))
                     {
                         gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
+                    }
+                    else if (person.Gender.Equals("NB", StringComparison.OrdinalIgnoreCase)
+                        || person.Gender.Equals("NonBinary", StringComparison.OrdinalIgnoreCase))
+                    {
+                        gender = Constants.Timing.TIMERESULT_GENDER_NON_BINARY;
                     }
                     ageGroupId = person.EventSpecific.AgeGroupId;
                     result.Place = ++place;

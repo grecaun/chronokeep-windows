@@ -579,10 +579,10 @@ namespace Chronokeep.Timing.Routines
                 personResults[result.EventSpecificId].Add(result);
             }
             // Get Dictionaries for storing the last known place (age group, gender)
-            // The key is as follows: (Distance ID, Age Group ID, int - Gender ID (M=1,F=2))
+            // The key is as follows: (Distance ID, Age Group ID, int - Gender ID (M=1,F=2, U=3, NB=4))
             // The value stored is the last place given
             Dictionary<(int, int, int), int> ageGroupPlaceDictionary = new Dictionary<(int, int, int), int>();
-            // The key is as follows: (Distance ID, Gender ID (M=1, F=2))
+            // The key is as follows: (Distance ID, Gender ID (M=1, F=2, U=3, NB=4))
             // The value stored is the last place given
             Dictionary<(int, int), int> genderPlaceDictionary = new Dictionary<(int, int), int>();
             // The key is as follows: (Distance ID)
@@ -664,6 +664,11 @@ namespace Chronokeep.Timing.Routines
                         || person.Gender.Equals("Female", StringComparison.OrdinalIgnoreCase))
                     {
                         gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
+                    }
+                    else if (person.Gender.Equals("NB", StringComparison.OrdinalIgnoreCase)
+                        || person.Gender.Equals("NonBinary", StringComparison.OrdinalIgnoreCase))
+                    {
+                        gender = Constants.Timing.TIMERESULT_GENDER_NON_BINARY;
                     }
                     ageGroupId = person.EventSpecific.AgeGroupId;
                     // Since Results were sorted before we started, let's assume that the first item

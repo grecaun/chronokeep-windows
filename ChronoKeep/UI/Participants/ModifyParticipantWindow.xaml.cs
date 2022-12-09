@@ -119,7 +119,7 @@ namespace Chronokeep.UI.Participants
             LastBox.Text = person.LastName;
             BirthdayBox.Text = person.Birthdate;
             AgeBox.Text = person.Age(theEvent.Date);
-            GenderBox.SelectedIndex = person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase) ? 0 : 1;
+            GenderBox.SelectedIndex = person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase) ? 0 : person.Gender.Equals("F", StringComparison.OrdinalIgnoreCase) ? 1: 2;
             StreetBox.Text = person.Street;
             Street2Box.Text = person.Street2;
             CityBox.Text = person.City;

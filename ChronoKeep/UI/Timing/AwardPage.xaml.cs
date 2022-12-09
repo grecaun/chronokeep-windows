@@ -442,7 +442,7 @@ namespace Chronokeep.UI.Timing
                                         gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
                                         ageGroups[AgeGroupId].StartAge);
                             }
-                            if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
+                            if (gender.Equals("M", StringComparison.OrdinalIgnoreCase)) /// TODO Fix this code for NB if we start using it again
                             {
                                 maleResults.Add((subheading, results: ageGroupResultDictionary[(AgeGroupId, gender)]));
                             }

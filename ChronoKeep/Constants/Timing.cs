@@ -48,6 +48,7 @@ namespace Chronokeep.Constants
         public static readonly int TIMERESULT_GENDER_MALE = 1;
         public static readonly int TIMERESULT_GENDER_FEMALE = 2;
         public static readonly int TIMERESULT_GENDER_UNKNOWN = 3;
+        public static readonly int TIMERESULT_GENDER_NON_BINARY = 4;
         public static readonly int TIMERESULT_DUMMYAGEGROUP = -1;
         public static readonly int TIMERESULT_DUMMYREAD = -1;
 

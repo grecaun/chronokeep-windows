@@ -435,12 +435,15 @@ namespace Chronokeep
             }
             if (gender != null && gender.Length > 0)
             {
+                this.gender = gender.ToUpper();
                 if (gender.Length > 1)
                 {
-                    this.gender = gender.Substring(0, 1);
+                    if (!gender.Equals("NB"))
+                    {
+                        this.gender = gender.Substring(0, 1);
+                    }
                 }
-                this.gender = gender.ToUpper();
-                if (!gender.Equals("M") && !gender.Equals("F"))
+                if (!gender.Equals("M") && !gender.Equals("F") && !gender.Equals("NB"))
                 {
                     if (gender.Equals("W"))
                     {
