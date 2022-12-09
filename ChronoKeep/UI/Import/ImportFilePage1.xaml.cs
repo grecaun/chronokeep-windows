@@ -66,6 +66,7 @@ namespace Chronokeep
 
         internal void UpdateSheetNo(int selection)
         {
+            Log.D("ImportFilePage1", "Changing sheet to " + selection);
             ExcelImporter excelImporter = (ExcelImporter)importer;
             excelImporter.ChangeSheet(selection);
             excelImporter.FetchHeaders();

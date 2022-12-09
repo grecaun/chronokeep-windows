@@ -198,7 +198,10 @@ namespace Chronokeep
             }
             ImportData data = importer.Data;
             string[] distancesFromFile = data.GetDistanceNames(keys[DISTANCE]);
-            Log.D("ImportFileWindow", "Distance key is " + keys[DISTANCE] + " with a header name of " + headerListBoxItems[keys[DISTANCE]-1].HeaderLabel.Content + " number of distances found is " + distancesFromFile.Length);
+            if (keys[DISTANCE] != 0)
+            {
+                Log.D("ImportFileWindow", "Distance key is " + keys[DISTANCE] + " with a header name of " + headerListBoxItems[keys[DISTANCE] - 1].HeaderLabel.Content + " number of distances found is " + distancesFromFile.Length);
+            }
             if (distancesFromFile.Length <= 0)
             {
                 MessageBox.Show("No distances found in file, or nothing selected for distance.  Please correct this or cancel.");
@@ -655,7 +658,7 @@ namespace Chronokeep
             Log.D("ImportFileWindow", "You've selected number " + selection);
             if (page1 != null)
             {
-                ((ImportFilePage1)page1).UpdateSheetNo(selection);
+                ((ImportFilePage1)page1).UpdateSheetNo(selection + 1);
             }
         }
     }
