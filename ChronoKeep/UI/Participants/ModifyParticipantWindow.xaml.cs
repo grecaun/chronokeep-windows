@@ -119,7 +119,7 @@ namespace Chronokeep.UI.Participants
             LastBox.Text = person.LastName;
             BirthdayBox.Text = person.Birthdate;
             AgeBox.Text = person.Age(theEvent.Date);
-            GenderBox.SelectedIndex = person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase) ? 0 : person.Gender.Equals("F", StringComparison.OrdinalIgnoreCase) ? 1: 2;
+            GenderBox.SelectedIndex = person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase) ? 0 : person.Gender.Equals("F", StringComparison.OrdinalIgnoreCase) ? 1 : person.Gender.Equals("NB", StringComparison.OrdinalIgnoreCase) ? 2 : 3;
             StreetBox.Text = person.Street;
             Street2Box.Text = person.Street2;
             CityBox.Text = person.City;
@@ -275,10 +275,18 @@ namespace Chronokeep.UI.Participants
                 bib = int.Parse(BibBox.Text);
             }
             catch { }
-            string gender = "Male";
+            string gender = "Not Specified";
             if (GenderBox.SelectedItem != null)
             {
                 gender = ((ComboBoxItem)GenderBox.SelectedItem).Content.ToString();
+            }
+            if (gender.Equals("Non-Binary", StringComparison.OrdinalIgnoreCase))
+            {
+                gender = "NB";
+            }
+            else if (gender.Equals("Not Specified", StringComparison.OrdinalIgnoreCase))
+            {
+                gender = "U";
             }
             int checkedin = 0;
             int.TryParse(AgeBox.Text, out int age);

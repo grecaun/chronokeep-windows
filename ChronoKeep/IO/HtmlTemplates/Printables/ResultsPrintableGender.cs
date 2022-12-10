@@ -149,7 +149,7 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             this.Write("\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr><td colspan=\'9\' class=\'table-header text-important\'>");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableGender.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture((gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female")));
+            this.Write(this.ToStringHelper.ToStringWithCulture((gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : gender.Equals("F", System.StringComparison.OrdinalIgnoreCase) ? "Female" : gender.Equals("NB", System.StringComparison.OrdinalIgnoreCase) ? "Non-Binary" : "Not Specified")));
             
             #line default
             #line hidden

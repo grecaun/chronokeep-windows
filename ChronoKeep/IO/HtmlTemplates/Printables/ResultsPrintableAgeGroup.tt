@@ -81,7 +81,7 @@
 				<# foreach ((int AgeGroupID, string gender) in distanceResults[d].Keys.OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge))
 				{ #>
 					<table>
-						<tr><td colspan='9' class='table-header text-important'><#= string.Format("{0} {1} - {2}", gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female", ageGroups[AgeGroupID].StartAge, ageGroups[AgeGroupID].EndAge) #></td></tr>
+						<tr><td colspan='9' class='table-header text-important'><#= string.Format("{0} {1} - {2}", gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : gender.Equals("F", System.StringComparison.OrdinalIgnoreCase) ? "Female" : gender.Equals("NB", System.StringComparison.OrdinalIgnoreCase) ? "Non-Binary" : "Not Specified", ageGroups[AgeGroupID].StartAge, ageGroups[AgeGroupID].EndAge) #></td></tr>
 						<tr>
 							<td class="text-important table-label">Place</td>
 							<td class="text-important table-label"></td>

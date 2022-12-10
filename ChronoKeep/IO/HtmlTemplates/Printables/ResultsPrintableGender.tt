@@ -81,7 +81,7 @@
 				<# foreach (string gender in distanceResults[d].Keys.OrderBy(i => i))
 				{ #>
 					<table>
-						<tr><td colspan='9' class='table-header text-important'><#= (gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female") #></td></tr>
+						<tr><td colspan='9' class='table-header text-important'><#= (gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : gender.Equals("F", System.StringComparison.OrdinalIgnoreCase) ? "Female" : gender.Equals("NB", System.StringComparison.OrdinalIgnoreCase) ? "Non-Binary" : "Not Specified") #></td></tr>
 						<tr>
 							<td class="text-important table-label">Place</td>
 							<td class="text-important table-label"></td>

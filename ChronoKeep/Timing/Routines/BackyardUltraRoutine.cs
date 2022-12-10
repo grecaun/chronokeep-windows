@@ -892,7 +892,7 @@ namespace Chronokeep.Timing.Routines
                         gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
                     }
                     else if (person.Gender.Equals("NB", StringComparison.OrdinalIgnoreCase)
-                        || person.Gender.Equals("NonBinary", StringComparison.OrdinalIgnoreCase))
+                        || person.Gender.Equals("Non-Binary", StringComparison.OrdinalIgnoreCase))
                     {
                         gender = Constants.Timing.TIMERESULT_GENDER_NON_BINARY;
                     }
