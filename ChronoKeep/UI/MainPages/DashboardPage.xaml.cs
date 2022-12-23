@@ -177,12 +177,12 @@ namespace Chronokeep.UI.MainPages
             TypeBox.IsEnabled = true;
         }
 
-        private void NewEvent_Click(object sender, RoutedEventArgs e)
+        private bool CancelEventChange()
         {
-            Log.D("UI.DashboardPage", "New event clicked.");
+            Log.D("UI.DashboardPage", "Checking if we need to cancel the change.");
             if (TimingController.IsRunning())
             {
-                MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and create a new event?",
+                MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and continue?",
                     "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
@@ -190,12 +190,12 @@ namespace Chronokeep.UI.MainPages
                 }
                 else
                 {
-                    return;
+                    return true;
                 }
             }
             if (mWindow.AnnouncerOpen())
             {
-                MessageBoxResult result = MessageBox.Show("You currently have the announcer window open.  Do you wish to close this window and create a new event?",
+                MessageBoxResult result = MessageBox.Show("You currently have the announcer window open.  Do you wish to close this window and continue?",
                     "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (result == MessageBoxResult.Yes)
                 {
@@ -203,8 +203,31 @@ namespace Chronokeep.UI.MainPages
                 }
                 else
                 {
-                    return;
+                    return true;
                 }
+            }
+            if (mWindow.IsAPIControllerRunning())
+            {
+                MessageBoxResult result = MessageBox.Show("You are automatically uploading results.  Do you wish to stop automatic uploads and continue?",
+                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (result == MessageBoxResult.Yes)
+                {
+                    mWindow.StopAPIController();
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void NewEvent_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.DashboardPage", "New event clicked.");
+            if (CancelEventChange())
+            {
+                return;
             }
             NewEventWindow newEventWindow = NewEventWindow.NewWindow(mWindow, database);
             if (newEventWindow != null)
@@ -217,31 +240,9 @@ namespace Chronokeep.UI.MainPages
         private void ImportEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.DashboardPage", "Import event clicked.");
-            if (TimingController.IsRunning())
+            if (CancelEventChange())
             {
-                MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and import a new event?",
-                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    mWindow.ShutdownTimingController();
-                }
-                else
-                {
-                    return;
-                }
-            }
-            if (mWindow.AnnouncerOpen())
-            {
-                MessageBoxResult result = MessageBox.Show("You currently have the announcer window open.  Do you wish to close this window and import a new event?",
-                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    mWindow.StopAnnouncer();
-                }
-                else
-                {
-                    return;
-                }
+                return;
             }
             OpenFileDialog openFileDialog = new OpenFileDialog() { Filter = "SQLite Database Files (*.sqlite)|*.sqlite;|All files|*" };
             if (openFileDialog.ShowDialog() == true)
@@ -512,31 +513,9 @@ namespace Chronokeep.UI.MainPages
         private void ChangeEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.DashboardPage", "Change event clicked.");
-            if (TimingController.IsRunning())
+            if (CancelEventChange())
             {
-                MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and change the viewed event?",
-                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    mWindow.ShutdownTimingController();
-                }
-                else
-                {
-                    return;
-                }
-            }
-            if (mWindow.AnnouncerOpen())
-            {
-                MessageBoxResult result = MessageBox.Show("You currently have the announcer window open.  Do you wish to close this window and change the viewed event?",
-                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    mWindow.StopAnnouncer();
-                }
-                else
-                {
-                    return;
-                }
+                return;
             }
             ChangeEventWindow changeEventWindow = ChangeEventWindow.NewWindow(mWindow, database);
             if (changeEventWindow != null)
@@ -549,31 +528,9 @@ namespace Chronokeep.UI.MainPages
         private void DeleteEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.DashboardPage", "Delete event clicked.");
-            if (TimingController.IsRunning())
+            if (CancelEventChange())
             {
-                MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and delete this event?",
-                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    mWindow.ShutdownTimingController();
-                }
-                else
-                {
-                    return;
-                }
-            }
-            if (mWindow.AnnouncerOpen())
-            {
-                MessageBoxResult result = MessageBox.Show("You currently have the announcer window open.  Do you wish to close this window and delete this event?",
-                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    mWindow.StopAnnouncer();
-                }
-                else
-                {
-                    return;
-                }
+                return;
             }
             try
             {

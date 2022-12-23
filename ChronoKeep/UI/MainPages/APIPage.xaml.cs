@@ -294,6 +294,10 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.APIPage", "Updating api.");
                 theAPI.Nickname = APINickname.Text;
                 theAPI.URL = APIURL.Text;
+                if (!theAPI.URL.EndsWith("/"))
+                {
+                    theAPI.URL = theAPI.URL + "/";
+                }
                 theAPI.AuthToken = APIToken.Text;
                 theAPI.Type = ((ComboBoxItem)APIType.SelectedItem).Uid;
             }
