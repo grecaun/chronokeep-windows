@@ -181,7 +181,7 @@ namespace Chronokeep.UI.Export
                 List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
                 foreach (TimeResult result in results)
                 {
-                    if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib) && (result.DistanceName == distance))
+                    if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib) && (result.DistanceName == distance) && result.Time.Length > 4)
                     {
                         data.Add(new object[]
                         {
