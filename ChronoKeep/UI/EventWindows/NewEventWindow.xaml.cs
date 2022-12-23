@@ -123,7 +123,14 @@ namespace Chronokeep
                     {
                         if (Constants.Timing.DISTANCE_NO_LINKED_ID != newD.LinkedDistance)
                         {
-                            newD.LinkedDistance = DistanceTranslationDict[newD.LinkedDistance];
+                            if (DistanceTranslationDict.ContainsKey(newD.LinkedDistance))
+                            {
+                                newD.LinkedDistance = DistanceTranslationDict[newD.LinkedDistance];
+                            }
+                            else
+                            {
+                                newD.LinkedDistance = Constants.Timing.DISTANCE_NO_LINKED_ID;
+                            }
                             database.UpdateDistance(newD);
                         }
                     }
