@@ -192,8 +192,8 @@ namespace Chronokeep.UI.Export
                             result.Gender,
                             participantDictionary[result.Bib].Birthdate,
                             result.Age(theEvent.Date),
-                            result.Time.Substring(0, result.Time.Length - 4),
-                            result.ChipTime.Substring(0, result.ChipTime.Length -4),
+                            result.Time.Substring(0, result.Time.Length > 4 ? result.Time.Length - 4 : 0),
+                            result.ChipTime.Substring(0, result.ChipTime.Length > 4 ? result.ChipTime.Length -4 : 0),
                             ""
                         });
                     }
