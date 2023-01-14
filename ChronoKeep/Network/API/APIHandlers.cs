@@ -21,6 +21,35 @@ namespace Chronokeep.Network.API
             return client;
         }
 
+        public static async Task<bool> IsHealthy(ResultsAPI api)
+        {
+            string content;
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(api.URL + "health"),
+                    };
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        return true;
+                    }
+                    content = "Unable to contact API.";
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown checking health: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
         public static async Task<GetEventsResponse> GetEvents(ResultsAPI api)
         {
             string content;

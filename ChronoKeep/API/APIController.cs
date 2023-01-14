@@ -217,6 +217,26 @@ namespace Chronokeep.API
                     }
                     mainWindow.UpdateTimingFromController();
                 }
+                else // KeepAlive check
+                {
+                    try
+                    {
+                        bool healthy = await APIHandlers.IsHealthy(api);
+                        // clear errors if we don't get an exception
+                        if (healthy)
+                        {
+                            this.Errors = 0;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.D("API.APIController", ex.Message);
+                        this.Errors += 1;
+                        mainWindow.UpdateTimingFromController();
+                        loop_error = true;
+                        break;
+                    }
+                }
                 // Block with timeout on a semaphore
                 // Use this to allow us to only send information every SleepSeconds seconds.
                 // We could check for if we've been signaled, but we're only signaled if we're
