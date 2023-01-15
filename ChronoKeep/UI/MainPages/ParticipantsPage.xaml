@@ -47,6 +47,7 @@
                     <GridViewColumn Header="Comments" DisplayMemberBinding="{Binding Comments}" />
                     <GridViewColumn Header="Other" DisplayMemberBinding="{Binding Other}" />
                     <GridViewColumn Header="Owes" DisplayMemberBinding="{Binding Owes}" />
+                    <GridViewColumn Header="Anon" DisplayMemberBinding="{Binding Anonymous}" />
                 </GridView>
             </ListView.View>
         </ListView>

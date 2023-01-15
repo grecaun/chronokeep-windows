@@ -15,7 +15,8 @@ namespace Chronokeep
             ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds;
         private long chipSeconds, seconds;
         private string time, locationName, segmentName, firstName, lastName,
-            distanceName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday, linked_distance_name = "";
+            distanceName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday, linked_distance_name = "", chip = "";
+        private bool anonymous;
         DateTime systemTime;
 
         private static int raceType = Constants.Timing.EVENT_TYPE_DISTANCE;
@@ -31,7 +32,7 @@ namespace Chronokeep
             string time, int occurrence, string first, string last, string distance, int bib,
             int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
             int agePlace, int genderPlace, string gender, int status, string split,
-            int ageGroupId, string ageGroupName, int uploaded, string birthday, int type, string linked_distance_name)
+            int ageGroupId, string ageGroupName, int uploaded, string birthday, int type, string linked_distance_name, string chip, bool anonymous)
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -108,6 +109,8 @@ namespace Chronokeep
             this.birthday = birthday;
             this.type = type;
             this.linked_distance_name = linked_distance_name;
+            this.chip = chip;
+            this.anonymous = anonymous;
         }
 
         public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
@@ -190,7 +193,16 @@ namespace Chronokeep
         public string GenderPlaceStr { get => genderPlace < 1 ? "" : genderPlace.ToString(); }
         public int Type { get => type; set => type = value; }
         public string Identifier { get => unknownId; }
-        public string PrettyType { get => type == Constants.Timing.DISTANCE_TYPE_EARLY ? "E" : type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL ? "U" : ""; }
+        public string PrettyType
+        {
+            get => PrettyTypeStr();
+        }
+
+        public string PrettyTypeStr()
+        {
+            string output = type == Constants.Timing.DISTANCE_TYPE_EARLY ? "E" : type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL ? "U" : "";
+            return anonymous ? "A" + output : output;
+        }
 
         public DateTime SystemTime { get => systemTime; set => systemTime = value; }
 
@@ -213,14 +225,16 @@ namespace Chronokeep
         public int Milliseconds { get => milliseconds; set => milliseconds = value; }
         public int Uploaded { get => uploaded; set => uploaded = (value == Constants.Timing.TIMERESULT_UPLOADED_FALSE ? Constants.Timing.TIMERESULT_UPLOADED_FALSE : Constants.Timing.TIMERESULT_UPLOADED_TRUE); }
         public string Birthday { get => birthday; set => birthday = value; }
+        public string Chip { get => chip; set => chip = value; }
+        public bool Anonymous { get => anonymous; set => anonymous = value; }
 
-        public static string BibToIdentifier(int bib)
+        public static string BibToIdentifier(int iBib)
         {
-            return "Bib:" + bib.ToString();
+            return "Bib:" + iBib.ToString();
         }
-        public static string ChipToIdentifier(string chip)
+        public static string ChipToIdentifier(string iChip)
         {
-            return "Chip:" + chip;
+            return "Chip:" + iChip;
         }
 
         public int Age(string eventDate)

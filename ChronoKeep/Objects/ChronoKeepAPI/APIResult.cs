@@ -8,8 +8,8 @@ namespace Chronokeep.Objects.API
         public APIResult(Event theEvent, TimeResult result)
         {
             this.Bib = result.Bib.ToString();
-            this.First = result.First;
-            this.Last = result.Last;
+            this.First = result.Anonymous ? "" : result.First;
+            this.Last = result.Anonymous ? "" : result.Last;
             this.Age = result.Age(theEvent.Date);
             this.Gender = result.Gender;
             this.AgeGroup = result.AgeGroupName;
@@ -24,6 +24,9 @@ namespace Chronokeep.Objects.API
             this.GenderRanking = result.GenderPlace;
             this.Finish = result.SegmentId == Constants.Timing.SEGMENT_FINISH;
             this.Type = result.Type;
+            this.Chip = result.Chip;
+            this.Anonymous = result.Anonymous;
+            Log.D("Objects.API.APIResult", string.Format("Chip is {0}, Anonymous is {1}.", this.Chip, this.Anonymous));
             if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
             {
                 this.Type = Constants.Timing.API_TYPE_DNF;
@@ -102,5 +105,9 @@ namespace Chronokeep.Objects.API
         public bool Finish { get; set; }
         [JsonPropertyName("type")]
         public int Type { get; set; }
+        [JsonPropertyName("chip")]
+        public string Chip { get; set; }
+        [JsonPropertyName("anonymous")]
+        public bool Anonymous { get; set; }
     }
 }

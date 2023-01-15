@@ -873,6 +873,7 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 36;
                     case 36:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 36.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE eventspecific RENAME TO eventspecific_old;" +
                             "CREATE TABLE IF NOT EXISTS eventspecific (" +
@@ -898,6 +899,7 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 37;
                     case 37:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 37.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE eventspecific ADD " +
                             "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + ";" +
@@ -905,6 +907,7 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 38;
                     case 38:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 38.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE age_groups ADD " +
                             "last_group INTEGER DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + " NOT NULL;" +
@@ -912,12 +915,14 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 39;
                     case 39:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 39.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE eventspecific ADD COLUMN eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110';" +
                             "UPDATE settings SET version=40 WHERE version=39;";
                         command.ExecuteNonQuery();
                         goto case 40;
                     case 40:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 40.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE divisions ADD " +
                             "division_early_start_offset_seconds INTEGER NOT NULL DEFAULT 0;" +
@@ -925,6 +930,7 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 41;
                     case 41:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 41.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE chipreads RENAME TO chipreads_old;" +
                             "CREATE TABLE IF NOT EXISTS chipreads (" +
@@ -957,6 +963,7 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 42;
                     case 42:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 42.");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS results_api(" +
                                 "api_id INTEGER PRIMARY KEY," +
@@ -976,6 +983,7 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 43;
                     case 43:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 43.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE divisions ADD COLUMN division_linked_id INTEGER NOT NULL REFERENCES divisions(division_id) DEFAULT -1;" +
                             "ALTER TABLE divisions ADD COLUMN division_type INTEGER NOT NULL DEFAULT 0;" +
@@ -984,6 +992,7 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 44;
                     case 44:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 44.");
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE dayof_participant; DROP TABLE kiosk; DROP TABLE eventspecific_apparel; " +
                             "DROP TABLE changes; DROP TABLE bib_group; DROP TABLE available_bibs; " +
@@ -1162,7 +1171,8 @@ namespace Chronokeep.Database.SQLite
                                     reader["eventspecific_other"].ToString(),
                                     Convert.ToInt32(reader["eventspecific_status"]),
                                     reader["eventspecific_age_group_name"].ToString(),
-                                    Convert.ToInt32(reader["eventspecific_age_group_id"])
+                                    Convert.ToInt32(reader["eventspecific_age_group_id"]),
+                                    false
                                     ),
                                 reader["participant_email"].ToString(),
                                 reader["participant_mobile"].ToString(),
@@ -1171,7 +1181,8 @@ namespace Chronokeep.Database.SQLite
                                 reader["participant_street2"].ToString(),
                                 reader["participant_gender"].ToString(),
                                 reader["emergencycontact_name"].ToString(),
-                                reader["emergencycontact_phone"].ToString()
+                                reader["emergencycontact_phone"].ToString(),
+                                ""
                                 ));
                         }
                         // Go through each participant and update their division/distance.
@@ -1185,6 +1196,7 @@ namespace Chronokeep.Database.SQLite
                         }
                         goto case 45;
                     case 45:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 45.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events RENAME TO events_old; " +
                             "CREATE TABLE IF NOT EXISTS events (" +
@@ -1238,6 +1250,7 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 46;
                     case 46:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 46.");
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE time_results; " +
                             "CREATE TABLE IF NOT EXISTS time_results (" +
@@ -1259,6 +1272,23 @@ namespace Chronokeep.Database.SQLite
                                 "UNIQUE (event_id, eventspecific_id, location_id, timeresult_occurance, timeresult_unknown_id) ON CONFLICT REPLACE" +
                                 ");" +
                                 "UPDATE settings SET value='47' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
+                        command.ExecuteNonQuery();
+                        goto case 47;
+                    case 47:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 47.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO old_bib_chip_assoc; "+
+                            "CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "bib INTEGER NOT NULL," +
+                                "chip VARCHAR NOT NULL," +
+                                "UNIQUE (event_id, chip) ON CONFLICT REPLACE," +
+                                "UNIQUE (event_id, bib) ON CONFLICT REPLACE" +
+                                "); " +
+                            "INSERT INTO bib_chip_assoc SELECT * FROM old_bib_chip_assoc; " +
+                            "DROP TABLE old_bib_chip_assoc; " +
+                            "ALTER TABLE eventspecific ADD COLUMN eventspecific_anonymous SMALLINT NOT NULL DEFAULT 0;" +
+                            "UPDATE settings SET value='48' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
                         command.ExecuteNonQuery();
                         break;
                 }

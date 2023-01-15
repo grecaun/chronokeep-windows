@@ -57,4 +57,33 @@ namespace Chronokeep.Objects.API
         [JsonPropertyName("results")]
         public List<APIResult> Results { get; set; }
     }
+
+    // Participant specific requests
+    public class GetParticipantsRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+    }
+
+    public class AddParticipantsRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+        [JsonPropertyName("participants")]
+        public List<APIPerson> Participants { get; set; }
+    }
+
+    public class DeleteParticipantsRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+        [JsonPropertyName("bibs")]
+        public List<string> Bibs { get; set; }
+    }
 }

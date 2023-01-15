@@ -68,7 +68,8 @@ namespace Chronokeep.Database.SQLite
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "bib INTEGER NOT NULL," +
                     "chip VARCHAR NOT NULL," +
-                    "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
+                    "UNIQUE (event_id, chip) ON CONFLICT REPLACE," +
+                    "UNIQUE (event_id, bib) ON CONFLICT REPLACE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS results_api(" +
                     "api_id INTEGER PRIMARY KEY," +
@@ -157,6 +158,7 @@ namespace Chronokeep.Database.SQLite
                     "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + "," +
                     "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
                     "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110'," +
+                    "eventspecific_anonymous SMALLINT NOT NULL DEFAULT 0," +
                     "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE," +
                     "UNIQUE (event_id, eventspecific_bib) ON CONFLICT REPLACE" +
                     ");");

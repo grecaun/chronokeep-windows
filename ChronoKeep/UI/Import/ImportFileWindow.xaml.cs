@@ -45,7 +45,8 @@ namespace Chronokeep
             "Emergency Contact Phone",
             "Age",
             "Apparel",
-            "Registration Date"
+            "Registration Date",
+            "Anonymous"
         };
         private static readonly int FIRST = 1;
         private static readonly int LAST = 2;
@@ -70,6 +71,7 @@ namespace Chronokeep
         private static readonly int AGE = 21;
         internal static readonly int APPARELITEM = 22;
         private static readonly int REGISTRATIONDATE = 23;
+        private static readonly int ANONYMOUS = 24;
         Page page1 = null;
         Page page2 = null;
         Page multiplesPage = null;
@@ -338,7 +340,8 @@ namespace Chronokeep
                                 0,                            // checked in
                                 data.Data[counter][keys[COMMENTS]], // comments
                                 data.Data[counter][keys[OWES]], // owes
-                                data.Data[counter][keys[OTHER]] // other
+                                data.Data[counter][keys[OTHER]], // other
+                                data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 // Set Anonymous if anything is in the field
                                 ),
                             data.Data[counter][keys[EMAIL]], // email
                             data.Data[counter][keys[MOBILE]], // mobile
@@ -389,7 +392,7 @@ namespace Chronokeep
                     // Check against others imported
                     for (int outer=inner+1; outer<importParticipants.Count; outer++)
                     {
-                        Log.D("ImportFileWindow", string.Format("inner {1} outer {0}", outer, inner));
+                        //Log.D("ImportFileWindow", string.Format("inner {1} outer {0}", outer, inner));
                         if (importParticipants[inner].Is(importParticipants[outer]))
                         {
                             // if they're a duplicate and not just a multiple
@@ -641,6 +644,10 @@ namespace Chronokeep
             else if (string.Equals(s, "Registration Date", StringComparison.OrdinalIgnoreCase))
             {
                 return REGISTRATIONDATE;
+            }
+            else if (string.Equals(s, "Anonymous", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Private", StringComparison.OrdinalIgnoreCase))
+            {
+                return ANONYMOUS;
             }
             return 0;
         }

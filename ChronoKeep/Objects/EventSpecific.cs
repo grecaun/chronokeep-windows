@@ -12,6 +12,7 @@ namespace Chronokeep
             checkedIn = 0, chip = -1,
             status = Constants.Timing.EVENTSPECIFIC_NOSHOW, ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
         private string comments, distanceName, owes, other, ageGroupName = "0-110";
+        private bool anonymous;
 
         public EventSpecific() { }
 
@@ -24,7 +25,8 @@ namespace Chronokeep
             int ci,
             string comments,
             string owes,
-            string other
+            string other,
+            bool anonymous
             )
         {
             this.eventIdentifier = eid;
@@ -35,6 +37,7 @@ namespace Chronokeep
             this.comments = comments ?? "";
             this.owes = owes ?? "";
             this.other = other ?? "";
+            this.anonymous = anonymous;
         }
 
         // Constructor the database uses
@@ -50,7 +53,8 @@ namespace Chronokeep
             string other,
             int status,
             string ageGroupName,
-            int ageGroupId
+            int ageGroupId,
+            bool anonymous
             )
         {
             this.identifier = id;
@@ -65,6 +69,7 @@ namespace Chronokeep
             this.status = status;
             this.ageGroupName = ageGroupName;
             this.ageGroupId = ageGroupId;
+            this.anonymous = anonymous;
         }
 
         internal void Trim()
@@ -77,7 +82,7 @@ namespace Chronokeep
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, "0-110", Constants.Timing.TIMERESULT_DUMMYAGEGROUP);
+            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, "0-110", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false);
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -94,5 +99,6 @@ namespace Chronokeep
         public string StatusStr { get => Constants.Timing.EVENTSPECIFIC_STATUS_NAMES[status]; }
         public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
+        public bool Anonymous { get => anonymous; set => anonymous = value; }
     }
 }

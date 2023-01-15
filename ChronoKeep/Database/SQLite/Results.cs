@@ -94,7 +94,9 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["timeresult_uploaded"]),
                     reader["participant_birthday"] == DBNull.Value ? "" : reader["participant_birthday"].ToString(),
                     reader["distance_type"] == DBNull.Value ? Constants.Timing.DISTANCE_TYPE_NORMAL : Convert.ToInt32(reader["distance_type"]),
-                    reader["linked_distance_name"] == DBNull.Value ? "" : reader["linked_distance_name"].ToString()
+                    reader["linked_distance_name"] == DBNull.Value ? "" : reader["linked_distance_name"].ToString(),
+                    reader["chip"] == DBNull.Value ? "" : reader["chip"].ToString(),
+                    reader["eventspecific_anonymous"] == DBNull.Value ? false : Convert.ToInt16(reader["eventspecific_anonymous"]) != 0
                     ));
             }
             reader.Close();
@@ -132,7 +134,9 @@ namespace Chronokeep.Database.SQLite
                     "participant_birthday," +
                     "d.distance_type," +
                     "y.distance_name AS linked_distance_name, " +
-                    "b.bib " +
+                    "b.bib," +
+                    "b.chip," +
+                    "eventspecific_anonymous " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
@@ -177,7 +181,9 @@ namespace Chronokeep.Database.SQLite
                     "participant_birthday," +
                     "d.distance_type," +
                     "y.distance_name AS linked_distance_name, " +
-                    "b.bib " +
+                    "b.bib," +
+                    "b.chip," +
+                    "eventspecific_anonymous " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
@@ -226,7 +232,9 @@ namespace Chronokeep.Database.SQLite
                     "participant_birthday," +
                     "d.distance_type," +
                     "y.distance_name AS linked_distance_name, " +
-                    "b.bib " +
+                    "b.bib," +
+                    "b.chip," +
+                    "eventspecific_anonymous " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
@@ -275,7 +283,9 @@ namespace Chronokeep.Database.SQLite
                     "participant_birthday," +
                     "d.distance_type," +
                     "y.distance_name AS linked_distance_name, " +
-                    "b.bib " +
+                    "b.bib," +
+                    "b.chip," +
+                    "eventspecific_anonymous " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
@@ -360,7 +370,9 @@ namespace Chronokeep.Database.SQLite
                     "participant_birthday," +
                     "d.distance_type," +
                     "y.distance_name AS linked_distance_name, " +
-                    "b.bib " +
+                    "b.bib," +
+                    "b.chip," +
+                    "eventspecific_anonymous " +
                 "FROM time_results r " +
                 "JOIN chipreads c ON c.read_id=r.read_id " +
                 "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +

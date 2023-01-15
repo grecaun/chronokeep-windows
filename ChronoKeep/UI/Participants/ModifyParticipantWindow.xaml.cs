@@ -133,6 +133,7 @@ namespace Chronokeep.UI.Participants
             OtherBox.Text = person.Other;
             ECNameBox.Text = person.ECName;
             ECPhoneBox.Text = person.ECPhone;
+            AnonymousBox.IsChecked = person.Anonymous;
             Add.Content = "Update";
             Done.Content = "Cancel";
         }
@@ -159,6 +160,7 @@ namespace Chronokeep.UI.Participants
             OtherBox.Text = "";
             ECNameBox.Text = "";
             ECPhoneBox.Text = "";
+            AnonymousBox.IsChecked = false;
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -319,7 +321,8 @@ namespace Chronokeep.UI.Participants
                     OtherBox.Text,
                     Constants.Timing.EVENTSPECIFIC_NOSHOW,
                     "0-110",
-                    Constants.Timing.TIMERESULT_DUMMYAGEGROUP
+                    Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
+                    AnonymousBox.IsChecked == true
                     ),
                 EmailBox.Text,
                 MobileBox.Text,
@@ -328,7 +331,9 @@ namespace Chronokeep.UI.Participants
                 Street2Box.Text,
                 gender,
                 ECNameBox.Text,
-                ECPhoneBox.Text);
+                ECPhoneBox.Text,
+                "" // placeholder chip value
+                );
             int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DISTANCEID : output.EventSpecific.DistanceIdentifier;
             if (AgeGroups == null || age < 0)
             {

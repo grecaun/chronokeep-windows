@@ -77,6 +77,10 @@
             <Label Content="Other" FontSize="16" Margin="5,0,5,0" Width="100" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
             <TextBox Name="OtherBox" FontSize="16" Margin="0,5,5,5" KeyDown="Box_KeyDown"/>
         </DockPanel>
+        <DockPanel>
+            <Label Content="Private" FontSize="16" Margin="5,0,5,0" Width="100" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" />
+            <CheckBox Name="AnonymousBox" Margin="0,5,5,5" VerticalContentAlignment="Center"/>
+        </DockPanel>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>

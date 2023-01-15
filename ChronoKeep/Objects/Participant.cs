@@ -11,7 +11,7 @@ namespace Chronokeep
         private int identifier = Constants.Timing.PARTICIPANT_DUMMYIDENTIFIER;
         private string firstName, lastName, street, city, state, zip, email,
             mobile, parent, country, street2, gender, birthdate, emergencyName,
-            emergencyPhone;
+            emergencyPhone, chip;
         private EventSpecific eventSpecific;
 
         public Participant()
@@ -50,7 +50,7 @@ namespace Chronokeep
             int id, string first, string last, string street, string city, string state, string zip,
             string birthday, EventSpecific epi, string email,
             string mobile, string parent, string country, string street2, string gender,
-            string ecName, string ecPhone
+            string ecName, string ecPhone, string chip
             )
         {
             this.identifier = id;
@@ -70,6 +70,7 @@ namespace Chronokeep
             this.gender = gender ?? "";
             this.emergencyName = ecName ?? "Emergency Services";
             this.emergencyPhone = ecPhone ?? "911";
+            this.chip = chip;
             Trim();
         }
 
@@ -530,6 +531,8 @@ namespace Chronokeep
         public string Country { get => country; }
         public string Street2 { get => street2; }
         public string Gender { get => gender; }
+        public string Chip { get => chip; }
+        public bool Anonymous { get => eventSpecific.Anonymous; }
 
         public int CompareTo(Participant other)
         {

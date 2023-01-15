@@ -44,6 +44,13 @@ namespace Chronokeep.Objects.API
         public int Count { get; set; }
     }
 
+    // Participant specific responses.
+    public class GetParticipantsResponse
+    {
+        [JsonPropertyName("participants")]
+        public List<APIPerson> Participants { get; set; }
+    }
+
     // Error response.
     public class ErrorResponse
     {
