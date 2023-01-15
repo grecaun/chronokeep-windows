@@ -310,5 +310,95 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
+        public static async Task<AddResultsResponse> UploadParticipants(ResultsAPI api, string slug, string year, List<APIPerson> people)
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Uploading participants.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Post,
+                        RequestUri = new Uri(api.URL + "participants/add"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new AddParticipantsRequest
+                            {
+                                Slug = slug,
+                                Year = year,
+                                Participants = people,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown deleting results: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
+        public static async Task<AddResultsResponse> DeleteParticipants(ResultsAPI api, string slug, string year)
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Deleting participants.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri(api.URL + "participants/delete"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new GetParticipantsRequest
+                            {
+                                Slug = slug,
+                                Year = year
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown deleting results: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
     }
 }

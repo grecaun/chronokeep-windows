@@ -15,20 +15,23 @@
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1">
                 <Button Name="ImportExcel" Content="Import" FontSize="14" Height="30" Margin="10,5,10,5" Click="Import_Click"/>
-                <Button Name="Export" Content="Export" FontSize="14" Height="30" Margin="10,5,10,5" Click="Export_Click" />
+                <Button Name="Export" Content="Export" FontSize="14" Height="30" Margin="10,0,10,5" Click="Export_Click" />
+                <Label Content="API Commands" FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="5,5,5,0" Padding="0,0,0,0"/>
+                <Button Name="Upload" Content="Upload" FontSize="14" Height="30" Margin="10,5,10,5" Click="Upload_Click" />
+                <Button Name="Delete" Content="Delete Uploaded" FontSize="14" Height="30" Margin="10,0,10,5" Click="Delete_Click" />
                 <Label Content="View" FontSize="16" Margin="10,0,10,0" HorizontalContentAlignment="Center"/>
                 <DockPanel Name="DistanceBoxHolder" />
                 <ComboBox Name="DistanceBox" FontSize="16" Margin="10,0,10,0" SelectionChanged="DistanceBox_SelectionChanged" />
                 <Label Content="Sort By" FontSize="16" Margin="10,0,10,0" HorizontalContentAlignment="Center"/>
-                <ComboBox Name="SortBox" FontSize="16" Margin="10,0,10,10" SelectionChanged="SortBox_SelectionChanged" SelectedIndex="0">
+                <ComboBox Name="SortBox" FontSize="16" Margin="10,0,10,5" SelectionChanged="SortBox_SelectionChanged" SelectedIndex="0">
                     <ComboBoxItem Content="Distance" />
                     <ComboBoxItem Content="Name" />
                     <ComboBoxItem Content="Bib" />
                 </ComboBox>
                 <TextBox Name="SearchBox" Margin="10,0,10,0" TextChanged="SearchBox_TextChanged" FontSize="16" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                 <Button Name="Add" Content="Add" FontSize="14" Height="30" Margin="10,10,10,5" Click="Add_Click"/>
-                <Button Name="Modify" Content="Modify" FontSize="14" Height="30" Margin="10,5,10,5" Click="Modify_Click"/>
-                <Button Name="Remove" Content="Remove" FontSize="14" Height="30" Margin="10,5,10,5" Click="Remove_Click"/>
+                <Button Name="Modify" Content="Modify" FontSize="14" Height="30" Margin="10,0,10,5" Click="Modify_Click"/>
+                <Button Name="Remove" Content="Remove" FontSize="14" Height="30" Margin="10,0,10,5" Click="Remove_Click"/>
             </StackPanel>
         <ListView Name="ParticipantsList" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SelectionMode="Extended" Grid.Column="0" Loaded="ParticipantsList_Loaded" MouseDoubleClick="ParticipantsList_MouseDoubleClick">
             <ListView.View>

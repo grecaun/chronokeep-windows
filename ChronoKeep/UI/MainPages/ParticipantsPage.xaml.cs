@@ -11,6 +11,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Chronokeep.Objects;
+using Chronokeep.Objects.API;
+using Chronokeep.Network.API;
+using Chronokeep.API;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -391,6 +396,129 @@ namespace Chronokeep.UI.MainPages
                 mWindow.AddWindow(modifyParticipant);
                 modifyParticipant.ShowDialog();
             }
+        }
+
+        private void Upload_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.ParticipantsPage", "Upload clicked.");
+            if (Upload.Content.ToString() != "Working")
+            {
+                Log.D("UI.MainPages.TimingPage", "Uploading data.");
+                Upload.Content = "Working";
+                UploadParticipants();
+                return;
+            }
+            Log.D("UI.MainPages.ParticipantsPage", "Already uploading.");
+        }
+
+        private async void UploadParticipants()
+        {
+            // Get API to upload.
+            if (theEvent.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
+            {
+                Upload.Content = "Upload";
+                return;
+            }
+            ResultsAPI api = database.GetResultsAPI(theEvent.API_ID);
+            string[] event_ids = theEvent.API_Event_ID.Split(',');
+            if (event_ids.Length != 2)
+            {
+                Upload.Content = "Upload";
+                return;
+            }
+            // Get results to upload.
+            List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+            if (participants.Count < 1)
+            {
+                Log.D("UI.MainPages.ParticipantsPage", "Nothing to upload.");
+                Upload.Content = "Upload";
+                return;
+            }
+            // Change Participant to APIPerson
+            List<APIPerson> upParticipants = new List<APIPerson>();
+            Log.D("UI.MainPages.ParticipantsPage", "Participants count: " + participants.Count.ToString());
+            foreach (Participant part in participants)
+            {
+                upParticipants.Add(new APIPerson(theEvent, part));
+            }
+            Log.D("UI.MainPages.ParticipantsPage", "Attempting to upload " + upParticipants.Count.ToString() + " results.");
+            int total = 0;
+            int loops = upParticipants.Count / Constants.Timing.API_LOOP_COUNT;
+            AddResultsResponse response;
+            for (int i = 0; i < loops; i += 1)
+            {
+                try
+                {
+                    response = await APIHandlers.UploadParticipants(api, event_ids[0], event_ids[1], upParticipants.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
+                }
+                catch (APIException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    Upload.Content = "Upload";
+                    return;
+                }
+                if (response != null)
+                {
+                    total += response.Count;
+                    Log.D("UI.MainPages.ParticipantsPage", "Total: " + total + " Count: " + response.Count);
+                }
+            }
+            int leftovers = upParticipants.Count - (loops * Constants.Timing.API_LOOP_COUNT);
+            if (leftovers > 0)
+            {
+                try
+                {
+                    response = await APIHandlers.UploadParticipants(api, event_ids[0], event_ids[1], upParticipants.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
+                }
+                catch (APIException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    Upload.Content = "Upload";
+                    return;
+                }
+                if (response != null)
+                {
+                    total += response.Count;
+                    Log.D("UI.MainPages.TimingPage", "Total: " + total + " Count: " + response.Count);
+                }
+                Log.D("UI.MainPages.TimingPage", "Upload finished. Count total: " + total);
+            }
+            Upload.Content = "Upload";
+        }
+
+        private async void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.ParticipantsPage", "Delete clicked.");
+            if (Delete.Content.ToString() != "Working")
+            {
+                Log.D("UI.MainPages.ParticipantsPage", "Deleting uploaded participants data.");
+                Delete.Content = "Working";
+                ResultsAPI api = null;
+                try
+                {
+                    api = database.GetResultsAPI(theEvent.API_ID);
+                    Log.D("UI.MainPages.ParticipantsPage", "API found.");
+                }
+                catch { }
+                // Get the event id values. Exit if not valid.
+                string[] event_ids = theEvent.API_Event_ID.Split(',');
+                // Create a bool for checking if we've grabbed the APIController's mutex so we release it later
+                if (event_ids.Length == 2)
+                {
+                    try
+                    {
+                        Log.D("UI.MainPages.ParticipantsPage", "Deleting participants from API.");
+                        await APIHandlers.DeleteParticipants(api, event_ids[0], event_ids[1]);
+                    }
+                    catch (APIException ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+                Delete.Content = "Delete Uploaded";
+                return;
+            }
+            Log.D("UI.MainPages.ParticipantsPage", "Already deleting.");
         }
     }
 }
