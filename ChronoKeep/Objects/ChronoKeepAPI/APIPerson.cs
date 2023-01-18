@@ -8,8 +8,8 @@ namespace Chronokeep.Objects.API
         public APIPerson(Event theEvent, Participant person)
         {
             this.Bib = person.Bib.ToString();
-            this.First = person.FirstName;
-            this.Last = person.LastName;
+            this.First = person.Anonymous ? "" : person.FirstName;
+            this.Last = person.Anonymous ? "" : person.LastName;
             this.Age = person.GetAge(theEvent.Date);
             this.Gender = person.Gender;
             this.AgeGroup = person.EventSpecific.AgeGroupName;
