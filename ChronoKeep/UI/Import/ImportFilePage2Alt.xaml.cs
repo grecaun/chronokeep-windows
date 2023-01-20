@@ -20,12 +20,22 @@ namespace Chronokeep.UI.Import
     /// </summary>
     public partial class ImportFilePage2Alt : Page
     {
-        public ImportFilePage2Alt(string[] fileDistances, List<Distance> dbDistances)
+        private bool no_distance = false;
+
+        public ImportFilePage2Alt(string[] fileDistances, List<Distance> dbDistances, bool noDistances)
         {
             InitializeComponent();
-            foreach (string distance in fileDistances)
+            no_distance = noDistances;
+            if (no_distance)
             {
-                distanceListBox.Items.Add(new DistanceListBoxItemAlternate(distance, dbDistances));
+                distanceListBox.Items.Add(new DistanceListBoxItemAlternate("Default Distance", dbDistances));
+            }
+            else
+            {
+                foreach (string distance in fileDistances)
+                {
+                    distanceListBox.Items.Add(new DistanceListBoxItemAlternate(distance, dbDistances));
+                }
             }
         }
 

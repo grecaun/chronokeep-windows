@@ -623,5 +623,10 @@ namespace Chronokeep
                 && this.FirstName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
                 && this.LastName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
         }
+
+        public string PrettyAnonymous
+        {
+            get => this.Anonymous == true ? "Yes" : "";
+        }
     }
 }

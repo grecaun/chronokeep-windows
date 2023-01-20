@@ -78,6 +78,8 @@ namespace Chronokeep
         Page bibConflictsPage = null;
         int[] keys;
 
+        private bool no_distance = false;
+
         Event theEvent;
 
         /**
@@ -206,8 +208,13 @@ namespace Chronokeep
             }
             if (distancesFromFile.Length <= 0)
             {
-                MessageBox.Show("No distances found in file, or nothing selected for distance.  Please correct this or cancel.");
-                return;
+                //MessageBox.Show("No distances found in file, or nothing selected for distance.  Please correct this and try again.");
+                //return;
+                no_distance = true;
+                distancesFromFile = new string[]
+                {
+                    "",
+                };
             }
             StringBuilder sb = new StringBuilder("Distance names are");
             foreach (string s in distancesFromFile)
@@ -223,7 +230,7 @@ namespace Chronokeep
                 this.Close();
             }
             List<Distance> distancesFromDatabase = database.GetDistances(theEvent.Identifier);
-            page2 = new ImportFilePage2Alt(distancesFromFile, distancesFromDatabase);
+            page2 = new ImportFilePage2Alt(distancesFromFile, distancesFromDatabase, no_distance);
             SheetsBox.Visibility = Visibility.Collapsed;
             eventLabel.Width = 460;
             Frame.Content = page2;
@@ -306,78 +313,79 @@ namespace Chronokeep
                 importParticipants = new List<Participant>();
                 for (int counter = 0; counter < numEntries; counter++)
                 {
+                    Distance thisDiv = distances[0];
                     if (data.Data[counter][keys[DISTANCE]] != null && data.Data[counter][keys[DISTANCE]].Length > 0)
                     {
                         Log.D("ImportFileWindow", "Looking for... " + Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].ToLower()));
                         // Always set distance to our backyard distance if we're importing for a backyard ultra event. Otherwise figure out the proper distance.
-                        Distance thisDiv = BackYardUltra ? backyardDistance : (Distance)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].Trim().ToLower())];
-                        string birthday = "01/01/1900";
-                        int age = -1;
-                        if (keys[BIRTHDAY] == 0 && keys[AGE] != 0) // birthday not set but age is
-                        {
-                            Log.D("ImportFileWindow", string.Format("Counter is {0} and keys[AGE] is {1}", counter, keys[AGE]));
-                            Log.D("ImportFileWindow", "Age of participant is " + data.Data[counter][keys[AGE]]);
-                            age = Convert.ToInt32(data.Data[counter][keys[AGE]]);
-                            birthday = string.Format("01/01/{0,4}", thisYear - age);
-                        }
-                        else if (keys[BIRTHDAY] != 0)
-                        {
-                            birthday = data.Data[counter][keys[BIRTHDAY]]; // birthday
-                        }
-                        Participant output = new Participant(
-                            data.Data[counter][keys[FIRST]], // First Name
-                            data.Data[counter][keys[LAST]], // Last Name
-                            data.Data[counter][keys[STREET]], // Street
-                            data.Data[counter][keys[CITY]], // City
-                            data.Data[counter][keys[STATE]], // State
-                            data.Data[counter][keys[ZIP]], // Zip
-                            birthday, // Birthday
-                            new EventSpecific(
-                                theEvent.Identifier,
-                                thisDiv.Identifier,
-                                thisDiv.Name,
-                                data.Data[counter][keys[BIB]], // Bib number
-                                0,                            // checked in
-                                data.Data[counter][keys[COMMENTS]], // comments
-                                data.Data[counter][keys[OWES]], // owes
-                                data.Data[counter][keys[OTHER]], // other
-                                data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 // Set Anonymous if anything is in the field
-                                ),
-                            data.Data[counter][keys[EMAIL]], // email
-                            data.Data[counter][keys[MOBILE]], // mobile
-                            data.Data[counter][keys[PARENT]], // parent
-                            data.Data[counter][keys[COUNTRY]], // country
-                            data.Data[counter][keys[STREET2]],  // street2
-                            data.Data[counter][keys[GENDER]],  // gender
-                            data.Data[counter][keys[EMERGENCYNAME]], // Emergency Name
-                            data.Data[counter][keys[EMERGENCYPHONE]]  // Emergency Phone
-                            );
-                        int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DISTANCEID : output.EventSpecific.DistanceIdentifier;
-                        age = output.GetAge(theEvent.Date);
-                        if (AgeGroups == null || age < 0)
-                        {
-                            output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                            output.EventSpecific.AgeGroupName = "0-110";
-                        }
-                        else if (AgeGroups.ContainsKey((agDivId, age)))
-                        {
-                            AgeGroup group = AgeGroups[(agDivId, age)];
-                            output.EventSpecific.AgeGroupId = group.GroupId;
-                            output.EventSpecific.AgeGroupName = string.Format("{0}-{1}", group.StartAge, group.EndAge);
-                        }
-                        else if (LastAgeGroup.ContainsKey(agDivId))
-                        {
-                            AgeGroup group = LastAgeGroup[agDivId];
-                            output.EventSpecific.AgeGroupId = group.GroupId;
-                            output.EventSpecific.AgeGroupName = string.Format("{0}-{1}", group.StartAge, group.EndAge);
-                        }
-                        else
-                        {
-                            output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                            output.EventSpecific.AgeGroupName = "0-110";
-                        }
-                        importParticipants.Add(output);
+                        thisDiv = BackYardUltra ? backyardDistance : (Distance)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].Trim().ToLower())];
                     }
+                    string birthday = "01/01/1900";
+                    int age = -1;
+                    if (keys[BIRTHDAY] == 0 && keys[AGE] != 0) // birthday not set but age is
+                    {
+                        Log.D("ImportFileWindow", string.Format("Counter is {0} and keys[AGE] is {1}", counter, keys[AGE]));
+                        Log.D("ImportFileWindow", "Age of participant is " + data.Data[counter][keys[AGE]]);
+                        age = Convert.ToInt32(data.Data[counter][keys[AGE]]);
+                        birthday = string.Format("01/01/{0,4}", thisYear - age);
+                    }
+                    else if (keys[BIRTHDAY] != 0)
+                    {
+                        birthday = data.Data[counter][keys[BIRTHDAY]]; // birthday
+                    }
+                    Participant output = new Participant(
+                        data.Data[counter][keys[FIRST]], // First Name
+                        data.Data[counter][keys[LAST]], // Last Name
+                        data.Data[counter][keys[STREET]], // Street
+                        data.Data[counter][keys[CITY]], // City
+                        data.Data[counter][keys[STATE]], // State
+                        data.Data[counter][keys[ZIP]], // Zip
+                        birthday, // Birthday
+                        new EventSpecific(
+                            theEvent.Identifier,
+                            thisDiv.Identifier,
+                            thisDiv.Name,
+                            data.Data[counter][keys[BIB]], // Bib number
+                            0,                            // checked in
+                            data.Data[counter][keys[COMMENTS]], // comments
+                            data.Data[counter][keys[OWES]], // owes
+                            data.Data[counter][keys[OTHER]], // other
+                            data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 // Set Anonymous if anything is in the field
+                            ),
+                        data.Data[counter][keys[EMAIL]], // email
+                        data.Data[counter][keys[MOBILE]], // mobile
+                        data.Data[counter][keys[PARENT]], // parent
+                        data.Data[counter][keys[COUNTRY]], // country
+                        data.Data[counter][keys[STREET2]],  // street2
+                        data.Data[counter][keys[GENDER]],  // gender
+                        data.Data[counter][keys[EMERGENCYNAME]], // Emergency Name
+                        data.Data[counter][keys[EMERGENCYPHONE]]  // Emergency Phone
+                        );
+                    int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DISTANCEID : output.EventSpecific.DistanceIdentifier;
+                    age = output.GetAge(theEvent.Date);
+                    if (AgeGroups == null || age < 0)
+                    {
+                        output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                        output.EventSpecific.AgeGroupName = "0-110";
+                    }
+                    else if (AgeGroups.ContainsKey((agDivId, age)))
+                    {
+                        AgeGroup group = AgeGroups[(agDivId, age)];
+                        output.EventSpecific.AgeGroupId = group.GroupId;
+                        output.EventSpecific.AgeGroupName = string.Format("{0}-{1}", group.StartAge, group.EndAge);
+                    }
+                    else if (LastAgeGroup.ContainsKey(agDivId))
+                    {
+                        AgeGroup group = LastAgeGroup[agDivId];
+                        output.EventSpecific.AgeGroupId = group.GroupId;
+                        output.EventSpecific.AgeGroupName = string.Format("{0}-{1}", group.StartAge, group.EndAge);
+                    }
+                    else
+                    {
+                        output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+                        output.EventSpecific.AgeGroupName = "0-110";
+                    }
+                    importParticipants.Add(output);
                 }
                 /**
                  * 

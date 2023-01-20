@@ -36,7 +36,7 @@
         <ListView Name="ParticipantsList" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SelectionMode="Extended" Grid.Column="0" Loaded="ParticipantsList_Loaded" MouseDoubleClick="ParticipantsList_MouseDoubleClick">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Bib" DisplayMemberBinding="{Binding Bib}" />
+                    <GridViewColumn Header="Bib" Width="45" DisplayMemberBinding="{Binding Bib}" />
                     <GridViewColumn Header="Distance" DisplayMemberBinding="{Binding Distance}" />
                     <GridViewColumn Header="First" DisplayMemberBinding="{Binding FirstName}" />
                     <GridViewColumn Header="Last" DisplayMemberBinding="{Binding LastName}" />
@@ -50,7 +50,7 @@
                     <GridViewColumn Header="Comments" DisplayMemberBinding="{Binding Comments}" />
                     <GridViewColumn Header="Other" DisplayMemberBinding="{Binding Other}" />
                     <GridViewColumn Header="Owes" DisplayMemberBinding="{Binding Owes}" />
-                    <GridViewColumn Header="Anon" DisplayMemberBinding="{Binding Anonymous}" />
+                    <GridViewColumn Header="Anon" DisplayMemberBinding="{Binding PrettyAnonymous}" />
                 </GridView>
             </ListView.View>
         </ListView>
