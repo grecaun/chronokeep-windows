@@ -233,7 +233,6 @@ namespace Chronokeep.API
                         Log.D("API.APIController", ex.Message);
                         this.Errors += 1;
                         mainWindow.UpdateTimingFromController();
-                        break;
                     }
                 }
                 // Block with timeout on a semaphore
