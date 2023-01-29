@@ -28,7 +28,8 @@ namespace Chronokeep.UI.Export
             "Bib", "Distance", "Status", "First", "Last", "Birthday",
             "Age", "Gender", "Start", "Street", "Apartment",
             "City", "State", "Zip", "Country", "Mobile", "Email", "Parent", "Comments",
-            "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone"
+            "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone",
+            "Anonymous"
         };
         List<string> distanceHeaders = new List<string>
         {
@@ -245,6 +246,10 @@ namespace Chronokeep.UI.Export
                     if (headerIndex.ContainsKey("Emergency Contact Phone"))
                     {
                         line[headerIndex["Emergency Contact Phone"]] = participant.ECPhone;
+                    }
+                    if (headerIndex.ContainsKey("Anonymous"))
+                    {
+                        line[headerIndex["Anonymous"]] = participant.PrettyAnonymous;
                     }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                     {
