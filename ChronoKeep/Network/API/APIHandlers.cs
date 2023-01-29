@@ -34,7 +34,7 @@ namespace Chronokeep.Network.API
                         RequestUri = new Uri(api.URL + "health"),
                     };
                     HttpResponseMessage response = await client.SendAsync(request);
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.NoContent)
                     {
                         Log.D("Network.API.APIHandlers", "Status code ok.");
                         return true;
