@@ -269,15 +269,15 @@ namespace Chronokeep.UI.Export
                                 {
                                     if (headerIndex.ContainsKey("Place"))
                                     {
-                                        line[headerIndex["Place"]] = result.Place;
+                                        line[headerIndex["Place"]] = result.Place == -1 ? "" : result.Place;
                                     }
                                     if (headerIndex.ContainsKey("Age Group Place"))
                                     {
-                                        line[headerIndex["Age Group Place"]] = result.AgePlace;
+                                        line[headerIndex["Age Group Place"]] = result.AgePlace == -1 ? "" : result.AgePlace;
                                     }
                                     if (headerIndex.ContainsKey("Gender Place"))
                                     {
-                                        line[headerIndex["Gender Place"]] = result.GenderPlace;
+                                        line[headerIndex["Gender Place"]] = result.GenderPlace == -1 ? "" : result.GenderPlace;
                                     }
                                     if (headerIndex.ContainsKey("Chip Finish"))
                                     {
@@ -386,15 +386,15 @@ namespace Chronokeep.UI.Export
                                     {
                                         if (headerIndex.ContainsKey("Place"))
                                         {
-                                            line[headerIndex["Place"]] = result.Place;
+                                            line[headerIndex["Place"]] = result.Place == -1 ? "" : result.Place;
                                         }
                                         if (headerIndex.ContainsKey("Age Group Place"))
                                         {
-                                            line[headerIndex["Age Group Place"]] = result.AgePlace;
+                                            line[headerIndex["Age Group Place"]] = result.AgePlace == -1 ? "" : result.AgePlace;
                                         }
                                         if (headerIndex.ContainsKey("Gender Place"))
                                         {
-                                            line[headerIndex["Gender Place"]] = result.GenderPlace;
+                                            line[headerIndex["Gender Place"]] = result.GenderPlace == -1 ? "" : result.GenderPlace;
                                         }
                                         if (headerIndex.ContainsKey("Chip Finish"))
                                         {
