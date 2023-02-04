@@ -235,7 +235,7 @@ namespace Chronokeep.Timing.Routines
                                 // Segments are based on the linked distance.
                                 int distanceId = d == null ? 0 : d.LinkedDistance > 0 ? d.LinkedDistance : d.Identifier;
                                 // Check for Distance specific segments (Occurrence is always 1 for time based)
-                                if (theEvent.DistanceSpecificSegments && dictionary.segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, 1)))
+                                if (!theEvent.DistanceSpecificSegments && dictionary.segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, 1)))
                                 {
                                     segId = dictionary.segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, 1)].Identifier;
                                 }
@@ -401,7 +401,7 @@ namespace Chronokeep.Timing.Routines
                                 chipLastReadDictionary[(chip, read.LocationID)] = (read, occurrence);
                                 int segId = Constants.Timing.SEGMENT_NONE;
                                 // Check for Distance specific segments (Occurrence is always 1 for time based)
-                                if (theEvent.DistanceSpecificSegments && dictionary.segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, 1)))
+                                if (!theEvent.DistanceSpecificSegments && dictionary.segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, 1)))
                                 {
                                     segId = dictionary.segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, 1)].Identifier;
                                 }

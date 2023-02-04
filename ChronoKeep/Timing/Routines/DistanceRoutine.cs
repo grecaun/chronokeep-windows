@@ -293,7 +293,7 @@ namespace Chronokeep.Timing.Routines
                                         distanceFinOcc = dictionary.distanceDictionary.ContainsKey(d.LinkedDistance) ? dictionary.distanceDictionary[d.LinkedDistance].FinishOccurrence : d.FinishOccurrence;
                                     }
                                     // First check if we're using Distance specific segments
-                                    if (theEvent.DistanceSpecificSegments && dictionary.segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)))
+                                    if (!theEvent.DistanceSpecificSegments && dictionary.segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)))
                                     {
                                         segId = dictionary.segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)].Identifier;
                                     }
@@ -498,7 +498,7 @@ namespace Chronokeep.Timing.Routines
                                     // Find if there's a segment associated with this combination
                                     int segId = Constants.Timing.SEGMENT_NONE;
                                     // First check if we're using Distance specific segments
-                                    if (theEvent.DistanceSpecificSegments && dictionary.segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)))
+                                    if (!theEvent.DistanceSpecificSegments && dictionary.segmentDictionary.ContainsKey((Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)))
                                     {
                                         segId = dictionary.segmentDictionary[(Constants.Timing.COMMON_SEGMENTS_DISTANCEID, read.LocationID, occurrence)].Identifier;
                                     }
