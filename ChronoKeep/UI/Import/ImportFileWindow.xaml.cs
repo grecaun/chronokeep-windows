@@ -188,7 +188,7 @@ namespace Chronokeep
         {
             importer.FetchData();
             keys = new int[human_fields.Length + 1];
-            for (int i = 0; i< keys.Length; i++)
+            for (int i = 0; i < keys.Length; i++)
             {
                 keys[i] = 0;
             }
@@ -350,7 +350,7 @@ namespace Chronokeep
                             data.Data[counter][keys[COMMENTS]], // comments
                             data.Data[counter][keys[OWES]], // owes
                             data.Data[counter][keys[OTHER]], // other
-                            data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 // Set Anonymous if anything is in the field
+                            data.Data[counter][keys[ANONYMOUS]] != null ? data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 : false // Set Anonymous if anything is in the field
                             ),
                         data.Data[counter][keys[EMAIL]], // email
                         data.Data[counter][keys[MOBILE]], // mobile

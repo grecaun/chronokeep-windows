@@ -246,7 +246,8 @@ namespace Chronokeep.UI.MainPages
                             "Other",
                             "Owes",
                             "Emergency Contact Name",
-                            "Emergency Contact Phone"
+                            "Emergency Contact Phone",
+                            "Anonymous"
                         };
                         List<object[]> data = new List<object[]>();
                         foreach (Participant p in parts)
@@ -275,6 +276,7 @@ namespace Chronokeep.UI.MainPages
                                 p.Owes,
                                 p.ECName,
                                 p.ECPhone,
+                                p.PrettyAnonymous,
                             });
                         }
                         IDataExporter exporter = null;
