@@ -17,6 +17,7 @@ using Chronokeep.Timing.Announcer;
 using Wpf.Ui.Mvvm.Contracts;
 using System.Windows.Controls;
 using Wpf.Ui.Controls.Interfaces;
+using System.Net;
 
 namespace Chronokeep.UI
 {
@@ -64,8 +65,8 @@ namespace Chronokeep.UI
             }
             release = true;
 
-            string dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
-            string path = System.IO.Path.Combine(dirPath, dbName);
+            string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
+            string path = Path.Combine(dirPath, dbName);
             Log.D("UI.MainWindow", "Looking for database file.");
             if (!Directory.Exists(dirPath))
             {
@@ -88,7 +89,6 @@ namespace Chronokeep.UI
                 this.Close();
             }
             Constants.Settings.SetupSettings(database);
-            UpdateStatus();
 
             // Setup AgeGroup static variables
             Event theEvent = database.GetCurrentEvent();
@@ -99,6 +99,8 @@ namespace Chronokeep.UI
 
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
+
+            UpdateStatus();
 
             // Check for updates.
             if (database.GetAppSetting(Constants.Settings.CHECK_UPDATES).value == Constants.Settings.SETTING_TRUE)
@@ -416,6 +418,20 @@ namespace Chronokeep.UI
                 timingButton.IsEnabled = true;
                 announcerButton.IsEnabled = true;
             }
+            if (OperatingSystem.IsWindowsVersionAtLeast(8))
+            {
+                dashboardButton.IsActive = page.GetType() == typeof(DashboardPage);
+                timingButton.IsActive = page.GetType() == typeof(TimingPage);
+                announcerButton.IsActive = announcerWindow != null;
+                participantsButton.IsActive = page.GetType() == typeof(ParticipantsPage);
+                chipsButton.IsActive = page.GetType() == typeof(ChipAssigmentPage);
+                locationsButton.IsActive = page.GetType() == typeof(LocationsPage);
+                distancesButton.IsActive = page.GetType() == typeof(DistancesPage);
+                segmentsButton.IsActive = page.GetType() == typeof(SegmentsPage);
+                agegroupsButton.IsActive = page.GetType() == typeof(AgeGroupsPage);
+                settingsButton.IsActive = page.GetType() == typeof(SettingsPage);
+                aboutButton.IsActive = page.GetType() == typeof(AboutPage);
+            }
         }
 
         public bool NewTimingInfo()
@@ -501,6 +517,7 @@ namespace Chronokeep.UI
             page = iPage;
             TheFrame.NavigationService.RemoveBackEntry();
             TheFrame.Content = iPage;
+            UpdateStatus();
         }
 
         private void Announcer_Click(object sender, RoutedEventArgs e)
@@ -512,6 +529,7 @@ namespace Chronokeep.UI
             }
             announcerWindow = new AnnouncerWindow(this, database);
             announcerWindow.Show();
+            UpdateStatus();
         }
 
         public void NetworkUpdateResults(int eventid, List<TimeResult> results)
@@ -592,6 +610,7 @@ namespace Chronokeep.UI
             {
                 Log.D("UI.MainWindow", "Announcer Window was supposed to close but did not.");
             }
+            UpdateStatus();
         }
 
         public bool AnnouncerOpen()
