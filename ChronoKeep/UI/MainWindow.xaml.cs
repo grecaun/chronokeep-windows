@@ -14,13 +14,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Chronokeep.Timing.Announcer;
+using Wpf.Ui.Mvvm.Contracts;
+using System.Windows.Controls;
+using Wpf.Ui.Controls.Interfaces;
 
 namespace Chronokeep.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IMainWindow
+    public partial class MainWindow : INavigationWindow, IMainWindow
     {
         IDBInterface database;
         IMainPage page;
@@ -102,6 +105,7 @@ namespace Chronokeep.UI
             {
                 Updates.Check.Do(this);
             }
+            DataContext = this;
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
@@ -392,25 +396,25 @@ namespace Chronokeep.UI
             {
                 participantsButton.IsEnabled = false;
                 chipsButton.IsEnabled = false;
-                reportsButton.IsEnabled = false;
+                //reportsButton.IsEnabled = false;
                 distancesButton.IsEnabled = false;
                 locationsButton.IsEnabled = false;
                 segmentsButton.IsEnabled = false;
                 agegroupsButton.IsEnabled = false;
                 timingButton.IsEnabled = false;
-                announcer.IsEnabled = false;
+                announcerButton.IsEnabled = false;
             }
             else
             {
                 participantsButton.IsEnabled = true;
                 chipsButton.IsEnabled = true;
-                reportsButton.IsEnabled = false;  // REPORTS DISABLED FOR NOW
+                //reportsButton.IsEnabled = false;  // REPORTS DISABLED FOR NOW
                 distancesButton.IsEnabled = true;
                 locationsButton.IsEnabled = true;
                 segmentsButton.IsEnabled = true;
                 agegroupsButton.IsEnabled = true;
                 timingButton.IsEnabled = true;
-                announcer.IsEnabled = true;
+                announcerButton.IsEnabled = true;
             }
         }
 
@@ -601,6 +605,32 @@ namespace Chronokeep.UI
         }
 
         public void Exit()
+        {
+            Close();
+        }
+
+        public Frame GetFrame()
+        {
+            return TheFrame;
+        }
+
+        public INavigation GetNavigation()
+        {
+            return RootNavigation;
+        }
+
+        public bool Navigate(Type pageType)
+        { return true; }
+
+        public void SetPageService(IPageService pageService)
+        {}
+
+        public void ShowWindow()
+        {
+            Show();
+        }
+
+        public void CloseWindow()
         {
             Close();
         }
