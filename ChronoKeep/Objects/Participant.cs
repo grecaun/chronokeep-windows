@@ -436,29 +436,26 @@ namespace Chronokeep
             }
             if (gender != null && gender.Length > 0)
             {
-                this.gender = gender.ToUpper();
-                if (gender.Length > 1)
+                if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (!gender.Equals("NB"))
-                    {
-                        this.gender = gender.Substring(0, 1);
-                    }
+                    this.gender = "Man";
                 }
-                if (!gender.Equals("M") && !gender.Equals("F") && !gender.Equals("NB"))
+                else if (gender.Equals("F", StringComparison.OrdinalIgnoreCase) ||
+                    gender.Equals("W", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (gender.Equals("W"))
-                    {
-                        this.gender = "F";
-                    }
-                    else
-                    {
-                        this.gender = "U";
-                    }
+                    this.gender = "Woman";
+                }
+                else if (gender.Equals("NB", StringComparison.OrdinalIgnoreCase) ||
+                    gender.Equals("Non-Binary", StringComparison.OrdinalIgnoreCase) ||
+                    gender.Equals("non binary", StringComparison.OrdinalIgnoreCase) ||
+                    gender.Equals("nonbinary", StringComparison.OrdinalIgnoreCase))
+                {
+                    this.gender = "Non-Binary";
                 }
             }
             else
             {
-                this.gender = "U";
+                this.gender = "NS";
             }
             try
             {
@@ -533,6 +530,7 @@ namespace Chronokeep
         public string Gender { get => gender; }
         public string Chip { get => chip; }
         public bool Anonymous { get => eventSpecific.Anonymous; }
+
 
         public int CompareTo(Participant other)
         {

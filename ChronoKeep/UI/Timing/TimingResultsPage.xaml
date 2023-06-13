@@ -20,7 +20,7 @@
                     <GridViewColumn Header="Bib" Width="50" DisplayMemberBinding="{Binding Bib}" />
                     <GridViewColumn Header="Name" Width="130" DisplayMemberBinding="{Binding ParticipantName}" />
                     <GridViewColumn Header="Pl" Width="25" DisplayMemberBinding="{Binding PlaceStr}"/>
-                    <GridViewColumn Header="G" Width="25" DisplayMemberBinding="{Binding Gender}" />
+                    <GridViewColumn Header="G" Width="25" DisplayMemberBinding="{Binding PrettyGender}" />
                     <GridViewColumn Header="GP" Width="25" DisplayMemberBinding="{Binding GenderPlaceStr}"/>
                     <GridViewColumn Header="Age Grp" Width="55" DisplayMemberBinding="{Binding AgeGroupName}" />
                     <GridViewColumn Header="AP" Width="25" DisplayMemberBinding="{Binding AgePlaceStr}"/>

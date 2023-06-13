@@ -1290,7 +1290,52 @@ namespace Chronokeep.Database.SQLite
                             "ALTER TABLE eventspecific ADD COLUMN eventspecific_anonymous SMALLINT NOT NULL DEFAULT 0;" +
                             "UPDATE settings SET value='48' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
                         command.ExecuteNonQuery();
-                        break;
+                        goto case 48;
+                    case 48:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 48.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO old_bib_chip_assoc; " +
+                            "CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "bib INTEGER NOT NULL," +
+                                "chip VARCHAR NOT NULL," +
+                                "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
+                                 "); " +
+                            "INSERT INTO bib_chip_assoc SELECT * FROM old_bib_chip_assoc; " +
+                            "ALTER TABLE participants RENAME TO participants_old; " +
+                            "CREATE TABLE IF NOT EXISTS participants (" +
+                                "participant_id INTEGER PRIMARY KEY," +
+                                "participant_first VARCHAR(50) NOT NULL," +
+                                "participant_last VARCHAR(75) NOT NULL," +
+                                "participant_street VARCHAR(150)," +
+                                "participant_city VARCHAR(75)," +
+                                "participant_state VARCHAR(25)," +
+                                "participant_zip VARCHAR(10)," +
+                                "participant_birthday VARCHAR(15) NOT NULL," +
+                                "participant_email VARCHAR(150)," +
+                                "participant_mobile VARCHAR(20)," +
+                                "participant_parent VARCHAR(150)," +
+                                "participant_country VARCHAR(50)," +
+                                "participant_street2 VARCHAR(50)," +
+                                "participant_gender VARCHAR(50)," +
+                                "emergencycontact_name VARCHAR(150) NOT NULL DEFAULT '911'," +
+                                "emergencycontact_phone VARCHAR(20)," +
+                                "UNIQUE (participant_first, participant_last, participant_street, participant_zip, participant_birthday) ON CONFLICT IGNORE" +
+                                "); " +
+                            "INSERT INTO participants SELECT * FROM participants_old; " +
+                            "DROP TABLE old_bib_chip_assoc; DROP TABLE participants_old; " +
+                            "UPDATE settings SET value='49' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
+                        command.ExecuteNonQuery();
+                        goto case 49;
+                    case 49:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 49.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "UPDATE participants SET participant_gender='Man' WHERE participant_gender='M'; " +
+                            "UPDATE participants SET participant_gender='Woman' WHERE participant_gender='F'; " +
+                            "UPDATE participants SET participant_gender='Non-Binary' WHERE participant_gender='NB'; " +
+                            "UPDATE participants SET participant_gender='NS' WHERE participant_gender='U';";
+                        command.ExecuteNonQuery();
+                        break;       
                 }
                 transaction.Commit();
                 connection.Close();

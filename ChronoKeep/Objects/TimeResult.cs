@@ -197,6 +197,10 @@ namespace Chronokeep
         {
             get => PrettyTypeStr();
         }
+        public string PrettyGender
+        {
+            get => gender == "Man" ? "M" : gender == "Woman" ? "W" : gender == "Non-Binary" ? "NB" : gender.Substring(0, 2);
+        }
 
         public string PrettyTypeStr()
         {

@@ -119,7 +119,30 @@ namespace Chronokeep.UI.Participants
             LastBox.Text = person.LastName;
             BirthdayBox.Text = person.Birthdate;
             AgeBox.Text = person.Age(theEvent.Date);
-            GenderBox.SelectedIndex = person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase) ? 0 : person.Gender.Equals("F", StringComparison.OrdinalIgnoreCase) ? 1 : person.Gender.Equals("NB", StringComparison.OrdinalIgnoreCase) ? 2 : 3;
+            bool genderFound = false;
+            foreach (ComboBoxItem item in GenderBox.Items)
+            {
+                if (person.Gender.Equals(item.Content.ToString()))
+                {
+                    GenderBox.SelectedItem = item;
+                    genderFound = true;
+                }
+            }
+            if (person.Gender.Equals("NS", StringComparison.OrdinalIgnoreCase))
+            {
+                GenderBox.SelectedIndex = 4;
+                genderFound = true;
+            }
+            if (!genderFound)
+            {
+                GenderBox.SelectedIndex = 3;
+                otherGenderBox.Text = person.Gender;
+                ShowOtherGender();
+            }
+            else
+            {
+                DismissOtherGender();
+            }
             StreetBox.Text = person.Street;
             Street2Box.Text = person.Street2;
             CityBox.Text = person.City;
@@ -147,6 +170,7 @@ namespace Chronokeep.UI.Participants
             BirthdayBox.Text = "";
             AgeBox.Text = "";
             GenderBox.SelectedIndex = 0;
+            otherGenderBox.Text = "";
             StreetBox.Text = "";
             Street2Box.Text = "";
             CityBox.Text = "";
@@ -210,6 +234,18 @@ namespace Chronokeep.UI.Participants
             }
             Clear();
             BibBox.Focus();
+        }
+
+        private void ShowOtherGender()
+        {
+            this.Height = 615;
+            otherGenderPanel.Visibility = Visibility.Visible;
+        }
+
+        private void DismissOtherGender()
+        {
+            this.Height = 575;
+            otherGenderPanel.Visibility = Visibility.Collapsed;
         }
 
         private void Modify_Click(object sender, RoutedEventArgs e)
@@ -282,13 +318,13 @@ namespace Chronokeep.UI.Participants
             {
                 gender = ((ComboBoxItem)GenderBox.SelectedItem).Content.ToString();
             }
-            if (gender.Equals("Non-Binary", StringComparison.OrdinalIgnoreCase))
+            if (gender.Equals("Other", StringComparison.OrdinalIgnoreCase))
             {
-                gender = "NB";
-            }
-            else if (gender.Equals("Not Specified", StringComparison.OrdinalIgnoreCase))
-            {
-                gender = "U";
+                gender = otherGenderBox.Text;
+                if (gender.Length < 1)
+                {
+                    gender = "Not Specified";
+                }
             }
             int checkedin = 0;
             int.TryParse(AgeBox.Text, out int age);
@@ -390,6 +426,18 @@ namespace Chronokeep.UI.Participants
             if (e.Key == Key.Return)
             {
                 Add.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            }
+        }
+
+        private void GenderBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string selectedGender = ((ComboBoxItem)GenderBox.SelectedItem).Content.ToString();
+            if (selectedGender.Equals("Other", StringComparison.OrdinalIgnoreCase)) {
+                ShowOtherGender();
+            }
+            else
+            {
+                DismissOtherGender();
             }
         }
     }
