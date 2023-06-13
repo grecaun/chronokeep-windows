@@ -436,6 +436,7 @@ namespace Chronokeep
             }
             if (gender != null && gender.Length > 0)
             {
+                this.gender = CapitalizeFirstAll(gender.Trim());
                 if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
                 {
                     this.gender = "Man";
