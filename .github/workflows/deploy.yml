@@ -62,17 +62,14 @@ jobs:
     - name: Create setup with Inno Setup
       run: .\Inno\ISCC.exe /DMyAppVersion=${{ steps.release-version.outputs.RELEASE_VERSION }} /DMyAppDirectory=$env:Compile_Path /O$env:Compile_Path .\install-script.iss
 
-    # Create the release: https://github.com/elgohr/Github-Release-Action
+    # Create the release
     - name: Create release
       id: create_release
-      uses: elgohr/Github-Release-Action@v4
+      uses: ncipollo/release-action@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        tag_name: ${{ steps.release-version.outputs.RELEASE_VERSION }}
-        release_name:  ${{ steps.release-version.outputs.RELEASE_VERSION }}
-        draft: false
-        prerelease: false
+        tag: ${{ steps.release-version.outputs.RELEASE_VERSION }}
 
     # Upload release asset:   https://github.com/softprops/action-gh-release
     - name: Update release asset
