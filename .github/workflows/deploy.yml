@@ -74,7 +74,8 @@ jobs:
     # Upload release asset
     - name: Update release asset
       id: upload-release-asset
-      uses: Shopify/upload-to-release@v1
+      uses: JasonEtco/upload-to-release@master
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        path: ${{ env.Compile_Path }}\${{ env.App_Packages_Archive }}
+        args: ${{ env.Compile_Path }}\${{ env.App_Packages_Archive }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
