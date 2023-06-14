@@ -74,8 +74,7 @@ jobs:
     # Upload release asset
     - name: Update release asset
       id: upload-release-asset
-      uses: JasonEtco/upload-to-release@master
+      uses: svenstaro/upload-release-action@v2
       with:
-        args: ${{ env.Compile_Path }}\${{ env.App_Packages_Archive }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ${{ env.Compile_Path }}\${{ env.App_Packages_Archive }}
