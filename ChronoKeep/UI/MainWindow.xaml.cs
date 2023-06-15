@@ -392,7 +392,6 @@ namespace Chronokeep.UI
             {
                 participantsButton.IsEnabled = false;
                 chipsButton.IsEnabled = false;
-                reportsButton.IsEnabled = false;
                 distancesButton.IsEnabled = false;
                 locationsButton.IsEnabled = false;
                 segmentsButton.IsEnabled = false;
@@ -404,7 +403,6 @@ namespace Chronokeep.UI
             {
                 participantsButton.IsEnabled = true;
                 chipsButton.IsEnabled = true;
-                reportsButton.IsEnabled = false;  // REPORTS DISABLED FOR NOW
                 distancesButton.IsEnabled = true;
                 locationsButton.IsEnabled = true;
                 segmentsButton.IsEnabled = true;

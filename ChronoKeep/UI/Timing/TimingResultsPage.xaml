@@ -19,11 +19,11 @@
                     <GridViewColumn Header="ChipTime" Width="90" DisplayMemberBinding="{Binding ChipTime}" x:Name="ChipTimeHeader" />
                     <GridViewColumn Header="Bib" Width="50" DisplayMemberBinding="{Binding Bib}" />
                     <GridViewColumn Header="Name" Width="130" DisplayMemberBinding="{Binding ParticipantName}" />
-                    <GridViewColumn Header="Pl" Width="25" DisplayMemberBinding="{Binding PlaceStr}"/>
+                    <GridViewColumn Header="Pl" Width="40" DisplayMemberBinding="{Binding PlaceStr}"/>
                     <GridViewColumn Header="G" Width="25" DisplayMemberBinding="{Binding PrettyGender}" />
-                    <GridViewColumn Header="GP" Width="25" DisplayMemberBinding="{Binding GenderPlaceStr}"/>
+                    <GridViewColumn Header="GP" Width="40" DisplayMemberBinding="{Binding GenderPlaceStr}"/>
                     <GridViewColumn Header="Age Grp" Width="55" DisplayMemberBinding="{Binding AgeGroupName}" />
-                    <GridViewColumn Header="AP" Width="25" DisplayMemberBinding="{Binding AgePlaceStr}"/>
+                    <GridViewColumn Header="AP" Width="40" DisplayMemberBinding="{Binding AgePlaceStr}"/>
                     <GridViewColumn Header="Distance" Width="60" DisplayMemberBinding="{Binding DistanceName}" />
                     <GridViewColumn Header="T" Width="20" DisplayMemberBinding="{Binding PrettyType}"/>
                     <GridViewColumn Header="Segment" Width="70" DisplayMemberBinding="{Binding SegmentName}" />
