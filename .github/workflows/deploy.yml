@@ -17,7 +17,7 @@ jobs:
       SigningCertificate: Chronokeep\Chronokeep.pfx
       Solution_Path: Chronokeep.sln
       App_Packages_Archive: chronokeep-setup.exe
-      Compile_Path: Chronokeep\bin\Release\net6.0-windows
+      Compile_Path: Chronokeep\bin\Release\net7.0-windows
       Version_Path: ChronoKeep\version.txt
       Actions_Allow_Unsecure_Commands: true # Allows AddPAth and SetEnv commands
 
