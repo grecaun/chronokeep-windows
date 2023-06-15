@@ -81,7 +81,7 @@ namespace Chronokeep
                 string[] headers = new string[numHeaders];
                 for (int i=1; i<=numHeaders; i++)
                 {
-                    headers[i-1] = worksheet.Cell(1, i).Value == null ? "" : worksheet.Cell(1,i).Value.ToString();
+                    headers[i-1] = worksheet.Cell(1, i).Value.IsBlank ? "" : worksheet.Cell(1,i).Value.ToString();
                 }
                 Data = new ImportData(headers, FilePath, ImportData.FileType.EXCEL);
             }
