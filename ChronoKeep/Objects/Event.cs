@@ -24,6 +24,8 @@ namespace Chronokeep
         {
             this.date = new DateTime(d).ToShortDateString();
             this.name = n;
+            this.start_window = 600;
+            this.finish_ignore_within = 600;
         }
 
         public Event(string n, long d, string yearcode)
@@ -31,6 +33,8 @@ namespace Chronokeep
             this.date = new DateTime(d).ToShortDateString();
             this.name = n;
             this.yearcode = yearcode;
+            this.start_window = 600;
+            this.finish_ignore_within = 600;
         }
 
         public Event(int id, string n, long d)
@@ -38,6 +42,8 @@ namespace Chronokeep
             this.identifier = id;
             this.name = n;
             this.date = new DateTime(d).ToShortDateString();
+            this.start_window = 600;
+            this.finish_ignore_within = 600;
         }
 
         public Event(string n, long d, int age, int start, int seg, int gun)
@@ -48,6 +54,8 @@ namespace Chronokeep
             this.common_start_finish = start;
             this.distance_specific_segments = seg;
             this.rank_by_gun = gun;
+            this.start_window = 600;
+            this.finish_ignore_within = 600;
         }
 
         public Event(int id, string n, long d, int age, int start, int seg, int gun)
@@ -59,6 +67,8 @@ namespace Chronokeep
             this.common_start_finish = start;
             this.distance_specific_segments = seg;
             this.rank_by_gun = gun;
+            this.start_window = 600;
+            this.finish_ignore_within = 600;
         }
 
         public Event(int id, string n, string d, int age, int start, int seg,

@@ -26,12 +26,17 @@
             <Label Content="Age" FontSize="16" Margin="0,0,5,0" Width="45" HorizontalContentAlignment="Right" VerticalAlignment="Center"/>
             <TextBox Name="AgeBox" FontSize="16" Margin="0,5,5,5" Width="40" KeyDown="Box_KeyDown" VerticalContentAlignment="Center"/>
             <Label Content="Gender" FontSize="16" Margin="0,0,5,0" Width="70" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
-            <ComboBox Name="GenderBox" FontSize="16" Margin="0,5,5,5">
-                <ComboBoxItem Content="Male"/>
-                <ComboBoxItem Content="Female"/>
+            <ComboBox Name="GenderBox" FontSize="16" Margin="0,5,5,5" SelectionChanged="GenderBox_SelectionChanged">
+                <ComboBoxItem Content="Man"/>
+                <ComboBoxItem Content="Woman"/>
                 <ComboBoxItem Content="Non-Binary"/>
+                <ComboBoxItem Content="Other"/>
                 <ComboBoxItem Content="Not Specified"/>
             </ComboBox>
+        </DockPanel>
+        <DockPanel Name="otherGenderPanel" HorizontalAlignment="Right">
+            <Label Content="Gender" FontSize="16" Margin="0,5,5,5" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
+            <TextBox Name="otherGenderBox" FontSize="16" Margin="0,5,5,5" Width="100" KeyDown="Box_KeyDown" Height="25"/>
         </DockPanel>
         <DockPanel>
             <Label Content="Street" FontSize="16" Margin="5,0,5,0" Width="100" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
