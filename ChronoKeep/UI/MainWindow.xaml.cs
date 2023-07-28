@@ -378,6 +378,11 @@ namespace Chronokeep.UI
             {
                 page.UpdateView();
             }
+            // Let the announcer window know that it has new information.
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            {
+                if (announcerWindow != null) { announcerWindow.UpdateTiming(); }
+            }));
         }
 
         public void AddWindow(Window w)

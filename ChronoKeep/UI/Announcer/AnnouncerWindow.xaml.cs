@@ -26,6 +26,7 @@ namespace Chronokeep.UI.Announcer
         IMainWindow window = null;
         AnnouncerWorker announcerWorker = null;
         Thread announcerThread = null;
+        IDBInterface database = null;
 
         Event theEvent = null;
 
@@ -33,11 +34,13 @@ namespace Chronokeep.UI.Announcer
         {
             InitializeComponent();
             this.window = window;
+            this.database = database;
             theEvent = database.GetCurrentEvent();
             announcerWorker = AnnouncerWorker.NewAnnouncer(window, database);
             announcerThread = new Thread(new ThreadStart(announcerWorker.Run));
             announcerThread.Start();
             UpdateView();
+            UpdateTiming();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -53,40 +56,190 @@ namespace Chronokeep.UI.Announcer
             }
         }
 
+        public void UpdateTiming()
+        {
+            if (!window.AnnouncerConnected())
+            {
+                // Get our list of results to display.
+                List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
+                // Ensure results are sorted.
+                results.Sort(TimeResult.CompareBySystemTime);
+                results.RemoveAll((x) => TimeResult.IsNotFinish(x) || x.IsDNF());
+                results.Reverse();
+                // Remove old entries.
+                AnnouncerBox.Items.Clear();
+                // Add header item.
+                AnnouncerBox.Items.Add(new AResultHeaderItem());
+                // Add all results to the display.
+                int bg = 1;
+                foreach (TimeResult res in results)
+                {
+                    AnnouncerBox.Items.Add(new AResultItem(res, theEvent, bg));
+                    bg = Math.Abs(bg - 1);
+                }
+            }
+        }
+
         public void UpdateView()
         {
             // Check if we've got an announcer reader connected.
-            if (!window.AnnouncerConnected())
+            if (window.AnnouncerConnected())
             {
-                NoAnnouncer.Height = new GridLength(100);
-            }
-            else
-            {
-                NoAnnouncer.Height = new GridLength(0);
-            }
-            // Get our list of people to display. Remove anything older than 45 seconds.
-            List<AnnouncerParticipant> participants = AnnouncerWorker.GetList();
-            participants.Sort((x1, x2) => x1.CompareTo(x2));
-            DateTime cutoff = DateTime.Now.AddSeconds(Constants.Timing.ANNOUNCER_DISPLAY_WINDOW);
-            AnnouncerBox.Items.Clear();
-            AnnouncerBox.Items.Add(new AHeaderItem());
-            foreach (AnnouncerParticipant part in participants)
-            {
-                // If 0 then they're equal, if greater then 0 then now came before the when.
-                // Only display participants that have shown up within the SecondGap window.
-                if (DateTime.Compare(cutoff, part.When) <= 0)
+                // Get our list of people to display. Remove anything older than 45 seconds.
+                List<AnnouncerParticipant> participants = AnnouncerWorker.GetList();
+                participants.Sort((x1, x2) => x1.CompareTo(x2));
+                DateTime cutoff = DateTime.Now.AddSeconds(Constants.Timing.ANNOUNCER_DISPLAY_WINDOW);
+                AnnouncerBox.Items.Clear();
+                AnnouncerBox.Items.Add(new AHeaderItem());
+                int bg = 1;
+                foreach (AnnouncerParticipant part in participants)
                 {
-                    // Display in order they came in in the last 45 seconds.
-                    AnnouncerBox.Items.Add(new AnAnnouncerItem(part, theEvent));
-                    // Display the last person in first.
-                    //AnnouncerBox.Items.Insert(1, new AnAnnouncerItem(part, theEvent));
+                    // If 0 then they're equal, if greater then 0 then now came before the when.
+                    // Only display participants that have shown up within the SecondGap window.
+                    if (DateTime.Compare(cutoff, part.When) <= 0)
+                    {
+                        // Display in order they came in in the last 45 seconds.
+                        AnnouncerBox.Items.Add(new AnAnnouncerItem(part, theEvent));
+                        // Display the last person in first.
+                        //AnnouncerBox.Items.Insert(1, new AnAnnouncerItem(part, theEvent));
+                        bg = Math.Abs(bg - 1);
+                    }
                 }
+            }
+        }
+
+        private class AResultItem : ListBoxItem
+        {
+            public AResultItem(TimeResult res, Event theEvent, int bg)
+            {
+                // Time - Distance - Name - City - Age - Gender
+                StackPanel mainPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Margin = new Thickness(10, 10, 10, 10)
+                };
+                // Distance
+                mainPanel.Children.Add(new Label()
+                {
+                    Content = res.DistanceName,
+                    FontSize = 16,
+                    Width = 150,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Place
+                mainPanel.Children.Add(new Label()
+                {
+                    Content = res.PlaceStr,
+                    FontSize = 16,
+                    Width = 60,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Chip Time
+                mainPanel.Children.Add(new Label()
+                {
+                    Content = res.ChipTime,
+                    FontSize = 20,
+                    Width = 150,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Name
+                mainPanel.Children.Add(new Label()
+                {
+                    Content = res.ParticipantName,
+                    FontSize = 20,
+                    MinWidth = 250,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Age && Gender
+                mainPanel.Children.Add(new Label()
+                {
+                    Content = string.Format("{0} {1}", res.Age(theEvent.Date), res.PrettyGender),
+                    FontSize = 20,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                this.Content = mainPanel;
+                byte alpha = (byte)(120 * bg);
+                this.Background = new SolidColorBrush(Color.FromArgb(alpha, 230, 230, 230));
+            }
+        }
+        private class AResultHeaderItem : ListBoxItem
+        {
+            public AResultHeaderItem()
+            {
+                // Distance - Place - Chip Time - Name - City - Age - Gender
+                StackPanel mainPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Margin = new Thickness(10, 10, 10, 10)
+                };
+                // Distance
+                mainPanel.Children.Add(new Label()
+                {
+                    Content = "Distance",
+                    FontSize = 16,
+                    Width = 150,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Place
+                mainPanel.Children.Add(new Label()
+                {
+                    Content = "Pl",
+                    FontSize = 16,
+                    Width = 60,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Chip Time
+                mainPanel.Children.Add(new Label()
+                {
+                    Content = "Time",
+                    FontSize = 20,
+                    Width = 150,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Name
+                mainPanel.Children.Add(new Label()
+                {
+                    Content = "Name",
+                    FontSize = 20,
+                    Width = 250,
+                    Margin = new Thickness(0, 0, 5, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                // Age && Gender
+                mainPanel.Children.Add(new Label()
+                {
+                    Content = "Age G",
+                    FontSize = 20,
+                    Margin = new Thickness(0, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                this.Content = mainPanel;
             }
         }
 
         private class AnAnnouncerItem : ListBoxItem
         {
-            public AnAnnouncerItem(AnnouncerParticipant part, Event theEvent)
+            public AnAnnouncerItem(AnnouncerParticipant part, Event theEvent, int bg)
             {
                 StackPanel mainPanel = new StackPanel()
                 {
@@ -171,6 +324,8 @@ namespace Chronokeep.UI.Announcer
                     });
                 }
                 this.Content = mainPanel;
+                byte alpha = (byte)(120 * bg);
+                this.Background = new SolidColorBrush(Color.FromArgb(alpha, 230, 230, 230));
             }
         }
         private class AHeaderItem : ListBoxItem
@@ -248,6 +403,33 @@ namespace Chronokeep.UI.Announcer
                 });
                 mainPanel.Children.Add(namePanel);
                 this.Content = mainPanel;
+            }
+        }
+
+        private void AnnouncerBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            ScrollViewer scv = ScrollBox;
+            if (e.Delta < 0)
+            {
+                if (scv.VerticalOffset - e.Delta <= scv.ExtentHeight - scv.ViewportHeight)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToBottom();
+                }
+            }
+            else
+            {
+                if (scv.VerticalOffset - e.Delta > 0)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToTop();
+                }
             }
         }
     }
