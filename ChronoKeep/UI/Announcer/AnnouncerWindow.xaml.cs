@@ -99,7 +99,7 @@ namespace Chronokeep.UI.Announcer
                     if (DateTime.Compare(cutoff, part.When) <= 0)
                     {
                         // Display in order they came in in the last 45 seconds.
-                        AnnouncerBox.Items.Add(new AnAnnouncerItem(part, theEvent));
+                        AnnouncerBox.Items.Add(new AnAnnouncerItem(part, theEvent, bg));
                         // Display the last person in first.
                         //AnnouncerBox.Items.Insert(1, new AnAnnouncerItem(part, theEvent));
                         bg = Math.Abs(bg - 1);
