@@ -501,8 +501,9 @@ namespace Chronokeep.UI.Export
                 {
                     exporter.ExportData(saveFileDialog.FileName);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.E("UI.Export.ExportResults.Error", ex.ToString());
                     MessageBox.Show("Error saving file.");
                 }
             }
