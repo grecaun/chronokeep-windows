@@ -22,9 +22,6 @@ namespace Chronokeep.UI.Participants
 
         private bool ParticipantChanged = false;
 
-        Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
-        Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
-
         public ModifyParticipantWindow(IMainWindow window, IDBInterface database, Participant person)
         {
             InitializeComponent();
@@ -33,6 +30,11 @@ namespace Chronokeep.UI.Participants
             this.database = database;
             this.person = person;
             theEvent = database.GetCurrentEvent();
+            if (theEvent == null)
+            {
+                MessageBox.Show("Unable to get event.");
+                this.Close();
+            }
             if (person == null)
             {
                 Add.Click += new RoutedEventHandler(this.Add_Click);
@@ -53,6 +55,11 @@ namespace Chronokeep.UI.Participants
             this.tPage = tPage;
             this.database = database;
             theEvent = database.GetCurrentEvent();
+            if (theEvent == null)
+            {
+                MessageBox.Show("Unable to get event.");
+                this.Close();
+            }
             person = database.GetParticipantEventSpecific(theEvent.Identifier, EventSpecificId);
             if (person == null)
             {
@@ -370,9 +377,13 @@ namespace Chronokeep.UI.Participants
                 ECPhoneBox.Text,
                 "" // placeholder chip value
                 );
+            age = output.GetAge(theEvent.Date);
+            Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
+            Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
             int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DISTANCEID : output.EventSpecific.DistanceIdentifier;
             if (AgeGroups == null || age < 0)
             {
+                Log.D("UI.Participants.ModifyParticipantWindow", "Age Groups not found or Age is less than 0.");
                 output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
                 output.EventSpecific.AgeGroupName = "0-110";
             }
@@ -390,6 +401,7 @@ namespace Chronokeep.UI.Participants
             }
             else
             {
+                Log.D("UI.Participants.ModifyParticipantWindow", "Age Group not found.");
                 output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
                 output.EventSpecific.AgeGroupName = "0-110";
             }

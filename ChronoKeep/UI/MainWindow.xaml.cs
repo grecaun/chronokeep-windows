@@ -115,17 +115,6 @@ namespace Chronokeep.UI
             SwitchPage(new DashboardPage(this, database), true);
         }
 
-        private void ReportsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Reports button clicked.");
-            if (page is ReportsPage)
-            {
-                Log.D("UI.MainWindow", "Reports page already displayed");
-                return;
-            }
-            //SwitchPage(new ReportsPage(this, database), true);
-        }
-
         private void ParticipantsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainWindow", "Participants button clicked.");
@@ -374,13 +363,13 @@ namespace Chronokeep.UI
 
         public void UpdateTiming()
         {
-            if (page is TimingPage)
-            {
-                page.UpdateView();
-            }
             // Let the announcer window know that it has new information.
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
+                if (page is TimingPage)
+                {
+                    page.UpdateView();
+                }
                 if (announcerWindow != null) { announcerWindow.UpdateTiming(); }
             }));
         }
@@ -415,12 +404,6 @@ namespace Chronokeep.UI
                 timingButton.IsEnabled = true;
                 announcer.IsEnabled = true;
             }
-        }
-
-        public bool NewTimingInfo()
-        {
-            bool output = (TimingWorker.NewResultsExist() || TimingController.NewReadsExist());
-            return output;
         }
 
         public async void ConnectTimingSystem(TimingSystem system)

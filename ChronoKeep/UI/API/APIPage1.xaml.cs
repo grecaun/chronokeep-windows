@@ -63,6 +63,12 @@ namespace Chronokeep.UI.API
                 count++;
             }
             APIBox.SelectedIndex = ix;
+            Event theEvent = database.GetCurrentEvent();
+            // Check if we've actually got a linked event, then unlink it.
+            if (theEvent != null && theEvent.API_ID != Constants.ResultsAPI.NULL_ID && theEvent.API_Event_ID != Constants.ResultsAPI.NULL_EVENT_ID)
+            {
+                unlinkButton.Visibility = Visibility.Visible;
+            }
         }
 
         private void Next_Click(object sender, RoutedEventArgs e)
@@ -72,6 +78,23 @@ namespace Chronokeep.UI.API
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
+            window.Close();
+        }
+
+        private void Unlink_Click(object sender, RoutedEventArgs e)
+        {
+            Event theEvent = database.GetCurrentEvent();
+            // Check if we've actually got a linked event, then unlink it.
+            if (theEvent != null && theEvent.API_ID != Constants.ResultsAPI.NULL_ID && theEvent.API_Event_ID != Constants.ResultsAPI.NULL_EVENT_ID)
+            {
+                theEvent.API_ID = Constants.ResultsAPI.NULL_ID;
+                theEvent.API_Event_ID = Constants.ResultsAPI.NULL_EVENT_ID;
+                database.UpdateEvent(theEvent);
+            }
+            else
+            {
+                MessageBox.Show("Unable to unlink event.");
+            }
             window.Close();
         }
     }

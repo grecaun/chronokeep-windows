@@ -17,10 +17,8 @@ namespace Chronokeep.Timing
 
         private static readonly Semaphore semaphore = new Semaphore(0, 2);
         private static readonly Mutex mutex = new Mutex();
-        private static readonly Mutex ResultsMutex = new Mutex();
         private static readonly Mutex ResetDictionariesMutex = new Mutex();
         private static bool QuittingTime = false;
-        private static bool NewResults = false;
         private static bool ResetDictionariesBool = true;
 
         private static TimingDictionary dictionary = new TimingDictionary();
@@ -48,20 +46,6 @@ namespace Chronokeep.Timing
                 QuittingTime = true;
                 mutex.ReleaseMutex();
             }
-        }
-
-        // Checks if new results exist, then resets the variable.
-        public static bool NewResultsExist()
-        {
-            bool output = false;
-            Log.D("Timing.TimingWorker", "Mutex Wait 02");
-            if (ResultsMutex.WaitOne(3000))
-            {
-                output = NewResults;
-                NewResults = false;
-                ResultsMutex.ReleaseMutex();
-            }
-            return output;
         }
 
         public static void Notify()
@@ -276,12 +260,7 @@ namespace Chronokeep.Timing
                     }
                     if (touched)
                     {
-                        Log.D("Timing.TimingWorker", "Mutex Wait 07");
-                        if (ResultsMutex.WaitOne(3000))
-                        {
-                            NewResults = true;
-                            ResultsMutex.ReleaseMutex();
-                        }
+                        window.UpdateTiming();
                     }
                 }
             } while (true);
