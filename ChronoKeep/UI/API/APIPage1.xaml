@@ -13,6 +13,7 @@
             <Label Content="Select API to use:" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,10"/>
             <ComboBox Name="APIBox" Width="200" VerticalAlignment="Center" />
         </StackPanel>
+        <Button x:Name="unlinkButton" Content="Unlink API" Height="25" Width="100" VerticalAlignment="Bottom" Margin="0,0,0,50" Click="Unlink_Click" Visibility="Collapsed" />
         <Button Content="Next" Height="25" Width="100" VerticalAlignment="Bottom" Margin="0,0,150,10" Click="Next_Click" />
         <Button Content="Cancel" Height="25" Width="100" VerticalAlignment="Bottom" Margin="150,0,0,10" Click="Cancel_Click" />
     </Grid>

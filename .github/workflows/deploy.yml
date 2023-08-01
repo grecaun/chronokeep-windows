@@ -17,7 +17,7 @@ jobs:
       SigningCertificate: Chronokeep\Chronokeep.pfx
       Solution_Path: Chronokeep.sln
       App_Packages_Archive: chronokeep-setup.exe
-      Compile_Path: Chronokeep\bin\Release\net6.0-windows
+      Compile_Path: Chronokeep\bin\Release\net7.0-windows
       Version_Path: ChronoKeep\version.txt
       Actions_Allow_Unsecure_Commands: true # Allows AddPAth and SetEnv commands
 
@@ -31,7 +31,7 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.x'
+        dotnet-version: '7.x'
 
     # Add  MsBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe

@@ -14,17 +14,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Chronokeep.Timing.Announcer;
-using Wpf.Ui.Mvvm.Contracts;
-using System.Windows.Controls;
-using Wpf.Ui.Controls.Interfaces;
-using System.Net;
 
 namespace Chronokeep.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : INavigationWindow, IMainWindow
+    public partial class MainWindow : Window, IMainWindow
     {
         IDBInterface database;
         IMainPage page;
@@ -65,8 +61,8 @@ namespace Chronokeep.UI
             }
             release = true;
 
-            string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
-            string path = Path.Combine(dirPath, dbName);
+            string dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
+            string path = System.IO.Path.Combine(dirPath, dbName);
             Log.D("UI.MainWindow", "Looking for database file.");
             if (!Directory.Exists(dirPath))
             {
@@ -89,6 +85,7 @@ namespace Chronokeep.UI
                 this.Close();
             }
             Constants.Settings.SetupSettings(database);
+            UpdateStatus();
 
             // Setup AgeGroup static variables
             Event theEvent = database.GetCurrentEvent();
@@ -100,14 +97,11 @@ namespace Chronokeep.UI
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
 
-            UpdateStatus();
-
             // Check for updates.
             if (database.GetAppSetting(Constants.Settings.CHECK_UPDATES).value == Constants.Settings.SETTING_TRUE)
             {
                 Updates.Check.Do(this);
             }
-            DataContext = this;
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
@@ -119,17 +113,6 @@ namespace Chronokeep.UI
                 return;
             }
             SwitchPage(new DashboardPage(this, database), true);
-        }
-
-        private void ReportsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.MainWindow", "Reports button clicked.");
-            if (page is ReportsPage)
-            {
-                Log.D("UI.MainWindow", "Reports page already displayed");
-                return;
-            }
-            //SwitchPage(new ReportsPage(this, database), true);
         }
 
         private void ParticipantsButton_Click(object sender, RoutedEventArgs e)
@@ -380,10 +363,15 @@ namespace Chronokeep.UI
 
         public void UpdateTiming()
         {
-            if (page is TimingPage)
+            // Let the announcer window know that it has new information.
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
-                page.UpdateView();
-            }
+                if (page is TimingPage)
+                {
+                    page.UpdateView();
+                }
+                if (announcerWindow != null) { announcerWindow.UpdateTiming(); }
+            }));
         }
 
         public void AddWindow(Window w)
@@ -398,46 +386,24 @@ namespace Chronokeep.UI
             {
                 participantsButton.IsEnabled = false;
                 chipsButton.IsEnabled = false;
-                //reportsButton.IsEnabled = false;
                 distancesButton.IsEnabled = false;
                 locationsButton.IsEnabled = false;
                 segmentsButton.IsEnabled = false;
                 agegroupsButton.IsEnabled = false;
                 timingButton.IsEnabled = false;
-                announcerButton.IsEnabled = false;
+                announcer.IsEnabled = false;
             }
             else
             {
                 participantsButton.IsEnabled = true;
                 chipsButton.IsEnabled = true;
-                //reportsButton.IsEnabled = false;  // REPORTS DISABLED FOR NOW
                 distancesButton.IsEnabled = true;
                 locationsButton.IsEnabled = true;
                 segmentsButton.IsEnabled = true;
                 agegroupsButton.IsEnabled = true;
                 timingButton.IsEnabled = true;
-                announcerButton.IsEnabled = true;
+                announcer.IsEnabled = true;
             }
-            if (OperatingSystem.IsWindowsVersionAtLeast(8))
-            {
-                dashboardButton.IsActive = page.GetType() == typeof(DashboardPage);
-                timingButton.IsActive = page.GetType() == typeof(TimingPage);
-                announcerButton.IsActive = announcerWindow != null;
-                participantsButton.IsActive = page.GetType() == typeof(ParticipantsPage);
-                chipsButton.IsActive = page.GetType() == typeof(ChipAssigmentPage);
-                locationsButton.IsActive = page.GetType() == typeof(LocationsPage);
-                distancesButton.IsActive = page.GetType() == typeof(DistancesPage);
-                segmentsButton.IsActive = page.GetType() == typeof(SegmentsPage);
-                agegroupsButton.IsActive = page.GetType() == typeof(AgeGroupsPage);
-                settingsButton.IsActive = page.GetType() == typeof(SettingsPage);
-                aboutButton.IsActive = page.GetType() == typeof(AboutPage);
-            }
-        }
-
-        public bool NewTimingInfo()
-        {
-            bool output = (TimingWorker.NewResultsExist() || TimingController.NewReadsExist());
-            return output;
         }
 
         public async void ConnectTimingSystem(TimingSystem system)
@@ -517,7 +483,6 @@ namespace Chronokeep.UI
             page = iPage;
             TheFrame.NavigationService.RemoveBackEntry();
             TheFrame.Content = iPage;
-            UpdateStatus();
         }
 
         private void Announcer_Click(object sender, RoutedEventArgs e)
@@ -529,7 +494,6 @@ namespace Chronokeep.UI
             }
             announcerWindow = new AnnouncerWindow(this, database);
             announcerWindow.Show();
-            UpdateStatus();
         }
 
         public void NetworkUpdateResults(int eventid, List<TimeResult> results)
@@ -610,7 +574,6 @@ namespace Chronokeep.UI
             {
                 Log.D("UI.MainWindow", "Announcer Window was supposed to close but did not.");
             }
-            UpdateStatus();
         }
 
         public bool AnnouncerOpen()
@@ -624,32 +587,6 @@ namespace Chronokeep.UI
         }
 
         public void Exit()
-        {
-            Close();
-        }
-
-        public Frame GetFrame()
-        {
-            return TheFrame;
-        }
-
-        public INavigation GetNavigation()
-        {
-            return RootNavigation;
-        }
-
-        public bool Navigate(Type pageType)
-        { return true; }
-
-        public void SetPageService(IPageService pageService)
-        {}
-
-        public void ShowWindow()
-        {
-            Show();
-        }
-
-        public void CloseWindow()
         {
             Close();
         }

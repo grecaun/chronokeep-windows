@@ -21,7 +21,6 @@ namespace Chronokeep.Interfaces
         void UpdateStatus();
         void UpdateTimingFromController();
         void UpdateTiming();
-        bool NewTimingInfo();
         void UpdateAnnouncerWindow();
 
         // Timing System related calls.

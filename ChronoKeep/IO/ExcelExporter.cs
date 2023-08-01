@@ -26,7 +26,7 @@ namespace Chronokeep.UI.IO
                 for (int j = 0; j < localData[0].Length; j++)
                 {
                     worksheet.Cell(i + 1, j + 1).Style.NumberFormat.Format = "@";
-                    worksheet.Cell(i + 1, j + 1).Value = localData[i][j].ToString();
+                    worksheet.Cell(i+1, j+1).Value = localData[i][j] != null ? localData[i][j].ToString() : "";
                 }
             }
             workbook.SaveAs(Path);

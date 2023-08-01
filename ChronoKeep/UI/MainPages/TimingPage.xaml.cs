@@ -71,10 +71,6 @@ namespace Chronokeep.UI.MainPages
             Timer.Tick += new EventHandler(Timer_Click);
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
 
-            // Setup a timer for updating the view
-            ViewUpdateTimer.Tick += new EventHandler(ViewUpdateTimer_Click);
-            ViewUpdateTimer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-
             IPAdd.Content = "localhost";
             Port.Content = "6933";
             // Check for default IP address to give to our reader boxes for connections
@@ -344,27 +340,6 @@ namespace Chronokeep.UI.MainPages
                 ManualAPIButton.IsEnabled = true;
             }
             subPage.UpdateView();
-        }
-
-        private async void ViewUpdateTimer_Click(object sender, EventArgs e)
-        {
-            Log.D("UI.MainPages.TimingPage", "View Update Timer Click");
-            bool updates = false;
-            await Task.Run(() =>
-            {
-                updates = mWindow.NewTimingInfo();
-            });
-            if (updates)
-            {
-                Log.D("UI.MainPages.TimingPage", "Updates available.");
-                List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
-                stats.Clear();
-                foreach (DistanceStat s in inStats)
-                {
-                    stats.Add(s);
-                }
-                UpdateSubView();
-            }
         }
 
         public void UpdateSubView()
