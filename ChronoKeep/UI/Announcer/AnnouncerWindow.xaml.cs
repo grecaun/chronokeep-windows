@@ -15,13 +15,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Announcer
 {
     /// <summary>
     /// Interaction logic for AnnouncerWindow.xaml
     /// </summary>
-    public partial class AnnouncerWindow : Window
+    public partial class AnnouncerWindow : UiWindow
     {
         IMainWindow window = null;
         AnnouncerWorker announcerWorker = null;
