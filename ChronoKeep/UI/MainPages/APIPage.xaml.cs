@@ -161,18 +161,18 @@ namespace Chronokeep.UI.MainPages
                 this.IsTabStop = false;
 
                 StackPanel nickPanel = new StackPanel();
-                nickPanel.Children.Add(new Label
+                nickPanel.Children.Add(new TextBlock
                 {
-                    Content = "Nickname",
+                    Text = "Nickname",
                     FontSize = 15,
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Center
+                    TextAlignment = TextAlignment.Center
                 });
                 APINickname = new TextBox
                 {
                     FontSize = 15,
-                    Height = 25,
+                    Height = 45,
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center,
                     Text = api.Nickname
@@ -183,18 +183,18 @@ namespace Chronokeep.UI.MainPages
 
 
                 StackPanel typePanel = new StackPanel();
-                typePanel.Children.Add(new Label
+                typePanel.Children.Add(new TextBlock
                 {
-                    Content = "API Type",
+                    Text = "API Type",
                     FontSize = 15,
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Center
+                    TextAlignment = TextAlignment.Center
                 });
                 APIType = new ComboBox()
                 {
                     FontSize = 14,
-                    Height = 25,
+                    Height = 45,
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center
                 };
@@ -213,18 +213,18 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(typePanel, 1);
 
                 StackPanel urlPanel = new StackPanel();
-                urlPanel.Children.Add(new Label
+                urlPanel.Children.Add(new TextBlock
                 {
-                    Content = "API URL",
+                    Text = "API URL",
                     FontSize = 15,
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Center
+                    TextAlignment = TextAlignment.Center
                 });
                 APIURL = new TextBox
                 {
                     FontSize = 15,
-                    Height = 25,
+                    Height = 45,
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center,
                     Text = api.URL,
@@ -248,18 +248,18 @@ namespace Chronokeep.UI.MainPages
                 APIType.SelectionChanged += new SelectionChangedEventHandler(this.APIType_SelectionChanged);
 
                 StackPanel tokenPanel = new StackPanel();
-                tokenPanel.Children.Add(new Label
+                tokenPanel.Children.Add(new TextBlock
                 {
-                    Content = "API Key",
+                    Text = "API Key",
                     FontSize = 15,
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Center
+                    TextAlignment = TextAlignment.Center
                 });
                 APIToken = new TextBox
                 {
                     FontSize = 15,
-                    Height = 25,
+                    Height = 45,
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center,
                     Text = api.AuthToken
