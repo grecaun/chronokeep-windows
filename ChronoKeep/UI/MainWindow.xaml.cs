@@ -18,6 +18,7 @@ using Wpf.Ui.Mvvm.Contracts;
 using System.Windows.Controls;
 using Wpf.Ui.Controls.Interfaces;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace Chronokeep.UI
 {
@@ -65,8 +66,8 @@ namespace Chronokeep.UI
             }
             release = true;
 
-            string dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
-            string path = System.IO.Path.Combine(dirPath, dbName);
+            string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
+            string path = Path.Combine(dirPath, dbName);
             Log.D("UI.MainWindow", "Looking for database file.");
             if (!Directory.Exists(dirPath))
             {
@@ -105,6 +106,17 @@ namespace Chronokeep.UI
             if (database.GetAppSetting(Constants.Settings.CHECK_UPDATES).value == Constants.Settings.SETTING_TRUE)
             {
                 Updates.Check.Do(this);
+            }
+
+            AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
+            if (OperatingSystem.IsWindowsVersionAtLeast(7))
+            {
+                var theme = Wpf.Ui.Appearance.ThemeType.Light;
+                if ((themeColor.value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.value == Constants.Settings.THEME_DARK)
+                {
+                    theme = Wpf.Ui.Appearance.ThemeType.Dark;
+                }
+                Wpf.Ui.Appearance.Theme.Apply(theme, Wpf.Ui.Appearance.BackgroundType.Mica, false);
             }
             DataContext = this;
         }
@@ -589,6 +601,7 @@ namespace Chronokeep.UI
             if (announcerWindow != null)
             {
                 announcerWindow = null;
+                UpdateStatus();
                 Log.D("UI.MainWindow", "Announcer Window has closed.");
             }
             else

@@ -14,6 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
+using System.Runtime.InteropServices;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -24,6 +26,9 @@ namespace Chronokeep.UI.MainPages
     {
         IMainWindow mWindow;
         IDBInterface database;
+
+        private int SystemTheme = -1;
+        private int ThemeOffset = -1;
 
         public SettingsPage(IMainWindow mainWindow, IDBInterface database)
         {
@@ -40,6 +45,26 @@ namespace Chronokeep.UI.MainPages
             {
                 Content = "Ipico",
                 Uid = Constants.Settings.TIMING_IPICO
+            });
+            SystemTheme = Utils.GetSystemTheme();
+            if (SystemTheme != -1)
+            {
+                ThemeOffset = 0;
+                ThemeColorBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "System",
+                    Uid = Constants.Settings.THEME_SYSTEM
+                });
+            }
+            ThemeColorBox.Items.Add(new ComboBoxItem()
+            {
+                Content = "Light",
+                Uid = Constants.Settings.THEME_LIGHT
+            });
+            ThemeColorBox.Items.Add(new ComboBoxItem()
+            {
+                Content = "Dark",
+                Uid = Constants.Settings.THEME_DARK
             });
             UpdateView();
         }
@@ -61,6 +86,23 @@ namespace Chronokeep.UI.MainPages
             UpdatePage.IsChecked = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE;
             ExitNoPrompt.IsChecked = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_TRUE;
             CheckUpdates.IsChecked = database.GetAppSetting(Constants.Settings.CHECK_UPDATES).value == Constants.Settings.SETTING_TRUE;
+            AppSetting themeSetting = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
+            Log.D("UI.MainPages.SettingsPage", "Current theme set to " + themeSetting.value + " Theme Offset is " + ThemeOffset);
+            if (themeSetting.value == Constants.Settings.THEME_SYSTEM)
+            {
+                Log.D("UI.MainPages.SettingsPage", "Setting selected theme to System.");
+                ThemeColorBox.SelectedIndex = 0;
+            }
+            else if (themeSetting.value == Constants.Settings.THEME_LIGHT)
+            {
+                Log.D("UI.MainPages.SettingsPage", "Setting selected theme to Light. " + (ThemeOffset + 1));
+                ThemeColorBox.SelectedIndex = ThemeOffset + 1;
+            }
+            else
+            {
+                Log.D("UI.MainPages.SettingsPage", "Setting selected theme to Dark. " + (ThemeOffset + 2));
+                ThemeColorBox.SelectedIndex = ThemeOffset + 2;
+            }
         }
 
         private async void ResetDB_Click(object sender, RoutedEventArgs e)
@@ -109,6 +151,7 @@ namespace Chronokeep.UI.MainPages
             database.SetAppSetting(Constants.Settings.COMPANY_NAME, CompanyNameBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.CONTACT_EMAIL, ContactEmailBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM, ((ComboBoxItem)DefaultTimingBox.SelectedItem).Uid);
+            database.SetAppSetting(Constants.Settings.CURRENT_THEME, ((ComboBoxItem)ThemeColorBox.SelectedItem).Uid);
             database.SetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR, DefaultExportDirBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE, UpdatePage.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.EXIT_NO_PROMPT, ExitNoPrompt.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
@@ -159,6 +202,22 @@ namespace Chronokeep.UI.MainPages
 
         public void Closing()
         {
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
+        private void ThemeColorBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBoxItem selectedItem = ThemeColorBox.SelectedItem as ComboBoxItem;
+            if (selectedItem != null)
+            {
+                database.SetAppSetting(Constants.Settings.CURRENT_THEME, ((ComboBoxItem)ThemeColorBox.SelectedItem).Uid);
+                var theme = Wpf.Ui.Appearance.ThemeType.Light;
+                if ((selectedItem.Uid == Constants.Settings.THEME_SYSTEM && SystemTheme == 0) || selectedItem.Uid == Constants.Settings.THEME_DARK)
+                {
+                    theme = Wpf.Ui.Appearance.ThemeType.Dark;
+                }
+                Wpf.Ui.Appearance.Theme.Apply(theme, Wpf.Ui.Appearance.BackgroundType.Mica, false);
+            }
         }
     }
 }

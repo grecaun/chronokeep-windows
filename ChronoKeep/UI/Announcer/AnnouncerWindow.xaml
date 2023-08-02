@@ -9,8 +9,6 @@
         mc:Ignorable="d"
         Title="Announcer" Height="450" Width="1000" Closing="Window_Closing"
         d:DataContext="{d:DesignInstance local:AnnouncerWindow, IsDesignTimeCreatable=True}"
-        d:Background="{DynamicResource ApplicationBackgroundBrush}"
-        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"

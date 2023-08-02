@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,6 +25,7 @@ namespace Chronokeep.Constants
         public static readonly string DEFAULT_CHIP_TYPE     = "DEFAULT_CHIP_TYPE";
         public static readonly string LAST_USED_API_ID      = "SETTING_LAST_USED_API_ID";
         public static readonly string CHECK_UPDATES         = "SETTING_CHECK_UPDATES";
+        public static readonly string CURRENT_THEME         = "SETTING_THEME";
 
         public static readonly string NULL_EVENT_ID     = "-1";
 
@@ -32,6 +35,10 @@ namespace Chronokeep.Constants
         public static readonly string TIMING_RFID       = "RFID";
         public static readonly string TIMING_IPICO      = "IPICO";
         public static readonly string TIMING_IPICO_LITE = "IPICO_LITE";
+
+        public static readonly string THEME_SYSTEM      = "THEME_SYSTEM";
+        public static readonly string THEME_DARK        = "THEME_DARK";
+        public static readonly string THEME_LIGHT       = "THEME_LIGHT";
 
         public static readonly string CHIP_TYPE_DEC     = "DEC";
         public static readonly string CHIP_TYPE_HEX     = "HEX";
@@ -78,6 +85,17 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(CHECK_UPDATES) == null)
             {
                 database.SetAppSetting(CHECK_UPDATES, SETTING_FALSE);
+            }
+            if (database.GetAppSetting(CURRENT_THEME) == null)
+            {
+                if (Utils.GetSystemTheme() != -1)
+                {
+                    database.SetAppSetting(CURRENT_THEME, THEME_SYSTEM);
+                }
+                else
+                {
+                    database.SetAppSetting(CURRENT_THEME, THEME_LIGHT);
+                }
             }
         }
     }

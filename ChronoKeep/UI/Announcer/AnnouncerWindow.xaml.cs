@@ -121,9 +121,9 @@ namespace Chronokeep.UI.Announcer
                     Margin = new Thickness(10, 10, 10, 10)
                 };
                 // Distance
-                mainPanel.Children.Add(new Label()
+                mainPanel.Children.Add(new TextBlock()
                 {
-                    Content = res.DistanceName,
+                    Text = res.DistanceName,
                     FontSize = 16,
                     Width = 150,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -131,9 +131,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Place
-                mainPanel.Children.Add(new Label()
+                mainPanel.Children.Add(new TextBlock()
                 {
-                    Content = res.PlaceStr,
+                    Text = res.PlaceStr,
                     FontSize = 16,
                     Width = 60,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -141,9 +141,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Chip Time
-                mainPanel.Children.Add(new Label()
+                mainPanel.Children.Add(new TextBlock()
                 {
-                    Content = res.ChipTime,
+                    Text = res.ChipTime,
                     FontSize = 20,
                     Width = 150,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -151,9 +151,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Name
-                mainPanel.Children.Add(new Label()
+                mainPanel.Children.Add(new TextBlock()
                 {
-                    Content = res.ParticipantName,
+                    Text = res.ParticipantName,
                     FontSize = 20,
                     MinWidth = 250,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -161,9 +161,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Age && Gender
-                mainPanel.Children.Add(new Label()
+                mainPanel.Children.Add(new TextBlock()
                 {
-                    Content = string.Format("{0} {1}", res.Age(theEvent.Date), res.PrettyGender),
+                    Text = string.Format("{0} {1}", res.Age(theEvent.Date), res.PrettyGender),
                     FontSize = 20,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
@@ -186,9 +186,9 @@ namespace Chronokeep.UI.Announcer
                     Margin = new Thickness(10, 10, 10, 10)
                 };
                 // Distance
-                mainPanel.Children.Add(new Label()
+                mainPanel.Children.Add(new TextBlock()
                 {
-                    Content = "Distance",
+                    Text = "Distance",
                     FontSize = 16,
                     Width = 150,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -196,9 +196,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Place
-                mainPanel.Children.Add(new Label()
+                mainPanel.Children.Add(new TextBlock()
                 {
-                    Content = "Pl",
+                    Text = "Pl",
                     FontSize = 16,
                     Width = 60,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -206,9 +206,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Chip Time
-                mainPanel.Children.Add(new Label()
+                mainPanel.Children.Add(new TextBlock()
                 {
-                    Content = "Time",
+                    Text = "Time",
                     FontSize = 20,
                     Width = 150,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -216,9 +216,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Name
-                mainPanel.Children.Add(new Label()
+                mainPanel.Children.Add(new TextBlock()
                 {
-                    Content = "Name",
+                    Text = "Name",
                     FontSize = 20,
                     Width = 250,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -226,9 +226,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Age && Gender
-                mainPanel.Children.Add(new Label()
+                mainPanel.Children.Add(new TextBlock()
                 {
-                    Content = "Age G",
+                    Text = "Age G",
                     FontSize = 20,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
@@ -254,9 +254,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
                 // When the read occurred
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = part.When.ToString("HH:mm:ss"),
+                    Text = part.When.ToString("HH:mm:ss"),
                     FontSize = 16,
                     Width = 80,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -264,9 +264,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Distance
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = part.Person.Distance,
+                    Text = part.Person.Distance,
                     FontSize = 16,
                     Width = 150,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -274,9 +274,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Bib
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = part.Person.Bib,
+                    Text = part.Person.Bib.ToString(),
                     FontSize = 20,
                     Width = 80,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -284,18 +284,18 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Name
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = string.Format("{0} {1}", part.Person.FirstName, part.Person.LastName),
+                    Text = string.Format("{0} {1}", part.Person.FirstName, part.Person.LastName),
                     FontSize = 20,
                     MinWidth = 250,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = string.Format("{0}, {1}", part.Person.City, part.Person.State),
+                    Text = string.Format("{0}, {1}", part.Person.City, part.Person.State),
                     FontSize = 20,
                     MinWidth = 250,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -303,9 +303,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Age && Gender
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = string.Format("{0} {1}", part.Person.Age(theEvent.Date), part.Person.Gender),
+                    Text = string.Format("{0} {1}", part.Person.Age(theEvent.Date), part.Person.Gender),
                     FontSize = 20,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
@@ -315,9 +315,9 @@ namespace Chronokeep.UI.Announcer
                 // Comments
                 if (part.Person.Comments.Length > 0)
                 {
-                    mainPanel.Children.Add(new Label()
+                    mainPanel.Children.Add(new TextBlock()
                     {
-                        Content = part.Person.Comments,
+                        Text = part.Person.Comments,
                         FontSize = 20,
                         Margin = new Thickness(5, 10, 5, 0),
                         VerticalAlignment = VerticalAlignment.Center,
@@ -345,9 +345,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
                 // When the read occurred
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = "When",
+                    Text = "When",
                     FontSize = 16,
                     Width = 80,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -355,9 +355,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Distance
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Distance",
+                    Text = "Distance",
                     FontSize = 16,
                     Width = 150,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -365,9 +365,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Bib
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Bib",
+                    Text = "Bib",
                     FontSize = 20,
                     Width = 80,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -375,18 +375,18 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Name
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Name",
+                    Text = "Name",
                     FontSize = 20,
                     Width = 250,
                     Margin = new Thickness(0, 0, 5, 0),
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = "City, State",
+                    Text = "City, State",
                     FontSize = 20,
                     Width = 250,
                     Margin = new Thickness(0, 0, 5, 0),
@@ -394,9 +394,9 @@ namespace Chronokeep.UI.Announcer
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
                 // Age && Gender
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Age G",
+                    Text = "Age G",
                     FontSize = 20,
                     Margin = new Thickness(0, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,

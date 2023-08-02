@@ -17,7 +17,7 @@
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="55" />
+            <RowDefinition Height="65" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Grid.ColumnSpan="2">
@@ -37,7 +37,7 @@
                 Margin="15,10,15,10"
                 Grid.Column="0"
                 Click="NewEvent_Click"
-                Height="45"
+                Height="40"
                 />
             <ui:Button
                 Name="importEvent"
@@ -48,7 +48,7 @@
                 Margin="15,10,15,10"
                 Grid.Column="1"
                 Click="ImportEvent_Click"
-                Height="45"
+                Height="40"
                 />
             <ui:Button
                 Name="saveEvent"
@@ -59,7 +59,7 @@
                 Margin="15,10,15,10"
                 Grid.Column="2"
                 Click="SaveEvent_Click"
-                Height="45"
+                Height="40"
                 />
             <ui:Button
                 Name="changeEvent"
@@ -70,7 +70,7 @@
                 Margin="15,10,15,10"
                 Grid.Column="3"
                 Click="ChangeEvent_Click"
-                Height="45"
+                Height="40"
                 />
             <ui:Button
                 Name="deleteEvent"
@@ -81,20 +81,20 @@
                 Margin="15,10,15,10"
                 Grid.Column="4"
                 Click="DeleteEvent_Click"
-                Height="45"
+                Height="40"
                 />
         </Grid>
         <StackPanel Name="LeftPanel" Grid.Column="0" Grid.Row="1" Margin="20,0,20,0">
             <DockPanel LastChildFill="True" Margin="0,0,0,5">
-                <Label Content="Event Name" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalContentAlignment="Right"/>
+                <TextBlock Text="Event Name" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
                 <TextBox Name="eventNameTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
             </DockPanel>
             <DockPanel LastChildFill="True" Margin="0,0,0,5">
-                <Label Content="Year Code" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalContentAlignment="Right"/>
+                <TextBlock Text="Year Code" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
                 <TextBox Name="eventYearCodeTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
             </DockPanel>
             <DockPanel LastChildFill="True">
-                <Label Content="Date" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalContentAlignment="Right"/>
+                <TextBlock Text="Date" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
                 <DatePicker Name="eventDatePicker" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
             </DockPanel>
             <Separator Margin="5,5,5,5" />
@@ -103,7 +103,7 @@
             <CheckBox Name="commonStartCheckBox" Content="Common Start/Finish Location" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <CheckBox Name="segmentCheckBox" Content="Distance Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <DockPanel Margin="10,5,10,5">
-                <Label Content="Event Type" FontSize="16"/>
+                <TextBlock Text="Event Type" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                 <ComboBox Name="TypeBox" Margin="10,0,0,0" VerticalContentAlignment="Center" IsEnabled="False" SelectionChanged="TypeBox_SelectionChanged">
                     <ComboBoxItem Content="Distance Based" Uid="0" IsSelected="True"/>
                     <ComboBoxItem Content="Time Based" Uid="1" />
