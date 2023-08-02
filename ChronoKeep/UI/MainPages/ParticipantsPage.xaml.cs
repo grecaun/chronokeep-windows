@@ -22,7 +22,7 @@ namespace Chronokeep.UI.MainPages
     /// <summary>
     /// Interaction logic for ParticipantsPage.xaml
     /// </summary>
-    public partial class ParticipantsPage : Page, IMainPage
+    public partial class ParticipantsPage : IMainPage
     {
         private IMainWindow mWindow;
         private IDBInterface database;
@@ -521,6 +521,33 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             Log.D("UI.MainPages.ParticipantsPage", "Already deleting.");
+        }
+
+        private void ParticipantsList_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            ScrollViewer scv = ScrollBox;
+            if (e.Delta < 0)
+            {
+                if (scv.VerticalOffset - e.Delta <= scv.ExtentHeight - scv.ViewportHeight)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToBottom();
+                }
+            }
+            else
+            {
+                if (scv.VerticalOffset - e.Delta > 0)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToTop();
+                }
+            }
         }
     }
 }
