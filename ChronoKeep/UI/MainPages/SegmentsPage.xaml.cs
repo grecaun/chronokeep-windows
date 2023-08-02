@@ -21,7 +21,7 @@ namespace Chronokeep.UI.MainPages
     /// <summary>
     /// Interaction logic for SegmentsPage.xaml
     /// </summary>
-    public partial class SegmentsPage : Page, IMainPage
+    public partial class SegmentsPage : IMainPage
     {
         private IMainWindow mWindow;
         private IDBInterface database;
@@ -286,7 +286,10 @@ namespace Chronokeep.UI.MainPages
                 StackPanel thePanel = new StackPanel();
                 this.Content = thePanel;
                 this.IsTabStop = false;
-                Grid namePanel = new Grid();
+                Grid namePanel = new Grid()
+                {
+                    Margin = new Thickness(5)
+                };
                 namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
                 namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(85) });
@@ -294,14 +297,13 @@ namespace Chronokeep.UI.MainPages
                 {
                     namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(250) });
                 }
-                Label distanceName = new Label()
+                TextBlock distanceName = new TextBlock()
                 {
-                    Content = distance == null ? "All Distances" : distance.Name,
+                    Text = distance == null ? "All Distances" : distance.Name,
                     FontSize = 20,
                     Margin = new Thickness(10, 5, 0, 5),
-                    VerticalContentAlignment = VerticalAlignment.Center
+                    VerticalAlignment = VerticalAlignment.Center
                 };
-                distanceName.IsTabStop = false;
                 namePanel.Children.Add(distanceName);
                 Grid.SetColumn(distanceName, 0);
                 numAdd = new TextBox
@@ -312,7 +314,7 @@ namespace Chronokeep.UI.MainPages
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Width = 40,
-                    Height = 25
+                    Height = 35
                 };
                 numAdd.PreviewTextInput += (s, e) =>
                 {
@@ -328,7 +330,7 @@ namespace Chronokeep.UI.MainPages
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     Width = 75,
-                    Height = 25
+                    Height = 35
                 };
                 addButton.Click += new RoutedEventHandler(this.AddClick);
                 namePanel.Children.Add(addButton);
@@ -336,20 +338,18 @@ namespace Chronokeep.UI.MainPages
                 if (distance != null)
                 {
                     DockPanel copyPanel = new DockPanel();
-                    copyPanel.Children.Add(new Label()
+                    copyPanel.Children.Add(new TextBlock()
                     {
-                        Content = "Copy from",
+                        Text = "Copy from",
                         FontSize = 14,
-                        VerticalContentAlignment = VerticalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Right,
-                        Margin = new Thickness(10, 0, 2, 0),
-                        IsTabStop = false
+                        Margin = new Thickness(10, 0, 2, 0)
                     });
                     copyFromDistance = new ComboBox()
                     {
                         FontSize = 14,
-                        Height = 25,
+                        Height = 35,
                         VerticalAlignment = VerticalAlignment.Center,
                         VerticalContentAlignment = VerticalAlignment.Center,
                         Margin = new Thickness(0, 0, 10, 0)
@@ -442,60 +442,60 @@ namespace Chronokeep.UI.MainPages
 
         private class ASegmentHeader : ListBoxItem
         {
-            public Label Where = new Label()
+            public TextBlock Where = new TextBlock()
             {
-                Content = "Where",
+                Text = "Where",
                 FontSize = 14,
                 Width = 140,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public Label NameLabel = new Label()
+            public TextBlock NameLabel = new TextBlock()
             {
-                Content = "Name",
+                Text = "Name",
                 FontSize = 14,
                 Width = 190,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public Label Occurrence = new Label()
+            public TextBlock Occurrence = new TextBlock()
             {
-                Content = "Occ",
+                Text = "Occ",
                 FontSize = 14,
                 Width = 70,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public Label SegDistance = new Label()
+            public TextBlock SegDistance = new TextBlock()
             {
-                Content = "Dist",
+                Text = "Dist",
                 FontSize = 14,
                 Width = 70,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public Label TotalDistance = new Label()
+            public TextBlock TotalDistance = new TextBlock()
             {
-                Content = "Total",
+                Text = "Total",
                 FontSize = 14,
                 Width = 70,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public Label Unit = new Label()
+            public TextBlock Unit = new TextBlock()
             {
-                Content = "Unit",
+                Text = "Unit",
                 FontSize = 14,
                 Width = 90,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public Label Remove = new Label()
+            public TextBlock Remove = new TextBlock()
             {
-                Content = "",
+                Text = "",
                 FontSize = 14,
                 Width = 50,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
             public ASegmentHeader(Event theEvent)
