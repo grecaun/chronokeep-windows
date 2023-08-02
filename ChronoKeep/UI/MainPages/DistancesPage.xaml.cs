@@ -22,7 +22,7 @@ namespace Chronokeep.UI.MainPages
     /// <summary>
     /// Interaction logic for DistancesPage.xaml
     /// </summary>
-    public partial class DistancesPage : Page, IMainPage
+    public partial class DistancesPage : IMainPage
     {
         private IMainWindow mWindow;
         private IDBInterface database;

@@ -21,7 +21,7 @@ namespace Chronokeep.UI.MainPages
     /// <summary>
     /// Interaction logic for LocationsPage.xaml
     /// </summary>
-    public partial class LocationsPage : Page, IMainPage
+    public partial class LocationsPage : IMainPage
     {
         private IMainWindow mWindow;
         private IDBInterface database;
@@ -160,14 +160,14 @@ namespace Chronokeep.UI.MainPages
                 this.IsTabStop = false;
                 // Name information.
                 DockPanel namePanel = new DockPanel();
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Name",
+                    Text = "Name",
                     Width = 140,
                     FontSize = 16,
                     Margin = new Thickness(10,0,0,0),
                     VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    HorizontalAlignment = HorizontalAlignment.Right
                 });
                 LocationName = new TextBox()
                 {
@@ -185,14 +185,14 @@ namespace Chronokeep.UI.MainPages
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 DockPanel occPanel = new DockPanel();
-                occPanel.Children.Add(new Label()
+                occPanel.Children.Add(new TextBlock()
                 {
-                    Content = "Max Occurrences",
+                    Text = "Max Occurrences",
                     Width = 140,
                     FontSize = 16,
                     Margin = new Thickness(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    HorizontalAlignment = HorizontalAlignment.Right
                 });
                 MaxOccurrences = new TextBox()
                 {
@@ -212,14 +212,14 @@ namespace Chronokeep.UI.MainPages
                 }
                 DockPanel ignPanel = new DockPanel();
                 string labelLabel = myLocation.Identifier == Constants.Timing.LOCATION_START ? "Start Window" : "Ignore Within";
-                ignPanel.Children.Add(new Label()
+                ignPanel.Children.Add(new TextBlock()
                 {
-                    Content = labelLabel,
+                    Text = labelLabel,
                     Width = 140,
                     FontSize = 16,
                     Margin = new Thickness(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    HorizontalAlignment = HorizontalAlignment.Right
                 });
                 string ignorewithin = string.Format(TimeFormat, myLocation.IgnoreWithin / 3600, (myLocation.IgnoreWithin % 3600) / 60, myLocation.IgnoreWithin % 60);
                 IgnoreWithin = new MaskedTextBox()
