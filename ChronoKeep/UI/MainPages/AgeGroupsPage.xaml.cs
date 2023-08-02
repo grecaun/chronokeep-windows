@@ -299,21 +299,21 @@ namespace Chronokeep.UI.MainPages
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                Label l = new Label()
+                TextBlock l = new TextBlock()
                 {
-                    Content = "Start Age",
+                    Text = "Start Age",
                     FontSize = 16,
                     Margin = new Thickness(10, 10, 10, 10),
-                    HorizontalContentAlignment = HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Center
                 };
                 theGrid.Children.Add(l);
                 Grid.SetColumn(l, 0);
-                l = new Label()
+                l = new TextBlock()
                 {
-                    Content = "End Age",
+                    Text = "End Age",
                     FontSize = 16,
                     Margin = new Thickness(10, 10, 10, 10),
-                    HorizontalContentAlignment = HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Center
                 };
                 theGrid.Children.Add(l);
                 Grid.SetColumn(l, 1);

@@ -25,7 +25,7 @@ namespace Chronokeep.UI.MainPages
     /// <summary>
     /// Interaction logic for DashboardPage.xaml
     /// </summary>
-    public partial class DashboardPage : Page, IMainPage
+    public partial class DashboardPage : IMainPage
     {
         private IMainWindow mWindow;
         private IDBInterface database;

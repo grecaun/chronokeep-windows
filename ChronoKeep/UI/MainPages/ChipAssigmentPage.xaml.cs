@@ -19,7 +19,7 @@ namespace Chronokeep.UI.MainPages
     /// <summary>
     /// Interaction logic for ChipAssigmentPage.xaml
     /// </summary>
-    public partial class ChipAssigmentPage : Page, IMainPage
+    public partial class ChipAssigmentPage : IMainPage
     {
         private IMainWindow mWindow;
         private IDBInterface database;
@@ -45,17 +45,6 @@ namespace Chronokeep.UI.MainPages
                 ChipTypeBox.SelectedIndex = 1;
             }
             ChipTypeBox.SelectionChanged += new SelectionChangedEventHandler(ChipTypeBox_SelectionChanged);
-        }
-
-        private void BibChipList_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Log.D("UI.MainPages.ChipAssignmentPage", "BibChipList size has changed.");
-            ListView listView = sender as ListView;
-            GridView gView = listView.View as GridView;
-
-            var workingWidth = listView.ActualWidth - SystemParameters.VerticalScrollBarWidth - 10;
-            gView.Columns[0].Width = workingWidth * 0.5;
-            gView.Columns[1].Width = workingWidth * 0.5;
         }
 
         public async void UpdateView()
@@ -175,12 +164,12 @@ namespace Chronokeep.UI.MainPages
             if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
             {
                 long.TryParse(RangeStartChipBox.Text, out startChip);
-                long.TryParse(RangeEndChipLabel.Content.ToString(), out endChip);
+                long.TryParse(RangeEndChipLabel.Text.ToString(), out endChip);
             }
             else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
             {
                 long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip);
-                long.TryParse(RangeEndChipLabel.Content.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip);
+                long.TryParse(RangeEndChipLabel.Text.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip);
             }
             Log.D("UI.MainPages.ChipAssignmentPage", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
             if (startChip == -1 || endChip == -1 || startBib == -1 || endBib == -1)
@@ -322,11 +311,11 @@ namespace Chronokeep.UI.MainPages
             {
                 if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
                 {
-                    RangeEndChipLabel.Content = endChip.ToString();
+                    RangeEndChipLabel.Text = endChip.ToString();
                 }
                 else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
                 {
-                    RangeEndChipLabel.Content = endChip.ToString("X");
+                    RangeEndChipLabel.Text = endChip.ToString("X");
                 }
             }
         }

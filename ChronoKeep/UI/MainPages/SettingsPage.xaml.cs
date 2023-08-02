@@ -22,7 +22,7 @@ namespace Chronokeep.UI.MainPages
     /// <summary>
     /// Interaction logic for SettingsPage.xaml
     /// </summary>
-    public partial class SettingsPage : Page, IMainPage
+    public partial class SettingsPage : IMainPage
     {
         IMainWindow mWindow;
         IDBInterface database;
@@ -216,7 +216,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     theme = Wpf.Ui.Appearance.ThemeType.Dark;
                 }
-                Wpf.Ui.Appearance.Theme.Apply(theme, Wpf.Ui.Appearance.BackgroundType.Mica, false);
+                Wpf.Ui.Appearance.Theme.Apply(theme, Wpf.Ui.Appearance.BackgroundType.Mica, true, true);
             }
         }
     }
