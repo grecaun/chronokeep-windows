@@ -233,7 +233,7 @@ namespace Chronokeep.UI.MainPages
         {
             public TextBox DistanceName { get; private set; }
             public TextBox Wave { get; private set; }
-            public Image WaveTypeImg { get; private set; }
+            public TextBlock WaveType { get; private set; }
             public TextBox Ranking { get; private set; }
             public MaskedTextBox StartOffset { get; private set; }
             public ComboBox TypeBox { get; private set; }
@@ -271,14 +271,13 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(nameGrid);
                 // Name information.
                 DockPanel namePanel = new DockPanel();
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Name",
+                    Text = "Name",
                     Width = 55,
                     FontSize = 16,
                     Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    VerticalAlignment = VerticalAlignment.Center
                 });
                 DistanceName = new TextBox()
                 {
@@ -292,14 +291,13 @@ namespace Chronokeep.UI.MainPages
                 nameGrid.Children.Add(namePanel);
                 Grid.SetColumn(namePanel, 0);
                 DockPanel rankPanel = new DockPanel();
-                rankPanel.Children.Add(new Label()
+                rankPanel.Children.Add(new TextBlock()
                 {
-                    Content = "Rank Priority",
+                    Text = "Rank Priority",
                     Width = 135,
                     FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    Margin = new Thickness(10, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
                 });
                 Ranking = new TextBox
                 {
@@ -327,14 +325,13 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(Remove, 2);
                 // Wave # - Start Offset - Type - Ranking Order
                 DockPanel wavePanel = new DockPanel();
-                wavePanel.Children.Add(new Label()
+                wavePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Wave",
+                    Text = "Wave",
                     Width = 55,
                     FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    Margin = new Thickness(10, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
                 });
                 Wave = new TextBox()
                 {
@@ -347,33 +344,36 @@ namespace Chronokeep.UI.MainPages
                 Wave.GotFocus += new RoutedEventHandler(this.SelectAll);
                 Wave.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
                 wavePanel.Children.Add(Wave);
-                wavePanel.Children.Add(new Label()
+                wavePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Start",
+                    Text = "Start",
                     Width = 55,
                     FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    Margin = new Thickness(10, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
                 });
-                Uri imgUri = new Uri("pack://application:,,,/img/plus.png");
+                string waveText = "+";
                 waveType = 1;
                 if (theDistance.StartOffsetSeconds < 0)
                 {
                     Log.D("UI.MainPages.DistancesPage", "Setting type to negative and making seconds/milliseconds positive for offset textbox.");
                     waveType = -1;
-                    imgUri = new Uri("pack://application:,,,/img/dash.png");
+                    waveText = "-";
                     theDistance.StartOffsetSeconds *= -1;
                     theDistance.StartOffsetMilliseconds *= -1;
                 }
-                WaveTypeImg = new Image()
+                WaveType = new TextBlock()
                 {
                     Width = 25,
                     Margin = new Thickness(0, 0, 3, 0),
-                    Source = new BitmapImage(imgUri),
+                    Text = waveText,
+                    FontSize = 30,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    TextAlignment = TextAlignment.Center
                 };
-                WaveTypeImg.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
-                wavePanel.Children.Add(WaveTypeImg);
+                WaveType.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
+                wavePanel.Children.Add(WaveType);
                 string sOffset = string.Format(TimeFormat, theDistance.StartOffsetSeconds / 3600,
                     (theDistance.StartOffsetSeconds % 3600) / 60, theDistance.StartOffsetSeconds % 60,
                     theDistance.StartOffsetMilliseconds);
@@ -387,14 +387,13 @@ namespace Chronokeep.UI.MainPages
                 };
                 StartOffset.GotFocus += new RoutedEventHandler(this.SelectAll);
                 wavePanel.Children.Add(StartOffset);
-                wavePanel.Children.Add(new Label()
+                wavePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Type",
+                    Text = "Type",
                     Width = 55,
                     FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    Margin = new Thickness(10, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
                 });
                 TypeBox = new ComboBox()
                 {
@@ -463,11 +462,11 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.DistancesPage", "Plus/Minus sign clicked. WaveType is: " + waveType);
                 if (waveType < 0)
                 {
-                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/plus.png"));
+                    WaveType.Text = "+";
                 }
                 else if (waveType > 0)
                 {
-                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/dash.png"));
+                    WaveType.Text = "-";
                 }
                 else
                 {
@@ -539,7 +538,7 @@ namespace Chronokeep.UI.MainPages
             public ComboBox DistanceUnit { get; private set; }
             public ComboBox FinishOccurrence { get; private set; } = null;
             public TextBox Wave { get; private set; }
-            public Image WaveTypeImg { get; private set; }
+            public TextBlock WaveType { get; private set; }
             public MaskedTextBox StartOffset { get; private set; }
             public MaskedTextBox TimeLimit { get; private set; } = null;
             public Button AddSubDistance { get; private set; }
@@ -576,14 +575,13 @@ namespace Chronokeep.UI.MainPages
                 nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
                 // Name information.
                 DockPanel namePanel = new DockPanel();
-                namePanel.Children.Add(new Label()
+                namePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Name",
+                    Text = "Name",
                     Width = 55,
                     FontSize = 16,
                     Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    VerticalAlignment = VerticalAlignment.Center
                 });
                 DistanceName = new TextBox()
                 {
@@ -597,14 +595,13 @@ namespace Chronokeep.UI.MainPages
                 nameGrid.Children.Add(namePanel);
                 Grid.SetColumn(namePanel, 0);
                 DockPanel copyPanel = new DockPanel();
-                copyPanel.Children.Add(new Label()
+                copyPanel.Children.Add(new TextBlock()
                 {
-                    Content = "Copy From",
+                    Text = "Copy From",
                     Width = 90,
                     FontSize = 16,
-                    Margin = new Thickness(0, 5, 0, 5),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    Margin = new Thickness(10, 5, 0, 5),
+                    VerticalAlignment = VerticalAlignment.Center
                 });
                 CopyFromBox = new ComboBox()
                 {
@@ -639,14 +636,13 @@ namespace Chronokeep.UI.MainPages
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 DockPanel distPanel = new DockPanel();
-                distPanel.Children.Add(new Label()
+                distPanel.Children.Add(new TextBlock()
                 {
-                    Content = "Distance",
+                    Text = "Distance",
                     Width = 75,
                     FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    Margin = new Thickness(10, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
                 });
                 Distance = new TextBox()
                 {
@@ -727,14 +723,13 @@ namespace Chronokeep.UI.MainPages
                 {
                     // Occurence
                     DockPanel occPanel = new DockPanel();
-                    occPanel.Children.Add(new Label()
+                    occPanel.Children.Add(new TextBlock()
                     {
-                        Content = "Occurrence",
-                        Width = 100,
-                        FontSize = 16,
-                        Margin = new Thickness(0, 0, 0, 0),
-                        VerticalAlignment = VerticalAlignment.Center,
-                        HorizontalContentAlignment = HorizontalAlignment.Right
+                        Text = "Occurrence",
+                        Width = 75,
+                        FontSize = 12,
+                        Margin = new Thickness(10, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Center
                     });
                     FinishOccurrence = new ComboBox()
                     {
@@ -771,14 +766,13 @@ namespace Chronokeep.UI.MainPages
                 else
                 {
                     DockPanel limitPanel = new DockPanel();
-                    limitPanel.Children.Add(new Label()
+                    limitPanel.Children.Add(new TextBlock()
                     {
-                        Content = "Max Time",
-                        Width = 80,
-                        FontSize = 14,
-                        Margin = new Thickness(0, 0, 0, 0),
-                        VerticalAlignment = VerticalAlignment.Center,
-                        HorizontalContentAlignment = HorizontalAlignment.Right
+                        Text = "Max Time",
+                        Width = 65,
+                        FontSize = 12,
+                        Margin = new Thickness(10, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Center
                     });
                     string limit = string.Format(LimitFormat, theDistance.EndSeconds / 3600,
                         theDistance.EndSeconds % 3600 / 60, theDistance.EndSeconds % 60);
@@ -801,15 +795,17 @@ namespace Chronokeep.UI.MainPages
                 Grid numGrid = new Grid();
                 numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                DockPanel wavePanel = new DockPanel();
-                wavePanel.Children.Add(new Label()
+                DockPanel wavePanel = new DockPanel()
                 {
-                    Content = "Wave",
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                wavePanel.Children.Add(new TextBlock()
+                {
+                    Text = "Wave",
                     Width = 55,
                     FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    Margin = new Thickness(10, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
                 });
                 Wave = new TextBox()
                 {
@@ -822,33 +818,36 @@ namespace Chronokeep.UI.MainPages
                 Wave.GotFocus += new RoutedEventHandler(this.SelectAll);
                 Wave.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
                 wavePanel.Children.Add(Wave);
-                wavePanel.Children.Add(new Label()
+                wavePanel.Children.Add(new TextBlock()
                 {
-                    Content = "Start",
+                    Text = "Start",
                     Width = 55,
                     FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Right
+                    Margin = new Thickness(10, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center
                 });
-                Uri imgUri = new Uri("pack://application:,,,/img/plus.png");
+                string waveText = "+";
                 waveType = 1;
                 if (theDistance.StartOffsetSeconds < 0)
                 {
                     Log.D("UI.MainPages.DistancesPage", "Setting type to negative and making seconds/milliseconds positive for offset textbox.");
                     waveType = -1;
-                    imgUri = new Uri("pack://application:,,,/img/dash.png");
+                    waveText = "-";
                     theDistance.StartOffsetSeconds *= -1;
                     theDistance.StartOffsetMilliseconds *= -1;
                 }
-                WaveTypeImg = new Image()
+                WaveType = new TextBlock()
                 {
                     Width = 25,
                     Margin = new Thickness(0,0,3,0),
-                    Source = new BitmapImage(imgUri),
+                    Text = waveText,
+                    FontSize = 30,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    TextAlignment = TextAlignment.Center
                 };
-                WaveTypeImg.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
-                wavePanel.Children.Add(WaveTypeImg);
+                WaveType.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
+                wavePanel.Children.Add(WaveType);
                 string sOffset = string.Format(TimeFormat, theDistance.StartOffsetSeconds / 3600,
                     theDistance.StartOffsetSeconds % 3600 / 60, theDistance.StartOffsetSeconds % 60,
                     theDistance.StartOffsetMilliseconds);
@@ -924,10 +923,10 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.DistancesPage", "Plus/Minus sign clicked. WaveType is: " + waveType);
                 if (waveType < 0)
                 {
-                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/plus.png"));
+                    WaveType.Text = "+";
                 } else if (waveType > 0)
                 {
-                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/dash.png"));
+                    WaveType.Text = "-";
                 } else
                 {
                     Log.E("UI.MainPages.DistancesPage", "Something went wrong and the wave type was set to 0.");
