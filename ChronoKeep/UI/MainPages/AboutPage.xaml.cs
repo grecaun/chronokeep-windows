@@ -1,4 +1,6 @@
 ﻿using Chronokeep.Interfaces;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -26,7 +28,7 @@ namespace Chronokeep.UI.MainPages
                 }
             }
             Log.D("UI.MainPages.AboutPage", "Version: " + gitVersion);
-            VersionLabel.Content = gitVersion;
+            VersionLabel.Text = gitVersion;
         }
 
         public void Closing() { }
@@ -43,6 +45,16 @@ namespace Chronokeep.UI.MainPages
         {
             Log.D("UI.MainPages.AboutPage", "Version clicked, checking for new version.");
             Updates.Check.Do(mWindow, true);
+        }
+
+        private void OpenDataFolder_Click(object sender, RoutedEventArgs e)
+        {
+            string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
+            if (!Directory.Exists(dirPath))
+            {
+                return;
+            }
+            Process.Start("explorer", dirPath);
         }
     }
 }

@@ -1,37 +1,95 @@
-﻿<Page x:Class="Chronokeep.UI.MainPages.AboutPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="clr-namespace:Chronokeep.UI.MainPages"
-      mc:Ignorable="d"
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="AboutPage">
-
-    <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
-            <StackPanel Margin="10,10,10,10">
-                <Label x:Name="ProgramNameLabel" Content="Chronokeep" FontSize="28px" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,0,0,0"/>
-                <Label x:Name="VersionLabel" Content="v0.1.6" FontSize="14px" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
-                <Button Name="Update" Content="Check for Updates" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-10,0,0" Padding="6" Click="VersionLabel_Click" />
-                <Label Content="Created by James Sentinella" FontSize="16px" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,5,0,0" />
-                <Label Content="This program uses the following software:" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0" FontWeight="Bold" />
-                <Label Content="SQLite" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0" />
-                <Label Content="https://system.data.sqlite.org/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0" />
-                <Label Content="System.Data.SQLite is in the public domain." FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0" />
-                <Label Content="wkhtmltopdf" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
-                <Label Content="https://wkhtmltopdf.org/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-                <Label Content="License : https://opensource.org/licenses/LGPL-3.0" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-                <Label Content="Ghostscript" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
-                <Label Content="https://www.ghostscript.com/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-                <Label Content="License information : https://www.gnu.org/licenses/agpl-3.0.html" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-                <Label Content="Extended WPF Toolkit" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
-                <Label Content="https://github.com/xceedsoftware/wpftoolkit" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-                <Label Content="License : https://opensource.org/licenses/MS-PL" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-                <Label Content="ClosedXML" FontSize="16px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
-                <Label Content="https://closedxml.github.io/ClosedXML/" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
-                <Label Content="License : https://github.com/ClosedXML/ClosedXML/blob/develop/LICENSE" FontSize="14px" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,-7,0,0"/>
+﻿<ui:UiPage x:Class="Chronokeep.UI.MainPages.AboutPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Chronokeep.UI.MainPages"
+        mc:Ignorable="d"
+        d:DesignHeight="450" d:DesignWidth="800"
+        Title="AboutPage"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        FlowDirection="LeftToRight"
+        Scrollable="True"
+        >
+    <StackPanel Margin="10,10,10,10">
+        <TextBlock
+            Margin="0,16,0,24"
+            FontSize="24"
+            FontWeight="Medium"
+            Text="About"
+            />
+        <TextBlock
+            Padding="0,0,0,8"
+            Text="Chronokeep"
+            />
+        <TextBlock
+            x:Name="VersionLabel"
+            Padding="0,0,0,8"
+            />
+        <Button
+            Name="Update"
+            Content="Check for Updates"
+            FontSize="12"
+            VerticalAlignment="Top"
+            Margin="0,-5,0,16"
+            Padding="6"
+            Click="VersionLabel_Click"
+            />
+        <TextBlock
+            Padding="0,8,0,0"
+            Text="Created by James Sentinella"
+            />
+        <TextBlock
+            Padding="0,24,0,8"
+            FontSize="14"
+            FontWeight="Medium"
+            Text="Links"
+            />
+        <ui:Hyperlink
+            Content="Project website on Github"
+            Icon="Link24"
+            NavigateUri="https://github.com/grecaun/chronokeep-windows"
+            />
+        <ui:Hyperlink
+            Content="Latest release on Github"
+            Icon="Link24"
+            NavigateUri="https://github.com/grecaun/chronokeep-windows/releases/latest"
+            />
+        <TextBlock
+            Padding="0,24,0,8"
+            FontSize="14"
+            FontWeight="Medium"
+            Text="3rd Party Libraries"
+            />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="0,0,32,0">
+                <ui:Hyperlink Content="SQLite" NavigateUri="https://system.data.sqlite.org/" />
+                <ui:Hyperlink Content="wkhtmltopdf" NavigateUri="https://wkhtmltopdf.org/" />
             </StackPanel>
-        </ScrollViewer>
-    </Grid>
-</Page>
+            <StackPanel Grid.Column="1" Margin="0,0,32,0">
+                <ui:Hyperlink Content="WPF UI" NavigateUri="https://github.com/lepoco/wpfui" />
+                <ui:Hyperlink Content="Ghostscript" NavigateUri="https://www.ghostscript.com/" />
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+                <ui:Hyperlink Content="Extended WPF Toolkit" NavigateUri="https://github.com/xceedsoftware/wpftoolkit" />
+                <ui:Hyperlink Content="ClosedXML" NavigateUri="https://closedxml.github.io/ClosedXML/" />
+            </StackPanel>
+        </Grid>
+        <TextBlock
+            Padding="0,24,0,8"
+            FontSize="14"
+            FontWeight="Medium"
+            Text="Application Folders"
+            />
+        <ui:Hyperlink
+            Click="OpenDataFolder_Click"
+            Content="Data"
+            Icon="Folder24"
+            />
+    </StackPanel>
+</ui:UiPage>
