@@ -1,11 +1,12 @@
 ﻿<Page x:Class="Chronokeep.UI.MainPages.DashboardPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:s="clr-namespace:System;assembly=mscorlib"
+      xmlns:s="clr-namespace:System;assembly=mscorlib"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Chronokeep.UI.MainPages"
       xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="660"
       Title="DashboardPage">
@@ -27,18 +28,68 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Button Name="newEvent" Content="New Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="15,10,15,10" Grid.Column="0" Click="NewEvent_Click" />
-            <Button Name="importEvent" Content="Import Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="15,10,15,10" Grid.Column="1" Click="ImportEvent_Click"/>
-            <Button Name="saveEvent" Content="Save Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="15,10,15,10" Grid.Column="2" Click="SaveEvent_Click"/>
-            <Button Name="changeEvent" Content="Change Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="15,10,15,10" Grid.Column="3" Click="ChangeEvent_Click"/>
-            <Button Name="deleteEvent" Content="Delete Event" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="15,10,15,10" Grid.Column="4" Click="DeleteEvent_Click"/>
+            <ui:Button
+                Name="newEvent"
+                Content="New Event"
+                FontSize="16"
+                VerticalContentAlignment="Center"
+                HorizontalAlignment="Stretch"
+                Margin="15,10,15,10"
+                Grid.Column="0"
+                Click="NewEvent_Click"
+                Height="45"
+                />
+            <ui:Button
+                Name="importEvent"
+                Content="Import Event"
+                FontSize="16"
+                VerticalContentAlignment="Center"
+                HorizontalAlignment="Stretch"
+                Margin="15,10,15,10"
+                Grid.Column="1"
+                Click="ImportEvent_Click"
+                Height="45"
+                />
+            <ui:Button
+                Name="saveEvent"
+                Content="Save Event"
+                FontSize="16"
+                VerticalContentAlignment="Center"
+                HorizontalAlignment="Stretch"
+                Margin="15,10,15,10"
+                Grid.Column="2"
+                Click="SaveEvent_Click"
+                Height="45"
+                />
+            <ui:Button
+                Name="changeEvent"
+                Content="Change Event"
+                FontSize="16"
+                VerticalContentAlignment="Center"
+                HorizontalAlignment="Stretch"
+                Margin="15,10,15,10"
+                Grid.Column="3"
+                Click="ChangeEvent_Click"
+                Height="45"
+                />
+            <ui:Button
+                Name="deleteEvent"
+                Content="Delete Event"
+                FontSize="16"
+                VerticalContentAlignment="Center"
+                HorizontalAlignment="Stretch"
+                Margin="15,10,15,10"
+                Grid.Column="4"
+                Click="DeleteEvent_Click"
+                Height="45"
+                />
         </Grid>
         <StackPanel Name="LeftPanel" Grid.Column="0" Grid.Row="1" Margin="20,0,20,0">
-            <DockPanel LastChildFill="True">
+            <DockPanel LastChildFill="True" Margin="0,0,0,5">
                 <Label Content="Event Name" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalContentAlignment="Right"/>
                 <TextBox Name="eventNameTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
             </DockPanel>
-            <DockPanel LastChildFill="True">
+            <DockPanel LastChildFill="True" Margin="0,0,0,5">
                 <Label Content="Year Code" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalContentAlignment="Right"/>
                 <TextBox Name="eventYearCodeTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
             </DockPanel>
@@ -60,13 +111,72 @@
                 </ComboBox>
             </DockPanel>
             <Separator Margin="5,5,5,5" />
-            <Button Name="editButton" Content="Edit" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="10,5,10,5" Click="EditButton_Click"/>
-            <Button Name="cancelButton" Content="Cancel" FontSize="16" VerticalContentAlignment="Center" Height="35" Margin="10,5,10,5" Click="CancelButton_Click" Visibility="Collapsed"/>
+            <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                >
+                <ui:Button
+                    Name="editButton"
+                    Content="Edit"
+                    FontSize="16"
+                    VerticalContentAlignment="Center"
+                    Height="40"
+                    Width="100"
+                    Margin="10,5,10,5"
+                    Click="EditButton_Click"
+                    />
+                <ui:Button
+                    Name="cancelButton"
+                    Content="Cancel"
+                    FontSize="16"
+                    VerticalContentAlignment="Center"
+                    Height="40"
+                    Width="100"
+                    Margin="10,5,10,5"
+                    Click="CancelButton_Click"
+                    Visibility="Collapsed"
+                    />
+            </StackPanel>
         </StackPanel>
-        <StackPanel Name="RightPanel" Grid.Column="1" Grid.Row="1" Margin="20,0,20,0">
-            <Button Name="apiPageButton" Content="Manage Results API" Margin="10,15,10,5" Click="apiPageButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
-            <Button Name="apiLinkButton" Content="Link to API Event" Margin="10,5,10,5" Click="apiLinkButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
-            <Button Name="tagTesterButton" Content="Chip Tester" Margin="10,5,10,5" Click="TagTesterButton_Click" FontSize="16" VerticalContentAlignment="Center" Height="35"/>
+        <StackPanel
+            Name="RightPanel"
+            Grid.Column="1"
+            Grid.Row="1"
+            Margin="20,0,20,0"
+            >
+            <Button
+                Name="apiPageButton"
+                Content="Manage Results API"
+                Margin="10,15,10,5"
+                Click="apiPageButton_Click"
+                FontSize="16"
+                VerticalContentAlignment="Center"
+                HorizontalAlignment="Center"
+                Height="40"
+                Width="200"
+                />
+            <Button
+                Name="apiLinkButton"
+                Content="Link to API Event"
+                Margin="10,5,10,5"
+                Click="apiLinkButton_Click"
+                FontSize="16"
+                VerticalContentAlignment="Center"
+                HorizontalAlignment="Center"
+                Height="40"
+                Width="200"
+                />
+            <Button
+                Name="tagTesterButton"
+                Content="Chip Tester"
+                Margin="10,5,10,5"
+                Click="TagTesterButton_Click"
+                FontSize="16"
+                VerticalContentAlignment="Center"
+                HorizontalAlignment="Center"
+                Height="40"
+                Width="200"
+                />
         </StackPanel>
     </Grid>
 </Page>

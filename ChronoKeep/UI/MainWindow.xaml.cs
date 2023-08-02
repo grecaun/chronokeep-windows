@@ -14,13 +14,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Chronokeep.Timing.Announcer;
+using Wpf.Ui.Mvvm.Contracts;
+using System.Windows.Controls;
+using Wpf.Ui.Controls.Interfaces;
+using System.Net;
 
 namespace Chronokeep.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IMainWindow
+    public partial class MainWindow : INavigationWindow, IMainWindow
     {
         IDBInterface database;
         IMainPage page;
@@ -85,7 +89,6 @@ namespace Chronokeep.UI
                 this.Close();
             }
             Constants.Settings.SetupSettings(database);
-            UpdateStatus();
 
             // Setup AgeGroup static variables
             Event theEvent = database.GetCurrentEvent();
@@ -96,12 +99,14 @@ namespace Chronokeep.UI
 
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
+            UpdateStatus();
 
             // Check for updates.
             if (database.GetAppSetting(Constants.Settings.CHECK_UPDATES).value == Constants.Settings.SETTING_TRUE)
             {
                 Updates.Check.Do(this);
             }
+            DataContext = this;
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
@@ -391,7 +396,7 @@ namespace Chronokeep.UI
                 segmentsButton.IsEnabled = false;
                 agegroupsButton.IsEnabled = false;
                 timingButton.IsEnabled = false;
-                announcer.IsEnabled = false;
+                announcerButton.IsEnabled = false;
             }
             else
             {
@@ -402,7 +407,21 @@ namespace Chronokeep.UI
                 segmentsButton.IsEnabled = true;
                 agegroupsButton.IsEnabled = true;
                 timingButton.IsEnabled = true;
-                announcer.IsEnabled = true;
+                announcerButton.IsEnabled = true;
+            }
+            if (OperatingSystem.IsWindowsVersionAtLeast(8))
+            {
+                dashboardButton.IsActive = page.GetType() == typeof(DashboardPage);
+                timingButton.IsActive = page.GetType() == typeof(TimingPage);
+                announcerButton.IsActive = announcerWindow != null;
+                participantsButton.IsActive = page.GetType() == typeof(ParticipantsPage);
+                chipsButton.IsActive = page.GetType() == typeof(ChipAssigmentPage);
+                locationsButton.IsActive = page.GetType() == typeof(LocationsPage);
+                distancesButton.IsActive = page.GetType() == typeof(DistancesPage);
+                segmentsButton.IsActive = page.GetType() == typeof(SegmentsPage);
+                agegroupsButton.IsActive = page.GetType() == typeof(AgeGroupsPage);
+                settingsButton.IsActive = page.GetType() == typeof(SettingsPage);
+                aboutButton.IsActive = page.GetType() == typeof(AboutPage);
             }
         }
 
@@ -483,6 +502,7 @@ namespace Chronokeep.UI
             page = iPage;
             TheFrame.NavigationService.RemoveBackEntry();
             TheFrame.Content = iPage;
+            UpdateStatus();
         }
 
         private void Announcer_Click(object sender, RoutedEventArgs e)
@@ -494,6 +514,7 @@ namespace Chronokeep.UI
             }
             announcerWindow = new AnnouncerWindow(this, database);
             announcerWindow.Show();
+            UpdateStatus();
         }
 
         public void NetworkUpdateResults(int eventid, List<TimeResult> results)
@@ -587,6 +608,27 @@ namespace Chronokeep.UI
         }
 
         public void Exit()
+        {
+            Close();
+        }
+
+        public Frame GetFrame()
+        {
+            return TheFrame;
+        }
+        public INavigation GetNavigation()
+        {
+            return RootNavigation;
+        }
+        public bool Navigate(Type pageType)
+        { return true; }
+        public void SetPageService(IPageService pageService)
+        { }
+        public void ShowWindow()
+        {
+            Show();
+        }
+        public void CloseWindow()
         {
             Close();
         }
