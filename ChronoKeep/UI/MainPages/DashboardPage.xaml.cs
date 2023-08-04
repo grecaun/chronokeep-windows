@@ -631,7 +631,7 @@ namespace Chronokeep.UI.MainPages
         private void apiPageButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.DashboardPage", "Results API button clicked.");
-            mWindow.SwitchPage(new APIPage(mWindow, database), true);
+            mWindow.SwitchPage(new APIPage(mWindow, database));
         }
 
         private void TypeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

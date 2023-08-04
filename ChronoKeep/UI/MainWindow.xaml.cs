@@ -129,7 +129,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Dashboard page already displayed.");
                 return;
             }
-            SwitchPage(new DashboardPage(this, database), true);
+            SwitchPage(new DashboardPage(this, database));
         }
 
         private void ParticipantsButton_Click(object sender, RoutedEventArgs e)
@@ -140,7 +140,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Participants page already displayed.");
                 return;
             }
-            SwitchPage(new ParticipantsPage(this, database), true);
+            SwitchPage(new ParticipantsPage(this, database));
         }
 
         private void ChipsButton_Click(object sender, RoutedEventArgs e)
@@ -151,7 +151,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Chips page already displayed.");
                 return;
             }
-            SwitchPage(new ChipAssigmentPage(this, database), true);
+            SwitchPage(new ChipAssigmentPage(this, database));
         }
 
         private void DistancesButton_Click(object sender, RoutedEventArgs e)
@@ -162,7 +162,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Distances page already displayed.");
                 return;
             }
-            SwitchPage(new DistancesPage(this, database), true);
+            SwitchPage(new DistancesPage(this, database));
         }
 
         private void LocationsButton_Click(object sender, RoutedEventArgs e)
@@ -173,7 +173,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Locations page already displayed.");
                 return;
             }
-            SwitchPage(new LocationsPage(this, database), true);
+            SwitchPage(new LocationsPage(this, database));
         }
 
         private void SegmentsButton_Click(object sender, RoutedEventArgs e)
@@ -184,7 +184,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Segments page already displayed.");
                 return;
             }
-            SwitchPage(new SegmentsPage(this, database), true);
+            SwitchPage(new SegmentsPage(this, database));
         }
 
         private void AgegroupsButton_Click(object sender, RoutedEventArgs e)
@@ -195,7 +195,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Age groups page already displayed.");
                 return;
             }
-            SwitchPage(new AgeGroupsPage(this, database), true);
+            SwitchPage(new AgeGroupsPage(this, database));
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -206,7 +206,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Settings page already displayed.");
                 return;
             }
-            SwitchPage(new SettingsPage(this, database), true);
+            SwitchPage(new SettingsPage(this, database));
         }
 
         private void TimingButton_Click(object sender, RoutedEventArgs e)
@@ -218,7 +218,7 @@ namespace Chronokeep.UI
                 ((TimingPage)page).LoadMainDisplay();
                 return;
             }
-            SwitchPage(new TimingPage(this, database), true);
+            SwitchPage(new TimingPage(this, database));
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -508,7 +508,7 @@ namespace Chronokeep.UI
             TimingWorker.Notify();
         }
 
-        public void SwitchPage(IMainPage iPage, bool IsMainPage)
+        public void SwitchPage(IMainPage iPage)
         {
             page.Closing();
             page = iPage;
@@ -557,7 +557,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "About page already displayed.");
                 return;
             }
-            SwitchPage(new AboutPage(this), true);
+            SwitchPage(new AboutPage(this));
         }
 
         public void StartHttpServer()

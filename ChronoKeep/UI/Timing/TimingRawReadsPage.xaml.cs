@@ -32,7 +32,9 @@ namespace Chronokeep.UI.Timing
             Log.D("UI.Timing.TimingRawReadsPage", "Current event fetched.");
             UpdateView();
             Log.D("UI.Timing.TimingRawReadsPage", "View updated.");
-            scrollViewer.ScrollToBottom();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
+            updateListView.SelectedItem = null;
             Log.D("UI.Timing.TimingRawReadsPage", "We're at the bottom.");
         }
 
@@ -190,33 +192,6 @@ namespace Chronokeep.UI.Timing
                 parent.NotifyTimingWorker();
             };
             dialog.Show();
-        }
-
-        private void updateListView_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
-        {
-            ScrollViewer scv = scrollViewer;
-            if (e.Delta < 0)
-            {
-                if (scv.VerticalOffset - e.Delta <= scv.ExtentHeight - scv.ViewportHeight)
-                {
-                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
-                }
-                else
-                {
-                    scv.ScrollToBottom();
-                }
-            }
-            else
-            {
-                if (scv.VerticalOffset - e.Delta > 0)
-                {
-                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
-                }
-                else
-                {
-                    scv.ScrollToTop();
-                }
-            }
         }
     }
 }

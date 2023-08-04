@@ -325,5 +325,10 @@ namespace Chronokeep.UI.MainPages
                 }
             }
         }
+
+        private void DoneBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mWindow.SwitchPage(new DashboardPage(mWindow, database));
+        }
     }
 }

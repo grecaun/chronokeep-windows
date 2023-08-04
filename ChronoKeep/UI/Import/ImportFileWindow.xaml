@@ -36,7 +36,7 @@
                 </ui:NotifyIcon>
             </ui:TitleBar.Tray>
         </ui:TitleBar>
-        <Grid Name="MainGrid">
+        <Grid Name="MainGrid" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" Name="Header"/>
                 <RowDefinition Height="1*"/>

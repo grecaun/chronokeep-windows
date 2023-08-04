@@ -35,7 +35,7 @@
                 </ui:NotifyIcon>
             </ui:TitleBar.Tray>
         </ui:TitleBar>
-        <Grid>
+        <Grid Grid.Row="1">
             <Frame x:Name="APIFrame" NavigationUIVisibility="Hidden" IsTabStop="False" />
         </Grid>
     </Grid>

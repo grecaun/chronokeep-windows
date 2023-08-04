@@ -35,7 +35,7 @@
                 </ui:NotifyIcon>
             </ui:TitleBar.Tray>
         </ui:TitleBar>
-        <Grid>
+        <Grid Grid.Row="1">
             <Button Content="Add Range" Width="90" Height="35" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,10,10" Click="AddRange_Click" TabIndex="1" />
             <Button Width="60" Height="35" Content="Save" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,80,10" Click="Save_Click" TabIndex="2" />
             <Button Width="60" Height="35" Content="Cancel" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,10,10" Click="Cancel_Click" TabIndex="3" />

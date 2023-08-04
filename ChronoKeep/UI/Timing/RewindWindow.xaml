@@ -36,7 +36,7 @@
                 </ui:NotifyIcon>
             </ui:TitleBar.Tray>
         </ui:TitleBar>
-        <xctf:BusyIndicator Name="busyIndicator">
+        <xctf:BusyIndicator Name="busyIndicator" Grid.Row="1">
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="Rewind" FontSize="18" TextAlignment="Center" VerticalAlignment="Center"/>
                 <Grid>

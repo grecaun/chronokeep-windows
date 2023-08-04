@@ -313,14 +313,12 @@ namespace Chronokeep.UI.Participants
 
         private void ShowOtherGender()
         {
-            this.Height = 615;
-            otherGenderPanel.Visibility = Visibility.Visible;
+            otherGenderBox.Visibility = Visibility.Visible;
         }
 
         private void DismissOtherGender()
         {
-            this.Height = 575;
-            otherGenderPanel.Visibility = Visibility.Collapsed;
+            otherGenderBox.Visibility = Visibility.Collapsed;
         }
 
         private void Modify_Click(object sender, RoutedEventArgs e)

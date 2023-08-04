@@ -36,7 +36,7 @@
                 </ui:NotifyIcon>
             </ui:TitleBar.Tray>
         </ui:TitleBar>
-        <Grid>
+        <Grid Grid.Row="1">
             <ListView x:Name="chipNumbers" Height="Auto" Width="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5,5,5,35">
                 <ListView.View>
                     <GridView>

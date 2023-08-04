@@ -142,7 +142,9 @@ namespace Chronokeep.UI.Timing
             });
             updateListView.ItemsSource = newResults;
             updateListView.Items.Refresh();
-            scrollViewer.ScrollToBottom();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
+            updateListView.SelectedItem = null;
         }
 
         public void CancelableUpdateView(CancellationToken token)
@@ -175,33 +177,6 @@ namespace Chronokeep.UI.Timing
             TimeResult selected = (TimeResult)updateListView.SelectedItem;
             ModifyParticipantWindow modifyParticipant = new ModifyParticipantWindow(parent, database, selected.EventSpecificId, selected.Bib);
             modifyParticipant.ShowDialog();
-        }
-
-        private void updateListView_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
-        {
-            ScrollViewer scv = scrollViewer;
-            if (e.Delta < 0)
-            {
-                if (scv.VerticalOffset - e.Delta <= scv.ExtentHeight - scv.ViewportHeight)
-                {
-                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
-                }
-                else
-                {
-                    scv.ScrollToBottom();
-                }
-            }
-            else
-            {
-                if (scv.VerticalOffset - e.Delta > 0)
-                {
-                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
-                }
-                else
-                {
-                    scv.ScrollToTop();
-                }
-            }
         }
     }
 }
