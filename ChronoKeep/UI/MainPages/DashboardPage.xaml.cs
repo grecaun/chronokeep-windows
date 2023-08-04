@@ -19,6 +19,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Controls.Interfaces;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -177,55 +179,117 @@ namespace Chronokeep.UI.MainPages
             TypeBox.IsEnabled = true;
         }
 
-        private bool CancelEventChange()
+        private bool CancelEventChangeAsync(EventClickType clickType)
         {
             Log.D("UI.DashboardPage", "Checking if we need to cancel the change.");
-            if (TimingController.IsRunning())
+            if (TimingController.IsRunning() || mWindow.AnnouncerOpen() || mWindow.IsAPIControllerRunning())
             {
-                MessageBoxResult result = MessageBox.Show("You are currently connected to one or more Timing Systems.  Do you wish to close these connections and continue?",
-                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    mWindow.ShutdownTimingController();
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            if (mWindow.AnnouncerOpen())
-            {
-                MessageBoxResult result = MessageBox.Show("You currently have the announcer window open.  Do you wish to close this window and continue?",
-                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    mWindow.StopAnnouncer();
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            if (mWindow.IsAPIControllerRunning())
-            {
-                MessageBoxResult result = MessageBox.Show("You are automatically uploading results.  Do you wish to stop automatic uploads and continue?",
-                    "Error", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result == MessageBoxResult.Yes)
-                {
-                    mWindow.StopAPIController();
-                }
-                else
-                {
-                    return true;
-                }
+
+                Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
+                    "Error",
+                    "There are processes running in the background. Do you wish to stop these and continue?",
+                    "Yes",
+                    "No",
+                    true,
+                    () =>
+                    {
+                        mWindow.ShutdownTimingController();
+                        mWindow.StopAPIController();
+                        mWindow.StopAnnouncer();
+                        switch (clickType)
+                        {
+                            case EventClickType.NewEvent:
+                                NewEventWindow newEventWindow = NewEventWindow.NewWindow(mWindow, database);
+                                if (newEventWindow != null)
+                                {
+                                    mWindow.AddWindow(newEventWindow);
+                                    newEventWindow.ShowDialog();
+                                }
+                                break;
+                            case EventClickType.ImportEvent:
+                                OpenFileDialog openFileDialog = new OpenFileDialog() { Filter = "SQLite Database Files (*.sqlite)|*.sqlite;|All files|*" };
+                                if (openFileDialog.ShowDialog() == true)
+                                {
+                                    SQLiteInterface savedDatabase = new SQLiteInterface(openFileDialog.FileName);
+                                    savedDatabase.Initialize();
+                                    List<Event> events = savedDatabase.GetEvents();
+                                    int lastID = -1;
+                                    foreach (Event ev in events)
+                                    {
+                                        int tmp = SaveEvent(ev, savedDatabase, database);
+                                        if (tmp > 0)
+                                        {
+                                            lastID = tmp;
+                                        }
+                                    }
+                                    database.SetAppSetting(Constants.Settings.CURRENT_EVENT, lastID.ToString());
+                                    UpdateView();
+                                    mWindow.UpdateStatus();
+                                }
+                                break;
+                            case EventClickType.ChangeEvent:
+                                ChangeEventWindow changeEventWindow = ChangeEventWindow.NewWindow(mWindow, database);
+                                if (changeEventWindow != null)
+                                {
+                                    mWindow.AddWindow(changeEventWindow);
+                                    changeEventWindow.ShowDialog();
+                                }
+                                break;
+                            case EventClickType.DeleteEvent:
+                                try
+                                {
+                                    Log.D("UI.DashboardPage", "Attempting to delete.");
+                                    Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
+                                        "Confirmation",
+                                        "Are you sure you want to delete this event? This cannot be undone.",
+                                        "Yes",
+                                        "No",
+                                        true,
+                                        () =>
+                                        {
+                                            database.RemoveEvent(theEvent.Identifier);
+                                            database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
+                                        }
+                                        );
+                                    messageBox.ShowDialog();
+                                }
+                                catch
+                                {
+                                    Log.D("UI.DashboardPage", "Unable to remove the event.");
+                                    Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
+                                        "",
+                                        "Unable to remove the event.",
+                                        "",
+                                        "OK",
+                                        false,
+                                        () => {}
+                                        );
+                                    messageBox.ShowDialog();
+                                }
+                                UpdateView();
+                                mWindow.UpdateStatus();
+                                break;
+                        }
+                    }
+                    );
+                messageBox.ShowDialog();
+                return true;
             }
             return false;
+        }
+
+        private enum EventClickType
+        {
+            NewEvent,
+            ImportEvent,
+            ChangeEvent,
+            DeleteEvent,
         }
 
         private void NewEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.DashboardPage", "New event clicked.");
-            if (CancelEventChange())
+            if (CancelEventChangeAsync(EventClickType.NewEvent))
             {
                 return;
             }
@@ -240,7 +304,7 @@ namespace Chronokeep.UI.MainPages
         private void ImportEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.DashboardPage", "Import event clicked.");
-            if (CancelEventChange())
+            if (CancelEventChangeAsync(EventClickType.ImportEvent))
             {
                 return;
             }
@@ -513,7 +577,7 @@ namespace Chronokeep.UI.MainPages
         private void ChangeEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.DashboardPage", "Change event clicked.");
-            if (CancelEventChange())
+            if (CancelEventChangeAsync(EventClickType.ChangeEvent))
             {
                 return;
             }
@@ -528,25 +592,39 @@ namespace Chronokeep.UI.MainPages
         private void DeleteEvent_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.DashboardPage", "Delete event clicked.");
-            if (CancelEventChange())
+            if (CancelEventChangeAsync(EventClickType.DeleteEvent))
             {
                 return;
             }
             try
             {
                 Log.D("UI.DashboardPage", "Attempting to delete.");
-                MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this event? This cannot be undone.",
-                                                            "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
-                {
-                    database.RemoveEvent(theEvent.Identifier);
-                    database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
-                }
+                Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
+                    "Confirmation",
+                    "Are you sure you want to delete this event? This cannot be undone.",
+                    "Yes",
+                    "No",
+                    true,
+                    () =>
+                    {
+                        database.RemoveEvent(theEvent.Identifier);
+                        database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
+                    }
+                    );
+                messageBox.ShowDialog();
             }
             catch
             {
                 Log.D("UI.DashboardPage", "Unable to remove the event.");
-                MessageBox.Show("Unable to remove the event.");
+                Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
+                    "",
+                    "Unable to remove the event.",
+                    "",
+                    "OK",
+                    true,
+                    () => {}
+                    );
+                messageBox.ShowDialog();
             }
             UpdateView();
             mWindow.UpdateStatus();
@@ -605,7 +683,22 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch
                 {
-                    MessageBox.Show("Unable to save to file.");
+                    Wpf.Ui.Controls.MessageBox dialog1 = new()
+                    {
+                        Title = "",
+                        Content = "Unable to save to file.",
+                        ButtonLeftAppearance = Wpf.Ui.Common.ControlAppearance.Transparent,
+                        ButtonRightName = "OK",
+                    };
+                    dialog1.ButtonRightClick += (sender, e) =>
+                    {
+                        dialog1.Close();
+                    };
+                    dialog1.ButtonLeftClick += (sender, e) =>
+                    {
+                        dialog1.Close();
+                    };
+                    dialog1.ShowDialog();
                     return;
                 }
                 SQLiteInterface savedDatabase = new SQLiteInterface(saveFileDialog.FileName);
@@ -613,7 +706,15 @@ namespace Chronokeep.UI.MainPages
                 Event theEvent = database.GetCurrentEvent();
                 SaveEvent(theEvent, database, savedDatabase);
                 Log.D("UI.DashboardPage", "Done saving file.");
-                MessageBox.Show("Event saved successfully.");
+                Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
+                    "",
+                    "Event saved successfully.",
+                    "",
+                    "OK",
+                    false,
+                    () => { }
+                    );
+                messageBox.ShowDialog();
             }
         }
 

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Chronokeep"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Event" Height="350" Width="350" ResizeMode="NoResize" Closing="Window_Closing" Topmost="True"
+        Title="New Event" Height="350" Width="350" ResizeMode="NoResize" Closing="Window_Closing" Topmost="True"
         d:DataContext="{d:DesignInstance local:NewEventWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -37,27 +37,23 @@
         </ui:TitleBar>
         <StackPanel Grid.Row="1">
             <DockPanel>
-                <TextBlock Text="Name" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right"/>
+                <TextBlock Text="Name" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right" VerticalAlignment="Center"/>
                 <TextBox x:Name="nameBox" FontSize="16" Margin="5,10,10,10" TextWrapping="Wrap" KeyUp="Keyboard_Up" />
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Year Code" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right"/>
+                <TextBlock Text="Year Code" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right" VerticalAlignment="Center"/>
                 <TextBox x:Name="yearCodeBox" FontSize="16" Margin="5,10,10,10" KeyUp="Keyboard_Up"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Date" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right"/>
+                <TextBlock Text="Date" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right" VerticalAlignment="Center"/>
                 <DatePicker x:Name="datePicker" Margin="5,10,10,10" KeyUp="Keyboard_Up" FontSize="16"/>
             </DockPanel>
-            <TextBlock Name="CopyLabel" Text="Copy from old event:" Margin="20,0,20,10" FontSize="16"/>
+            <TextBlock Name="CopyLabel" Text="Copy from old event:" Margin="20,10,20,10" FontSize="16"/>
             <ComboBox Name="oldEvent" FontSize="16" Margin="20,0,20,10" />
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <Button Content="Submit" Margin="20,10,20,0" VerticalAlignment="Bottom" Click="Submit_Click" Grid.Column="0" FontSize="16" Height="35"/>
-                <Button Content="Cancel" Margin="20,10,20,0" VerticalAlignment="Bottom"  Click="Cancel_Click" Grid.Column="1" FontSize="16" Height="35"/>
-            </Grid>
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button Content="Submit" Margin="20,10,10,0" Width="150" Click="Submit_Click" FontSize="16" Height="35"/>
+                <Button Content="Cancel" Margin="10,10,20,0" Width="150"  Click="Cancel_Click" FontSize="16" Height="35"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </ui:UiWindow>

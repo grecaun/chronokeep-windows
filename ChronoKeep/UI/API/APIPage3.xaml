@@ -17,16 +17,18 @@
             <StackPanel x:Name="newPanel" Visibility="Collapsed">
                 <TextBlock Text="New Year:" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                 <DockPanel Margin="0,0,0,5">
-                    <TextBlock Text="Year" FontSize="15" Width="100" VerticalAlignment="Center" TextAlignment="Right" Padding="0,0,5,0"/>
-                    <TextBox x:Name="yearBox" FontSize="15" Width="180" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    <TextBlock Text="Year" FontSize="15" Width="60" VerticalAlignment="Center" TextAlignment="Right" Padding="0,0,5,0"/>
+                    <TextBox x:Name="yearBox" FontSize="15" Width="220" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
                 </DockPanel>
                 <DockPanel Margin="0,0,0,5">
-                    <TextBlock Text="Date" FontSize="15" Width="100" VerticalAlignment="Center" TextAlignment="Right" Padding="0,0,5,0"/>
-                    <DatePicker Name="dateBox" FontSize="15" Width="180" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    <TextBlock Text="Date" FontSize="15" Width="60" VerticalAlignment="Center" TextAlignment="Right" Padding="0,0,5,0"/>
+                    <DatePicker Name="dateBox" FontSize="15" Width="220" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
                 </DockPanel>
             </StackPanel>
         </StackPanel>
-        <Button Content="Finish" Height="35" Width="100" VerticalAlignment="Bottom" Margin="0,0,150,10" Click="Next_Click" />
-        <Button Content="Cancel" Height="35" Width="100" VerticalAlignment="Bottom" Margin="150,0,0,10" Click="Cancel_Click" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="Finish" Height="35" Width="100" VerticalAlignment="Bottom" Margin="0,0,10,10" Click="Next_Click" />
+            <Button Content="Cancel" Height="35" Width="100" VerticalAlignment="Bottom" Margin="10,0,0,10" Click="Cancel_Click" />
+        </StackPanel>
     </Grid>
 </ui:UiPage>

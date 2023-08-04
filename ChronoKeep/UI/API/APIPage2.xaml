@@ -33,7 +33,9 @@
                 </DockPanel>
             </StackPanel>
         </StackPanel>
-        <Button Content="Next" Height="35" Width="100" VerticalAlignment="Bottom" Margin="0,0,150,10" Click="Next_Click" />
-        <Button Content="Cancel" Height="35" Width="100" VerticalAlignment="Bottom" Margin="150,0,0,10" Click="Cancel_Click" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="Next" Height="35" Width="100" VerticalAlignment="Bottom" Margin="0,0,10,10" Click="Next_Click" />
+            <Button Content="Cancel" Height="35" Width="100" VerticalAlignment="Bottom" Margin="10,0,0,10" Click="Cancel_Click" />
+        </StackPanel>
     </Grid>
 </ui:UiPage>

@@ -66,18 +66,6 @@ namespace Chronokeep.UI
             this.Close();
         }
 
-        private void EventList_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Log.D("UI.ChangeEventWindow", "EventList size has changed.");
-            ListView listView = sender as ListView;
-            GridView gView = listView.View as GridView;
-
-            var workingWidth = listView.ActualWidth - SystemParameters.VerticalScrollBarWidth-2;
-            gView.Columns[0].Width = workingWidth * 0.5;
-            gView.Columns[1].Width = workingWidth * 0.2;
-            gView.Columns[2].Width = workingWidth * 0.3;
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             window.WindowFinalize(this);

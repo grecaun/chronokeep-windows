@@ -37,24 +37,40 @@
         </ui:TitleBar>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="60"/>
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <ListView x:Name="eventList" Grid.Row="0" Grid.ColumnSpan="2" ScrollViewer.HorizontalScrollBarVisibility="Auto" Width="Auto" Height="Auto" SizeChanged="EventList_SizeChanged">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn Header="YearCode" DisplayMemberBinding="{Binding YearCode}"/>
-                        <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
-                    </GridView>
-                </ListView.View>
+            <Grid Grid.Row="0" Margin="9,0,10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Margin="8,4" Text="Name" />
+                <TextBlock Grid.Column="1" Margin="8,4" Text="Year" />
+                <TextBlock Grid.Column="2" Margin="8,4" Text="Date" />
+            </Grid>
+            <ListView x:Name="eventList" Grid.Row="1" Margin="4,0,4,0" ScrollViewer.HorizontalScrollBarVisibility="Auto" Width="Auto" Height="Auto">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="250" />
+                                <ColumnDefinition Width="70" />
+                                <ColumnDefinition Width="100" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Margin="8,4" Text="{Binding Name}" />
+                            <TextBlock Grid.Column="1" Margin="8,4" Text="{Binding YearCode}" />
+                            <TextBlock Grid.Column="2" Margin="8,4" Text="{Binding Date}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
             </ListView>
-            <Button Name="changeButton" Height="35" FontSize="16" Content="Change" Grid.Row="1" Grid.Column="0" Margin="20,0,20,0" Click="ChangeButton_Click"/>
-            <Button Name="cancelButton" Height="35" FontSize="16" Content="Cancel" Grid.Row="1" Grid.Column="1" Margin="20,0,20,0" Click="CancelButton_Click"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center">
+                <Button Name="changeButton" Height="35" Width="150" FontSize="16" Content="Change" Margin="20,0,10,0" Click="ChangeButton_Click" HorizontalAlignment="Center"/>
+                <Button Name="cancelButton" Height="35" Width="150" FontSize="16" Content="Cancel" Margin="10,0,20,0" Click="CancelButton_Click" HorizontalAlignment="Center"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </ui:UiWindow>
