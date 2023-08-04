@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Chronokeep"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="ChipReaderWindow" Height="350" Width="525"
+        Title="Chip Reader" Height="350" Width="535" MinWidth="535"
         Closing="Window_Closing"
         d:DataContext="{d:DesignInstance local:ChipReaderWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
@@ -37,39 +37,63 @@
             </ui:TitleBar.Tray>
         </ui:TitleBar>
         <Grid Grid.Row="1">
-            <ListView x:Name="chipNumbers" Height="Auto" Width="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5,5,5,35">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Dec Number" Width="Auto" DisplayMemberBinding="{Binding DecNumber}" />
-                        <GridViewColumn Header="Hex Number" Width="Auto" DisplayMemberBinding="{Binding HexNumber}" />
-                        <GridViewColumn Header="Ant Number" Width="Auto" DisplayMemberBinding="{Binding AntennaNumber}" />
-                        <GridViewColumn Header="Dev NUmber" Width="Auto" DisplayMemberBinding="{Binding DeviceNumber}" />
-                        <GridViewColumn Header="Data" Width="Auto" DisplayMemberBinding="{Binding DataRep}" />
-                        <GridViewColumn Header="Read Number" Width="Auto" DisplayMemberBinding="{Binding ReadNumber}" />
-                    </GridView>
-                </ListView.View>
+            <ListView x:Name="chipNumbers" Height="Auto" Width="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="5,5,5,85">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Margin="4" Text="{Binding DecNumber}" />
+                            <TextBlock Grid.Column="1" Margin="4" Text="{Binding HexNumber}" />
+                            <TextBlock Grid.Column="2" Margin="4" Text="{Binding AntennaNumber}" />
+                            <TextBlock Grid.Column="3" Margin="4" Text="{Binding DeviceNumber}" />
+                            <TextBlock Grid.Column="4" Margin="4" Text="{Binding DataRep}" />
+                            <TextBlock Grid.Column="5" Margin="4" Text="{Binding ReadNumber}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
             </ListView>
-            <Grid VerticalAlignment="Bottom" Height="35" Width="Auto" HorizontalAlignment="Center" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <DockPanel Margin="2" Grid.Column="0" Grid.ColumnSpan="2" Name="EventPickerHolder">
-                    <TextBlock Text="Event"  HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Height="Auto"/>
-                    <ComboBox Name="eventCB" Height="Auto" Width="100" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                </DockPanel>
-                <DockPanel Margin="2" Grid.Column="0" Grid.ColumnSpan="2" Name="EventNameHolder" Visibility="Hidden">
-                    <TextBlock Text="TEST" VerticalAlignment="Center" Name="eventName"/>
-                </DockPanel>
-                <TextBlock Text="Serial Port" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Height="Auto" Grid.Column="2" />
-                <ComboBox Name="serialPortCB" Height="Auto" Width="70" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3" />
-                <Button Content="Refresh" Name="refreshBtn" Width="Auto" Padding="10,0,10,0" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Column="4" Click="RefreshBtn_Click" />
-                <Button Content="Connect" Name="connectBtn" Width="Auto" Padding="10,0,10,0" Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Column="5" Click="ConnectBtn_Click" />
-            </Grid>
+            <StackPanel VerticalAlignment="Bottom" Height="85">
+                <Grid Margin="9,2" Height="26">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Margin="4" Text="Dec Number" />
+                    <TextBlock Grid.Column="1" Margin="4" Text="Hex Number" />
+                    <TextBlock Grid.Column="2" Margin="4" Text="Ant Number" />
+                    <TextBlock Grid.Column="3" Margin="4" Text="Dev Number" />
+                    <TextBlock Grid.Column="4" Margin="4" Text="Data" />
+                    <TextBlock Grid.Column="5" Margin="4" Text="Read Number" />
+                </Grid>
+                <Grid HorizontalAlignment="Center" Height="55">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <DockPanel Margin="5,0,15,0" Grid.Column="0" Grid.ColumnSpan="2" Name="EventNameHolder" Visibility="Hidden">
+                        <TextBlock Text="TEST" VerticalAlignment="Center" Name="eventName"/>
+                    </DockPanel>
+                    <TextBlock Text="Serial Port" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Height="Auto" Grid.Column="2" />
+                    <ComboBox Name="serialPortCB" Height="Auto" Width="70" Margin="5,0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3" />
+                    <Button Content="Refresh" Name="refreshBtn" Width="Auto" Padding="10,0,10,0" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Column="4" Click="RefreshBtn_Click" />
+                    <Button Content="Connect" Name="connectBtn" Width="Auto" Padding="10,0,10,0" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Column="5" Click="ConnectBtn_Click" />
+                </Grid>
+            </StackPanel>
         </Grid>
     </Grid>
 </ui:UiWindow>
