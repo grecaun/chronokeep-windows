@@ -18,7 +18,7 @@ namespace Chronokeep.UI.Import
     /// <summary>
     /// Interaction logic for ImportPageMultiples.xaml
     /// </summary>
-    public partial class ImportFilePageConflicts : Page
+    public partial class ImportFilePageConflicts
     {
         public ImportFilePageConflicts(List<Participant> conflicts, Event theEvent)
         {

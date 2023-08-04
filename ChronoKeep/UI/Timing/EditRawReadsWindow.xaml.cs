@@ -14,13 +14,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for EditRawReadsWindow.xaml
     /// </summary>
-    public partial class EditRawReadsWindow : Window
+    public partial class EditRawReadsWindow : UiWindow
     {
         TimingPage parent;
         IDBInterface database;
@@ -62,7 +63,14 @@ namespace Chronokeep.UI.Timing
             catch
             {
                 Log.D("UI.Timing.EditRawReadsWindow", "Somehow the time value wasn't valid.");
-                MessageBox.Show("Something went wrong trying to figure out that time value.");
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "Something went wrong trying to figure out that time value.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog.Show();
                 return;
             }
             if (!add)

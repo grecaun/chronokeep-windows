@@ -13,13 +13,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.API
 {
     /// <summary>
     /// Interaction logic for APIPage1.xaml
     /// </summary>
-    public partial class APIPage1 : Page
+    public partial class APIPage1
     {
         APIWindow window;
         IDBInterface database;
@@ -93,7 +94,14 @@ namespace Chronokeep.UI.API
             }
             else
             {
-                MessageBox.Show("Unable to unlink event.");
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "Unable to unlink event.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog.Show();
             }
             window.Close();
         }

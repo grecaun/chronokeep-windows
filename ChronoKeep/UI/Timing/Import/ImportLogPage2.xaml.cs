@@ -13,13 +13,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing.Import
 {
     /// <summary>
     /// Interaction logic for ImportLogPage2.xaml
     /// </summary>
-    public partial class ImportLogPage2 : Page
+    public partial class ImportLogPage2
     {
         internal static string[] human_fields = new string[]
         {
@@ -81,7 +82,14 @@ namespace Chronokeep.UI.Timing.Import
                     message.Append(s);
                     message.Append("\n");
                 }
-                MessageBox.Show(message.ToString());
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = message.ToString(),
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog.Show();
                 return;
             }
             int chip = 0, time = 0;
@@ -98,7 +106,15 @@ namespace Chronokeep.UI.Timing.Import
             }
             if (chip == 0 || time == 0)
             {
-                MessageBox.Show("Both Chip and Time must be chosen.");
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "Both Chip and Time must be chosen.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog.Show();
+                return;
             }
             parent.Import(LogImporter.Type.CUSTOM, Constants.Timing.LOCATION_DUMMY, chip, time);
         }

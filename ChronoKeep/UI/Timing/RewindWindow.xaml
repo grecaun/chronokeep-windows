@@ -1,4 +1,4 @@
-﻿<Window x:Class="Chronokeep.UI.Timing.RewindWindow"
+﻿<ui:UiWindow x:Class="Chronokeep.UI.Timing.RewindWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,49 +6,78 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chronokeep.UI.Timing"
         xmlns:xctf="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Rewind" Height="330" Width="300" ResizeMode="NoResize">
-    <xctf:BusyIndicator Name="busyIndicator">
-        <StackPanel VerticalAlignment="Center">
-            <Label Content="Rewind" FontSize="18" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Label Content="From" FontSize="14" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0" Grid.Row="0" Margin="10,5,5,5"/>
-                <Label Content="To" FontSize="14" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0" Margin="5,5,10,5"/>
-                <DatePicker Name="FromDate" FontSize="14" VerticalContentAlignment="Center" Grid.Column="0" Grid.Row="1" Margin="10,5,5,5"/>
-                <DatePicker Name="ToDate" FontSize="14" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1" Margin="5,5,10,5"/>
-                <xctf:MaskedTextBox Name="FromTime" FontSize="14" Mask="00:00:00" ValueDataType="{x:Type s:String}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0" Grid.Row="2" Margin="10,5,5,5"/>
-                <xctf:MaskedTextBox Name="ToTime" FontSize="14" Mask="00:00:00" ValueDataType="{x:Type s:String}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="2" Margin="5,5,10,5"/>
-                <RadioButton x:Name="Reader1" Content="Reader 1" GroupName="Readers" IsChecked="True" Grid.Column="0" Grid.Row="3"  VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="10,5,5,5" Visibility="Collapsed"/>
-                <RadioButton x:Name="Reader2" Content="Reader 2" GroupName="Readers" Grid.Column="1" Grid.Row="3"  VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="5,5,10,5" Visibility="Collapsed"/>
-            </Grid>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Button Name="SetYesterday" Content="Yesterday" Margin="10,10,3,10" Click="SetYesterday_Click" Height="25" Grid.Column="0"/>
-                <Button Name="SetToday" Content="Today" Margin="7,10,7,10" Click="SetToday_Click" Height="25" Grid.Column="1"/>
-                <Button Name="SetTomorrow" Content="Tomorrow" Margin="3,10,10,10" Click="SetTomorrow_Click" Height="25" Grid.Column="2"/>
-            </Grid>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Button Name="Rewind" Content="Rewind" HorizontalAlignment="Right" Width="100" Height="25" Margin="5,5,5,5" Grid.Column="0" Click="Rewind_Click"/>
-                <Button Name="Done" Content="Done" HorizontalAlignment="Left" Width="100" Height="25" Margin="5,5,5,5" Grid.Column="1" Click="Done_Click"/>
-            </Grid>
-        </StackPanel>
-    </xctf:BusyIndicator>
-</Window>
+        Title="Rewind" Height="330" Width="300" ResizeMode="NoResize"
+        d:DataContext="{d:DesignInstance local:RewindWindow, IsDesignTimeCreatable=True}"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica"
+        WindowCornerPreference="Round"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar
+            Grid.Row="0">
+            <ui:TitleBar.Tray>
+                <ui:NotifyIcon
+                    FocusOnLeftClick="True"
+                    MenuOnRightClick="True">
+                    <ui:NotifyIcon.Menu>
+                        <ContextMenu>
+                            <MenuItem
+                                Header="Home"
+                                Tag="tray_home" 
+                                />
+                        </ContextMenu>
+                    </ui:NotifyIcon.Menu>
+                </ui:NotifyIcon>
+            </ui:TitleBar.Tray>
+        </ui:TitleBar>
+        <xctf:BusyIndicator Name="busyIndicator">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Rewind" FontSize="18" TextAlignment="Center" VerticalAlignment="Center"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="From" FontSize="14" VerticalAlignment="Center" TextAlignment="Center" Grid.Column="0" Grid.Row="0" Margin="10,5,5,5"/>
+                    <TextBlock Text="To" FontSize="14" VerticalAlignment="Center" TextAlignment="Center" Grid.Column="1" Grid.Row="0" Margin="5,5,10,5"/>
+                    <DatePicker Name="FromDate" FontSize="14" VerticalContentAlignment="Center" Grid.Column="0" Grid.Row="1" Margin="10,5,5,5"/>
+                    <DatePicker Name="ToDate" FontSize="14" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1" Margin="5,5,10,5"/>
+                    <xctf:MaskedTextBox Name="FromTime" FontSize="14" Mask="00:00:00" ValueDataType="{x:Type s:String}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0" Grid.Row="2" Margin="10,5,5,5"/>
+                    <xctf:MaskedTextBox Name="ToTime" FontSize="14" Mask="00:00:00" ValueDataType="{x:Type s:String}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="2" Margin="5,5,10,5"/>
+                    <RadioButton x:Name="Reader1" Content="Reader 1" GroupName="Readers" IsChecked="True" Grid.Column="0" Grid.Row="3"  VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="10,5,5,5" Visibility="Collapsed"/>
+                    <RadioButton x:Name="Reader2" Content="Reader 2" GroupName="Readers" Grid.Column="1" Grid.Row="3"  VerticalContentAlignment="Center" HorizontalAlignment="Center" Margin="5,5,10,5" Visibility="Collapsed"/>
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Name="SetYesterday" Content="Yesterday" Margin="10,10,3,10" Click="SetYesterday_Click" Height="35" Grid.Column="0" HorizontalAlignment="Stretch"/>
+                    <Button Name="SetToday" Content="Today" Margin="7,10,7,10" Click="SetToday_Click" Height="35" Grid.Column="1" HorizontalAlignment="Stretch"/>
+                    <Button Name="SetTomorrow" Content="Tomorrow" Margin="3,10,10,10" Click="SetTomorrow_Click" Height="35" Grid.Column="2" HorizontalAlignment="Stretch"/>
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Name="Rewind" Content="Rewind" HorizontalAlignment="Right" Width="100" Height="35" Margin="5,5,5,5" Grid.Column="0" Click="Rewind_Click"/>
+                    <Button Name="Done" Content="Done" HorizontalAlignment="Left" Width="100" Height="35" Margin="5,5,5,5" Grid.Column="1" Click="Done_Click"/>
+                </Grid>
+            </StackPanel>
+        </xctf:BusyIndicator>
+    </Grid>
+</ui:UiWindow>

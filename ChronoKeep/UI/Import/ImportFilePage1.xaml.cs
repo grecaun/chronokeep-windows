@@ -18,7 +18,7 @@ namespace Chronokeep
     /// <summary>
     /// Interaction logic for ImportFilePage1.xaml
     /// </summary>
-    public partial class ImportFilePage1 : Page
+    public partial class ImportFilePage1
     {
         IDataImporter importer;
 

@@ -15,13 +15,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for RewindWindow.xaml
     /// </summary>
-    public partial class RewindWindow : Window
+    public partial class RewindWindow : UiWindow
     {
         TimingSystem system;
 
@@ -80,8 +81,14 @@ namespace Chronokeep.UI.Timing
             }
             if (system.Type == Constants.Settings.TIMING_IPICO || system.Type == Constants.Settings.TIMING_IPICO_LITE)
             {
-                MessageBoxResult result = MessageBox.Show("This process can take up to 3 minutes to complete. There is no guarantee that other processes will work properly while this is occuring. Are you sure you wish to proceed?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.Yes)
+                Dialog dialog = new()
+                {
+                    Title = "Confirm?",
+                    Message = "This process can take up to 3 minutes to complete. There is no guarantee that other processes will work properly while this is occuring. Are you sure you wish to proceed?",
+                    ButtonRightName = "No",
+                    ButtonLeftName = "Yes",
+                };
+                dialog.ButtonLeftClick += (sender, e) =>
                 {
                     BackgroundWorker worker = new BackgroundWorker();
                     worker.DoWork += (o, ea) =>
@@ -95,7 +102,8 @@ namespace Chronokeep.UI.Timing
                     };
                     busyIndicator.IsBusy = true;
                     worker.RunWorkerAsync();
-                }
+                };
+                dialog.Show();
             }
             else
             {

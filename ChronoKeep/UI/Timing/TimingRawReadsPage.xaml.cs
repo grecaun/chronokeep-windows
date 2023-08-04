@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {
@@ -23,9 +25,15 @@ namespace Chronokeep.UI.Timing
         public TimingRawReadsPage(TimingPage parent, IDBInterface database)
         {
             InitializeComponent();
+            Log.D("UI.Timing.TimingRawReadsPage", "Page initialized.");
             this.parent = parent;
             this.database = database;
             theEvent = database.GetCurrentEvent();
+            Log.D("UI.Timing.TimingRawReadsPage", "Current event fetched.");
+            UpdateView();
+            Log.D("UI.Timing.TimingRawReadsPage", "View updated.");
+            scrollViewer.ScrollToBottom();
+            Log.D("UI.Timing.TimingRawReadsPage", "We're at the bottom.");
         }
 
         private void IgnoreButton_Click(object sender, RoutedEventArgs e)
@@ -82,6 +90,7 @@ namespace Chronokeep.UI.Timing
 
         public async void UpdateView()
         {
+            Log.D("UI.Timing.TimingRawReadsPage", "Update View called.");
             List<ChipRead> reads = new List<ChipRead>();
             SortType sortType = parent.GetSortType();
             await Task.Run(() =>
@@ -118,11 +127,6 @@ namespace Chronokeep.UI.Timing
 
         public void EditSelected() { }
 
-        private void UpdateListView_Loaded(object sender, RoutedEventArgs e)
-        {
-            UpdateView();
-        }
-
         private void SortWorker(List<ChipRead> reads, SortType sortType, string search)
         {
             reads.RemoveAll(read => read.IsNotMatch(search));
@@ -154,9 +158,14 @@ namespace Chronokeep.UI.Timing
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.TimingRawReadsPage", "Delete clicked.");
-            if (MessageBoxResult.Yes == MessageBox.Show("Are you sure you wish to delete these records? They " +
-                "cannot be recovered if you have no other record of them.", "Confirmation",
-                MessageBoxButton.YesNo, MessageBoxImage.Hand))
+            Dialog dialog = new()
+            {
+                Title = "Confirmation",
+                Message = "Are you sure you wish to delete these records? They cannot be recovered if you have no other record of them.",
+                ButtonLeftName = "Yes",
+                ButtonRightName = "No",
+            };
+            dialog.ButtonLeftClick += (sender, e) =>
             {
                 List<ChipRead> readsToDelete = new List<ChipRead>();
                 foreach (ChipRead read in updateListView.SelectedItems)
@@ -179,6 +188,34 @@ namespace Chronokeep.UI.Timing
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 UpdateView();
                 parent.NotifyTimingWorker();
+            };
+            dialog.Show();
+        }
+
+        private void updateListView_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            ScrollViewer scv = scrollViewer;
+            if (e.Delta < 0)
+            {
+                if (scv.VerticalOffset - e.Delta <= scv.ExtentHeight - scv.ViewportHeight)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToBottom();
+                }
+            }
+            else
+            {
+                if (scv.VerticalOffset - e.Delta > 0)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToTop();
+                }
             }
         }
     }

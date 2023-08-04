@@ -12,13 +12,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for BibChipAssociationWindow.xaml
     /// </summary>
-    public partial class BibChipAssociationWindow : Window
+    public partial class BibChipAssociationWindow : UiWindow
     {
         IDataImporter importer;
         IWindowCallback window = null;
@@ -179,11 +180,18 @@ namespace Chronokeep
                         {
                             error.Append(string.Format("\nChip {0} - Bib {1}", assoc.Chip, assoc.Bib));
                         }
-                        MessageBoxResult result = MessageBox.Show(error.ToString(), "Clobber?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                        if (result == MessageBoxResult.No)
+                        Dialog dialog1 = new()
+                        {
+                            Title = "Clobber?",
+                            Message = error.ToString(),
+                            ButtonRightName = "No",
+                            ButtonLeftName = "Yes",
+                        };
+                        dialog1.ButtonRightClick += (sender, e) =>
                         {
                             items.RemoveAll(x => conflicts.Contains(x));
-                        }
+                        };
+                        dialog1.Show();
                     }
                     database.AddBibChipAssociation(eventId, items);
                 });
@@ -198,7 +206,14 @@ namespace Chronokeep
                 {
                     val = " " + str;
                 }
-                MessageBox.Show("Multiple values given for:" + val);
+                Dialog dialog1 = new()
+                {
+                    Title = "",
+                    Message = "Multiple values given for:" + val,
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog1.Show();
             }
         }
     }

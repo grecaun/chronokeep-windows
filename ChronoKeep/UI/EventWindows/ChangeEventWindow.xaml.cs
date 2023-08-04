@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI
 {
     /// <summary>
     /// Interaction logic for ChangeEventWindow.xaml
     /// </summary>
-    public partial class ChangeEventWindow : Window
+    public partial class ChangeEventWindow : UiWindow
     {
         private IWindowCallback window;
         private IDBInterface database;

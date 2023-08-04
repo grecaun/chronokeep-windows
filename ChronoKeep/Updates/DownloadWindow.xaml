@@ -1,9 +1,10 @@
-﻿<Window x:Class="Chronokeep.Updates.DownloadWindow"
+﻿<ui:UiWindow x:Class="Chronokeep.Updates.DownloadWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chronokeep.Updates"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
         Title="Chronokeep Update" Height="200" Width="400" ResizeMode="NoResize" Closing="Window_Closing">
     <StackPanel VerticalAlignment="Center">
@@ -20,4 +21,4 @@
             <Button Name="CancelButton" Content="Cancel" Height="30" Width="100" Margin="10,0,10,0" Click="CancelButton_Click"/>
         </DockPanel>
     </StackPanel>
-</Window>
+</ui:UiWindow>

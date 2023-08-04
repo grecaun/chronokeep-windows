@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Wpf.Ui.Controls;
 using static Chronokeep.UI.Import.ImportFilePage2Alt;
 
 namespace Chronokeep
@@ -15,7 +16,7 @@ namespace Chronokeep
     /// <summary>
     /// Interaction logic for ImportFileWindow.xaml
     /// </summary>
-    public partial class ImportFileWindow : Window
+    public partial class ImportFileWindow : UiWindow
     {
         IDataImporter importer;
         IMainWindow window = null;
@@ -155,7 +156,14 @@ namespace Chronokeep
                     {
                         sb.Append(" " + s);
                     }
-                    MessageBox.Show(sb.ToString());
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = sb.ToString(),
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                 }
                 else
                 {
@@ -194,7 +202,7 @@ namespace Chronokeep
             }
             foreach (HeaderListBoxItem item in headerListBoxItems)
             {
-                Log.D("ImportFileWindow", "Header is " + item.HeaderLabel.Content);
+                Log.D("ImportFileWindow", "Header is " + item.HeaderLabel.Text);
                 if (item.HeaderBox.SelectedIndex != 0)
                 {
                     keys[item.HeaderBox.SelectedIndex] = item.Index;
@@ -204,7 +212,7 @@ namespace Chronokeep
             string[] distancesFromFile = data.GetDistanceNames(keys[DISTANCE]);
             if (keys[DISTANCE] != 0)
             {
-                Log.D("ImportFileWindow", "Distance key is " + keys[DISTANCE] + " with a header name of " + headerListBoxItems[keys[DISTANCE] - 1].HeaderLabel.Content + " number of distances found is " + distancesFromFile.Length);
+                Log.D("ImportFileWindow", "Distance key is " + keys[DISTANCE] + " with a header name of " + headerListBoxItems[keys[DISTANCE] - 1].HeaderLabel.Text + " number of distances found is " + distancesFromFile.Length);
             }
             if (distancesFromFile.Length <= 0)
             {

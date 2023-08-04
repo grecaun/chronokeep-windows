@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Participants
 {
     /// <summary>
     /// Interaction logic for ModifyParticipantWindow.xaml
     /// </summary>
-    public partial class ModifyParticipantWindow : Window
+    public partial class ModifyParticipantWindow : UiWindow
     {
         IMainWindow window;
         IDBInterface database;
@@ -32,7 +33,14 @@ namespace Chronokeep.UI.Participants
             theEvent = database.GetCurrentEvent();
             if (theEvent == null)
             {
-                MessageBox.Show("Unable to get event.");
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "Unable to get event.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed
+                };
+                dialog.Show();
                 this.Close();
             }
             if (person == null)
@@ -57,7 +65,14 @@ namespace Chronokeep.UI.Participants
             theEvent = database.GetCurrentEvent();
             if (theEvent == null)
             {
-                MessageBox.Show("Unable to get event.");
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "Unable to get event.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed
+                };
+                dialog.Show();
                 this.Close();
             }
             person = database.GetParticipantEventSpecific(theEvent.Identifier, EventSpecificId);
@@ -210,37 +225,90 @@ namespace Chronokeep.UI.Participants
             if (offendingBib != null)
             {
                 // bib is taken
-                MessageBoxResult result = MessageBox.Show("This bib is already taken. Assign no bib to the previous bib owner?", "", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (MessageBoxResult.Yes == result)
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "This bib is already taken. Assign no bib to the previous bib owner?",
+                    ButtonRightName = "Yes",
+                    ButtonLeftName = "No"
+                };
+                dialog.ButtonLeftClick += (sender, e) =>
                 {
                     offendingBib.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
                     database.UpdateParticipant(offendingBib);
-                }
-                else if (MessageBoxResult.No == result)
-                {
-                    return;
-                }
+                    if (newPart != null)
+                    {
+                        if (newPart.FirstName.Trim().Length < 1 || newPart.LastName.Trim().Length < 1)
+                        {
+                            Dialog dialog = new()
+                            {
+                                Title = "",
+                                Message = "Invalid name given.",
+                                ButtonRightName = "OK",
+                                ButtonLeftVisibility = Visibility.Collapsed
+                            };
+                            dialog.Show();
+                            return;
+                        }
+                        if (newPart.Birthdate.Length < 1)
+                        {
+                            Dialog dialog = new()
+                            {
+                                Title = "",
+                                Message = "Birthdate or Age not specified.",
+                                ButtonRightName = "OK",
+                                ButtonLeftVisibility = Visibility.Collapsed
+                            };
+                            dialog.Show();
+                            return;
+                        }
+                        database.AddParticipant(newPart);
+                        if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                        {
+                            ParticipantChanged = true;
+                        }
+                    }
+                    Clear();
+                    BibBox.Focus();
+                };
             }
-            if (newPart != null)
+            else
             {
-                if (newPart.FirstName.Trim().Length < 1 || newPart.LastName.Trim().Length < 1)
+                if (newPart != null)
                 {
-                    MessageBox.Show("Invalid name given.");
-                    return;
+                    if (newPart.FirstName.Trim().Length < 1 || newPart.LastName.Trim().Length < 1)
+                    {
+                        Dialog dialog = new()
+                        {
+                            Title = "",
+                            Message = "Invalid name given.",
+                            ButtonRightName = "OK",
+                            ButtonLeftVisibility = Visibility.Collapsed
+                        };
+                        dialog.Show();
+                        return;
+                    }
+                    if (newPart.Birthdate.Length < 1)
+                    {
+                        Dialog dialog = new()
+                        {
+                            Title = "",
+                            Message = "Birthdate or Age not specified.",
+                            ButtonRightName = "OK",
+                            ButtonLeftVisibility = Visibility.Collapsed
+                        };
+                        dialog.Show();
+                        return;
+                    }
+                    database.AddParticipant(newPart);
+                    if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                    {
+                        ParticipantChanged = true;
+                    }
                 }
-                if (newPart.Birthdate.Length < 1)
-                {
-                    MessageBox.Show("Birthdate or Age not specified.");
-                    return;
-                }
-                database.AddParticipant(newPart);
-                if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                {
-                    ParticipantChanged = true;
-                }
+                Clear();
+                BibBox.Focus();
             }
-            Clear();
-            BibBox.Focus();
         }
 
         private void ShowOtherGender()
@@ -271,8 +339,14 @@ namespace Chronokeep.UI.Participants
             if (offendingBib != null && newPart.Identifier != offendingBib.Identifier)
             {
                 // bib is taken - person object holds old bib #
-                MessageBoxResult result = MessageBox.Show("This bib is already taken. Swap bibs?", "", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (MessageBoxResult.Yes == result)
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "This bib is already taken. Assign no bib to the previous bib owner?",
+                    ButtonRightName = "Yes",
+                    ButtonLeftName = "No"
+                };
+                dialog.ButtonLeftClick += (sender, e) =>
                 {
                     offendingBib.EventSpecific.Bib = person.EventSpecific.Bib;
                     int newBib = newPart.EventSpecific.Bib;
@@ -283,22 +357,24 @@ namespace Chronokeep.UI.Participants
                     database.UpdateParticipant(newPart);
                     ParticipantChanged = true;
                     this.Close();
-                }
-                else if (MessageBoxResult.No == result)
+                };
+                dialog.ButtonRightClick += (sender, e) =>
                 {
                     BibBox.Text = person.EventSpecific.Bib.ToString();
-                    return;
-                }
+                };
             }
-            if (newPart != null)
+            else
             {
-                Log.D("UI.Participants.ModifyParticipantWindow", "NewPart not null ---- Should update --- NewPart birthdate ----" + newPart.Birthdate);
-                database.UpdateParticipant(newPart);
-                if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                if (newPart != null)
                 {
-                    ParticipantChanged = true;
+                    Log.D("UI.Participants.ModifyParticipantWindow", "NewPart not null ---- Should update --- NewPart birthdate ----" + newPart.Birthdate);
+                    database.UpdateParticipant(newPart);
+                    if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                    {
+                        ParticipantChanged = true;
+                    }
+                    this.Close();
                 }
-                this.Close();
             }
         }
 
@@ -437,7 +513,7 @@ namespace Chronokeep.UI.Participants
         {
             if (e.Key == Key.Return)
             {
-                Add.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                Add.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
             }
         }
 

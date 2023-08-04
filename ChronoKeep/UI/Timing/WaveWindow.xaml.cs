@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 using Xceed.Wpf.Toolkit;
 
 namespace Chronokeep.UI.Timing
@@ -20,7 +21,7 @@ namespace Chronokeep.UI.Timing
     /// <summary>
     /// Interaction logic for WaveWindow.xaml
     /// </summary>
-    public partial class WaveWindow : Window
+    public partial class WaveWindow : UiWindow
     {
         IMainWindow window;
         IDBInterface database;
@@ -240,7 +241,7 @@ namespace Chronokeep.UI.Timing
 
             private void SelectAll(object sender, RoutedEventArgs e)
             {
-                TextBox src = (TextBox)e.OriginalSource;
+                System.Windows.Controls.TextBox src = (System.Windows.Controls.TextBox)e.OriginalSource;
                 src.SelectAll();
             }
         }

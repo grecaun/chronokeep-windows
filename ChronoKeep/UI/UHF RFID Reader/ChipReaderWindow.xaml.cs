@@ -4,13 +4,14 @@ using System.IO.Ports;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for ChipReaderWindow.xaml
     /// </summary>
-    public partial class ChipReaderWindow : Window
+    public partial class ChipReaderWindow : UiWindow
     {
         public static byte deviceNo = 0;
         private static Thread readingThread;
@@ -31,7 +32,7 @@ namespace Chronokeep
             eventId = Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value);
             EventPickerHolder.Visibility = Visibility.Hidden;
             EventNameHolder.Visibility = Visibility.Visible;
-            eventName.Content = database.GetEvent(eventId).Name;
+            eventName.Text = database.GetEvent(eventId).Name;
         }
 
         public static ChipReaderWindow NewWindow(IWindowCallback window, IDBInterface database)
@@ -82,12 +83,26 @@ namespace Chronokeep
                 }
                 else
                 {
-                    MessageBox.Show("No serial port selected.");
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = "No serial port selected.",
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                     return;
                 }
                 if (serial.Connect() != RFIDSerial.Error.NOERR)
                 {
-                    MessageBox.Show("Unable to connect to device.");
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = "Unable to connect to device.",
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                     return;
                 }
                 connectBtn.Content = "Disconnect";

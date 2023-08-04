@@ -2,13 +2,14 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for ChipPersonWindow.xaml
     /// </summary>
-    public partial class ChipPersonWindow : Window
+    public partial class ChipPersonWindow : UiWindow
     {
         private ChipReaderWindow readerWindow;
         private string eventDate;
@@ -33,25 +34,25 @@ namespace Chronokeep
             });
             if (person != null)
             {
-                Bib.Content = "Bib: " + person.EventSpecific.Bib;
-                Chip.Content = "Chip: " + person.EventSpecific.Chip;
-                First.Content = "First: " + person.FirstName;
-                Last.Content = "Last: " + person.LastName;
-                Age.Content = "Age: " + person.Age(eventDate);
-                Gender.Content = "Gender: " + person.Gender;
-                Distance.Content = "Distance: " + person.EventSpecific.DistanceName;
-                Unknown.Content = "";
+                Bib.Text = "Bib: " + person.EventSpecific.Bib;
+                Chip.Text = "Chip: " + person.EventSpecific.Chip;
+                First.Text = "First: " + person.FirstName;
+                Last.Text = "Last: " + person.LastName;
+                Age.Text = "Age: " + person.Age(eventDate);
+                Gender.Text = "Gender: " + person.Gender;
+                Distance.Text = "Distance: " + person.EventSpecific.DistanceName;
+                Unknown.Text = "";
             }
             else
             {
-                Bib.Content = "";
-                Chip.Content = "";
-                First.Content = "";
-                Last.Content = "";
-                Age.Content = "";
-                Gender.Content = "";
-                Distance.Content = "";
-                Unknown.Content = "Information not found.";
+                Bib.Text = "";
+                Chip.Text = "";
+                First.Text = "";
+                Last.Text = "";
+                Age.Text = "";
+                Gender.Text = "";
+                Distance.Text = "";
+                Unknown.Text = "Information not found.";
             }
             await Task.Run(() =>
             {
@@ -60,14 +61,14 @@ namespace Chronokeep
                     Monitor.Wait(_locker, 5000);
                 }
             });
-            Bib.Content = "";
-            Chip.Content = "";
-            First.Content = "";
-            Last.Content = "";
-            Age.Content = "";
-            Gender.Content = "";
-            Distance.Content = "";
-            Unknown.Content = "";
+            Bib.Text = "";
+            Chip.Text = "";
+            First.Text = "";
+            Last.Text = "";
+            Age.Text = "";
+            Gender.Text = "";
+            Distance.Text = "";
+            Unknown.Text = "";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

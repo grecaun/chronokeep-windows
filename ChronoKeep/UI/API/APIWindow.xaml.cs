@@ -13,13 +13,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.API
 {
     /// <summary>
     /// Interaction logic for APIWindow.xaml
     /// </summary>
-    public partial class APIWindow : Window
+    public partial class APIWindow : UiWindow
     {
         IWindowCallback window = null;
         IDBInterface database;
@@ -75,7 +76,15 @@ namespace Chronokeep.UI.API
                 database.UpdateEvent(theEvent);
             } else
             {
-                MessageBox.Show("One or more values retrieved is invalid.");
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "One or more values retrieved is invalid.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog.Show();
+                return;
             }
             this.Close();
         }

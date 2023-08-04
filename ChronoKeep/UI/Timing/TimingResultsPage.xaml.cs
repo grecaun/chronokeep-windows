@@ -4,6 +4,7 @@ using Chronokeep.UI.Participants;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace Chronokeep.UI.Timing
@@ -27,8 +28,7 @@ namespace Chronokeep.UI.Timing
             theEvent = database.GetCurrentEvent();
             if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
             {
-                ChipTimeHeader.Header = "Lap Time";
-                ChipTimeHeader.DisplayMemberBinding = new Binding("LapTime");
+                ChipTimeHeader.Text = "Lap Time";
             }
             TimeResult.SetupStaticVariables(database);
         }
@@ -142,9 +142,7 @@ namespace Chronokeep.UI.Timing
             });
             updateListView.ItemsSource = newResults;
             updateListView.Items.Refresh();
-            updateListView.SelectedIndex = updateListView.Items.Count - 1;
-            updateListView.ScrollIntoView(updateListView.SelectedItem);
-            updateListView.SelectedItem = null;
+            scrollViewer.ScrollToBottom();
         }
 
         public void CancelableUpdateView(CancellationToken token)
@@ -177,6 +175,33 @@ namespace Chronokeep.UI.Timing
             TimeResult selected = (TimeResult)updateListView.SelectedItem;
             ModifyParticipantWindow modifyParticipant = new ModifyParticipantWindow(parent, database, selected.EventSpecificId, selected.Bib);
             modifyParticipant.ShowDialog();
+        }
+
+        private void updateListView_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            ScrollViewer scv = scrollViewer;
+            if (e.Delta < 0)
+            {
+                if (scv.VerticalOffset - e.Delta <= scv.ExtentHeight - scv.ViewportHeight)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToBottom();
+                }
+            }
+            else
+            {
+                if (scv.VerticalOffset - e.Delta > 0)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToTop();
+                }
+            }
         }
     }
 }

@@ -7,13 +7,14 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Export
 {
     /// <summary>
     /// Interaction logic for ExportResults.xaml
     /// </summary>
-    public partial class ExportResults : Window
+    public partial class ExportResults : UiWindow
     {
         IMainWindow window;
         IDBInterface database;
@@ -504,10 +505,25 @@ namespace Chronokeep.UI.Export
                 catch (Exception ex)
                 {
                     Log.E("UI.Export.ExportResults.Error", ex.ToString());
-                    MessageBox.Show("Error saving file.");
+                    Dialog dialog1 = new()
+                    {
+                        Title = "",
+                        Message = "Error saving file.",
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog1.Show();
+                    return;
                 }
             }
-            MessageBox.Show("Results saved.");
+            Dialog dialog = new()
+            {
+                Title = "",
+                Message = "File saved.",
+                ButtonRightName = "OK",
+                ButtonLeftVisibility = Visibility.Collapsed,
+            };
+            dialog.Show();
             this.Close();
         }
 

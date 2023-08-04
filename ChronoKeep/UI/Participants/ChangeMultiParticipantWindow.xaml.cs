@@ -12,13 +12,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Participants
 {
     /// <summary>
     /// Interaction logic for ChangeMultiParticipantWindow.xaml
     /// </summary>
-    public partial class ChangeMultiParticipantWindow : Window
+    public partial class ChangeMultiParticipantWindow : UiWindow
     {
         IMainWindow window;
         IDBInterface database;

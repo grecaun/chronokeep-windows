@@ -14,13 +14,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for SetTimeWindow.xaml
     /// </summary>
-    public partial class SetTimeWindow : Window
+    public partial class SetTimeWindow : UiWindow
     {
         TimingPage parent;
         TimingSystem timingSystem;
@@ -34,7 +35,7 @@ namespace Chronokeep.UI.Timing
 
         public void UpdateTime()
         {
-            TimeLabel.Content = string.Format("Time is {0}", timingSystem.SystemTime);
+            TimeLabel.Text = string.Format("Time is {0}", timingSystem.SystemTime);
         }
 
         private void Set_Click(object sender, RoutedEventArgs e)

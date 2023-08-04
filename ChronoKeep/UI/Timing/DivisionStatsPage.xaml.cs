@@ -50,7 +50,7 @@ namespace Chronokeep.UI.Timing
             dnsListView.ItemsSource = dnsParticipants;
             dnfListView.ItemsSource = dnfParticipants;
             finishedListView.ItemsSource = finishedParticipants;
-            this.DistanceName.Content = DistanceName;
+            this.DistanceName.Text = DistanceName;
             UpdateView();
         }
 
@@ -131,6 +131,33 @@ namespace Chronokeep.UI.Timing
         {
             Log.D("UI.Timing.DistanceStatsPage", "Done button clicked.");
             parent.LoadMainDisplay();
+        }
+
+        private void activeListView_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            ScrollViewer scv = mainScroll;
+            if (e.Delta < 0)
+            {
+                if (scv.VerticalOffset - e.Delta <= scv.ExtentHeight - scv.ViewportHeight)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToBottom();
+                }
+            }
+            else
+            {
+                if (scv.VerticalOffset - e.Delta > 0)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToTop();
+                }
+            }
         }
     }
 }

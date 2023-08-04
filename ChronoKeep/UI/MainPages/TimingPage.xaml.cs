@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -71,8 +72,8 @@ namespace Chronokeep.UI.MainPages
             Timer.Tick += new EventHandler(Timer_Click);
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
 
-            IPAdd.Content = "localhost";
-            Port.Content = "6933";
+            IPAdd.Text = "localhost";
+            Port.Text = "6933";
             // Check for default IP address to give to our reader boxes for connections
             foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces())
             {
@@ -84,7 +85,7 @@ namespace Chronokeep.UI.MainPages
                         {
                             if (ipinfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                             {
-                                IPAdd.Content = ipinfo.Address;
+                                IPAdd.Text = ipinfo.Address.ToString();
                                 Log.D("UI.MainPages.TimingPage", "IP Address :" + ipinfo.Address);
                                 Log.D("UI.MainPages.TimingPage", "IPv4 Mask  :" + ipinfo.IPv4Mask);
                                 string[] ipParts = ipinfo.Address.ToString().Split('.');
@@ -370,7 +371,7 @@ namespace Chronokeep.UI.MainPages
         private void Timer_Click(object sender, EventArgs e)
         {
             TimeSpan ellapsed = DateTime.Now - startTime;
-            EllapsedTime.Content = string.Format("{0:D2}:{1:D2}:{2:D2}", Math.Abs(ellapsed.Days) * 24 + Math.Abs(ellapsed.Hours), Math.Abs(ellapsed.Minutes), Math.Abs(ellapsed.Seconds));
+            EllapsedTime.Text = string.Format("{0:D2}:{1:D2}:{2:D2}", Math.Abs(ellapsed.Days) * 24 + Math.Abs(ellapsed.Hours), Math.Abs(ellapsed.Minutes), Math.Abs(ellapsed.Seconds));
         }
 
         private void StartRaceClick(object sender, RoutedEventArgs e)
@@ -615,7 +616,14 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch (APIException ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = ex.Message,
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                 }
             }
             // We do this because we want to ensure we've reset all the results before we allow
@@ -724,7 +732,14 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.TimingPage", "Export BAA Clicked.");
             if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {
-                MessageBox.Show("Exporting time based events not supported.");
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "Exporting time based events not supported.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog.Show();
                 return;
             }
             ExportDistanceResults exportBAA = new ExportDistanceResults(mWindow, database, OutputType.Boston);
@@ -739,7 +754,14 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.TimingPage", "Export Ultrasignup Clicked.");
             if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {
-                MessageBox.Show("Exporting time based events not supported.");
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "Exporting time based events not supported.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog.Show();
                 return;
             }
             ExportDistanceResults exportUS = new ExportDistanceResults(mWindow, database, OutputType.UltraSignup);
@@ -871,7 +893,14 @@ namespace Chronokeep.UI.MainPages
                 {
                     mWindow.StopHttpServer();
                     HttpServerButton.Content = "Start Web";
-                    MessageBox.Show("Unable to start the web server. Please type this command in an elevated command prompt: 'netsh http add urlacl url=http://*:6933/ user=everyone'");
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = "Unable to start the web server. Please type this command in an elevated command prompt: 'netsh http add urlacl url=http://*:6933/ user=everyone'",
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                     IPContainer.Visibility = Visibility.Collapsed;
                     PortContainer.Visibility = Visibility.Collapsed;
                 }
@@ -956,7 +985,14 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch (APIException ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = ex.Message,
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                     ManualAPIButton.Content = "Manual Upload";
                     return;
                 }
@@ -975,7 +1011,14 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch (APIException ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = ex.Message,
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                     ManualAPIButton.Content = "Manual Upload";
                     return;
                 }
@@ -1106,16 +1149,43 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
+        private void statsListView_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            ScrollViewer scv = controlScroll;
+            if (e.Delta < 0)
+            {
+                if (scv.VerticalOffset - e.Delta <= scv.ExtentHeight - scv.ViewportHeight)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToBottom();
+                }
+            }
+            else
+            {
+                if (scv.VerticalOffset - e.Delta > 0)
+                {
+                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                }
+                else
+                {
+                    scv.ScrollToTop();
+                }
+            }
+        }
+
         private class AReaderBox : ListBoxItem
         {
             public ComboBox ReaderType { get; private set; }
-            public TextBox ReaderIP { get; private set; }
-            public TextBox ReaderPort { get; private set; }
+            public System.Windows.Controls.TextBox ReaderIP { get; private set; }
+            public System.Windows.Controls.TextBox ReaderPort { get; private set; }
             public ComboBox ReaderLocation { get; private set; }
-            public Button ConnectButton { get; private set; }
-            public Button ClockButton { get; private set; }
-            public Button RewindButton { get; private set; }
-            public Button RemoveButton { get; private set; }
+            public Wpf.Ui.Controls.Button ConnectButton { get; private set; }
+            public Wpf.Ui.Controls.Button ClockButton { get; private set; }
+            public Wpf.Ui.Controls.Button RewindButton { get; private set; }
+            public Wpf.Ui.Controls.Button RemoveButton { get; private set; }
 
             readonly TimingPage parent;
             private List<TimingLocation> locations;
@@ -1132,23 +1202,24 @@ namespace Chronokeep.UI.MainPages
                 this.reader = sys;
                 Grid thePanel = new Grid()
                 {
-                    MaxWidth = 740,
-                    Width = 790
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
                 };
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(70) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(65) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(65) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(90) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) }); // Reader Type
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) }); // Reader IP
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(70) });  // Reader Port
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) }); // Location
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(75) });  // Clock
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(80) });  // Rewind
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(85) });  // Connect
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Disconnect
                 this.Content = thePanel;
                 ReaderType = new ComboBox()
                 {
                     VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     Margin = new Thickness(5, 5, 5, 5),
-                    Height = 25
+                    Height = 40
                 };
                 ComboBoxItem current = null, selected = null;
                 foreach (string SYSTEM_IDVAL in Constants.Timing.SYSTEM_NAMES.Keys)
@@ -1175,22 +1246,24 @@ namespace Chronokeep.UI.MainPages
                 ReaderType.SelectionChanged += new SelectionChangedEventHandler(ReaderTypeChanged);
                 thePanel.Children.Add(ReaderType);
                 Grid.SetColumn(ReaderType, 0);
-                ReaderIP = new TextBox()
+                ReaderIP = new System.Windows.Controls.TextBox()
                 {
                     Text = reader.IPAddress,
                     FontSize = 14,
                     VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     Margin = new Thickness(5, 5, 5, 5)
                 };
                 ReaderIP.GotFocus += new RoutedEventHandler(this.SelectAll);
                 ReaderIP.PreviewTextInput += new TextCompositionEventHandler(this.IPValidation);
                 thePanel.Children.Add(ReaderIP);
                 Grid.SetColumn(ReaderIP, 1);
-                ReaderPort = new TextBox()
+                ReaderPort = new System.Windows.Controls.TextBox()
                 {
                     Text = reader.Port.ToString(),
                     FontSize = 14,
                     VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     Margin = new Thickness(5, 5, 5, 5)
                 };
                 ReaderPort.GotFocus += new RoutedEventHandler(this.SelectAll);
@@ -1201,7 +1274,8 @@ namespace Chronokeep.UI.MainPages
                 {
                     VerticalContentAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(5, 5, 5, 5),
-                    Height = 25
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Height = 40
                 };
                 current = null; selected = null;
                 foreach (TimingLocation loc in this.locations)
@@ -1227,40 +1301,47 @@ namespace Chronokeep.UI.MainPages
                 }
                 thePanel.Children.Add(ReaderLocation);
                 Grid.SetColumn(ReaderLocation, 3);
-                ClockButton = new Button()
+                ClockButton = new Wpf.Ui.Controls.Button()
                 {
                     Content = "Clock",
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
-                    IsEnabled = false
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    IsEnabled = false,
+                    Height = 40
                 };
                 ClockButton.Click += new RoutedEventHandler(this.Clock);
                 thePanel.Children.Add(ClockButton);
                 Grid.SetColumn(ClockButton, 4);
-                RewindButton = new Button()
+                RewindButton = new Wpf.Ui.Controls.Button()
                 {
                     Content = "Rewind",
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
-                    IsEnabled = false
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    IsEnabled = false,
+                    Height = 40
                 };
                 RewindButton.Click += new RoutedEventHandler(this.Rewind);
                 thePanel.Children.Add(RewindButton);
                 Grid.SetColumn(RewindButton, 5);
-                ConnectButton = new Button()
+                ConnectButton = new Wpf.Ui.Controls.Button()
                 {
                     Content = "Connect",
                     Margin = new Thickness(5, 5, 5, 5),
-                    VerticalContentAlignment = VerticalAlignment.Center
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Height = 40
                 };
                 ConnectButton.Click += new RoutedEventHandler(this.Connect);
                 thePanel.Children.Add(ConnectButton);
                 Grid.SetColumn(ConnectButton, 6);
-                RemoveButton = new Button()
+                RemoveButton = new Wpf.Ui.Controls.Button()
                 {
                     Content = "X",
                     Margin = new Thickness(5, 5, 5, 5),
-                    VerticalContentAlignment = VerticalAlignment.Center
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Height = 40
                 };
                 if (reader.Saved())
                 {
@@ -1318,7 +1399,7 @@ namespace Chronokeep.UI.MainPages
 
             private void SelectAll(object sender, RoutedEventArgs e)
             {
-                TextBox src = (TextBox)e.OriginalSource;
+                System.Windows.Controls.TextBox src = (System.Windows.Controls.TextBox)e.OriginalSource;
                 src.SelectAll();
             }
 
@@ -1387,7 +1468,14 @@ namespace Chronokeep.UI.MainPages
                 // Check if IP is a valid IP address
                 if (!Regex.IsMatch(ReaderIP.Text.Trim(), IPPattern))
                 {
-                    MessageBox.Show("IP address given not valid.");
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = "IP address given not valid.",
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                     return;
                 }
                 reader.IPAddress = ReaderIP.Text.Trim();
@@ -1396,7 +1484,14 @@ namespace Chronokeep.UI.MainPages
                 int.TryParse(ReaderPort.Text.Trim(), out portNo);
                 if (portNo < 0 || portNo > 65535)
                 {
-                    MessageBox.Show("Port given not valid.");
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = "Port given not valid.",
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                     return;
                 }
                 reader.Port = portNo;

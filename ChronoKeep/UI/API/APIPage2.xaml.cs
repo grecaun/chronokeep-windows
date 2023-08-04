@@ -15,13 +15,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.API
 {
     /// <summary>
     /// Interaction logic for APIPage2.xaml
     /// </summary>
-    public partial class APIPage2 : Page
+    public partial class APIPage2
     {
         APIWindow window;
         IDBInterface database;
@@ -38,7 +39,14 @@ namespace Chronokeep.UI.API
             }
             catch (APIException ex)
             {
-                MessageBox.Show(ex.Message);
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = ex.Message,
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog.Show();
                 window.Close();
                 return;
             }
@@ -144,7 +152,14 @@ namespace Chronokeep.UI.API
                 }
                 catch (APIException ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = ex.Message,
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                     return;
                 }
             }

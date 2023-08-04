@@ -18,7 +18,7 @@ namespace Chronokeep.UI.Import
     /// <summary>
     /// Interaction logic for ImportFilePage2Alt.xaml
     /// </summary>
-    public partial class ImportFilePage2Alt : Page
+    public partial class ImportFilePage2Alt
     {
         private bool no_distance = false;
 

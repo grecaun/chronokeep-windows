@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {
@@ -286,7 +287,14 @@ namespace Chronokeep.UI.Timing
             }
             else
             {
-                MessageBox.Show("Please select a type.");
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "Please select a type.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog.Show();
                 return;
             }
             try
@@ -327,7 +335,14 @@ namespace Chronokeep.UI.Timing
             }
             catch
             {
-                MessageBox.Show("Something went wrong when attempting to print.");
+                Dialog dialog = new()
+                {
+                    Title = "",
+                    Message = "Something went wrong when attempting to print.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog.Show();
             }
         }
 
@@ -370,7 +385,14 @@ namespace Chronokeep.UI.Timing
                 }
                 else
                 {
-                    MessageBox.Show("Please select a type.");
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = "Please select a type.",
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                     return;
                 }
                 try
@@ -398,11 +420,25 @@ namespace Chronokeep.UI.Timing
                     create_pdf.Close();
                     // delete old file
                     File.Delete(tmpFile);
-                    MessageBox.Show("File saved.");
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = "File saved.",
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                 }
                 catch
                 {
-                    MessageBox.Show("Unable to save file.");
+                    Dialog dialog = new()
+                    {
+                        Title = "",
+                        Message = "Unable to save file.",
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog.Show();
                 }
             }
         }

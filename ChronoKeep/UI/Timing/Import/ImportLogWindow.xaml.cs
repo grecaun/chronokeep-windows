@@ -7,13 +7,14 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing.Import
 {
     /// <summary>
     /// Interaction logic for ImportLogWindow.xaml
     /// </summary>
-    public partial class ImportLogWindow : Window
+    public partial class ImportLogWindow : UiWindow
     {
         IMainWindow window;
         IDBInterface database;

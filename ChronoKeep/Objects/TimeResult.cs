@@ -218,6 +218,10 @@ namespace Chronokeep
             }
         }
 
+        public string ChipLapTime
+        {
+            get => raceType == Constants.Timing.EVENT_TYPE_TIME ? splitTime : chipTime;
+        }
         public string ChipTime { get => chipTime; set => chipTime = value; }
         public string Gender { get => gender; set => gender = value; }
         public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }

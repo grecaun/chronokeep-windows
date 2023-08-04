@@ -1,9 +1,10 @@
-﻿<Page x:Class="Chronokeep.UI.Timing.TimingRawReadsPage"
+﻿<ui:UiPage x:Class="Chronokeep.UI.Timing.TimingRawReadsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Chronokeep.UI.Timing"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="TimingRawReadsPage">
@@ -12,21 +13,60 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="45" />
         </Grid.RowDefinitions>
-        <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Extended" Grid.Row="0" FontSize="12" Loaded="UpdateListView_Loaded">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Box" Width="40" DisplayMemberBinding="{Binding Box}" />
-                    <GridViewColumn Header="Location" Width="80" DisplayMemberBinding="{Binding LocationName}" />
-                    <GridViewColumn Header="Chip" Width="80" DisplayMemberBinding="{Binding ChipNumber}" />
-                    <GridViewColumn Header="Bib" Width="60" DisplayMemberBinding="{Binding Bib}" />
-                    <GridViewColumn Header="Name" Width="140" DisplayMemberBinding="{Binding Name}" />
-                    <GridViewColumn Header="Clock" Width="160" DisplayMemberBinding="{Binding TimeString}" />
-                    <GridViewColumn Header="Net Time" Width="100" DisplayMemberBinding="{Binding NetTime}" />
-                    <GridViewColumn Header="Status" Width="60" DisplayMemberBinding="{Binding StatusName}" />
-                    <GridViewColumn Header="Type" Width="60" DisplayMemberBinding="{Binding TypeName}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
+        <ScrollViewer x:Name="scrollViewer" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Grid.Row="0">
+            <StackPanel>
+                <ListView x:Name="updateListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Extended" FontSize="12" PreviewMouseWheel="updateListView_PreviewMouseWheel">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="140"/>
+                                    <ColumnDefinition Width="160"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="60"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Box}"/>
+                                <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding LocationName}"/>
+                                <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding ChipNumber}"/>
+                                <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Bib}"/>
+                                <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Name}"/>
+                                <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding TimeString}"/>
+                                <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding NetTime}"/>
+                                <TextBlock Grid.Column="7" Margin="4,4" Text="{Binding StatusName}"/>
+                                <TextBlock Grid.Column="8" Margin="4,4" Text="{Binding TypeName}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Grid PreviewMouseWheel="updateListView_PreviewMouseWheel" Margin="5,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Margin="4,4" Text="Box"/>
+                    <TextBlock Grid.Column="1" Margin="4,4" Text="Location"/>
+                    <TextBlock Grid.Column="2" Margin="4,4" Text="Chip"/>
+                    <TextBlock Grid.Column="3" Margin="4,4" Text="Bib"/>
+                    <TextBlock Grid.Column="4" Margin="4,4" Text="Name"/>
+                    <TextBlock Grid.Column="5" Margin="4,4" Text="Clock"/>
+                    <TextBlock Grid.Column="6" Margin="4,4" Text="Net Time"/>
+                    <TextBlock Grid.Column="7" Margin="4,4" Text="Status"/>
+                    <TextBlock Grid.Column="8" Margin="4,4" Text="Type"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
         <DockPanel LastChildFill="False" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Button Name="DeleteButton" Content="Delete" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="DeleteButton_Click"/>
             <Button Name="IgnoreButton" Content="Ignore" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="IgnoreButton_Click"/>
@@ -34,4 +74,4 @@
             <Button Name="DoneButton" Content="Done" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="DoneButton_Click"/>
         </DockPanel>
     </Grid>
-</Page>
+</ui:UiPage>

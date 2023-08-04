@@ -18,7 +18,7 @@ namespace Chronokeep.UI.API
     /// <summary>
     /// Interaction logic for APIErrorPage.xaml
     /// </summary>
-    public partial class APIErrorPage : Page
+    public partial class APIErrorPage
     {
         APIWindow window;
         public APIErrorPage(APIWindow window, bool noAPI)

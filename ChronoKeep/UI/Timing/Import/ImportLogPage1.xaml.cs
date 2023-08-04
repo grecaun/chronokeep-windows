@@ -19,7 +19,7 @@ namespace Chronokeep.UI.Timing.Import
     /// <summary>
     /// Interaction logic for ImportLogPage1.xaml
     /// </summary>
-    public partial class ImportLogPage1 : Page
+    public partial class ImportLogPage1
     {
         LogImporter importer;
         ImportLogWindow parent;

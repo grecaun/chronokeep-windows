@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.ChipAssignment
 {
     /// <summary>
     /// Interaction logic for ChipTool.xaml
     /// </summary>
-    public partial class ChipTool : Window
+    public partial class ChipTool : UiWindow
     {
         IWindowCallback window;
         IDBInterface database;
@@ -39,11 +40,11 @@ namespace Chronokeep.UI.ChipAssignment
 
         private class ATagRange : ListBoxItem
         {
-            public TextBox StartBib { get; private set; }
-            public TextBox EndBib { get; private set; }
-            public TextBox StartChip { get; private set; }
+            public System.Windows.Controls.TextBox StartBib { get; private set; }
+            public System.Windows.Controls.TextBox EndBib { get; private set; }
+            public System.Windows.Controls.TextBox StartChip { get; private set; }
             public Label EndChip { get; private set; }
-            public Button Remove { get; private set; }
+            public System.Windows.Controls.Button Remove { get; private set; }
 
             ListBox parent;
 
@@ -69,7 +70,7 @@ namespace Chronokeep.UI.ChipAssignment
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                StartBib = new TextBox
+                StartBib = new System.Windows.Controls.TextBox
                 {
                     Text = string.Format("{0}", lastEndBib + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -78,7 +79,7 @@ namespace Chronokeep.UI.ChipAssignment
                 StartBib.TextChanged += new TextChangedEventHandler(this.StartBib_TextChanged);
                 StartBib.GotFocus += new RoutedEventHandler(this.SelectAll);
                 StartBib.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                EndBib = new TextBox
+                EndBib = new System.Windows.Controls.TextBox
                 {
                     Text = string.Format("{0}", lastEndBib + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -87,7 +88,7 @@ namespace Chronokeep.UI.ChipAssignment
                 EndBib.TextChanged += new TextChangedEventHandler(this.EndBib_TextChanged);
                 EndBib.GotFocus += new RoutedEventHandler(SelectAll);
                 EndBib.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                StartChip = new TextBox
+                StartChip = new System.Windows.Controls.TextBox
                 {
                     Text = string.Format("{0}", lastEndChip + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -102,7 +103,7 @@ namespace Chronokeep.UI.ChipAssignment
                     Margin = new Thickness(2, 2, 2, 2),
                     IsTabStop = false
                 };
-                Remove = new Button
+                Remove = new System.Windows.Controls.Button
                 {
                     Content = "Remove",
                     Height = 25,
@@ -191,7 +192,7 @@ namespace Chronokeep.UI.ChipAssignment
 
             private void SelectAll(object sender, RoutedEventArgs e)
             {
-                TextBox src = (TextBox)e.OriginalSource;
+                System.Windows.Controls.TextBox src = (System.Windows.Controls.TextBox)e.OriginalSource;
                 src.SelectAll();
             }
 
@@ -246,7 +247,14 @@ namespace Chronokeep.UI.ChipAssignment
                 }
                 if (conflicts)
                 {
-                    MessageBox.Show("One or more values is in conflict. Please fix the error and try again.");
+                    Dialog dialog1 = new()
+                    {
+                        Title = "",
+                        Message = "One or more values is in conflict. Please fix the error and try again.",
+                        ButtonRightName = "OK",
+                        ButtonLeftVisibility = Visibility.Collapsed,
+                    };
+                    dialog1.Show();
                     return;
                 }
                 ranges.Add(curRange);

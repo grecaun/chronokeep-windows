@@ -7,13 +7,14 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep.Updates
 {
     /// <summary>
     /// Interaction logic for DownloadWindow.xaml
     /// </summary>
-    public partial class DownloadWindow : Window
+    public partial class DownloadWindow : UiWindow
     {
         private string uri;
         private string download_uri;
@@ -119,7 +120,14 @@ namespace Chronokeep.Updates
                         catch (Exception ex)
                         {
                             Log.E("Updates.Check", $"Error downloading update. {ex.Message}");
-                            MessageBox.Show("Unable to download update.", "Error");
+                            Dialog dialog = new()
+                            {
+                                Title = "Error",
+                                Message = "Unable to download update.",
+                                ButtonRightName = "OK",
+                                ButtonLeftVisibility = Visibility.Collapsed
+                            };
+                            dialog.Show();
                         }
                     }
                 }

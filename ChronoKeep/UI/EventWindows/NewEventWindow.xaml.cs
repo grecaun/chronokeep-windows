@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Wpf.Ui.Controls;
 
 namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class NewEventWindow : Window
+    public partial class NewEventWindow : UiWindow
     {
         IDBInterface database = null;
         IWindowCallback window = null;
@@ -71,7 +72,14 @@ namespace Chronokeep
             Log.D("NewEventWindow", "Name given for event: '" + nameString + "' Date Given: " + dateVal + " Date Value: " + dateVal);
             if (nameString == "")
             {
-                MessageBox.Show("Please input a value in the name box.");
+                Dialog dialog1 = new()
+                {
+                    Title = "",
+                    Message = "Please input a value in the name box.",
+                    ButtonRightName = "OK",
+                    ButtonLeftVisibility = Visibility.Collapsed,
+                };
+                dialog1.Show();
                 return;
             }
             else
