@@ -43,8 +43,8 @@
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <Button Name="Change" Content="Change" Width="100" Height="25" HorizontalAlignment="Right" Grid.Column="0" Margin="5,10,5,5" Click="Change_Click"/>
-                <Button Name="Cancel" Content="Cancel" Width="100" Height="25" HorizontalAlignment="Left" Grid.Column="1" Margin="5,10,5,5" Click="Cancel_Click"/>
+                <Button Name="Change" Content="Change" Width="100" Height="35" HorizontalAlignment="Right" Grid.Column="0" Margin="5,10,5,5" Click="Change_Click"/>
+                <Button Name="Cancel" Content="Cancel" Width="100" Height="35" HorizontalAlignment="Left" Grid.Column="1" Margin="5,10,5,5" Click="Cancel_Click"/>
             </Grid>
         </StackPanel>
     </Grid>
