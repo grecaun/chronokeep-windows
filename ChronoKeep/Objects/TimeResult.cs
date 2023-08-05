@@ -26,6 +26,7 @@ namespace Chronokeep
         public static Dictionary<int, TimingLocation> locations = null;
         public static Dictionary<int, Segment> segments = null;
         public static Dictionary<(string, int), TimeResult> RaceResults = null;
+        public static Event theEvent = null;
 
         // database constructor
         public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
@@ -231,6 +232,10 @@ namespace Chronokeep
         public string Birthday { get => birthday; set => birthday = value; }
         public string Chip { get => chip; set => chip = value; }
         public bool Anonymous { get => anonymous; set => anonymous = value; }
+        public string AgeGenderString
+        {
+            get => theEvent != null ? string.Format("{0} {1}", this.Age(theEvent.Date), this.PrettyGender) : string.Format("? {0}", this.PrettyGender);
+        }
 
         public static string BibToIdentifier(int iBib)
         {
