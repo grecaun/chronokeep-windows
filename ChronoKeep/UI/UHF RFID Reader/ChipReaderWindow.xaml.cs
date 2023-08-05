@@ -30,7 +30,6 @@ namespace Chronokeep
             reader = new NewReader(600, this);
             this.database = database;
             eventId = Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value);
-            EventPickerHolder.Visibility = Visibility.Hidden;
             EventNameHolder.Visibility = Visibility.Visible;
             eventName.Text = database.GetEvent(eventId).Name;
         }
@@ -106,10 +105,6 @@ namespace Chronokeep
                     return;
                 }
                 connectBtn.Content = "Disconnect";
-                if (eventId == -1)
-                {
-                    eventId = Convert.ToInt32(((ComboBoxItem)eventCB.SelectedItem).Uid);
-                }
                 Event thisEvent = database.GetEvent(eventId);
                 chipNumbers.Items.Add(new RFIDSerial.Info { DecNumber = 0 });
                 readingThread = new Thread(new ThreadStart(reader.Run));

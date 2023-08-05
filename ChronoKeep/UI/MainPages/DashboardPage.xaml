@@ -13,14 +13,16 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" MinWidth="380"/>
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="550" MinWidth="550"/>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="65" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Grid.ColumnSpan="2">
+        <Grid Grid.ColumnSpan="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -84,7 +86,7 @@
                 Height="40"
                 />
         </Grid>
-        <StackPanel Name="LeftPanel" Grid.Column="0" Grid.Row="1" Margin="20,0,20,0">
+        <StackPanel Name="LeftPanel" Grid.Column="1" Grid.Row="1" Margin="10,0,10,0">
             <DockPanel LastChildFill="True" Margin="0,0,0,5">
                 <TextBlock Text="Event Name" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
                 <TextBox Name="eventNameTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
@@ -140,42 +142,39 @@
         </StackPanel>
         <StackPanel
             Name="RightPanel"
-            Grid.Column="1"
+            Grid.Column="2"
             Grid.Row="1"
-            Margin="20,0,20,0"
+            Margin="10,0,15,0"
             >
             <Button
                 Name="apiPageButton"
                 Content="Manage Results API"
-                Margin="10,15,10,5"
+                Margin="0,15,0,5"
                 Click="apiPageButton_Click"
                 FontSize="16"
                 VerticalContentAlignment="Center"
-                HorizontalAlignment="Center"
+                HorizontalAlignment="Stretch"
                 Height="40"
-                Width="200"
                 />
             <Button
                 Name="apiLinkButton"
                 Content="Link to API Event"
-                Margin="10,5,10,5"
+                Margin="0,5,0,5"
                 Click="apiLinkButton_Click"
                 FontSize="16"
                 VerticalContentAlignment="Center"
-                HorizontalAlignment="Center"
+                HorizontalAlignment="Stretch"
                 Height="40"
-                Width="200"
                 />
             <Button
                 Name="tagTesterButton"
                 Content="Chip Tester"
-                Margin="10,5,10,5"
+                Margin="0,5,0,5"
                 Click="TagTesterButton_Click"
                 FontSize="16"
                 VerticalContentAlignment="Center"
-                HorizontalAlignment="Center"
+                HorizontalAlignment="Stretch"
                 Height="40"
-                Width="200"
                 />
         </StackPanel>
     </Grid>
