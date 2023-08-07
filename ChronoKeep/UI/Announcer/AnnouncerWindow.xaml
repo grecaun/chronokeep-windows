@@ -7,6 +7,15 @@
         mc:Ignorable="d"
         Title="Announcer" Height="450" Width="1000" Closing="Window_Closing">
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="ListViewItem" x:Key="alternateStyle">
+                <Style.Triggers>
+                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                        <Setter Property="Background" Value="#78E6E6E6" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="35" />
             <RowDefinition Height="*" />
@@ -43,7 +52,15 @@
             <TextBlock Grid.Column="3" Text="Name" FontSize="20" Margin="4,4" />
             <TextBlock Grid.Column="4" Text="Age G" FontSize="20" Margin="4,4" />
         </Grid>
-        <ListView Grid.Row="1" x:Name="AnnouncerBox" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Visibility="Collapsed">
+        <ListView 
+            Grid.Row="1"
+            x:Name="AnnouncerBox"
+            ScrollViewer.CanContentScroll="True"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+            Visibility="Collapsed"
+            AlternationCount="2"
+            ItemContainerStyle="{StaticResource alternateStyle}"
+            >
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -67,7 +84,14 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <ListView Grid.Row="1"  x:Name="ResultsBox" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+        <ListView
+            Grid.Row="1"
+            x:Name="ResultsBox" 
+            ScrollViewer.CanContentScroll="True"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            AlternationCount="2"
+            ItemContainerStyle="{StaticResource alternateStyle}"
+            >
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
