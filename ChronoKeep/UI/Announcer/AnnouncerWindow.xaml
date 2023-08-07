@@ -19,7 +19,7 @@
             <Style TargetType="ListViewItem" x:Key="alternateStyle">
                 <Style.Triggers>
                     <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                        <Setter Property="Background" Value="#78E6E6E6" />
+                        <Setter Property="Background" Value="#48A6A6A6" />
                     </Trigger>
                 </Style.Triggers>
             </Style>
@@ -77,11 +77,8 @@
             <TextBlock Grid.Column="3" Text="Name" FontSize="20" Margin="4,4" />
             <TextBlock Grid.Column="4" Text="Age G" FontSize="20" Margin="4,4" />
         </Grid>
-<<<<<<< HEAD
-        <ListView Grid.Row="2" x:Name="AnnouncerBox" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Visibility="Collapsed">
-=======
         <ListView 
-            Grid.Row="1"
+            Grid.Row="2"
             x:Name="AnnouncerBox"
             ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
@@ -89,7 +86,6 @@
             AlternationCount="2"
             ItemContainerStyle="{StaticResource alternateStyle}"
             >
->>>>>>> main
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -113,18 +109,14 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-<<<<<<< HEAD
-        <ListView Grid.Row="2" x:Name="ResultsBox" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-=======
         <ListView
-            Grid.Row="1"
+            Grid.Row="2"
             x:Name="ResultsBox" 
             ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             AlternationCount="2"
             ItemContainerStyle="{StaticResource alternateStyle}"
             >
->>>>>>> main
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
