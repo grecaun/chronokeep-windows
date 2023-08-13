@@ -9,7 +9,7 @@ namespace Chronokeep
         public static void D(string ns, string msg)
         {
 #if DEBUG
-            //Trace.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "d", ns, msg));
+            Trace.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "d", ns, msg));
 #endif
         }
 
