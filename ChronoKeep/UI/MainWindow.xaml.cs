@@ -19,6 +19,7 @@ using System.Windows.Controls;
 using Wpf.Ui.Controls.Interfaces;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Windows.Threading;
 
 namespace Chronokeep.UI
 {
@@ -49,6 +50,9 @@ namespace Chronokeep.UI
         AnnouncerWindow announcerWindow = null;
 
         List<Window> openWindows = new List<Window>();
+
+        // Setup a timer for updating the view
+        DispatcherTimer TimingUpdater = new DispatcherTimer();
 
         // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
         static Mutex OneWindow = new Mutex(true,
@@ -108,6 +112,7 @@ namespace Chronokeep.UI
                 Updates.Check.Do(this);
             }
 
+            // Check for current theme color and apply it.
             AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
             if (OperatingSystem.IsWindowsVersionAtLeast(7))
             {
@@ -119,6 +124,11 @@ namespace Chronokeep.UI
                 Wpf.Ui.Appearance.Theme.Apply(theme, Wpf.Ui.Appearance.BackgroundType.Mica, false);
             }
             DataContext = this;
+
+            // Set timing update to every half second.
+            TimingUpdater.Tick += new EventHandler(UpdateTimingTick);
+            TimingUpdater.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            TimingUpdater.Start();
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
@@ -277,6 +287,7 @@ namespace Chronokeep.UI
             {
                 OneWindow.ReleaseMutex();
             }
+            TimingUpdater.Stop();
         }
 
         private bool StopTimingWorker()
@@ -387,8 +398,26 @@ namespace Chronokeep.UI
                 {
                     page.UpdateView();
                 }
-                if (announcerWindow != null) { announcerWindow.UpdateTiming(); }
+                if (announcerWindow != null)
+                {
+                    announcerWindow.UpdateTiming();
+                }
             }));
+        }
+
+        public void UpdateTimingTick(object sender, EventArgs e)
+        {
+            if (TimingWorker.NewResultsExist())
+            {
+                if (page is TimingPage)
+                {
+                    page.UpdateView();
+                }
+                if (announcerWindow != null)
+                {
+                    announcerWindow.UpdateTiming();
+                }
+            }
         }
 
         public void AddWindow(Window w)
@@ -628,19 +657,24 @@ namespace Chronokeep.UI
         public Frame GetFrame()
         {
             return TheFrame;
-        }
+        }
+
         public INavigation GetNavigation()
         {
             return RootNavigation;
-        }
+        }
+
         public bool Navigate(Type pageType)
-        { return true; }
+        { return true; }
+
         public void SetPageService(IPageService pageService)
-        { }
+        { }
+
         public void ShowWindow()
         {
             Show();
-        }
+        }
+
         public void CloseWindow()
         {
             Close();
