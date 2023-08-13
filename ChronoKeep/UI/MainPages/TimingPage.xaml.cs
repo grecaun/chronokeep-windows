@@ -44,7 +44,6 @@ namespace Chronokeep.UI.MainPages
 
         private DateTime startTime;
         DispatcherTimer Timer = new DispatcherTimer();
-        DispatcherTimer ViewUpdateTimer = new DispatcherTimer();
         private Boolean TimerStarted = false;
         private SetTimeWindow timeWindow = null;
 
@@ -242,7 +241,6 @@ namespace Chronokeep.UI.MainPages
                 database.AddTimingSystem(sys);
             }
             Timer.Stop();
-            ViewUpdateTimer.Stop();
         }
 
         public void UpdateView()
@@ -761,7 +759,6 @@ namespace Chronokeep.UI.MainPages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Starting TimingPage Update Timer.");
-            ViewUpdateTimer.Start();
         }
 
         private void AddDNF_Click(object sender, RoutedEventArgs e)
