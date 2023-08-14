@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -72,14 +73,7 @@ namespace Chronokeep
             Log.D("NewEventWindow", "Name given for event: '" + nameString + "' Date Given: " + dateVal + " Date Value: " + dateVal);
             if (nameString == "")
             {
-                Dialog dialog1 = new()
-                {
-                    Title = "",
-                    Message = "Please input a value in the name box.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog1.Show();
+                DialogBox.Show("Please input a value in the name box.");
                 return;
             }
             else

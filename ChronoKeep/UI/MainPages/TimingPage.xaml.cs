@@ -9,6 +9,7 @@ using Chronokeep.UI.Export;
 using Chronokeep.UI.IO;
 using Chronokeep.UI.Timing;
 using Chronokeep.UI.Timing.Import;
+using Chronokeep.UI.UIObjects;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -614,14 +615,8 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch (APIException ex)
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = ex.Message,
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+
+                    DialogBox.Show(ex.Message);
                 }
             }
             // We do this because we want to ensure we've reset all the results before we allow
@@ -730,14 +725,7 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.TimingPage", "Export BAA Clicked.");
             if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Exporting time based events not supported.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Exporting time based events not supported.");
                 return;
             }
             ExportDistanceResults exportBAA = new ExportDistanceResults(mWindow, database, OutputType.Boston);
@@ -752,14 +740,7 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.TimingPage", "Export Ultrasignup Clicked.");
             if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Exporting time based events not supported.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Exporting time based events not supported.");
                 return;
             }
             ExportDistanceResults exportUS = new ExportDistanceResults(mWindow, database, OutputType.UltraSignup);
@@ -890,14 +871,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     mWindow.StopHttpServer();
                     HttpServerButton.Content = "Start Web";
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "Unable to start the web server. Please type this command in an elevated command prompt: 'netsh http add urlacl url=http://*:6933/ user=everyone'",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("Unable to start the web server. Please type this command in an elevated command prompt: 'netsh http add urlacl url=http://*:6933/ user=everyone'");
                     IPContainer.Visibility = Visibility.Collapsed;
                     PortContainer.Visibility = Visibility.Collapsed;
                 }
@@ -982,14 +956,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch (APIException ex)
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = ex.Message,
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show(ex.Message);
                     ManualAPIButton.Content = "Manual Upload";
                     return;
                 }
@@ -1008,14 +975,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch (APIException ex)
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = ex.Message,
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show(ex.Message);
                     ManualAPIButton.Content = "Manual Upload";
                     return;
                 }
@@ -1465,14 +1425,7 @@ namespace Chronokeep.UI.MainPages
                 // Check if IP is a valid IP address
                 if (!Regex.IsMatch(ReaderIP.Text.Trim(), IPPattern))
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "IP address given not valid.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("IP address given not valid.");
                     return;
                 }
                 reader.IPAddress = ReaderIP.Text.Trim();
@@ -1481,14 +1434,7 @@ namespace Chronokeep.UI.MainPages
                 int.TryParse(ReaderPort.Text.Trim(), out portNo);
                 if (portNo < 0 || portNo > 65535)
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "Port given not valid.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("Port given not valid.");
                     return;
                 }
                 reader.Port = portNo;

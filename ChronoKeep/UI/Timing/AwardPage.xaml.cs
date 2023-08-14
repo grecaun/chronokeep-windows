@@ -2,6 +2,7 @@
 using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
+using Chronokeep.UI.UIObjects;
 using Microsoft.Win32;
 using System;
 using System.Collections;
@@ -76,26 +77,12 @@ namespace Chronokeep.UI.Timing
                 }
                 else
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "Ages not in the range of 0 to 110.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("Ages are not in the range of 0 to 110.");
                 }
             }
             catch
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Start or end age not specified.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Start or end age not specified.");
             }
         }
 
@@ -148,14 +135,7 @@ namespace Chronokeep.UI.Timing
                 }
                 else
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "Award printing for time based races has not been implemented yet.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("Award printing for time based races has not been implemented yet.");
                     return;
                 }
                 /*renderer.RenderDocument();
@@ -170,7 +150,7 @@ namespace Chronokeep.UI.Timing
                 }
                 catch
                 {
-                    MessageBox.Show("Something went wrong when attempting to print.");
+                    DialogBox.Show("Something went wrong when attempting to print.");
                 }//*/
             }
         }
@@ -223,25 +203,18 @@ namespace Chronokeep.UI.Timing
                 }
                 else
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "Award printing for time based races has not been implemented yet.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("Award printing for time based races has not been implemented yet.");
                     return;
                 }
                 /*renderer.RenderDocument();
                 try
                 {
                     renderer.PdfDocument.Save(saveFileDialog.FileName);
-                    MessageBox.Show("File saved.");
+                    DialogBox.Show("File saved.");
                 }
                 catch
                 {
-                    MessageBox.Show("Unable to save file.");
+                    DialogBox.Show("Unable to save file.");
                 }//*/
             }
         }

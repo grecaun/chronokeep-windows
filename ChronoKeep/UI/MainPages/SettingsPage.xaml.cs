@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
+using Chronokeep.UI.UIObjects;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -108,10 +109,16 @@ namespace Chronokeep.UI.MainPages
         private async void ResetDB_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.SettingsPage", "Reset button clicked.");
-            MessageBoxResult result = MessageBox.Show("This deletes all of the data stored in the database.  You cannot recover" +
-                " any of the data in the database after this step.\n\nAre you sure you wish to continue?",
-                                                        "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
+            bool YesClicked = false;
+            DialogBox.Show(
+                "This deletes all of the data stored in the database.  You cannot recover any of the data in the database after this step.\n\nAre you sure you wish to continue?",
+                "Yes",
+                "No",
+                () =>
+                {
+                    YesClicked = true;
+                });
+            if (YesClicked)
             {
                 ResetDB.IsEnabled = false;
                 await Task.Run(() =>
@@ -128,10 +135,16 @@ namespace Chronokeep.UI.MainPages
         private async void RebuildDB_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.SettingsPage", "Rebuild button clicked.");
-            MessageBoxResult result = MessageBox.Show("This deletes all of the tables and values in the database, then rebuilds all of the tables." +
-                "  You cannot recover any of the data in the database after this step.\n\nAre you sure you wish to continue?",
-                                                        "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
+            bool YesClicked = false;
+            DialogBox.Show(
+                "This deletes all of the tables and values in the database, then rebuilds all of the tables.  You cannot recover any of the data in the database after this step.\n\nAre you sure you wish to continue?",
+                "Yes",
+                "No",
+                () =>
+                {
+                    YesClicked = true;
+                });
+            if (YesClicked)
             {
                 RebuildDB.IsEnabled = false;
                 await Task.Run(() =>

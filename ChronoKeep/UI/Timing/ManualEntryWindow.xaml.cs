@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -148,26 +149,12 @@ namespace Chronokeep.UI.Timing
             }
             catch
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Invalid bib value given.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Invalid bib value given.");
                 return;
             }
             if (bib < 0)
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Invalid bib value given.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Invalid bib value given.");
                 return;
             }
             string timeVal = TimeBox.Text.Replace('_', '0');
@@ -246,26 +233,12 @@ namespace Chronokeep.UI.Timing
             }
             catch
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Invalid bib value given.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Invalid bib value given.");
                 return;
             }
             if (bib < 0)
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Invalid bib value given.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Invalid bib value given.");
                 return;
             }
             string timeVal = TimeBox.Text.Replace('_', '0');
@@ -278,14 +251,7 @@ namespace Chronokeep.UI.Timing
             milliseconds = Convert.ToInt32(timeVal.Substring(9, 3));
             if (hours == minutes && minutes == seconds && seconds == milliseconds && milliseconds == 0)
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "No time value specified.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("No time value specified.");
                 return;
             }
             if (NetTimeButton.IsChecked == true)

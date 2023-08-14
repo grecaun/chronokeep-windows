@@ -2,6 +2,7 @@
 using Chronokeep.Objects;
 using Chronokeep.Timing;
 using Chronokeep.UI.API;
+using Chronokeep.UI.UIObjects;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -185,12 +186,10 @@ namespace Chronokeep.UI.MainPages
             if (TimingController.IsRunning() || mWindow.AnnouncerOpen() || mWindow.IsAPIControllerRunning())
             {
 
-                Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
-                    "Error",
+                DialogBox.Show(
                     "There are processes running in the background. Do you wish to stop these and continue?",
                     "Yes",
                     "No",
-                    true,
                     () =>
                     {
                         mWindow.ShutdownTimingController();
@@ -239,32 +238,21 @@ namespace Chronokeep.UI.MainPages
                                 try
                                 {
                                     Log.D("UI.DashboardPage", "Attempting to delete.");
-                                    Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
-                                        "Confirmation",
+                                    DialogBox.Show(
                                         "Are you sure you want to delete this event? This cannot be undone.",
                                         "Yes",
                                         "No",
-                                        true,
                                         () =>
                                         {
                                             database.RemoveEvent(theEvent.Identifier);
                                             database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
                                         }
                                         );
-                                    messageBox.ShowDialog();
                                 }
                                 catch
                                 {
                                     Log.D("UI.DashboardPage", "Unable to remove the event.");
-                                    Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
-                                        "",
-                                        "Unable to remove the event.",
-                                        "",
-                                        "OK",
-                                        false,
-                                        () => {}
-                                        );
-                                    messageBox.ShowDialog();
+                                    DialogBox.Show("Unable to remove the event.");
                                 }
                                 UpdateView();
                                 mWindow.UpdateStatus();
@@ -272,7 +260,6 @@ namespace Chronokeep.UI.MainPages
                         }
                     }
                     );
-                messageBox.ShowDialog();
                 return true;
             }
             return false;
@@ -599,32 +586,21 @@ namespace Chronokeep.UI.MainPages
             try
             {
                 Log.D("UI.DashboardPage", "Attempting to delete.");
-                Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
-                    "Confirmation",
+                DialogBox.Show(
                     "Are you sure you want to delete this event? This cannot be undone.",
                     "Yes",
                     "No",
-                    true,
                     () =>
                     {
                         database.RemoveEvent(theEvent.Identifier);
                         database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
                     }
                     );
-                messageBox.ShowDialog();
             }
             catch
             {
                 Log.D("UI.DashboardPage", "Unable to remove the event.");
-                Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
-                    "",
-                    "Unable to remove the event.",
-                    "",
-                    "OK",
-                    true,
-                    () => {}
-                    );
-                messageBox.ShowDialog();
+                DialogBox.Show("Unable to remove the event.");
             }
             UpdateView();
             mWindow.UpdateStatus();
@@ -683,22 +659,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch
                 {
-                    Wpf.Ui.Controls.MessageBox dialog1 = new()
-                    {
-                        Title = "",
-                        Content = "Unable to save to file.",
-                        ButtonLeftAppearance = Wpf.Ui.Common.ControlAppearance.Transparent,
-                        ButtonRightName = "OK",
-                    };
-                    dialog1.ButtonRightClick += (sender, e) =>
-                    {
-                        dialog1.Close();
-                    };
-                    dialog1.ButtonLeftClick += (sender, e) =>
-                    {
-                        dialog1.Close();
-                    };
-                    dialog1.ShowDialog();
+                    DialogBox.Show("Unable to save to file");
                     return;
                 }
                 SQLiteInterface savedDatabase = new SQLiteInterface(saveFileDialog.FileName);
@@ -706,15 +667,7 @@ namespace Chronokeep.UI.MainPages
                 Event theEvent = database.GetCurrentEvent();
                 SaveEvent(theEvent, database, savedDatabase);
                 Log.D("UI.DashboardPage", "Done saving file.");
-                Wpf.Ui.Controls.MessageBox messageBox = Utils.MakeMessageBox(
-                    "",
-                    "Event saved successfully.",
-                    "",
-                    "OK",
-                    false,
-                    () => { }
-                    );
-                messageBox.ShowDialog();
+                DialogBox.Show("Event saved successfully.");
             }
         }
 

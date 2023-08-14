@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,14 +77,7 @@ namespace Chronokeep.UI.API
                 database.UpdateEvent(theEvent);
             } else
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "One or more values retrieved is invalid.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("One or more values retrieved is invalid.");
                 return;
             }
             this.Close();

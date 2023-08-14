@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Chronokeep.UI.UIObjects;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -137,7 +138,7 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.ChipAssignmentPage", "Bib " + bib + " Chip " + chip);
             if (chip == -1 || bib == -1)
             {
-                MessageBox.Show("The bib or chip is not valid.");
+                DialogBox.Show("The bib or chip is not valid.");
                 return;
             }
             List<BibChipAssociation> bibChips = new List<BibChipAssociation>
@@ -174,7 +175,7 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.ChipAssignmentPage", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
             if (startChip == -1 || endChip == -1 || startBib == -1 || endBib == -1)
             {
-                MessageBox.Show("One or more values is not valid.");
+                DialogBox.Show("One or more values is not valid.");
                 return;
             }
             List<BibChipAssociation> bibChips = new List<BibChipAssociation>();
@@ -322,15 +323,18 @@ namespace Chronokeep.UI.MainPages
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete everything? This cannot be undone.",
-                                                        "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
-            {
-                List<BibChipAssociation> list = (List<BibChipAssociation>) bibChipList.ItemsSource;
-                database.RemoveBibChipAssociations(list);
-                BibsChanged = true;
-                UpdateView();
-            }
+            DialogBox.Show(
+                "Are you sure you want to delete everything? This cannot be undone.",
+                "Yes",
+                "No",
+                () =>
+                {
+                    List<BibChipAssociation> list = (List<BibChipAssociation>)bibChipList.ItemsSource;
+                    database.RemoveBibChipAssociations(list);
+                    BibsChanged = true;
+                    UpdateView();
+                }
+                );
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)

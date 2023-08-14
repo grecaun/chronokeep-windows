@@ -20,6 +20,7 @@ using Wpf.Ui.Controls.Interfaces;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
+using Chronokeep.UI.UIObjects;
 
 namespace Chronokeep.UI
 {
@@ -65,7 +66,7 @@ namespace Chronokeep.UI
             // Check that no other instance of this program are running.
             if (!OneWindow.WaitOne(TimeSpan.Zero, true))
             {
-                MessageBox.Show("Chronokeep is already running.");
+                DialogBox.Show("Chronokeep is already running.");
                 this.Close();
             }
             release = true;
@@ -90,7 +91,7 @@ namespace Chronokeep.UI
             }
             catch (InvalidDatabaseVersion db)
             {
-                MessageBox.Show("Database version greater than the max known by this client. Please update the client.", "fv"+db.FoundVersion+"mv"+db.MaxVersion);
+                DialogBox.Show(string.Format("Database version greater than the max known by this client. Please update the client. Database version {0}. Max version for this client {1}", db.FoundVersion, db.MaxVersion));
                 this.Close();
             }
             Constants.Settings.SetupSettings(database);
@@ -240,13 +241,23 @@ namespace Chronokeep.UI
             if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_FALSE &&
                 (TimingController.IsRunning() || AnnouncerOpen()))
             {
-                MessageBoxResult result = MessageBox.Show("Are you sure you wish to exit?", "", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == MessageBoxResult.No)
+                bool AllowClose = false;
+                DialogBox.Show(
+                    "Are you sure you wish to exit?",
+                    "Yes",
+                    "No",
+                    () =>
+                    {
+                        AllowClose = true;
+                    }
+                    );
+                if (!AllowClose)
                 {
                     e.Cancel = true;
                     return;
                 }
             }
+            Log.D("UI.MainWindow", "Window is closing!");
             try
             {
                 StopTimingController();
@@ -512,7 +523,7 @@ namespace Chronokeep.UI
         {
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
-                MessageBox.Show("Reader at " + system.LocationName + " has unexpectedly disconnected. IP Address was " + system.IPAddress + ".");
+                DialogBox.Show(string.Format("Reader at {0} has unexpectedly disconnected. IP Address was {1}.", system.LocationName, system.IPAddress));
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
                 UpdateTiming();
                 if (announcerWindow != null) announcerWindow.UpdateView();

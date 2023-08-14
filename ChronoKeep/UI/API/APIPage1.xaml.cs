@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Objects;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,14 +95,7 @@ namespace Chronokeep.UI.API
             }
             else
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Unable to unlink event.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Unable to Link Event");
             }
             window.Close();
         }

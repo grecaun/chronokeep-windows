@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.UI.IO;
+using Chronokeep.UI.UIObjects;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -505,25 +506,11 @@ namespace Chronokeep.UI.Export
                 catch (Exception ex)
                 {
                     Log.E("UI.Export.ExportResults.Error", ex.ToString());
-                    Dialog dialog1 = new()
-                    {
-                        Title = "",
-                        Message = "Error saving file.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog1.Show();
+                    DialogBox.Show("Error saving file.");
                     return;
                 }
             }
-            Dialog dialog = new()
-            {
-                Title = "",
-                Message = "File saved.",
-                ButtonRightName = "OK",
-                ButtonLeftVisibility = Visibility.Collapsed,
-            };
-            dialog.Show();
+            DialogBox.Show("File saved.");
             this.Close();
         }
 

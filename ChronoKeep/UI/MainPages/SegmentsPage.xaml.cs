@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -138,7 +139,7 @@ namespace Chronokeep.UI.MainPages
             }
             if (occurrence_error)
             {
-                MessageBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  This could cause errors.");
+                DialogBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  This could cause errors.");
             }
             UpdateView();
         }
@@ -216,7 +217,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 if (occurrence_error)
                 {
-                    MessageBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  These will not be added. Update locations and max occurrences to fix this.");
+                    DialogBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  These will not be added. Update locations and max occurrences to fix this.");
                 }
             }
             if (UpdateTimingWorker)
@@ -750,7 +751,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch
                 {
-                    MessageBox.Show("Error with values given.");
+                    DialogBox.Show("Error with values given.");
                     return;
                 }
             }

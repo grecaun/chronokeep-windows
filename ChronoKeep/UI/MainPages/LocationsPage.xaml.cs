@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -280,7 +281,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch
                 {
-                    System.Windows.MessageBox.Show("Error with values given.");
+                    DialogBox.Show("Error with values given.");
                     return;
                 }
             }

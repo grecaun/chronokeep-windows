@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -84,7 +85,7 @@ namespace Chronokeep.Updates
             catch (Exception ex)
             {
                 Log.E("Updates.Check", ex.Message);
-                MessageBox.Show("Unable to check for update.", "Error");
+                DialogBox.Show("Unable to check for update.");
                 return;
             }
             GithubRelease latestRelease = null;
@@ -117,7 +118,7 @@ namespace Chronokeep.Updates
             }
             else if (messageOnNoUpdate)
             {
-                MessageBox.Show("No updates found.");
+                DialogBox.Show("No updates found.");
             }
         }
 

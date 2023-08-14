@@ -23,46 +23,6 @@ namespace Chronokeep
             return new string(charArray);
         }
 
-        public delegate void LeftClickDelegate();
-
-        public static Wpf.Ui.Controls.MessageBox MakeMessageBox(
-            string Title, 
-            string Message, 
-            string LeftButtonName, 
-            string RightButtonName, 
-            bool ShowLeftButton, 
-            LeftClickDelegate LeftClick)
-        {
-            Wpf.Ui.Controls.MessageBox dialog = new()
-            {
-                Title = Title,
-                Content = new TextBlock()
-                {
-                    Text = Message,
-                    TextWrapping = TextWrapping.Wrap,
-                    VerticalAlignment = VerticalAlignment.Stretch,
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    Margin = new Thickness(5)
-                },
-                ButtonLeftName = LeftButtonName,
-                ButtonRightName = RightButtonName,
-            };
-            if (!ShowLeftButton)
-            {
-                dialog.ButtonLeftAppearance = Wpf.Ui.Common.ControlAppearance.Transparent;
-            }
-            dialog.ButtonRightClick += (sender, e) =>
-            {
-                dialog.Close();
-            };
-            dialog.ButtonLeftClick += (sender, e) =>
-            {
-                dialog.Close();
-                LeftClick();
-            };
-            return dialog;
-        }
-
         public static DependencyObject GetScrollViewer(DependencyObject o)
         {
             if (o is ScrollViewer)

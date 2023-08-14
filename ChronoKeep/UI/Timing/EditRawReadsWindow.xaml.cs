@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.UI.MainPages;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,14 +64,7 @@ namespace Chronokeep.UI.Timing
             catch
             {
                 Log.D("UI.Timing.EditRawReadsWindow", "Somehow the time value wasn't valid.");
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Something went wrong trying to figure out that time value.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Something went wrong trying to figure out that time value.");
                 return;
             }
             if (!add)

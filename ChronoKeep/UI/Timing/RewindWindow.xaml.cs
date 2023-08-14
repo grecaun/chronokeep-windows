@@ -1,6 +1,7 @@
 ﻿using Chronokeep.Objects;
 using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.MainPages;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -81,29 +82,25 @@ namespace Chronokeep.UI.Timing
             }
             if (system.Type == Constants.Settings.TIMING_IPICO || system.Type == Constants.Settings.TIMING_IPICO_LITE)
             {
-                Dialog dialog = new()
-                {
-                    Title = "Confirm?",
-                    Message = "This process can take up to 3 minutes to complete. There is no guarantee that other processes will work properly while this is occuring. Are you sure you wish to proceed?",
-                    ButtonRightName = "No",
-                    ButtonLeftName = "Yes",
-                };
-                dialog.ButtonLeftClick += (sender, e) =>
-                {
-                    BackgroundWorker worker = new BackgroundWorker();
-                    worker.DoWork += (o, ea) =>
+                DialogBox.Show(
+                    "This process can take up to 3 minutes to complete. There is no guarantee that other processes will work properly while this is occuring. Are you sure you wish to proceed?",
+                    "Yes",
+                    "No",
+                    () =>
                     {
-                        system.SystemInterface.Rewind(from, to, Reader1.IsChecked == true ? 1 : 2);
-                        ((IpicoInterface)system.SystemInterface).GetRewind();
-                    };
-                    worker.RunWorkerCompleted += (o, ea) =>
-                    {
-                        busyIndicator.IsBusy = false;
-                    };
-                    busyIndicator.IsBusy = true;
-                    worker.RunWorkerAsync();
-                };
-                dialog.Show();
+                        BackgroundWorker worker = new BackgroundWorker();
+                        worker.DoWork += (o, ea) =>
+                        {
+                            system.SystemInterface.Rewind(from, to, Reader1.IsChecked == true ? 1 : 2);
+                            ((IpicoInterface)system.SystemInterface).GetRewind();
+                        };
+                        worker.RunWorkerCompleted += (o, ea) =>
+                        {
+                            busyIndicator.IsBusy = false;
+                        };
+                        busyIndicator.IsBusy = true;
+                        worker.RunWorkerAsync();
+                    });
             }
             else
             {

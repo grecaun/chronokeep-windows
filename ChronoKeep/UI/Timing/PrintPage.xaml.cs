@@ -2,6 +2,7 @@
 using Chronokeep.IO.HtmlTemplates.Printables;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
+using Chronokeep.UI.UIObjects;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -287,14 +288,7 @@ namespace Chronokeep.UI.Timing
             }
             else
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Please select a type.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Please select a type.");
                 return;
             }
             try
@@ -335,14 +329,7 @@ namespace Chronokeep.UI.Timing
             }
             catch
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Something went wrong when attempting to print.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Something went wrong when attempting to print.");
             }
         }
 
@@ -385,14 +372,7 @@ namespace Chronokeep.UI.Timing
                 }
                 else
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "Please select a type.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("Please select a type.");
                     return;
                 }
                 try
@@ -420,25 +400,11 @@ namespace Chronokeep.UI.Timing
                     create_pdf.Close();
                     // delete old file
                     File.Delete(tmpFile);
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "File saved.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("File saved.");
                 }
                 catch
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "Unable to save file.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("Unable to save file.");
                 }
             }
         }

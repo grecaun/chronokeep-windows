@@ -16,6 +16,7 @@ using Chronokeep.Objects.API;
 using Chronokeep.Network.API;
 using Chronokeep.API;
 using DocumentFormat.OpenXml.Bibliography;
+using Chronokeep.UI.UIObjects;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -143,7 +144,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("There was a problem importing the file.");
+                    DialogBox.Show("There was a problem importing the file.");
                     Log.E("UI.MainPages.ParticipantsPage", $"Something went wrong when trying to read the Excel file. {ex.StackTrace}");
                 }
             }
@@ -305,7 +306,7 @@ namespace Chronokeep.UI.MainPages
                             exporter.ExportData(saveFileDialog.FileName);
                         }
                     });
-                    MessageBox.Show("File saved.");
+                    DialogBox.Show("File saved.");
                 }
             }
         }
@@ -455,7 +456,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch (APIException ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    DialogBox.Show(ex.Message);
                     Upload.Content = "Upload";
                     return;
                 }
@@ -474,7 +475,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 catch (APIException ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    DialogBox.Show(ex.Message);
                     Upload.Content = "Upload";
                     return;
                 }
@@ -514,7 +515,7 @@ namespace Chronokeep.UI.MainPages
                     }
                     catch (APIException ex)
                     {
-                        MessageBox.Show(ex.Message);
+                        DialogBox.Show(ex.Message);
                     }
                 }
                 Delete.Content = "Delete Uploaded";

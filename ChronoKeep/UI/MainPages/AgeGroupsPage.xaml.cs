@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -190,7 +191,7 @@ namespace Chronokeep.UI.MainPages
             }
             if (conflict)
             {
-                MessageBox.Show("There is a conflict in the age groups. Unable to save.");
+                DialogBox.Show("There is a conflict in the age groups. Unable to save.");
                 return;
             }
             ageGroups.AddRange(toAdd);

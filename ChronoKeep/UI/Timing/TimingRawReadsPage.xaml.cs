@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.UI.MainPages;
+using Chronokeep.UI.UIObjects;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -160,38 +161,34 @@ namespace Chronokeep.UI.Timing
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.TimingRawReadsPage", "Delete clicked.");
-            Dialog dialog = new()
-            {
-                Title = "Confirmation",
-                Message = "Are you sure you wish to delete these records? They cannot be recovered if you have no other record of them.",
-                ButtonLeftName = "Yes",
-                ButtonRightName = "No",
-            };
-            dialog.ButtonLeftClick += (sender, e) =>
-            {
-                List<ChipRead> readsToDelete = new List<ChipRead>();
-                foreach (ChipRead read in updateListView.SelectedItems)
+            DialogBox.Show(
+                "Are you sure you wish to delete these records? They cannot be recovered if you have no other record of them.",
+                "Yes",
+                "No",
+                () =>
                 {
-                    readsToDelete.Add(read);
-                    if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                    List<ChipRead> readsToDelete = new List<ChipRead>();
+                    foreach (ChipRead read in updateListView.SelectedItems)
                     {
-                        bibsToReset.Add(read.ChipBib);
+                        readsToDelete.Add(read);
+                        if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                        {
+                            bibsToReset.Add(read.ChipBib);
+                        }
+                        else if (read.ReadBib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                        {
+                            bibsToReset.Add(read.ReadBib);
+                        }
+                        else
+                        {
+                            chipsToReset.Add(read.ChipNumber);
+                        }
                     }
-                    else if (read.ReadBib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                    {
-                        bibsToReset.Add(read.ReadBib);
-                    }
-                    else
-                    {
-                        chipsToReset.Add(read.ChipNumber);
-                    }
-                }
-                database.DeleteChipReads(readsToDelete);
-                database.ResetTimingResultsEvent(theEvent.Identifier);
-                UpdateView();
-                parent.NotifyTimingWorker();
-            };
-            dialog.Show();
+                    database.DeleteChipReads(readsToDelete);
+                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    UpdateView();
+                    parent.NotifyTimingWorker();
+                });
         }
     }
 }

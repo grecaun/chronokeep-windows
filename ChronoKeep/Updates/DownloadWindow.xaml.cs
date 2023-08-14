@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -97,7 +98,7 @@ namespace Chronokeep.Updates
             {
                 Log.D("Updates.DownloadWindow", $"Download clicked. Downloading to {download_uri}");
                 DownloadProgress.Visibility = Visibility.Visible;
-                DownloadLabel.Content = $"Downloading {version}";
+                DownloadLabel.Text = $"Downloading {version}";
                 InstallButton.Content = "Install";
                 InstallButton.IsEnabled = false;
                 BackupDatabaseButton.IsEnabled = false;
@@ -120,14 +121,8 @@ namespace Chronokeep.Updates
                         catch (Exception ex)
                         {
                             Log.E("Updates.Check", $"Error downloading update. {ex.Message}");
-                            Dialog dialog = new()
-                            {
-                                Title = "Error",
-                                Message = "Unable to download update.",
-                                ButtonRightName = "OK",
-                                ButtonLeftVisibility = Visibility.Collapsed
-                            };
-                            dialog.Show();
+                            DialogBox.Show("Unable to download update.");
+                            Close();
                         }
                     }
                 }

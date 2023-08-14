@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -180,18 +181,15 @@ namespace Chronokeep
                         {
                             error.Append(string.Format("\nChip {0} - Bib {1}", assoc.Chip, assoc.Bib));
                         }
-                        Dialog dialog1 = new()
-                        {
-                            Title = "Clobber?",
-                            Message = error.ToString(),
-                            ButtonRightName = "No",
-                            ButtonLeftName = "Yes",
-                        };
-                        dialog1.ButtonRightClick += (sender, e) =>
-                        {
-                            items.RemoveAll(x => conflicts.Contains(x));
-                        };
-                        dialog1.Show();
+                        DialogBox.Show(
+                            error.ToString(),
+                            "Yes",
+                            "No",
+                            () =>
+                            {
+                                items.RemoveAll(x => conflicts.Contains(x));
+                            }
+                            );
                     }
                     database.AddBibChipAssociation(eventId, items);
                 });
@@ -206,14 +204,7 @@ namespace Chronokeep
                 {
                     val = " " + str;
                 }
-                Dialog dialog1 = new()
-                {
-                    Title = "",
-                    Message = "Multiple values given for:" + val,
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog1.Show();
+                DialogBox.Show("Multiple values given for: " + val);
             }
         }
     }

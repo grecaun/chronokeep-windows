@@ -1,6 +1,7 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.UI.Import;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -156,14 +157,7 @@ namespace Chronokeep
                     {
                         sb.Append(" " + s);
                     }
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = sb.ToString(),
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show(sb.ToString());
                 }
                 else
                 {
@@ -216,7 +210,7 @@ namespace Chronokeep
             }
             if (distancesFromFile.Length <= 0)
             {
-                //MessageBox.Show("No distances found in file, or nothing selected for distance.  Please correct this and try again.");
+                //DialogBox.Show("No distances found in file, or nothing selected for distance.  Please correct this and try again.");
                 //return;
                 no_distance = true;
                 distancesFromFile = new string[]

@@ -1,6 +1,7 @@
 ﻿using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,14 +40,7 @@ namespace Chronokeep.UI.API
             }
             catch (APIException ex)
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = ex.Message,
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show(ex.Message);
                 window.Close();
                 return;
             }
@@ -129,14 +123,7 @@ namespace Chronokeep.UI.API
                 }
                 catch (APIException ex)
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = ex.Message,
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show(ex.Message);
                     return;
                 }
             }

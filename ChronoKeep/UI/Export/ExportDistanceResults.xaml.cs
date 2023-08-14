@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.UI.IO;
+using Chronokeep.UI.UIObjects;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.IO;
@@ -44,14 +45,7 @@ namespace Chronokeep.UI.Export
             }
             if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
             {
-                Dialog dialog1 = new()
-                {
-                    Title = "",
-                    Message = "Time based events not supported.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog1.Show();
+                DialogBox.Show("Time based events not supported.");
                 noOpen = true;
                 return;
             }
@@ -72,14 +66,7 @@ namespace Chronokeep.UI.Export
             }
             if (distanceBox.Items.Count < 1)
             {
-                Dialog dialog1 = new()
-                {
-                    Title = "",
-                    Message = "Oops, you don't appear to have any distances set up.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog1.Show();
+                DialogBox.Show("Oops, you don't appear to have any distances set up.");
                 noOpen = true;
                 return;
             }
@@ -95,14 +82,7 @@ namespace Chronokeep.UI.Export
                 }
                 else
                 {
-                    Dialog dialog1 = new()
-                    {
-                        Title = "",
-                        Message = "Something went wrong with the distance. Exiting.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog1.Show();
+                    DialogBox.Show("Something went wrong with the distance. Exiting.");
                     noOpen = true;
                     return;
                 }
@@ -116,14 +96,7 @@ namespace Chronokeep.UI.Export
                 }
                 else
                 {
-                    Dialog dialog1 = new()
-                    {
-                        Title = "",
-                        Message = "Something went wrong. No known output type specified.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog1.Show();
+                    DialogBox.Show("Something went wrong. No known output type specified.");
                 }
                 noOpen = true;
             }
@@ -143,14 +116,7 @@ namespace Chronokeep.UI.Export
             }
             else
             {
-                Dialog dialog1 = new()
-                {
-                    Title = "",
-                    Message = "Something went wrong with the distance. Exiting.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog1.Show();
+                DialogBox.Show("Something went wrong with the distance. Exiting.");
                 Close();
                 return;
             }
@@ -164,14 +130,7 @@ namespace Chronokeep.UI.Export
             }
             else
             {
-                Dialog dialog1 = new()
-                {
-                    Title = "",
-                    Message = "Something went wrong. No known output type specified.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog1.Show();
+                DialogBox.Show("Something went wrong. No known output type specified.");
             }
             Close();
         }
@@ -263,14 +222,7 @@ namespace Chronokeep.UI.Export
                 }
                 exporter.SetData(headers, data);
                 exporter.ExportData(saveFileDialog.FileName);
-                Dialog dialog1 = new()
-                {
-                    Title = "",
-                    Message = "File saved.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog1.Show();
+                DialogBox.Show("File saved.");
             }
         }
 
@@ -345,14 +297,7 @@ namespace Chronokeep.UI.Export
                 exporter = new CSVExporter(format.ToString());
                 exporter.SetData(headers, data);
                 exporter.ExportData(saveFileDialog.FileName);
-                Dialog dialog1 = new()
-                {
-                    Title = "",
-                    Message = "File saved.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog1.Show();
+                DialogBox.Show("File saved.");
             }
         }
 

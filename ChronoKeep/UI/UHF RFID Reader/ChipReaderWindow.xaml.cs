@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.IO.Ports;
 using System.Threading;
@@ -82,26 +83,12 @@ namespace Chronokeep
                 }
                 else
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "No serial port selected.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("No serial port selected.");
                     return;
                 }
                 if (serial.Connect() != RFIDSerial.Error.NOERR)
                 {
-                    Dialog dialog = new()
-                    {
-                        Title = "",
-                        Message = "Unable to connect to device.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog.Show();
+                    DialogBox.Show("Unable to connect to device.");
                     return;
                 }
                 connectBtn.Content = "Disconnect";

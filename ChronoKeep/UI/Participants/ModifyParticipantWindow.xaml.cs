@@ -1,6 +1,7 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -33,14 +34,7 @@ namespace Chronokeep.UI.Participants
             theEvent = database.GetCurrentEvent();
             if (theEvent == null)
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Unable to get event.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed
-                };
-                dialog.Show();
+                DialogBox.Show("Unable to get event.");
                 this.Close();
             }
             if (person == null)
@@ -65,14 +59,7 @@ namespace Chronokeep.UI.Participants
             theEvent = database.GetCurrentEvent();
             if (theEvent == null)
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Unable to get event.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed
-                };
-                dialog.Show();
+                DialogBox.Show("Unable to get event.");
                 this.Close();
             }
             person = database.GetParticipantEventSpecific(theEvent.Identifier, EventSpecificId);
@@ -225,52 +212,35 @@ namespace Chronokeep.UI.Participants
             if (offendingBib != null)
             {
                 // bib is taken
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "This bib is already taken. Assign no bib to the previous bib owner?",
-                    ButtonRightName = "Yes",
-                    ButtonLeftName = "No"
-                };
-                dialog.ButtonLeftClick += (sender, e) =>
-                {
-                    offendingBib.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
-                    database.UpdateParticipant(offendingBib);
-                    if (newPart != null)
+                DialogBox.Show(
+                    "This bib is already taken. Assign no bib to the previous bib owner?",
+                    "Yes",
+                    "No",
+                    () =>
                     {
-                        if (newPart.FirstName.Trim().Length < 1 || newPart.LastName.Trim().Length < 1)
+                        offendingBib.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                        database.UpdateParticipant(offendingBib);
+                        if (newPart != null)
                         {
-                            Dialog dialog = new()
+                            if (newPart.FirstName.Trim().Length < 1 || newPart.LastName.Trim().Length < 1)
                             {
-                                Title = "",
-                                Message = "Invalid name given.",
-                                ButtonRightName = "OK",
-                                ButtonLeftVisibility = Visibility.Collapsed
-                            };
-                            dialog.Show();
-                            return;
-                        }
-                        if (newPart.Birthdate.Length < 1)
-                        {
-                            Dialog dialog = new()
+                                DialogBox.Show("Invalid name given.");
+                                return;
+                            }
+                            if (newPart.Birthdate.Length < 1)
                             {
-                                Title = "",
-                                Message = "Birthdate or Age not specified.",
-                                ButtonRightName = "OK",
-                                ButtonLeftVisibility = Visibility.Collapsed
-                            };
-                            dialog.Show();
-                            return;
+                                DialogBox.Show("Birthdate or Age not specified.");
+                                return;
+                            }
+                            database.AddParticipant(newPart);
+                            if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                            {
+                                ParticipantChanged = true;
+                            }
                         }
-                        database.AddParticipant(newPart);
-                        if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                        {
-                            ParticipantChanged = true;
-                        }
-                    }
-                    Clear();
-                    BibBox.Focus();
-                };
+                        Clear();
+                        BibBox.Focus();
+                    });
             }
             else
             {
@@ -278,26 +248,12 @@ namespace Chronokeep.UI.Participants
                 {
                     if (newPart.FirstName.Trim().Length < 1 || newPart.LastName.Trim().Length < 1)
                     {
-                        Dialog dialog = new()
-                        {
-                            Title = "",
-                            Message = "Invalid name given.",
-                            ButtonRightName = "OK",
-                            ButtonLeftVisibility = Visibility.Collapsed
-                        };
-                        dialog.Show();
+                        DialogBox.Show("Invalid name given.");
                         return;
                     }
                     if (newPart.Birthdate.Length < 1)
                     {
-                        Dialog dialog = new()
-                        {
-                            Title = "",
-                            Message = "Birthdate or Age not specified.",
-                            ButtonRightName = "OK",
-                            ButtonLeftVisibility = Visibility.Collapsed
-                        };
-                        dialog.Show();
+                        DialogBox.Show("Birthdate or Age not specified.");
                         return;
                     }
                     database.AddParticipant(newPart);
@@ -337,29 +293,28 @@ namespace Chronokeep.UI.Participants
             if (offendingBib != null && newPart.Identifier != offendingBib.Identifier)
             {
                 // bib is taken - person object holds old bib #
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "This bib is already taken. Assign no bib to the previous bib owner?",
-                    ButtonRightName = "Yes",
-                    ButtonLeftName = "No"
-                };
-                dialog.ButtonLeftClick += (sender, e) =>
-                {
-                    offendingBib.EventSpecific.Bib = person.EventSpecific.Bib;
-                    int newBib = newPart.EventSpecific.Bib;
-                    newPart.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
-                    database.UpdateParticipant(newPart);
-                    database.UpdateParticipant(offendingBib);
-                    newPart.EventSpecific.Bib = newBib;
-                    database.UpdateParticipant(newPart);
-                    ParticipantChanged = true;
-                    this.Close();
-                };
-                dialog.ButtonRightClick += (sender, e) =>
+                bool ModifyBibs = false;
+                DialogBox.Show(
+                    "This bib is already taken. Assign no bib to the previous bib owner?",
+                    "Yes",
+                    "No",
+                    () =>
+                    {
+                        ModifyBibs = true;
+                        offendingBib.EventSpecific.Bib = person.EventSpecific.Bib;
+                        int newBib = newPart.EventSpecific.Bib;
+                        newPart.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                        database.UpdateParticipant(newPart);
+                        database.UpdateParticipant(offendingBib);
+                        newPart.EventSpecific.Bib = newBib;
+                        database.UpdateParticipant(newPart);
+                        ParticipantChanged = true;
+                        this.Close();
+                    });
+                if (!ModifyBibs)
                 {
                     BibBox.Text = person.EventSpecific.Bib.ToString();
-                };
+                }
             }
             else
             {

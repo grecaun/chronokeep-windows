@@ -1,4 +1,5 @@
 ﻿using Chronokeep.IO;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,14 +83,7 @@ namespace Chronokeep.UI.Timing.Import
                     message.Append(s);
                     message.Append("\n");
                 }
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = message.ToString(),
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show(message.ToString());
                 return;
             }
             int chip = 0, time = 0;
@@ -106,14 +100,7 @@ namespace Chronokeep.UI.Timing.Import
             }
             if (chip == 0 || time == 0)
             {
-                Dialog dialog = new()
-                {
-                    Title = "",
-                    Message = "Both Chip and Time must be chosen.",
-                    ButtonRightName = "OK",
-                    ButtonLeftVisibility = Visibility.Collapsed,
-                };
-                dialog.Show();
+                DialogBox.Show("Both Chip and Time must be chosen.");
                 return;
             }
             parent.Import(LogImporter.Type.CUSTOM, Constants.Timing.LOCATION_DUMMY, chip, time);

@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -247,14 +248,7 @@ namespace Chronokeep.UI.ChipAssignment
                 }
                 if (conflicts)
                 {
-                    Dialog dialog1 = new()
-                    {
-                        Title = "",
-                        Message = "One or more values is in conflict. Please fix the error and try again.",
-                        ButtonRightName = "OK",
-                        ButtonLeftVisibility = Visibility.Collapsed,
-                    };
-                    dialog1.Show();
+                    DialogBox.Show("One or more values is in conflict. Please fix the error and try again.");
                     return;
                 }
                 ranges.Add(curRange);
