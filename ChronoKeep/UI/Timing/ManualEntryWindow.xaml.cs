@@ -27,6 +27,11 @@ namespace Chronokeep.UI.Timing
         private ManualEntryWindow(IMainWindow window, IDBInterface database, List<TimingLocation> locations)
         {
             InitializeComponent();
+            this.MinHeight = 275;
+            this.MinWidth = 300;
+            this.Height = 385;
+            this.Width = 300;
+            this.Topmost = true;
             this.window = window;
             this.database = database;
             theEvent = database.GetCurrentEvent();
@@ -42,7 +47,11 @@ namespace Chronokeep.UI.Timing
         private ManualEntryWindow(IMainWindow window, IDBInterface database)
         {
             InitializeComponent();
-            this.Height = 275;
+            this.MinHeight = 275;
+            this.MinWidth = 300;
+            this.Width = 300;
+            this.Height = 320;
+            this.Topmost = true;
             this.Title = "Add DNF Entry";
             LocationPanel.Visibility = Visibility.Collapsed;
             this.window = window;
@@ -318,34 +327,6 @@ namespace Chronokeep.UI.Timing
         private void NumberValidation(object sender, TextCompositionEventArgs e)
         {
             e.Handled = Regex.IsMatch(e.Text, allowedNums);
-        }
-
-        private void TypeButtonChecked(object sender, RoutedEventArgs e)
-        {
-            if (TimeofDayButton != null && TimeofDayButton.IsChecked == true)
-            {
-                DatePanel.Visibility = Visibility.Visible;
-                if (LocationPanel.Visibility == Visibility.Collapsed)
-                {
-                    this.Height = 320;
-                }
-                else
-                {
-                    this.Height = 365;
-                }
-            }
-            else
-            {
-                DatePanel.Visibility = Visibility.Collapsed;
-                if (LocationPanel.Visibility == Visibility.Collapsed)
-                {
-                    this.Height = 270;
-                }
-                else
-                {
-                    this.Height = 315;
-                }
-            }
         }
     }
 }

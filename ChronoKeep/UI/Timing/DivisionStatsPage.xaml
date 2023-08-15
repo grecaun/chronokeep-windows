@@ -10,6 +10,15 @@
       Title="DistanceStatsPage">
 
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="ListViewItem" x:Key="alternatingStyle">
+                <Style.Triggers>
+                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                        <Setter Property="Background" Value="#48A6A6A6" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="45"/>
@@ -18,7 +27,17 @@
             <StackPanel>
                 <TextBlock Name="DistanceName" Text="Distance Name" HorizontalAlignment="Center" FontSize="18" Margin="0,5,0,5"/>
                 <Expander x:Name="activePanel" Header="Active" Margin="0,0,0,5" IsExpanded="True" FontSize="12" HorizontalAlignment="Stretch">
-                    <ListView x:Name="activeListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" FontSize="12" PreviewMouseWheel="activeListView_PreviewMouseWheel">
+                    <ListView
+                        x:Name="activeListView"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        VerticalContentAlignment="Top"
+                        SelectionMode="Single"
+                        FontSize="12"
+                        PreviewMouseWheel="activeListView_PreviewMouseWheel"
+                        AlternationCount="2"
+                        ItemContainerStyle="{StaticResource alternatingStyle}"
+                        >
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -42,7 +61,17 @@
                     </ListView>
                 </Expander>
                 <Expander x:Name="dnfPanel" Header="Did Not Finish" Margin="0,0,0,5" IsExpanded="True" FontSize="12" HorizontalAlignment="Stretch">
-                    <ListView x:Name="dnfListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" FontSize="12" PreviewMouseWheel="activeListView_PreviewMouseWheel">
+                    <ListView
+                        x:Name="dnfListView"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        VerticalContentAlignment="Top" 
+                        SelectionMode="Single" 
+                        FontSize="12"
+                        PreviewMouseWheel="activeListView_PreviewMouseWheel"
+                        AlternationCount="2"
+                        ItemContainerStyle="{StaticResource alternatingStyle}"
+                        >
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -66,7 +95,17 @@
                     </ListView>
                 </Expander>
                 <Expander x:Name="dnsPanel" Header="Did Not Start" Margin="0,0,0,5" IsExpanded="False" FontSize="12" HorizontalAlignment="Stretch">
-                    <ListView x:Name="dnsListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" FontSize="12" PreviewMouseWheel="activeListView_PreviewMouseWheel">
+                    <ListView 
+                        x:Name="dnsListView" 
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        VerticalContentAlignment="Top"
+                        SelectionMode="Single"
+                        FontSize="12"
+                        PreviewMouseWheel="activeListView_PreviewMouseWheel"
+                        AlternationCount="2"
+                        ItemContainerStyle="{StaticResource alternatingStyle}"
+                        >
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -90,7 +129,17 @@
                     </ListView>
                 </Expander>
                 <Expander x:Name="finishedPanel" Header="Finished" Margin="0,0,0,0" IsExpanded="False" FontSize="12" HorizontalAlignment="Stretch">
-                    <ListView x:Name="finishedListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" FontSize="12" PreviewMouseWheel="activeListView_PreviewMouseWheel">
+                    <ListView
+                        x:Name="finishedListView"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch" 
+                        VerticalContentAlignment="Top"
+                        SelectionMode="Single"
+                        FontSize="12"
+                        PreviewMouseWheel="activeListView_PreviewMouseWheel"
+                        AlternationCount="2"
+                        ItemContainerStyle="{StaticResource alternatingStyle}"
+                        >
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>

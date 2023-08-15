@@ -8,7 +8,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Manual Entry" Height="345" Width="300" Closing="Window_Closing"
+        Title="Manual Entry" Height="345" Width="300" Closing="Window_Closing" SizeToContent="Height"
         d:DataContext="{d:DesignInstance local:ManualEntryWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -21,7 +21,10 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ui:TitleBar
-            Grid.Row="0">
+            Grid.Row="0"
+            ShowMinimize="False"
+            ShowMaximize="False"
+            >
             <ui:TitleBar.Tray>
                 <ui:NotifyIcon
                     FocusOnLeftClick="True"
@@ -39,31 +42,31 @@
         </ui:TitleBar>
         <StackPanel VerticalAlignment="Center" Grid.Row="1">
             <DockPanel>
-                <TextBlock Text="Bib" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right"/>
+                <TextBlock Text="Bib" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right" VerticalAlignment="Center"/>
                 <TextBox Name="BibBox" FontSize="16" Margin="5,10,10,10" TextWrapping="Wrap" KeyUp="Enter_KeyDown" PreviewTextInput="NumberValidation" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Time" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right"/>
-                <xctk:MaskedTextBox Name="TimeBox" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" FontSize="16" Margin="5,10,10,10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" KeyUp="Enter_KeyDown"/>
+                <TextBlock Text="Time" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right" VerticalAlignment="Center"/>
+                <xctk:MaskedTextBox Name="TimeBox" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" FontSize="16" Margin="5,10,10,10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" KeyUp="Enter_KeyDown" Height="35"/>
             </DockPanel>
             <DockPanel Name="DatePanel" Visibility="Collapsed">
-                <TextBlock Text="Date" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right"/>
+                <TextBlock Text="Date" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right" VerticalAlignment="Center"/>
                 <DatePicker Name="DateBox" FontSize="16" Margin="5,10,10,10"/>
             </DockPanel>
             <DockPanel x:Name="LocationPanel">
-                <TextBlock Text="Location" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right"/>
+                <TextBlock Text="Location" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right" VerticalAlignment="Center"/>
                 <ComboBox Name="LocationBox" FontSize="16" Margin="5,10,10,10"/>
             </DockPanel>
-            <RadioButton Name="NetTimeButton" Content="Net Time" GroupName="TimeGroup" Margin="95,5,0,0" IsChecked="True" FontSize="14" VerticalContentAlignment="Center" Checked="TypeButtonChecked"/>
-            <RadioButton Name="ClockTimeButton" Content="Clock Time" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center" Checked="TypeButtonChecked"/>
-            <RadioButton Name="TimeofDayButton" Content="Time of Day" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center" Checked="TypeButtonChecked"/>
-            <Grid Margin="10,10,10,0">
+            <RadioButton Name="NetTimeButton" Content="Net Time" GroupName="TimeGroup" Margin="95,5,0,0" IsChecked="True" FontSize="14" VerticalContentAlignment="Center"/>
+            <RadioButton Name="ClockTimeButton" Content="Clock Time" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center"/>
+            <RadioButton Name="TimeofDayButton" Content="Time of Day" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center"/>
+            <Grid Margin="10,10,10,15">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <Button Name="Add" Content="Add" Click="Add_Click" Grid.Column="0" Margin="10,0,10,0" FontSize="14" Height="30"/>
-                <Button Name="Done" Content="Done" Click="Done_Click" Grid.Column="1" Margin="10,0,10,0" FontSize="14" Height="30"/>
+                <Button Name="Add" Content="Add" Click="Add_Click" Grid.Column="0" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Stretch"/>
+                <Button Name="Done" Content="Done" Click="Done_Click" Grid.Column="1" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Stretch"/>
             </Grid>
         </StackPanel>
     </Grid>

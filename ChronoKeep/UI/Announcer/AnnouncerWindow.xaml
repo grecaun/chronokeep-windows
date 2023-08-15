@@ -16,7 +16,7 @@
         >
     <Grid>
         <Grid.Resources>
-            <Style TargetType="ListViewItem" x:Key="alternateStyle">
+            <Style TargetType="ListViewItem" x:Key="alternatingStyle">
                 <Style.Triggers>
                     <Trigger Property="ItemsControl.AlternationIndex" Value="1">
                         <Setter Property="Background" Value="#48A6A6A6" />
@@ -84,7 +84,7 @@
             ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
             Visibility="Collapsed"
             AlternationCount="2"
-            ItemContainerStyle="{StaticResource alternateStyle}"
+            ItemContainerStyle="{StaticResource alternatingStyle}"
             >
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -115,7 +115,7 @@
             ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             AlternationCount="2"
-            ItemContainerStyle="{StaticResource alternateStyle}"
+            ItemContainerStyle="{StaticResource alternatingStyle}"
             >
             <ListView.ItemTemplate>
                 <DataTemplate>

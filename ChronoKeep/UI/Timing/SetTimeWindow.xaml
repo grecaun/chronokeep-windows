@@ -41,10 +41,10 @@
             <TextBlock Text="Set Time To" FontSize="18" VerticalAlignment="Center" TextAlignment="Center"/>
             <RadioButton Name="NowTimeRadioButton" Margin="30,5,30,5" VerticalContentAlignment="Center" GroupName="TimeGroup" Content="Now" FontSize="14" IsChecked="True"/>
             <RadioButton Name="SpecificTimeRadioButton" Margin="30,5,30,5" VerticalContentAlignment="Center" GroupName="TimeGroup" HorizontalAlignment="Stretch">
-                <Grid>
+                <Grid HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="125"/>
+                        <ColumnDefinition Width="85"/>
                     </Grid.ColumnDefinitions>
                     <DatePicker Name="SpecificDateBox" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Grid.Column="0"/>
                     <xctk:MaskedTextBox Name="SpecificTimeBox" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" Grid.Column="1" Margin="10,0,0,0"/>

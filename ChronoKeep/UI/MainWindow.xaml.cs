@@ -449,6 +449,15 @@ namespace Chronokeep.UI
                 agegroupsButton.IsEnabled = false;
                 timingButton.IsEnabled = false;
                 announcerButton.IsEnabled = false;
+
+                participantsButton.Opacity = 0.2;
+                chipsButton.Opacity = 0.2;
+                distancesButton.Opacity = 0.2;
+                locationsButton.Opacity = 0.2;
+                segmentsButton.Opacity = 0.2;
+                agegroupsButton.Opacity = 0.2;
+                timingButton.Opacity = 0.2;
+                announcerButton.Opacity = 0.2;
             }
             else
             {
@@ -460,6 +469,15 @@ namespace Chronokeep.UI
                 agegroupsButton.IsEnabled = true;
                 timingButton.IsEnabled = true;
                 announcerButton.IsEnabled = true;
+
+                participantsButton.Opacity = 1.0;
+                chipsButton.Opacity = 1.0;
+                distancesButton.Opacity = 1.0;
+                locationsButton.Opacity = 1.0;
+                segmentsButton.Opacity = 1.0;
+                agegroupsButton.Opacity = 1.0;
+                timingButton.Opacity = 1.0;
+                announcerButton.Opacity = 1.0;
             }
             if (OperatingSystem.IsWindowsVersionAtLeast(8))
             {

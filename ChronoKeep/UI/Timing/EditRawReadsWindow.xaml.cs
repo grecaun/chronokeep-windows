@@ -38,6 +38,10 @@ namespace Chronokeep.UI.Timing
             this.parent = parent;
             this.database = database;
             this.chipReads = chipReads;
+            this.MinWidth = 250;
+            this.Width = 250;
+            this.MinHeight = 230;
+            this.Height = 230;
             theEvent = database.GetCurrentEvent();
             TimeBox.Focus();
         }

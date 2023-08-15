@@ -50,8 +50,8 @@ namespace Chronokeep.UI.UIObjects
             this.MinWidth = 400.0;
             this.Width = 400.0;
             this.MinHeight = 200.0;
-            Log.D("UI.UIObjects.DialogBox", string.Format("Height of the messagebox frame: {0} - Content Frame Height {1}", MessageBox.ActualHeight, ContentFrame.ActualHeight));
             this.Height = 200.0;
+            this.Topmost = true;
         }
 
         public static void Show(string Message)

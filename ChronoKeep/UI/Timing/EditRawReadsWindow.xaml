@@ -21,7 +21,10 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ui:TitleBar
-            Grid.Row="0">
+            Grid.Row="0"
+            ShowMinimize="False"
+            ShowMaximize="False"
+            >
             <ui:TitleBar.Tray>
                 <ui:NotifyIcon
                     FocusOnLeftClick="True"
@@ -37,16 +40,16 @@
                 </ui:NotifyIcon>
             </ui:TitleBar.Tray>
         </ui:TitleBar>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="130"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="35"/>
                 <RowDefinition Height="35"/>
-                <RowDefinition Height="70"/>
+                <RowDefinition Height="95"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Text="Days" FontSize="14" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Center"/>
@@ -64,8 +67,8 @@
                 </Grid.RowDefinitions>
                 <RadioButton Content="Add" VerticalContentAlignment="Center" HorizontalAlignment="Center" Grid.Column="0" Grid.Row="0" Name="AddRadio" GroupName="RadioGroup" IsChecked="True" KeyDown="Enter_KeyDown"/>
                 <RadioButton Content="Subtract" VerticalContentAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="0" Name="SubRadio" GroupName="RadioGroup" KeyDown="Enter_KeyDown"/>
-                <Button Content="Submit" Name="Submit" Grid.Column="0" Grid.Row="1" Margin="5,5,5,5" Click="Submit_Click" HorizontalAlignment="Center"/>
-                <Button Content="Cancel" Name="Cancel" Grid.Column="1" Grid.Row="1" Margin="5,5,5,5" Click="Cancel_Click" HorizontalAlignment="Center"/>
+                <Button Content="Submit" Name="Submit" Grid.Column="0" Grid.Row="1" Margin="5,5,5,5" Click="Submit_Click" HorizontalAlignment="Center" Width="100" Height="35"/>
+                <Button Content="Cancel" Name="Cancel" Grid.Column="1" Grid.Row="1" Margin="5,5,5,5" Click="Cancel_Click" HorizontalAlignment="Center" Width="100" Height="35"/>
             </Grid>
         </Grid>
     </Grid>

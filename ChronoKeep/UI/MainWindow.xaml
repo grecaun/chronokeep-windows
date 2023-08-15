@@ -47,7 +47,8 @@
         <ui:NavigationCompact
             x:Name="RootNavigation"
             Grid.Column="0"
-            Frame="{Binding ElementName=TheFrame, Mode=OneWay}">
+            Frame="{Binding ElementName=TheFrame, Mode=OneWay}"
+            >
             <ui:NavigationCompact.Items>
                 <ui:NavigationItem
                             Content="Dashboard"

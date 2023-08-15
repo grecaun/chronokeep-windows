@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.UIObjects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
@@ -55,9 +56,10 @@ namespace Chronokeep.UI
             else
             {
                 Log.D("UI.ChangeEventWindow", "No event selected.");
+                DialogBox.Show("No event selected.");
+                return;
             }
             this.Close();
-
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -69,6 +71,24 @@ namespace Chronokeep.UI
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             window.WindowFinalize(this);
+        }
+
+        private void eventList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Log.D("UI.ChangeEventWindow", "Double Click detected.");
+            Event one = (Event)eventList.SelectedItem;
+            if (one != null)
+            {
+                Log.D("UI.ChangeEventWindow", "Selected event has ID of " + one.Identifier);
+                database.SetAppSetting(Constants.Settings.CURRENT_EVENT, one.Identifier.ToString());
+            }
+            else
+            {
+                Log.D("UI.ChangeEventWindow", "No event selected.");
+                DialogBox.Show("No event selected.");
+                return;
+            }
+            this.Close();
         }
     }
 }
