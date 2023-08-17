@@ -348,7 +348,7 @@ namespace Chronokeep.UI.MainPages
                 wavePanel.Children.Add(new TextBlock()
                 {
                     Text = "Start",
-                    Width = 55,
+                    Width = 50,
                     FontSize = 16,
                     Margin = new Thickness(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
@@ -384,7 +384,8 @@ namespace Chronokeep.UI.MainPages
                     Mask = "00:00:00.000",
                     FontSize = 16,
                     Margin = new Thickness(0, 5, 0, 5),
-                    VerticalContentAlignment = VerticalAlignment.Center
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                 };
                 StartOffset.GotFocus += new RoutedEventHandler(this.SelectAll);
                 wavePanel.Children.Add(StartOffset);
@@ -822,7 +823,7 @@ namespace Chronokeep.UI.MainPages
                 wavePanel.Children.Add(new TextBlock()
                 {
                     Text = "Start",
-                    Width = 55,
+                    Width = 50,
                     FontSize = 16,
                     Margin = new Thickness(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center
@@ -925,10 +926,12 @@ namespace Chronokeep.UI.MainPages
                 if (waveType < 0)
                 {
                     WaveType.Text = "+";
-                } else if (waveType > 0)
+                }
+                else if (waveType > 0)
                 {
                     WaveType.Text = "-";
-                } else
+                }
+                else
                 {
                     Log.E("UI.MainPages.DistancesPage", "Something went wrong and the wave type was set to 0.");
                 }

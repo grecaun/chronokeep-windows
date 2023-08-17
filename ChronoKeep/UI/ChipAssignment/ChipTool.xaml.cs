@@ -44,7 +44,7 @@ namespace Chronokeep.UI.ChipAssignment
             public System.Windows.Controls.TextBox StartBib { get; private set; }
             public System.Windows.Controls.TextBox EndBib { get; private set; }
             public System.Windows.Controls.TextBox StartChip { get; private set; }
-            public Label EndChip { get; private set; }
+            public TextBlock EndChip { get; private set; }
             public System.Windows.Controls.Button Remove { get; private set; }
 
             ListBox parent;
@@ -62,7 +62,7 @@ namespace Chronokeep.UI.ChipAssignment
                     try
                     {
                         int.TryParse(lastItem.EndBib.Text, out lastEndBib);
-                        int.TryParse(lastItem.EndChip.Content.ToString(), out lastEndChip);
+                        int.TryParse(lastItem.EndChip.Text.ToString(), out lastEndChip);
                     }
                     catch { }
                 }
@@ -98,11 +98,10 @@ namespace Chronokeep.UI.ChipAssignment
                 StartChip.TextChanged += new TextChangedEventHandler(this.StartChip_TextChanged);
                 StartChip.GotFocus += new RoutedEventHandler(SelectAll);
                 StartChip.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                EndChip = new Label
+                EndChip = new TextBlock
                 {
-                    Content = string.Format("{0}", lastEndChip + 1),
-                    Margin = new Thickness(2, 2, 2, 2),
-                    IsTabStop = false
+                    Text = string.Format("{0}", lastEndChip + 1),
+                    Margin = new Thickness(2, 2, 2, 2)
                 };
                 Remove = new System.Windows.Controls.Button
                 {
@@ -188,7 +187,7 @@ namespace Chronokeep.UI.ChipAssignment
                 int.TryParse(EndBib.Text, out endBib);
                 int.TryParse(StartChip.Text, out startChip);
                 endChip = endBib - startBib + startChip;
-                EndChip.Content = endChip.ToString();
+                EndChip.Text = endChip.ToString();
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)
@@ -229,7 +228,7 @@ namespace Chronokeep.UI.ChipAssignment
                 int.TryParse(tag.StartBib.Text, out startBib);
                 int.TryParse(tag.EndBib.Text, out endBib);
                 int.TryParse(tag.StartChip.Text, out startChip);
-                int.TryParse(tag.EndChip.Content.ToString(), out endChip);
+                int.TryParse(tag.EndChip.Text.ToString(), out endChip);
                 Log.D("UI.ChipAssignment.ChipTool", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
                 Objects.Range curRange = new Objects.Range
                 {

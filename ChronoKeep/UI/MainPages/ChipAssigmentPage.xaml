@@ -81,11 +81,11 @@
             </Grid>
             <StackPanel Grid.Column="0">
                 <DockPanel HorizontalAlignment="Center">
-                    <Label 
-                        Content="Chip Type"
+                    <TextBlock 
+                        Text="Chip Type"
                         Margin="10"
                         VerticalAlignment="Center" 
-                        VerticalContentAlignment="Center"
+                        TextAlignment="Center"
                         FontSize="16"
                         />
                     <ComboBox
@@ -108,7 +108,7 @@
                         <TextBlock
                             Text="Assign Single"
                             FontSize="20"
-                            Margin="10,5,10,0"
+                            Margin="10,5,10,5"
                             HorizontalAlignment="Center"
                             />
                         <DockPanel>
@@ -192,7 +192,7 @@
                         <TextBlock
                             Text="Assign Range" 
                             FontSize="20"
-                            Margin="10,5,10,0"
+                            Margin="10,5,10,5"
                             HorizontalAlignment="Center"
                             />
                         <Grid>

@@ -14,7 +14,7 @@
             <RowDefinition Height="35"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Label Content="Select distances to link to those found in file." FontSize="16" Margin="10,0,10,0" Grid.Row="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+        <TextBlock Text="Select distances to link to those found in file." FontSize="16" Margin="10,0,10,0" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
         <ListBox x:Name="distanceListBox" KeyboardNavigation.TabNavigation="Continue" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" IsTabStop="False" Grid.Row="1">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">

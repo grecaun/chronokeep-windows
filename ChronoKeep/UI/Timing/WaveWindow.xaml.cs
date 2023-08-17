@@ -35,6 +35,9 @@ namespace Chronokeep.UI.Timing
         public WaveWindow(IMainWindow window, IDBInterface database)
         {
             InitializeComponent();
+            this.MinHeight = 300;
+            this.MinWidth = 230;
+            this.Width = 300;
             this.window = window;
             this.database = database;
             theEvent = database.GetCurrentEvent();
@@ -133,7 +136,7 @@ namespace Chronokeep.UI.Timing
         private class AWave : ListBoxItem
         {
             public MaskedTextBox StartOffset { get; private set; }
-            public Image WaveTypeImg { get; private set; }
+            public TextBlock WaveType { get; private set; }
             private int Wave;
             private int waveType = 1;
 
@@ -142,32 +145,37 @@ namespace Chronokeep.UI.Timing
                 Wave = num;
                 DockPanel thePanel = new DockPanel();
                 this.Content = thePanel;
-                thePanel.Children.Add(new Label()
+                thePanel.VerticalAlignment = VerticalAlignment.Center;
+                thePanel.Children.Add(new TextBlock()
                 {
-                    Content = num.ToString(),
+                    Text = num.ToString(),
                     FontSize = 14,
                     Width = 60,
-                    VerticalContentAlignment = VerticalAlignment.Center,
-                    HorizontalContentAlignment = HorizontalAlignment.Center
+                    TextAlignment = TextAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
                 });
-                Uri imgUri = new Uri("pack://application:,,,/img/plus.png");
+                string waveText = "+";
                 waveType = 1;
                 if (startSeconds < 0)
                 {
                     Log.D("UI.Timing.WaveWindow", "Setting type to negative and making seconds/milliseconds positive for offset textbox.");
                     waveType = -1;
-                    imgUri = new Uri("pack://application:,,,/img/dash.png");
+                    waveText = "-";
                     startSeconds *= -1;
                     startMilliseconds *= -1;
                 }
-                WaveTypeImg = new Image()
+                WaveType = new TextBlock()
                 {
                     Width = 25,
                     Margin = new Thickness(0, 0, 3, 0),
-                    Source = new BitmapImage(imgUri),
+                    Text = waveText,
+                    FontSize = 30,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    TextAlignment = TextAlignment.Center
                 };
-                WaveTypeImg.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
-                thePanel.Children.Add(WaveTypeImg);
+                WaveType.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
+                thePanel.Children.Add(WaveType);
                 string sOffset = string.Format(TimeFormat, startSeconds / 3600,
                     (startSeconds % 3600) / 60, startSeconds % 60,
                     startMilliseconds);
@@ -200,11 +208,11 @@ namespace Chronokeep.UI.Timing
                 Log.D("UI.Timing.WaveWindow", "Plus/Minus sign clicked. WaveType is: " + waveType);
                 if (waveType < 0)
                 {
-                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/plus.png"));
+                    WaveType.Text = "+";
                 }
                 else if (waveType > 0)
                 {
-                    WaveTypeImg.Source = new BitmapImage(new Uri("pack://application:,,,/img/dash.png"));
+                    WaveType.Text = "-";
                 }
                 else
                 {

@@ -213,10 +213,11 @@ namespace Chronokeep.UI.MainPages
                 }
                 DockPanel ignPanel = new DockPanel();
                 string labelLabel = myLocation.Identifier == Constants.Timing.LOCATION_START ? "Start Window" : "Ignore Within";
+                int labelWidth = myLocation.Identifier == Constants.Timing.LOCATION_START ? 140 : 120;
                 ignPanel.Children.Add(new TextBlock()
                 {
                     Text = labelLabel,
-                    Width = 140,
+                    Width = labelWidth,
                     FontSize = 16,
                     Margin = new Thickness(10, 0, 0, 0),
                     VerticalAlignment = VerticalAlignment.Center,
@@ -228,8 +229,11 @@ namespace Chronokeep.UI.MainPages
                     Text = ignorewithin,
                     Mask = "00:00:00",
                     FontSize = 16,
+                    Height = 35,
                     Margin = new Thickness(0, 10, 0, 10),
-                    VerticalContentAlignment = VerticalAlignment.Center
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    TextAlignment = TextAlignment.Center,
                 };
                 IgnoreWithin.GotFocus += new RoutedEventHandler(this.SelectAll);
                 ignPanel.Children.Add(IgnoreWithin);

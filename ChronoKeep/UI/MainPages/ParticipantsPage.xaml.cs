@@ -523,32 +523,5 @@ namespace Chronokeep.UI.MainPages
             }
             Log.D("UI.MainPages.ParticipantsPage", "Already deleting.");
         }
-
-        private void ParticipantsList_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            ScrollViewer scv = ScrollBox;
-            if (e.Delta < 0)
-            {
-                if (scv.VerticalOffset - e.Delta <= scv.ExtentHeight - scv.ViewportHeight)
-                {
-                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
-                }
-                else
-                {
-                    scv.ScrollToBottom();
-                }
-            }
-            else
-            {
-                if (scv.VerticalOffset - e.Delta > 0)
-                {
-                    scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
-                }
-                else
-                {
-                    scv.ScrollToTop();
-                }
-            }
-        }
     }
 }
