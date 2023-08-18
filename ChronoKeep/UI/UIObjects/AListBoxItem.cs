@@ -20,11 +20,13 @@ namespace Chronokeep
             Index = ix;
             Grid theGrid = new Grid();
             this.Content = theGrid;
-            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(150) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             HeaderLabel = new TextBlock
             {
-                Text = s
+                Text = s,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 18,
             };
             theGrid.Children.Add(HeaderLabel);
             Grid.SetColumn(HeaderLabel, 0);

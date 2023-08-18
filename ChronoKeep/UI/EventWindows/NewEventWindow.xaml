@@ -6,7 +6,11 @@
         xmlns:local="clr-namespace:Chronokeep"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="New Event" Height="350" Width="350" ResizeMode="NoResize" Closing="Window_Closing" Topmost="True"
+        Title="New Event"
+        ResizeMode="NoResize"
+        Closing="Window_Closing"
+        Topmost="True"
+        SizeToContent="Height"
         d:DataContext="{d:DesignInstance local:NewEventWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -51,8 +55,8 @@
             <TextBlock Name="CopyLabel" Text="Copy from old event:" Margin="20,10,20,10" FontSize="16"/>
             <ComboBox Name="oldEvent" FontSize="16" Margin="20,0,20,10" />
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <Button Content="Submit" Margin="20,10,10,0" Width="150" Click="Submit_Click" FontSize="16" Height="35"/>
-                <Button Content="Cancel" Margin="10,10,20,0" Width="150"  Click="Cancel_Click" FontSize="16" Height="35"/>
+                <Button Content="Submit" Margin="20,10,10,15" Width="120" Click="Submit_Click" FontSize="16" Height="35"/>
+                <Button Content="Cancel" Margin="10,10,20,15" Width="120"  Click="Cancel_Click" FontSize="16" Height="35"/>
             </StackPanel>
         </StackPanel>
     </Grid>

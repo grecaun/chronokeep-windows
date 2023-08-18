@@ -24,6 +24,9 @@ namespace Chronokeep
             datePicker.SelectedDate = DateTime.Today;
             CopyLabel.Visibility = Visibility.Collapsed;
             oldEvent.Visibility = Visibility.Collapsed;
+            this.MinWidth = 350;
+            this.MinHeight = 350;
+            this.Width = 350;
             this.Height = 310;
         }
 
@@ -32,6 +35,10 @@ namespace Chronokeep
             InitializeComponent();
             this.window = window;
             this.database = database;
+            this.MinWidth = 350;
+            this.MinHeight = 350;
+            this.Width = 350;
+            this.Height = 310;
             oldEvent.Items.Clear();
             oldEvent.Items.Add(new ComboBoxItem
             {
