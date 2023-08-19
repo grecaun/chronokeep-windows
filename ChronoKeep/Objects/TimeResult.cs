@@ -180,6 +180,7 @@ namespace Chronokeep
         public string First { get => firstName; set => firstName = value; }
         public string Last { get => lastName; set => lastName = value; }
         public string ParticipantName { get => string.Format("{0} {1}", firstName, lastName).Trim(); }
+        public string PrettyParticipantName { get => anonymous ? string.Format("Bib {0}", bib) : string.Format("{0} {1}", firstName, lastName).Trim(); }
         public string DistanceName { get => linked_distance_name == "" ? distanceName : linked_distance_name; }
         public string RealDistanceName { get => distanceName; }
         public int Bib { get => bib; set => bib = value; }
@@ -240,6 +241,7 @@ namespace Chronokeep
         {
             get => theEvent != null ? string.Format("{0} {1}", this.Age(theEvent.Date), this.PrettyGender) : string.Format("? {0}", this.PrettyGender);
         }
+        public bool Finish { get => segmentId == Constants.Timing.SEGMENT_FINISH; }
 
         public static string BibToIdentifier(int iBib)
         {

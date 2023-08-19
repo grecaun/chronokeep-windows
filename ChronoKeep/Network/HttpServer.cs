@@ -228,12 +228,19 @@ namespace Chronokeep.Network
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
             }
-            context.Response.ContentLength64 = message.Length;
             context.Response.AddHeader("Date", DateTime.Now.ToString("r"));
             context.Response.AddHeader("Last-Modified", DateTime.Now.ToString("r"));
             byte[] messageBytes = Encoding.Default.GetBytes(message);
-            context.Response.OutputStream.Write(messageBytes, 0, messageBytes.Length);
-            context.Response.OutputStream.Flush();
+            context.Response.ContentLength64 = messageBytes.Length;
+            try
+            {
+                context.Response.OutputStream.Write(messageBytes, 0, messageBytes.Length);
+                context.Response.OutputStream.Flush();
+            }
+            catch (Exception ex)
+            {
+                Log.E("Network.HttpServer", "Error attempting to write response.\n" + ex.Message);
+            }
         }
 
         private void Initialize(IDBInterface database, int port)

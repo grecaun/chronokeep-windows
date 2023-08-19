@@ -4,53 +4,87 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="Chronokeep" #>
-<html>
+<!doctype html>
+<html lang="en">
 	<head>
 		<link rel='stylesheet' href='bootstrap.css'>
 		<link rel='stylesheet' href='style.css'>
+		<title><#= theEvent.Name #> Results</title>
 	</head>
 	<body>
-		<div class='events-results-wrapper panel-group' id='results'>
-			<div class='text-important table-header'><h2><#= theEvent.YearCode #> <#= theEvent.Name #></h2></div>
-			<div class='events-panel panel panel-default'>
-				<div class='events-btn-wrapper'>
-					<# foreach (string d in distanceResults.Keys)
-					{ #>
-					<button class="btn btn-default events-btn collapsed" type="button" data-toggle="collapse" data-parent="#results" data-target="#<#= theEvent.YearCode #>-results-<#= d.Replace(' ', '-') #>" aria-expanded="false" aria-controls="<#= theEvent.YearCode #>-results-<#= d.Replace(' ', '-') #>"><#= d #></button>
-					<# } #>
-				</div>
-				<# foreach (string d in distanceResults.Keys)
-				{ #>
-				<div class="collapse" id="<#= theEvent.YearCode #>-results-<#= d.Replace(' ', '-') #>">
-					<div class='well'>
-						<table>
-							<tr><td colspan='8' class='table-header text-important'><#= d #></td></tr>
-							<tr>
-							   <td class="overflow-hidden text-important table-label">Place</td>
-							   <td class="overflow-hidden text-important table-label">Age Place</td>
-							   <td class="text-important table-label">First</td>
-							   <td class="text-important table-label">Last</td>
-							   <td class="overflow-hidden text-important table-label">Age</td>
-							   <td class="overflow-hidden text-important table-label">Gender</td>
-							   <td class="overflow-hidden text-important table-label">Gun Time</td>
-							   <td class="text-important table-label">Time</td>
-							</tr>
-							<# foreach (TimeResult r in distanceResults[d])
-							{ #>
-							<tr>
-							   <td class="overflow-hidden"><#= r.PlaceStr #></td>
-							   <td class="overflow-hidden"><#= r.AgePlaceStr #></td>
-							   <td><#= participantDictionary[r.EventSpecificId].FirstName #></td>
-							   <td><#= participantDictionary[r.EventSpecificId].LastName #></td>
-							   <td class="overflow-hidden"><#= participantDictionary[r.EventSpecificId].Age(theEvent.Date) #></td>
-							   <td class="overflow-hidden"><#= participantDictionary[r.EventSpecificId].Gender #></td>
-							   <td class="overflow-hidden"><#= r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) #></td>
-							   <td><#= r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length) #></td>
-							</tr>
-							<# } #>
-						</table>
+		<div>
+            <div className="row container-lg lg-max-width mx-auto d-flex mt-4 mb-3 align-items-stretch">
+                <div className="col-md-10 flex-fill text-center mx-auto m-1">
+                    <p className="text-important mb-2 mt-1 h1"><#= theEvent.YearCode #> <#= theEvent.Name #></p>
+                </div>
+			</div>
+			<div>
+				<# if (distanceResults.Keys.Count < 1) { #>
+					<div className="container-lg lg-max-width shadow-sm p-5 mb-3 border border-light">
+						<div className="text-center">
+							<h2>No results to display.</h2>
+						</div>
 					</div>
-				</div>
+				<# } else { #>
+					<div>
+						<div className="row container-lg lg-max-width mx-auto d-flex align-items-stretch shadow-sm p-0 mb-3 border border-light">
+							<div className="p-0">
+								<# if (distanceResults.Keys.Count > 1) { #>
+									<ul className="nav nav-tabs nav-fill">
+										<# foreach (string d in distanceResults.Keys ) { #>
+											<li className="nav-item" key="distance-<#= d #>">
+												<a className="nav-link text-important h5 text-secondary" href="#<#= d #>" role="button"><#= d #></a>
+											</li>
+										<# } #>
+									</ul>
+								<# } #>
+								<div id="results-parent">
+									<# foreach (string d in distanceResults.Keys) { #>
+										<div className="table-responsive-sm m-3" key="<#= d #>" id="<#= d #>">
+											<table className="table table-sm">
+												<thead>
+													<# if (distanceResults.Keys.Count > 1) { #>
+														<tr>
+															<td className="table-distance-header text-important text-center" colSpan="10"><#= d #></td>
+														</tr>
+													<# } #>
+													<tr>
+														<th className="overflow-hidden-sm col-md text-center">Bib</th>
+														<th className="col-sm text-center">Place</th>
+														<th className="col-lg">Name</th>
+														<th className="overflow-hidden-lg col-sm text-center">Age</th>
+														<th className="overflow-hidden-lg col-sm text-center">Pl</th>
+														<th className="overflow-hidden-lg col-sm text-center">Gender</th>
+														<th className="overflow-hidden-lg col-sm text-center">Pl</th>
+														<th className="overflow-hidden-lgcol-lg text-center">Chip Time*</th>
+														<th className="col-lg text-center">Time</th>
+													</tr>
+												</thead>
+												<tbody>
+													<# foreach (TimeResult r in distanceResults[d]) { #>
+														<tr key="<#= r.Bib #>">
+															<td className="overflow-hidden-sm text-center"><#= r.Bib #></td>
+															<td className="text-center"><#= r.Finish ? r.PlaceStr : "" #></td>
+															<td className="text-center"><#= r.PrettyParticipantName #></td>
+															<td className="overflow-hidden-lg text-center"><#= r.Age(theEvent.Date) #></td>
+															<td className="overflow-hidden-lg text-center"><#= r.Finish? r.AgePlaceStr : "" #></td>
+															<td className="overflow-hidden-lg text-center"><#= r.PrettyGender #></td>
+															<td className="overflow-hidden-lg text-center"><#= r.Finish? r.GenderPlaceStr : "" #></td>
+															<td className="overflow-hidden-lg text-center"><#= r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length) #></td>
+															<td className="text-center">
+																<#= r.Finish? r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) : r.SegmentName #>
+															</td>
+														</tr>
+													<# } #>
+												</tbody>
+											</table>
+										</div>
+									<# } #>
+								</div>
+							</div>
+						</div>
+						<div id='disclaimer' className='container-lg lg-max-width shadow-sm text-center p-3 mb-3 border border-light overflow-hidden-lg'>*Results are ranked based upon the Time and not the Chip Time.</div>
+					</div>
 				<# } #>
 			</div>
 		</div>
