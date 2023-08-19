@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
 using Chronokeep.UI.UIObjects;
+using Chronokeep.Helpers;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -67,6 +68,14 @@ namespace Chronokeep.UI.MainPages
                 Content = "Dark",
                 Uid = Constants.Settings.THEME_DARK
             });
+            for (int i=1; i<=60; i++)
+            {
+                UploadIntervalBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = i.ToString(),
+                    Uid = i.ToString(),
+                });
+            }
             UpdateView();
         }
 
@@ -103,6 +112,10 @@ namespace Chronokeep.UI.MainPages
             {
                 Log.D("UI.MainPages.SettingsPage", "Setting selected theme to Dark. " + (ThemeOffset + 2));
                 ThemeColorBox.SelectedIndex = ThemeOffset + 2;
+            }
+            int uploadInt;
+            if (int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).value, out uploadInt) && uploadInt > 0 && uploadInt < 60) {
+                UploadIntervalBox.SelectedIndex = uploadInt - 1;
             }
         }
 
@@ -169,6 +182,11 @@ namespace Chronokeep.UI.MainPages
             database.SetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE, UpdatePage.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.EXIT_NO_PROMPT, ExitNoPrompt.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.CHECK_UPDATES, CheckUpdates.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
+            database.SetAppSetting(Constants.Settings.UPLOAD_INTERVAL, ((ComboBoxItem)UploadIntervalBox.SelectedItem).Uid);
+            if (!int.TryParse(((ComboBoxItem)UploadIntervalBox.SelectedItem).Uid, out Globals.UploadInterval))
+            {
+                DialogBox.Show("Something went wrong trying to update the upload interval.");
+            }
             UpdateView();
         }
 

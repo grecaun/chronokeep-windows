@@ -26,6 +26,7 @@ namespace Chronokeep.Constants
         public static readonly string LAST_USED_API_ID      = "SETTING_LAST_USED_API_ID";
         public static readonly string CHECK_UPDATES         = "SETTING_CHECK_UPDATES";
         public static readonly string CURRENT_THEME         = "SETTING_THEME";
+        public static readonly string UPLOAD_INTERVAL       = "SETTING_UPLOAD_INTERVAL";
 
         public static readonly string NULL_EVENT_ID     = "-1";
 
@@ -46,6 +47,8 @@ namespace Chronokeep.Constants
         public static readonly string WAIVER_YEAR       = "[YEAR]";
         public static readonly string WAIVER_EVENT      = "[EVENT]";
         public static readonly string WAIVER_COMPANY    = "[COMPANY]";
+
+        public static readonly string DEFAULT_INTERVAL  = "30";
 
         public static void SetupSettings(IDBInterface database)
         {
@@ -88,14 +91,11 @@ namespace Chronokeep.Constants
             }
             if (database.GetAppSetting(CURRENT_THEME) == null)
             {
-                if (Utils.GetSystemTheme() != -1)
-                {
-                    database.SetAppSetting(CURRENT_THEME, THEME_SYSTEM);
-                }
-                else
-                {
-                    database.SetAppSetting(CURRENT_THEME, THEME_LIGHT);
-                }
+                database.SetAppSetting(CURRENT_THEME, THEME_LIGHT);
+            }
+            if (database.GetAppSetting(UPLOAD_INTERVAL) == null)
+            {
+                database.SetAppSetting(UPLOAD_INTERVAL, DEFAULT_INTERVAL);
             }
         }
     }

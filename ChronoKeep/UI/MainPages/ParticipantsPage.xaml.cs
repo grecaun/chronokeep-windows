@@ -85,6 +85,14 @@ namespace Chronokeep.UI.MainPages
             ParticipantsList.SelectedItems.Clear();
             ParticipantsList.ItemsSource = newParts;
             ParticipantsList.Items.Refresh();
+            if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
+            {
+                apiPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                apiPanel.Visibility = Visibility.Collapsed;
+            }
             Log.D("UI.MainPages.ParticipantsPage", "Participants updated.");
         }
 

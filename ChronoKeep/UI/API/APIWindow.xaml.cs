@@ -1,19 +1,7 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.API
@@ -37,6 +25,9 @@ namespace Chronokeep.UI.API
             InitializeComponent();
             this.window = window;
             this.database = database;
+            this.MinHeight = 100;
+            this.MinWidth = 300;
+            this.Width = 300;
             theEvent = database.GetCurrentEvent();
             List<ResultsAPI> apis = database.GetAllResultsAPI();
             if (theEvent == null || theEvent.Identifier < 1 || apis.Count < 1)

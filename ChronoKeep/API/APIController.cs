@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
@@ -236,11 +237,17 @@ namespace Chronokeep.API
                     }
                 }
                 // Block with timeout on a semaphore
-                // Use this to allow us to only send information every SleepSeconds seconds.
+                // Use this to allow us to only send information every so often based upon a global
+                // interval set, or the SleepSeconds value if the global value isn't in the correct range.
                 // We could check for if we've been signaled, but we're only signaled if we're
                 // told to exit, so we can just check KeepAlive after.
                 Log.D("API.APIController", "Waiting to upload more results.");
-                waiter.WaitOne(SleepSeconds * 1000);
+                int sleepFor = Globals.UploadInterval;
+                if (sleepFor < 1 || sleepFor > 60)
+                {
+                    sleepFor = SleepSeconds;
+                }
+                waiter.WaitOne(sleepFor * 1000);
                 // Check if we're supposed to exit the loop
                 if (mut.WaitOne(6000))
                 {

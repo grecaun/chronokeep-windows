@@ -21,6 +21,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using Chronokeep.UI.UIObjects;
+using Chronokeep.Helpers;
 
 namespace Chronokeep.UI
 {
@@ -130,6 +131,12 @@ namespace Chronokeep.UI
             TimingUpdater.Tick += new EventHandler(UpdateTimingTick);
             TimingUpdater.Interval = new TimeSpan(0, 0, 0, 0, 500);
             TimingUpdater.Start();
+
+            // Set the global upload interval.
+            if (!int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).value, out Globals.UploadInterval))
+            {
+                DialogBox.Show("Something went wrong trying to update the upload interval.");
+            }
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)

@@ -6,19 +6,16 @@
       xmlns:local="clr-namespace:Chronokeep.UI.API"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="300"
+      d:DesignHeight="450"
+      d:DesignWidth="300"
       Title="APIPage1">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2">
-            <TextBlock Text="Select API to use:" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" Margin="0,0,0,10"/>
-            <ComboBox Name="APIBox" Width="200" VerticalAlignment="Center" />
-        </StackPanel>
-        <Button x:Name="unlinkButton" Content="Unlink API" Height="35" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,50" Click="Unlink_Click" Visibility="Collapsed" Grid.ColumnSpan="2"/>
-        <Button Content="Next" Height="35" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,10" Click="Next_Click"  Grid.Column="0"/>
-        <Button Content="Cancel" Height="35" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,10" Click="Cancel_Click" Grid.Column="1"/>
-    </Grid>
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2">
+        <TextBlock Text="Select API to use:" FontSize="16" TextAlignment="Center" Margin="0,0,0,5"/>
+        <ComboBox Name="APIBox" Width="250" VerticalAlignment="Center" Margin="0,0,0,15" />
+        <Button x:Name="unlinkButton" Content="Unlink API" Height="35" Width="150" HorizontalAlignment="Center" Margin="0,0,0,5" Click="Unlink_Click" Visibility="Collapsed" Grid.ColumnSpan="2"/>
+        <DockPanel>
+            <Button Content="Next" Height="35" Width="120" HorizontalAlignment="Center" Margin="0,0,10,10" Click="Next_Click"  Grid.Column="0"/>
+            <Button Content="Cancel" Height="35" Width="120" HorizontalAlignment="Center" Margin="10,0,0,10" Click="Cancel_Click" Grid.Column="1"/>
+        </DockPanel>
+    </StackPanel>
 </ui:UiPage>

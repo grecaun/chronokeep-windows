@@ -6,12 +6,13 @@
         xmlns:local="clr-namespace:Chronokeep.UI.API"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Link Event" Height="450" Width="300" MinWidth="300"
+        Title="Link Event"
         d:DataContext="{d:DesignInstance local:APIWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
+        SizeToContent="Height"
         >
     <Grid>
         <Grid.RowDefinitions>
