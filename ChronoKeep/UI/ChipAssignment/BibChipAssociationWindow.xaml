@@ -6,13 +6,14 @@
         xmlns:local="clr-namespace:Chronokeep"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="BibChipAssociationWindow" Height="600" Width="500"
+        Title="BibChipAssociationWindow"
         Closing="Window_Closing"
         d:DataContext="{d:DesignInstance local:BibChipAssociationWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
+        SizeToContent="Height"
         >
     <Grid>
         <Grid.RowDefinitions>
@@ -40,7 +41,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" Name="TopRow"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="80"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel Name="EventHolder" Grid.Row="0">
                 <TextBlock Text="Please choose an event:" FontSize="18" Margin="10,10,20,0" TextAlignment="Center" />
@@ -55,11 +56,66 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
             </ListBox>
-            <CheckBox Name="Headers" Content="First Row Contains Headers" IsChecked="True" Grid.Row="2" Margin="20,10,20,0" FontSize="15" VerticalContentAlignment="Center"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
-            <Button x:Name="Done" Height="35" Width="125" Content="Done" Margin="25,30,0,0" Click="Done_Click" Grid.Row="2" HorizontalAlignment="Left"/>
-            <Button x:Name="Cancel" Height="35" Width="125" Content="Cancel" Margin="0,30,25,0" Click="Cancel_Click"  Grid.Row="2" HorizontalAlignment="Right"/>
-            <TextBlock x:Name="SheetsLabel" FontSize="16" HorizontalAlignment="Center" Margin="0,30,110,0" Text="Sheet" Grid.Row="2" VerticalAlignment="Center" Visibility="Collapsed"/>
-            <ComboBox x:Name="SheetsBox" Height="25" Width="100" HorizontalAlignment="Center" Margin="70,30,20,0"  SelectionChanged="SheetsBox_SelectionChanged" TabIndex="1" Grid.Row="2" Visibility="Collapsed"/>
+            <StackPanel Grid.Row="2">
+                <CheckBox
+                    Name="Headers"
+                    Content="First Row Contains Headers"
+                    IsChecked="True"
+                    FontSize="15"
+                    VerticalContentAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="0,5,0,0"
+                    />
+                <StackPanel
+                    x:Name="SheetsContainer"
+                    Orientation="Horizontal"
+                    Margin="0,5"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Center"
+                    >
+                    <TextBlock 
+                        x:Name="SheetsLabel"
+                        FontSize="16"
+                        Margin="5,0,0,0" 
+                        Text="Sheet"
+                        VerticalAlignment="Center"
+                        TextAlignment="Right"
+                        />
+                    <ComboBox
+                        x:Name="SheetsBox"
+                        Width="150"
+                        HorizontalAlignment="Stretch"
+                        Margin="5,0,0,0"
+                        SelectionChanged="SheetsBox_SelectionChanged"
+                        TabIndex="1"
+                        />
+                </StackPanel>
+                <StackPanel
+                    Orientation="Horizontal"
+                    Margin="0,5,0,10"
+                    HorizontalAlignment="Center"
+                    >
+                    <Button
+                        x:Name="Done"
+                        Height="37"
+                        Width="125"
+                        Content="Done"
+                        Margin="25,0,5,0"
+                        Click="Done_Click"
+                        Grid.Row="2"
+                        HorizontalAlignment="Left"
+                        />
+                    <Button
+                        x:Name="Cancel" 
+                        Height="37" 
+                        Width="125"
+                        Content="Cancel"
+                        Margin="5,0,25,0"
+                        Click="Cancel_Click"
+                        HorizontalAlignment="Right"
+                        />
+                </StackPanel>
+            </StackPanel>
         </Grid>
     </Grid>
 </ui:UiWindow>

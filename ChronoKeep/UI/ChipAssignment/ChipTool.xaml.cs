@@ -32,6 +32,9 @@ namespace Chronokeep.UI.ChipAssignment
             correlationBox.Items.Add(new ATagRange(correlationBox));
             this.window = window;
             this.database = database;
+            this.MinHeight = 100;
+            this.MinWidth = 550;
+            this.ResizeMode = ResizeMode.NoResize;
         }
 
         public static ChipTool NewWindow(IWindowCallback window, IDBInterface database)
@@ -101,13 +104,13 @@ namespace Chronokeep.UI.ChipAssignment
                 EndChip = new TextBlock
                 {
                     Text = string.Format("{0}", lastEndChip + 1),
-                    Margin = new Thickness(2, 2, 2, 2)
+                    Margin = new Thickness(7, 2, 2, 2),
+                    VerticalAlignment = VerticalAlignment.Center,
                 };
                 Remove = new System.Windows.Controls.Button
                 {
                     Content = "Remove",
-                    Height = 25,
-                    Width = 65
+                    Width = 75
                 };
                 Remove.Click += new RoutedEventHandler(this.Remove_Click);
                 theGrid.Children.Add(StartBib);

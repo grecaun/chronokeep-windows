@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chronokeep.UI.Timing.Import"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        mc:Ignorable="d" Width="300" Height="250"
-        Title="Load Log" Closing="Window_Closing"
+        mc:Ignorable="d"
+        Title="Load Log"
+        Closing="Window_Closing"
         d:DataContext="{d:DesignInstance local:ImportLogWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
+        SizeToContent="Height"
         >
     <Grid>
         <Grid.RowDefinitions>

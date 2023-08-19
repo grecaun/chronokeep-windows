@@ -36,13 +36,21 @@ namespace Chronokeep
             this.importer = importer;
             this.window = window;
             this.database = database;
+            this.MinHeight = 300;
+            this.MinWidth = 300;
+            this.Height = 300;
+            this.Width = 300;
+            this.Topmost = true;
             if (importer.Data.Type == ImportData.FileType.EXCEL)
             {
-                SheetsLabel.Visibility = Visibility.Visible;
-                SheetsBox.Visibility = Visibility.Visible;
+                SheetsContainer.Visibility = Visibility.Visible;
                 SheetsBox.ItemsSource = ((ExcelImporter)importer).SheetNames;
                 SheetsBox.SelectedIndex = 0;
                 init = false;
+            }
+            else
+            {
+                SheetsContainer.Visibility = Visibility.Collapsed;
             }
             for (int i = 1; i < importer.Data.GetNumHeaders(); i++)
             {

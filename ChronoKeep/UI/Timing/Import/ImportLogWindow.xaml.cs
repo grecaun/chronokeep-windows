@@ -31,6 +31,10 @@ namespace Chronokeep.UI.Timing.Import
             this.window = window;
             this.importer = importer;
             this.database = database;
+            this.MinHeight = 0;
+            this.MinWidth = 100;
+            this.Width = 300;
+            this.Height = 250;
             theEvent = database.GetCurrentEvent();
             List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
             if (!theEvent.CommonStartFinish)

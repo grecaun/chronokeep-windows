@@ -6,12 +6,19 @@
         xmlns:local="clr-namespace:Chronokeep.UI.ChipAssignment"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Chip Tool"  Height="450" Width="390" MaxWidth="390" MinWidth="390" BorderThickness="1" Closing="Window_Closing"
+        Title="Chip Tool"
+        Height="450"
+        Width="390"
+        MaxWidth="390"
+        MinWidth="390"
+        BorderThickness="1"
+        Closing="Window_Closing"
         d:DataContext="{d:DesignInstance local:ChipTool, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
+        SizeToContent="Height"
         >
     <Grid>
         <Grid.RowDefinitions>
@@ -36,14 +43,30 @@
             </ui:TitleBar.Tray>
         </ui:TitleBar>
         <Grid Grid.Row="1">
-            <Button Content="Add Range" Width="90" Height="35" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,10,10" Click="AddRange_Click" TabIndex="1" />
-            <Button Width="60" Height="35" Content="Save" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,80,10" Click="Save_Click" TabIndex="2" />
-            <Button Width="60" Height="35" Content="Cancel" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,10,10" Click="Cancel_Click" TabIndex="3" />
-            <TextBlock Width="65" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,45,0,0" Text="Start Bib #" />
-            <TextBlock Width="65" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="85,45,0,0" Text="End Bib #" />
-            <TextBlock Width="65" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="160,45,0,0" Text="Start Tag #" />
-            <TextBlock Width="65" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="235,45,0,0" Text="End Tag #" />
-            <Grid x:Name="itemsWindow" VerticalAlignment="Top" Margin="0,70,0,0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Button Content="Add Range" Width="100" Height="35" HorizontalAlignment="Left" Margin="10,10,10,10" Click="AddRange_Click" TabIndex="1" />
+                <Button Width="80" Height="35" Content="Save" HorizontalAlignment="Right" Margin="10,10,95,10" Click="Save_Click" TabIndex="2" />
+                <Button Width="80" Height="35" Content="Cancel" HorizontalAlignment="Right" Margin="10,10,10,10" Click="Cancel_Click" TabIndex="3" />
+            </Grid>
+            <Grid Grid.Row="1" Margin="5,0,5,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Margin="10,0,0,0" Text="Start Bib #" />
+                <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="End Bib #" />
+                <TextBlock Grid.Column="2" Margin="10,0,0,0" Text="Start Tag #" />
+                <TextBlock Grid.Column="3" Margin="10,0,0,0" Text="End Tag #" />
+            </Grid>
+            <Grid x:Name="itemsWindow" Grid.Row="2">
                 <ListBox x:Name="correlationBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" >
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">

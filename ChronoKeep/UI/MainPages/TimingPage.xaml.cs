@@ -1103,6 +1103,7 @@ namespace Chronokeep.UI.MainPages
                         exporter.ExportData(Path.GetDirectoryName(saveFileDialog.FileName) + "\\" + Regex.Replace(key.ToLower(), @"[^a-z0-9\-]", "") + "-" + Path.GetFileName(saveFileDialog.FileName));
                     }
                 }
+                DialogBox.Show("File saved.");
             }
         }
 
