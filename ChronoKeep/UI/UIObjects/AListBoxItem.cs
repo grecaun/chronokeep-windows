@@ -136,7 +136,9 @@ namespace Chronokeep
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             DistanceName = new TextBlock
             {
-                Text = name
+                Text = name,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = 18,
             };
             theGrid.Children.Add(DistanceName);
             Grid.SetColumn(DistanceName, 0);
@@ -189,8 +191,8 @@ namespace Chronokeep
             this.IsTabStop = false;
             Grid theGrid = new Grid();
             this.Content = theGrid;
-            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20) });
-            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(20) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
+            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(30) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -201,158 +203,46 @@ namespace Chronokeep
             Grid.SetColumn(Keep, 0);
             Existing = new TextBlock
             {
+                VerticalAlignment = VerticalAlignment.Center,
                 Text = (person.Identifier == Constants.Timing.PARTICIPANT_DUMMYIDENTIFIER ? "" : "X")
             };
             theGrid.Children.Add(Existing);
             Grid.SetColumn(Existing, 1);
             Bib = new TextBlock
             {
+                VerticalAlignment = VerticalAlignment.Center,
                 Text = person.Bib.ToString()
             };
             theGrid.Children.Add(Bib);
             Grid.SetColumn(Bib, 2);
             Distance = new TextBlock
             {
+                VerticalAlignment = VerticalAlignment.Center,
                 Text = person.Distance
             };
             theGrid.Children.Add(Distance);
             Grid.SetColumn(Distance, 3);
             PartName = new TextBlock
             {
+                VerticalAlignment = VerticalAlignment.Center,
                 Text = string.Format("{0} {1}", person.FirstName, person.LastName)
             };
             theGrid.Children.Add(PartName);
             Grid.SetColumn(PartName, 4);
             Sex = new TextBlock
             {
+                VerticalAlignment = VerticalAlignment.Center,
                 Text = person.Gender
             };
             theGrid.Children.Add(Sex);
             Grid.SetColumn(Sex, 5);
             Age = new TextBlock
             {
+                VerticalAlignment = VerticalAlignment.Center,
                 Text = person.Age(theEvent.Date)
             };
             theGrid.Children.Add(Age);
             Grid.SetColumn(Age, 6);
-        }
-    }
-
-    internal class DistanceListBoxItem : ListBoxItem
-    {
-        public TextBlock DistanceName { get; private set; }
-        public TextBox DistanceCost { get; private set; }
-
-        public DistanceListBoxItem(string name, int cost)
-        {
-            this.IsTabStop = false;
-            Grid theGrid = new Grid();
-            this.Content = theGrid;
-            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            DistanceName = new TextBlock
-            {
-                Text = name
-            };
-            theGrid.Children.Add(DistanceName);
-            Grid.SetColumn(DistanceName, 0);
-            DistanceCost = new TextBox
-            {
-                Text = string.Format("{0}.{1:D2}", cost / 100, cost % 100)
-            };
-            theGrid.Children.Add(DistanceCost);
-            Grid.SetColumn(DistanceCost, 1);
-            DistanceCost.GotFocus += new RoutedEventHandler(SelectAll);
-        }
-
-        public void SelectAll(object sender, RoutedEventArgs e)
-        {
-            DistanceCost.SelectAll();
-        }
-
-        public int Cost()
-        {
-            int output = 70;
-            string[] priceVals = DistanceCost.Text.Split('.');
-            if (priceVals.Length > 0)
-            {
-                int.TryParse(priceVals[0], out output);
-            }
-            output = output * 100;
-            int cents = 0;
-            if (priceVals.Length > 1)
-            {
-                int.TryParse(priceVals[1], out cents);
-            }
-            while (cents > 100)
-            {
-                cents = cents / 100;
-            }
-            return output + cents;
-        }
-
-        public string DivName()
-        {
-            return DistanceName.Text.ToString().Trim();
-        }
-    }
-
-    internal class DistanceListBoxItem2 : ListBoxItem
-    {
-        public TextBox DistanceName { get; private set; }
-        public TextBox DistanceCost { get; private set; }
-
-        public DistanceListBoxItem2(string name, int cost)
-        {
-            this.IsTabStop = false;
-            Grid theGrid = new Grid();
-            this.Content = theGrid;
-            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            DistanceName = new TextBox
-            {
-                Text = name
-            };
-            theGrid.Children.Add(DistanceName);
-            Grid.SetColumn(DistanceName, 0);
-            DistanceCost = new TextBox
-            {
-                Text = string.Format("{0}.{1:D2}", cost / 100, cost % 100)
-            };
-            theGrid.Children.Add(DistanceCost);
-            Grid.SetColumn(DistanceCost, 1);
-            DistanceCost.GotFocus += new RoutedEventHandler(SelectAll);
-        }
-
-        public void SelectAll(object sender, RoutedEventArgs e)
-        {
-            DistanceCost.SelectAll();
-        }
-
-        public int Cost()
-        {
-            int output = 70;
-            string[] priceVals = DistanceCost.Text.Split('.');
-            if (priceVals.Length > 0)
-            {
-                int.TryParse(priceVals[0], out output);
-            }
-            output = output * 100;
-            int cents = 0;
-            if (priceVals.Length > 1)
-            {
-                int.TryParse(priceVals[1], out cents);
-            }
-            while (cents > 100)
-            {
-                cents = cents / 100;
-            }
-            return output + cents;
-        }
-
-        public string DivName()
-        {
-            return DistanceName.Text.ToString().Trim();
         }
     }
 }
