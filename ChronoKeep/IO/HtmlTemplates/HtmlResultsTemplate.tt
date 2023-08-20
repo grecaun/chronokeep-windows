@@ -66,15 +66,21 @@
 															<tr key="<#= r.Bib #>">
 																<td class="overflow-hidden-sm text-center"><#= r.Bib #></td>
 																<td class="text-center"><#= r.PrettyPlaceStr #></td>
-																<td><#= r.PrettyParticipantName #></td>
+																<td>
+																	<# if (linkPart) { #>
+																		<a class="nav-link m-0 p-0" href="part/<#= r.Bib #>">
+																	<# } #>
+																	<#= r.PrettyParticipantName #>
+																	<# if (linkPart) { #>
+																		</a>
+																	<# } #>
+																</td>
 																<td class="overflow-hidden-lg text-center"><#= r.Age(theEvent.Date) #></td>
 																<td class="overflow-hidden-lg text-center"><#= r.Finish? r.AgePlaceStr : "" #></td>
 																<td class="overflow-hidden-lg text-center"><#= r.PrettyGender #></td>
 																<td class="overflow-hidden-lg text-center"><#= r.Finish? r.GenderPlaceStr : "" #></td>
 																<td class="overflow-hidden-lg text-center"><#= r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) #></td>
-																<td class="text-center">
-																	<#= (r.SegmentName == "Finish")? string.Format("Lap {0}", r.Occurrence) : r.SegmentName #>
-																</td>
+																<td class="text-center"><#= (r.SegmentName == "Finish")? string.Format("Lap {0}", r.Occurrence) : r.SegmentName #></td>
 															</tr>
 														<# } #>
 													</tbody>
@@ -102,15 +108,21 @@
 															<tr key="<#= r.Bib #>">
 																<td class="overflow-hidden-sm text-center"><#= r.Bib #></td>
 																<td class="text-center"><#= r.PrettyPlaceStr #></td>
-																<td><#= r.PrettyParticipantName #></td>
+																<td>
+																	<# if (linkPart) { #>
+																		<a class="nav-link m-0 p-0" href="part/<#= r.Bib #>">
+																	<# } #>
+																	<#= r.PrettyParticipantName #>
+																	<# if (linkPart) { #>
+																		</a>
+																	<# } #>
+																</td>
 																<td class="overflow-hidden-lg text-center"><#= r.Age(theEvent.Date) #></td>
 																<td class="overflow-hidden-lg text-center"><#= r.Finish? r.AgePlaceStr : "" #></td>
 																<td class="overflow-hidden-lg text-center"><#= r.PrettyGender #></td>
 																<td class="overflow-hidden-lg text-center"><#= r.Finish? r.GenderPlaceStr : "" #></td>
 																<td class="overflow-hidden-lg text-center"><#= r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length) #></td>
-																<td class="text-center">
-																	<#= r.Finish? r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) : r.SegmentName #>
-																</td>
+																<td class="text-center"><#= r.Finish? r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) : r.SegmentName #></td>
 															</tr>
 														<# } #>
 													</tbody>

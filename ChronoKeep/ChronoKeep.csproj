@@ -118,6 +118,7 @@
     <None Remove="IO\HtmlTemplates\css\bootstrap.rtl.css.map" />
     <None Remove="IO\HtmlTemplates\css\bootstrap.rtl.min.css" />
     <None Remove="IO\HtmlTemplates\css\bootstrap.rtl.min.css.map" />
+    <None Remove="IO\HtmlTemplates\HtmlParticipantTemplate.tt" />
     <None Remove="IO\HtmlTemplates\HtmlResultsPrint.tt" />
     <None Remove="IO\HtmlTemplates\js\bootstrap.bundle.js" />
     <None Remove="IO\HtmlTemplates\js\bootstrap.bundle.js.map" />
@@ -138,6 +139,11 @@
     <Reference Include="CustomMarshalers" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="IO\HtmlTemplates\HtmlParticipantTemplate.cs">
+      <DependentUpon>HtmlParticipantTemplate.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Update="IO\HtmlTemplates\HtmlResultsTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -233,6 +239,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="IO\HtmlTemplates\HtmlParticipantTemplate.tt">
+      <LastGenOutput>HtmlParticipantTemplate.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </Content>
     <Content Include="IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt">
       <LastGenOutput>ResultsPrintableOverall.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>

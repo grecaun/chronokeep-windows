@@ -1,4 +1,6 @@
-﻿using Chronokeep.IO.HtmlTemplates;
+﻿using Chronokeep.Database.SQLite;
+using Chronokeep.IO.HtmlTemplates;
+using DocumentFormat.OpenXml.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +22,10 @@ namespace Chronokeep.Network
         private IDBInterface database;
         private Event theEvent;
         private List<TimeResult> finishResults = new List<TimeResult>();
+        private Dictionary<int, List<TimeResult>> participantResults = new Dictionary<int, List<TimeResult>>();
+
+        private byte[] resultsCache = null;
+        private Dictionary<int, byte[]> participantCache = new Dictionary<int, byte[]>();
 
         private Mutex info_mutex = new Mutex();
 
@@ -55,6 +61,7 @@ namespace Chronokeep.Network
             }
             theEvent = database.GetCurrentEvent();
             finishResults.Clear();
+            participantResults.Clear();
             Dictionary<int, TimeResult> lastResult = new Dictionary<int, TimeResult>();
             foreach (TimeResult r in database.GetTimingResults(theEvent.Identifier))
             {
@@ -66,9 +73,17 @@ namespace Chronokeep.Network
                 {
                     lastResult[r.Bib] = r;
                 }
+                if (!participantResults.ContainsKey(r.Bib))
+                {
+                    participantResults[r.Bib] = new List<TimeResult>();
+                }
+                participantResults[r.Bib].Add(r);
             }
             finishResults.AddRange(lastResult.Values);
             finishResults.RemoveAll(r => r.Bib < 0 || string.IsNullOrEmpty(r.First) || string.IsNullOrEmpty(r.Last));
+            // clear response caches whenever we update information
+            resultsCache = null;
+            participantCache.Clear();
             info_mutex.ReleaseMutex();
         }
 
@@ -100,12 +115,22 @@ namespace Chronokeep.Network
             Log.D("Network.HttpServer", "'" + filename + "' requested.");
             filename = filename.Substring(1);
 
+            int partBib = -1;
+            if (filename.StartsWith("part/", StringComparison.OrdinalIgnoreCase))
+            {
+                filename = filename.Substring(5);
+                if (!int.TryParse(filename, out partBib))
+                {
+                    partBib = -1;
+                }
+            }
+
             byte[] message = Encoding.Default.GetBytes("");
             bool answer = false;
             if (string.IsNullOrEmpty(filename) || filename.Equals("results.htm", StringComparison.OrdinalIgnoreCase) || filename.Equals("results.html", StringComparison.OrdinalIgnoreCase))
             {
                 answer = true;
-                // Serve up HtmlResultsTemplace
+                // Serve up HtmlResultsTemplate
                 if (!info_mutex.WaitOne(3000))
                 {
                     Log.D("Network.HttpServer", "Unable to get mutex for outputting results page.");
@@ -113,11 +138,16 @@ namespace Chronokeep.Network
                 }
                 else
                 {
-                    HtmlResultsTemplate results = new HtmlResultsTemplate(
-                        theEvent,
-                        finishResults
-                        );
-                    message = Encoding.Default.GetBytes(results.TransformText());
+                    if (resultsCache == null)
+                    {
+                        HtmlResultsTemplate results = new HtmlResultsTemplate(
+                            theEvent,
+                            finishResults,
+                            true
+                            );
+                        resultsCache = Encoding.Default.GetBytes(results.TransformText());
+                    }
+                    message = resultsCache;
                     context.Response.ContentType = "text/html";
                     Log.D("Network.HttpServer", "Results html");
                     info_mutex.ReleaseMutex();
@@ -146,6 +176,35 @@ namespace Chronokeep.Network
                 else if (filename.EndsWith(".html", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".html"))
                 {
                     context.Response.ContentType = "text/html";
+                }
+            }
+            else if (partBib >= 0)
+            {
+                answer = true;
+                // Serve up HtmlParticipantTemplate
+                if (!info_mutex.WaitOne(3000))
+                {
+                    Log.D("Network.HttpServer", string.Format("Unable to get mutex for outputting participant page for bib {0}.", partBib));
+                    message = Encoding.Default.GetBytes("");
+                }
+                else
+                {
+                    if (!participantResults.ContainsKey(partBib))
+                    {
+                        participantResults[partBib] = new List<TimeResult>();
+                    }
+                    if (!participantCache.ContainsKey(partBib))
+                    {
+                        HtmlParticipantTemplate results = new HtmlParticipantTemplate(
+                            theEvent,
+                            participantResults[partBib]
+                            );
+                        participantCache[partBib] = Encoding.Default.GetBytes(results.TransformText());
+                    }
+                    message = participantCache[partBib];
+                    context.Response.ContentType = "text/html";
+                    Log.D("Network.HttpServer", "Participant html");
+                    info_mutex.ReleaseMutex();
                 }
             }
             if (answer)
