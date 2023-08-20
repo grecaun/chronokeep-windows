@@ -189,6 +189,12 @@ namespace Chronokeep
         public int ReadId { get => readId; set => readId = value; }
         public int Place { get => place; set => place = value; }
         public string PlaceStr { get => place < 1 ? "" : place.ToString(); }
+        public string PrettyPlaceStr
+        {
+            get => type == Constants.Timing.DISTANCE_TYPE_EARLY && place > 0 ? string.Format("{0}e", place) :
+                type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL && place > 0 ? string.Format("{0}u", place) :
+                Finish && place > 0 ? place.ToString() : "";
+        }
         public int AgePlace { get => agePlace; set => agePlace = value; }
         public string AgePlaceStr { get => agePlace < 1 ? "" : agePlace.ToString(); }
         public int GenderPlace { get => genderPlace; set => genderPlace = value; }
@@ -391,6 +397,10 @@ namespace Chronokeep
             if (one == null || two == null) return 1;
             if (one.DistanceName.Equals(two.DistanceName))
             {
+                if (one.status != two.status)
+                {
+                    return one.status.CompareTo(two.status);
+                }
                 if (one.Place == two.Place)
                 {
                     return one.SystemTime.CompareTo(two.SystemTime);

@@ -34,9 +34,21 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("\n");
             this.Write("\n");
             this.Write("\n");
-            this.Write("\n<html>\n\t<head>\n\t\t<link rel=\'stylesheet\' href=\'bootstrap.css\'>\n\t\t<link rel=\'style" +
-                    "sheet\' href=\'style.css\'>\n\t</head>\n\t<body>\n\t\t<div class=\'events-results-wrapper p" +
-                    "anel-group\' id=\'results\'>\n\t\t\t<div class=\'text-important table-header\'><h2>");
+            this.Write("\n<!doctype html>\n<html lang=\"en\">\n\t<head>\n\t\t<link rel=\'stylesheet\' href=\'css/boot" +
+                    "strap.min.css\'>\n\t\t<link rel=\'stylesheet\' href=\'css/style.min.css\'>\n\t\t<title>");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.Name));
+            
+            #line default
+            #line hidden
+            this.Write(@" Results</title>
+	</head>
+	<body>
+		<div>
+            <div class=""row container-lg lg-max-width mx-auto d-flex mt-4 mb-3 align-items-stretch"">
+                <div class=""col-md-10 flex-fill text-center mx-auto m-1"">
+                    <p class=""text-important mb-2 mt-1 h1"">");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.YearCode));
@@ -50,179 +62,388 @@ namespace Chronokeep.IO.HtmlTemplates
             
             #line default
             #line hidden
-            this.Write("</h2></div>\n\t\t\t<div class=\'events-panel panel panel-default\'>\n\t\t\t\t<div class=\'eve" +
-                    "nts-btn-wrapper\'>\n\t\t\t\t\t");
+            this.Write("</p>\n                </div>\n\t\t\t</div>\n\t\t\t<div>\n\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
- foreach (string d in distanceResults.Keys)
-					{ 
+ if (distanceResults.Keys.Count < 1) { 
             
             #line default
             #line hidden
-            this.Write("\n\t\t\t\t\t<button class=\"btn btn-default events-btn collapsed\" type=\"button\" data-tog" +
-                    "gle=\"collapse\" data-parent=\"#results\" data-target=\"#");
+            this.Write("\n\t\t\t\t\t<div class=\"container-lg lg-max-width shadow-sm p-5 mb-3 border border-ligh" +
+                    "t\">\n\t\t\t\t\t\t<div class=\"text-center\">\n\t\t\t\t\t\t\t<h2>No results to display.</h2>\n\t\t\t\t\t" +
+                    "\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.YearCode));
+ } else { 
             
             #line default
             #line hidden
-            this.Write("-results-");
+            this.Write("\n\t\t\t\t\t<div>\n\t\t\t\t\t\t<div class=\"row container-lg lg-max-width mx-auto d-flex align-" +
+                    "items-stretch shadow-sm p-0 mb-3 border border-light\">\n\t\t\t\t\t\t\t<div class=\"p-0\">\n" +
+                    "\t\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(d.Replace(' ', '-')));
+ if (distanceResults.Keys.Count > 1) { 
             
             #line default
             #line hidden
-            this.Write("\" aria-expanded=\"false\" aria-controls=\"");
+            this.Write("\n\t\t\t\t\t\t\t\t\t<ul class=\"nav nav-tabs nav-fill\">\n\t\t\t\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.YearCode));
+ foreach (string d in distanceResults.Keys ) { 
             
             #line default
             #line hidden
-            this.Write("-results-");
-            
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(d.Replace(' ', '-')));
-            
-            #line default
-            #line hidden
-            this.Write("\">");
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t<li class=\"nav-item\" key=\"distance-");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
-            this.Write("</button>\n\t\t\t\t\t");
+            this.Write("\">\n\t\t\t\t\t\t\t\t\t\t\t\t<a class=\"nav-link text-important h5 text-secondary\" href=\"#");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(d));
+            
+            #line default
+            #line hidden
+            this.Write("\" role=\"button\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(d));
+            
+            #line default
+            #line hidden
+            this.Write("</a>\n\t\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
-            this.Write("\n\t\t\t\t</div>\n\t\t\t\t");
+            this.Write("\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
- foreach (string d in distanceResults.Keys)
-				{ 
+ } 
             
             #line default
             #line hidden
-            this.Write("\n\t\t\t\t<div class=\"collapse\" id=\"");
+            this.Write("\n\t\t\t\t\t\t\t\t<div id=\"results-parent\">\n\t\t\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.YearCode));
+ foreach (string d in distanceResults.Keys) { 
             
             #line default
             #line hidden
-            this.Write("-results-");
-            
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(d.Replace(' ', '-')));
-            
-            #line default
-            #line hidden
-            this.Write("\">\n\t\t\t\t\t<div class=\'well\'>\n\t\t\t\t\t\t<table>\n\t\t\t\t\t\t\t<tr><td colspan=\'8\' class=\'table-" +
-                    "header text-important\'>");
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t<div class=\"table-responsive-sm m-3\" key=\"");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
-            this.Write(@"</td></tr>
-							<tr>
-							   <td class=""overflow-hidden text-important table-label"">Place</td>
-							   <td class=""overflow-hidden text-important table-label"">Age Place</td>
-							   <td class=""text-important table-label"">First</td>
-							   <td class=""text-important table-label"">Last</td>
-							   <td class=""overflow-hidden text-important table-label"">Age</td>
-							   <td class=""overflow-hidden text-important table-label"">Gender</td>
-							   <td class=""overflow-hidden text-important table-label"">Gun Time</td>
-							   <td class=""text-important table-label"">Time</td>
-							</tr>
-							");
+            this.Write("\" id=\"");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
- foreach (TimeResult r in distanceResults[d])
-							{ 
+            this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
-            this.Write("\n\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t   <td class=\"overflow-hidden\">");
+            this.Write("\">\n\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-sm\">\n\t\t\t\t\t\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(r.PlaceStr));
+ if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME) { 
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t\t\t   <td class=\"overflow-hidden\">");
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(r.AgePlaceStr));
+ if (distanceResults.Keys.Count > 1) { 
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t\t\t   <td>");
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"table-distance-header text-import" +
+                    "ant text-center\" colSpan=\"10\">");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(participantDictionary[r.EventSpecificId].FirstName));
+            this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t\t\t   <td>");
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(participantDictionary[r.EventSpecificId].LastName));
+ } 
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t\t\t   <td class=\"overflow-hidden\">");
+            this.Write(@"
+														<tr>
+															<th class=""overflow-hidden-sm col-md text-center"">Bib</th>
+															<th class=""col-sm text-center"">Place</th>
+															<th class=""col-lg"">Name</th>
+															<th class=""overflow-hidden-lg col-sm text-center"">Age</th>
+															<th class=""overflow-hidden-lg col-sm text-center"">Pl</th>
+															<th class=""overflow-hidden-lg col-sm text-center"">Gender</th>
+															<th class=""overflow-hidden-lg col-sm text-center"">Pl</th>
+															<th class=""col-lg text-center"">Time</th>
+															<th class=""col-lg text-center""></th>
+														</tr>
+													</thead>
+													<tbody>
+														");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(participantDictionary[r.EventSpecificId].Age(theEvent.Date)));
+ foreach (TimeResult r in distanceResults[d]) { 
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t\t\t   <td class=\"overflow-hidden\">");
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr key=\"");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(participantDictionary[r.EventSpecificId].Gender));
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib));
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t\t\t   <td class=\"overflow-hidden\">");
+            this.Write("\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-sm text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyPlaceStr));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyParticipantName));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Age(theEvent.Date)));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish? r.AgePlaceStr : ""));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyGender));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish? r.GenderPlaceStr : ""));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)));
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t\t\t   <td>");
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"text-center\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture((r.SegmentName == "Finish")? string.Format("Lap {0}", r.Occurrence) : r.SegmentName));
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t\t\t\t\t\t");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+ } else { 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+ if (distanceResults.Keys.Count > 1) { 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"table-distance-header text-import" +
+                    "ant text-center\" colSpan=\"10\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(d));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write(@"
+														<tr>
+															<th class=""overflow-hidden-sm col-md text-center"">Bib</th>
+															<th class=""col-sm text-center"">Place</th>
+															<th class=""col-lg"">Name</th>
+															<th class=""overflow-hidden-lg col-sm text-center"">Age</th>
+															<th class=""overflow-hidden-lg col-sm text-center"">Pl</th>
+															<th class=""overflow-hidden-lg col-sm text-center"">Gender</th>
+															<th class=""overflow-hidden-lg col-sm text-center"">Pl</th>
+															<th class=""overflow-hidden-lg col-lg text-center"">Chip Time*</th>
+															<th class=""col-lg text-center"">Time</th>
+														</tr>
+													</thead>
+													<tbody>
+														");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+ foreach (TimeResult r in distanceResults[d]) { 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr key=\"");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib));
+            
+            #line default
+            #line hidden
+            this.Write("\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-sm text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyPlaceStr));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyParticipantName));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Age(theEvent.Date)));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish? r.AgePlaceStr : ""));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyGender));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish? r.GenderPlaceStr : ""));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length)));
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t");
+            this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"text-center\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish? r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) : r.SegmentName));
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
-            this.Write("\n\t\t\t\t\t\t</table>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t");
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
-            this.Write("\n\t\t\t</div>\n\t\t</div>\n\t\t<script type=\"text/javascript\" src=\'jquery.js\'></script>\n\t\t" +
-                    "<script type=\"text/javascript\" src=\'bootstrap.js\'></script>\n\t</body>\n</html>");
+            this.Write("\n\t\t\t\t\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+ if (theEvent.EventType == Constants.Timing.EVENT_TYPE_DISTANCE) { 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\t\t\t\t\t<div id=\'disclaimer\' class=\'container-lg lg-max-width shadow-sm text-cent" +
+                    "er p-3 mb-3 border border-light overflow-hidden-lg\'>*Results are ranked based up" +
+                    "on the Time and not the Chip Time.</div>\n\t\t\t\t\t\t");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\t\t\t</div>\n\t\t\t\t");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\t</div>\n\t\t</div>\n\t\t<script type=\"text/javascript\" src=\'js/jquery.min.js\'></scr" +
+                    "ipt>\n\t\t<script type=\"text/javascript\" src=\'js/bootstrap.min.js\'></script>\n\t</bod" +
+                    "y>\n</html>");
             return this.GenerationEnvironment.ToString();
         }
     }
@@ -248,7 +469,7 @@ namespace Chronokeep.IO.HtmlTemplates
         /// <summary>
         /// The string builder that generation-time code is using to assemble generated output
         /// </summary>
-        protected System.Text.StringBuilder GenerationEnvironment
+        public System.Text.StringBuilder GenerationEnvironment
         {
             get
             {

@@ -130,12 +130,42 @@
                             </StackPanel>
                         </Grid>
                         <DockPanel Name="IPContainer" Visibility="Collapsed" HorizontalAlignment="Center" Margin="0,10,0,0">
-                            <TextBlock Text="IP:" Width="75" VerticalAlignment="Center" TextAlignment="Right"/>
-                            <TextBlock Name="IPAdd" Width="150" Text="IP" VerticalAlignment="Center" TextAlignment="Left"/>
+                            <TextBlock
+                                Text="IP:"
+                                Width="75"
+                                VerticalAlignment="Center"
+                                TextAlignment="Right" 
+                                Margin="5,0"
+                                FontSize="16"
+                                />
+                            <TextBlock 
+                                Name="IPAdd"
+                                Width="150" 
+                                Text="IP" 
+                                VerticalAlignment="Center"
+                                TextAlignment="Left" 
+                                Margin="5,0"
+                                FontSize="16"
+                                />
                         </DockPanel>
                         <DockPanel Name="PortContainer" Visibility="Collapsed" HorizontalAlignment="Center">
-                            <TextBlock Text="Port:" Width="75" VerticalAlignment="Center" TextAlignment="Right"/>
-                            <TextBlock Name="Port" Width="150" Text="Port" VerticalAlignment="Center" TextAlignment="Left"/>
+                            <TextBlock
+                                Text="Port:"
+                                Width="75"
+                                VerticalAlignment="Center"
+                                TextAlignment="Right"
+                                Margin="5,0"
+                                FontSize="16"
+                                />
+                            <TextBlock
+                                Name="Port"
+                                Width="150" 
+                                Text="Port"
+                                VerticalAlignment="Center" 
+                                TextAlignment="Left" 
+                                Margin="5,0"
+                                FontSize="16"
+                                />
                         </DockPanel>
                     </StackPanel>
                 </Expander>

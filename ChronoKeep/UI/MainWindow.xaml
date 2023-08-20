@@ -24,6 +24,7 @@
         </Grid.ColumnDefinitions>
         <ui:TitleBar
             Title="Chronokeep"
+            FontSize="14"
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2"

@@ -86,7 +86,51 @@
     <StartupObject>Chronokeep.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="IO\HtmlTemplates\css\bootstrap-grid.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-grid.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-grid.min.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-grid.min.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-grid.rtl.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-grid.rtl.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-grid.rtl.min.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-grid.rtl.min.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-reboot.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-reboot.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-reboot.min.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-reboot.min.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-reboot.rtl.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-reboot.rtl.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-reboot.rtl.min.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-reboot.rtl.min.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-utilities.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-utilities.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-utilities.min.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-utilities.min.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-utilities.rtl.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-utilities.rtl.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-utilities.rtl.min.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap-utilities.rtl.min.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap.min.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap.min.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap.rtl.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap.rtl.css.map" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap.rtl.min.css" />
+    <None Remove="IO\HtmlTemplates\css\bootstrap.rtl.min.css.map" />
     <None Remove="IO\HtmlTemplates\HtmlResultsPrint.tt" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.bundle.js" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.bundle.js.map" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.bundle.min.js" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.bundle.min.js.map" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.esm.js" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.esm.js.map" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.esm.min.js" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.esm.min.js.map" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.js" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.js.map" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.min.js" />
+    <None Remove="IO\HtmlTemplates\js\bootstrap.min.js.map" />
     <None Remove="IO\HtmlTemplates\Printables\ResultsPrintableGender.tt" />
     <None Remove="IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt" />
   </ItemGroup>
@@ -98,11 +142,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>HtmlResultsTemplate.tt</DependentUpon>
-    </Compile>
-    <Compile Update="IO\HtmlTemplates\HtmlResultsTemplateTime.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>HtmlResultsTemplateTime.tt</DependentUpon>
     </Compile>
     <Compile Update="IO\HtmlTemplates\Printables\ResultsPrintableOverall.cs">
       <DependentUpon>ResultsPrintableOverall.tt</DependentUpon>
@@ -142,6 +181,50 @@
     <PackageReference Include="WPF-UI" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.min.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.min.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.rtl.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.rtl.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.rtl.min.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.rtl.min.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-reboot.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-reboot.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-reboot.min.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-reboot.min.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-reboot.rtl.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-reboot.rtl.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-reboot.rtl.min.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-reboot.rtl.min.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-utilities.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-utilities.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-utilities.min.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-utilities.min.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-utilities.rtl.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-utilities.rtl.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-utilities.rtl.min.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-utilities.rtl.min.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap.min.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap.min.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap.rtl.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap.rtl.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap.rtl.min.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap.rtl.min.css.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.bundle.js" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.bundle.js.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.bundle.min.js" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.bundle.min.js.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.esm.js" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.esm.js.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.esm.min.js" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.esm.min.js.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.js" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.js.map" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.min.js" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\bootstrap.min.js.map" />
     <EmbeddedResource Include="version.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -150,8 +233,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="IO\HtmlTemplates\bootstrap.min.css" />
-    <EmbeddedResource Include="IO\HtmlTemplates\bootstrap.min.js" />
     <Content Include="IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt">
       <LastGenOutput>ResultsPrintableOverall.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
@@ -164,17 +245,13 @@
       <LastGenOutput>ResultsPrintableAgeGroup.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </Content>
-    <Content Include="IO\HtmlTemplates\HtmlResultsTemplateTime.tt">
-      <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>HtmlResultsTemplateTime.cs</LastGenOutput>
-    </Content>
     <Content Include="IO\HtmlTemplates\HtmlResultsTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>HtmlResultsTemplate.cs</LastGenOutput>
     </Content>
-    <EmbeddedResource Include="IO\HtmlTemplates\jquery-3.4.1.min.js" />
-    <Content Include="IO\HtmlTemplates\style.css" />
-    <EmbeddedResource Include="IO\HtmlTemplates\style.min.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\js\jquery.min.js" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\style.css" />
+    <EmbeddedResource Include="IO\HtmlTemplates\css\style.min.css" />
   </ItemGroup>
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

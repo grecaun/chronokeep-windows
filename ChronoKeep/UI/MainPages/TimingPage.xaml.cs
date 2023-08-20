@@ -803,56 +803,10 @@ namespace Chronokeep.UI.MainPages
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                string content = "";
                 List<TimeResult> finishResults = database.GetFinishTimes(theEvent.Identifier);
                 Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
-                // if event is TIME BASED
-                if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
-                {
-                    Dictionary<string, int> maxLoops = new Dictionary<string, int>();
-                    Dictionary<(int, int), TimeResult> LoopResults = new Dictionary<(int, int), TimeResult>();
-                    Dictionary<int, int> RunnerLoopsCompleted = new Dictionary<int, int>();
-                    Dictionary<string, double> DivisionDistancePerLoop = new Dictionary<string, double>();
-                    Dictionary<string, string> DivisionDistanceType = new Dictionary<string, string>();
-                    foreach (TimeResult result in finishResults)
-                    {
-                        if (!maxLoops.ContainsKey(result.DistanceName))
-                        {
-                            maxLoops[result.DistanceName] = result.Occurrence;
-                        }
-                        maxLoops[result.DistanceName] = result.Occurrence > maxLoops[result.DistanceName] ? result.Occurrence : maxLoops[result.DistanceName];
-                        LoopResults[(result.EventSpecificId, result.Occurrence)] = result;
-                        if (!RunnerLoopsCompleted.ContainsKey(result.EventSpecificId))
-                        {
-                            RunnerLoopsCompleted[result.EventSpecificId] = result.Occurrence;
-                        }
-                        RunnerLoopsCompleted[result.EventSpecificId] =
-                            RunnerLoopsCompleted[result.EventSpecificId] > result.Occurrence ?
-                                RunnerLoopsCompleted[result.EventSpecificId] :
-                                result.Occurrence;
-                    }
-                    List<Distance> divs = database.GetDistances(theEvent.Identifier);
-                    foreach (Distance d in divs)
-                    {
-                        DivisionDistancePerLoop[d.Name] = d.DistanceValue;
-                        DivisionDistanceType[d.Name] = d.DistanceUnit == Constants.Distances.MILES ? "Miles" :
-                            d.DistanceUnit == Constants.Distances.FEET ? "Feet" :
-                            d.DistanceUnit == Constants.Distances.KILOMETERS ? "Kilometers" :
-                            d.DistanceUnit == Constants.Distances.METERS ? "Meters" :
-                            d.DistanceUnit == Constants.Distances.YARDS ? "Yards" :
-                            "Unknown";
-                    }
-                    HtmlResultsTemplateTime template = new HtmlResultsTemplateTime(theEvent, finishResults, partDict,
-                        maxLoops, LoopResults, RunnerLoopsCompleted, DivisionDistancePerLoop, DivisionDistanceType);
-                    content = template.TransformText();
-                }
-                // if event is DISTANCE BASED
-                else
-                {
-                    HtmlResultsTemplate template = new HtmlResultsTemplate(theEvent, finishResults, partDict);
-                    content = template.TransformText();
-                }
-                System.IO.File.WriteAllText(saveFileDialog.FileName, content);
+                HtmlResultsTemplate template = new HtmlResultsTemplate(theEvent, finishResults);
+                File.WriteAllText(saveFileDialog.FileName, template.TransformText());
             }
         }
 

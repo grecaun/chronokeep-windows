@@ -20,14 +20,6 @@ namespace Chronokeep.Network
         private IDBInterface database;
         private Event theEvent;
         private List<TimeResult> finishResults = new List<TimeResult>();
-        private Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
-
-        // Time based results page specific items
-        private Dictionary<string, int> maxLoops = new Dictionary<string, int>();
-        private Dictionary<(int, int), TimeResult> LoopResults = new Dictionary<(int, int), TimeResult>();
-        private Dictionary<int, int> RunnerLoopsCompleted = new Dictionary<int, int>();
-        private Dictionary<string, double> DivisionDistancePerLoop = new Dictionary<string, double>();
-        private Dictionary<string, string> DivisionDistanceType = new Dictionary<string, string>();
 
         private Mutex info_mutex = new Mutex();
 
@@ -62,45 +54,21 @@ namespace Chronokeep.Network
                 return;
             }
             theEvent = database.GetCurrentEvent();
-            finishResults = database.GetFinishTimes(theEvent.Identifier);
-            foreach (Participant person in database.GetParticipants(theEvent.Identifier))
+            finishResults.Clear();
+            Dictionary<int, TimeResult> lastResult = new Dictionary<int, TimeResult>();
+            foreach (TimeResult r in database.GetTimingResults(theEvent.Identifier))
             {
-                participantDictionary[person.EventSpecific.Identifier] = person;
-            }
-            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
-            {
-                // Figure out all the information required for time based events.
-                maxLoops.Clear();
-                LoopResults.Clear();
-                RunnerLoopsCompleted.Clear();
-                foreach (TimeResult result in finishResults)
+                if (!lastResult.ContainsKey(r.Bib))
                 {
-                    if (!maxLoops.ContainsKey(result.DistanceName)) {
-                        maxLoops[result.DistanceName] = result.Occurrence;
-                    }
-                    maxLoops[result.DistanceName] = result.Occurrence > maxLoops[result.DistanceName] ? result.Occurrence : maxLoops[result.DistanceName];
-                    LoopResults[(result.EventSpecificId, result.Occurrence)] = result;
-                    if (!RunnerLoopsCompleted.ContainsKey(result.EventSpecificId))
-                    {
-                        RunnerLoopsCompleted[result.EventSpecificId] = result.Occurrence;
-                    }
-                    RunnerLoopsCompleted[result.EventSpecificId] =
-                        RunnerLoopsCompleted[result.EventSpecificId] > result.Occurrence ?
-                            RunnerLoopsCompleted[result.EventSpecificId] :
-                            result.Occurrence;
+                    lastResult[r.Bib] = r;
                 }
-                List<Distance> divs = database.GetDistances(theEvent.Identifier);
-                foreach (Distance d in divs)
+                else if (lastResult[r.Bib].SystemTime.CompareTo(r.SystemTime) < 0)
                 {
-                    DivisionDistancePerLoop[d.Name] = d.DistanceValue;
-                    DivisionDistanceType[d.Name] = d.DistanceUnit == Constants.Distances.MILES ? "Miles" :
-                        d.DistanceUnit == Constants.Distances.FEET ? "Feet" :
-                        d.DistanceUnit == Constants.Distances.KILOMETERS ? "Kilometers" :
-                        d.DistanceUnit == Constants.Distances.METERS ? "Meters" :
-                        d.DistanceUnit == Constants.Distances.YARDS ? "Yards" :
-                        "Unknown";
+                    lastResult[r.Bib] = r;
                 }
             }
+            finishResults.AddRange(lastResult.Values);
+            finishResults.RemoveAll(r => r.Bib < 0 || string.IsNullOrEmpty(r.First) || string.IsNullOrEmpty(r.Last));
             info_mutex.ReleaseMutex();
         }
 
@@ -119,17 +87,20 @@ namespace Chronokeep.Network
                     HttpListenerContext context = _listener.GetContext();
                     Process(context);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Log.E("Network.HttpServer", "Exception caught trying to serve something.\n" + ex.Message);
+                }
             }
         }
 
         private void Process(HttpListenerContext context)
         {
             string filename = context.Request.Url.AbsolutePath;
-            Log.D("Network.HttpServer", filename + " requested.");
+            Log.D("Network.HttpServer", "'" + filename + "' requested.");
             filename = filename.Substring(1);
 
-            string message = "";
+            byte[] message = Encoding.Default.GetBytes("");
             bool answer = false;
             if (string.IsNullOrEmpty(filename) || filename.Equals("results.htm", StringComparison.OrdinalIgnoreCase) || filename.Equals("results.html", StringComparison.OrdinalIgnoreCase))
             {
@@ -138,87 +109,44 @@ namespace Chronokeep.Network
                 if (!info_mutex.WaitOne(3000))
                 {
                     Log.D("Network.HttpServer", "Unable to get mutex for outputting results page.");
-                    message = "";
+                    message = Encoding.Default.GetBytes("");
                 }
                 else
                 {
-                    if (theEvent.EventType == Constants.Timing.EVENT_TYPE_DISTANCE)
-                    {
-                        HtmlResultsTemplate results = new HtmlResultsTemplate(theEvent, finishResults, participantDictionary);
-                        message = results.TransformText();
-                        context.Response.ContentType = "text/html";
-                        Log.D("Network.HttpServer", "Results html");
-                    }
-                    else
-                    {
-                        HtmlResultsTemplateTime results = new HtmlResultsTemplateTime(theEvent, finishResults, participantDictionary,
-                            maxLoops, LoopResults, RunnerLoopsCompleted, DivisionDistancePerLoop, DivisionDistanceType);
-                        message = results.TransformText();
-                        context.Response.ContentType = "text/html";
-                        Log.D("Network.HttpServer", "Results html");
-                    }
+                    HtmlResultsTemplate results = new HtmlResultsTemplate(
+                        theEvent,
+                        finishResults
+                        );
+                    message = Encoding.Default.GetBytes(results.TransformText());
+                    context.Response.ContentType = "text/html";
+                    Log.D("Network.HttpServer", "Results html");
                     info_mutex.ReleaseMutex();
                 }
             }
-            else if (filename.Equals("style.min.css", StringComparison.OrdinalIgnoreCase) || filename.Equals("style.css", StringComparison.OrdinalIgnoreCase))
+            else if (filename.StartsWith("css/", StringComparison.OrdinalIgnoreCase) || filename.StartsWith("js/", StringComparison.OrdinalIgnoreCase))
             {
+                Log.D("Network.HttpServer", "Fetching " + filename);
                 answer = true;
-                // Serve up style.css
-                message = "";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + "style.min.css"))
+                // Serve up the file requested.
+                string newName = filename.Replace('/', '.');
+                Log.D("Network.HttpServer", "Newname is " + newName);
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + newName))
                 {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        message = reader.ReadToEnd();
-                    }
+                    message = new byte[stream.Length];
+                    stream.Read(message, 0, message.Length);
                 }
-                context.Response.ContentType = "text/css";
-                Log.D("Network.HttpServer", "Style css");
-            }
-            else if (filename.Equals("bootstrap.min.css", StringComparison.OrdinalIgnoreCase) || filename.Equals("bootstrap.css", StringComparison.OrdinalIgnoreCase))
-            {
-                answer = true;
-                // Serve up bootstrap.min.css
-                message = "";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + "bootstrap.min.css"))
+                if (filename.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
                 {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        message = reader.ReadToEnd();
-                    }
+                    context.Response.ContentType = "text/css";
                 }
-                context.Response.ContentType = "text/css";
-                Log.D("Network.HttpServer", "Bootstrap css");
-            }
-            else if (filename.Equals("bootstrap.min.js", StringComparison.OrdinalIgnoreCase) || filename.Equals("bootstrap.js", StringComparison.OrdinalIgnoreCase))
-            {
-                answer = true;
-                // Serve up bootstrap.min.js
-                message = "";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + "bootstrap.min.js"))
+                else if (filename.EndsWith(".js", StringComparison.OrdinalIgnoreCase))
                 {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        message = reader.ReadToEnd();
-                    }
+                    context.Response.ContentType= "text/javascript";
                 }
-                context.Response.ContentType = "text/javascript";
-                Log.D("Network.HttpServer", "Bootstrap js");
-            }
-            else if (filename.Equals("jquery.min.js", StringComparison.OrdinalIgnoreCase) || filename.Equals("jquery.js", StringComparison.OrdinalIgnoreCase))
-            {
-                answer = true;
-                // Serve up jquery-3.4.1.min.js
-                message = "";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + "jquery-3.4.1.min.js"))
+                else if (filename.EndsWith(".html", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".html"))
                 {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        message = reader.ReadToEnd();
-                    }
+                    context.Response.ContentType = "text/html";
                 }
-                context.Response.ContentType = "text/javascript";
-                Log.D("Network.HttpServer", "jquery js");
             }
             if (answer)
             {
@@ -228,13 +156,10 @@ namespace Chronokeep.Network
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
             }
-            context.Response.AddHeader("Date", DateTime.Now.ToString("r"));
-            context.Response.AddHeader("Last-Modified", DateTime.Now.ToString("r"));
-            byte[] messageBytes = Encoding.Default.GetBytes(message);
-            context.Response.ContentLength64 = messageBytes.Length;
+            context.Response.ContentLength64 = message.Length;
             try
             {
-                context.Response.OutputStream.Write(messageBytes, 0, messageBytes.Length);
+                context.Response.OutputStream.Write(message, 0, message.Length);
                 context.Response.OutputStream.Flush();
             }
             catch (Exception ex)

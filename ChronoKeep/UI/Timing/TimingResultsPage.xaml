@@ -23,21 +23,20 @@
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <ListView
-                x:Name="updateListView"
-                VerticalAlignment="Stretch" 
-                HorizontalAlignment="Stretch"
-                VerticalContentAlignment="Top"
-                SelectionMode="Single"
-                Loaded="UpdateListView_Loaded" 
-                HorizontalContentAlignment="Center"
-                FontSize="12" 
-                MouseDoubleClick="UpdateListView_MouseDoubleClick"
-                ScrollViewer.CanContentScroll="True"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                Grid.Row="0"
-                AlternationCount="2"
-                ItemContainerStyle="{StaticResource alternatingStyle}"
-                >
+            x:Name="updateListView"
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            SelectionMode="Single"
+            VerticalContentAlignment="Bottom"
+            Loaded="UpdateListView_Loaded" 
+            FontSize="12" 
+            MouseDoubleClick="UpdateListView_MouseDoubleClick"
+            ScrollViewer.CanContentScroll="True"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            Grid.Row="0"
+            AlternationCount="2"
+            ItemContainerStyle="{StaticResource alternatingStyle}"
+            >
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
