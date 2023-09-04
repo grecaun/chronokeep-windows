@@ -13,18 +13,40 @@
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
         >
-    <StackPanel VerticalAlignment="Center">
-        <StackPanel Name="UpdatePanel">
-            <TextBlock Name="DownloadLabel" Text="Update Available" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <ProgressBar Name="DownloadProgress" Height="20" Margin="10,0,10,0" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar Grid.Row="0">
+            <ui:TitleBar.Tray>
+                <ui:NotifyIcon
+                    FocusOnLeftClick="True"
+                    MenuOnRightClick="True">
+                    <ui:NotifyIcon.Menu>
+                        <ContextMenu>
+                            <MenuItem
+                                Header="Home"
+                                Tag="tray_home" 
+                                />
+                        </ContextMenu>
+                    </ui:NotifyIcon.Menu>
+                </ui:NotifyIcon>
+            </ui:TitleBar.Tray>
+        </ui:TitleBar>
+        <StackPanel VerticalAlignment="Center" Grid.Row="1">
+            <StackPanel Name="UpdatePanel">
+                <TextBlock Name="DownloadLabel" Text="Update Available" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <ProgressBar Name="DownloadProgress" Height="20" Margin="10,0,10,0" />
+            </StackPanel>
+            <Button x:Name="BackupDatabaseButton" Content="Backup Database" Height="30" Width="170" HorizontalAlignment="Center" Visibility="Collapsed" Margin="0,10,0,0" Click="BackupDatabaseButton_Click"/>
+            <ScrollViewer x:Name="BackupPanel" Visibility="Collapsed" Height="100" HorizontalScrollBarVisibility="Disabled" Padding="10" VerticalScrollBarVisibility="Auto">
+                <TextBlock x:Name="backupBlock" TextAlignment="Center" TextWrapping="Wrap"/>
+            </ScrollViewer>
+            <DockPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,10,0,10">
+                <Button Name="InstallButton" Content="Download" Height="30" Width="100" Margin="10,0,10,0" Click="InstallButton_Click"/>
+                <Button Name="CancelButton" Content="Cancel" Height="30" Width="100" Margin="10,0,10,0" Click="CancelButton_Click"/>
+            </DockPanel>
         </StackPanel>
-        <Button x:Name="BackupDatabaseButton" Content="Backup Database" Height="30" Width="170" Visibility="Collapsed" Margin="0,10,0,0" Click="BackupDatabaseButton_Click"/>
-        <ScrollViewer x:Name="BackupPanel" Visibility="Collapsed" Height="100" HorizontalScrollBarVisibility="Disabled" Padding="10" VerticalScrollBarVisibility="Auto">
-            <TextBlock x:Name="backupBlock" TextAlignment="Center" TextWrapping="Wrap"/>
-        </ScrollViewer>
-        <DockPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,10,0,10">
-            <Button Name="InstallButton" Content="Download" Height="30" Width="100" Margin="10,0,10,0" Click="InstallButton_Click"/>
-            <Button Name="CancelButton" Content="Cancel" Height="30" Width="100" Margin="10,0,10,0" Click="CancelButton_Click"/>
-        </DockPanel>
-    </StackPanel>
+    </Grid>
 </ui:UiWindow>

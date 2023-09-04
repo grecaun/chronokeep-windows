@@ -25,7 +25,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -825,7 +824,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     mWindow.StopHttpServer();
                     HttpServerButton.Content = "Start Web";
-                    DialogBox.Show("Unable to start the web server. Please type this command in an elevated command prompt: 'netsh http add urlacl url=http://*:6933/ user=everyone'");
+                    DialogBox.Show("Unable to start the web server. Please type this command in an elevated command prompt:", "netsh http add urlacl url=http://*:6933/ user=everyone");
                     IPContainer.Visibility = Visibility.Collapsed;
                     PortContainer.Visibility = Visibility.Collapsed;
                 }

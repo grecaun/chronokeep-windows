@@ -72,7 +72,7 @@ namespace Chronokeep.Updates
             string[] version = curVersion.Split('.');
             if (version.Length >= 3)
             {
-                current.major = int.Parse(version[0].Replace("v", ""));
+                current.major = int.Parse(version[0].Substring(1));
                 current.minor = int.Parse(version[1]);
                 current.patch = int.Parse(version[2].Split('-')[0]);
             }

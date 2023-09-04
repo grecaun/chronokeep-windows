@@ -39,6 +39,10 @@ namespace Chronokeep.Updates
             Activate();
             Topmost = true;
             this.mWindow = mWindow;
+            this.MinHeight = 0;
+            this.Height = 250;
+            this.MinWidth = 0;
+            this.Width = 400;
         }
 
         private static HttpClient GetHttpClient()
@@ -162,8 +166,8 @@ namespace Chronokeep.Updates
             BackupDatabaseButton.Visibility = Visibility.Collapsed;
             BackupPanel.Visibility = Visibility.Visible;
             backupBlock.Text = $"{backupBlock.Text}\nChecking for old database files.";
-            string dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), appName);
-            string path = System.IO.Path.Combine(dirPath, dbName);
+            string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), appName);
+            string path = Path.Combine(dirPath, dbName);
             Log.D("Updates.DownloadWindow", "Looking for database file.");
             if (Directory.Exists(dirPath))
             {

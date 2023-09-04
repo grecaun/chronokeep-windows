@@ -1,19 +1,6 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
-using Wpf.Ui.Extensions;
 
 namespace Chronokeep.UI.UIObjects
 {
@@ -23,6 +10,8 @@ namespace Chronokeep.UI.UIObjects
     public partial class DialogBox : UiWindow
     {
         public delegate void LeftClickDelegate();
+
+        private string CopyText = "";
 
         public DialogBox(string Message, string LeftButtonContent, string RightButtonContent, bool ShowLeftButton, LeftClickDelegate LeftClick)
         {
@@ -76,6 +65,27 @@ namespace Chronokeep.UI.UIObjects
                 LeftClick
                 );
             output.ShowDialog();
+        }
+
+        public static void Show(string Message, string CopyText)
+        {
+            DialogBox output = new DialogBox(
+                Message,
+                "",
+                "OK",
+                false,
+                () => { }
+                );
+            output.CopyText = CopyText;
+            output.CopyBox.Text = CopyText;
+            output.CopyBox.Visibility = Visibility.Visible;
+            output.Width = 500.0;
+            output.ShowDialog();
+        }
+
+        private void CopyBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CopyBox.Text = CopyText;
         }
     }
 }
