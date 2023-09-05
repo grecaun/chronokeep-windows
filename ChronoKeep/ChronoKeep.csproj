@@ -84,8 +84,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Chronokeep.App</StartupObject>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="icon.png" />
     <None Remove="IO\HtmlTemplates\css\bootstrap-grid.css" />
     <None Remove="IO\HtmlTemplates\css\bootstrap-grid.css.map" />
     <None Remove="IO\HtmlTemplates\css\bootstrap-grid.min.css" />
@@ -187,6 +189,7 @@
     <PackageReference Include="WPF-UI" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="icon.png" />
     <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.css" />
     <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.css.map" />
     <EmbeddedResource Include="IO\HtmlTemplates\css\bootstrap-grid.min.css" />
@@ -239,6 +242,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="icon.ico" />
     <Content Include="IO\HtmlTemplates\HtmlParticipantTemplate.tt">
       <LastGenOutput>HtmlParticipantTemplate.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
