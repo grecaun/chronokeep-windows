@@ -369,6 +369,7 @@ namespace Chronokeep.UI.Timing
                 // remove temp files
                 File.Delete(tmpFile);
                 File.Delete(tmpPdf);
+                DialogBox.Show("Printing is a go.");
             }
             catch
             {

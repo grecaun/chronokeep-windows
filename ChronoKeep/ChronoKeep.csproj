@@ -133,6 +133,7 @@
     <None Remove="IO\HtmlTemplates\js\bootstrap.js.map" />
     <None Remove="IO\HtmlTemplates\js\bootstrap.min.js" />
     <None Remove="IO\HtmlTemplates\js\bootstrap.min.js.map" />
+    <None Remove="IO\HtmlTemplates\Printables\AwardsPrintable.tt" />
     <None Remove="IO\HtmlTemplates\Printables\ResultsPrintableGender.tt" />
     <None Remove="IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt" />
   </ItemGroup>
@@ -149,6 +150,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>HtmlResultsTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="IO\HtmlTemplates\Printables\AwardsPrintable.cs">
+      <DependentUpon>AwardsPrintable.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="IO\HtmlTemplates\Printables\ResultsPrintableOverall.cs">
       <DependentUpon>ResultsPrintableOverall.tt</DependentUpon>
@@ -243,6 +249,10 @@
     <Content Include="icon.ico" />
     <Content Include="IO\HtmlTemplates\HtmlParticipantTemplate.tt">
       <LastGenOutput>HtmlParticipantTemplate.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </Content>
+    <Content Include="IO\HtmlTemplates\Printables\AwardsPrintable.tt">
+      <LastGenOutput>AwardsPrintable.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </Content>
     <Content Include="IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt">

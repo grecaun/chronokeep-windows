@@ -232,7 +232,7 @@ namespace Chronokeep
         }
         public string ChipTime { get => chipTime; set => chipTime = value; }
         public string Gender { get => gender; set => gender = value; }
-        public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
+        public string AgeGroupName { get => PrettyAgeGroupName(); set => ageGroupName = value; }
         public int Status { get => status; set => status = value; }
         public string LapTime { get => splitTime; set => splitTime = value; }
         public long ChipSeconds { get => chipSeconds; set => chipSeconds = value; }
@@ -248,6 +248,25 @@ namespace Chronokeep
             get => theEvent != null ? string.Format("{0} {1}", this.Age(theEvent.Date), this.PrettyGender) : string.Format("? {0}", this.PrettyGender);
         }
         public bool Finish { get => segmentId == Constants.Timing.SEGMENT_FINISH; }
+
+        public string PrettyAgeGroupName()
+        {
+            string[] agSplit = ageGroupName.Split('-');
+            int topAge = -1;
+            if (agSplit.Length > 1 && agSplit[0] == "0")
+            {
+                int.TryParse(agSplit[1], out topAge);
+                if (topAge > 0)
+                {
+                    return string.Format("Under {0}", topAge + 1);
+                }
+            }
+            else if (topAge >= 99)
+            {
+                return string.Format("Over {0}", agSplit[0]);
+            }
+            return ageGroupName;
+        }
 
         public static string BibToIdentifier(int iBib)
         {

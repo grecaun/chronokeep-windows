@@ -1,13 +1,18 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.IO;
+using Chronokeep.IO.HtmlTemplates.Printables;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
+using Microsoft.AspNetCore.Html;
+using Microsoft.Extensions.Options;
 using Microsoft.Win32;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -128,30 +133,47 @@ namespace Chronokeep.UI.Timing
             }
             if (printDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                //PdfDocumentRenderer renderer = new PdfDocumentRenderer();
-                if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
-                {
-                    //renderer.Document = GetAwardsPrintableDocumentDistance(divsToPrint, options);
-                }
-                else
-                {
-                    DialogBox.Show("Award printing for time based races has not been implemented yet.");
-                    return;
-                }
-                /*renderer.RenderDocument();
-                MigraDocPrintDocument printDocument = new MigraDocPrintDocument
-                {
-                    Renderer = renderer.DocumentRenderer,
-                    PrinterSettings = printDialog.PrinterSettings
-                };
                 try
                 {
-                    printDocument.Print();
+                    // Printing is a very weird process that I would love to streamline... but printing is hard.
+                    // Get two temp file names.
+                    string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
+                    string tmpPdf = Path.Combine(Path.GetTempPath(), "print_pdf.pdf");
+                    // Write the HTML file to a temp file because wkhtmltopdf requires a URI.
+                    using StreamWriter streamwriter = new StreamWriter(File.Open(tmpFile, FileMode.Create));
+                    streamwriter.Write(GetPrintableAwards(divsToPrint, options));
+                    streamwriter.Close();
+                    // Use wkhtmltopdf to convert the temp HTML file to a temp PDF file.
+                    using Process create_pdf = new Process();
+                    create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
+                    create_pdf.StartInfo.Arguments = $"-s A4 -B 30mm {tmpFile} {tmpPdf}";
+                    create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    create_pdf.StartInfo.UseShellExecute = true;
+                    create_pdf.Start();
+                    // Process shouldn't take more than 15 seconds, so wait for it to finish and kill it when done (or not done).
+                    create_pdf.WaitForExit(15000);
+                    create_pdf.Kill();
+                    create_pdf.Close();
+                    // Use ghostscript to print the temp PDF file.
+                    using Process print_pdf = new Process();
+                    print_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "gswin32.exe");
+                    print_pdf.StartInfo.Arguments = $"-dPrinted -dBATCH -dNOPAUSE -dNOSAFER -dNumCopies=1 -sDEVICE=mswinpr2 {tmpPdf}";
+                    print_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    print_pdf.StartInfo.UseShellExecute = true;
+                    print_pdf.Start();
+                    // wait for up to two minutes and make sure to kill the process
+                    print_pdf.WaitForExit(120000);
+                    print_pdf.Kill();
+                    print_pdf.Close();
+                    // remove temp files
+                    File.Delete(tmpFile);
+                    File.Delete(tmpPdf);
+                    DialogBox.Show("Printing is a go.");
                 }
                 catch
                 {
                     DialogBox.Show("Something went wrong when attempting to print.");
-                }//*/
+                }
             }
         }
 
@@ -194,31 +216,294 @@ namespace Chronokeep.UI.Timing
             {
                 divsToPrint = null;
             }
+            string HTML_String = GetPrintableAwards(divsToPrint, options);
             if (saveFileDialog.ShowDialog() == true)
             {
-                //PdfDocumentRenderer renderer = new PdfDocumentRenderer();
-                if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
-                {
-                    //renderer.Document = GetAwardsPrintableDocumentDistance(divsToPrint, options);
-                }
-                else
-                {
-                    DialogBox.Show("Award printing for time based races has not been implemented yet.");
-                    return;
-                }
-                /*renderer.RenderDocument();
                 try
                 {
-                    renderer.PdfDocument.Save(saveFileDialog.FileName);
+                    // Write HTML to a temp file.
+                    string tmpFile = Path.Combine(Path.GetTempPath(), "print_temp.html");
+                    using StreamWriter streamwriter = new StreamWriter(File.Open(tmpFile, FileMode.Create));
+                    streamwriter.Write(GetPrintableAwards(divsToPrint, options));
+                    streamwriter.Close();
+                    // Delete old file if it exists.
+                    if (File.Exists(saveFileDialog.FileName))
+                    {
+                        File.Delete(saveFileDialog.FileName);
+                    }
+                    // Use wkhtmltopdf to convert our temp html file to a saved pdf file.
+                    using Process create_pdf = new Process();
+                    create_pdf.StartInfo.FileName = Path.Combine(Directory.GetCurrentDirectory(), "wkhtmltopdf.exe");
+                    create_pdf.StartInfo.Arguments = $"-s A4 {tmpFile} {saveFileDialog.FileName}";
+                    create_pdf.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    create_pdf.StartInfo.UseShellExecute = true;
+                    create_pdf.Start();
+                    // wait for it to exit then kill it, even if the wait timed out
+                    create_pdf.WaitForExit(15000);
+                    create_pdf.Kill();
+                    create_pdf.Close();
+                    // delete old file
+                    File.Delete(tmpFile);
                     DialogBox.Show("File saved.");
                 }
-                catch
+                catch (Exception ex)
                 {
+                    Log.E("UI.Timing.AwardPage", "Exception caught: " + ex.Message);
                     DialogBox.Show("Unable to save file.");
-                }//*/
+                }
             }
         }
 
+        private string GetPrintableAwards(List<string> distances, AwardOptions options)
+        {
+            // Get all results for the race.
+            List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
+            // Remove all unknown participants.
+            results.RemoveAll(x => x.Bib == Constants.Timing.CHIPREAD_DUMMYBIB);
+            // Remove all from unselected divisions.
+            if (distances != null)
+            {
+                results.RemoveAll(x => !distances.Contains(x.DistanceName));
+            }
+            // Remove all results that are not finish results.
+            results.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
+            // If we're a time based event, exclude all but the last result
+            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
+            {
+                Dictionary<string, TimeResult> lastResult = new Dictionary<string, TimeResult>();
+                foreach (TimeResult individual in results)
+                {
+                    if (lastResult.ContainsKey(individual.ParticipantName))
+                    {
+                        if (lastResult[individual.ParticipantName].Occurrence < individual.Occurrence)
+                        {
+                            lastResult[individual.ParticipantName] = individual;
+                        }
+                    }
+                    else
+                    {
+                        lastResult[individual.ParticipantName] = individual;
+                    }
+                }
+                results = lastResult.Values.ToList();
+            }
+            // This dictionary stores the list of results with the key being the distance and the header for the grouping (Overall, Age Group, Custom)
+            Dictionary<string, Dictionary<string, List<TimeResult>>> resultsDictionary = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
+            foreach (TimeResult result in results)
+            {
+                // Gather the gender and modify it to what we want for use in results.
+                string gend = result.Gender;
+                if (result.Gender == "Woman")
+                {
+                    gend = "Women";
+                }
+                else if (result.Gender == "Man")
+                {
+                    gend = "Men";
+                }
+                else if (result.Gender == "Not Specified")
+                {
+                    gend = "";
+                }
+                bool addedToAgeGroupResults = false;
+                if (!resultsDictionary.ContainsKey(result.DistanceName))
+                {
+                    resultsDictionary[result.DistanceName] = new Dictionary<string, List<TimeResult>>();
+                }
+                // Get the overall results.
+                if (result.Place <= options.NumOverall)
+                {
+                    // Check if we're printing the overall results.
+                    if (options.PrintOverall == true)
+                    {
+                        if (!resultsDictionary[result.DistanceName].ContainsKey("Overall"))
+                        {
+                            resultsDictionary[result.DistanceName]["Overall"] = new List<TimeResult>();
+                        }
+                        resultsDictionary[result.DistanceName]["Overall"].Add(result);
+                    }
+                    // Check if we were told to exclude overall from age group awards.
+                    // Also ensure we've been told to print age groups and that the person is in the age group results.
+                    // The place check is easy here because we can check the result.Place value.
+                    // Exclude any genders we don't know about.
+                    if (options.ExcludeOverallAG == false
+                        && result.Place <= options.NumAgeGroups
+                        && gend != "")
+                    {
+                        if (options.PrintAgeGroups == true)
+                        {
+                            string ageGroup = string.Format("{0} {1}", gend, result.AgeGroupName);
+                            if (!resultsDictionary[result.DistanceName].ContainsKey(ageGroup))
+                            {
+                                resultsDictionary[result.DistanceName][ageGroup] = new List<TimeResult>();
+                            }
+                            resultsDictionary[result.DistanceName][ageGroup].Add(result);
+                        }
+                        addedToAgeGroupResults = true;
+                    }
+                    // This is almost the same as the age groups category.
+                    // Check if told to exclude from custom results.
+                    // and if we were told to print custom results
+                    // exclude any unknown genders
+                    // check if we were told to exclude age group winners from custom winners, if so only include ones we didn't add above
+                    // this will exclude any that would have won an age group award even if we didn't actually print it
+                    // this is the behavior we want and should work the same for overall as well
+                    if (options.ExcludeOverallCustom == false
+                        && options.PrintCustom == true
+                        && gend != ""
+                        && (options.ExcludeAgeGroupsCustom == false || addedToAgeGroupResults == false))
+                    {
+                        int age = result.Age(theEvent.Date);
+                        foreach (AgeGroup group in customAgeGroups)
+                        {
+                            if (age >= group.StartAge && age <= group.EndAge)
+                            {
+                                string ageGroup = string.Format("{0} {1}", gend, group.PrettyName());
+                                if (!resultsDictionary[result.DistanceName].ContainsKey(ageGroup))
+                                {
+                                    resultsDictionary[result.DistanceName][ageGroup] = new List<TimeResult>();
+                                }
+                                // only add to the results if we're under the number of results we can print
+                                if (resultsDictionary[result.DistanceName][ageGroup].Count < options.NumCustom)
+                                {
+                                    resultsDictionary[result.DistanceName][ageGroup].Add(result);
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (gend != "")
+                {
+                    // We're not in the overall results.
+                    // Check for age groups.
+                    string ageGroup = string.Format("{0} {1}", gend, result.AgeGroupName);
+                    if (!resultsDictionary[result.DistanceName].ContainsKey(ageGroup))
+                    {
+                        resultsDictionary[result.DistanceName][ageGroup] = new List<TimeResult>();
+                    }
+                    // We're doing it this way so we can exclude people from custom if we want even if we don't print the age group.
+                    if (resultsDictionary[result.DistanceName][ageGroup].Count < options.NumAgeGroups)
+                    {
+                        if (options.PrintAgeGroups == true)
+                        {
+                            resultsDictionary[result.DistanceName][ageGroup].Add(result);
+                        }
+                        addedToAgeGroupResults = true;
+                    }
+                    // Check for custom groups.
+                    // Ensure we don't care about excluding age group winners, or they didn't actually win
+                    if (options.PrintCustom == true && (options.ExcludeAgeGroupsCustom == false || addedToAgeGroupResults == false))
+                    {
+                        int age = result.Age(theEvent.Date);
+                        foreach (AgeGroup group in customAgeGroups)
+                        {
+                            if (age >= group.StartAge && age <= group.EndAge)
+                            {
+                                ageGroup = string.Format("{0} {1}", gend, group.PrettyName());
+                                if (!resultsDictionary[result.DistanceName].ContainsKey(ageGroup))
+                                {
+                                    resultsDictionary[result.DistanceName][ageGroup] = new List<TimeResult>();
+                                }
+                                // only add to the results if we're under the number of results we can print
+                                if (resultsDictionary[result.DistanceName][ageGroup].Count < options.NumCustom)
+                                {
+                                    resultsDictionary[result.DistanceName][ageGroup].Add(result);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Collect all of the groups into lists according to their distance
+            // We do this so we can sort them by age group.
+            Dictionary<string, List<string>> distanceGroups = new Dictionary<string, List<string>>();
+            foreach (string dist in resultsDictionary.Keys)
+            {
+                foreach (string group in resultsDictionary[dist].Keys)
+                {
+                    // only add to our list if they actually have results in them
+                    if (resultsDictionary[dist][group].Count > 0)
+                    {
+                        if (!distanceGroups.ContainsKey(dist))
+                        {
+                            distanceGroups[dist] = new List<string>();
+                        }
+                        if (!distanceGroups[dist].Contains(group))
+                        {
+                            distanceGroups[dist].Add(group);
+                        }
+                    }
+                }
+            }
+            // sort our lists
+            foreach (string dist in distanceGroups.Keys)
+            {
+                distanceGroups[dist].Sort((x1, x2) => CompareGroups(x1, x2));
+            }
+            AwardsPrintable output = new AwardsPrintable(theEvent, distanceGroups, resultsDictionary);
+            return output.TransformText();
+        }
+
+        public int CompareGroups(string group1, string group2)
+        {
+            if (group1 == "Overall")
+            {
+                Log.D("Test", "Overall found1");
+                return -1;
+            }
+            if (group2 == "Overall")
+            {
+                Log.D("Test", "Overall found2");
+                return 1;
+            }
+            string[] firstSplit1 = group1.Split(' ');
+            string[] firstSplit2 = group2.Split(' ');
+            if (firstSplit1.Length < 2 || firstSplit2.Length < 2)
+            {
+                return group1.CompareTo(group2);
+            }
+            // if genders are not equal, sort by gender
+            if (firstSplit1[0] != firstSplit2[0])
+            {
+                return firstSplit1[0].CompareTo(firstSplit2[0]);
+            }
+            if (firstSplit1[1].Equals("Under", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.D("Test", "Under found1");
+                return -1;
+            }
+            if (firstSplit2[1].Equals("Under", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.D("Test", "Under found2");
+                return 1;
+            }
+            if (firstSplit1[1].Equals("Over", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.D("Test", "Over found1");
+                return 1;
+            }
+            if (firstSplit2[1].Equals("Over", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.D("Test", "Over found2");
+                return -1;
+            }
+            string[] secondSplit1 = firstSplit1[0].Split('-');
+            string[] secondSplit2 = firstSplit2[0].Split('-');
+            if (secondSplit1.Length < 2 || secondSplit2.Length < 2)
+            {
+                return firstSplit1[1].CompareTo(firstSplit2[1]);
+            }
+            int start1 = -1;
+            int.TryParse(secondSplit1[0], out start1);
+            int start2 = -1;
+            int.TryParse(secondSplit2[0], out start2);
+            if (start1 < 0 || start2 < 0)
+            {
+                return firstSplit1[1].CompareTo(firstSplit2[1]);
+            }
+            return start1.CompareTo(start2);
+        }
+        
         public void CancelableUpdateView(CancellationToken token) { }
 
         private void DoneButton_Click(object sender, RoutedEventArgs e)
@@ -249,307 +534,6 @@ namespace Chronokeep.UI.Timing
         public void Keyboard_Ctrl_S() { }
 
         public void Keyboard_Ctrl_Z() { }
-
-        /*
-        private Document GetAwardsPrintableDocumentTime(List<string> distances, AwardOptions options)
-        {
-            Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
-            return document;
-        }
-
-        private Document GetAwardsPrintableDocumentDistance(List<string> distances, AwardOptions options)
-        {
-            // Ensure we were given options
-            if (options == null)
-            {
-                options = new AwardOptions();
-            }
-            // Get all participants for the race and categorize them by their event specific identifier.
-            Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
-            // Get all results for the race.
-            List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
-            // Remove all results where we don't have the person's information.
-            // and all results that are not finish results
-            // TODO - Make anonymouse entries possible.
-            results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId) || x.SegmentId != Constants.Timing.SEGMENT_FINISH);
-            // Remove some participants if we don't want their distance.
-            if (distances != null)
-            {
-                results.RemoveAll(x => !distances.Contains(x.DistanceName));
-            }
-            // Separate them based upon distance.
-            Dictionary<string, List<TimeResult>> distanceResults = new Dictionary<string, List<TimeResult>>();
-            foreach (TimeResult result in results)
-            {
-                if (!distanceResults.ContainsKey(result.DistanceName))
-                {
-                    distanceResults[result.DistanceName] = new List<TimeResult>();
-                }
-                distanceResults[result.DistanceName].Add(result);
-            }
-            // Get a list of all our age groups + our custom age groups
-            Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier).ToDictionary(x => x.GroupId, x => x);
-            // Add an age group for our unknown age people/
-            ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new AgeGroup(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, 0, 3000);
-            Dictionary<int, AgeGroup> customAgeGroups = new Dictionary<int, AgeGroup>();
-            foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
-            {
-                if (Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID == group.DistanceId)
-                {
-                    customAgeGroups[group.GroupId] = group;
-                }
-            }
-            Dictionary<string, Distance> distancesDictionary = new Dictionary<string, Distance>();
-            foreach (Distance div in database.GetDistances(theEvent.Identifier))
-            {
-                distancesDictionary[div.Name] = div;
-            }
-            // Create document to output.
-            Document document = PrintingInterface.CreateDocument(theEvent.YearCode, theEvent.Name, database.GetAppSetting(Constants.Settings.COMPANY_NAME).value);
-            foreach (string divName in distanceResults.Keys.OrderBy(i => i))
-            {
-                // Create a dictionary for storing lists of award winners based upon category.
-                // this is either OVERALL, AG<GROUP_ID>, or CUSTOM<GROUP_ID>
-                Dictionary<string, List<TimeResult>> distanceAwards = new Dictionary<string, List<TimeResult>>();
-                // Create three lists of results for each type (OVERALL, AGEGROUPS, CUSTOM)
-                distanceResults[divName].Sort(TimeResult.CompareByDistancePlace);
-                List<TimeResult> ageGroupResults = new List<TimeResult>(distanceResults[divName]);
-                ageGroupResults.Sort(TimeResult.CompareByDistancePlace);
-                List<TimeResult> customResults = new List<TimeResult>(distanceResults[divName]);
-                customResults.Sort(TimeResult.CompareByDistancePlace);
-                // Check the number of winners we need for overall and remove all but those from distanceResults[divName]
-                // Sort them into a gender based dictionary
-                Dictionary<string, List<TimeResult>> overallResultDictionary = new Dictionary<string, List<TimeResult>>();
-                foreach (TimeResult result in distanceResults[divName])
-                {
-                    if (!overallResultDictionary.ContainsKey(result.Gender))
-                    {
-                        overallResultDictionary[result.Gender] = new List<TimeResult>();
-                    }
-                    if (overallResultDictionary[result.Gender].Count < options.NumOverall)
-                    {
-                        overallResultDictionary[result.Gender].Add(result);
-                    }
-                }
-                // Remove all results from the other two lists if we think we should.
-                if (options.ExcludeOverallAG)
-                {
-                    foreach (string key in overallResultDictionary.Keys)
-                    {
-                        ageGroupResults.RemoveAll(x => overallResultDictionary[key].Contains(x));
-                    }
-                }
-                if (options.ExcludeOverallCustom)
-                {
-                    foreach (string key in overallResultDictionary.Keys)
-                    {
-                        customResults.RemoveAll(x => overallResultDictionary[key].Contains(x));
-                    }
-                }
-                // Get results for each age group + gender into lists with a MAX NUMBER of entries
-                Dictionary<(int, string), List<TimeResult>> ageGroupResultDictionary = new Dictionary<(int, string), List<TimeResult>>();
-                foreach (TimeResult result in ageGroupResults)
-                {
-                    if (!ageGroupResultDictionary.ContainsKey((result.AgeGroupId, result.Gender)))
-                    {
-                        ageGroupResultDictionary[(result.AgeGroupId, result.Gender)] = new List<TimeResult>();
-                    }
-                    if (ageGroupResultDictionary[(result.AgeGroupId, result.Gender)].Count < options.NumAgeGroups)
-                    {
-                        ageGroupResultDictionary[(result.AgeGroupId, result.Gender)].Add(result);
-                    }
-                }
-                // Remove everything from CustomResults if we were told to.
-                if (options.ExcludeAgeGroupsCustom)
-                {
-                    foreach ((int, string) key in ageGroupResultDictionary.Keys)
-                    {
-                        customResults.RemoveAll(x => ageGroupResultDictionary[key].Contains(x));
-                    }
-                }
-                // Process results for custom age groups.  This is similar to the others but sort of different.
-                Dictionary<(int, string), List<TimeResult>> customResultDictionary = new Dictionary<(int, string), List<TimeResult>>();
-                List<TimeResult> processed = new List<TimeResult>();
-                foreach (AgeGroup group in customAgeGroups.Values)
-                {
-                    foreach (TimeResult result in customResults)
-                    {
-                        int age = participantDictionary[result.EventSpecificId].GetAge(theEvent.Date);
-                        if (age >= group.StartAge && age <= group.EndAge)
-                        {
-                            processed.Add(result);
-                            if (!customResultDictionary.ContainsKey((group.GroupId, result.Gender)))
-                            {
-                                customResultDictionary[(group.GroupId, result.Gender)] = new List<TimeResult>();
-                            }
-                            if (customResultDictionary[(group.GroupId, result.Gender)].Count < options.NumCustom)
-                            {
-                                customResultDictionary[(group.GroupId, result.Gender)].Add(result);
-                            }
-                        }
-                    }
-                    customResults.RemoveAll(x => processed.Contains(x));
-                    processed.Clear();
-                }
-                Section section = PrintingInterface.SetupMargins(document.AddSection());
-                HeaderFooter header = section.Headers.Primary;
-                Paragraph curPara = header.AddParagraph(theEvent.Name);
-                curPara.Style = "Heading1";
-                curPara = header.AddParagraph("Age Group Results");
-                curPara.Style = "Heading2";
-                curPara = header.AddParagraph(theEvent.Date);
-                curPara.Style = "Heading3";
-                curPara = header.AddParagraph(divName);
-                curPara.Style = "DistanceName";
-                List<(string subheading, List<TimeResult> results)> maleResults = new List<(string subheading, List<TimeResult> results)>();
-                List<(string subheading, List<TimeResult> results)> femaleResults = new List<(string subheading, List<TimeResult> results)>();
-                // check if we're printing overall
-                if (options.PrintOverall)
-                {
-                    foreach (string gender in overallResultDictionary.Keys)
-                    {
-                        if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
-                        {
-                            maleResults.Add((subheading: "Male Overall", results: overallResultDictionary[gender]));
-                        }
-                        else
-                        {
-                            femaleResults.Add((subheading: "Female Overall", results: overallResultDictionary[gender]));
-                        }
-                    }
-                }
-                if (options.PrintAgeGroups)
-                {
-                    IOrderedEnumerable<(int, string)> ageGroupKeys;
-                    try
-                    {
-                        ageGroupKeys = ageGroupResultDictionary.Keys
-                           .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge);
-                    }
-                    catch
-                    {
-                        ageGroupKeys = ageGroupResultDictionary.Keys.OrderBy(c => c.Item2);
-                    }
-                    foreach ((int AgeGroupId, string gender) in ageGroupKeys)
-                    {
-                        if (AgeGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
-                        {
-                            string subheading = string.Format("{0} {1} - {2}",
-                                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
-                                        ageGroups[AgeGroupId].StartAge,
-                                        ageGroups[AgeGroupId].EndAge);
-                            if (ageGroups[AgeGroupId].LastGroup)
-                            {
-                                subheading = string.Format("{0} {1}+",
-                                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
-                                        ageGroups[AgeGroupId].StartAge);
-                            }
-                            if (gender.Equals("M", StringComparison.OrdinalIgnoreCase)) /// TODO Fix this code for NB if we start using it again
-                            {
-                                maleResults.Add((subheading, results: ageGroupResultDictionary[(AgeGroupId, gender)]));
-                            }
-                            else
-                            {
-                                femaleResults.Add((subheading, results: ageGroupResultDictionary[(AgeGroupId, gender)]));
-                            }
-
-                        }
-                    }
-                }
-                if (options.PrintCustom)
-                {
-                    IOrderedEnumerable<(int, string)> customKeys;
-                    try
-                    {
-                        customKeys = customResultDictionary.Keys
-                           .OrderBy(c => c.Item2).ThenBy(i => ageGroups[i.Item1].StartAge);
-                    }
-                    catch
-                    {
-                        customKeys = customResultDictionary.Keys.OrderBy(c => c.Item2);
-                    }
-                    foreach ((int AgeGroupId, string gender) in customKeys)
-                    {
-                        if (AgeGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
-                        {
-                            string subheading = string.Format("{0} {1} - {2} (Custom)",
-                                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
-                                        ageGroups[AgeGroupId].StartAge,
-                                        ageGroups[AgeGroupId].EndAge);
-                            if (ageGroups[AgeGroupId].LastGroup)
-                            {
-                                subheading = string.Format("{0} {1}+ (Custom)",
-                                        gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : "Female",
-                                        ageGroups[AgeGroupId].StartAge);
-                            }
-                            if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
-                            {
-                                maleResults.Add((subheading, results: customResultDictionary[(AgeGroupId, gender)]));
-                            }
-                            else
-                            {
-                                femaleResults.Add((subheading, results: customResultDictionary[(AgeGroupId, gender)]));
-                            }
-                        }
-                    }
-                }
-                foreach ((string subheading, List<TimeResult> res) in femaleResults)
-                {
-                    AddAwardSection(section, subheading, res, participantDictionary);
-                }
-                foreach ((string subheading, List<TimeResult> res) in maleResults)
-                {
-                    AddAwardSection(section, subheading, res, participantDictionary);
-                }
-            }
-            return document;
-        }
-
-        private void AddAwardSection(Section section, string subheading, List<TimeResult> results, Dictionary<int, Participant> participantDictionary)
-        {
-            section.AddParagraph(subheading, "SubHeading");
-            // Create a tabel to display the results.
-            Table table = new Table();
-            table.Borders.Width = 0.0;
-            table.Rows.Alignment = RowAlignment.Center;
-            // Create the rows we're displaying
-            table.AddColumn(Unit.FromCentimeter(1));   // place
-            table.AddColumn(Unit.FromCentimeter(1.2)); // bib
-            table.AddColumn(Unit.FromCentimeter(5));   // name
-            table.AddColumn(Unit.FromCentimeter(0.6)); // gender
-            table.AddColumn(Unit.FromCentimeter(0.6)); // age
-            table.AddColumn(Unit.FromCentimeter(2.3)); // gun time
-            table.AddColumn(Unit.FromCentimeter(2.3)); // chip time
-                                                       // add the header row
-            Row row = table.AddRow();
-            row.Style = "ResultsHeader";
-            row.Cells[0].AddParagraph("Place");
-            row.Cells[1].AddParagraph("Bib");
-            row.Cells[2].AddParagraph("Name");
-            row.Cells[2].Style = "ResultsHeaderName";
-            row.Cells[3].AddParagraph("G");
-            row.Cells[4].AddParagraph("Age");
-            row.Cells[5].AddParagraph("Finish Gun");
-            row.Cells[6].AddParagraph("Finish Chip");
-            int place = 1;
-            foreach (TimeResult result in results)
-            {
-                row = table.AddRow();
-                row.Style = "ResultsRow";
-                row.Cells[0].AddParagraph(place.ToString()); // Place
-                row.Cells[1].AddParagraph(result.Bib.ToString()); // Bib
-                row.Cells[2].AddParagraph(result.ParticipantName); // Name
-                row.Cells[2].Style = "ResultsRowName";
-                row.Cells[3].AddParagraph(result.Gender); // Gender
-                row.Cells[4].AddParagraph(participantDictionary[result.EventSpecificId].Age(theEvent.Date)); // Age
-                row.Cells[5].AddParagraph(result.Time.Substring(0, result.Time.Length - 2)); // Gun time
-                row.Cells[6].AddParagraph(result.ChipTime.Substring(0, result.ChipTime.Length - 2)); // Chip time
-                place++;
-            }
-            row = table.AddRow();
-            section.Add(table);
-        }
-        //*/
 
         private class AwardOptions
         {

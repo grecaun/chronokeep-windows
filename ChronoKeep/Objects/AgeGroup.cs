@@ -42,7 +42,19 @@ namespace Chronokeep.Objects
         public int GroupId { get => group_id; set => group_id = value; }
         public bool LastGroup { get => last_group == Constants.Timing.AGEGROUPS_LASTGROUP_TRUE;
             set => last_group = value ? Constants.Timing.AGEGROUPS_LASTGROUP_TRUE : Constants.Timing.AGEGROUPS_LASTGROUP_FALSE; }
-        public string Name { get => LastGroup ? string.Format("{0}+", start_age) : string.Format("{0}-{1}", start_age, end_age); }
+        public string Name { get => LastGroup ? string.Format("Over {0}", start_age) : string.Format("{0}-{1}", start_age, end_age); }
+        public string PrettyName()
+        {
+            if (start_age < 1 && end_age > 0)
+            {
+                return string.Format("Under {0}", end_age + 1);
+            }
+            else if (end_age >= 99)
+            {
+                return string.Format("Over {0}", start_age);
+            }
+            return Name;
+        }
 
         public int CompareTo(AgeGroup other)
         {

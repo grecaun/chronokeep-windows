@@ -1,0 +1,126 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Chronokeep" #>
+<html>
+	<head>
+		<style type="text/css">
+			/*
+			 * Set website details.
+			 */
+			.text-center {
+			  text-align: center;
+			}
+			/**
+			 * Table options for results.
+			 */
+			.table-header {
+			  text-align: center;
+			  font-size: 26px;
+			  padding: 0px;
+			  margin-top: 0px;
+			  margin-bottom: 2px;
+			}
+			.table-h3 {
+			  text-align: center;
+			  font-size: 22px;
+			  padding: 0px;
+			  margin-top: 0px;
+			  margin-bottom: 4px;
+			}
+			.table-h4 {
+			  text-align: center;
+			  font-size: 18px;
+			  padding: 0px;
+			  margin-top: 0px;
+			  margin-bottom: 4px;
+			}
+			.header-margin-top {
+		      margin-top: 20px;
+			}
+			.table-label {
+			  font-size: 18px;
+			}
+			.table-info {
+			  text-align: center;
+			  padding-top: 4px;
+			}
+			table {
+			  min-width: 360px;
+			  overflow: hidden;
+			  margin-top: 20px;
+			}
+			.panel-center {
+			  text-align: center;
+			}
+			td {
+			  padding: 5px;
+			  text-align: center;
+			  border: 1px solid #E7E7E7;
+			}
+			table {
+			  width: 100%;
+			  border-collapse: collapse;
+			  border-radius: 10px;
+			  border-style: hidden;
+			  box-shadow: 0 0 0 1px #E7E7E7;
+			}
+		</style>
+	</head>
+	<body>
+		<div class='text-important table-header'><#= theEvent.YearCode #> <#= theEvent.Name #></div>
+		<div class='text-important table-h3'>Awards</div>
+		<div class='text-important table-h4'><#= theEvent.Date #></div>
+		<div class='events-panel panel panel-default'>
+			<# foreach (string d in distanceResults.Keys.OrderBy(i => i))
+			{ #>
+			<div>
+				<div class='text-important table-header header-margin-top'><#= d #></div>
+				<# foreach (string group in distanceGroups[d])
+				{ #>
+					<table>
+						<tr><td colspan='9' class='table-header text-important'><#= group #></td></tr>
+						<tr>
+							<td class="text-important table-label">Place</td>
+							<td class="text-important table-label">Bib</td>
+							<td class="text-important table-label">Name</td>
+							<td class="text-important table-label">G</td>
+							<td class="text-important table-label">Age</td>
+							<td class="text-important table-label"><#= theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Laps" : "Finish Gun" #></td>
+							<td class="text-important table-label"><#= theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Time" : "Finish Chip" #></td>
+						</tr>
+						<#
+						int place = 1;
+						foreach (TimeResult r in distanceResults[d][group])
+						{ #>
+						<tr>
+							<td><#= place++ #></td>
+							<td><#= r.Bib.ToString() #></td>
+							<td><#= r.ParticipantName #></td>
+							<td><#= r.Gender #></td>
+							<td><#= r.Age(theEvent.Date) #></td>
+							<td>
+								<#= 
+									theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME
+									? r.Occurrence
+									: r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)
+								#>
+							</td>
+							<td>
+								<#= 
+									theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME
+									? r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)
+									: r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length)
+								#>
+							</td>
+						</tr>
+						<# } #>
+					</table>
+				<# } #>
+			</div>
+			<# } #>
+		</div>
+	</body>
+</html>
