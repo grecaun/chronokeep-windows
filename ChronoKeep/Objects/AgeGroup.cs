@@ -10,12 +10,13 @@ namespace Chronokeep.Objects
     public class AgeGroup : IEquatable<AgeGroup>, IComparable<AgeGroup>
     {
         private int group_id, event_id, distance_id, start_age, end_age, last_group = Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
+        private string custom_name;
 
         private static Dictionary<(int, int), AgeGroup> CurrentGroups = null;
         private static Dictionary<int, AgeGroup> LastAgeGroup = null;
         private static Mutex AGMutex = new Mutex();
 
-        public AgeGroup(int eventId, int distanceId, int startAge, int endAge)
+        public AgeGroup(int eventId, int distanceId, int startAge, int endAge, string custom_name = "")
         {
             this.group_id = -1;
             this.event_id = eventId;
@@ -23,9 +24,10 @@ namespace Chronokeep.Objects
             this.start_age = startAge;
             this.end_age = endAge;
             this.last_group = Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
+            this.custom_name = custom_name;
         }
 
-        public AgeGroup(int groupId, int eventId, int distanceId, int startAge, int endAge, int last_group)
+        public AgeGroup(int groupId, int eventId, int distanceId, int startAge, int endAge, int last_group, string custom_name)
         {
             this.group_id = groupId;
             this.event_id = eventId;
@@ -33,6 +35,7 @@ namespace Chronokeep.Objects
             this.start_age = startAge;
             this.end_age = endAge;
             this.last_group = last_group;
+            this.custom_name = custom_name;
         }
 
         public int EventId { get => event_id; set => event_id = value; }
@@ -43,8 +46,13 @@ namespace Chronokeep.Objects
         public bool LastGroup { get => last_group == Constants.Timing.AGEGROUPS_LASTGROUP_TRUE;
             set => last_group = value ? Constants.Timing.AGEGROUPS_LASTGROUP_TRUE : Constants.Timing.AGEGROUPS_LASTGROUP_FALSE; }
         public string Name { get => LastGroup ? string.Format("Over {0}", start_age) : string.Format("{0}-{1}", start_age, end_age); }
+        public string CustomName { get => custom_name; set => custom_name = value; }
         public string PrettyName()
         {
+            if (custom_name.Length > 0)
+            {
+                return custom_name;
+            }
             if (start_age < 1 && end_age > 0)
             {
                 return string.Format("Under {0}", end_age + 1);

@@ -73,21 +73,35 @@ namespace Chronokeep.UI.Timing
             {
                 int start = Convert.ToInt32(startCustom.Text);
                 int end = Convert.ToInt32(endCustom.Text);
-                if (start > -1 || end < 111)
+                string custom = customNameBox.Text;
+                if (custom == null)
                 {
-                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID, start, end));
+                    custom = "";
+                }
+                if (start > -1 || end < 101)
+                {
+                    database.AddAgeGroup(
+                        new AgeGroup(
+                            theEvent.Identifier,
+                            Constants.Timing.AGEGROUPS_CUSTOM_DISTANCEID,
+                            start,
+                            end,
+                            custom
+                            ));
                     UpdateView();
                     startCustom.Text = "";
                     endCustom.Text = "";
+                    customNameBox.Text = "";
                     startCustom.Focus();
                 }
                 else
                 {
-                    DialogBox.Show("Ages are not in the range of 0 to 110.");
+                    DialogBox.Show("Ages are not in the range of 0 to 100.");
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Log.E("UI.Timing.AwardPage", ex.Message);
                 DialogBox.Show("Start or end age not specified.");
             }
         }
@@ -272,6 +286,8 @@ namespace Chronokeep.UI.Timing
             }
             // Remove all results that are not finish results.
             results.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
+            // Remove all DNF results.
+            results.RemoveAll(x => x.Status == Constants.Timing.TIMERESULT_STATUS_DNF);
             // If we're a time based event, exclude all but the last result
             if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {

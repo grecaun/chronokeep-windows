@@ -230,6 +230,7 @@ namespace Chronokeep.Database.SQLite
                     "distance_id INTEGER NOT NULL DEFAULT -1," +
                     "start_age INTEGER NOT NULL," +
                     "end_age INTEGER NOT NULL," +
+                    "custom_name VARCHAR NOT NULL DEFAULT ''," +
                     "last_group INTEGER DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + " NOT NULL);");
                 queries.Add("CREATE TABLE IF NOT EXISTS timing_systems (" +
                     "ts_identifier INTEGER PRIMARY KEY," +

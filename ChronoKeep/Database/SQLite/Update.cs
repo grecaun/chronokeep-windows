@@ -1333,7 +1333,15 @@ namespace Chronokeep.Database.SQLite
                         command.CommandText = "UPDATE participants SET participant_gender='Man' WHERE participant_gender='M'; " +
                             "UPDATE participants SET participant_gender='Woman' WHERE participant_gender='F'; " +
                             "UPDATE participants SET participant_gender='Non-Binary' WHERE participant_gender='NB'; " +
-                            "UPDATE participants SET participant_gender='NS' WHERE participant_gender='U';";
+                            "UPDATE participants SET participant_gender='NS' WHERE participant_gender='U'; " +
+                            "UPDATE settings SET value='50' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
+                        command.ExecuteNonQuery();
+                        goto case 50;
+                    case 50:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 50.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE age_groups ADD COLUMN custom_name VARCHAR NOT NULL DEFAULT ''; " +
+                            "UPDATE settings SET value='51' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
                         command.ExecuteNonQuery();
                         break;       
                 }

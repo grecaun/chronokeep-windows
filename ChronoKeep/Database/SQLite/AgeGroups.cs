@@ -13,14 +13,15 @@ namespace Chronokeep.Database.SQLite
         internal static void AddAgeGroup(AgeGroup group, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO age_groups (event_id, distance_id, start_age, end_age)" +
-                " VALUES (@event, @distance, @start, @end);";
+            command.CommandText = "INSERT INTO age_groups (event_id, distance_id, start_age, end_age, custom_name)" +
+                " VALUES (@event, @distance, @start, @end, @custom);";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                     new SQLiteParameter("@event", group.EventId),
                     new SQLiteParameter("@distance", group.DistanceId),
                     new SQLiteParameter("@start", group.StartAge),
-                    new SQLiteParameter("@end", group.EndAge)
+                    new SQLiteParameter("@end", group.EndAge),
+                    new SQLiteParameter("@custom", group.CustomName)
             });
             command.ExecuteNonQuery();
         }
@@ -31,14 +32,15 @@ namespace Chronokeep.Database.SQLite
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandText = "UPDATE age_groups SET event_id=@event, distance_id=@distance, " +
-                    "start_age=@start, end_age=@end WHERE group_id=@group;";
+                    "start_age=@start, end_age=@end, custom_name=@custom WHERE group_id=@group;";
                 command.Parameters.AddRange(new SQLiteParameter[]
                 {
                     new SQLiteParameter("@event", group.EventId),
                     new SQLiteParameter("@distance", group.DistanceId),
                     new SQLiteParameter("@start", group.StartAge),
                     new SQLiteParameter("@end", group.EndAge),
-                    new SQLiteParameter("@group", group.GroupId)
+                    new SQLiteParameter("@group", group.GroupId),
+                    new SQLiteParameter("@custom", group.CustomName)
                 });
                 command.ExecuteNonQuery();
                 transaction.Commit();
@@ -121,8 +123,16 @@ namespace Chronokeep.Database.SQLite
             List<AgeGroup> output = new List<AgeGroup>();
             while (reader.Read())
             {
-                output.Add(new AgeGroup(Convert.ToInt32(reader["group_id"]), Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["distance_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"]), Convert.ToInt32(reader["last_group"])));
+                output.Add(
+                    new AgeGroup(
+                        Convert.ToInt32(reader["group_id"]),
+                        Convert.ToInt32(reader["event_id"]),
+                        Convert.ToInt32(reader["distance_id"]),
+                        Convert.ToInt32(reader["start_age"]),
+                        Convert.ToInt32(reader["end_age"]),
+                        Convert.ToInt32(reader["last_group"]),
+                        reader["custom_name"].ToString()
+                        ));
             }
             reader.Close();
             return output;
@@ -141,9 +151,16 @@ namespace Chronokeep.Database.SQLite
             List<AgeGroup> output = new List<AgeGroup>();
             while (reader.Read())
             {
-                output.Add(new AgeGroup(Convert.ToInt32(reader["group_id"]), Convert.ToInt32(reader["event_id"]),
-                    Convert.ToInt32(reader["distance_id"]), Convert.ToInt32(reader["start_age"]), Convert.ToInt32(reader["end_age"]),
-                    Convert.ToInt32(reader["last_group"])));
+                output.Add(
+                    new AgeGroup(
+                        Convert.ToInt32(reader["group_id"]), 
+                        Convert.ToInt32(reader["event_id"]),
+                        Convert.ToInt32(reader["distance_id"]), 
+                        Convert.ToInt32(reader["start_age"]),
+                        Convert.ToInt32(reader["end_age"]),
+                        Convert.ToInt32(reader["last_group"]),
+                        reader["custom_name"].ToString()
+                    ));
             }
             reader.Close();
             return output;

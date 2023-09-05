@@ -22,7 +22,7 @@ namespace Chronokeep.UI.MainPages
     /// <summary>
     /// Interaction logic for AgeGroupsPage.xaml
     /// </summary>
-    public partial class AgeGroupsPage : Page, IMainPage
+    public partial class AgeGroupsPage : IMainPage
     {
         private IMainWindow mWindow;
         private IDBInterface database;
