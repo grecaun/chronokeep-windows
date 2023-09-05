@@ -198,21 +198,21 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(participantDictionary[r.EventSpecificId].Gender));
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Gender != "Not Specified" ? r.Gender : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(participantDictionary[r.EventSpecificId].Age(theEvent.Date)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Age(theEvent.Date)));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(r.AgePlaceStr));
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Gender != "Not Specified" ? r.AgePlaceStr : ""));
             
             #line default
             #line hidden
@@ -281,14 +281,14 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(participantDictionary[r.EventSpecificId].Gender));
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Gender != "Not Specified" ? r.Gender : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(participantDictionary[r.EventSpecificId].Age(theEvent.Date)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Age(theEvent.Date)));
             
             #line default
             #line hidden

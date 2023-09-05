@@ -260,6 +260,10 @@ namespace Chronokeep
 
         public int Age(string eventDate)
         {
+            if (birthday.Length < 1)
+            {
+                return -1;
+            }
             DateTime eventDateTime = Convert.ToDateTime(eventDate);
             DateTime myDateTime = Convert.ToDateTime(birthday);
             int numYears = eventDateTime.Year - myDateTime.Year;

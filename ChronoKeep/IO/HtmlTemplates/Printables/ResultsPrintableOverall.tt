@@ -94,9 +94,9 @@
 						<td><#= r.PrettyType #></td>
 						<td><#= r.Bib.ToString() #></td>
 						<td><#= r.ParticipantName #></td>
-						<td><#= participantDictionary[r.EventSpecificId].Gender #></td>
-						<td><#= participantDictionary[r.EventSpecificId].Age(theEvent.Date) #></td>
-						<td><#= r.AgePlaceStr #></td>
+						<td><#= r.Gender != "Not Specified" ? r.Gender : "" #></td>
+						<td><#= r.Age(theEvent.Date) #></td>
+						<td><#= r.Gender != "Not Specified" ? r.AgePlaceStr : "" #></td>
 						<td><#= r.AgeGroupName #></td>
 						<td>
 							<#= 
@@ -122,8 +122,8 @@
 						<td><#= r.PrettyType #></td>
 						<td><#= r.Bib.ToString() #></td>
 						<td><#= r.ParticipantName #></td>
-						<td><#= participantDictionary[r.EventSpecificId].Gender #></td>
-						<td><#= participantDictionary[r.EventSpecificId].Age(theEvent.Date) #></td>
+						<td><#= r.Gender != "Not Specified" ? r.Gender : "" #></td>
+						<td><#= r.Age(theEvent.Date) #></td>
 						<td></td>
 						<td></td>
 						<td>DNF</td>

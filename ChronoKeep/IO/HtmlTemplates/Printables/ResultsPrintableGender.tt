@@ -100,8 +100,8 @@
 							<td><#= r.PrettyType #></td>
 							<td><#= r.Bib.ToString() #></td>
 							<td><#= r.ParticipantName #></td>
-							<td><#= participantDictionary[r.EventSpecificId].Gender #></td>
-							<td><#= participantDictionary[r.EventSpecificId].Age(theEvent.Date) #></td>
+							<td><#= r.Gender #></td>
+							<td><#= r.Age(theEvent.Date) #></td>
 							<td><#= r.PlaceStr #></td>
 							<td>
 								<#= 
@@ -128,8 +128,8 @@
 								<td><#= r.PrettyType #></td>
 								<td><#= r.Bib.ToString() #></td>
 								<td><#= r.ParticipantName #></td>
-								<td><#= participantDictionary[r.EventSpecificId].Gender #></td>
-								<td><#= participantDictionary[r.EventSpecificId].Age(theEvent.Date) #></td>
+								<td><#= r.Gender #></td>
+								<td><#= r.Age(theEvent.Date) #></td>
 								<td></td>
 								<td>DNF</td>
 								<td>DNF</td>

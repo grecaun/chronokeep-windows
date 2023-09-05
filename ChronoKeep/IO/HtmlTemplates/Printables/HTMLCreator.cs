@@ -13,17 +13,14 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
         private Event theEvent;
         private Dictionary<string, List<TimeResult>> distanceResults = new Dictionary<string, List<TimeResult>>();
         private Dictionary<string, List<TimeResult>> dnfResultsDictionary = new Dictionary<string, List<TimeResult>>();
-        private Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
 
         public ResultsPrintableOverall(Event theEvent,
             Dictionary<string, List<TimeResult>> distanceResults,
-            Dictionary<string, List<TimeResult>> dnfResultsDictionary,
-            Dictionary<int, Participant> participantDictionary)
+            Dictionary<string, List<TimeResult>> dnfResultsDictionary)
         {
             this.theEvent = theEvent;
             this.distanceResults = distanceResults;
             this.dnfResultsDictionary = dnfResultsDictionary;
-            this.participantDictionary = participantDictionary;
         }
     }
 
@@ -33,19 +30,16 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
         private Dictionary<string, Dictionary<(int, string), List<TimeResult>>> distanceResults = new Dictionary<string, Dictionary<(int, string), List<TimeResult>>>();
         private Dictionary<string, Dictionary<(int, string), List<TimeResult>>> dnfResultsDictionary = new Dictionary<string, Dictionary<(int, string), List<TimeResult>>>();
         private Dictionary<int, AgeGroup> ageGroups = new Dictionary<int, AgeGroup>();
-        private Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
 
         public ResultsPrintableAgeGroup(Event theEvent,
             Dictionary<string, Dictionary<(int, string), List<TimeResult>>> distanceResults,
             Dictionary<string, Dictionary<(int, string), List<TimeResult>>> dnfResultsDictionary,
-            Dictionary<int, AgeGroup> ageGroups,
-            Dictionary<int, Participant> participantDictionary)
+            Dictionary<int, AgeGroup> ageGroups)
         {
             this.theEvent = theEvent;
             this.distanceResults = distanceResults;
             this.dnfResultsDictionary = dnfResultsDictionary;
             this.ageGroups = ageGroups;
-            this.participantDictionary = participantDictionary;
         }
     }
 
@@ -54,17 +48,14 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
         private Event theEvent;
         private Dictionary<string, Dictionary<string, List<TimeResult>>> distanceResults = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
         private Dictionary<string, Dictionary<string, List<TimeResult>>> dnfResultsDictionary = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
-        private Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
 
         public ResultsPrintableGender(Event theEvent,
             Dictionary<string, Dictionary<string, List<TimeResult>>> distanceResults,
-            Dictionary<string, Dictionary<string, List<TimeResult>>> dnfResultsDictionary,
-            Dictionary<int, Participant> participantDictionary)
+            Dictionary<string, Dictionary<string, List<TimeResult>>> dnfResultsDictionary)
         {
             this.theEvent = theEvent;
             this.distanceResults = distanceResults;
             this.dnfResultsDictionary = dnfResultsDictionary;
-            this.participantDictionary = participantDictionary;
         }
     }
 }

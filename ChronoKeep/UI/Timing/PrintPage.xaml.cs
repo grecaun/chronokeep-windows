@@ -56,13 +56,10 @@ namespace Chronokeep.UI.Timing
 
         private string GetOverallPrintableDocument(List<string> distances)
         {
-            // Get all participants for the race and categorize them by their event specific identifier;
-            Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
             // Get all results for the race
             List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
-            // Remove all results where we don't have the person's information.
-            // TODO - Make anonymous entries possible.
-            results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
+            // Remove all unknown participants
+            results.RemoveAll(x => x.Bib == Constants.Timing.CHIPREAD_DUMMYBIB);
             // REMOVE SOME DEPENDING ON WHO THEY WANT
             if (distances != null)
             {
@@ -118,18 +115,16 @@ namespace Chronokeep.UI.Timing
                 // sort by distance place
                 distanceResults[divName].Sort(TimeResult.CompareByDistancePlace);
             }
-            ResultsPrintableOverall output = new ResultsPrintableOverall(theEvent, distanceResults, dnfResultDictionary, participantDictionary);
+            ResultsPrintableOverall output = new ResultsPrintableOverall(theEvent, distanceResults, dnfResultDictionary);
             return output.TransformText();
         }
 
         private string GetGenderPrintableDocument(List<string> distances)
         {
-            // Get all participants for the race and categorize them by their event specific identifier;
-            Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
             // Get all finish results for the race
             List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
-            // Remove all results where we don't have the person's information.
-            results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
+            // Remove all unknown participants
+            results.RemoveAll(x => x.Bib == Constants.Timing.CHIPREAD_DUMMYBIB);
             // REMOVE SOME DEPENDING ON WHO THEY WANT
             if (distances != null)
             {
@@ -199,22 +194,20 @@ namespace Chronokeep.UI.Timing
                     distanceResults[divName][gender].Sort(TimeResult.CompareByDistancePlace);
                 }
             }
-            ResultsPrintableGender output = new ResultsPrintableGender(theEvent, distanceResults, dnfResultsDictionary, participantDictionary);
+            ResultsPrintableGender output = new ResultsPrintableGender(theEvent, distanceResults, dnfResultsDictionary);
             return output.TransformText();
         }
 
         private string GetAgeGroupPrintableDocument(List<string> distances)
         {
-            // Get all participants for the race and categorize them by their event specific identifier;
-            Dictionary<int, Participant> participantDictionary = database.GetParticipants(theEvent.Identifier).ToDictionary(x => x.EventSpecific.Identifier, x => x);
             // Get all of the age groups for the race
             Dictionary<int, AgeGroup> ageGroups = database.GetAgeGroups(theEvent.Identifier).ToDictionary(x => x.GroupId, x => x);
             // Add an age group for our unknown age people/
             ageGroups[Constants.Timing.TIMERESULT_DUMMYAGEGROUP] = new AgeGroup(theEvent.Identifier, Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, 0, 3000);
             // Get all finish results for the race
             List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
-            // Remove all results where we don't have the person's information.
-            results.RemoveAll(x => !participantDictionary.ContainsKey(x.EventSpecificId));
+            // Remove all unknown participants
+            results.RemoveAll(x => x.Bib == Constants.Timing.CHIPREAD_DUMMYBIB);
             // REMOVE SOME DEPENDING ON WHO THEY WANT
             if (distances != null)
             {
@@ -283,7 +276,7 @@ namespace Chronokeep.UI.Timing
                     distanceResults[divName][(ag, gender)].Sort(TimeResult.CompareByDistancePlace);
                 }
             }
-            ResultsPrintableAgeGroup output = new ResultsPrintableAgeGroup(theEvent, distanceResults, dnfResultsDictionary, ageGroups, participantDictionary);
+            ResultsPrintableAgeGroup output = new ResultsPrintableAgeGroup(theEvent, distanceResults, dnfResultsDictionary, ageGroups);
             return output.TransformText();
         }
 
