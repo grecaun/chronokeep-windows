@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Interfaces;
 using Chronokeep.IO;
 using Chronokeep.IO.HtmlTemplates.Printables;
 using Chronokeep.Objects;
@@ -216,7 +217,11 @@ namespace Chronokeep.UI.Timing
             {
                 divsToPrint = null;
             }
-            string HTML_String = GetPrintableAwards(divsToPrint, options);
+            if (options.PrintCustom != true && options.PrintAgeGroups != true && options.PrintOverall != true)
+            {
+                DialogBox.Show("No awards group selected to print/save.");
+                return;
+            }
             if (saveFileDialog.ShowDialog() == true)
             {
                 try
@@ -287,8 +292,12 @@ namespace Chronokeep.UI.Timing
                 }
                 results = lastResult.Values.ToList();
             }
+            results.Sort(TimeResult.CompareByDistancePlace);
             // This dictionary stores the list of results with the key being the distance and the header for the grouping (Overall, Age Group, Custom)
             Dictionary<string, Dictionary<string, List<TimeResult>>> resultsDictionary = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
+            // This dictionary keeps track of the number of individuals in an age group so we can choose to not print age group awards
+            // and still exclude them from the results.
+            Dictionary<(string, string), int> ageGroupCounter = new Dictionary<(string, string), int>();
             foreach (TimeResult result in results)
             {
                 // Gather the gender and modify it to what we want for use in results.
@@ -330,15 +339,20 @@ namespace Chronokeep.UI.Timing
                         && result.Place <= options.NumAgeGroups
                         && gend != "")
                     {
+                        string ageGroup = string.Format("{0} {1}", gend, result.AgeGroupName);
+                        if (!ageGroupCounter.ContainsKey((result.DistanceName, ageGroup)))
+                        {
+                            ageGroupCounter[(result.DistanceName, ageGroup)] = 0;
+                        }
                         if (options.PrintAgeGroups == true)
                         {
-                            string ageGroup = string.Format("{0} {1}", gend, result.AgeGroupName);
                             if (!resultsDictionary[result.DistanceName].ContainsKey(ageGroup))
                             {
                                 resultsDictionary[result.DistanceName][ageGroup] = new List<TimeResult>();
                             }
                             resultsDictionary[result.DistanceName][ageGroup].Add(result);
                         }
+                        ageGroupCounter[(result.DistanceName, ageGroup)]++;
                         addedToAgeGroupResults = true;
                     }
                     // This is almost the same as the age groups category.
@@ -382,18 +396,24 @@ namespace Chronokeep.UI.Timing
                         resultsDictionary[result.DistanceName][ageGroup] = new List<TimeResult>();
                     }
                     // We're doing it this way so we can exclude people from custom if we want even if we don't print the age group.
-                    if (resultsDictionary[result.DistanceName][ageGroup].Count < options.NumAgeGroups)
+                    if (!ageGroupCounter.ContainsKey((result.DistanceName, ageGroup)))
+                    {
+                        ageGroupCounter[(result.DistanceName, ageGroup)] = 0;
+                    }
+                    if (ageGroupCounter[(result.DistanceName, ageGroup)] < options.NumAgeGroups)
                     {
                         if (options.PrintAgeGroups == true)
                         {
                             resultsDictionary[result.DistanceName][ageGroup].Add(result);
                         }
+                        ageGroupCounter[(result.DistanceName, ageGroup)]++;
                         addedToAgeGroupResults = true;
                     }
                     // Check for custom groups.
                     // Ensure we don't care about excluding age group winners, or they didn't actually win
                     if (options.PrintCustom == true && (options.ExcludeAgeGroupsCustom == false || addedToAgeGroupResults == false))
                     {
+                        Log.D("UI.Timing.AwardPage", "Checking to add to custom award group.");
                         int age = result.Age(theEvent.Date);
                         foreach (AgeGroup group in customAgeGroups)
                         {
