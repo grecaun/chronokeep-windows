@@ -274,7 +274,7 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish? r.AgePlaceStr : ""));
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish && r.PrettyGender.Length > 0 ? r.AgePlaceStr : ""));
             
             #line default
             #line hidden
@@ -288,7 +288,7 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish? r.GenderPlaceStr : ""));
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish && r.PrettyGender.Length > 0  ? r.GenderPlaceStr : ""));
             
             #line default
             #line hidden
@@ -437,7 +437,7 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish? r.AgePlaceStr : ""));
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish && r.PrettyGender.Length > 0 ? r.AgePlaceStr : ""));
             
             #line default
             #line hidden
@@ -451,7 +451,7 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish? r.GenderPlaceStr : ""));
+            this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish && r.PrettyGender.Length > 0 ? r.GenderPlaceStr : ""));
             
             #line default
             #line hidden

@@ -131,6 +131,8 @@ namespace Chronokeep.UI.Timing
             }
             // remove all segments that are not finish segments
             results.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
+            // remove all results without a gender specified
+            results.RemoveAll(x => x.Gender == "Not Specified");
             // separate each grouping by distance, then by gender
             Dictionary<string, Dictionary<string, List<TimeResult>>> distanceResults = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
             Dictionary<string, Dictionary<string, List<TimeResult>>> dnfResultsDictionary = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
@@ -194,6 +196,8 @@ namespace Chronokeep.UI.Timing
             }
             // remove all segments that are not finish segments
             results.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
+            // remove all results without a gender specified
+            results.RemoveAll(x => x.Gender == "Not Specified");
             Dictionary<string, Dictionary<(int, string), List<TimeResult>>> distanceResults = new Dictionary<string, Dictionary<(int, string), List<TimeResult>>>();
             Dictionary<string, Dictionary<(int, string), List<TimeResult>>> dnfResultsDictionary = new Dictionary<string, Dictionary<(int, string), List<TimeResult>>>();
             foreach (TimeResult result in results)

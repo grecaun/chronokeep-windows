@@ -22,7 +22,7 @@
             <div class="container-sm sm-max-width m-5 mt-0 p-4 mx-auto shadow">
                 <div class="p-2">
                     <div class="text-center text-important display-4 m-0"><#= finish != null ? finish.PrettyParticipantName : "Unknown" #></div>
-                    <div class="text-center text-important text-secondary m-0"><#= finish == null ? "" : finish.Gender.Length < 1 ? finish.Age(theEvent.Date) : string.Format("{0} - {1}", finish.Gender, finish.Age(theEvent.Date)) #></div>
+                    <div class="text-center text-important text-secondary m-0"><#= finish == null ? "" : finish.Gender.Length < 1 || finish.Gender == "Not Specified" ? finish.Age(theEvent.Date) : string.Format("{0} - {1}", finish.Gender, finish.Age(theEvent.Date)) #></div>
                 </div>
                 <div class="h3 m-2 mt-0 text-center text-important text-secondary mx-auto"><#= finish != null ? finish.DistanceName : "" #></div>
                 <div class="bib-box h4 m-2 p-2 mx-auto"><#= finish != null ? finish.Bib : "" #></div>

@@ -149,7 +149,7 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             this.Write("\n\t\t\t\t\t<table>\n\t\t\t\t\t\t<tr><td colspan=\'9\' class=\'table-header text-important\'>");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableAgeGroup.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(string.Format("{0} {1} - {2}", gender.Equals("M", System.StringComparison.OrdinalIgnoreCase) ? "Male" : gender.Equals("F", System.StringComparison.OrdinalIgnoreCase) ? "Female" : gender.Equals("NB", System.StringComparison.OrdinalIgnoreCase) ? "Non-Binary" : "Not Specified", ageGroups[AgeGroupID].StartAge, ageGroups[AgeGroupID].EndAge)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(string.Format("{0} {1} - {2}", gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "Men" : gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "Women" : gender, ageGroups[AgeGroupID].StartAge, ageGroups[AgeGroupID].EndAge)));
             
             #line default
             #line hidden
@@ -336,7 +336,7 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
         /// <summary>
         /// The string builder that generation-time code is using to assemble generated output
         /// </summary>
-        protected System.Text.StringBuilder GenerationEnvironment
+        public System.Text.StringBuilder GenerationEnvironment
         {
             get
             {

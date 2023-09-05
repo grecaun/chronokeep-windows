@@ -82,7 +82,7 @@ namespace Chronokeep.IO.HtmlTemplates
                     "m-0\">");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(finish == null ? "" : finish.Gender.Length < 1 ? finish.Age(theEvent.Date) : string.Format("{0} - {1}", finish.Gender, finish.Age(theEvent.Date))));
+            this.Write(this.ToStringHelper.ToStringWithCulture(finish == null ? "" : finish.Gender.Length < 1 || finish.Gender == "Not Specified" ? finish.Age(theEvent.Date) : string.Format("{0} - {1}", finish.Gender, finish.Age(theEvent.Date))));
             
             #line default
             #line hidden
