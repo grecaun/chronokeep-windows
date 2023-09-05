@@ -36,20 +36,6 @@ namespace Chronokeep.UI.Timing
                 return;
             }
 
-            /*if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
-            {
-                ReportType.Items.Clear();
-                ReportType.Items.Add(new ListBoxItem
-                {
-                    Content = "Total Time",
-                    IsSelected = true
-                });
-                ReportType.Items.Add(new ListBoxItem
-                {
-                    Content = "Lap Times"
-                });
-            }//*/
-
             List<Distance> distances = database.GetDistances(theEvent.Identifier);
             distances.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
             foreach (Distance d in distances)
@@ -84,6 +70,26 @@ namespace Chronokeep.UI.Timing
             }
             // remove all segments that are not finish segments
             results.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
+            // if we're a time based event, exclude all but the last result
+            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
+            {
+                Dictionary<string, TimeResult> lastResult = new Dictionary<string, TimeResult>();
+                foreach (TimeResult individual in results)
+                {
+                    if (lastResult.ContainsKey(individual.ParticipantName))
+                    {
+                        if (lastResult[individual.ParticipantName].Occurrence < individual.Occurrence)
+                        {
+                            lastResult[individual.ParticipantName] = individual;
+                        }
+                    }
+                    else
+                    {
+                        lastResult[individual.ParticipantName] = individual;
+                    }
+                }
+                results = lastResult.Values.ToList();
+            }
             Dictionary<string, List<TimeResult>> distanceResults = new Dictionary<string, List<TimeResult>>();
             Dictionary<string, List<TimeResult>> dnfResultDictionary = new Dictionary<string, List<TimeResult>>();
             foreach (TimeResult result in results)
@@ -133,6 +139,26 @@ namespace Chronokeep.UI.Timing
             results.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
             // remove all results without a gender specified
             results.RemoveAll(x => x.Gender == "Not Specified");
+            // if we're a time based event, exclude all but the last result
+            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
+            {
+                Dictionary<string, TimeResult> lastResult = new Dictionary<string, TimeResult>();
+                foreach (TimeResult individual in results)
+                {
+                    if (lastResult.ContainsKey(individual.ParticipantName))
+                    {
+                        if (lastResult[individual.ParticipantName].Occurrence < individual.Occurrence)
+                        {
+                            lastResult[individual.ParticipantName] = individual;
+                        }
+                    }
+                    else
+                    {
+                        lastResult[individual.ParticipantName] = individual;
+                    }
+                }
+                results = lastResult.Values.ToList();
+            }
             // separate each grouping by distance, then by gender
             Dictionary<string, Dictionary<string, List<TimeResult>>> distanceResults = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
             Dictionary<string, Dictionary<string, List<TimeResult>>> dnfResultsDictionary = new Dictionary<string, Dictionary<string, List<TimeResult>>>();
@@ -198,6 +224,26 @@ namespace Chronokeep.UI.Timing
             results.RemoveAll(x => x.SegmentId != Constants.Timing.SEGMENT_FINISH);
             // remove all results without a gender specified
             results.RemoveAll(x => x.Gender == "Not Specified");
+            // if we're a time based event, exclude all but the last result
+            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
+            {
+                Dictionary<string, TimeResult> lastResult = new Dictionary<string, TimeResult>();
+                foreach (TimeResult individual in results)
+                {
+                    if (lastResult.ContainsKey(individual.ParticipantName))
+                    {
+                        if (lastResult[individual.ParticipantName].Occurrence < individual.Occurrence)
+                        {
+                            lastResult[individual.ParticipantName] = individual;
+                        }
+                    }
+                    else
+                    {
+                        lastResult[individual.ParticipantName] = individual;
+                    }
+                }
+                results = lastResult.Values.ToList();
+            }
             Dictionary<string, Dictionary<(int, string), List<TimeResult>>> distanceResults = new Dictionary<string, Dictionary<(int, string), List<TimeResult>>>();
             Dictionary<string, Dictionary<(int, string), List<TimeResult>>> dnfResultsDictionary = new Dictionary<string, Dictionary<(int, string), List<TimeResult>>>();
             foreach (TimeResult result in results)

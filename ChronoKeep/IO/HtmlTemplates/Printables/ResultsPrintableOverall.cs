@@ -145,10 +145,21 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
 						<td class=""text-important table-label"">G</td>
 						<td class=""text-important table-label"">Age</td>
 						<td colspan='2' class=""text-important table-label"">AG Place</td>
-						<td class=""text-important table-label"">Finish Gun</td>
-						<td class=""text-important table-label"">Finish Chip</td>
-					</tr>
-					");
+						<td class=""text-important table-label"">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Laps" : "Finish Gun"));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t\t<td class=\"text-important table-label\">");
+            
+            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Time" : "Finish Chip"));
+            
+            #line default
+            #line hidden
+            this.Write("</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
  foreach (TimeResult r in distanceResults[d])
@@ -212,21 +223,25 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t\t<td>");
+            this.Write("</td>\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME
+								? r.Occurrence
+								: r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)));
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t\t<td>");
+            this.Write("\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME
+								? r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)
+								: r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length)));
             
             #line default
             #line hidden
-            this.Write("</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t");
+            this.Write("\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
  } 
@@ -318,7 +333,7 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
         /// <summary>
         /// The string builder that generation-time code is using to assemble generated output
         /// </summary>
-        protected System.Text.StringBuilder GenerationEnvironment
+        public System.Text.StringBuilder GenerationEnvironment
         {
             get
             {

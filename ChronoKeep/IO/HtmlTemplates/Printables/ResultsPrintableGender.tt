@@ -90,8 +90,8 @@
 							<td class="text-important table-label">G</td>
 							<td class="text-important table-label">Age</td>
 							<td class="text-important table-label">Overall</td>
-							<td class="text-important table-label">Finish Gun</td>
-							<td class="text-important table-label">Finish Chip</td>
+							<td class="text-important table-label"><#= theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Laps" : "Finish Gun" #></td>
+							<td class="text-important table-label"><#= theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Time" : "Finish Chip" #></td>
 						</tr>
 						<# foreach (TimeResult r in distanceResults[d][gender])
 						{ #>
@@ -103,8 +103,20 @@
 							<td><#= participantDictionary[r.EventSpecificId].Gender #></td>
 							<td><#= participantDictionary[r.EventSpecificId].Age(theEvent.Date) #></td>
 							<td><#= r.PlaceStr #></td>
-							<td><#= r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) #></td>
-							<td><#= r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length) #></td>
+							<td>
+								<#= 
+									theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME
+									? r.Occurrence
+									: r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)
+								#>
+							</td>
+							<td>
+								<#= 
+									theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME
+									? r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)
+									: r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length)
+								#>
+							</td>
 						</tr>
 						<# } #>
 						<# if (dnfResultsDictionary.ContainsKey(d) && dnfResultsDictionary[d].ContainsKey(gender))

@@ -200,15 +200,6 @@ namespace Chronokeep.UI.MainPages
                 AutoAPIButton.Content = "Auto Upload";
                 ManualAPIButton.IsEnabled = true;
             }
-
-            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_DISTANCE)
-            {
-                printButton.IsEnabled = true;
-            }
-            else
-            {
-                printButton.IsEnabled = false;
-            }
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -256,15 +247,6 @@ namespace Chronokeep.UI.MainPages
             if (TimerStarted)
             {
                 UpdateStartTime();
-            }
-
-            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_DISTANCE)
-            {
-                printButton.IsEnabled = true;
-            }
-            else
-            {
-                printButton.IsEnabled = false;
             }
 
             // Get updated list of locations

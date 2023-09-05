@@ -122,7 +122,7 @@
                                 <Button Content="Create HTML" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="CreateHTML_Click" />
                             </StackPanel>
                             <StackPanel Grid.Column="1">
-                                <Button Name="printButton" Content="Print" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="Print_Click" IsEnabled="False"/>
+                                <Button Name="printButton" Content="Print" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="Print_Click"/>
                                 <Button Content="Awards" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="Award_Click"/>
                                 <Button Content="Raw Data" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="RawReads_Click"/>
                                 <Button x:Name="DNFButton" Content="Add DNF" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="AddDNF_Click"/>
