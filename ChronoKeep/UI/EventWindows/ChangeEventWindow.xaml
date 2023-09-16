@@ -20,20 +20,6 @@
         </Grid.RowDefinitions>
         <ui:TitleBar
             Grid.Row="0">
-            <ui:TitleBar.Tray>
-                <ui:NotifyIcon
-                    FocusOnLeftClick="True"
-                    MenuOnRightClick="True">
-                    <ui:NotifyIcon.Menu>
-                        <ContextMenu>
-                            <MenuItem
-                                Header="Home"
-                                Tag="tray_home" 
-                                />
-                        </ContextMenu>
-                    </ui:NotifyIcon.Menu>
-                </ui:NotifyIcon>
-            </ui:TitleBar.Tray>
         </ui:TitleBar>
         <Grid Grid.Row="1">
             <Grid.Resources>
