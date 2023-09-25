@@ -343,6 +343,7 @@ namespace Chronokeep.UI.MainPages
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
+                FileName = string.Format("{0} {1} Chips.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)
@@ -377,6 +378,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 exporter.SetData(headers, data);
                 exporter.ExportData(saveFileDialog.FileName);
+                DialogBox.Show("File saved.");
             }
         }
 

@@ -214,6 +214,7 @@ namespace Chronokeep.UI.Timing
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 Filter = "PDF (*.pdf)|*.pdf",
+                FileName = string.Format("{0} {1} Awards.{2}", theEvent.YearCode, theEvent.Name, "pdf"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             AwardOptions options = GetOptions();

@@ -780,6 +780,7 @@ namespace Chronokeep.UI.MainPages
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "HTML file (*.htm,*.html)|*.htm;*.html",
+                FileName = string.Format("{0} {1} Web.{2}", theEvent.YearCode, theEvent.Name, "html"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)
@@ -788,6 +789,7 @@ namespace Chronokeep.UI.MainPages
                 Dictionary<int, Participant> partDict = database.GetParticipants(theEvent.Identifier).ToDictionary(v => v.EventSpecific.Identifier, v => v);
                 HtmlResultsTemplate template = new HtmlResultsTemplate(theEvent, finishResults);
                 File.WriteAllText(saveFileDialog.FileName, template.TransformText());
+                DialogBox.Show("File saved.");
             }
         }
 
@@ -935,6 +937,7 @@ namespace Chronokeep.UI.MainPages
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "CSV (*.csv)|*.csv",
+                FileName = string.Format("{0} {1} Log.{2}", theEvent.YearCode, theEvent.Name, "csv"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)

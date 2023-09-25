@@ -169,6 +169,7 @@ namespace Chronokeep.UI.Export
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
+                FileName = string.Format("{0} {1} Boston.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)
@@ -180,7 +181,7 @@ namespace Chronokeep.UI.Export
                 {
                     SaveBostonInternal(
                         distance.Name,
-                        Path.Combine(filePath, string.Format("{0}_{1}{2}", fileName, distance.Name, extension)),
+                        Path.Combine(filePath, string.Format("{0} {1}{2}", fileName, distance.Name, extension)),
                         extension
                         );
                 }
@@ -193,6 +194,7 @@ namespace Chronokeep.UI.Export
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "CSV (*.csv)|*.csv",
+                FileName = string.Format("{0} {1} Ultrasignup.{2}", theEvent.YearCode, theEvent.Name, "csv"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)
@@ -204,7 +206,7 @@ namespace Chronokeep.UI.Export
                 {
                     SaveUltraSignupInternal(
                         distance.Name,
-                        Path.Combine(filePath, string.Format("{0}_{1}{2}", fileName, distance.Name, extension))
+                        Path.Combine(filePath, string.Format("{0} {1}{2}", fileName, distance.Name, extension))
                         );
                 }
                 DialogBox.Show("Files saved.");
@@ -216,6 +218,7 @@ namespace Chronokeep.UI.Export
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
+                FileName = string.Format("{0} {1} {2} Boston.{3}", theEvent.YearCode, theEvent.Name, distance, "xlsx"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)
@@ -274,7 +277,7 @@ namespace Chronokeep.UI.Export
                             result.First,
                             participantDictionary[result.Bib].City,
                             participantDictionary[result.Bib].State,
-                            result.Gender,
+                            result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : result.Gender.Equals("Non-Binary", System.StringComparison.OrdinalIgnoreCase) ? "NB" : "",
                             participantDictionary[result.Bib].Birthdate,
                             result.Age(theEvent.Date),
                             result.Time.Substring(0, result.Time.Length > 4 ? result.Time.Length - 4 : 0),
@@ -311,11 +314,23 @@ namespace Chronokeep.UI.Export
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "CSV (*.csv)|*.csv",
+                FileName = string.Format("{0} {1} {2} Ultrasignup.{3}", theEvent.YearCode, theEvent.Name, distance, "csv"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)
             {
-                SaveUltraSignupInternal(distance, saveFileDialog.FileName);
+                string filename = saveFileDialog.FileName;
+                string[] fileSplit = filename.Split('.');
+                if (fileSplit.Length != 2)
+                {
+                    DialogBox.Show("Filename appears to be invalid.");
+                    return;
+                }
+                if (!fileSplit[1].Equals("csv"))
+                {
+                    filename = string.Format("{0}.{1}", fileSplit[0], "csv");
+                }
+                SaveUltraSignupInternal(distance, filename);
                 DialogBox.Show("File saved.");
             }
         }
@@ -361,7 +376,7 @@ namespace Chronokeep.UI.Export
                             result.ChipTime,
                             result.First,
                             result.Last,
-                            result.Gender,
+                            result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : result.Gender.Equals("Non-Binary", System.StringComparison.OrdinalIgnoreCase) ? "NB" : "",
                             result.Age(theEvent.Date),
                             participantDictionary[result.Bib].Birthdate,
                             result.Bib,

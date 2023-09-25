@@ -648,6 +648,7 @@ namespace Chronokeep.UI.MainPages
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "SQLite Database File (*.sqlite)|*.sqlite",
+                FileName = string.Format("{0} {1}.{2}", theEvent.YearCode, theEvent.Name, "sqlite"),
                 InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
             };
             if (saveFileDialog.ShowDialog() == true)
