@@ -88,7 +88,7 @@ namespace Chronokeep.Constants
 
         // Announcer variables
         public static readonly int ANNOUNCER_LOOP_TIMER = 2;
-        public static readonly int ANNOUNCER_DISPLAY_WINDOW = -45;
+        public static readonly int ANNOUNCER_DISPLAY_WINDOW = -75;
 
         public static long DateToEpoch(DateTime date)
         {
