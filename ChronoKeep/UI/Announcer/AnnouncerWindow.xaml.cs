@@ -102,7 +102,7 @@ namespace Chronokeep.UI.Announcer
                 // Remove all participant values where x.When is less than 0 (i.e. cutoff occurred after x.When)
                 participants.RemoveAll((x) => (DateTime.Compare(cutoff, x.When) > 0));
                 // Reverse all entries so the last person to cross the line is at the top.
-                results.Reverse();
+                participants.Reverse();
                 AnnouncerBox.ItemsSource = participants;
                 AnnouncerBox.Items.Refresh();
             }
