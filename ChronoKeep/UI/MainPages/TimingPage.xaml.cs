@@ -759,6 +759,10 @@ namespace Chronokeep.UI.MainPages
         private void StatsListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             DistanceStat selected = (DistanceStat)statsListView.SelectedItem;
+            if (selected == null)
+            {
+                return;
+            }
             Log.D("UI.MainPages.TimingPage", "Stats double cliked. Distance is " + selected.DistanceName);
             subPage = new DistanceStatsPage(this, database, selected.DistanceID, selected.DistanceName);
             TimingFrame.NavigationService.RemoveBackEntry();
