@@ -97,6 +97,9 @@ namespace Chronokeep.UI
             }
             Constants.Settings.SetupSettings(database);
 
+            // Ensure Global values are set up.
+            Globals.SetupValues(database);
+
             // Setup AgeGroup static variables
             Event theEvent = database.GetCurrentEvent();
             if (theEvent != null && theEvent.Identifier != -1)

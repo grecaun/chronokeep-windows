@@ -27,6 +27,7 @@ namespace Chronokeep.Constants
         public static readonly string CHECK_UPDATES         = "SETTING_CHECK_UPDATES";
         public static readonly string CURRENT_THEME         = "SETTING_THEME";
         public static readonly string UPLOAD_INTERVAL       = "SETTING_UPLOAD_INTERVAL";
+        public static readonly string ANNOUNCER_WINDOW      = "SETTING_ANNOUNCER_WINDOW";
 
         public static readonly string NULL_EVENT_ID     = "-1";
 
@@ -49,6 +50,7 @@ namespace Chronokeep.Constants
         public static readonly string WAIVER_COMPANY    = "[COMPANY]";
 
         public static readonly string DEFAULT_INTERVAL  = "30";
+        public static readonly string DEFAULT_ANNOUNCER = "45";
 
         public static void SetupSettings(IDBInterface database)
         {
@@ -96,6 +98,10 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(UPLOAD_INTERVAL) == null)
             {
                 database.SetAppSetting(UPLOAD_INTERVAL, DEFAULT_INTERVAL);
+            }
+            if (database.GetAppSetting(ANNOUNCER_WINDOW) == null)
+            {
+                database.SetAppSetting(ANNOUNCER_WINDOW, DEFAULT_ANNOUNCER);
             }
         }
     }

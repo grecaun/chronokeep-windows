@@ -76,6 +76,14 @@ namespace Chronokeep.UI.MainPages
                     Uid = i.ToString(),
                 });
             }
+            for (int i=15; i<=180; i+=5)
+            {
+                AnnouncerWindowBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = i.ToString(),
+                    Uid = i.ToString(),
+                });
+            }
             UpdateView();
         }
 
@@ -113,9 +121,14 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.SettingsPage", "Setting selected theme to Dark. " + (ThemeOffset + 2));
                 ThemeColorBox.SelectedIndex = ThemeOffset + 2;
             }
-            int uploadInt;
+            int uploadInt = -1;
             if (int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).value, out uploadInt) && uploadInt > 0 && uploadInt < 60) {
                 UploadIntervalBox.SelectedIndex = uploadInt - 1;
+            }
+            int announcerWindow = -1;
+            if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).value, out announcerWindow) && announcerWindow >= 15 && announcerWindow <= 180)
+            {
+                AnnouncerWindowBox.SelectedIndex = (announcerWindow - 15) / 5;
             }
         }
 
@@ -186,6 +199,11 @@ namespace Chronokeep.UI.MainPages
             if (!int.TryParse(((ComboBoxItem)UploadIntervalBox.SelectedItem).Uid, out Globals.UploadInterval))
             {
                 DialogBox.Show("Something went wrong trying to update the upload interval.");
+            }
+            database.SetAppSetting(Constants.Settings.ANNOUNCER_WINDOW, ((ComboBoxItem)AnnouncerWindowBox.SelectedItem).Uid);
+            if (!int.TryParse(((ComboBoxItem)AnnouncerWindowBox.SelectedItem).Uid, out Globals.AnnouncerWindow))
+            {
+                DialogBox.Show("Something went wrong trying to update the announcer window.");
             }
             UpdateView();
         }
