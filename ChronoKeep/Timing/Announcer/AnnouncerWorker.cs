@@ -34,6 +34,7 @@ namespace Chronokeep.Timing.Announcer
             {
                 announcer = new AnnouncerWorker(window, database);
             }
+            QuittingTime = false;
             return announcer;
         }
 
@@ -165,6 +166,7 @@ namespace Chronokeep.Timing.Announcer
                 else
                 {
                     Log.D("Timing.Announcer.AnnouncerWorker", "Update window expired.");
+                    window.UpdateTiming();
                     window.UpdateAnnouncerWindow();
                 }
             }
