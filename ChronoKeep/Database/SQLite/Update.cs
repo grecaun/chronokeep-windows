@@ -1343,7 +1343,14 @@ namespace Chronokeep.Database.SQLite
                         command.CommandText = "ALTER TABLE age_groups ADD COLUMN custom_name VARCHAR NOT NULL DEFAULT ''; " +
                             "UPDATE settings SET value='51' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
                         command.ExecuteNonQuery();
-                        break;       
+                        goto case 51;
+                    case 51:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 51.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events ADD COLUMN event_display_placements INTEGER NOT NULL DEFAULT 1; " +
+                            "UPDATE settings SET value='52' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
+                        command.ExecuteNonQuery();
+                        break;
                 }
                 transaction.Commit();
                 connection.Close();

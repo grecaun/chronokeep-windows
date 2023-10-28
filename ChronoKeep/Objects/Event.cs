@@ -17,6 +17,7 @@ namespace Chronokeep
         private int start_milliseconds;
         private int api_id = Constants.ResultsAPI.NULL_ID;
         private string api_event_id = Constants.ResultsAPI.NULL_EVENT_ID;
+        private int display_placements = 1;
 
         public Event() { }
 
@@ -73,7 +74,8 @@ namespace Chronokeep
 
         public Event(int id, string n, string d, int age, int start, int seg,
             int gun, string yearcode, int maxOcc, int ignWith, int window,
-            long startsec, int startmill, string system, int type, int api_id, string api_event_id)
+            long startsec, int startmill, string system, int type, int api_id,
+            string api_event_id, int display_placements)
         {
             this.identifier = id;
             this.name = n;
@@ -92,6 +94,7 @@ namespace Chronokeep
             this.event_type = type;
             this.api_id = api_id;
             this.api_event_id = api_event_id;
+            this.display_placements = display_placements;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -111,6 +114,8 @@ namespace Chronokeep
         public int EventType { get => event_type; set => event_type = value; }
         public int API_ID { get => api_id; set => api_id = value; }
         public string API_Event_ID { get => api_event_id; set => api_event_id = value; }
+        public bool DisplayPlacements{ get => display_placements != 0; set => display_placements = value ? 1 : 0;}
+
         public string EventTypeString
         {
             get

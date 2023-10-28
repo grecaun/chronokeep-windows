@@ -51,7 +51,7 @@
                             <ColumnDefinition Width="40"/>
                             <ColumnDefinition Width="25"/>
                             <ColumnDefinition Width="40"/>
-                            <ColumnDefinition Width="55"/>
+                            <ColumnDefinition Width="60"/>
                             <ColumnDefinition Width="40"/>
                             <ColumnDefinition Width="60"/>
                             <ColumnDefinition Width="20"/>
@@ -88,7 +88,7 @@
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="25"/>
                 <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="20"/>
@@ -101,11 +101,11 @@
             <TextBlock Grid.Column="4" Margin="4,4" Text="Chip Time" x:Name="ChipTimeHeader"/>
             <TextBlock Grid.Column="5" Margin="4,4" Text="Bib"/>
             <TextBlock Grid.Column="6" Margin="4,4" Text="Name"/>
-            <TextBlock Grid.Column="7" Margin="4,4" Text="Pl"/>
+            <TextBlock Grid.Column="7" Margin="4,4" Text="Pl" x:Name="placeText" />
             <TextBlock Grid.Column="8" Margin="4,4" Text="G"/>
-            <TextBlock Grid.Column="9" Margin="4,4" Text="GP"/>
+            <TextBlock Grid.Column="9" Margin="4,4" Text="GP" x:Name="genderPlaceText" />
             <TextBlock Grid.Column="10" Margin="4,4" Text="Age Grp"/>
-            <TextBlock Grid.Column="11" Margin="4,4" Text="AP"/>
+            <TextBlock Grid.Column="11" Margin="4,4" Text="AP" x:Name="agePlaceText" />
             <TextBlock Grid.Column="12" Margin="4,4" Text="Distance"/>
             <TextBlock Grid.Column="13" Margin="4,4" Text="T"/>
             <TextBlock Grid.Column="14" Margin="4,4" Text="Segment"/>

@@ -31,6 +31,7 @@ namespace Chronokeep.UI.Timing
                 ChipTimeHeader.Text = "Lap Time";
             }
             TimeResult.SetupStaticVariables(database);
+            TimeResult.theEvent = theEvent;
         }
 
         public void Closing() { }
@@ -145,6 +146,28 @@ namespace Chronokeep.UI.Timing
             updateListView.SelectedIndex = updateListView.Items.Count - 1;
             updateListView.ScrollIntoView(updateListView.SelectedItem);
             updateListView.SelectedItem = null;
+            if (theEvent.DisplayPlacements)
+            {
+                DisplayPlacements();
+            }
+            else
+            {
+                HidePlacements();
+            }
+        }
+
+        public void DisplayPlacements()
+        {
+            placeText.Visibility = System.Windows.Visibility.Visible;
+            genderPlaceText.Visibility = System.Windows.Visibility.Visible;
+            agePlaceText.Visibility = System.Windows.Visibility.Visible;
+        }
+
+        public void HidePlacements()
+        {
+            placeText.Visibility = System.Windows.Visibility.Hidden;
+            genderPlaceText.Visibility = System.Windows.Visibility.Hidden;
+            agePlaceText.Visibility = System.Windows.Visibility.Hidden;
         }
 
         public void CancelableUpdateView(CancellationToken token)

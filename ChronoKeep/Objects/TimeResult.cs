@@ -188,7 +188,7 @@ namespace Chronokeep
         public string UnknownId { get => unknownId; set => unknownId = value; }
         public int ReadId { get => readId; set => readId = value; }
         public int Place { get => place; set => place = value; }
-        public string PlaceStr { get => place < 1 ? "" : place.ToString(); }
+        public string PlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? (place < 1 ? "" : place.ToString()) : ""; }
         public string PrettyPlaceStr
         {
             get => type == Constants.Timing.DISTANCE_TYPE_EARLY && place > 0 ? string.Format("{0}e", place) :
@@ -196,9 +196,9 @@ namespace Chronokeep
                 Finish && place > 0 ? place.ToString() : "";
         }
         public int AgePlace { get => agePlace; set => agePlace = value; }
-        public string AgePlaceStr { get => agePlace < 1 ? "" : agePlace.ToString(); }
+        public string AgePlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? (agePlace < 1 ? "" : agePlace.ToString()) : ""; }
         public int GenderPlace { get => genderPlace; set => genderPlace = value; }
-        public string GenderPlaceStr { get => genderPlace < 1 ? "" : genderPlace.ToString(); }
+        public string GenderPlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? (genderPlace < 1 ? "" : genderPlace.ToString()) : ""; }
         public int Type { get => type; set => type = value; }
         public string Identifier { get => unknownId; }
         public string PrettyType

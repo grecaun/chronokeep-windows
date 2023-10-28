@@ -16,9 +16,9 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "INSERT INTO events(event_name, event_date, event_yearcode, event_rank_by_gun, " +
                 "event_common_age_groups, event_common_start_finish, event_distance_specific_segments, " +
                 "event_start_time_seconds, event_start_time_milliseconds, event_finish_max_occurances, event_finish_ignore_within, " +
-                "event_start_window, event_timing_system, event_type)" +
+                "event_start_window, event_timing_system, event_type, event_display_placements)" +
                 " VALUES(@name,@date,@yearcode,@gun,@age,@start,@sepseg,@startsec,@startmill,@occ,@ign,@window," +
-                "@system,@type)";
+                "@system,@type,@display)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
@@ -33,7 +33,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@ign", anEvent.FinishIgnoreWithin),
                 new SQLiteParameter("@window", anEvent.StartWindow),
                 new SQLiteParameter("@system", anEvent.TimingSystem),
-                new SQLiteParameter("@type", anEvent.EventType)
+                new SQLiteParameter("@type", anEvent.EventType),
+                new SQLiteParameter("@display", anEvent.DisplayPlacements)
             });
             command.ExecuteNonQuery();
         }
@@ -67,7 +68,8 @@ namespace Chronokeep.Database.SQLite
                 "event_start_time_seconds=@startsec, event_start_time_milliseconds=@startmill, " +
                 "event_timing_system=@system, event_type=@type," +
                 "event_finish_max_occurances=@maxocc, event_finish_ignore_within=@ignore," +
-                "event_start_window=@startWindow, api_id=@apiid, api_event_id=@apieventid WHERE event_id=@id";
+                "event_start_window=@startWindow, api_id=@apiid, api_event_id=@apieventid," +
+                "event_display_placements=@display WHERE event_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@id", anEvent.Identifier),
                 new SQLiteParameter("@name", anEvent.Name),
@@ -86,6 +88,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@startWindow", anEvent.StartWindow),
                 new SQLiteParameter("@apiid", anEvent.API_ID),
                 new SQLiteParameter("@apieventid", anEvent.API_Event_ID),
+                new SQLiteParameter("@display", anEvent.DisplayPlacements),
             });
             command.ExecuteNonQuery();
         }
@@ -115,7 +118,8 @@ namespace Chronokeep.Database.SQLite
                     reader["event_timing_system"].ToString(),
                     Convert.ToInt32(reader["event_type"]),
                     Convert.ToInt32(reader["api_id"]),
-                    reader["api_event_id"].ToString()
+                    reader["api_event_id"].ToString(),
+                    Convert.ToInt32(reader["event_display_placements"])
                     ));
             }
             reader.Close();
@@ -170,7 +174,8 @@ namespace Chronokeep.Database.SQLite
                     reader["event_timing_system"].ToString(),
                     Convert.ToInt32(reader["event_type"]),
                     Convert.ToInt32(reader["api_id"]),
-                    reader["api_event_id"].ToString()
+                    reader["api_event_id"].ToString(),
+                    Convert.ToInt32(reader["event_display_placements"])
                     );
             }
             reader.Close();

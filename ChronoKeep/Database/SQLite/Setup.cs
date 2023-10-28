@@ -95,6 +95,7 @@ namespace Chronokeep.Database.SQLite
                     "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
                     "api_id INTEGER REFERENCES results_api(api_id) NOT NULL DEFAULT -1," +
                     "api_event_id VARCHAR(200) NOT NULL DEFAULT ''," +
+                    "event_display_placements INTEGER NOT NULL DEFAULT 1," +
                     "UNIQUE (event_name, event_date) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS distances (" +

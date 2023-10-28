@@ -104,6 +104,7 @@
             <CheckBox Name="commonAgeCheckBox" Content="Common Age Groups for Distances" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <CheckBox Name="commonStartCheckBox" Content="Common Start/Finish Location" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <CheckBox Name="segmentCheckBox" Content="Distance Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+            <CheckBox Name="placementsCheckBox" Content="Display Participant Placements" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
             <DockPanel Margin="10,5,10,5">
                 <TextBlock Text="Event Type" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                 <ComboBox Name="TypeBox" Margin="10,0,0,0" VerticalContentAlignment="Center" IsEnabled="False" SelectionChanged="TypeBox_SelectionChanged">

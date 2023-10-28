@@ -67,6 +67,7 @@ namespace Chronokeep.UI.MainPages
             commonAgeCheckBox.IsChecked = theEvent.CommonAgeGroups;
             commonStartCheckBox.IsChecked = theEvent.CommonStartFinish;
             segmentCheckBox.IsChecked = theEvent.DistanceSpecificSegments;
+            placementsCheckBox.IsChecked = theEvent.DisplayPlacements;
             ComboBoxItem eventType = null;
             foreach (ComboBoxItem item in TypeBox.Items)
             {
@@ -117,6 +118,7 @@ namespace Chronokeep.UI.MainPages
                 theEvent.CommonAgeGroups = commonAgeCheckBox.IsChecked ?? false;
                 theEvent.CommonStartFinish = commonStartCheckBox.IsChecked ?? false;
                 theEvent.DistanceSpecificSegments = segmentCheckBox.IsChecked ?? false;
+                theEvent.DisplayPlacements = placementsCheckBox.IsChecked ?? true;
                 try
                 {
                     theEvent.EventType = int.Parse(((ComboBoxItem)TypeBox.SelectedItem).Uid);
@@ -158,6 +160,7 @@ namespace Chronokeep.UI.MainPages
             commonAgeCheckBox.IsEnabled = false;
             commonStartCheckBox.IsEnabled = false;
             segmentCheckBox.IsEnabled = false;
+            placementsCheckBox.IsEnabled = false;
             TypeBox.IsEnabled = false;
         }
 
@@ -178,6 +181,7 @@ namespace Chronokeep.UI.MainPages
             commonStartCheckBox.IsEnabled = true;
             segmentCheckBox.IsEnabled = true;
             TypeBox.IsEnabled = true;
+            placementsCheckBox.IsEnabled = true;
         }
 
         private bool CancelEventChangeAsync(EventClickType clickType)
