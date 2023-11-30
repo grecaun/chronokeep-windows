@@ -30,6 +30,10 @@ namespace Chronokeep.UI.Timing
         public RewindWindow(TimingSystem system)
         {
             InitializeComponent();
+            this.MinWidth = 0;
+            this.MinHeight = 0;
+            this.SizeToContent = SizeToContent.Height;
+            this.Width = 400;
             this.system = system;
             string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
             FromDate.Text = dateStr;

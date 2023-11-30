@@ -31,6 +31,10 @@ namespace Chronokeep.UI.Timing
             InitializeComponent();
             this.parent = parent;
             this.timingSystem = timingSystem;
+            this.MinHeight = 0;
+            this.MinWidth = 0;
+            this.Width = 400;
+            this.SizeToContent = SizeToContent.Height;
         }
 
         public void UpdateTime()

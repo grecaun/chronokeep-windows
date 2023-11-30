@@ -8,7 +8,7 @@
         xmlns:xctf="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Rewind" Height="330" Width="300" ResizeMode="NoResize"
+        Title="Rewind" Width="400" ResizeMode="NoResize"
         d:DataContext="{d:DesignInstance local:RewindWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -23,7 +23,7 @@
             Grid.Row="0">
         </ui:TitleBar>
         <xctf:BusyIndicator Name="busyIndicator" Grid.Row="1">
-            <StackPanel VerticalAlignment="Center">
+            <StackPanel VerticalAlignment="Top" Margin="10,10,10,10">
                 <TextBlock Text="Rewind" FontSize="18" TextAlignment="Center" VerticalAlignment="Center"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
