@@ -28,7 +28,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
             <TextBlock Text="Content to Export" FontSize="16" VerticalAlignment="Center" TextAlignment="Center" Grid.Row="0" Margin="0,-15,0,0"/>
             <ListBox Name="headersList" Margin="5,0,5,5" BorderThickness="0" Grid.Row="1"/>

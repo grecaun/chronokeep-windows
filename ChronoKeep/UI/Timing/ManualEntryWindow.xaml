@@ -46,14 +46,10 @@
             <RadioButton Name="NetTimeButton" Content="Net Time" GroupName="TimeGroup" Margin="95,5,0,0" IsChecked="True" FontSize="14" VerticalContentAlignment="Center"/>
             <RadioButton Name="ClockTimeButton" Content="Clock Time" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center"/>
             <RadioButton Name="TimeofDayButton" Content="Time of Day" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center"/>
-            <Grid Margin="10,10,10,15">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <Button Name="Add" Content="Add" Click="Add_Click" Grid.Column="0" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Stretch"/>
-                <Button Name="Done" Content="Done" Click="Done_Click" Grid.Column="1" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Stretch"/>
-            </Grid>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10,10,10,15">
+                <Button Name="Add" Content="Add" Click="Add_Click" Width="100" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Center"/>
+                <Button Name="Done" Content="Done" Click="Done_Click" Width="100" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Center"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </ui:UiWindow>
