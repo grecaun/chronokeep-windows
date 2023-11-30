@@ -161,6 +161,8 @@
                     <ColumnDefinition Width="75" />
                     <!-- Birthday -->
                     <ColumnDefinition Width="100" />
+                    <!-- Phone -->
+                    <ColumnDefinition Width="120" />
                     <!-- Mobile -->
                     <ColumnDefinition Width="120" />
                     <!-- EC Name -->
@@ -176,10 +178,11 @@
                 <TextBlock Grid.Column="3" Text="Last"/>
                 <TextBlock Grid.Column="4" Text="Gender"/>
                 <TextBlock Grid.Column="5" Text="Birthday"/>
-                <TextBlock Grid.Column="6" Text="Mobile"/>
-                <TextBlock Grid.Column="7" Text="EC Name"/>
-                <TextBlock Grid.Column="8" Text="EC Phone"/>
-                <TextBlock Grid.Column="9" Text="Anon"/>
+                <TextBlock Grid.Column="6" Text="Phone"/>
+                <TextBlock Grid.Column="7" Text="Mobile"/>
+                <TextBlock Grid.Column="8" Text="EC Name"/>
+                <TextBlock Grid.Column="9" Text="EC Phone"/>
+                <TextBlock Grid.Column="10" Text="Anon"/>
             </Grid>
             <ListView 
                 Name="ParticipantsList" 
@@ -210,6 +213,8 @@
                                 <ColumnDefinition Width="75" />
                                 <!-- Birthday -->
                                 <ColumnDefinition Width="100" />
+                                <!-- Phone -->
+                                <ColumnDefinition Width="120" />
                                 <!-- Mobile -->
                                 <ColumnDefinition Width="120" />
                                 <!-- EC Name -->
@@ -225,10 +230,11 @@
                             <TextBlock Grid.Column="3" Text="{Binding LastName}"/>
                             <TextBlock Grid.Column="4" Text="{Binding Gender}"/>
                             <TextBlock Grid.Column="5" Text="{Binding Birthdate}"/>
-                            <TextBlock Grid.Column="6" Text="{Binding Mobile}"/>
-                            <TextBlock Grid.Column="7" Text="{Binding ECName}"/>
-                            <TextBlock Grid.Column="8" Text="{Binding ECPhone}"/>
-                            <TextBlock Grid.Column="9" Text="{Binding PrettyAnonymous}"/>
+                            <TextBlock Grid.Column="6" Text="{Binding Phone}"/>
+                            <TextBlock Grid.Column="7" Text="{Binding Mobile}"/>
+                            <TextBlock Grid.Column="8" Text="{Binding ECName}"/>
+                            <TextBlock Grid.Column="9" Text="{Binding ECPhone}"/>
+                            <TextBlock Grid.Column="10" Text="{Binding PrettyAnonymous}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

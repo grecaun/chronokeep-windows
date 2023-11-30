@@ -27,20 +27,23 @@
                 <RowDefinition Height="85" Name="Header"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="eventLabel" FontSize="17" VerticalAlignment="Top" Margin="10,10,10,0" Width="340" TabIndex="0"/>
-                    <DatePicker x:Name="date" Height="35" Width="120" VerticalAlignment="Top" Margin="10,10,10,0" TabIndex="1" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="40">
-                    <TextBlock Text="Shirt Price" VerticalAlignment="Center" Margin="10,0,10,0" />
-                    <TextBox x:Name="shirtPriceBox" VerticalAlignment="Center" Width="75" Height="25" FontSize="16" Margin="10,0,10,0" TabIndex="2" />
-                    <CheckBox x:Name="shirtOptionalBox" Height="35" Content="Shirt Optional" IsChecked="True" Margin="10,0,10,0" TabIndex="3"/>
-                    <ComboBox x:Name="SheetsBox" Height="35" Width="100" VerticalAlignment="Center" Margin="10,0,10,0" SelectionChanged="SheetsBox_SelectionChanged" TabIndex="1"/>
-                    <Button x:Name="Done" Height="35" Width="55" VerticalAlignment="Center" Content="Next" Margin="10,0,10,0" Click="Done_Click" TabIndex="500"/>
-                    <Button x:Name="Cancel" Height="35" Width="55" VerticalAlignment="Center" Content="Cancel" Margin="10,0,10,0" Click="Cancel_Click" TabIndex="501"/>
-                </StackPanel>
-            </StackPanel>
+            <Grid
+                Grid.Row="0"
+                Name="HeaderGrid"
+                VerticalAlignment="Center"
+                >
+                <TextBox x:Name="eventLabel" FontSize="17" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,10,0" Width="340" TabIndex="0"/>
+                <DatePicker x:Name="date" Height="35" Width="120" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,10,0" TabIndex="1" />
+
+                <TextBlock Text="Shirt Price" VerticalAlignment="Center" TextAlignment="Right" Margin="0,47,420,0" />
+                <TextBox x:Name="shirtPriceBox" VerticalAlignment="Center" HorizontalAlignment="Right" Width="75" Height="25" FontSize="16" Margin="0,47,345,0" TabIndex="2" />
+                <CheckBox x:Name="shirtOptionalBox" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Shirt Optional" IsChecked="True" Margin="10,53,245,0" TabIndex="3"/>
+
+                <ComboBox x:Name="SheetsBox" Height="25" Width="100" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="70,47,131,0" SelectionChanged="SheetsBox_SelectionChanged" TabIndex="1"/>
+
+                <Button x:Name="Done" Height="35" Width="55" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Next" Margin="0,47,68,0" Click="Done_Click" TabIndex="500"/>
+                <Button x:Name="Cancel" Height="35" Width="55" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Cancel" Margin="0,47,6,0" Click="Cancel_Click" TabIndex="501"/>
+            </Grid>
             <Frame x:Name="Frame"  NavigationUIVisibility="Hidden" IsTabStop="False" Grid.Row="1"/>
         </Grid>
     </Grid>

@@ -15,10 +15,10 @@ namespace Chronokeep.Database.SQLite
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO participants (participant_first, participant_last, participant_street, " +
-                "participant_city, participant_state, participant_zip, participant_birthday, participant_email, " +
+                "participant_city, participant_state, participant_zip, participant_birthday, participant_email, participant_phone, " +
                 "participant_mobile, participant_parent, participant_country, participant_street2, participant_gender, " +
                 "emergencycontact_name, emergencycontact_phone)" +
-                " VALUES (@first,@last,@street,@city,@state,@zip,@birthdate,@email,@mobile,@parent,@country,@street2," +
+                " VALUES (@first,@last,@street,@city,@state,@zip,@birthdate,@email,@phone,@mobile,@parent,@country,@street2," +
                 "@gender,@ecname,@ecphone); SELECT participant_id FROM participants WHERE participant_first=@first " +
                 "AND participant_last=@last AND participant_street=@street AND participant_city=@city AND " +
                 "participant_state=@state AND participant_zip=@zip;";
@@ -31,6 +31,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@zip", person.Zip),
                 new SQLiteParameter("@birthdate", person.Birthdate),
                 new SQLiteParameter("@email", person.Email),
+                new SQLiteParameter("@phone", person.Phone),
                 new SQLiteParameter("@mobile", person.Mobile),
                 new SQLiteParameter("@parent", person.Parent),
                 new SQLiteParameter("@country", person.Country),
@@ -96,7 +97,7 @@ namespace Chronokeep.Database.SQLite
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE participants SET participant_first=@first, participant_last=@last, participant_street=@street," +
                 " participant_city=@city, participant_state=@state, participant_zip=@zip, participant_birthday=@birthdate," +
-                " emergencycontact_name=@ecname, emergencycontact_phone=@ecphone, participant_email=@email, participant_mobile=@mobile," +
+                " emergencycontact_name=@ecname, emergencycontact_phone=@ecphone, participant_email=@email, participant_phone=@phone, participant_mobile=@mobile," +
                 " participant_parent=@parent, participant_country=@country, participant_street2=@street2, participant_gender=@gender WHERE participant_id=@participantid";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@first", person.FirstName),
@@ -110,6 +111,7 @@ namespace Chronokeep.Database.SQLite
                     new SQLiteParameter("@ecphone", person.ECPhone),
                     new SQLiteParameter("@email", person.Email),
                     new SQLiteParameter("@participantid", person.Identifier),
+                    new SQLiteParameter("@phone", person.Phone),
                     new SQLiteParameter("@mobile", person.Mobile),
                     new SQLiteParameter("@parent", person.Parent),
                     new SQLiteParameter("@country", person.Country),
@@ -209,6 +211,7 @@ namespace Chronokeep.Database.SQLite
                         Convert.ToInt16(reader["eventspecific_anonymous"]) == 0 ? false : true
                         ),
                     reader["participant_email"].ToString(),
+                    reader["participant_phone"].ToString(),
                     reader["participant_mobile"].ToString(),
                     reader["participant_parent"].ToString(),
                     reader["participant_country"].ToString(),
@@ -252,6 +255,7 @@ namespace Chronokeep.Database.SQLite
                         Convert.ToInt16(reader["eventspecific_anonymous"]) == 0 ? false : true
                         ),
                     reader["participant_email"].ToString(),
+                    reader["participant_phone"].ToString(),
                     reader["participant_mobile"].ToString(),
                     reader["participant_parent"].ToString(),
                     reader["participant_country"].ToString(),

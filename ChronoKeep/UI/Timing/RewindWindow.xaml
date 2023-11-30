@@ -55,14 +55,10 @@
                     <Button Name="SetToday" Content="Today" Margin="7,10,7,10" Click="SetToday_Click" Height="35" Grid.Column="1" HorizontalAlignment="Stretch"/>
                     <Button Name="SetTomorrow" Content="Tomorrow" Margin="3,10,10,10" Click="SetTomorrow_Click" Height="35" Grid.Column="2" HorizontalAlignment="Stretch"/>
                 </Grid>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Button Name="Rewind" Content="Rewind" HorizontalAlignment="Right" Width="100" Height="35" Margin="5,5,5,5" Grid.Column="0" Click="Rewind_Click"/>
-                    <Button Name="Done" Content="Done" HorizontalAlignment="Left" Width="100" Height="35" Margin="5,5,5,5" Grid.Column="1" Click="Done_Click"/>
-                </Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Name="Rewind" Content="Rewind" Width="100" Height="35" Margin="5,5,5,5" Grid.Column="0" Click="Rewind_Click"/>
+                    <Button Name="Done" Content="Done" Width="100" Height="35" Margin="5,5,5,5" Grid.Column="1" Click="Done_Click"/>
+                </StackPanel>
             </StackPanel>
         </xctf:BusyIndicator>
     </Grid>

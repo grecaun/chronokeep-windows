@@ -1175,6 +1175,7 @@ namespace Chronokeep.Database.SQLite
                                     false
                                     ),
                                 reader["participant_email"].ToString(),
+                                "",
                                 reader["participant_mobile"].ToString(),
                                 reader["participant_parent"].ToString(),
                                 reader["participant_country"].ToString(),
@@ -1349,6 +1350,13 @@ namespace Chronokeep.Database.SQLite
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE events ADD COLUMN event_display_placements INTEGER NOT NULL DEFAULT 1; " +
                             "UPDATE settings SET value='52' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "'";
+                        command.ExecuteNonQuery();
+                        goto case 52;
+                    case 52:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 52.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE participants ADD COLUMN participant_phone VARCHAR(20) DEFAULT ''; " +
+                            "UPDATE settings SET value='53' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;
                 }

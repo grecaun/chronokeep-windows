@@ -159,6 +159,7 @@ namespace Chronokeep.UI.Participants
             ZipBox.Text = person.Zip;
             CountryBox.Text = person.Country;
             EmailBox.Text = person.Email;
+            PhoneBox.Text = person.Phone;
             MobileBox.Text = person.Mobile;
             ParentBox.Text = person.Parent;
             CommentsBox.Text = person.Comments;
@@ -187,6 +188,7 @@ namespace Chronokeep.UI.Participants
             ZipBox.Text = "";
             CountryBox.Text = "";
             EmailBox.Text = "";
+            PhoneBox.Text = "";
             MobileBox.Text = "";
             ParentBox.Text = "";
             CommentsBox.Text = "";
@@ -397,6 +399,7 @@ namespace Chronokeep.UI.Participants
                     AnonymousBox.IsChecked == true
                     ),
                 EmailBox.Text,
+                PhoneBox.Text,
                 MobileBox.Text,
                 ParentBox.Text,
                 CountryBox.Text,

@@ -590,7 +590,7 @@ namespace Chronokeep.Timing.Routines
                     part.Status = Constants.Timing.EVENTSPECIFIC_NOFINISH;
                     updateParticipants.Add(part);
                 }
-                int occurrence = dictionary.distanceDictionary.ContainsKey(part.EventSpecific.DistanceIdentifier) ? dictionary.distanceDictionary[part.EventSpecific.DistanceIdentifier].FinishOccurrence : 1;
+                int occurrence = part == null ? 1 : dictionary.distanceDictionary.ContainsKey(part.EventSpecific.DistanceIdentifier) ? dictionary.distanceDictionary[part.EventSpecific.DistanceIdentifier].FinishOccurrence : 1;
                 if (finishTimes.ContainsKey(TimeResult.BibToIdentifier(bib)))
                 {
                     TimeResult finish = finishTimes[TimeResult.BibToIdentifier(bib)];

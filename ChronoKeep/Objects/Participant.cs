@@ -9,7 +9,7 @@ namespace Chronokeep
     public class Participant : IEquatable<Participant>, IComparable<Participant>
     {
         private int identifier = Constants.Timing.PARTICIPANT_DUMMYIDENTIFIER;
-        private string firstName, lastName, street, city, state, zip, email,
+        private string firstName, lastName, street, city, state, zip, email, phone,
             mobile, parent, country, street2, gender, birthdate, emergencyName,
             emergencyPhone, chip;
         private EventSpecific eventSpecific;
@@ -21,7 +21,7 @@ namespace Chronokeep
 
         public Participant(
             string first, string last, string street, string city, string state, string zip,
-            string birthday, EventSpecific epi, string email,
+            string birthday, EventSpecific epi, string email, string phone,
             string mobile, string parent, string country, string street2, string gender,
             string ecName, string ecPhone
             )
@@ -35,6 +35,7 @@ namespace Chronokeep
             this.zip = zip;
             this.eventSpecific = epi;
             this.email = email ?? "";
+            this.phone = phone ?? "";
             this.mobile = mobile ?? "";
             this.parent = parent ?? "";
             this.country = country ?? "";
@@ -48,7 +49,7 @@ namespace Chronokeep
 
         public Participant(
             int id, string first, string last, string street, string city, string state, string zip,
-            string birthday, EventSpecific epi, string email,
+            string birthday, EventSpecific epi, string email, string phone,
             string mobile, string parent, string country, string street2, string gender,
             string ecName, string ecPhone, string chip
             )
@@ -63,6 +64,7 @@ namespace Chronokeep
             this.zip = zip ?? "";
             this.eventSpecific = epi ?? EventSpecific.Blank();
             this.email = email ?? "";
+            this.phone = phone ?? "";
             this.mobile = mobile ?? "";
             this.parent = parent ?? "";
             this.country = country ?? "";
@@ -90,6 +92,7 @@ namespace Chronokeep
             zip = (zip ?? "").Trim();
             eventSpecific.Trim();
             email = (email ?? "").Trim();
+            phone = (phone ?? "").Trim();
             mobile = (mobile ?? "").Trim();
             parent = (parent ?? "").Trim();
             country = (country ?? "").Trim();
@@ -410,6 +413,18 @@ namespace Chronokeep
                 }
             }
             string tmpPhone;
+            if (phone != null && phone.Length > 0)
+            {
+                tmpPhone = phone.Replace("-", "").Replace("+", "").Replace("(", "").Replace(")", "").Replace(" ", "").Replace(",", "").Replace(".", "").Trim();
+                if (tmpPhone.Length == 10)
+                {
+                    this.phone = tmpPhone.Substring(0, 3) + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
+                }
+                else if (tmpPhone.Length == 11)
+                {
+                    this.phone = tmpPhone.Substring(0, 1) + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
+                }
+            }
             if (mobile != null && mobile.Length > 0)
             {
                 tmpPhone = mobile.Replace("-", "").Replace("+", "").Replace("(", "").Replace(")", "").Replace(" ", "").Replace(",", "").Replace(".", "").Trim();
@@ -524,6 +539,7 @@ namespace Chronokeep
         public string State { get => state; }
         public string Zip { get => zip; }
         public string Email { get => email; }
+        public string Phone { get=> phone; }
         public string Mobile { get => mobile; }
         public string Parent { get => parent; }
         public string Country { get => country; }

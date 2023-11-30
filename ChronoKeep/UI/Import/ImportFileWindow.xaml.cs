@@ -36,6 +36,7 @@ namespace Chronokeep
             "Zip",
             "Country",
             "Email",
+            "Phone",
             "Mobile",
             "Parent",
             "Bib",
@@ -61,19 +62,20 @@ namespace Chronokeep
         private static readonly int ZIP = 9;
         private static readonly int COUNTRY = 10;
         private static readonly int EMAIL = 11;
-        private static readonly int MOBILE = 12;
-        private static readonly int PARENT = 13;
-        private static readonly int BIB = 14;
-        private static readonly int OWES = 15;
-        private static readonly int COMMENTS = 16;
-        private static readonly int OTHER = 17;
-        private static readonly int DISTANCE = 18;
-        private static readonly int EMERGENCYNAME = 19;
-        private static readonly int EMERGENCYPHONE = 20;
-        private static readonly int AGE = 21;
-        internal static readonly int APPARELITEM = 22;
-        private static readonly int REGISTRATIONDATE = 23;
-        private static readonly int ANONYMOUS = 24;
+        private static readonly int PHONE = 12;
+        private static readonly int MOBILE = 13;
+        private static readonly int PARENT = 14;
+        private static readonly int BIB = 15;
+        private static readonly int OWES = 16;
+        private static readonly int COMMENTS = 17;
+        private static readonly int OTHER = 18;
+        private static readonly int DISTANCE = 19;
+        private static readonly int EMERGENCYNAME = 20;
+        private static readonly int EMERGENCYPHONE = 21;
+        private static readonly int AGE = 22;
+        internal static readonly int APPARELITEM = 23;
+        private static readonly int REGISTRATIONDATE = 24;
+        private static readonly int ANONYMOUS = 25;
         Page page1 = null;
         Page page2 = null;
         Page multiplesPage = null;
@@ -355,6 +357,7 @@ namespace Chronokeep
                             data.Data[counter][keys[ANONYMOUS]] != null ? data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 : false // Set Anonymous if anything is in the field
                             ),
                         data.Data[counter][keys[EMAIL]], // email
+                        data.Data[counter][keys[PHONE]], // phone
                         data.Data[counter][keys[MOBILE]], // mobile
                         data.Data[counter][keys[PARENT]], // parent
                         data.Data[counter][keys[COUNTRY]], // country
@@ -591,7 +594,11 @@ namespace Chronokeep
             {
                 return COUNTRY;
             }
-            else if (string.Equals(s, "Phone", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Phone Number", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Mobile", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Mobile Phone Number", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Phone", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Phone Number", StringComparison.OrdinalIgnoreCase))
+            {
+                return PHONE;
+            }
+            else if (string.Equals(s, "Mobile", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Mobile Phone Number", StringComparison.OrdinalIgnoreCase))
             {
                 return MOBILE;
             }

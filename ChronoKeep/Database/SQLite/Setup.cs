@@ -135,6 +135,7 @@ namespace Chronokeep.Database.SQLite
                     "participant_zip VARCHAR(10)," +
                     "participant_birthday VARCHAR(15) NOT NULL," +
                     "participant_email VARCHAR(150)," +
+                    "participant_phone VARCHAR(20)," +
                     "participant_mobile VARCHAR(20)," +
                     "participant_parent VARCHAR(150)," +
                     "participant_country VARCHAR(50)," +
