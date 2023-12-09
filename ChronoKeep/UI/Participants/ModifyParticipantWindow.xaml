@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Chronokeep.UI.Participants"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Participant" Height="745" Width="520" Closing="Window_Closing" ResizeMode="NoResize"
+        Title="Participant" Height="805" Width="520" Closing="Window_Closing" ResizeMode="NoResize"
         d:DataContext="{d:DesignInstance local:ModifyParticipantWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
