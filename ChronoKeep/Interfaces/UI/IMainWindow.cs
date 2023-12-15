@@ -30,6 +30,9 @@ namespace Chronokeep.Interfaces
         void ShutdownTimingController();
         List<TimingSystem> GetConnectedSystems();
         void NotifyTimingWorker();
+        bool InDidNotStartMode();
+        bool StartDidNotStartMode();
+        bool StopDidNotStartMode();
 
         // Announcer related calls.
         bool AnnouncerConnected();

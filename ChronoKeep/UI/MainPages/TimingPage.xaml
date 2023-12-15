@@ -25,10 +25,17 @@
                     <TextBlock Name="StartTimeLabel" Text="Start Time" FontSize="14" Width="65" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,10,0" />
                     <xctk:MaskedTextBox Name="StartTime" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" Width="125" Height="30" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="16" KeyDown="StartTimeKeyDown" LostFocus="StartTimeLostFocus"/>
                 </StackPanel>
-                <Button Name="StartRace" Content="Start Race" Width="200" Height="35" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,0" Click="StartRaceClick" />
-                <Button Name="WaveButton" Content="Set Wave Times" Width="200" Height="35" HorizontalAlignment="Center" Margin="0,5,0,0" Click="ChangeWaves"/>
-                <Button Content="Manual Entry" Width="200" Height="35" HorizontalAlignment="Center" Margin="0,5,0,0" Click="ManualEntry" IsEnabled="True"/>
-                <Grid Width="200">
+                <Button Name="StartRace" Content="Start Race" Width="250" Height="35" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,0" Click="StartRaceClick" />
+                <Button Name="WaveButton" Content="Set Wave Times" Width="250" Height="35" HorizontalAlignment="Center" Margin="0,5,0,0" Click="ChangeWaves"/>
+                <Grid Width="250">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Manual Entry" Height="35" HorizontalAlignment="Stretch" Margin="0,5,1,0" Click="ManualEntry" IsEnabled="True" Grid.Column="0"/>
+                    <Button x:Name="DNFButton" Content="Add DNF" Height="35" HorizontalAlignment="Stretch" Margin="1,5,0,0" Click="AddDNF_Click" Grid.Column="1"/>
+                </Grid>
+                <Grid Width="250">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -36,14 +43,14 @@
                     <Button Content="Load Log" Height="35" HorizontalAlignment="Stretch" Margin="0,5,1,0" Click="LoadLog" IsEnabled="True"  Grid.Column="0"/>
                     <Button x:Name="SaveLogButton" Content="Save Log" Height="35" HorizontalAlignment="Stretch" Margin="1,5,0,0" Click="SaveLog" IsEnabled="True" Grid.Column="1"/>
                 </Grid>
-                <TextBox Name="searchBox" Width="200" Height="35" Margin="0,5,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="SearchBox_TextChanged"/>
-                <ComboBox Name="viewOnlyBox" Width="200" Height="35" HorizontalAlignment="Stretch" Margin="0,5,0,0" SelectionChanged="ViewOnlyBox_SelectionChanged">
+                <TextBox Name="searchBox" Width="250" Height="35" Margin="0,5,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="SearchBox_TextChanged"/>
+                <ComboBox Name="viewOnlyBox" Width="250" Height="35" HorizontalAlignment="Stretch" Margin="0,5,0,0" SelectionChanged="ViewOnlyBox_SelectionChanged">
                     <ComboBoxItem Content="Hide Unknown" IsSelected="True"/>
                     <ComboBoxItem Content="Show All" />
                     <ComboBoxItem Content="Show Only Starts" />
                     <ComboBoxItem Content="Show Only Finishes" />
                 </ComboBox>
-                <ComboBox Name="SortBy" Width="200" Height="35" HorizontalAlignment="Stretch" Margin="0,5,0,0" SelectionChanged="SortBy_SelectionChanged">
+                <ComboBox Name="SortBy" Width="250" Height="35" HorizontalAlignment="Stretch" Margin="0,5,0,0" SelectionChanged="SortBy_SelectionChanged">
                     <ComboBoxItem Content="System Time" IsSelected="True" />
                     <ComboBoxItem Content="Gun Time" />
                     <ComboBoxItem Content="Bib"/>
@@ -115,17 +122,17 @@
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
+                                <Button Name="recalculateButton" Content="Recalculate" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="Recalculate_Click"/>
                                 <Button Content="Export Results" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="Export_Click"/>
                                 <Button Content="Export Boston" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="Export_BAA_Click"/>
                                 <Button Content="Export UltraSignup" FontSize="9" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="Export_US_Click"/>
-                                <Button Name="recalculateButton" Content="Recalculate" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="Recalculate_Click"/>
                                 <Button Content="Create HTML" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="CreateHTML_Click" />
                             </StackPanel>
                             <StackPanel Grid.Column="1">
-                                <Button Name="printButton" Content="Print" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="Print_Click"/>
-                                <Button Content="Awards" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="Award_Click"/>
                                 <Button Content="Raw Data" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="RawReads_Click"/>
-                                <Button x:Name="DNFButton" Content="Add DNF" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="AddDNF_Click"/>
+                                <Button Name="printButton" Content="Print" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="Print_Click"/>
+                                <Button Name="dnsMode" Content="Start DNS Mode" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="dnsMode_Click" />
+                                <Button Content="Awards" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="Award_Click"/>
                                 <Button x:Name="HttpServerButton" Content="Start Web" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="HTMLServerButton_Click"/>
                             </StackPanel>
                         </Grid>

@@ -200,6 +200,8 @@ namespace Chronokeep.UI.MainPages
                 AutoAPIButton.Content = "Auto Upload";
                 ManualAPIButton.IsEnabled = true;
             }
+
+            UpdateDNSButton();
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -320,6 +322,9 @@ namespace Chronokeep.UI.MainPages
                 AutoAPIButton.Content = "Auto Upload";
                 ManualAPIButton.IsEnabled = true;
             }
+
+            UpdateDNSButton();
+
             subPage.UpdateView();
         }
 
@@ -1073,6 +1078,38 @@ namespace Chronokeep.UI.MainPages
                 {
                     scv.ScrollToTop();
                 }
+            }
+        }
+
+        private void dnsMode_Click(object sender, RoutedEventArgs e)
+        {
+            bool worked = false;
+            if (dnsMode.Content.Equals("Start DNS Mode"))
+            {
+                Log.D("UI.MainPages.TimingPage", "Starting DNS Mode.");
+                worked = mWindow.StartDidNotStartMode();
+            }
+            else
+            {
+                Log.D("UI.MainPages.TimingPage", "Stopping DNS Mode.");
+                worked = mWindow.StopDidNotStartMode();
+            }
+            if (!worked)
+            {
+                DialogBox.Show("An error occurred entering DNS mode.");
+            }
+            UpdateDNSButton();
+        }
+
+        private void UpdateDNSButton()
+        {
+            if (mWindow.InDidNotStartMode())
+            {
+                dnsMode.Content = "Stop DNS Mode";
+            }
+            else
+            {
+                dnsMode.Content = "Start DNS Mode";
             }
         }
 

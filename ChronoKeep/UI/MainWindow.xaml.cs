@@ -53,6 +53,10 @@ namespace Chronokeep.UI
 
         List<Window> openWindows = new List<Window>();
 
+        // Setting to allow the user to enter a mode where we can record DNS chips.
+        private bool didNotStartMode = false;
+        private Mutex dnsMutex = new Mutex();
+
         // Setup a timer for updating the view
         DispatcherTimer TimingUpdater = new DispatcherTimer();
 
@@ -717,6 +721,41 @@ namespace Chronokeep.UI
         public void CloseWindow()
         {
             Close();
+        }
+
+        public bool InDidNotStartMode()
+        {
+            bool output = false;
+            if (dnsMutex.WaitOne(3000))
+            {
+                output = didNotStartMode;
+                dnsMutex.ReleaseMutex();
+            }
+            else
+            {
+                Log.D("UI.MainWindow", "Error getting DNSMutex.");
+            }
+            return output;
+        }
+
+        public bool StartDidNotStartMode()
+        {
+            if (dnsMutex.WaitOne(3000))
+            {
+                didNotStartMode = true;
+                return true;
+            }
+            return false;
+        }
+
+        public bool StopDidNotStartMode()
+        {
+            if (dnsMutex.WaitOne(3000))
+            {
+                didNotStartMode = false;
+                return true;
+            }
+            return false;
         }
     }
 }
