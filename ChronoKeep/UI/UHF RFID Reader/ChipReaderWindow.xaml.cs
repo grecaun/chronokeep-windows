@@ -19,7 +19,7 @@ namespace Chronokeep
         private static NewReader reader;
         private static int ReadNo = 1;
         RFIDSerial serial;
-        private static ChipPersonWindow personWindow;
+        private static ChipPersonWindow personWindow = null;
         private IDBInterface database;
         private IWindowCallback window = null;
         int eventId = -1;
@@ -43,14 +43,7 @@ namespace Chronokeep
         internal void PersonWindowClosing()
         {
             personWindow = null;
-            try
-            {
-                KillReader();
-            }
-            catch
-            {
-                Log.E("ChipReaderWindow", "Already dead.");
-            }
+            beautyBtn.Content = "Show Info Window";
         }
 
         public void InstantiateSerialPortList()
@@ -92,17 +85,21 @@ namespace Chronokeep
                     return;
                 }
                 connectBtn.Content = "Disconnect";
-                Event thisEvent = database.GetEvent(eventId);
+                beautyBtn.Visibility = Visibility.Visible;
+                beautyBtn.Content = "Show Info Window";
                 chipNumbers.Items.Add(new RFIDSerial.Info { DecNumber = 0 });
                 readingThread = new Thread(new ThreadStart(reader.Run));
                 readingThread.Start();
-                personWindow = new ChipPersonWindow(this, thisEvent.Date);
-                personWindow.Show();
             }
             else
             {
                 connectBtn.Content = "Connect";
-                personWindow.Close();
+                beautyBtn.Visibility = Visibility.Hidden;
+                beautyBtn.Content = "Show Info Window";
+                if (personWindow != null)
+                {
+                    personWindow.Close();
+                }
             }
         }
 
@@ -150,6 +147,21 @@ namespace Chronokeep
                 Log.E("ChipReaderWindow", "Things are already closed.");
             }
             if (window != null) window.WindowFinalize(this);
+        }
+
+        private void beautyBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (personWindow == null)
+            {
+                Event thisEvent = database.GetEvent(eventId);
+                personWindow = new ChipPersonWindow(this, thisEvent.Date);
+                personWindow.Show();
+                beautyBtn.Content = "Close Info Window";
+            }
+            else
+            {
+                personWindow.Close();
+            }
         }
     }
 }

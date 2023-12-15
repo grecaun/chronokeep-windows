@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Chronokeep"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Chip Reader" Height="350" Width="535" MinWidth="535"
+        Title="Chip Reader" Height="450" Width="750" MinWidth="750"
         Closing="Window_Closing"
         d:DataContext="{d:DesignInstance local:ChipReaderWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
@@ -64,20 +64,21 @@
                 </Grid>
                 <Grid HorizontalAlignment="Center" Height="55">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="250" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="84" />
+                        <ColumnDefinition Width="84" />
+                        <ColumnDefinition Width="144" />
                     </Grid.ColumnDefinitions>
-                    <DockPanel Margin="5,0,15,0" Grid.Column="0" Grid.ColumnSpan="2" Name="EventNameHolder" Visibility="Hidden">
+                    <DockPanel Margin="5,0,15,0" Grid.Column="0" Name="EventNameHolder" Visibility="Hidden">
                         <TextBlock Text="TEST" VerticalAlignment="Center" Name="eventName"/>
                     </DockPanel>
-                    <TextBlock Text="Serial Port" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Height="Auto" Grid.Column="2" />
-                    <ComboBox Name="serialPortCB" Height="Auto" Width="70" Margin="5,0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3" />
-                    <Button Content="Refresh" Name="refreshBtn" Width="Auto" Padding="10,0,10,0" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Column="4" Click="RefreshBtn_Click" />
-                    <Button Content="Connect" Name="connectBtn" Width="Auto" Padding="10,0,10,0" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Column="5" Click="ConnectBtn_Click" />
+                    <TextBlock Text="Serial Port" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Height="Auto" Grid.Column="1" />
+                    <ComboBox Name="serialPortCB" Height="35" Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="2" />
+                    <Button Content="Refresh" Name="refreshBtn" Width="80" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Grid.Column="3" Click="RefreshBtn_Click" />
+                    <Button Content="Connect" Name="connectBtn" Width="80" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Grid.Column="4" Click="ConnectBtn_Click" />
+                    <Button Content="Show Info Window" Name="beautyBtn" Width="140" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Grid.Column="5" Click="beautyBtn_Click" Visibility="Hidden" />
                 </Grid>
             </StackPanel>
         </Grid>
