@@ -64,7 +64,7 @@ namespace Chronokeep.Timing
         public void ConnectTimingSystem(TimingSystem system)
         {
             Log.D("Timing.TimingController", "-- UPDATE -- Creating interface for communication with timing system.");
-            system.CreateTimingSystemInterface(database);
+            system.CreateTimingSystemInterface(database, mainWindow);
             List<Socket> sockets = system.Connect();
             if (sockets == null)
             {

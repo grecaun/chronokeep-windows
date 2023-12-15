@@ -436,7 +436,8 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM time_results WHERE event_id=@event;" +
-                "UPDATE chipreads SET read_status=@status WHERE event_id=@event AND read_status!=@ignore AND read_status!=@dnf;" +
+                "UPDATE chipreads SET read_status=@status WHERE event_id=@event AND read_status!=@ignore " +
+                "AND read_status!=@dnf AND read_status!=@dnf_ignore AND read_status!=@dns AND read_status!=@dns_ignore;" +
                 "UPDATE eventspecific SET eventspecific_status=@estatus WHERE event_id=@event;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
@@ -444,6 +445,9 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
                 new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE),
                 new SQLiteParameter("@dnf", Constants.Timing.CHIPREAD_STATUS_DNF),
+                new SQLiteParameter("@dnf_ignore", Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE),
+                new SQLiteParameter("@dns", Constants.Timing.CHIPREAD_STATUS_DNS),
+                new SQLiteParameter("@dns_ignore", Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE),
                 new SQLiteParameter("estatus", Constants.Timing.EVENTSPECIFIC_NOSHOW)
             });
             command.ExecuteNonQuery();

@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces.Timing;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.Timing;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,6 +18,7 @@ namespace Chronokeep.Timing.Interfaces
         Event theEvent;
         StringBuilder buffer = new StringBuilder();
         Socket sock;
+        IMainWindow window = null;
 
         private static readonly Regex voltage = new Regex(@"^V=.*");
         private static readonly Regex connected = new Regex(@"^Connected,.*");
@@ -27,18 +29,12 @@ namespace Chronokeep.Timing.Interfaces
         private static readonly Regex status = new Regex(@"^S=.*");
         private static readonly Regex msg = new Regex(@"^[^\n]*\n");
 
-        public RFIDUltraInterface(IDBInterface database, int locationId)
+        public RFIDUltraInterface(IDBInterface database, int locationId, IMainWindow window)
         {
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
             this.locationId = locationId;
-        }
-
-        public RFIDUltraInterface(IDBInterface database, Socket sock, int locationId)
-        {
-            this.database = database;
-            this.theEvent = database.GetCurrentEvent();
-            this.locationId = locationId;
+            this.window = window;
         }
 
         public List<Socket> Connect(string IpAddress, int Port)
@@ -90,6 +86,10 @@ namespace Chronokeep.Timing.Interfaces
                         long.Parse(chipVals[10]),
                         int.Parse(chipVals[11])
                     );
+                    if (window != null && window.InDidNotStartMode())
+                    {
+                        chipRead.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
+                    }
                     chipReads.Add(chipRead);
                     // we don't need to do anything other than notify of a chipread
                     if (!output.ContainsKey(MessageType.CHIPREAD))

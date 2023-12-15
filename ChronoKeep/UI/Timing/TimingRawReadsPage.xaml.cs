@@ -45,11 +45,33 @@ namespace Chronokeep.UI.Timing
             List<ChipRead> newChipReads = new List<ChipRead>();
             foreach (ChipRead read in updateListView.SelectedItems)
             {
+                // Check what the previous status was. If it was FORCEIGNORE, then we can set to NONE
                 if (read.Status == Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE)
                 {
                     read.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
                 }
-                else
+                // Else if it's DNF, we need to use the special status of DNF ignore
+                // so we can restore it to DNF status if we want to un-ignore the read.
+                else if (read.Status == Constants.Timing.CHIPREAD_STATUS_DNF)
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE;
+                }
+                else if (read.Status == Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE)
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_DNF;
+                }
+                // Treat DNS the same as DNF.
+                else if (read.Status == Constants.Timing.CHIPREAD_STATUS_DNS)
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE;
+                }
+                else if(read.Status == Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE)
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
+                }
+                // These reads are not DNF or DNS. Don't modify announcer reads.
+                else if (read.Status != Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_SEEN &&
+                    read.Status != Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
                 {
                     read.Status = Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE;
                 }

@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces.Timing;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.Timing;
 using Chronokeep.Timing.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -92,17 +93,17 @@ namespace Chronokeep.Objects
             }
         }
 
-        public void CreateTimingSystemInterface(IDBInterface database)
+        public void CreateTimingSystemInterface(IDBInterface database, IMainWindow window)
         {
             if (this.Type == Constants.Settings.TIMING_RFID)
             {
                 Log.D("Objects.TimingSystem", "System interface is RFID.");
-                SystemInterface = new RFIDUltraInterface(database, LocationID);
+                SystemInterface = new RFIDUltraInterface(database, LocationID, window);
             }
             else if (this.Type == Constants.Settings.TIMING_IPICO || this.Type == Constants.Settings.TIMING_IPICO_LITE)
             {
                 Log.D("Objects.TimingSystem", "System interface is IPICO.");
-                SystemInterface = new IpicoInterface(database, LocationID, this.Type);
+                SystemInterface = new IpicoInterface(database, LocationID, this.Type, window);
             }
         }
 

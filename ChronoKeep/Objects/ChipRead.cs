@@ -282,7 +282,9 @@ namespace Chronokeep
                 {
                     return "Unused Start";
                 }
-                if (Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE == Status)
+                if (Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE == Status ||
+                    Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE == Status ||
+                    Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE == Status)
                 {
                     return "Ignored";
                 }
@@ -313,6 +315,10 @@ namespace Chronokeep
                 if (Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED == Status)
                 {
                     return "A-Used";
+                }
+                if (Constants.Timing.CHIPREAD_STATUS_DNS == Status)
+                {
+                    return "DNS";
                 }
                 return "Unknown";
             }

@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces.Timing;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.Timing;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,26 +23,21 @@ namespace Chronokeep.Timing.Interfaces
         string ipadd;
         string Type;
 
+        IMainWindow window = null;
+
 
         // private static readonly Regex voltage/connected/chipread/settinginfo/settingconfirmation/time/status/msg
         private static readonly Regex chipread = new Regex(@"aa[0-9a-fA-F]{34,36}");
         private static readonly Regex time = new Regex(@"date\.\w{3} \w{3} {1,2}\d{1,2} \d{2}:\d{2}:\d{2} \w{3} \d{4} *");
         private static readonly Regex msg = new Regex(@"^[^\n]+\n");
 
-        public IpicoInterface(IDBInterface database, int locationId, string type)
+        public IpicoInterface(IDBInterface database, int locationId, string type, IMainWindow window)
         {
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
             this.locationId = locationId;
             this.Type = type;
-        }
-
-        public IpicoInterface(IDBInterface database, Socket sock, int locationId, string type)
-        {
-            this.database = database;
-            this.theEvent = database.GetCurrentEvent();
-            this.locationId = locationId;
-            this.Type = type;
+            this.window = window;
         }
 
         public List<Socket> Connect(string IpAddress, int Port)
@@ -128,6 +124,10 @@ namespace Chronokeep.Timing.Interfaces
                         Convert.ToInt32(message.Substring(2, 2)),
                         message.Length == 36 ? 0 : 1
                         );
+                    if (window != null && window.InDidNotStartMode())
+                    {
+                        chipRead.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
+                    }
                     chipReads.Add(chipRead);
                     if (!output.ContainsKey(MessageType.CHIPREAD))
                     {

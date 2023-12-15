@@ -29,6 +29,9 @@ namespace Chronokeep.Constants
         public static readonly int CHIPREAD_STATUS_DNF = 9;
         public static readonly int CHIPREAD_STATUS_ANNOUNCER_SEEN = 10;
         public static readonly int CHIPREAD_STATUS_ANNOUNCER_USED = 11;
+        public static readonly int CHIPREAD_STATUS_DNS = 12;
+        public static readonly int CHIPREAD_STATUS_DNF_IGNORE = 13;
+        public static readonly int CHIPREAD_STATUS_DNS_IGNORE = 14;
 
         public static readonly int TIMERESULT_STATUS_NONE = 0;
         public static readonly int TIMERESULT_STATUS_DNF = 1;
