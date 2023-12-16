@@ -18,7 +18,7 @@ namespace Chronokeep.Timing.Routines
             {
                 startTimes[result.Identifier] = result;
             }
-            // Dictionary of timeresults for a specific chip
+            // Dictionary of timeresults for a specific identifier
             Dictionary<string, List<TimeResult>> finishTimes = new Dictionary<string , List<TimeResult>>();
             foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
             {
@@ -119,7 +119,7 @@ namespace Chronokeep.Timing.Routines
                             }
                         }
                     }
-                    // Otherwise check the status and everything as we did for Bib (Manual) reads.
+                    // Otherwise check the status and everything as we did for Bib reads.
                     else if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
                         if (!chipLastReadDictionary.ContainsKey((read.ChipNumber.ToString(), read.LocationID)))

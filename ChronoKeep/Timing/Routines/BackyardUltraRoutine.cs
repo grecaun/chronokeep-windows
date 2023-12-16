@@ -21,9 +21,17 @@ namespace Chronokeep.Timing.Routines
             {
                 backyardResultDictionary[(0, result.Identifier)] = (start: result, end: null);
             }
+            // Dictionary of timeresults for a specific identifier
+            Dictionary<string, List<TimeResult>> finishTimes = new Dictionary<string, List<TimeResult>>();
             // Get the rest of the times.
             foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
             {
+                // Keep track of all finish times based upon an identifier.
+                if (!finishTimes.ContainsKey(result.Identifier))
+                {
+                    finishTimes[result.Identifier] = new List<TimeResult>();
+                }
+                finishTimes[result.Identifier].Add(result);
                 // Pull out old results if they're in the dictionary already.
                 (TimeResult start, TimeResult end) tmpRes = (null, null);
                 if (backyardResultDictionary.ContainsKey((result.Occurrence / 2, result.Identifier)))
@@ -71,6 +79,11 @@ namespace Chronokeep.Timing.Routines
             Dictionary<string, int> dnfHourDictionary = new Dictionary<string, int>();
             Dictionary<int, ChipRead> dnfDictionary = new Dictionary<int, ChipRead>();
             Dictionary<string, ChipRead> chipDnfDictionary = new Dictionary<string, ChipRead>();
+            // Keep a list of DNS participants so we can mark them as DNS in results.
+            // Keep a record of the DNS chipread so we can link it with the TimeResult
+            Dictionary<int, ChipRead> dnsDictionary = new Dictionary<int, ChipRead>();
+            Dictionary<string, ChipRead> chipDNSDictionary = new Dictionary<string, ChipRead>();
+
             // Get all useful chipreads.
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
             allChipReads.Sort();
@@ -82,12 +95,30 @@ namespace Chronokeep.Timing.Routines
                 // Process reads with known bib numbers.
                 if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
+                    // Start by checking if we've got a record of the person not starting.
+                    // If they are, we set them to AFTER_DNS.
+                    // This status can be ignored later and won't be changed to DNS_IGNORE
+                    // which would keep it as a DNS entry forever.
+                    if (dictionary.dnsParticipants.Contains(dictionary.bibChipDictionary[read.Bib]))
+                    {
+                        if (read.Status != Constants.Timing.CHIPREAD_STATUS_DNS)
+                        {
+                            read.Status = Constants.Timing.CHIPREAD_STATUS_AFTER_DNS;
+                        }
+                        else
+                        {
+                            if (!dnsDictionary.ContainsKey(read.Bib))
+                            {
+                                dnsDictionary.Add(read.Bib, read);
+                            }
+                        }
+                    }
                     // if we process all the used reads before putting them in the list
                     // we can ensure that all of the reads we process are STATUS_NONE
                     // and then we can verify that we aren't inserting results BEFORE
                     // results we've already calculated
                     // Check if its a read we've used for a finish read.
-                    if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
+                    else if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
                         if (!lastReadDictionary.ContainsKey((read.ChipBib, read.LocationID)))
                         {
@@ -137,7 +168,26 @@ namespace Chronokeep.Timing.Routines
                 // Process reads with unknown bib numbers but known chip numbers.
                 else if (read.ChipNumber != Constants.Timing.CHIPREAD_DUMMYCHIP)
                 {
-                    if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
+                    // Start by checking if we've got a record of the person not starting.
+                    // If they are, we set them to AFTER_DNS.
+                    // This status can be ignored later and won't be changed to DNS_IGNORE
+                    // which would keep it as a DNS entry forever.
+                    if (dictionary.dnsParticipants.Contains(read.ChipNumber))
+                    {
+                        if (read.Status != Constants.Timing.CHIPREAD_STATUS_DNS)
+                        {
+                            read.Status = Constants.Timing.CHIPREAD_STATUS_AFTER_DNS;
+                        }
+                        else
+                        {
+                            if (!chipDNSDictionary.ContainsKey(read.ChipNumber))
+                            {
+                                chipDNSDictionary.Add(read.ChipNumber, read);
+                            }
+                        }
+                    }
+                    // Otherwise check the status and everything as we did for Bib reads.
+                    else if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
                         if (!chipLastReadDictionary.ContainsKey((read.ChipNumber.ToString(), read.LocationID)))
                         {
@@ -702,6 +752,78 @@ namespace Chronokeep.Timing.Routines
                         dnfDictionary[bib].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? dnfDictionary[bib].ReadBib : dnfDictionary[bib].ChipBib,
                         Constants.Timing.TIMERESULT_STATUS_DNF
                         ));
+                }
+            }
+            // Process the intersection of unknown DNS people and Finish results:
+            foreach (string chip in chipDNSDictionary.Keys)
+            {
+                if (finishTimes.ContainsKey(TimeResult.ChipToIdentifier(chip)))
+                {
+                    foreach (TimeResult finish in finishTimes[TimeResult.ChipToIdentifier(chip)])
+                    {
+                        finish.ReadId = chipDNSDictionary[chip].ReadId;
+                        finish.Time = "DNS";
+                        finish.ChipTime = "DNS";
+                        finish.Status = Constants.Timing.TIMERESULT_STATUS_DNS;
+                        finish.Occurrence = theEvent.FinishMaxOccurrences;
+                        newResults.Add(finish);
+                    }
+                }
+                else
+                {
+                    newResults.Add(new TimeResult(theEvent.Identifier,
+                        chipDNSDictionary[chip].ReadId,
+                        Constants.Timing.TIMERESULT_DUMMYPERSON,
+                        Constants.Timing.LOCATION_FINISH,
+                        Constants.Timing.SEGMENT_FINISH,
+                        chipLastReadDictionary.ContainsKey((chip, Constants.Timing.LOCATION_FINISH)) ? chipLastReadDictionary[(chip, Constants.Timing.LOCATION_FINISH)].Occurrence + 1 : 1,
+                        "DNS",
+                        TimeResult.ChipToIdentifier(chip),
+                        "DNS",
+                        chipDNSDictionary[chip].Time,
+                        chipDNSDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDNSDictionary[chip].ReadBib : chipDNSDictionary[chip].ChipBib,
+                        Constants.Timing.TIMERESULT_STATUS_DNS
+                        ));
+                }
+            }
+            // Process the intersection of known DNS people and Finish results:
+            foreach (int bib in dnsDictionary.Keys)
+            {
+                Participant part = dictionary.participantBibDictionary.ContainsKey(bib) ?
+                    dictionary.participantBibDictionary[bib] :
+                    null;
+                if (part != null)
+                {
+                    part.Status = Constants.Timing.EVENTSPECIFIC_DNS;
+                    updateParticipants.Add(part);
+                }
+                int occurrence = part == null ? 1 : dictionary.distanceDictionary.ContainsKey(part.EventSpecific.DistanceIdentifier) ? dictionary.distanceDictionary[part.EventSpecific.DistanceIdentifier].FinishOccurrence : 1;
+                if (finishTimes.ContainsKey(TimeResult.BibToIdentifier(bib)))
+                {
+                    foreach (TimeResult finish in finishTimes[TimeResult.BibToIdentifier(bib)])
+                    {
+                        finish.ReadId = dnsDictionary[bib].ReadId;
+                        finish.Time = "DNS";
+                        finish.ChipTime = "DNS";
+                        finish.Status = Constants.Timing.TIMERESULT_STATUS_DNS;
+                        finish.Occurrence = occurrence;
+                        newResults.Add(finish);
+                    }
+                }
+                else
+                {
+                    newResults.Add(new TimeResult(theEvent.Identifier,
+                        dnsDictionary[bib].ReadId,
+                        part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
+                        Constants.Timing.LOCATION_FINISH,
+                        Constants.Timing.SEGMENT_FINISH,
+                        occurrence,
+                        "DNS",
+                        TimeResult.BibToIdentifier(bib),
+                        "DNS",
+                        dnsDictionary[bib].Time,
+                        bib,
+                        Constants.Timing.TIMERESULT_STATUS_DNS));
                 }
             }
             // process reads that need to be set to ignore
