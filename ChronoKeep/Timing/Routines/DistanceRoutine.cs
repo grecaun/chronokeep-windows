@@ -258,7 +258,7 @@ namespace Chronokeep.Timing.Routines
                                 startTimes[startResult.Identifier] = startResult;
                                 newResults.Add(startResult);
                                 if (part != null &&
-                                    (Constants.Timing.EVENTSPECIFIC_NOSHOW == part.Status
+                                    (Constants.Timing.EVENTSPECIFIC_UNKNOWN == part.Status
                                     && !dnfDictionary.ContainsKey(bib)))
                                 {
                                     part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
@@ -396,7 +396,7 @@ namespace Chronokeep.Timing.Routines
                                                 updateParticipants.Add(part);
                                             }
                                             // If they were marked as noshow previously, mark them as started
-                                            else if (Constants.Timing.EVENTSPECIFIC_NOSHOW == part.Status
+                                            else if (Constants.Timing.EVENTSPECIFIC_UNKNOWN == part.Status
                                                 && !dnfDictionary.ContainsKey(bib))
                                             {
                                                 part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;

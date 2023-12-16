@@ -393,7 +393,7 @@ namespace Chronokeep.UI.Participants
                     CommentsBox.Text,
                     "",
                     OtherBox.Text,
-                    Constants.Timing.EVENTSPECIFIC_NOSHOW,
+                    Constants.Timing.EVENTSPECIFIC_UNKNOWN,
                     "0-110",
                     Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
                     AnonymousBox.IsChecked == true

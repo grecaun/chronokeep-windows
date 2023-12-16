@@ -902,7 +902,7 @@ namespace Chronokeep.Database.SQLite
                         Log.D("Database.SQLite.Update", "Upgrading from version 37.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE eventspecific ADD " +
-                            "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + ";" +
+                            "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_UNKNOWN + ";" +
                             "UPDATE settings SET version=38 WHERE version=37;";
                         command.ExecuteNonQuery();
                         goto case 38;
@@ -1059,7 +1059,7 @@ namespace Chronokeep.Database.SQLite
                                 "eventspecific_earlystart INTEGER DEFAULT 0," +
                                 "eventspecific_next_year INTEGER DEFAULT 0," +
                                 "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
-                                "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + "," +
+                                "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_UNKNOWN + "," +
                                 "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
                                 "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110'," +
                                 "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE," +
@@ -1237,7 +1237,7 @@ namespace Chronokeep.Database.SQLite
                                 "eventspecific_owes VARCHAR(50)," +
                                 "eventspecific_other VARCHAR," +
                                 "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
-                                "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + "," +
+                                "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_UNKNOWN + "," +
                                 "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
                                 "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110'," +
                                 "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE," +

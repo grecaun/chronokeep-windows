@@ -159,6 +159,7 @@ namespace Chronokeep.UI.MainPages
             TimingFrame.Content = subPage;
             List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
             statsListView.ItemsSource = stats;
+            stats.Clear();
             foreach (DistanceStat s in inStats)
             {
                 stats.Add(s);

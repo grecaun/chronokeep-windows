@@ -56,7 +56,7 @@ namespace Chronokeep.Constants
         public static readonly int TIMERESULT_DUMMYAGEGROUP = -1;
         public static readonly int TIMERESULT_DUMMYREAD = -1;
 
-        public static readonly int EVENTSPECIFIC_NOSHOW = 0;
+        public static readonly int EVENTSPECIFIC_UNKNOWN = 0;
         public static readonly int EVENTSPECIFIC_STARTED = 1;
         public static readonly int EVENTSPECIFIC_FINISHED = 2;
         public static readonly int EVENTSPECIFIC_DNF = 3;
@@ -114,10 +114,11 @@ namespace Chronokeep.Constants
 
         public static readonly Dictionary<int, string> EVENTSPECIFIC_STATUS_NAMES = new Dictionary<int, string>()
         {
-            { EVENTSPECIFIC_NOSHOW, "DNS" },
+            { EVENTSPECIFIC_UNKNOWN, "Unknown" },
             { EVENTSPECIFIC_STARTED, "Started" },
             { EVENTSPECIFIC_FINISHED, "Finished" },
             { EVENTSPECIFIC_DNF, "DNF" },
+            { EVENTSPECIFIC_DNS, "DNS" },
         };
 
         public static string SecondsToTime(long seconds)

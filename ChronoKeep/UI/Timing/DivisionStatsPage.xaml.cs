@@ -31,6 +31,7 @@ namespace Chronokeep.UI.Timing
 
         private ObservableCollection<Participant> activeParticipants = new ObservableCollection<Participant>();
         private ObservableCollection<Participant> dnsParticipants = new ObservableCollection<Participant>();
+        private ObservableCollection<Participant> unknownParticipants = new ObservableCollection<Participant>();
         private ObservableCollection<Participant> dnfParticipants = new ObservableCollection<Participant>();
         private ObservableCollection<Participant> finishedParticipants = new ObservableCollection<Participant>();
 
@@ -48,6 +49,7 @@ namespace Chronokeep.UI.Timing
             }
             activeListView.ItemsSource = activeParticipants;
             dnsListView.ItemsSource = dnsParticipants;
+            unknownListView.ItemsSource = unknownParticipants;
             dnfListView.ItemsSource = dnfParticipants;
             finishedListView.ItemsSource = finishedParticipants;
             this.DistanceName.Text = DistanceName;
@@ -74,6 +76,7 @@ namespace Chronokeep.UI.Timing
         {
             activeParticipants.Clear();
             dnsParticipants.Clear();
+            unknownParticipants.Clear();
             dnfParticipants.Clear();
             finishedParticipants.Clear();
             Dictionary<int, List<Participant>> partDict = database.GetDistanceParticipantsStatus(theEvent.Identifier, distanceId);
@@ -89,10 +92,10 @@ namespace Chronokeep.UI.Timing
             {
                 activePanel.Visibility = Visibility.Collapsed;
             }
-            if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_NOSHOW)) // DNS
+            if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_DNS)) // DNS
             {
                 dnsPanel.Visibility = Visibility.Visible;
-                foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_NOSHOW])
+                foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_DNS])
                 {
                     dnsParticipants.Add(p);
                 }
@@ -100,6 +103,18 @@ namespace Chronokeep.UI.Timing
             else
             {
                 dnsPanel.Visibility = Visibility.Collapsed;
+            }
+            if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_UNKNOWN)) // UNKOWN
+            {
+                unknownPanel.Visibility = Visibility.Visible;
+                foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_UNKNOWN])
+                {
+                    unknownParticipants.Add(p);
+                }
+            }
+            else
+            {
+                unknownPanel.Visibility = Visibility.Collapsed;
             }
             if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_DNF)) // DNF
             {

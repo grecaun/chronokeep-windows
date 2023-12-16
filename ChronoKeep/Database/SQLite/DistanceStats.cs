@@ -43,7 +43,7 @@ namespace Chronokeep.Database.SQLite
                 }
                 if (int.TryParse(reader["status"].ToString(), out int status))
                 {
-                    if (Constants.Timing.EVENTSPECIFIC_NOSHOW == status)
+                    if (Constants.Timing.EVENTSPECIFIC_DNS == status || Constants.Timing.EVENTSPECIFIC_UNKNOWN == status)
                     {
                         statsDictionary[distanceId].DNS = Convert.ToInt32(reader["count"]);
                         allstats.DNS += statsDictionary[distanceId].DNS;

@@ -276,7 +276,7 @@ namespace Chronokeep.Timing.Routines
                                     newResults.Add(startResult);
                                     // Check if we should update the status of the person.
                                     if (part != null &&
-                                        (Constants.Timing.EVENTSPECIFIC_NOSHOW == part.Status
+                                        (Constants.Timing.EVENTSPECIFIC_UNKNOWN == part.Status
                                         && !dnfDictionary.ContainsKey(bib)))
                                     {
                                         part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
@@ -380,7 +380,7 @@ namespace Chronokeep.Timing.Routines
                                                 if (part != null)
                                                 {
                                                     // If they were marked as noshow previously, mark them as started
-                                                    if (Constants.Timing.EVENTSPECIFIC_NOSHOW == part.Status
+                                                    if (Constants.Timing.EVENTSPECIFIC_UNKNOWN == part.Status
                                                         && !dnfDictionary.ContainsKey(bib))
                                                     {
                                                         part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;

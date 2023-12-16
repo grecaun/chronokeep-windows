@@ -10,7 +10,7 @@ namespace Chronokeep
     {
         private int identifier, eventIdentifier, distanceIdentifier, bib,
             checkedIn = 0, chip = -1,
-            status = Constants.Timing.EVENTSPECIFIC_NOSHOW, ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+            status = Constants.Timing.EVENTSPECIFIC_UNKNOWN, ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
         private string comments, distanceName, owes, other, ageGroupName = "0-110";
         private bool anonymous;
 

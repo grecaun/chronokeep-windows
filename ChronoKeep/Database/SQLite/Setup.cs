@@ -156,7 +156,7 @@ namespace Chronokeep.Database.SQLite
                     "eventspecific_owes VARCHAR(50)," +
                     "eventspecific_other VARCHAR," +
                     "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
-                    "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_NOSHOW + "," +
+                    "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_UNKNOWN + "," +
                     "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
                     "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110'," +
                     "eventspecific_anonymous SMALLINT NOT NULL DEFAULT 0," +

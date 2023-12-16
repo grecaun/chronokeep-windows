@@ -448,7 +448,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@dnf_ignore", Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE),
                 new SQLiteParameter("@dns", Constants.Timing.CHIPREAD_STATUS_DNS),
                 new SQLiteParameter("@dns_ignore", Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE),
-                new SQLiteParameter("estatus", Constants.Timing.EVENTSPECIFIC_NOSHOW)
+                new SQLiteParameter("@estatus", Constants.Timing.EVENTSPECIFIC_UNKNOWN)
             });
             command.ExecuteNonQuery();
         }
