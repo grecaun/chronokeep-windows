@@ -120,7 +120,7 @@ namespace Chronokeep.Database.SQLite
                 "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
                 "AND e.eventspecific_bib != @dummybib) " +
                 "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND " +
-                "(read_status=@status OR read_status=@used OR read_status=@start OR read_status=@dnf) AND c.location_id!=@announcer;";
+                "(read_status=@status OR read_status=@used OR read_status=@start OR read_status=@dnf OR read_status=@dns) AND c.location_id!=@announcer;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
@@ -128,6 +128,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@used", Constants.Timing.CHIPREAD_STATUS_USED),
                 new SQLiteParameter("@start", Constants.Timing.CHIPREAD_STATUS_STARTTIME),
                 new SQLiteParameter("@dnf", Constants.Timing.CHIPREAD_STATUS_DNF),
+                new SQLiteParameter("@dns", Constants.Timing.CHIPREAD_STATUS_DNS),
                 new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB),
                 new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER)
             });
