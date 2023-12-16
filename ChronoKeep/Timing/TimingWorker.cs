@@ -220,6 +220,13 @@ namespace Chronokeep.Timing
                         ResetDictionariesMutex.ReleaseMutex();
                     }
                     bool touched = false;
+                    // Get a list of DNS entries.
+                    dictionary.dnsParticipants.Clear();
+                    List<ChipRead> dnsReads = database.GetDNSChipReads(theEvent.Identifier);
+                    foreach (ChipRead read in dnsReads)
+                    {
+                        dictionary.dnsParticipants.Add(read.ChipNumber);
+                    }
                     // Process chip reads first.
                     if (database.UnprocessedReadsExist(theEvent.Identifier))
                     {

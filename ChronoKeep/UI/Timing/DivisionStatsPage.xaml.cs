@@ -101,10 +101,10 @@ namespace Chronokeep.UI.Timing
             {
                 dnsPanel.Visibility = Visibility.Collapsed;
             }
-            if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_NOFINISH)) // DNF
+            if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_DNF)) // DNF
             {
                 dnfPanel.Visibility = Visibility.Visible;
-                foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_NOFINISH])
+                foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_DNF])
                 {
                     dnfParticipants.Add(p);
                 }

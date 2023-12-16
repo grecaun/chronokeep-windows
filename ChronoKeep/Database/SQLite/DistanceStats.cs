@@ -58,7 +58,7 @@ namespace Chronokeep.Database.SQLite
                         statsDictionary[distanceId].Active = Convert.ToInt32(reader["count"]);
                         allstats.Active += statsDictionary[distanceId].Active;
                     }
-                    else if (Constants.Timing.EVENTSPECIFIC_NOFINISH == status)
+                    else if (Constants.Timing.EVENTSPECIFIC_DNF == status)
                     {
                         statsDictionary[distanceId].DNF = Convert.ToInt32(reader["count"]);
                         allstats.DNF += statsDictionary[distanceId].DNF;

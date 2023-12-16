@@ -17,8 +17,8 @@ namespace Chronokeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 135
-         * NEXT AVAILABLE   = 136
+         * HIGHEST MUTEX ID = 136
+         * NEXT AVAILABLE   = 137
          */
         private readonly int version = 53;
         readonly string connectionInfo;
@@ -1577,6 +1577,22 @@ namespace Chronokeep
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<ChipRead> output = ChipReads.GetAnnouncerUsedChipReads(eventId, GetCurrentEvent(), connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
+        public List<ChipRead> GetDNSChipReads(int eventId)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 136");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 136");
+                return new List<ChipRead>();
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            List<ChipRead> output = ChipReads.GetDNSChipReads(eventId, GetCurrentEvent(), connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;

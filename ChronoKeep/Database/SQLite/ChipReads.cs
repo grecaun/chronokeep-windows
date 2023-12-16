@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
@@ -169,6 +170,26 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB),
                 new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER),
                 new SQLiteParameter("@used", Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
+            return output;
+        }
+
+        internal static List<ChipRead> GetDNSChipReads(int eventId, Event theEvent, SQLiteConnection connection)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on (c.read_chipnumber=b.chip AND c.event_id=b.event_id) " +
+                "LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
+                "AND e.eventspecific_bib != @dummybib) " +
+                "LEFT JOIN participants p ON p.participant_id=e.participant_id WHERE c.event_id=@event AND " +
+                " read_status=@dns;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB),
+                new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER),
+                new SQLiteParameter("@dns", Constants.Timing.CHIPREAD_STATUS_DNS)
             });
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);

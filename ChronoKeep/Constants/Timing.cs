@@ -30,8 +30,9 @@ namespace Chronokeep.Constants
         public static readonly int CHIPREAD_STATUS_ANNOUNCER_SEEN = 10;
         public static readonly int CHIPREAD_STATUS_ANNOUNCER_USED = 11;
         public static readonly int CHIPREAD_STATUS_DNS = 12;
-        public static readonly int CHIPREAD_STATUS_DNF_IGNORE = 13;
-        public static readonly int CHIPREAD_STATUS_DNS_IGNORE = 14;
+        public static readonly int CHIPREAD_STATUS_AFTER_DNS = 13;
+        public static readonly int CHIPREAD_STATUS_DNF_IGNORE = 14;
+        public static readonly int CHIPREAD_STATUS_DNS_IGNORE = 15;
 
         public static readonly int TIMERESULT_STATUS_NONE = 0;
         public static readonly int TIMERESULT_STATUS_DNF = 1;
@@ -58,7 +59,8 @@ namespace Chronokeep.Constants
         public static readonly int EVENTSPECIFIC_NOSHOW = 0;
         public static readonly int EVENTSPECIFIC_STARTED = 1;
         public static readonly int EVENTSPECIFIC_FINISHED = 2;
-        public static readonly int EVENTSPECIFIC_NOFINISH = 3;
+        public static readonly int EVENTSPECIFIC_DNF = 3;
+        public static readonly int EVENTSPECIFIC_DNS = 4;
 
         public static readonly int COMMON_SEGMENTS_DISTANCEID = -1;
         public static readonly int COMMON_AGEGROUPS_DISTANCEID = -1;
@@ -115,7 +117,7 @@ namespace Chronokeep.Constants
             { EVENTSPECIFIC_NOSHOW, "DNS" },
             { EVENTSPECIFIC_STARTED, "Started" },
             { EVENTSPECIFIC_FINISHED, "Finished" },
-            { EVENTSPECIFIC_NOFINISH, "DNF" },
+            { EVENTSPECIFIC_DNF, "DNF" },
         };
 
         public static string SecondsToTime(long seconds)

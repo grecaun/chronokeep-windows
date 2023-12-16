@@ -25,5 +25,8 @@ namespace Chronokeep.Timing
 
         public Dictionary<string, (Distance, int)> linkedDistanceDictionary = new Dictionary<string, (Distance, int)>();
         public Dictionary<int, int> linkedDistanceIdentifierDictionary = new Dictionary<int, int>();
+
+        // HashSet to keep track of chips of DNS entries.
+        public HashSet<string> dnsParticipants = new HashSet<string>();
     }
 }

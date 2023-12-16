@@ -655,7 +655,7 @@ namespace Chronokeep.Timing.Routines
                     null;
                 if (part != null)
                 {
-                    part.Status = Constants.Timing.EVENTSPECIFIC_NOFINISH;
+                    part.Status = Constants.Timing.EVENTSPECIFIC_DNF;
                     updateParticipants.Add(part);
                 }
                 int occurrence = -1;

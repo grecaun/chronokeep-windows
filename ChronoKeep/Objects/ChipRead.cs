@@ -320,6 +320,10 @@ namespace Chronokeep
                 {
                     return "DNS";
                 }
+                if (Constants.Timing.CHIPREAD_STATUS_AFTER_DNS == Status)
+                {
+                    return "After DNS";
+                }
                 return "Unknown";
             }
         }
