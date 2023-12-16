@@ -1114,6 +1114,14 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
+        private void AlarmButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.TimingPage", "Alarms selected.");
+            subPage = new AlarmsPage(this, database);
+            TimingFrame.NavigationService.RemoveBackEntry();
+            TimingFrame.Content = subPage;
+        }
+
         private class AReaderBox : ListBoxItem
         {
             public ComboBox ReaderType { get; private set; }
