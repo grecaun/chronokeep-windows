@@ -56,7 +56,7 @@ namespace Chronokeep.Timing.Routines
                     // If they are, we set them to AFTER_DNS.
                     // This status can be ignored later and won't be changed to DNS_IGNORE
                     // which would keep it as a DNS entry forever.
-                    if (dictionary.dnsParticipants.Contains(dictionary.bibChipDictionary[read.Bib]))
+                    if (dictionary.dnsBibs.Contains(read.Bib))
                     {
                         if (read.Status != Constants.Timing.CHIPREAD_STATUS_DNS)
                         {
@@ -105,7 +105,7 @@ namespace Chronokeep.Timing.Routines
                     // If they are, we set them to AFTER_DNS.
                     // This status can be ignored later and won't be changed to DNS_IGNORE
                     // which would keep it as a DNS entry forever.
-                    if (dictionary.dnsParticipants.Contains(read.ChipNumber))
+                    if (dictionary.dnsChips.Contains(read.ChipNumber))
                     {
                         if (read.Status != Constants.Timing.CHIPREAD_STATUS_DNS)
                         {

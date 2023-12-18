@@ -145,11 +145,16 @@ namespace Chronokeep.Timing
                 dictionary.distanceEndDict[d.Identifier] = (dictionary.distanceStartDict[d.Identifier].Seconds + d.EndSeconds, dictionary.distanceStartDict[d.Identifier].Milliseconds);
                 dictionary.distanceEndDict[0] = (dictionary.distanceEndDict[d.Identifier].Seconds, dictionary.distanceEndDict[d.Identifier].Milliseconds);
             }
-            // Set up bibChipDictionary so we can link bibs to chips
+            // Set up bibToChipDictionary so we can link bibs to chips
             List<BibChipAssociation> bibChips = database.GetBibChips(theEvent.Identifier);
             foreach (BibChipAssociation assoc in bibChips)
             {
-                dictionary.bibChipDictionary[assoc.Bib] = assoc.Chip;
+                dictionary.chipToBibDictionary[assoc.Chip] = assoc.Bib;
+                if (!dictionary.bibToChipDictionary.ContainsKey(assoc.Bib))
+                {
+                    dictionary.bibToChipDictionary[assoc.Bib] = new List<string>();
+                }
+                dictionary.bibToChipDictionary[assoc.Bib].Add(assoc.Chip);
             }
             // Dictionary for looking up linked distances
             dictionary.linkedDistanceDictionary.Clear();
@@ -182,6 +187,24 @@ namespace Chronokeep.Timing
                     dictionary.linkedDistanceIdentifierDictionary[d.Identifier] = d.Identifier;
                 }
             }
+            RecalculateDNS(theEvent);
+        }
+
+        private void RecalculateDNS(Event theEvent)
+        {
+            // Get a list of DNS entries.
+            dictionary.dnsChips.Clear();
+            dictionary.dnsBibs.Clear();
+            List<ChipRead> dnsReads = database.GetDNSChipReads(theEvent.Identifier);
+            foreach (ChipRead read in dnsReads)
+            {
+                dictionary.dnsChips.Add(read.ChipNumber);
+                if (dictionary.chipToBibDictionary.ContainsKey(read.ChipNumber))
+                {
+                    dictionary.dnsBibs.Add(dictionary.chipToBibDictionary[read.ChipNumber]);
+                }
+            }
+            dictionary.dnsEntryCount = dnsReads.Count;
         }
 
         public void Run()
@@ -220,12 +243,10 @@ namespace Chronokeep.Timing
                         ResetDictionariesMutex.ReleaseMutex();
                     }
                     bool touched = false;
-                    // Get a list of DNS entries.
-                    dictionary.dnsParticipants.Clear();
-                    List<ChipRead> dnsReads = database.GetDNSChipReads(theEvent.Identifier);
-                    foreach (ChipRead read in dnsReads)
+                    // Check if we have new DNS entries and reset if necessary.
+                    if (database.GetDNSChipReads(theEvent.Identifier).Count > dictionary.dnsEntryCount)
                     {
-                        dictionary.dnsParticipants.Add(read.ChipNumber);
+                        RecalculateDNS(theEvent);
                     }
                     // Process chip reads first.
                     if (database.UnprocessedReadsExist(theEvent.Identifier))

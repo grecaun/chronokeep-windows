@@ -21,12 +21,16 @@ namespace Chronokeep.Timing
         public Dictionary<int, Distance> distanceDictionary = new Dictionary<int, Distance>();
 
         // Link bibs and chipreads for adding occurence to bib based dnf entry.
-        public Dictionary<int, string> bibChipDictionary = new Dictionary<int, string>();
+        // We changed the database to allow multiple chips per bib.
+        public Dictionary<int, List<string>> bibToChipDictionary = new Dictionary<int, List<string>>();
+        public Dictionary<string, int> chipToBibDictionary = new Dictionary<string, int>();
 
         public Dictionary<string, (Distance, int)> linkedDistanceDictionary = new Dictionary<string, (Distance, int)>();
         public Dictionary<int, int> linkedDistanceIdentifierDictionary = new Dictionary<int, int>();
 
-        // HashSet to keep track of chips of DNS entries.
-        public HashSet<string> dnsParticipants = new HashSet<string>();
+        // HashSet to keep track of chips & bibs of DNS entries.
+        public HashSet<string> dnsChips = new HashSet<string>();
+        public HashSet<int> dnsBibs = new HashSet<int>();
+        public int dnsEntryCount = 0;
     }
 }
