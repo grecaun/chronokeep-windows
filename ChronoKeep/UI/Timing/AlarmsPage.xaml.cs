@@ -32,8 +32,6 @@ namespace Chronokeep.UI.Timing
         TimingPage parent;
         Event theEvent;
 
-        List<Alarm> alarms = new List<Alarm>();
-
         public AlarmsPage(TimingPage parent, IDBInterface database)
         {
             InitializeComponent();
@@ -73,6 +71,7 @@ namespace Chronokeep.UI.Timing
             }
             AlarmsBox.Items.Clear();
             // alarms = database.GetAlarms(theEvent.Identifier);
+            List<Alarm> alarms = Alarm.GetAlarms();
             alarms.Sort();
             foreach (Alarm alarm in alarms)
             {
@@ -83,10 +82,10 @@ namespace Chronokeep.UI.Timing
         private void SaveAlarms()
         {
             Log.D("UI.Timing.AlarmsPage", "Saving Alarms.");
-            alarms.Clear();
+            Alarm.ClearAlarms();
             foreach (AnAlarmItem alarm in AlarmsBox.Items)
             {
-                alarms.Add(alarm.GetUpdatedAlarm());
+                Alarm.AddAlarm(alarm.GetUpdatedAlarm());
             }
             /*
              * database.SaveAlarms(alarms);
