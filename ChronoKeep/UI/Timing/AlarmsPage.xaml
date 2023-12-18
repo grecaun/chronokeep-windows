@@ -8,11 +8,44 @@
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="800"
       Title="AwardPage">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-        <StackPanel HorizontalAlignment="Center">
-            <DockPanel HorizontalAlignment="Center" Margin="0,0,0,15">
-                <Button Width="100" Name="doneButton" Content="Done" Click="DoneButton_Click" Margin="2,0,0,0" Height="35"/>
-            </DockPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="55"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="175" />
+                <ColumnDefinition Width="52" />
+                <ColumnDefinition Width="45" />
+            </Grid.ColumnDefinitions>
+            <Label Content="Bib" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="0" />
+            <Label Content="Chip" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="1" />
+            <Label Content="# of Alerts" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="2" />
+            <Label Content="Times Alerted" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="3" />
+            <Label Content="Sound" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="4" />
+            <Label Content="Enabled" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="5" />
+        </Grid>
+        <ListBox
+            Name="AlarmsBox"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Center"
+            KeyboardNavigation.TabNavigation="Continue"
+            Grid.Row="1"
+            ScrollViewer.CanContentScroll="False"
+            PreviewMouseWheel="AlarmsBox_PreviewMouseWheel"
+            Margin="0"
+            >
+        </ListBox>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2">
+            <Button Width="150" Name="addButton" Content="Add Alarm" Click="addButton_Click" Height="35" Margin="0,0,10,0"/>
+            <Button Width="150" Name="saveButton" Content="Save" Click="saveButton_Click"  Height="35" Margin="10,0,10,0"/>
+            <Button Width="150" Name="doneButton" Content="Done" Click="DoneButton_Click" Height="35" Margin="10,0,0,0"/>
         </StackPanel>
-    </ScrollViewer>
+    </Grid>
 </ui:UiPage>
