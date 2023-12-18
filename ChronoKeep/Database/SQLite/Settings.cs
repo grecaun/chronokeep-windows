@@ -20,8 +20,8 @@ namespace Chronokeep.Database.SQLite
             {
                 output = new AppSetting
                 {
-                    name = Convert.ToString(reader["setting"]),
-                    value = Convert.ToString(reader["value"])
+                    Name = Convert.ToString(reader["setting"]),
+                    Value = Convert.ToString(reader["value"])
                 };
             }
             reader.Close();
@@ -36,8 +36,8 @@ namespace Chronokeep.Database.SQLite
                 command.CommandText = "INSERT INTO settings (setting, value)" +
                     " VALUES (@name,@value)";
                 command.Parameters.AddRange(new SQLiteParameter[] {
-                new SQLiteParameter("@name", setting.name),
-                new SQLiteParameter("@value", setting.value) });
+                new SQLiteParameter("@name", setting.Name),
+                new SQLiteParameter("@value", setting.Value) });
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }

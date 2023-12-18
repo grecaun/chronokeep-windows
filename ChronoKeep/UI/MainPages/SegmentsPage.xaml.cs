@@ -199,7 +199,7 @@ namespace Chronokeep.UI.MainPages
 
         public void Closing()
         {
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
                 bool occurrence_error = false;
@@ -231,7 +231,7 @@ namespace Chronokeep.UI.MainPages
         public void AddSegment(int distanceId, int occurrence)
         {
             Log.D("UI.MainPages.SegmentsPage", "Adding segment.");
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
@@ -244,7 +244,7 @@ namespace Chronokeep.UI.MainPages
         public void CopyFromDistance(int intoDistance, int fromDistance)
         {
             Log.D("UI.MainPages.SegmentsPage", "Copying segments.");
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }

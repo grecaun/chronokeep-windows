@@ -384,7 +384,7 @@ namespace Chronokeep.UI.Timing
             {
                 Filter = "PDF (*.pdf)|*.pdf",
                 FileName = string.Format("{0} {1} Results.{2}", theEvent.YearCode, theEvent.Name, "pdf"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             List<string> divsToPrint = new List<string>();
             foreach (ListBoxItem divItem in DistancesBox.SelectedItems)

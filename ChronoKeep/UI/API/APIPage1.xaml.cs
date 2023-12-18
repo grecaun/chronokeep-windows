@@ -41,7 +41,7 @@ namespace Chronokeep.UI.API
             {
                 try
                 {
-                    api_id = Convert.ToInt32(last_api.value);
+                    api_id = Convert.ToInt32(last_api.Value);
                 }
                 catch
                 {

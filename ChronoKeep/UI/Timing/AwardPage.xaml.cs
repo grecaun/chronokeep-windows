@@ -215,7 +215,7 @@ namespace Chronokeep.UI.Timing
             {
                 Filter = "PDF (*.pdf)|*.pdf",
                 FileName = string.Format("{0} {1} Awards.{2}", theEvent.YearCode, theEvent.Name, "pdf"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             AwardOptions options = GetOptions();
             List<string> divsToPrint = new List<string>();

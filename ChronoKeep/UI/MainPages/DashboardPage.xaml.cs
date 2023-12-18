@@ -640,7 +640,7 @@ namespace Chronokeep.UI.MainPages
 
         public void Closing()
         {
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
@@ -653,7 +653,7 @@ namespace Chronokeep.UI.MainPages
             {
                 Filter = "SQLite Database File (*.sqlite)|*.sqlite",
                 FileName = string.Format("{0} {1}.{2}", theEvent.YearCode, theEvent.Name, "sqlite"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             if (saveFileDialog.ShowDialog() == true)
             {

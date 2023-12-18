@@ -170,7 +170,7 @@ namespace Chronokeep.UI.Export
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Boston.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -195,7 +195,7 @@ namespace Chronokeep.UI.Export
             {
                 Filter = "CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Ultrasignup.{2}", theEvent.YearCode, theEvent.Name, "csv"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -219,7 +219,7 @@ namespace Chronokeep.UI.Export
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} {2} Boston.{3}", theEvent.YearCode, theEvent.Name, distance, "xlsx"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -315,7 +315,7 @@ namespace Chronokeep.UI.Export
             {
                 Filter = "CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} {2} Ultrasignup.{3}", theEvent.YearCode, theEvent.Name, distance, "csv"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             if (saveFileDialog.ShowDialog() == true)
             {

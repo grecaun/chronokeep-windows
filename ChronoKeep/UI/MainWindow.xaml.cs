@@ -116,7 +116,7 @@ namespace Chronokeep.UI
             UpdateStatus();
 
             // Check for updates.
-            if (database.GetAppSetting(Constants.Settings.CHECK_UPDATES).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.CHECK_UPDATES).Value == Constants.Settings.SETTING_TRUE)
             {
                 Updates.Check.Do(this);
             }
@@ -126,7 +126,7 @@ namespace Chronokeep.UI
             if (OperatingSystem.IsWindowsVersionAtLeast(7))
             {
                 var theme = Wpf.Ui.Appearance.ThemeType.Light;
-                if ((themeColor.value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.value == Constants.Settings.THEME_DARK)
+                if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
                 {
                     theme = Wpf.Ui.Appearance.ThemeType.Dark;
                 }
@@ -140,7 +140,7 @@ namespace Chronokeep.UI
             TimingUpdater.Start();
 
             // Set the global upload interval.
-            if (!int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).value, out Globals.UploadInterval))
+            if (!int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).Value, out Globals.UploadInterval))
             {
                 DialogBox.Show("Something went wrong trying to update the upload interval.");
             }
@@ -252,7 +252,7 @@ namespace Chronokeep.UI
             {
                 return;
             }
-            if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_FALSE &&
+            if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).Value == Constants.Settings.SETTING_FALSE &&
                 (TimingController.IsRunning() || AnnouncerOpen()))
             {
                 bool AllowClose = false;

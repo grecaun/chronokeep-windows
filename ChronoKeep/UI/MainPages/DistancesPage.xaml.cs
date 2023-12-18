@@ -102,7 +102,7 @@ namespace Chronokeep.UI.MainPages
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.DistancesPage", "Add distance clicked.");
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
@@ -127,7 +127,7 @@ namespace Chronokeep.UI.MainPages
         internal void RemoveDistance(Distance distance)
         {
             Log.D("UI.MainPages.DistancesPage", "Remove distance clicked.");
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
@@ -188,7 +188,7 @@ namespace Chronokeep.UI.MainPages
 
         public void Closing()
         {
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
@@ -215,7 +215,7 @@ namespace Chronokeep.UI.MainPages
 
         public void AddSubDistance(Distance theDistance)
         {
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }

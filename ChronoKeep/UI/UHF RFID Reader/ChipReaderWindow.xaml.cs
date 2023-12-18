@@ -30,7 +30,7 @@ namespace Chronokeep
             InstantiateSerialPortList();
             reader = new NewReader(600, this);
             this.database = database;
-            eventId = Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).value);
+            eventId = Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).Value);
             EventNameHolder.Visibility = Visibility.Visible;
             eventName.Text = database.GetEvent(eventId).Name;
         }

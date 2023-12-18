@@ -791,7 +791,7 @@ namespace Chronokeep.UI.MainPages
             {
                 Filter = "HTML file (*.htm,*.html)|*.htm;*.html",
                 FileName = string.Format("{0} {1} Web.{2}", theEvent.YearCode, theEvent.Name, "html"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -948,7 +948,7 @@ namespace Chronokeep.UI.MainPages
             {
                 Filter = "CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Log.{2}", theEvent.YearCode, theEvent.Name, "csv"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             if (saveFileDialog.ShowDialog() == true)
             {

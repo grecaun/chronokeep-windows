@@ -121,7 +121,7 @@ namespace Chronokeep.UI.Export
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Results.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             if (saveFileDialog.ShowDialog() == true)
             {

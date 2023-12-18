@@ -286,7 +286,7 @@ namespace Chronokeep
             {
                 return null;
             }
-            return GetEvent(Convert.ToInt32(CurEvent.value));
+            return GetEvent(Convert.ToInt32(CurEvent.Value));
         }
 
         public Event GetEvent(int id)
@@ -1622,8 +1622,8 @@ namespace Chronokeep
         {
             AppSetting setting = new AppSetting()
             {
-                name = n,
-                value = v
+                Name = n,
+                Value = v
             };
             SetAppSetting(setting);
         }

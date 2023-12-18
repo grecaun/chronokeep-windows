@@ -41,7 +41,7 @@ namespace Chronokeep.UI.MainPages
         private void Distances_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Log.D("UI.MainPages.AgeGroupsPage", "Distance changed.");
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
@@ -243,7 +243,7 @@ namespace Chronokeep.UI.MainPages
 
         public void Closing()
         {
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }

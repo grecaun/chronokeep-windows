@@ -224,7 +224,7 @@ namespace Chronokeep.UI.MainPages
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Entrants.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -360,7 +360,7 @@ namespace Chronokeep.UI.MainPages
 
         public void Closing()
         {
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }

@@ -18,6 +18,8 @@ using Microsoft.Win32;
 using System.Runtime.InteropServices;
 using Chronokeep.UI.UIObjects;
 using Chronokeep.Helpers;
+using System.Media;
+using System.Resources;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -90,7 +92,7 @@ namespace Chronokeep.UI.MainPages
         public void UpdateView()
         {
             AppSetting setting = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
-            if (setting.value == Constants.Settings.TIMING_IPICO)
+            if (setting.Value == Constants.Settings.TIMING_IPICO)
             {
                 DefaultTimingBox.SelectedIndex = 1;
             }
@@ -98,20 +100,20 @@ namespace Chronokeep.UI.MainPages
             {
                 DefaultTimingBox.SelectedIndex = 0;
             }
-            CompanyNameBox.Text = database.GetAppSetting(Constants.Settings.COMPANY_NAME).value;
-            ContactEmailBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).value;
-            DefaultExportDirBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value;
-            UpdatePage.IsChecked = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE;
-            ExitNoPrompt.IsChecked = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).value == Constants.Settings.SETTING_TRUE;
-            CheckUpdates.IsChecked = database.GetAppSetting(Constants.Settings.CHECK_UPDATES).value == Constants.Settings.SETTING_TRUE;
+            CompanyNameBox.Text = database.GetAppSetting(Constants.Settings.COMPANY_NAME).Value;
+            ContactEmailBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).Value;
+            DefaultExportDirBox.Text = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value;
+            UpdatePage.IsChecked = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE;
+            ExitNoPrompt.IsChecked = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).Value == Constants.Settings.SETTING_TRUE;
+            CheckUpdates.IsChecked = database.GetAppSetting(Constants.Settings.CHECK_UPDATES).Value == Constants.Settings.SETTING_TRUE;
             AppSetting themeSetting = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
-            Log.D("UI.MainPages.SettingsPage", "Current theme set to " + themeSetting.value + " Theme Offset is " + ThemeOffset);
-            if (themeSetting.value == Constants.Settings.THEME_SYSTEM)
+            Log.D("UI.MainPages.SettingsPage", "Current theme set to " + themeSetting.Value + " Theme Offset is " + ThemeOffset);
+            if (themeSetting.Value == Constants.Settings.THEME_SYSTEM)
             {
                 Log.D("UI.MainPages.SettingsPage", "Setting selected theme to System.");
                 ThemeColorBox.SelectedIndex = 0;
             }
-            else if (themeSetting.value == Constants.Settings.THEME_LIGHT)
+            else if (themeSetting.Value == Constants.Settings.THEME_LIGHT)
             {
                 Log.D("UI.MainPages.SettingsPage", "Setting selected theme to Light. " + (ThemeOffset + 1));
                 ThemeColorBox.SelectedIndex = ThemeOffset + 1;
@@ -121,14 +123,19 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.SettingsPage", "Setting selected theme to Dark. " + (ThemeOffset + 2));
                 ThemeColorBox.SelectedIndex = ThemeOffset + 2;
             }
-            int uploadInt = -1;
-            if (int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).value, out uploadInt) && uploadInt > 0 && uploadInt < 60) {
+            int uploadInt;
+            if (int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).Value, out uploadInt) && uploadInt > 0 && uploadInt < 60) {
                 UploadIntervalBox.SelectedIndex = uploadInt - 1;
             }
-            int announcerWindow = -1;
-            if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).value, out announcerWindow) && announcerWindow >= 15 && announcerWindow <= 180)
+            int announcerWindow;
+            if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).Value, out announcerWindow) && announcerWindow >= 15 && announcerWindow <= 180)
             {
                 AnnouncerWindowBox.SelectedIndex = (announcerWindow - 15) / 5;
+            }
+            int alarm = 1;
+            if (int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND).Value, out alarm))
+            {
+                AlarmSoundBox.SelectedIndex = alarm - 1;
             }
         }
 
@@ -187,6 +194,13 @@ namespace Chronokeep.UI.MainPages
         private void Save_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.SettingsPage", "Save button clicked.");
+            SaveSettings();
+            UpdateView();
+        }
+
+        private void SaveSettings()
+        {
+            Log.D("UI.MainPages.SettingsPage", "Saving.");
             database.SetAppSetting(Constants.Settings.COMPANY_NAME, CompanyNameBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.CONTACT_EMAIL, ContactEmailBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM, ((ComboBoxItem)DefaultTimingBox.SelectedItem).Uid);
@@ -196,6 +210,7 @@ namespace Chronokeep.UI.MainPages
             database.SetAppSetting(Constants.Settings.EXIT_NO_PROMPT, ExitNoPrompt.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.CHECK_UPDATES, CheckUpdates.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.UPLOAD_INTERVAL, ((ComboBoxItem)UploadIntervalBox.SelectedItem).Uid);
+            database.SetAppSetting(Constants.Settings.ALARM_SOUND, ((ComboBoxItem)AlarmSoundBox.SelectedItem).Uid);
             if (!int.TryParse(((ComboBoxItem)UploadIntervalBox.SelectedItem).Uid, out Globals.UploadInterval))
             {
                 DialogBox.Show("Something went wrong trying to update the upload interval.");
@@ -205,7 +220,6 @@ namespace Chronokeep.UI.MainPages
             {
                 DialogBox.Show("Something went wrong trying to update the announcer window.");
             }
-            UpdateView();
         }
 
         private void ChangeExport_Click(object sender, RoutedEventArgs e)
@@ -251,6 +265,11 @@ namespace Chronokeep.UI.MainPages
 
         public void Closing()
         {
+            Log.D("UI.MainPages.SettingsPage", "Closing page.");
+            if (UpdatePage.IsChecked == true)
+            {
+                SaveSettings();
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
@@ -266,6 +285,43 @@ namespace Chronokeep.UI.MainPages
                     theme = Wpf.Ui.Appearance.ThemeType.Dark;
                 }
                 Wpf.Ui.Appearance.Theme.Apply(theme, Wpf.Ui.Appearance.BackgroundType.Mica, true, true);
+            }
+        }
+
+        private void PlayBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.SettingsPage", "Play alarm sound clicked.");
+            string soundFile = Environment.CurrentDirectory;
+            switch (AlarmSoundBox.SelectedIndex)
+            {
+                case 0:
+                    soundFile += "\\Sounds\\alert-1.wav";
+                    break;
+                case 1:
+                    soundFile += "\\Sounds\\alert-2.wav";
+                    break;
+                case 2:
+                    soundFile += "\\Sounds\\alert-3.wav";
+                    break;
+                case 3:
+                    soundFile += "\\Sounds\\alert-4.wav";
+                    break;
+                case 4:
+                    soundFile += "\\Sounds\\alert-5.wav";
+                    break;
+                default:
+                    DialogBox.Show("Sound not selected.");
+                    return;
+            }
+            Log.D("UI.MainPages.SettingsPage", "Path we're trying to play: " + soundFile);
+            try
+            {
+                SoundPlayer player = new SoundPlayer(soundFile);
+                player.Play();
+            }
+            catch (Exception ex)
+            {
+                DialogBox.Show("Error trying to play sound. " + ex.Message);
             }
         }
     }

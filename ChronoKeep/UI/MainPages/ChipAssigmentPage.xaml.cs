@@ -37,11 +37,11 @@ namespace Chronokeep.UI.MainPages
             this.mWindow = mWindow;
             this.database = database;
             chipType = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE);
-            if (chipType.value == Constants.Settings.CHIP_TYPE_DEC)
+            if (chipType.Value == Constants.Settings.CHIP_TYPE_DEC)
             {
                 ChipTypeBox.SelectedIndex = 0;
             }
-            else if (chipType.value == Constants.Settings.CHIP_TYPE_HEX)
+            else if (chipType.Value == Constants.Settings.CHIP_TYPE_HEX)
             {
                 ChipTypeBox.SelectedIndex = 1;
             }
@@ -65,7 +65,7 @@ namespace Chronokeep.UI.MainPages
             long maxChip = 0;
             long chip = -1;
             // check if hex before using a convert
-            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
                 foreach (BibChipAssociation b in list)
                 {
@@ -73,7 +73,7 @@ namespace Chronokeep.UI.MainPages
                     maxChip = chip > maxChip ? chip : maxChip;
                 }
             }
-            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
             {
                 foreach (BibChipAssociation b in list)
                 {
@@ -82,12 +82,12 @@ namespace Chronokeep.UI.MainPages
                 }
             }
             maxChip += 1;
-            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
                 SingleChipBox.Text = maxChip.ToString();
                 RangeStartChipBox.Text = maxChip.ToString();
             }
-            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
             {
                 SingleChipBox.Text = maxChip.ToString("X");
                 RangeStartChipBox.Text = maxChip.ToString("X");
@@ -127,11 +127,11 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.ChipAssignmentPage", "Save Single clicked.");
             long chip = -1, bib = -1;
             long.TryParse(SingleBibBox.Text, out bib);
-            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
                 long.TryParse(SingleChipBox.Text, out chip);
             }
-            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
             {
                 long.TryParse(SingleChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out chip);
             }
@@ -146,7 +146,7 @@ namespace Chronokeep.UI.MainPages
                 new BibChipAssociation()
                 {
                     Bib = (int) bib,
-                    Chip = Constants.Settings.CHIP_TYPE_DEC == chipType.value ? chip.ToString() : chip.ToString("X")
+                    Chip = Constants.Settings.CHIP_TYPE_DEC == chipType.Value ? chip.ToString() : chip.ToString("X")
                 }
             };
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
@@ -162,12 +162,12 @@ namespace Chronokeep.UI.MainPages
             long startChip = -1, endChip = -1, startBib = -1, endBib = -1;
             long.TryParse(RangeStartBibBox.Text, out startBib);
             long.TryParse(RangeEndBibBox.Text, out endBib);
-            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
                 long.TryParse(RangeStartChipBox.Text, out startChip);
                 long.TryParse(RangeEndChipLabel.Text.ToString(), out endChip);
             }
-            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
             {
                 long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip);
                 long.TryParse(RangeEndChipLabel.Text.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip);
@@ -183,7 +183,7 @@ namespace Chronokeep.UI.MainPages
             {
                 bibChips.Add(new BibChipAssociation() {
                     Bib = (int)bib,
-                    Chip = Constants.Settings.CHIP_TYPE_HEX == chipType.value ? tag.ToString("X") : tag.ToString()
+                    Chip = Constants.Settings.CHIP_TYPE_HEX == chipType.Value ? tag.ToString("X") : tag.ToString()
                 });
             }
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
@@ -299,22 +299,22 @@ namespace Chronokeep.UI.MainPages
             long startBib = -1, endBib = -1, startChip = -1, endChip = -1;
             long.TryParse(RangeStartBibBox.Text, out startBib);
             long.TryParse(RangeEndBibBox.Text, out endBib);
-            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
                 long.TryParse(RangeStartChipBox.Text, out startChip);
             }
-            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
             {
                 long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip);
             }
             endChip = endBib - startBib + startChip;
             if (startBib > -1 && endBib > -1 && startChip > -1)
             {
-                if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+                if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
                 {
                     RangeEndChipLabel.Text = endChip.ToString();
                 }
-                else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+                else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
                 {
                     RangeEndChipLabel.Text = endChip.ToString("X");
                 }
@@ -344,7 +344,7 @@ namespace Chronokeep.UI.MainPages
             {
                 Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
                 FileName = string.Format("{0} {1} Chips.{2}", theEvent.YearCode, theEvent.Name, "xlsx"),
-                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).value
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
             };
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -398,7 +398,7 @@ namespace Chronokeep.UI.MainPages
 
         public void Closing()
         {
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).value == Constants.Settings.SETTING_TRUE)
+            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
@@ -429,11 +429,11 @@ namespace Chronokeep.UI.MainPages
 
         private void ChipValidation(object sender, TextCompositionEventArgs e)
         {
-            if (Constants.Settings.CHIP_TYPE_DEC == chipType.value)
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
                 e.Handled = allowedChars.IsMatch(e.Text);
             }
-            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.value)
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
             {
                 e.Handled = allowedHexChars.IsMatch(e.Text);
             }

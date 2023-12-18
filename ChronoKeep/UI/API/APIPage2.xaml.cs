@@ -79,7 +79,7 @@ namespace Chronokeep.UI.API
             }
             nameBox.Text = theEvent.Name;
             slugBox.Text = theEvent.Name.Replace(' ', '-').ToLower();
-            contactBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).value;
+            contactBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).Value;
             eventPanel.Visibility = Visibility.Visible;
             holdingLabel.Visibility = Visibility.Hidden;
         }
