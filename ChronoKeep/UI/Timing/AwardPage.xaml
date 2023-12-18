@@ -8,70 +8,76 @@
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="800"
       Title="AwardPage">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-        <StackPanel HorizontalAlignment="Center">
-            <TextBlock Text="Distances" FontSize="16" HorizontalAlignment="Center" />
-            <ListBox Name="DistancesBox" Height="Auto" FontSize="12" SelectionMode="Extended">
-                <ListBoxItem Content="All" IsSelected="True"/>
-            </ListBox>
-            <TextBlock Text="Overall" FontSize="16" HorizontalAlignment="Center" Margin="0,5"/>
-            <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
-                <CheckBox Content="Print" FontSize="12" Name="overallYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0"/>
-                <TextBox Text="3" Name="overallNumberParticipants" Width="40" Height="35" PreviewTextInput="IsNumber" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
-            </DockPanel>
-            <CheckBox Content="Exclude winners from Age Group awards." Name="overallExcludeAG" IsChecked="False" Margin="0,0,0,5"/>
-            <CheckBox Content="Exclude winners from Custom awards." Name="overallExcludeCustom" IsChecked="False" Margin="0,0,0,5"/>
-            <TextBlock Text="Age Groups" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-            <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
-                <CheckBox Content="Print" FontSize="12" Name="agYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0"/>
-                <TextBox Text="3" Name="agNumberParticipants" Width="40" Height="35" PreviewTextInput="IsNumber" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
-            </DockPanel>
-            <CheckBox Content="Exclude winners from Custom awards." Name="agExcludeCustom" IsChecked="False" Margin="0,0,0,5"/>
-            <TextBlock Text="Custom" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-            <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
-                <CheckBox Content="Print" FontSize="12" Name="customYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0"/>
-                <TextBox Text="3" Name="customNumberParticipants" Width="40" Height="35" PreviewTextInput="IsNumber" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
-            </DockPanel>
-            <Grid Margin="0,10,0,5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Margin="4" Text="Start Age" TextAlignment="Center"/>
-                <TextBlock Grid.Column="1" Margin="4" Text="End Age" TextAlignment="Center"/>
-                <TextBlock Grid.Column="2" Margin="4" Text="Name" TextAlignment="Center"/>
-            </Grid>
-            <ListView Name="customGroupsListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Extended" FontSize="12" Margin="0,0,0,5">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Margin="4" Text="{Binding StartAge}" TextAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Margin="4" Text="{Binding EndAge}" TextAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Margin="4" Text="{Binding CustomName}" TextAlignment="Center"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <DockPanel HorizontalAlignment="Center" Margin="0,0,0,5">
-                <TextBox Width="100" x:Name="startCustom" PreviewTextInput="IsNumber" Margin="0,0,2,0" HorizontalContentAlignment="Center" />
-                <TextBox Width="100" x:Name="endCustom" PreviewTextInput="IsNumber" Margin="2,0" HorizontalContentAlignment="Center" />
-                <TextBox Width="100" x:Name="customNameBox" Margin="2,0,0,0" HorizontalContentAlignment="Center" />
-            </DockPanel>
-            <DockPanel HorizontalAlignment="Center" Margin="0,0,0,15">
-                <Button Width="100" Name="addCustom" Content="Add" Click="AddCustom_Click" Margin="0,0,2,0" Height="35"/>
-                <Button Width="100" Name="deleteCustom" Content="Delete" Click="DeleteCustom_Click" Margin="2,0,0,0" Height="35"/>
-            </DockPanel>
-            <DockPanel HorizontalAlignment="Center" Margin="0,0,0,15">
-                <Button Width="100" Name="printButton" Content="Print" Click="PrintButton_Click" Margin="0,0,2,0" Height="35"/>
-                <Button Width="100" Name="saveButton" Content="Save" Click="SaveButton_Click" Margin="2,0,2,0" Height="35"/>
-                <Button Width="100" Name="doneButton" Content="Done" Click="DoneButton_Click" Margin="2,0,0,0" Height="35"/>
-            </DockPanel>
-        </StackPanel>
-    </ScrollViewer>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="55" />
+        </Grid.RowDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Grid.Row="0">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="Distances" FontSize="16" HorizontalAlignment="Center" />
+                <ListBox Name="DistancesBox" Height="Auto" FontSize="12" SelectionMode="Extended">
+                    <ListBoxItem Content="All" IsSelected="True"/>
+                </ListBox>
+                <TextBlock Text="Overall" FontSize="16" HorizontalAlignment="Center" Margin="0,5"/>
+                <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
+                    <CheckBox Content="Print" FontSize="12" Name="overallYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0"/>
+                    <TextBox Text="3" Name="overallNumberParticipants" Width="40" Height="35" PreviewTextInput="IsNumber" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
+                </DockPanel>
+                <CheckBox Content="Exclude winners from Age Group awards." Name="overallExcludeAG" IsChecked="False" Margin="0,0,0,5"/>
+                <CheckBox Content="Exclude winners from Custom awards." Name="overallExcludeCustom" IsChecked="False" Margin="0,0,0,5"/>
+                <TextBlock Text="Age Groups" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
+                    <CheckBox Content="Print" FontSize="12" Name="agYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0"/>
+                    <TextBox Text="3" Name="agNumberParticipants" Width="40" Height="35" PreviewTextInput="IsNumber" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
+                </DockPanel>
+                <CheckBox Content="Exclude winners from Custom awards." Name="agExcludeCustom" IsChecked="False" Margin="0,0,0,5"/>
+                <TextBlock Text="Custom" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
+                    <CheckBox Content="Print" FontSize="12" Name="customYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0"/>
+                    <TextBox Text="3" Name="customNumberParticipants" Width="40" Height="35" PreviewTextInput="IsNumber" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
+                </DockPanel>
+                <Grid Margin="0,10,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Margin="4" Text="Start Age" TextAlignment="Center"/>
+                    <TextBlock Grid.Column="1" Margin="4" Text="End Age" TextAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Margin="4" Text="Name" TextAlignment="Center"/>
+                </Grid>
+                <ListView Name="customGroupsListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Extended" FontSize="12" Margin="0,0,0,5">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Margin="4" Text="{Binding StartAge}" TextAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Margin="4" Text="{Binding EndAge}" TextAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Margin="4" Text="{Binding CustomName}" TextAlignment="Center"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <DockPanel HorizontalAlignment="Center" Margin="0,0,0,5">
+                    <TextBox Width="100" x:Name="startCustom" PreviewTextInput="IsNumber" Margin="0,0,2,0" HorizontalContentAlignment="Center" />
+                    <TextBox Width="100" x:Name="endCustom" PreviewTextInput="IsNumber" Margin="2,0" HorizontalContentAlignment="Center" />
+                    <TextBox Width="100" x:Name="customNameBox" Margin="2,0,0,0" HorizontalContentAlignment="Center" />
+                </DockPanel>
+                <DockPanel HorizontalAlignment="Center" Margin="0,0,0,15">
+                    <Button Width="100" Name="addCustom" Content="Add" Click="AddCustom_Click" Margin="0,0,2,0" Height="35"/>
+                    <Button Width="100" Name="deleteCustom" Content="Delete" Click="DeleteCustom_Click" Margin="2,0,0,0" Height="35"/>
+                </DockPanel>
+            </StackPanel>
+        </ScrollViewer>
+        <DockPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">
+            <Button Width="100" Name="printButton" Content="Print" Click="PrintButton_Click" Margin="0,0,2,0" Height="35"/>
+            <Button Width="100" Name="saveButton" Content="Save" Click="SaveButton_Click" Margin="2,0,2,0" Height="35"/>
+            <Button Width="100" Name="doneButton" Content="Done" Click="DoneButton_Click" Margin="2,0,0,0" Height="35"/>
+        </DockPanel>
+    </Grid>
 </ui:UiPage>
