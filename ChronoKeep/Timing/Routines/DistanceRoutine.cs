@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +10,7 @@ namespace Chronokeep.Timing.Routines
 {
     internal class DistanceRoutine
     {
-        public static List<TimeResult> ProcessRace(Event theEvent, IDBInterface database, TimingDictionary dictionary)
+        public static List<TimeResult> ProcessRace(Event theEvent, IDBInterface database, TimingDictionary dictionary, IMainWindow window)
         {
             Log.D("Timing.Routines.DistanceRoutine", "Processing chip reads for a distance based event.");
             // Check if there's anything to process.
@@ -47,8 +49,32 @@ namespace Chronokeep.Timing.Routines
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
             allChipReads.Sort();
             List<ChipRead> setUnknown = new List<ChipRead>();
+
+            // Get some variables to check if we need to sound an alarm.
+            // Get a time value to check to ensure the chip read isn't too far in the past.
+            DateTime before = DateTime.Now.AddMinutes(-5);
+            (Dictionary<int, Alarm> bibAlarms, Dictionary<string, Alarm> chipAlarms) = Alarm.GetAlarmDictionarys();
+
             foreach (ChipRead read in allChipReads)
             {
+                // Check to set off an alarm.
+                if (read.Time > before)
+                {
+                    // Bib set on the read, alarm exists and it hasn't went off.
+                    if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB
+                        && bibAlarms.ContainsKey(read.Bib)
+                        && bibAlarms[read.Bib].Enabled)
+                    {
+                        window.NotifyAlarm(read.Bib, "");
+                    }
+                    // Bib not set, chip is set, alarm exists and it hasn't went off.
+                    else if (read.ChipNumber != Constants.Timing.CHIPREAD_DUMMYCHIP
+                        && chipAlarms.ContainsKey(read.ChipNumber)
+                        && chipAlarms[read.ChipNumber].Enabled)
+                    {
+                        window.NotifyAlarm(-1, read.ChipNumber);
+                    }
+                }
                 if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
                     // Start by checking if we've got a record of the person not starting.

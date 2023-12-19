@@ -97,6 +97,10 @@ namespace Chronokeep.UI.Timing
             Log.D("UI.Timing.AlarmsPage", "Closing Page.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
+                if (AlarmErrors(true))
+                {
+                    return;
+                }
                 SaveAlarms();
             }
         }
@@ -106,6 +110,10 @@ namespace Chronokeep.UI.Timing
         public void Keyboard_Ctrl_S()
         {
             Log.D("UI.Timing.AlarmsPage", "Ctrl+S pressed.");
+            if (AlarmErrors())
+            {
+                return;
+            }
             SaveAlarms();
         }
 
@@ -133,21 +141,73 @@ namespace Chronokeep.UI.Timing
         private void RemoveAlarm(AnAlarmItem alarm)
         {
             AlarmsBox.Items.Remove(alarm);
-            SaveAlarms();
-            UpdateView();
+        }
+
+        private bool AlarmErrors(bool silent = false)
+        {
+            // Verify there are no repeating bibs/chips.
+            HashSet<int> bibs = new HashSet<int>();
+            HashSet<string> chips = new HashSet<string>();
+            bool notSetExists = false;
+            foreach (AnAlarmItem alarm in AlarmsBox.Items)
+            {
+                Alarm al = alarm.GetUpdatedAlarm();
+                if (al.Bib >= 0 && bibs.Contains(al.Bib))
+                {
+                    if (!silent)
+                    {
+                        DialogBox.Show("Unable to continue, multiples of the same bib found.");
+                    }
+                    return true;
+                }
+                else
+                {
+                    bibs.Add(al.Bib);
+                }
+                if (al.Chip.Length > 0 && chips.Contains(al.Chip))
+                {
+                    if (!silent)
+                    {
+                        DialogBox.Show("Unable to continue, multiples of the same chip found.");
+                    }
+                    return true;
+                }
+                else
+                {
+                    chips.Add(al.Chip);
+                }
+                if (al.Bib < 0 && al.Chip.Length == 0)
+                {
+                    if (notSetExists)
+                    {
+                        if (!silent)
+                        {
+                            DialogBox.Show("Only one alarm without a bib & chip allowed at a time.");
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        notSetExists = true;
+                    }
+                }
+            }
+            return false;
         }
 
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AlarmsPage", "Add button clicked.");
             AlarmsBox.Items.Add(new AnAlarmItem(this, new Alarm()));
-            SaveAlarms();
-            UpdateView();
         }
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AlarmsPage", "Save button clicked.");
+            if (AlarmErrors())
+            {
+                return;
+            }
             SaveAlarms();
             UpdateView();
         }

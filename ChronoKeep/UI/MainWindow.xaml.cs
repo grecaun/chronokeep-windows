@@ -22,6 +22,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using Chronokeep.UI.UIObjects;
 using Chronokeep.Helpers;
+using Chronokeep.UI.Timing;
+using System.Media;
 
 namespace Chronokeep.UI
 {
@@ -756,6 +758,62 @@ namespace Chronokeep.UI
                 return true;
             }
             return false;
+        }
+
+        public void NotifyAlarm(int Bib, string Chip)
+        {
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            {
+                Alarm alarm = null;
+                if (Bib >= 0)
+                {
+                    alarm = Alarm.GetAlarmByBib(Bib);
+                }
+                else if (Chip.Length > 0)
+                {
+                    alarm = Alarm.GetAlarmByChip(Chip);
+                }
+                if (alarm != null && alarm.Enabled)
+                {
+                    Alarm.RemoveAlarm(alarm);
+                    alarm.Enabled = false;
+                    Alarm.AddAlarm(alarm);
+                    string soundFile = Environment.CurrentDirectory;
+                    int sound = alarm.AlarmSound;
+                    // Any value not between 1-5 (inclusive both) is defined to be the default sound.
+                    if (sound < 1 || sound > 5)
+                    {
+                        // If for some reason we can't parse the value into integer, set it to 1.
+                        if (!int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND).Value, out sound))
+                        {
+                            sound = 1;
+                        }
+                    }
+                    switch (sound)
+                    {
+                        case 2:
+                            soundFile += "\\Sounds\\alert-2.wav";
+                            break;
+                        case 3:
+                            soundFile += "\\Sounds\\alert-3.wav";
+                            break;
+                        case 4:
+                            soundFile += "\\Sounds\\alert-4.wav";
+                            break;
+                        case 5:
+                            soundFile += "\\Sounds\\alert-5.wav";
+                            break;
+                        default:
+                            soundFile += "\\Sounds\\alert-1.wav";
+                            break;
+                    }
+                    new SoundPlayer(soundFile).Play();
+                }
+                if (page is TimingPage)
+                {
+                    page.UpdateView();
+                }
+            }));
         }
     }
 }

@@ -33,6 +33,7 @@ namespace Chronokeep.Interfaces
         bool InDidNotStartMode();
         bool StartDidNotStartMode();
         bool StopDidNotStartMode();
+        void NotifyAlarm(int Bib, string Chip);
 
         // Announcer related calls.
         bool AnnouncerConnected();

@@ -316,8 +316,7 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.SettingsPage", "Path we're trying to play: " + soundFile);
             try
             {
-                SoundPlayer player = new SoundPlayer(soundFile);
-                player.Play();
+                new SoundPlayer(soundFile).Play();
             }
             catch (Exception ex)
             {

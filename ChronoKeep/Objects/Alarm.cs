@@ -11,6 +11,8 @@ namespace Chronokeep.Objects
     {
         private static Mutex listMtx = new Mutex();
         private static List<Alarm> alarms = new List<Alarm>();
+        private static Dictionary<int, Alarm> bibAlarms = new Dictionary<int, Alarm>();
+        private static Dictionary<string, Alarm> chipAlarms = new Dictionary<string, Alarm>();
 
         public int Identifier { get; set; }
         public int Bib { get; set; } = -1;
@@ -29,12 +31,32 @@ namespace Chronokeep.Objects
             return output;
         }
 
+        public static (Dictionary<int, Alarm>, Dictionary<string, Alarm>) GetAlarmDictionarys()
+        {
+            Dictionary<int, Alarm> outBib = new Dictionary<int, Alarm>();
+            Dictionary<string, Alarm> outChip = new Dictionary<string, Alarm>();
+            if (listMtx.WaitOne(3000))
+            {
+                outBib = new Dictionary<int, Alarm>(bibAlarms);
+                outChip = new Dictionary<string, Alarm>(chipAlarms);
+            }
+            return (outBib, outChip);
+        }
+
         public static bool RemoveAlarm(Alarm alarm)
         {
             bool output = false;
             if (listMtx.WaitOne(3000))
             {
                 alarms.Remove(alarm);
+                if (bibAlarms.ContainsKey(alarm.Bib))
+                {
+                    bibAlarms.Remove(alarm.Bib);
+                }
+                if (chipAlarms.ContainsKey(alarm.Chip))
+                {
+                    chipAlarms.Remove(alarm.Chip);
+                }
                 output = true;
             }
             return output;
@@ -46,6 +68,8 @@ namespace Chronokeep.Objects
             if (listMtx.WaitOne(3000))
             {
                 alarms.Clear();
+                bibAlarms.Clear();
+                chipAlarms.Clear();
                 output = true;
             }
             return output;
@@ -57,6 +81,14 @@ namespace Chronokeep.Objects
             if (listMtx.WaitOne(3000))
             {
                 alarms.Add(alarm);
+                if (alarm.Bib >= 0)
+                {
+                    bibAlarms[alarm.Bib] = alarm;
+                }
+                if (alarm.Chip.Length > 0)
+                {
+                    chipAlarms[alarm.Chip] = alarm;
+                }
                 output = true;
             }
             return output;
@@ -67,8 +99,45 @@ namespace Chronokeep.Objects
             bool output = false;
             if (listMtx.WaitOne(3000))
             {
-                alarms.AddRange(newAlarms);
+                foreach (Alarm alarm in newAlarms)
+                {
+                    alarms.Add(alarm);
+                    if (alarm.Bib >= 0)
+                    {
+                        bibAlarms.Add(alarm.Bib, alarm);
+                    }
+                    if (alarm.Chip.Length > 0)
+                    {
+                        chipAlarms.Add(alarm.Chip, alarm);
+                    }
+                }
                 output = true;
+            }
+            return output;
+        }
+
+        public static Alarm GetAlarmByBib(int bib)
+        {
+            Alarm output = null;
+            if (listMtx.WaitOne(3000))
+            {
+                if (bibAlarms.ContainsKey(bib))
+                {
+                    output = bibAlarms[bib];
+                }
+            }
+            return output;
+        }
+
+        public static Alarm GetAlarmByChip(string chip)
+        {
+            Alarm output = null;
+            if (listMtx.WaitOne(3000))
+            {
+                if (chipAlarms.ContainsKey(chip))
+                {
+                    output = chipAlarms[chip];
+                }
             }
             return output;
         }

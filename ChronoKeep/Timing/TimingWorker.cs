@@ -251,28 +251,32 @@ namespace Chronokeep.Timing
                     // Process chip reads first.
                     if (database.UnprocessedReadsExist(theEvent.Identifier))
                     {
+#if DEBUG
                         DateTime start = DateTime.Now;
+#endif
                         // If RACETYPE is DISTANCE
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                         {
-                            _ = Routines.DistanceRoutine.ProcessRace(theEvent, database, dictionary);
+                            _ = Routines.DistanceRoutine.ProcessRace(theEvent, database, dictionary, window);
                             touched = true;
                         }
                         // Else RACETYPE is TIME
                         else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                         {
-                            _ = Routines.TimeRoutine.ProcessRace(theEvent, database, dictionary);
+                            _ = Routines.TimeRoutine.ProcessRace(theEvent, database, dictionary, window);
                             touched = true;
                         }
                         // Else if RACETYPE if BACKYARD_ULTRA
                         else if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
                         {
-                            _ = Routines.BackyardUltraRoutine.ProcessRace(theEvent, database, dictionary);
+                            _ = Routines.BackyardUltraRoutine.ProcessRace(theEvent, database, dictionary, window);
                             touched = true;
                         }
+#if DEBUG
                         DateTime end = DateTime.Now;
                         TimeSpan time = end - start;
                         Log.D("Timing.TimingWorker", string.Format("Time to process all chip reads was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
+#endif
                     }
                     // Now process Results that aren't ranked.
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
