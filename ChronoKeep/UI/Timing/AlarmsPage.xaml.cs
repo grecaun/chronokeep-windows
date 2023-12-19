@@ -154,13 +154,11 @@ namespace Chronokeep.UI.Timing
 
         private class AnAlarmItem : ListBoxItem
         {
-            public TextBox BibBox;
-            public TextBox ChipBox;
-            public TextBox AlertCountBox;
-            public Label AlertedCountLabel;
+            public Wpf.Ui.Controls.TextBox BibBox;
+            public Wpf.Ui.Controls.TextBox ChipBox;
             public ComboBox AlarmSoundBox;
-            public System.Windows.Controls.CheckBox EnabledBox;
-            public Button RemoveButton;
+            public Wpf.Ui.Controls.ToggleSwitch EnabledBox;
+            public Wpf.Ui.Controls.Button RemoveButton;
 
             readonly AlarmsPage page;
             private Alarm theAlarm;
@@ -181,13 +179,11 @@ namespace Chronokeep.UI.Timing
                 this.IsTabStop = false;
 
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100) });
+                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120) });
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(175) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(52) });
+                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(55) });
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(45) });
-                BibBox = new TextBox()
+                BibBox = new Wpf.Ui.Controls.TextBox()
                 {
                     Text = alarm.Bib < 0 ? "" : alarm.Bib.ToString(),
                     FontSize = 16,
@@ -198,7 +194,7 @@ namespace Chronokeep.UI.Timing
                 BibBox.PreviewTextInput += new TextCompositionEventHandler(NumberValidation);
                 theGrid.Children.Add(BibBox);
                 Grid.SetColumn(BibBox, 0);
-                ChipBox = new TextBox()
+                ChipBox = new Wpf.Ui.Controls.TextBox()
                 {
                     Text = alarm.Chip,
                     FontSize = 16,
@@ -208,27 +204,6 @@ namespace Chronokeep.UI.Timing
                 ChipBox.GotFocus += new RoutedEventHandler(SelectAll);
                 theGrid.Children.Add(ChipBox);
                 Grid.SetColumn(ChipBox, 1);
-                AlertCountBox = new TextBox()
-                {
-                    Text = alarm.AlertCount < 1 ? "1" : alarm.AlertCount.ToString(),
-                    FontSize = 16,
-                    Margin = new Thickness(2),
-                    VerticalAlignment = VerticalAlignment.Center,
-                };
-                AlertCountBox.GotFocus += new RoutedEventHandler(SelectAll);
-                AlertCountBox.PreviewTextInput += new TextCompositionEventHandler(NumberValidation);
-                theGrid.Children.Add(AlertCountBox);
-                Grid.SetColumn(AlertCountBox, 2);
-                AlertedCountLabel = new Label()
-                {
-                    Content = alarm.AlertedCount.ToString(),
-                    FontSize = 16,
-                    Margin = new Thickness(2),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                };
-                theGrid.Children.Add(AlertedCountLabel);
-                Grid.SetColumn(AlertedCountLabel, 3);
                 AlarmSoundBox = new ComboBox()
                 {
                     FontSize = 16,
@@ -279,8 +254,9 @@ namespace Chronokeep.UI.Timing
                     );
                 AlarmSoundBox.SelectedIndex = alarm.AlarmSound;
                 theGrid.Children.Add(AlarmSoundBox);
-                Grid.SetColumn(AlarmSoundBox, 4);
-                EnabledBox = new System.Windows.Controls.CheckBox()
+                Grid.SetColumn(AlarmSoundBox, 2);
+                Log.D("UI.Timing.AlarmsPage.AnAlarmItem", "Alarm enabled set to: " + alarm.Enabled.ToString());
+                EnabledBox = new Wpf.Ui.Controls.ToggleSwitch()
                 {
                     IsChecked = alarm.Enabled,
                     Margin = new Thickness(2),
@@ -288,8 +264,8 @@ namespace Chronokeep.UI.Timing
                     HorizontalAlignment = HorizontalAlignment.Center,
                 };
                 theGrid.Children.Add(EnabledBox);
-                Grid.SetColumn(EnabledBox, 5);
-                RemoveButton = new Button()
+                Grid.SetColumn(EnabledBox, 3);
+                RemoveButton = new Wpf.Ui.Controls.Button()
                 {
                     Content = "X",
                     FontSize = 16,
@@ -300,7 +276,7 @@ namespace Chronokeep.UI.Timing
                 };
                 RemoveButton.Click += new RoutedEventHandler(Remove_Click);
                 theGrid.Children.Add(RemoveButton);
-                Grid.SetColumn(RemoveButton, 6);
+                Grid.SetColumn(RemoveButton, 4);
             }
 
             private void Remove_Click(object sender, RoutedEventArgs e)
@@ -322,18 +298,20 @@ namespace Chronokeep.UI.Timing
 
             public Alarm GetUpdatedAlarm()
             {
-                int tmpBib, tmpAlertCount;
+                int tmpBib;
                 if (int.TryParse(BibBox.Text, out tmpBib) == false)
                 {
                     tmpBib = -1;
                 }
-                if (int.TryParse(AlertCountBox.Text, out tmpAlertCount) == false)
-                {
-                    tmpAlertCount = 1;
-                }
                 theAlarm.Bib = tmpBib;
-                theAlarm.Chip = ChipBox.Text;
-                theAlarm.AlertCount = tmpAlertCount;
+                if (theAlarm.Bib >= 0)
+                {
+                    theAlarm.Chip = "";
+                }
+                else
+                {
+                    theAlarm.Chip = ChipBox.Text;
+                }
                 theAlarm.Enabled = EnabledBox.IsChecked == true;
                 theAlarm.AlarmSound = AlarmSoundBox.SelectedIndex;
                 return theAlarm;

@@ -15,12 +15,8 @@ namespace Chronokeep.Objects
         public int Identifier { get; set; }
         public int Bib { get; set; } = -1;
         public string Chip { get; set; } = "";
-        // This is the number of times to alert the user.
-        public int AlertCount { get; set; } = 1;
-        // This is the number of times the user has already been alerted.
-        public int AlertedCount { get; set; } = 0;
-        public bool Enabled { get; set; } = false;
-        // Any number not assigned to a sound is assumed to be the default.
+        public bool Enabled { get; set; } = true;
+        // Any number not assigned to a sound (1-5 currently) is assumed to be the default.
         public int AlarmSound { get; set; } = 0;
 
         public static List<Alarm> GetAlarms()

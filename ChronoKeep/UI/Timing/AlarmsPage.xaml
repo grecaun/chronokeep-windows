@@ -17,19 +17,15 @@
         <Grid Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
-                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="175" />
-                <ColumnDefinition Width="52" />
+                <ColumnDefinition Width="55" />
                 <ColumnDefinition Width="45" />
             </Grid.ColumnDefinitions>
             <Label Content="Bib" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="0" />
             <Label Content="Chip" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="1" />
-            <Label Content="# of Alerts" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="2" />
-            <Label Content="Times Alerted" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="3" />
-            <Label Content="Sound" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="4" />
-            <Label Content="Enabled" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="5" />
+            <Label Content="Sound" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="2" />
+            <Label Content="Active" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="3" />
         </Grid>
         <ListBox
             Name="AlarmsBox"
