@@ -38,6 +38,7 @@ namespace Chronokeep.Constants
         public static readonly string TIMING_RFID       = "RFID";
         public static readonly string TIMING_IPICO      = "IPICO";
         public static readonly string TIMING_IPICO_LITE = "IPICO_LITE";
+        public static readonly string TIMING_CHRONOKEEP_PORTAL = "CHRONOKEEP_PORTAL";
 
         public static readonly string THEME_SYSTEM      = "THEME_SYSTEM";
         public static readonly string THEME_DARK        = "THEME_DARK";

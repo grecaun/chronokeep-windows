@@ -109,7 +109,8 @@ namespace Chronokeep.Constants
         {
             { Settings.TIMING_RFID, "RFID Timing Systems" },
             { Settings.TIMING_IPICO, "Ipico Elite Reader" },
-            { Settings.TIMING_IPICO_LITE, "Ipico Lite Reader" }
+            { Settings.TIMING_IPICO_LITE, "Ipico Lite Reader" },
+            { Settings.TIMING_CHRONOKEEP_PORTAL, "Chronokeep Portal"},
         };
 
         public static readonly Dictionary<int, string> EVENTSPECIFIC_STATUS_NAMES = new Dictionary<int, string>()

@@ -91,6 +91,10 @@ namespace Chronokeep.Objects
             {
                 this.Port = 10000;
             }
+            else if (type == Constants.Settings.TIMING_CHRONOKEEP_PORTAL)
+            {
+                this.Port = 4488;
+            }
         }
 
         public void CreateTimingSystemInterface(IDBInterface database, IMainWindow window)
