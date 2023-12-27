@@ -136,15 +136,25 @@ namespace Chronokeep.UI.MainPages
             }
             List<TimingSystem> systems = mWindow.GetConnectedSystems();
             int numSystems = systems.Count;
+            string system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+            try
+            {
+                system = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM).Value;
+            }
+            catch
+            {
+                Log.D("UI.MainPages.TimingPage", "Error fetching default timing system information.");
+                system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+            }
             if (numSystems < 3)
             {
                 Log.D("UI.MainPages.TimingPage", systems.Count + " systems found.");
                 for (int i = 0; i < 3 - numSystems; i++)
                 {
-                    systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID));
+                    systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
                 }
             }
-            systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID));
+            systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
             connected = 0;
             foreach (TimingSystem sys in systems)
             {
@@ -276,14 +286,24 @@ namespace Chronokeep.UI.MainPages
             }
             if (total < 4)
             {
+                string system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+                try
+                {
+                    system = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM).Value;
+                }
+                catch
+                {
+                    Log.D("UI.MainPages.TimingPage", "Error fetching default timing system information.");
+                    system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+                }
                 for (int i = total; i < 4; i++)
                 {
                     ReadersBox.Items.Add(new AReaderBox(
                         this,
                         new TimingSystem(
                             string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
-                            Constants.Settings.TIMING_RFID),
-                        locations));
+                            system),
+                            locations));
                 }
             }
 
@@ -525,7 +545,17 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.TimingPage", connected + " systems connected or trying to connect.");
             if (connected >= total)
             {
-                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), Constants.Settings.TIMING_RFID), locations));
+                string system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+                try
+                {
+                    system = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM).Value;
+                }
+                catch
+                {
+                    Log.D("UI.MainPages.TimingPage", "Error fetching default timing system information.");
+                    system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+                }
+                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system), locations));
                 total = ReadersBox.Items.Count;
             }
             return sys.Status != SYSTEM_STATUS.DISCONNECTED;
@@ -1154,7 +1184,7 @@ namespace Chronokeep.UI.MainPages
                 };
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) }); // Reader Type
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) }); // Reader IP
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(70) });  // Reader Port
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(80) });  // Reader Port
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(140) }); // Location
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Clock
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Rewind
@@ -1170,11 +1200,11 @@ namespace Chronokeep.UI.MainPages
                     Height = 40
                 };
                 ComboBoxItem current = null, selected = null;
-                foreach (string SYSTEM_IDVAL in Constants.Timing.SYSTEM_NAMES.Keys)
+                foreach (string SYSTEM_IDVAL in Constants.Readers.SYSTEM_NAMES.Keys)
                 {
                     current = new ComboBoxItem()
                     {
-                        Content = Constants.Timing.SYSTEM_NAMES[SYSTEM_IDVAL],
+                        Content = Constants.Readers.SYSTEM_NAMES[SYSTEM_IDVAL],
                         Uid = SYSTEM_IDVAL
                     };
                     if (SYSTEM_IDVAL == reader.Type)
@@ -1402,18 +1432,10 @@ namespace Chronokeep.UI.MainPages
             {
                 Log.D("UI.MainPages.TimingPage", "Reader type has changed.");
                 string type = ((ComboBoxItem)ReaderType.SelectedItem).Uid;
-                Log.D("UI.MainPages.TimingPage", "Updating to type: " + Constants.Timing.SYSTEM_NAMES[type]);
+                Log.D("UI.MainPages.TimingPage", "Updating to type: " + Constants.Readers.SYSTEM_NAMES[type]);
                 reader.UpdateSystemType(type);
-                if (Constants.Settings.TIMING_CHRONOKEEP_PORTAL == type)
-                {
-                    ReaderPort.IsEnabled = false;
-                    ReaderPort.Text = "";
-                }
-                else
-                {
-                    ReaderPort.IsEnabled = true;
-                    ReaderPort.Text = reader.Port.ToString();
-                }
+                ReaderPort.Text = reader.Port.ToString();
+                ReaderPort.IsEnabled = Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL == type ? false : true;
             }
 
             private void Remove(object sender, RoutedEventArgs e)
@@ -1471,7 +1493,7 @@ namespace Chronokeep.UI.MainPages
                 ReaderLocation.IsEnabled = false;
                 RemoveButton.IsEnabled = false;
                 RemoveButton.Opacity = 0.2;
-                if (reader.Type.Equals(Constants.Settings.TIMING_IPICO_LITE, StringComparison.OrdinalIgnoreCase))
+                if (reader.Type.Equals(Constants.Readers.SYSTEM_IPICO_LITE, StringComparison.OrdinalIgnoreCase))
                 {
                     RewindButton.IsEnabled = false;
                     ClockButton.IsEnabled = false;
@@ -1497,7 +1519,7 @@ namespace Chronokeep.UI.MainPages
             private void SetDisconnected()
             {
                 ReaderIP.IsEnabled = true;
-                ReaderPort.IsEnabled = true;
+                ReaderPort.IsEnabled = Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL == reader.Type ? false : true;
                 ReaderLocation.IsEnabled = true;
                 // Set Remove and Connect buttons to enabled
                 RemoveButton.IsEnabled = true;

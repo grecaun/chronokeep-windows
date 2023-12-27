@@ -105,14 +105,6 @@ namespace Chronokeep.Constants
             return new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(date * TimeSpan.TicksPerSecond);
         }
 
-        public static readonly Dictionary<string, string> SYSTEM_NAMES = new Dictionary<string, string>()
-        {
-            { Settings.TIMING_RFID, "RFID Timing Systems" },
-            { Settings.TIMING_IPICO, "Ipico Elite Reader" },
-            { Settings.TIMING_IPICO_LITE, "Ipico Lite Reader" },
-            { Settings.TIMING_CHRONOKEEP_PORTAL, "Chronokeep Portal"},
-        };
-
         public static readonly Dictionary<int, string> EVENTSPECIFIC_STATUS_NAMES = new Dictionary<int, string>()
         {
             { EVENTSPECIFIC_UNKNOWN, "Unknown" },

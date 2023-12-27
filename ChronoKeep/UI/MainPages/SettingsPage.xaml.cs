@@ -42,13 +42,23 @@ namespace Chronokeep.UI.MainPages
             DefaultTimingBox.Items.Clear();
             DefaultTimingBox.Items.Add(new ComboBoxItem()
             {
-                Content = "RFID",
-                Uid = Constants.Settings.TIMING_RFID
+                Content = Constants.Readers.SYSTEM_NAMES[Constants.Readers.SYSTEM_RFID],
+                Uid = Constants.Readers.SYSTEM_RFID
             });
             DefaultTimingBox.Items.Add(new ComboBoxItem()
             {
-                Content = "Ipico",
-                Uid = Constants.Settings.TIMING_IPICO
+                Content = Constants.Readers.SYSTEM_NAMES[Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL],
+                Uid = Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL
+            });
+            DefaultTimingBox.Items.Add(new ComboBoxItem()
+            {
+                Content = Constants.Readers.SYSTEM_NAMES[Constants.Readers.SYSTEM_IPICO],
+                Uid = Constants.Readers.SYSTEM_IPICO
+            });
+            DefaultTimingBox.Items.Add(new ComboBoxItem()
+            {
+                Content = Constants.Readers.SYSTEM_NAMES[Constants.Readers.SYSTEM_IPICO_LITE],
+                Uid = Constants.Readers.SYSTEM_IPICO_LITE
             });
             SystemTheme = Utils.GetSystemTheme();
             if (SystemTheme != -1)
@@ -92,13 +102,20 @@ namespace Chronokeep.UI.MainPages
         public void UpdateView()
         {
             AppSetting setting = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
-            if (setting.Value == Constants.Settings.TIMING_IPICO)
+            switch (setting.Value)
             {
-                DefaultTimingBox.SelectedIndex = 1;
-            }
-            else
-            {
-                DefaultTimingBox.SelectedIndex = 0;
+                case Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL:
+                    DefaultTimingBox.SelectedIndex = 1;
+                    break;
+                case Constants.Readers.SYSTEM_IPICO:
+                    DefaultTimingBox.SelectedIndex = 2;
+                    break;
+                case Constants.Readers.SYSTEM_IPICO_LITE:
+                    DefaultTimingBox.SelectedIndex = 3;
+                    break;
+                default:
+                    DefaultTimingBox.SelectedIndex = 0;
+                    break;
             }
             CompanyNameBox.Text = database.GetAppSetting(Constants.Settings.COMPANY_NAME).Value;
             ContactEmailBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).Value;

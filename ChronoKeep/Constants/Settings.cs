@@ -35,11 +35,6 @@ namespace Chronokeep.Constants
         public static readonly string SETTING_TRUE      = "TRUE";
         public static readonly string SETTING_FALSE     = "FALSE";
 
-        public static readonly string TIMING_RFID       = "RFID";
-        public static readonly string TIMING_IPICO      = "IPICO";
-        public static readonly string TIMING_IPICO_LITE = "IPICO_LITE";
-        public static readonly string TIMING_CHRONOKEEP_PORTAL = "CHRONOKEEP_PORTAL";
-
         public static readonly string THEME_SYSTEM      = "THEME_SYSTEM";
         public static readonly string THEME_DARK        = "THEME_DARK";
         public static readonly string THEME_LIGHT       = "THEME_LIGHT";
@@ -64,7 +59,7 @@ namespace Chronokeep.Constants
             }
             if (database.GetAppSetting(DEFAULT_TIMING_SYSTEM) == null)
             {
-                database.SetAppSetting(DEFAULT_TIMING_SYSTEM, TIMING_RFID);
+                database.SetAppSetting(DEFAULT_TIMING_SYSTEM, Readers.DEFAULT_TIMING_SYSTEM);
             }
             if (database.GetAppSetting(CURRENT_EVENT) == null)
             {

@@ -46,12 +46,12 @@ namespace Chronokeep.Timing.Interfaces
             List<Socket> output = new List<Socket>();
             controlSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             streamSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            if (Type != Constants.Settings.TIMING_IPICO_LITE)
+            if (Type != Constants.Readers.SYSTEM_IPICO_LITE)
             {
                 try
                 {
-                    Log.D("Timing.Interfaces.IpicoInterface", "Attempting to connect to " + IpAddress + ":9999");
-                    controlSocket.Connect(IpAddress, 9999);
+                    Log.D("Timing.Interfaces.IpicoInterface", "Attempting to connect to " + IpAddress + ":" + Constants.Readers.IPICO_CONTROL_PORT);
+                    controlSocket.Connect(IpAddress, Constants.Readers.IPICO_CONTROL_PORT);
                     output.Add(controlSocket);
                 }
                 catch
@@ -67,8 +67,8 @@ namespace Chronokeep.Timing.Interfaces
             }
             try
             {
-                Log.D("Timing.Interfaces.IpicoInterface", "Attempting to connect to " + IpAddress + ":10000");
-                streamSocket.Connect(IpAddress, 10000);
+                Log.D("Timing.Interfaces.IpicoInterface", "Attempting to connect to " + IpAddress + ":" + Constants.Readers.IPICO_DEFAULT_PORT);
+                streamSocket.Connect(IpAddress, Constants.Readers.IPICO_DEFAULT_PORT);
                 output.Add(streamSocket);
             }
             catch
@@ -76,7 +76,7 @@ namespace Chronokeep.Timing.Interfaces
                 Log.D("Timing.Interfaces.IpicoInterface", "Unable to connect to stream socket...");
                 streamSocket = null;
             }
-            if ((controlSocket == null && Type != Constants.Settings.TIMING_IPICO_LITE) || streamSocket == null)
+            if ((controlSocket == null && Type != Constants.Readers.SYSTEM_IPICO_LITE) || streamSocket == null)
             {
                 return null;
             }

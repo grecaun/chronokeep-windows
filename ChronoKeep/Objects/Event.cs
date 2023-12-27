@@ -12,7 +12,7 @@ namespace Chronokeep
         private int common_age_groups = 1, common_start_finish = 1, distance_specific_segments = 0, rank_by_gun = 1;
         private int finish_max_occurrences = 1, finish_ignore_within = 0, start_window = -1;
         private int event_type = Constants.Timing.EVENT_TYPE_DISTANCE;
-        private string name, date, yearcode = "", timing_system = Constants.Settings.TIMING_RFID;
+        private string name, date, yearcode = "";
         private long start_seconds = -1;
         private int start_milliseconds;
         private int api_id = Constants.ResultsAPI.NULL_ID;
@@ -74,7 +74,7 @@ namespace Chronokeep
 
         public Event(int id, string n, string d, int age, int start, int seg,
             int gun, string yearcode, int maxOcc, int ignWith, int window,
-            long startsec, int startmill, string system, int type, int api_id,
+            long startsec, int startmill, int type, int api_id,
             string api_event_id, int display_placements)
         {
             this.identifier = id;
@@ -90,7 +90,6 @@ namespace Chronokeep
             this.start_window = window;
             this.start_seconds = startsec;
             this.start_milliseconds = startmill;
-            this.timing_system = system;
             this.event_type = type;
             this.api_id = api_id;
             this.api_event_id = api_event_id;
@@ -110,7 +109,6 @@ namespace Chronokeep
         public int FinishIgnoreWithin { get => finish_ignore_within; set => finish_ignore_within = value; }
         public long StartSeconds { get => start_seconds; set => start_seconds = value; }
         public int StartMilliseconds { get => start_milliseconds; set => start_milliseconds = value; }
-        public string TimingSystem { get => timing_system; set => timing_system = value; }
         public int EventType { get => event_type; set => event_type = value; }
         public int API_ID { get => api_id; set => api_id = value; }
         public string API_Event_ID { get => api_event_id; set => api_event_id = value; }

@@ -541,7 +541,7 @@ namespace Chronokeep.Database.SQLite
                         Log.D("Database.SQLite.Update", "Upgrading from version 24.");
                         command = connection.CreateCommand();
                         command.CommandText = "UPDATE events SET event_start_time_seconds=-1 WHERE event_start_time_seconds=0;" +
-                            "ALTER TABLE events ADD event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Settings.TIMING_RFID + "';" +
+                            "ALTER TABLE events ADD event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Readers.SYSTEM_RFID + "';" +
                             "UPDATE settings SET version=25 WHERE version=24;";
                         command.ExecuteNonQuery();
                         goto case 25;
@@ -1084,7 +1084,7 @@ namespace Chronokeep.Database.SQLite
                                 "event_finish_max_occurances INTEGER NOT NULL DEFAULT 1," +
                                 "event_finish_ignore_within INTEGER NOT NULL DEFAULT 0," +
                                 "event_start_window INTEGER NOT NULL DEFAULT -1," +
-                                "event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Settings.TIMING_RFID + "'," +
+                                "event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Readers.SYSTEM_RFID + "'," +
                                 "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
                                 "api_id INTEGER REFERENCES results_api(api_id) NOT NULL DEFAULT -1," +
                                 "api_event_id VARCHAR(200) NOT NULL DEFAULT ''," +
@@ -1214,7 +1214,7 @@ namespace Chronokeep.Database.SQLite
                                 "event_finish_max_occurances INTEGER NOT NULL DEFAULT 1," +
                                 "event_finish_ignore_within INTEGER NOT NULL DEFAULT 0," +
                                 "event_start_window INTEGER NOT NULL DEFAULT -1," +
-                                "event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Settings.TIMING_RFID + "'," +
+                                "event_timing_system VARCHAR NOT NULL DEFAULT '" + Constants.Readers.SYSTEM_RFID + "'," +
                                 "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
                                 "api_id INTEGER REFERENCES results_api(api_id) NOT NULL DEFAULT -1," +
                                 "api_event_id VARCHAR(200) NOT NULL DEFAULT ''," +

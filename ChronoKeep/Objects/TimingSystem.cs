@@ -17,7 +17,7 @@ namespace Chronokeep.Objects
         public int Port { get; set; }
         public int LocationID { get; set; } = Constants.Timing.LOCATION_FINISH;
         public string LocationName { get; set; } = "Unknown";
-        public string Type { get; set; } = Constants.Settings.TIMING_RFID;
+        public string Type { get; set; } = Constants.Readers.SYSTEM_RFID;
         public SYSTEM_STATUS Status { get; set; } = SYSTEM_STATUS.DISCONNECTED;
         public List<Socket> Sockets { get; private set; }
         public ITimingSystemInterface SystemInterface;
@@ -31,13 +31,17 @@ namespace Chronokeep.Objects
             this.IPAddress = ip;
             this.Status = SYSTEM_STATUS.DISCONNECTED;
             this.Type = type;
-            if (type == Constants.Settings.TIMING_RFID)
+            if (type == Constants.Readers.SYSTEM_RFID)
             {
-                this.Port = 23;
+                this.Port = Constants.Readers.RFID_DEFAULT_PORT;
             }
-            else if (type == Constants.Settings.TIMING_IPICO || type == Constants.Settings.TIMING_IPICO_LITE)
+            else if (type == Constants.Readers.SYSTEM_IPICO || type == Constants.Readers.SYSTEM_IPICO_LITE)
             {
-                this.Port = 10000;
+                this.Port = Constants.Readers.IPICO_DEFAULT_PORT;
+            }
+            else if (type == Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL)
+            {
+                this.Port = Constants.Readers.CHRONO_PORTAL_ZCONF_PORT;
             }
         }
 
@@ -83,28 +87,28 @@ namespace Chronokeep.Objects
         public void UpdateSystemType(string type)
         {
             this.Type = type;
-            if (type == Constants.Settings.TIMING_RFID)
+            if (type == Constants.Readers.SYSTEM_RFID)
             {
-                this.Port = 23;
+                this.Port = Constants.Readers.RFID_DEFAULT_PORT;
             }
-            else if (type == Constants.Settings.TIMING_IPICO || type == Constants.Settings.TIMING_IPICO_LITE)
+            else if (type == Constants.Readers.SYSTEM_IPICO || type == Constants.Readers.SYSTEM_IPICO_LITE)
             {
-                this.Port = 10000;
+                this.Port = Constants.Readers.IPICO_DEFAULT_PORT;
             }
-            else if (type == Constants.Settings.TIMING_CHRONOKEEP_PORTAL)
+            else if (type == Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL)
             {
-                this.Port = 4488;
+                this.Port = Constants.Readers.CHRONO_PORTAL_ZCONF_PORT;
             }
         }
 
         public void CreateTimingSystemInterface(IDBInterface database, IMainWindow window)
         {
-            if (this.Type == Constants.Settings.TIMING_RFID)
+            if (this.Type == Constants.Readers.SYSTEM_RFID)
             {
                 Log.D("Objects.TimingSystem", "System interface is RFID.");
                 SystemInterface = new RFIDUltraInterface(database, LocationID, window);
             }
-            else if (this.Type == Constants.Settings.TIMING_IPICO || this.Type == Constants.Settings.TIMING_IPICO_LITE)
+            else if (this.Type == Constants.Readers.SYSTEM_IPICO || this.Type == Constants.Readers.SYSTEM_IPICO_LITE)
             {
                 Log.D("Objects.TimingSystem", "System interface is IPICO.");
                 SystemInterface = new IpicoInterface(database, LocationID, this.Type, window);

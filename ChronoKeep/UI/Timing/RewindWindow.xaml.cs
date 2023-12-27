@@ -40,7 +40,7 @@ namespace Chronokeep.UI.Timing
             ToDate.Text = dateStr;
             FromTime.Text = "00:00:00";
             ToTime.Text = "23:59:59";
-            if (system.Type == Constants.Settings.TIMING_IPICO || system.Type == Constants.Settings.TIMING_IPICO_LITE)
+            if (system.Type == Constants.Readers.SYSTEM_IPICO || system.Type == Constants.Readers.SYSTEM_IPICO_LITE)
             {
                 Reader1.Visibility = Visibility.Visible;
                 Reader2.Visibility = Visibility.Visible;
@@ -84,7 +84,7 @@ namespace Chronokeep.UI.Timing
             {
                 to = DateTime.Now;
             }
-            if (system.Type == Constants.Settings.TIMING_IPICO || system.Type == Constants.Settings.TIMING_IPICO_LITE)
+            if (system.Type == Constants.Readers.SYSTEM_IPICO || system.Type == Constants.Readers.SYSTEM_IPICO_LITE)
             {
                 DialogBox.Show(
                     "This process can take up to 3 minutes to complete. There is no guarantee that other processes will work properly while this is occuring. Are you sure you wish to proceed?",
