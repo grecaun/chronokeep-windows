@@ -113,6 +113,16 @@ namespace Chronokeep.Objects
                 Log.D("Objects.TimingSystem", "System interface is IPICO.");
                 SystemInterface = new IpicoInterface(database, LocationID, this.Type, window);
             }
+            else if (this.Type == Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL)
+            {
+                Log.D("Objects.TimingSystem", "System interface is CHRONOKEEP_PORTAL.");
+                SystemInterface = new ChronokeepInerface(database, LocationID, window);
+            }
+            else
+            {
+                Log.E("Objects.TimingSystem", "Unknown interface selected.");
+                SystemInterface = null;
+            }
         }
 
         public void SetLastCommunicationTime()
