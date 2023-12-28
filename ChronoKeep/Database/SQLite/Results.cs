@@ -416,7 +416,7 @@ namespace Chronokeep.Database.SQLite
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
-                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
+                new SQLiteParameter("@status", Constants.Timing.TIMERESULT_STATUS_NONE),
                 new SQLiteParameter("@start", Constants.Timing.SEGMENT_START),
                 new SQLiteParameter("@dummy", Constants.Timing.TIMERESULT_DUMMYPERSON),
                 new SQLiteParameter("@none", Constants.Timing.SEGMENT_NONE)

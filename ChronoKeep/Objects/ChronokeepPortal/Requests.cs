@@ -68,9 +68,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public string Command { get; set; }
     }
 
-    public class ApiAdd : Request
+    public class ApiAddRequest : Request
     {
-        public ApiAdd()
+        public ApiAddRequest()
         {
             Command = API_ADD;
         }
@@ -85,17 +85,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public string Token { get; set; }
     }
 
-    public class ApiList : Request
+    public class ApiListRequest : Request
     {
-        public ApiList()
+        public ApiListRequest()
         {
             Command = API_LIST;
         }
     }
 
-    public class ApiRemoteAutoUpload : Request
+    public class ApiRemoteAutoUploadRequest : Request
     {
-        public ApiRemoteAutoUpload()
+        public ApiRemoteAutoUploadRequest()
         {
             Command = API_REMOTE_AUTO_UPLOAD;
         }
@@ -105,17 +105,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public string Query { get; set; }
     }
 
-    public class ApiRemoteManualUpload : Request
+    public class ApiRemoteManualUploadRequest : Request
     {
-        public ApiRemoteManualUpload()
+        public ApiRemoteManualUploadRequest()
         {
             Command = API_REMOTE_MANUAL_UPLOAD;
         }
     }
 
-    public class ApiRemove : Request
+    public class ApiRemoveRequest : Request
     {
-        public ApiRemove()
+        public ApiRemoveRequest()
         {
             Command = API_REMOVE;
         }
@@ -124,9 +124,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public string APIName { get; set; }
     }
 
-    public class ApiResultsEventGet : Request
+    public class ApiResultsEventGetRequest : Request
     {
-        public ApiResultsEventGet()
+        public ApiResultsEventGetRequest()
         {
             Command = API_RESULTS_EVENTS_GET;
         }
@@ -135,9 +135,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public string APIName { get; set; }
     }
 
-    public class ApiResultsEventYearGet : Request
+    public class ApiResultsEventYearGetRequest : Request
     {
-        public ApiResultsEventYearGet()
+        public ApiResultsEventYearGetRequest()
         {
             Command = API_RESULTS_EVENT_YEARS_GET;
         }
@@ -148,9 +148,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public string EventSlug { get; set; }
     }
 
-    public class ApiResultsParticipantsGet : Request
+    public class ApiResultsParticipantsGetRequest : Request
     {
-        public ApiResultsParticipantsGet()
+        public ApiResultsParticipantsGetRequest()
         {
             Command = API_RESULTS_PARTICIPANTS_GET;
         }
@@ -163,9 +163,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public string EventYear { get; set; }
     }
 
-    public class Connect : Request
+    public class ConnectRequest : Request
     {
-        public Connect()
+        public ConnectRequest()
         {
             Command = CONNECT;
         }
@@ -176,57 +176,57 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public bool Sightings { get; set; }
     }
 
-    public class Disconnect : Request
+    public class DisconnectRequest : Request
     {
-        public Disconnect()
+        public DisconnectRequest()
         {
             Command = DISCONNECT;
         }
     }
 
-    public class KeepaliveAck : Request
+    public class KeepaliveAckRequest : Request
     {
-        public KeepaliveAck()
+        public KeepaliveAckRequest()
         {
             Command = KEEPALIVE_ACK;
         }
     }
 
-    public class Quit : Request
+    public class QuitRequest : Request
     {
-        public Quit()
+        public QuitRequest()
         {
             Command = QUIT;
         }
     }
 
-    public class Shutdown : Request
+    public class ShutdownRequest : Request
     {
-        public Shutdown()
+        public ShutdownRequest()
         {
             Command = SHUTDOWN;
         }
     }
 
-    public class ParticipantsGet : Request
+    public class ParticipantsGetRequest : Request
     {
-        public ParticipantsGet()
+        public ParticipantsGetRequest()
         {
             Command = PARTICIPANTS_GET;
         }
     }
 
-    public class ParticipantsRemove : Request
+    public class ParticipantsRemoveRequest : Request
     {
-        public ParticipantsRemove()
+        public ParticipantsRemoveRequest()
         {
             Command = PARTICIPANTS_REMOVE;
         }
     }
 
-    public class ReaderAdd : Request
+    public class ReaderAddRequest : Request
     {
-        public ReaderAdd()
+        public ReaderAddRequest()
         {
             Command = READER_ADD;
         }
@@ -243,9 +243,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public bool AutoConnect { get; set; }
     }
 
-    public class ReaderConnect : Request
+    public class ReaderConnectRequest : Request
     {
-        public ReaderConnect()
+        public ReaderConnectRequest()
         {
             Command = READER_CONNECT;
         }
@@ -254,9 +254,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long Id { get; set; }
     }
 
-    public class ReaderDisconnect : Request
+    public class ReaderDisconnectRequest : Request
     {
-        public ReaderDisconnect()
+        public ReaderDisconnectRequest()
         {
             Command= READER_DISCONNECT;
         }
@@ -265,17 +265,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long Id { get; set; }
     }
 
-    public class ReaderList : Request
+    public class ReaderListRequest : Request
     {
-        public ReaderList()
+        public ReaderListRequest()
         {
             Command = READER_LIST;
         }
     }
 
-    public class ReaderRemove : Request
+    public class ReaderRemoveRequest : Request
     {
-        public ReaderRemove()
+        public ReaderRemoveRequest()
         {
             Command = READER_REMOVE;
         }
@@ -284,9 +284,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long Id { get; set; }
     }
 
-    public class ReaderStart : Request
+    public class ReaderStartRequest : Request
     {
-        public ReaderStart()
+        public ReaderStartRequest()
         {
             Command = READER_START;
         }
@@ -295,9 +295,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long Id { get; set; }
     }
 
-    public class ReaderStop : Request
+    public class ReaderStopRequest : Request
     {
-        public ReaderStop()
+        public ReaderStopRequest()
         {
             Command = READER_STOP;
         }
@@ -306,9 +306,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long Id { get; set; }
     }
 
-    public class ReadsAdd : Request
+    public class ReadsAddRequest : Request
     {
-        public ReadsAdd()
+        public ReadsAddRequest()
         {
             Command = READS_ADD;
         }
@@ -317,17 +317,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public PortalRead Read { get; set; }
     }
 
-    public class ReadsDeleteAll : Request
+    public class ReadsDeleteAllRequest : Request
     {
-        public ReadsDeleteAll()
+        public ReadsDeleteAllRequest()
         {
             Command = READS_DELETE_ALL;
         }
     }
 
-    public class ReadsDelete : Request
+    public class ReadsDeleteRequest : Request
     {
-        public ReadsDelete()
+        public ReadsDeleteRequest()
         {
             Command= READS_DELETE;
         }
@@ -338,17 +338,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long EndSeconds { get; set; }
     }
 
-    public class ReadsGetAll : Request
+    public class ReadsGetAllRequest : Request
     {
-        public ReadsGetAll()
+        public ReadsGetAllRequest()
         {
             Command = READS_GET_ALL;
         }
     }
 
-    public class ReadsGet : Request
+    public class ReadsGetRequest : Request
     {
-        public ReadsGet()
+        public ReadsGetRequest()
         {
             Command = READS_GET;
         }
@@ -359,17 +359,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long EndSeconds { get; set; }
     }
 
-    public class SightingsGetAll : Request
+    public class SightingsGetAllRequest : Request
     {
-        public SightingsGetAll()
+        public SightingsGetAllRequest()
         {
             Command = SIGHTINGS_GET_ALL;
         }
     }
 
-    public class SightingsGet : Request
+    public class SightingsGetRequest : Request
     {
-        public SightingsGet()
+        public SightingsGetRequest()
         {
             Command = SIGHTINGS_GET;
         }
@@ -380,17 +380,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long EndSeconds { get; set; }
     }
 
-    public class SightingsDelete : Request
+    public class SightingsDeleteRequest : Request
     {
-        public SightingsDelete()
+        public SightingsDeleteRequest()
         {
             Command = SIGHTINGS_DELETE;
         }
     }
 
-    public class SettingsSet : Request
+    public class SettingsSetRequest : Request
     {
-        public SettingsSet()
+        public SettingsSetRequest()
         {
             Command = SETTINGS_SET;
         }
@@ -399,17 +399,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public List<PortalSetting> Settings { get; set; }
     }
 
-    public class SettingsGet : Request 
+    public class SettingsGetRequest : Request 
     {
-        public SettingsGet()
+        public SettingsGetRequest()
         {
             Command = SETTINGS_GET;
         }
     }
 
-    public class Subscribe : Request
+    public class SubscribeRequest : Request
     {
-        public Subscribe()
+        public SubscribeRequest()
         {
             Command = SUBSCRIBE;
         }
@@ -420,17 +420,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public bool Sightings { get; set; }
     }
 
-    public class TimeGet : Request
+    public class TimeGetRequest : Request
     {
-        public TimeGet()
+        public TimeGetRequest()
         {
             Command = TIME_GET;
         }
     }
 
-    public class TimeSet : Request
+    public class TimeSetRequest : Request
     {
-        public TimeSet()
+        public TimeSetRequest()
         {
             Command = TIME_SET;
         }

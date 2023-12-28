@@ -78,6 +78,7 @@ namespace Chronokeep.Objects
 
         public void Disconnect()
         {
+            SystemInterface.Disconnect();
             foreach (Socket sock in Sockets)
             {
                 sock.Disconnect(false);

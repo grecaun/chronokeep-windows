@@ -11,6 +11,7 @@ namespace Chronokeep.Interfaces.Timing
     {
         Dictionary<MessageType, List<string>> ParseMessages(string message, Socket sock);
         List<Socket> Connect(string IpAddress, int Port);
+        void Disconnect();
         void StartReading();
         void StopReading();
         void SetTime(DateTime date);
@@ -25,5 +26,19 @@ namespace Chronokeep.Interfaces.Timing
         void SetSettingsSocket(Socket sock);
     }
 
-    public enum MessageType { CONNECTED, VOLTAGENORMAL, VOLTAGELOW, CHIPREAD, TIME, SETTINGVALUE, SETTINGCHANGE, STATUS, UNKNOWN, ERROR, NONE }
+    public enum MessageType {
+        CONNECTED,
+        VOLTAGENORMAL,
+        VOLTAGELOW,
+        CHIPREAD,
+        TIME,
+        SETTINGVALUE,
+        SETTINGCHANGE,
+        STATUS,
+        UNKNOWN,
+        ERROR,
+        NONE,
+        SUCCESS,
+        DISCONNECT
+    }
 }

@@ -1513,7 +1513,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 ConnectButton.IsEnabled = true;
                 ConnectButton.Opacity = 1.0;
-                ConnectButton.Icon = Wpf.Ui.Common.SymbolRegular.RecordStop28;
+                ConnectButton.Icon = Wpf.Ui.Common.SymbolRegular.Stop24;
             }
 
             private void SetDisconnected()

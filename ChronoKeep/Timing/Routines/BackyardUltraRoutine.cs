@@ -907,7 +907,7 @@ namespace Chronokeep.Timing.Routines
                 }
             }
             // Calculate the current hour.
-            int hour = (int)((Constants.Timing.DateToEpoch(DateTime.Now) - dictionary.distanceStartDict[0].Seconds) / 3600);
+            int hour = (int)((Constants.Timing.RFIDDateToEpoch(DateTime.Now) - dictionary.distanceStartDict[0].Seconds) / 3600);
             List<TimeResult> invalid = new List<TimeResult>();
             // Process every hour from the start of the event until we don't have any more finishers for that hour
             for (int i = 0; i <= hour; i++)
@@ -1066,6 +1066,11 @@ namespace Chronokeep.Timing.Routines
                     result.Place = placeResult.Place;
                     result.GenderPlace = placeResult.GenderPlace;
                     result.AgePlace = placeResult.AgePlace;
+                }
+                // Change any TIMERESULT_STATUS_NONE to TIMERESULT_STATUS_PROCESSED
+                if (Constants.Timing.TIMERESULT_STATUS_NONE == result.Status)
+                {
+                    result.Status = Constants.Timing.TIMERESULT_STATUS_PROCESSED;
                 }
             }
             // Check if we should be re-uploading results because placements have changed.

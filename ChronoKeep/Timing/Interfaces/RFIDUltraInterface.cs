@@ -221,7 +221,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void Rewind(DateTime start, DateTime end, int reader = 1)
         {
-            SendMessage("800" + Constants.Timing.DateToEpoch(start).ToString() + RFIDUltraCodes.RewindDelimiter + Constants.Timing.DateToEpoch(end).ToString());
+            SendMessage("800" + Constants.Timing.RFIDDateToEpoch(start).ToString() + RFIDUltraCodes.RewindDelimiter + Constants.Timing.RFIDDateToEpoch(end).ToString());
         }
 
         public void Rewind(int reader = 1)
@@ -270,13 +270,15 @@ namespace Chronokeep.Timing.Interfaces
 
         public void StartSending(DateTime date)
         {
-            SendMessage("700" + Constants.Timing.DateToEpoch(date));
+            SendMessage("700" + Constants.Timing.RFIDDateToEpoch(date));
         }
 
         public void StopSending()
         {
             SendMessage("s");
         }
+
+        public void Disconnect() { }
 
         /**
          * Changing settings on the Ultra 

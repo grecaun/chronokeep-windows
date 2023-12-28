@@ -9,63 +9,63 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
 {
     public class Response
     {
-        public static readonly string READERS               = "readers";
-        public static readonly string ERROR                 = "error";
-        public static readonly string SETTINGS              = "settings";
-        public static readonly string API_LIST              = "api_list";
-        public static readonly string READS                 = "reads";
-        public static readonly string SUCCESS               = "success";
-        public static readonly string TIME                  = "time";
-        public static readonly string PARTICIPANTS          = "participants";
-        public static readonly string SIGHTINGS             = "sightings";
-        public static readonly string EVENTS                = "events";
-        public static readonly string EVENT_YEARS           = "event_years";
-        public static readonly string READ_AUTO_UPLOAD      = "read_auto_upload";
-        public static readonly string CONNECTION_SUCCESSFUL = "connection_successful";
-        public static readonly string KEEPALIVE             = "keepalive";
-        public static readonly string DISCONNECT            = "disconnect";
+        public const string READERS               = "readers";
+        public const string ERROR                 = "error";
+        public const string SETTINGS              = "settings";
+        public const string API_LIST              = "api_list";
+        public const string READS                 = "reads";
+        public const string SUCCESS               = "success";
+        public const string TIME                  = "time";
+        public const string PARTICIPANTS          = "participants";
+        public const string SIGHTINGS             = "sightings";
+        public const string EVENTS                = "events";
+        public const string EVENT_YEARS           = "event_years";
+        public const string READ_AUTO_UPLOAD      = "read_auto_upload";
+        public const string CONNECTION_SUCCESSFUL = "connection_successful";
+        public const string KEEPALIVE             = "keepalive";
+        public const string DISCONNECT            = "disconnect";
 
         [JsonPropertyName("command")]
         public string Command { get; set; }
     }
 
-    public class Readers : Response
+    public class ReadersResponse : Response
     {
         [JsonPropertyName("readers")]
         public List<PortalReader> List { get; set; }
     }
 
-    public class Error : Response
+    public class ErrorResponse : Response
     {
         [JsonPropertyName("error")]
         public PortalError Value { get; set; }
     }
 
-    public class Settings : Response
+    public class SettingsResponse : Response
     {
         [JsonPropertyName("settings")]
         public List<PortalSetting> List { get; set; }
     }
 
-    public class ApiList : Response
+    public class ApiListResponse : Response
     {
         [JsonPropertyName("apis")]
         public List<PortalAPI> List { get; set; }
     }
 
-    public class Reads : Response
+    public class ReadsResponse : Response
     {
         [JsonPropertyName("list")]
         public List<PortalRead> List { get; set; }
     }
 
-    public class Success : Response
+    public class SuccessResponse : Response
     {
         [JsonPropertyName("count")]
         public ulong Count { get; set; }
     }
 
-    public class Time : Response
+    public class TimeResponse : Response
     {
         [JsonPropertyName("local")]
         public string Local { get; set; }
@@ -73,37 +73,37 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public string UTC { get; set; }
     }
 
-    public class Participants : Response
+    public class ParticipantsResponse : Response
     {
         [JsonPropertyName("participants")]
         public List<PortalParticipant> List { get; set; }
     }
 
-    public class Sightings : Response
+    public class SightingsResponse : Response
     {
         [JsonPropertyName("list")]
         public List<PortalSighting> List { get; set; }
     }
 
-    public class Events : Response
+    public class EventsResponse : Response
     {
         [JsonPropertyName("events")]
         public List<PortalEvent> List { get; set; }
     }
 
-    public class EventYears : Response
+    public class EventYearsResponse : Response
     {
         [JsonPropertyName("years")]
         public List<string> Years { get; set; }
     }
 
-    public class ReadAutoUpload : Response
+    public class ReadAutoUploadResponse : Response
     {
         [JsonPropertyName("status")]
         public PortalStatus Status { get; set; }
     }
 
-    public class ConnectionSuccessful : Response
+    public class ConnectionSuccessfulResponse : Response
     {
         [JsonPropertyName("name")]
         public string Name { get; set; }

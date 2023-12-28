@@ -388,7 +388,7 @@ namespace Chronokeep.Timing.Routines
                                         secondsDiff--;
                                         millisecDiff += 1000;
                                     }
-                                    long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? Constants.Timing.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
+                                    long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? Constants.Timing.RFIDDateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
                                     int chipMillisecDiff = read.TimeMilliseconds - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime.Millisecond : startMilliseconds);
                                     if (chipMillisecDiff < 0)
                                     {
@@ -583,7 +583,7 @@ namespace Chronokeep.Timing.Routines
                                         secondsDiff--;
                                         millisecDiff += 1000;
                                     }
-                                    long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? Constants.Timing.DateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
+                                    long chipSecDiff = read.TimeSeconds - (startTimes.ContainsKey(identifier) ? Constants.Timing.RFIDDateToEpoch(startTimes[identifier].SystemTime) : startSeconds);
                                     int chipMillisecDiff = read.TimeMilliseconds - (startTimes.ContainsKey(identifier) ? startTimes[identifier].SystemTime.Millisecond : startMilliseconds);
                                     if (chipMillisecDiff < 0)
                                     {
@@ -983,6 +983,7 @@ namespace Chronokeep.Timing.Routines
                     }
                     result.AgePlace = ++(ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)]);
                 }
+                result.Status = Constants.Timing.TIMERESULT_STATUS_PROCESSED;
             }
             segmentResults.AddRange(DNFResults);
             return segmentResults;

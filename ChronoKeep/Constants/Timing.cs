@@ -37,6 +37,7 @@ namespace Chronokeep.Constants
         public static readonly int TIMERESULT_STATUS_NONE = 0;
         public static readonly int TIMERESULT_STATUS_DNF = 1;
         public static readonly int TIMERESULT_STATUS_DNS = 2;
+        public static readonly int TIMERESULT_STATUS_PROCESSED = 3;
 
         public static readonly int TIMERESULT_UPLOADED_FALSE = 0;
         public static readonly int TIMERESULT_UPLOADED_TRUE = 1;
@@ -94,15 +95,34 @@ namespace Chronokeep.Constants
         // Announcer variables
         public static readonly int ANNOUNCER_LOOP_TIMER = 2;
 
-        public static long DateToEpoch(DateTime date)
+        private static DateTime UnixDateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static DateTime RFIDDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        public static long RFIDDateToEpoch(DateTime date)
         {
-            var ticks = date.Ticks - new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
+            var ticks = date.Ticks - RFIDDateTime.Ticks;
             return ticks / TimeSpan.TicksPerSecond;
         }
 
-        public static DateTime EpochToDate(long date)
+        public static DateTime RFIDEpochToDate(long date)
         {
-            return new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddTicks(date * TimeSpan.TicksPerSecond);
+            return RFIDDateTime.AddTicks(date * TimeSpan.TicksPerSecond);
+        }
+
+        public static long UnixDateToEpoch(DateTime date)
+        {
+            var ticks = date.Ticks - UnixDateTime.Ticks;
+            return ticks / TimeSpan.TicksPerSecond;
+        }
+
+        public static DateTime UnixEpochToDate(long date)
+        {
+            return UnixDateTime.AddTicks(date * TimeSpan.TicksPerSecond);
+        }
+
+        public static long UTCSecondsToRFIDSeconds(long seconds)
+        {
+            return RFIDDateToEpoch(UnixEpochToDate(seconds).ToLocalTime());
         }
 
         public static readonly Dictionary<int, string> EVENTSPECIFIC_STATUS_NAMES = new Dictionary<int, string>()

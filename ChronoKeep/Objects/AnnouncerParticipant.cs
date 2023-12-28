@@ -20,7 +20,7 @@ namespace Chronokeep.Objects
         public static Event theEvent = null;
 
         public Participant Person { get => person; }
-        public DateTime When { get => Constants.Timing.EpochToDate(seconds); }
+        public DateTime When { get => Constants.Timing.RFIDEpochToDate(seconds); }
         public string AnnouncerWhen { get => this.When.ToString("HH:mm:ss"); }
         public string Distance { get => person.Distance; }
         public string Bib { get => person.Bib.ToString(); }

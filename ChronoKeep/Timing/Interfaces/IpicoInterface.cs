@@ -259,6 +259,8 @@ namespace Chronokeep.Timing.Interfaces
             controlSocket = sock;
         }
 
+        public void Disconnect() { }
+
         public void SendMessage(string msg)
         {
             Log.D("Timing.Interfaces.IpicoInterface", "Sending message '" + msg + "'");

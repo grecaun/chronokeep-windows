@@ -126,7 +126,7 @@ namespace Chronokeep.Timing
             // Get the start time for the event. (Net time of 0:00:00.000)
             dictionary.distanceStartDict.Clear();
             DateTime startTime = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds);
-            dictionary.distanceStartDict[0] = (Constants.Timing.DateToEpoch(startTime), theEvent.StartMilliseconds);
+            dictionary.distanceStartDict[0] = (Constants.Timing.RFIDDateToEpoch(startTime), theEvent.StartMilliseconds);
             // And the end time (for time based events)
             dictionary.distanceEndDict.Clear();
             dictionary.distanceEndDict[0] = dictionary.distanceStartDict[0];
@@ -251,6 +251,7 @@ namespace Chronokeep.Timing
                     // Process chip reads first.
                     if (database.UnprocessedReadsExist(theEvent.Identifier))
                     {
+                        Log.D("Timing.TimingWorker", "Unprocessed reads exist.");
 #if DEBUG
                         DateTime start = DateTime.Now;
 #endif
@@ -281,6 +282,7 @@ namespace Chronokeep.Timing
                     // Now process Results that aren't ranked.
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
                     {
+                        Log.D("Timing.TimingWorker", "Unprocessed results exist.");
                         DateTime start = DateTime.Now;
                         // If RACETYPE if DISTANCE
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)

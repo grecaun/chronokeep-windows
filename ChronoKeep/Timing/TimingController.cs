@@ -223,8 +223,9 @@ namespace Chronokeep.Timing
                             }
                         }
                     }
-                    catch
+                    catch (Exception e)
                     {
+                        Log.E("Timing.TimingController", "Error trying to parse messages. " + e.Message);
                         if (TimingSystemDict.ContainsKey(sock))
                         {
                             Log.D("Timing.TimingController", "Socket errored on us.");
