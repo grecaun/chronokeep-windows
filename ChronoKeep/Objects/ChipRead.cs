@@ -316,7 +316,7 @@ namespace Chronokeep
                 {
                     return "Unused Start";
                 }
-                if (Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE == Status ||
+                if (Constants.Timing.CHIPREAD_STATUS_IGNORE == Status ||
                     Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE == Status ||
                     Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE == Status)
                 {
@@ -388,6 +388,11 @@ namespace Chronokeep
             return this.Bib.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
                 && this.Name.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
                 && this.ChipNumber.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
+        }
+
+        public bool IsIgnored()
+        {
+            return Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE == Status || Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE == Status || Constants.Timing.CHIPREAD_STATUS_IGNORE == Status;
         }
     }
 }

@@ -443,7 +443,7 @@ namespace Chronokeep.Database.SQLite
             {
                 new SQLiteParameter("@event", eventId),
                 new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE),
-                new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE),
+                new SQLiteParameter("@ignore", Constants.Timing.CHIPREAD_STATUS_IGNORE),
                 new SQLiteParameter("@dnf", Constants.Timing.CHIPREAD_STATUS_DNF),
                 new SQLiteParameter("@dnf_ignore", Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE),
                 new SQLiteParameter("@dns", Constants.Timing.CHIPREAD_STATUS_DNS),

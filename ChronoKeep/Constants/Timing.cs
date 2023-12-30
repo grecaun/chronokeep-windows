@@ -19,7 +19,7 @@ namespace Chronokeep.Constants
 
         public static readonly int CHIPREAD_STATUS_NONE = 0; // If this value changes, SQLiteInterface version must be updated to reflect said change.
         public static readonly int CHIPREAD_STATUS_UNUSEDSTART = 1;
-        public static readonly int CHIPREAD_STATUS_FORCEIGNORE = 2;
+        public static readonly int CHIPREAD_STATUS_IGNORE = 2;
         public static readonly int CHIPREAD_STATUS_PRESTART = 3;
         public static readonly int CHIPREAD_STATUS_USED = 4;
         public static readonly int CHIPREAD_STATUS_WITHINIGN = 5;  // Within the ignore period

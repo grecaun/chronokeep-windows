@@ -46,7 +46,7 @@ namespace Chronokeep.UI.Timing
             foreach (ChipRead read in updateListView.SelectedItems)
             {
                 // Check what the previous status was. If it was FORCEIGNORE, then we can set to NONE
-                if (read.Status == Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE)
+                if (read.Status == Constants.Timing.CHIPREAD_STATUS_IGNORE)
                 {
                     read.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
                 }
@@ -73,7 +73,7 @@ namespace Chronokeep.UI.Timing
                 else if (read.Status != Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_SEEN &&
                     read.Status != Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
                 {
-                    read.Status = Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE;
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_IGNORE;
                 }
                 newChipReads.Add(read);
                 if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)

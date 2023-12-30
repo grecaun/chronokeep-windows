@@ -669,7 +669,7 @@ namespace Chronokeep.Database.SQLite
                         command = connection.CreateCommand();
                         command.CommandText = "DROP TABLE time_results; UPDATE chipreads SET read_status=" +
                             Constants.Timing.CHIPREAD_STATUS_NONE + " WHERE read_status<>" +
-                            Constants.Timing.CHIPREAD_STATUS_FORCEIGNORE + ";" +
+                            Constants.Timing.CHIPREAD_STATUS_IGNORE + ";" +
                             "CREATE TABLE IF NOT EXISTS time_results (" +
                                 "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                                 "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
