@@ -45,7 +45,7 @@ namespace Chronokeep.UI.MainPages
 
         private DateTime startTime;
         DispatcherTimer Timer = new DispatcherTimer();
-        private Boolean TimerStarted = false;
+        private bool TimerStarted = false;
         private SetTimeWindow timeWindow = null;
 
         ObservableCollection<DistanceStat> stats = new ObservableCollection<DistanceStat>();
@@ -246,6 +246,14 @@ namespace Chronokeep.UI.MainPages
                 database.AddTimingSystem(sys);
             }
             Timer.Stop();
+        }
+
+        public void UpdateAlarms()
+        {
+            if (subPage is AlarmsPage)
+            {
+                ((AlarmsPage)subPage).UpdateAlarms();
+            }
         }
 
         public void UpdateView()

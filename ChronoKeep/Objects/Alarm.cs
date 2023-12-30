@@ -27,6 +27,7 @@ namespace Chronokeep.Objects
             if (listMtx.WaitOne(3000))
             {
                 output.AddRange(alarms);
+                listMtx.ReleaseMutex();
             }
             return output;
         }
@@ -39,6 +40,7 @@ namespace Chronokeep.Objects
             {
                 outBib = new Dictionary<int, Alarm>(bibAlarms);
                 outChip = new Dictionary<string, Alarm>(chipAlarms);
+                listMtx.ReleaseMutex();
             }
             return (outBib, outChip);
         }
@@ -52,12 +54,19 @@ namespace Chronokeep.Objects
                 if (bibAlarms.ContainsKey(alarm.Bib))
                 {
                     bibAlarms.Remove(alarm.Bib);
+                    output = true;
                 }
                 if (chipAlarms.ContainsKey(alarm.Chip))
                 {
                     chipAlarms.Remove(alarm.Chip);
+                    output = true;
                 }
-                output = true;
+                if (alarms.Contains(alarm))
+                {
+                    alarms.Remove(alarm);
+                    output = true;
+                }
+                listMtx.ReleaseMutex();
             }
             return output;
         }
@@ -71,6 +80,7 @@ namespace Chronokeep.Objects
                 bibAlarms.Clear();
                 chipAlarms.Clear();
                 output = true;
+                listMtx.ReleaseMutex();
             }
             return output;
         }
@@ -84,13 +94,13 @@ namespace Chronokeep.Objects
                 if (alarm.Bib >= 0)
                 {
                     bibAlarms[alarm.Bib] = alarm;
-                    output = true;
                 }
                 if (alarm.Chip.Length > 0)
                 {
                     chipAlarms[alarm.Chip] = alarm;
-                    output = true;
                 }
+                output = true;
+                listMtx.ReleaseMutex();
             }
             return output;
         }
@@ -106,14 +116,14 @@ namespace Chronokeep.Objects
                     if (alarm.Bib >= 0)
                     {
                         bibAlarms.Add(alarm.Bib, alarm);
-                        output = true;
                     }
                     if (alarm.Chip.Length > 0)
                     {
                         chipAlarms.Add(alarm.Chip, alarm);
-                        output = true;
                     }
+                    output = true;
                 }
+                listMtx.ReleaseMutex();
             }
             return output;
         }
@@ -127,6 +137,7 @@ namespace Chronokeep.Objects
                 {
                     output = bibAlarms[bib];
                 }
+                listMtx.ReleaseMutex();
             }
             return output;
         }
@@ -140,6 +151,7 @@ namespace Chronokeep.Objects
                 {
                     output = chipAlarms[chip];
                 }
+                listMtx.ReleaseMutex();
             }
             return output;
         }

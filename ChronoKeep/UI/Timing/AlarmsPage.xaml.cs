@@ -45,7 +45,7 @@ namespace Chronokeep.UI.Timing
             }
             // get alarms from the database
             // alarms = database.GetAlarms(theEvent.Identifier);
-            UpdateView();
+            UpdateAlarms();
         }
         
         public void CancelableUpdateView(CancellationToken token) { }
@@ -62,7 +62,9 @@ namespace Chronokeep.UI.Timing
 
         public void EditSelected() { }
 
-        public void UpdateView()
+        public void UpdateView() { }
+
+        public void UpdateAlarms()
         {
             Log.D("UI.Timing.AlarmsPage", "Updating View.");
             if (theEvent == null || theEvent.Identifier < 0)
@@ -87,7 +89,6 @@ namespace Chronokeep.UI.Timing
             {
                 Alarm.AddAlarm(alarm.GetUpdatedAlarm());
             }
-            UpdateView();
             /*
              * database.SaveAlarms(alarms);
              */
@@ -121,7 +122,7 @@ namespace Chronokeep.UI.Timing
         public void Keyboard_Ctrl_Z()
         {
             Log.D("UI.Timing.AlarmsPage", "Ctrl+Z pressed.");
-            UpdateView();
+            UpdateAlarms();
         }
 
         private void AlarmsBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -210,7 +211,7 @@ namespace Chronokeep.UI.Timing
                 return;
             }
             SaveAlarms();
-            UpdateView();
+            UpdateAlarms();
         }
 
         private class AnAlarmItem : ListBoxItem

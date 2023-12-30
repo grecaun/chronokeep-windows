@@ -745,6 +745,7 @@ namespace Chronokeep.UI
             if (dnsMutex.WaitOne(3000))
             {
                 didNotStartMode = true;
+                dnsMutex.ReleaseMutex();
                 return true;
             }
             return false;
@@ -755,6 +756,7 @@ namespace Chronokeep.UI
             if (dnsMutex.WaitOne(3000))
             {
                 didNotStartMode = false;
+                dnsMutex.ReleaseMutex();
                 return true;
             }
             return false;
@@ -811,7 +813,7 @@ namespace Chronokeep.UI
                 }
                 if (page is TimingPage)
                 {
-                    page.UpdateView();
+                    ((TimingPage)page).UpdateAlarms();
                 }
             }));
         }
