@@ -84,12 +84,13 @@ namespace Chronokeep.Objects
                 if (alarm.Bib >= 0)
                 {
                     bibAlarms[alarm.Bib] = alarm;
+                    output = true;
                 }
                 if (alarm.Chip.Length > 0)
                 {
                     chipAlarms[alarm.Chip] = alarm;
+                    output = true;
                 }
-                output = true;
             }
             return output;
         }
@@ -105,13 +106,14 @@ namespace Chronokeep.Objects
                     if (alarm.Bib >= 0)
                     {
                         bibAlarms.Add(alarm.Bib, alarm);
+                        output = true;
                     }
                     if (alarm.Chip.Length > 0)
                     {
                         chipAlarms.Add(alarm.Chip, alarm);
+                        output = true;
                     }
                 }
-                output = true;
             }
             return output;
         }

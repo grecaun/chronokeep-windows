@@ -87,6 +87,7 @@ namespace Chronokeep.UI.Timing
             {
                 Alarm.AddAlarm(alarm.GetUpdatedAlarm());
             }
+            UpdateView();
             /*
              * database.SaveAlarms(alarms);
              */
