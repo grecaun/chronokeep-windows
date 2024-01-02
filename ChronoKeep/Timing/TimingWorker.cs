@@ -283,7 +283,9 @@ namespace Chronokeep.Timing
                     if (database.UnprocessedResultsExist(theEvent.Identifier))
                     {
                         Log.D("Timing.TimingWorker", "Unprocessed results exist.");
+#if DEBUG
                         DateTime start = DateTime.Now;
+#endif
                         // If RACETYPE if DISTANCE
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                         {
@@ -303,9 +305,12 @@ namespace Chronokeep.Timing
                             _ = Routines.BackyardUltraRoutine.ProcessPlacements(theEvent, database, dictionary);
                             touched = true;
                         }
+#if DEBUG
                         DateTime end = DateTime.Now;
                         TimeSpan time = end - start;
                         Log.D("Timing.TimingWorker", string.Format("Time to process placements was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
+#endif
+                        window.NetworkUpdateResults();
                     }
                     if (touched)
                     {

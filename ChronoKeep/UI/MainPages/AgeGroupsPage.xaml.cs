@@ -284,7 +284,7 @@ namespace Chronokeep.UI.MainPages
                 database.UpdateParticipants(participants);
 
                 database.ResetTimingResultsEvent(theEvent.Identifier);
-                mWindow.NetworkClearResults(theEvent.Identifier);
+                mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
             }
         }

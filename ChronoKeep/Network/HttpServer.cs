@@ -118,7 +118,8 @@ namespace Chronokeep.Network
             string partBib = "";
             if (filename.StartsWith("part/", StringComparison.OrdinalIgnoreCase))
             {
-                partBib = filename.Substring(5);
+                filename = filename.Substring(5);
+                partBib = filename;
             }
 
             byte[] message = Encoding.Default.GetBytes("");

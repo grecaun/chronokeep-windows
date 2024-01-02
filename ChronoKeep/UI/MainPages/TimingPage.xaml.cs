@@ -475,7 +475,7 @@ namespace Chronokeep.UI.MainPages
                 database.UpdateEvent(theEvent);
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 UpdateView();
-                mWindow.NetworkClearResults(theEvent.Identifier);
+                mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
             }
         }
@@ -653,7 +653,7 @@ namespace Chronokeep.UI.MainPages
                 APIController.ReleaseMutex();
             }
             UpdateView();
-            mWindow.NetworkClearResults(theEvent.Identifier);
+            mWindow.NetworkClearResults();
             mWindow.NotifyTimingWorker();
             recalculateButton.Content = "Recalculate";
         }

@@ -10,9 +10,10 @@ namespace Chronokeep.Interfaces
         void AddWindow(Window w);
         void SwitchPage(IMainPage iPage);
         void Exit();
-        
+
         // Networking services related calls.
-        void NetworkClearResults(int eventid);
+        void NetworkUpdateResults();
+        void NetworkClearResults();
         void StartHttpServer();
         void StopHttpServer();
         bool HttpServerActive();

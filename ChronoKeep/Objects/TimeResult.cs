@@ -461,9 +461,17 @@ namespace Chronokeep
             if (one == null || two == null) return 1;
             if (one.DistanceName.Equals(two.DistanceName))
             {
-                if (one.status != two.status)
+                if (one.Occurrence != two.Occurrence)
                 {
-                    return one.status.CompareTo(two.status);
+                    return two.Occurrence.CompareTo(one.Occurrence);
+                }
+                if (one.status == 3 && two.status != 3)
+                {
+                    return -1;
+                }
+                if (one.status != 3 && two.status == 3)
+                {
+                    return 1;
                 }
                 if (one.Place == two.Place)
                 {

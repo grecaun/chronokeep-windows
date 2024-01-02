@@ -223,7 +223,7 @@ namespace Chronokeep.UI.MainPages
             if (UpdateTimingWorker)
             {
                 database.ResetTimingResultsEvent(theEvent.Identifier);
-                mWindow.NetworkClearResults(theEvent.Identifier);
+                mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
             }
         }

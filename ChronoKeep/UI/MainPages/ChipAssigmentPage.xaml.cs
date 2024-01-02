@@ -415,7 +415,7 @@ namespace Chronokeep.UI.MainPages
             if (BibsChanged)
             {
                 database.ResetTimingResultsEvent(theEvent.Identifier);
-                mWindow.NetworkClearResults(theEvent.Identifier);
+                mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
             }
         }

@@ -540,7 +540,7 @@ namespace Chronokeep
             });
             Log.D("ImportFileWindow", "All done with the import.");
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            window.NetworkClearResults(theEvent.Identifier);
+            window.NetworkClearResults();
             window.NotifyTimingWorker();
             this.Close();
         }

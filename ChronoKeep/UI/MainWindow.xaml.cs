@@ -604,7 +604,7 @@ namespace Chronokeep.UI
             UpdateStatus();
         }
 
-        public void NetworkUpdateResults(int eventid, List<TimeResult> results)
+        public void NetworkUpdateResults()
         {
             if (httpServer != null)
             {
@@ -612,11 +612,11 @@ namespace Chronokeep.UI
             }
         }
 
-        public void NetworkAddResults(int eventid, List<TimeResult> results)
+        public void NetworkAddResults()
         {
         }
 
-        public void NetworkClearResults(int eventid)
+        public void NetworkClearResults()
         {
             if (httpServer != null)
             {
