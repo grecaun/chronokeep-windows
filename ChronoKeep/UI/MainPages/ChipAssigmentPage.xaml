@@ -136,7 +136,6 @@
                                 FontSize="16"
                                 Margin="5,5,5,5"
                                 KeyDown="KeyPressHandlerSingle"
-                                PreviewTextInput="BibValidation"
                                 GotFocus="SelectAll"
                                 />
                         </DockPanel>
@@ -227,7 +226,6 @@
                                 Grid.Column="1"
                                 KeyDown="KeyPressHandlerRange"
                                 TextChanged="UpdateEndChip"
-                                PreviewTextInput="BibValidation"
                                 GotFocus="SelectAll"
                                 />
                             <TextBox
@@ -237,7 +235,6 @@
                                 Grid.Column="2"
                                 KeyDown="KeyPressHandlerRange" 
                                 TextChanged="UpdateEndChip"
-                                PreviewTextInput="BibValidation"
                                 GotFocus="SelectAll"
                                 />
                         </Grid>

@@ -432,11 +432,6 @@ namespace Chronokeep.UI.MainPages
             src.SelectAll();
         }
 
-        private void BibValidation(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = allowedChars.IsMatch(e.Text);
-        }
-
         private void ChipValidation(object sender, TextCompositionEventArgs e)
         {
             if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)

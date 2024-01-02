@@ -142,12 +142,6 @@ namespace Chronokeep.UI.ChipAssignment
                 {
                     StartBib.Text = replaceStr;
                 }
-                int startVal = -1;
-                int.TryParse(StartBib.Text, out startVal);
-                if (string.CompareOrdinal(StartBib.Text, startVal.ToString()) != 0)
-                {
-                    StartBib.Text = startVal.ToString();
-                }
                 UpdateEndChip();
             }
 
@@ -157,12 +151,6 @@ namespace Chronokeep.UI.ChipAssignment
                 if (EndBib.Text.Length != replaceStr.Length)
                 {
                     EndBib.Text = replaceStr;
-                }
-                int endVal = -1;
-                int.TryParse(EndBib.Text, out endVal);
-                if (string.CompareOrdinal(EndBib.Text, endVal.ToString()) != 0)
-                {
-                    EndBib.Text = endVal.ToString();
                 }
                 UpdateEndChip();
             }
