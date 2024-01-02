@@ -489,7 +489,7 @@ namespace Chronokeep.UI.MainPages
                 List<Participant> participants = new List<Participant>();
                 Dictionary<int, int> eventspecificIDTranslation = new Dictionary<int, int>();
                 // Bib is the key here
-                Dictionary<int, int> oldEventSpecificDictionary = new Dictionary<int, int>();
+                Dictionary<string, int> oldEventSpecificDictionary = new Dictionary<string, int>();
                 foreach (Participant item in loadFrom.GetParticipants(oldEventId))
                 {
                     item.EventSpecific.EventIdentifier = newEventId;
@@ -516,7 +516,7 @@ namespace Chronokeep.UI.MainPages
                 List<ChipRead> chipReads = new List<ChipRead>();
                 Dictionary<int, int> readIDTranslation = new Dictionary<int, int>();
                 // (CHIPNUMBER, BIB, SECONDS, MILLISECONDS) for the key
-                Dictionary<(string, int, long, int), int> oldReadDictionary = new Dictionary<(string, int, long, int), int>();
+                Dictionary<(string, string, long, int), int> oldReadDictionary = new Dictionary<(string, string, long, int), int>();
                 foreach (ChipRead item in loadFrom.GetChipReads(oldEventId))
                 {
                     item.EventId = newEventId;

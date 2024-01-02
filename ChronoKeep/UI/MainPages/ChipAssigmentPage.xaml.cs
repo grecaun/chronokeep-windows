@@ -136,23 +136,30 @@ namespace Chronokeep.UI.MainPages
                 long.TryParse(SingleChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out chip);
             }
             Log.D("UI.MainPages.ChipAssignmentPage", "Bib " + bib + " Chip " + chip);
-            if (chip == -1 || bib == -1)
+            if (chip == -1)
             {
-                DialogBox.Show("The bib or chip is not valid.");
+                DialogBox.Show("The chip is not valid.");
                 return;
             }
             List<BibChipAssociation> bibChips = new List<BibChipAssociation>
             {
                 new BibChipAssociation()
                 {
-                    Bib = (int) bib,
+                    Bib = SingleBibBox.Text,
                     Chip = Constants.Settings.CHIP_TYPE_DEC == chipType.Value ? chip.ToString() : chip.ToString("X")
                 }
             };
             database.AddBibChipAssociation(theEvent.Identifier, bibChips);
             BibsChanged = true;
             UpdateView();
-            SingleBibBox.Text = (bib + 1).ToString();
+            if (bib > -1)
+            {
+                SingleBibBox.Text = (bib + 1).ToString();
+            }
+            else
+            {
+                SingleBibBox.Text = "";
+            }
             SingleBibBox.Focus();
         }
 
@@ -160,8 +167,11 @@ namespace Chronokeep.UI.MainPages
         {
             Log.D("UI.MainPages.ChipAssignmentPage", "Save Range clicked.");
             long startChip = -1, endChip = -1, startBib = -1, endBib = -1;
-            long.TryParse(RangeStartBibBox.Text, out startBib);
-            long.TryParse(RangeEndBibBox.Text, out endBib);
+            if (!long.TryParse(RangeStartBibBox.Text, out startBib) || !long.TryParse(RangeEndBibBox.Text, out endBib))
+            {
+                return;
+            }
+            ;
             if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
                 long.TryParse(RangeStartChipBox.Text, out startChip);
@@ -182,7 +192,7 @@ namespace Chronokeep.UI.MainPages
             for (long bib = startBib, tag = startChip; bib <= endBib && tag <= endChip; bib++, tag++)
             {
                 bibChips.Add(new BibChipAssociation() {
-                    Bib = (int)bib,
+                    Bib = bib.ToString(),
                     Chip = Constants.Settings.CHIP_TYPE_HEX == chipType.Value ? tag.ToString("X") : tag.ToString()
                 });
             }

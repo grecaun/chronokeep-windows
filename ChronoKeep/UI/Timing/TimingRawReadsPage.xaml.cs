@@ -20,7 +20,7 @@ namespace Chronokeep.UI.Timing
         Event theEvent;
 
         List<ChipRead> chipReads = new List<ChipRead>();
-        HashSet<int> bibsToReset = new HashSet<int>();
+        HashSet<string> bibsToReset = new HashSet<string>();
         HashSet<string> chipsToReset = new HashSet<string>();
 
         public TimingRawReadsPage(TimingPage parent, IDBInterface database)

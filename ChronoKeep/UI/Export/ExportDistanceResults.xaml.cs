@@ -261,7 +261,7 @@ namespace Chronokeep.UI.Export
                 "Wheelchair"
             });
             List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-            Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
+            Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
             foreach (Participant person in participants)
             {
                 participantDictionary[person.Bib] = person;
@@ -351,7 +351,7 @@ namespace Chronokeep.UI.Export
                 "state",
                 "status"
             };
-            Dictionary<int, Participant> participantDictionary = new Dictionary<int, Participant>();
+            Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
             foreach (Participant person in database.GetParticipants(theEvent.Identifier))
             {
                 participantDictionary[person.Bib] = person;

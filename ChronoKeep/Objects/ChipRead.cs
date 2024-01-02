@@ -27,15 +27,15 @@ namespace Chronokeep
         public int IsRewind { get; set; }
         public string ReaderTime { get; set; }
         public long StartTime { get; set; }
-        public int ReadBib { get; set; }
-        public int ChipBib { get; set; }
+        public string ReadBib { get; set; }
+        public string ChipBib { get; set; }
         public string Name { get; set; }
         public int Type { get; set; }
 
         // RawReads window functions
         private DateTime Start { get; set; }
         public string LocationName { get; set; }
-        public int Bib {
+        public string Bib {
             get
             {
                 return Constants.Timing.CHIPREAD_TYPE_CHIP == Type ? ChipBib : ReadBib;
@@ -43,9 +43,21 @@ namespace Chronokeep
         }
 
         // This constructor is used when receiving a read from a RFID Ultra 8
-        public ChipRead(int eventId, int locationId, string chipNumber, long seconds, int millisec,
-            int antenna, string rssi, int isRewind, string reader, string box, string readertime,
-            long starttime, int logid)
+        public ChipRead(
+            int eventId, 
+            int locationId, 
+            string chipNumber, 
+            long seconds, 
+            int millisec,
+            int antenna, 
+            string rssi, 
+            int isRewind, 
+            string reader, 
+            string box, 
+            string readertime,
+            long starttime, 
+            int logid
+            )
         {
             this.EventId = eventId;
             this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
@@ -68,7 +80,14 @@ namespace Chronokeep
         }
 
         // This constructor is used when receiving a read from an Ipico system
-        public ChipRead(int eventId, int locationId, string chipNumber, DateTime time, int antenna, int isRewind)
+        public ChipRead(
+            int eventId, 
+            int locationId, 
+            string chipNumber, 
+            DateTime time, 
+            int antenna, 
+            int isRewind
+            )
         {
             this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
             this.TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
@@ -91,8 +110,18 @@ namespace Chronokeep
         }
 
         // This constructor is used when receiving a read from a Chronokeep Portal system
-        public ChipRead(int eventId, int locationId, bool chipIsChip, string chipNumber,
-            long seconds, int millisec, int antenna, string rssi, string reader, int readType)
+        public ChipRead(
+            int eventId, 
+            int locationId, 
+            bool chipIsChip, 
+            string chipNumber,
+            long seconds, 
+            int millisec, 
+            int antenna, 
+            string rssi, 
+            string reader, 
+            int readType
+            )
         {
             this.EventId = eventId;
             this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
@@ -115,17 +144,33 @@ namespace Chronokeep
                 this.ChipNumber = chipNumber;
                 this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
             }
-            else
+            else // chip is a bib
             {
                 this.ChipNumber = Constants.Timing.CHIPREAD_DUMMYCHIP;
-                this.ReadBib = int.Parse(chipNumber);
+                this.ReadBib = chipNumber;
             }
         }
 
         // This is the OLD database' constructor.
-        public ChipRead(int readId, int eventId, int status, int locationId, long chipNumber, long seconds,
-           int millisec, int antenna, string rssi, int isRewind, string reader, string box, string readertime,
-           long starttime, int logid, DateTime time, int readbib, int type)
+        public ChipRead(int readId, 
+            int eventId, 
+            int status, 
+            int locationId, 
+            long chipNumber, 
+            long seconds,
+            int millisec, 
+            int antenna, 
+            string rssi, 
+            int isRewind, 
+            string reader, 
+            string box, 
+            string readertime,
+            long starttime, 
+            int logid, 
+            DateTime time, 
+            int readbib,
+            int type
+            )
         {
             this.ReadId = readId;
             this.EventId = eventId;
@@ -144,15 +189,37 @@ namespace Chronokeep
             this.LogId = logid;
             this.TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
             this.TimeMilliseconds = time.Millisecond;
-            this.ReadBib = readbib;
+            this.ReadBib = readbib.ToString();
             this.Type = type;
         }
 
         // new database constructor
-        public ChipRead(int readId, int eventId, int status, int locationId, string chipNumber, long seconds,
-            int millisec, int antenna, string rssi, int isRewind, string reader, string box, string readertime,
-            long starttime, int logid, long time_seconds, int time_millisec, int readbib, int type, int chipbib,
-            string first, string last, DateTime start, string locationName)
+        public ChipRead(
+            int readId, 
+            int eventId,
+            int status, 
+            int locationId, 
+            string chipNumber, 
+            long seconds,
+            int millisec, 
+            int antenna, 
+            string rssi, 
+            int isRewind, 
+            string reader, 
+            string box, 
+            string readertime,
+            long starttime, 
+            int logid, 
+            long time_seconds, 
+            int time_millisec, 
+            string readbib, 
+            int type, 
+            string chipbib,
+            string first,
+            string last, 
+            DateTime start,
+            string locationName
+            )
         {
             this.ReadId = readId;
             this.EventId = eventId;
@@ -180,7 +247,13 @@ namespace Chronokeep
         }
 
         // Constructor used in manual entry.
-        public ChipRead(int eventId, int locationId, int bib, DateTime time, int status)
+        public ChipRead(
+            int eventId,
+            int locationId,
+            string bib,
+            DateTime time,
+            int status
+            )
         {
             this.ReadBib = bib;
             this.TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
@@ -203,7 +276,12 @@ namespace Chronokeep
         }
 
         // Constructor used when loading from a Log
-        public ChipRead(int eventId, int locationId, string chip, DateTime time)
+        public ChipRead(
+            int eventId,
+            int locationId,
+            string chip,
+            DateTime time
+            )
         {
             this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
             this.TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
@@ -243,7 +321,7 @@ namespace Chronokeep
             int is_rewind,
             string reader_time,
             long start_time,
-            int read_bib,
+            string read_bib,
             int type,
             bool fake)
         {
@@ -378,8 +456,8 @@ namespace Chronokeep
             {
                 return one.Time.CompareTo(two.Time);
             }
-            int oneBib = one.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? one.ChipBib : one.ReadBib;
-            int twoBib = two.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? two.ChipBib : two.ReadBib;
+            string oneBib = one.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? one.ChipBib : one.ReadBib;
+            string twoBib = two.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? two.ChipBib : two.ReadBib;
             return oneBib.CompareTo(twoBib);
         }
 

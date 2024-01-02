@@ -563,7 +563,7 @@ namespace Chronokeep.Database.SQLite
                                 "read_id INTEGER PRIMARY KEY," +
                                 "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                                 "read_status INTEGER NOT NULL DEFAULT 0," +
-                                "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                                "location_id INTEGER NOT NULL," +
                                 "read_chipnumber INTEGER NOT NULL," +
                                 "read_seconds INTEGER NOT NULL," +
                                 "read_milliseconds INTEGER NOT NULL," +
@@ -582,7 +582,7 @@ namespace Chronokeep.Database.SQLite
                                 "ts_identifier INTEGER PRIMARY KEY," +
                                 "ts_ip TEXT NOT NULL," +
                                 "ts_port INTEGER NOT NULL," +
-                                "ts_location INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                                "ts_location INTEGER NOT NULL," +
                                 "ts_type TEXT NOT NULL," +
                                 "UNIQUE (ts_ip, ts_location) ON CONFLICT REPLACE);" +
                             "UPDATE settings SET version=26 WHERE version=25;";
@@ -604,7 +604,7 @@ namespace Chronokeep.Database.SQLite
                                 "read_id INTEGER PRIMARY KEY," +
                                 "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                                 "read_status INTEGER NOT NULL DEFAULT 0," +
-                                "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                                "location_id INTEGER NOT NULL," +
                                 "read_chipnumber INTEGER NOT NULL," +
                                 "read_seconds INTEGER NOT NULL," +
                                 "read_milliseconds INTEGER NOT NULL," +
@@ -707,7 +707,7 @@ namespace Chronokeep.Database.SQLite
                             "read_id INTEGER PRIMARY KEY," +
                             "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                             "read_status INTEGER NOT NULL DEFAULT 0," +
-                            "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                            "location_id INTEGER NOT NULL," +
                             "read_chipnumber INTEGER NOT NULL," +
                             "read_seconds INTEGER NOT NULL," +
                             "read_milliseconds INTEGER NOT NULL," +
@@ -719,15 +719,17 @@ namespace Chronokeep.Database.SQLite
                             "read_isrewind INTEGER NOT NULL," +
                             "read_readertime TEXT NOT NULL," +
                             "read_starttime INTEGER NOT NULL," +
+                            // new fields
                             "read_time_seconds INTEGER NOT NULL," +
                             "read_time_milliseconds INTEGER NOT NULL," +
+                            //
                             "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
                             "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
                             "UNIQUE (event_id, read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
                             ");";
                         command.ExecuteNonQuery();
                         command = connection.CreateCommand();
-                        command.CommandText = "SELECT * FROM chipreads_old;";
+                        command.CommandText = "SELECT * FROM chipreads;";
                         SQLiteDataReader reader = command.ExecuteReader();
                         List<ChipRead> output = new List<ChipRead>();
                         while (reader.Read())
@@ -773,13 +775,13 @@ namespace Chronokeep.Database.SQLite
                     case 35:
                         Log.D("Database.SQLite.Update", "Upgrading from version 35.");
                         command = connection.CreateCommand();
-                        command.CommandText = "ALTER TABLE bib_chip_assoc RENAME TO " +
-                            "old_bib_chip_assoc; ALTER TABLE chipreads RENAME TO " +
-                            "old_chipreads; CREATE TABLE IF NOT EXISTS chipreads (" +
+                        // Chipnumber changed from integer to VARCHAR
+                        command.CommandText =
+                            "CREATE TABLE IF NOT EXISTS chipreads_new(" +
                                 "read_id INTEGER PRIMARY KEY," +
                                 "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                                 "read_status INTEGER NOT NULL DEFAULT 0," +
-                                "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                                "location_id INTEGER NOT NULL," +
                                 "read_chipnumber VARCHAR NOT NULL," +
                                 "read_seconds INTEGER NOT NULL," +
                                 "read_milliseconds INTEGER NOT NULL," +
@@ -798,77 +800,27 @@ namespace Chronokeep.Database.SQLite
                                 "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
                                 "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
                                 "UNIQUE (event_id, read_chipnumber, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
-                                ");" +
-                            "CREATE TABLE IF NOT EXISTS bib_chip_assoc(" +
+                                "); " +
+                            "INSERT INTO chipreads_new(" +
+                                "read_id, event_id, read_status, location_id, read_chipnumber, read_seconds, read_milliseconds, read_antenna, read_reader, " +
+                                "read_box, read_logindex, read_rssi, read_isrewind, read_readertime, read_starttime, read_time_seconds, read_time_milliseconds, " +
+                                "read_bib, read_type " +
+                            ") SELECT " +
+                                "read_id, event_id, read_status, location_id, read_chipnumber, read_seconds, read_milliseconds, read_antenna, read_reader, " +
+                                "read_box, read_logindex, read_rssi, read_isrewind, read_readertime, read_starttime, read_time_seconds, read_time_milliseconds, " +
+                                "read_bib, read_type " +
+                            "FROM chipreads; " +
+                            "DROP TABLE chipreads; " +
+                            "ALTER TABLE chipreads_new RENAME TO chipreads; " +
+                            "CREATE TABLE IF NOT EXISTS bib_chip_assoc_new(" +
                                 "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                                 "bib INTEGER NOT NULL," +
                                 "chip VARCHAR NOT NULL," +
                                 "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
-                                ");";
-                        command.ExecuteNonQuery();
-                        command.CommandText = "SELECT * FROM old_bib_chip_assoc;";
-                        SQLiteDataReader bibreader = command.ExecuteReader();
-                        List<BibChipAssociation> assocs = new List<BibChipAssociation>();
-                        while (bibreader.Read())
-                        {
-                            assocs.Add(new BibChipAssociation()
-                            {
-                                EventId = Convert.ToInt32(bibreader["event_id"]),
-                                Bib = Convert.ToInt32(bibreader["bib"]),
-                                Chip = bibreader["chip"].ToString()
-                            });
-                        }
-                        bibreader.Close();
-                        command.CommandText = "INSERT INTO bib_chip_assoc (event_id, bib, chip) VALUES (@eventId, @bib, @chip);";
-                        foreach (BibChipAssociation a in assocs)
-                        {
-                            command.Parameters.AddRange(new SQLiteParameter[]
-                            {
-                                    new SQLiteParameter("@eventId", a.EventId),
-                                    new SQLiteParameter("@bib", a.Bib),
-                                    new SQLiteParameter("@chip", a.Chip),
-                            });
-                            command.ExecuteNonQuery();
-                        }
-                        command.CommandText = "SELECT * FROM old_chipreads;";
-                        bibreader = command.ExecuteReader();
-                        List<ChipRead> reads = new List<ChipRead>();
-                        DateTime time = DateTime.Now;
-                        while (bibreader.Read())
-                        {
-                            reads.Add(new ChipRead(
-                                Convert.ToInt32(bibreader["read_id"]),
-                                Convert.ToInt32(bibreader["event_id"]),
-                                Convert.ToInt32(bibreader["read_status"]),
-                                Convert.ToInt32(bibreader["location_id"]),
-                                bibreader["read_chipnumber"].ToString(),
-                                Convert.ToInt64(bibreader["read_seconds"]),
-                                Convert.ToInt32(bibreader["read_milliseconds"]),
-                                Convert.ToInt32(bibreader["read_antenna"]),
-                                bibreader["read_rssi"].ToString(),
-                                Convert.ToInt32(bibreader["read_isrewind"]),
-                                bibreader["read_reader"].ToString(),
-                                bibreader["read_box"].ToString(),
-                                bibreader["read_readertime"].ToString(),
-                                Convert.ToInt32(bibreader["read_starttime"]),
-                                Convert.ToInt32(bibreader["read_logindex"]),
-                                Convert.ToInt64(bibreader["read_time_seconds"]),
-                                Convert.ToInt32(bibreader["read_time_milliseconds"]),
-                                Convert.ToInt32(bibreader["read_bib"]),
-                                Convert.ToInt32(bibreader["read_type"]),
-                                Constants.Timing.CHIPREAD_DUMMYBIB,
-                                "",
-                                "",
-                                time,
-                                ""
-                                ));
-                        }
-                        bibreader.Close();
-                        foreach (ChipRead read in reads)
-                        {
-                            ChipReads.AddChipRead(read, connection);
-                        }
-                        command.CommandText = "DROP TABLE old_chipreads; DROP TABLE old_bib_chip_assoc;" +
+                                "); " +
+                            "INSERT INTO bib_chip_assoc_new(event_id, bib, chip) SELECT event_id, bib, chip FROM bib_chip_assoc; " +
+                            "DROP TABLE bib_chip_assoc; " +
+                            "ALTER TABLE bib_chip_assoc_new RENAME TO bib_chip_assoc;" +
                             "UPDATE settings SET version=36 WHERE version=35;";
                         command.ExecuteNonQuery();
                         goto case 36;
@@ -937,7 +889,7 @@ namespace Chronokeep.Database.SQLite
                             "read_id INTEGER PRIMARY KEY," +
                             "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                             "read_status INTEGER NOT NULL DEFAULT 0," +
-                            "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                            "location_id INTEGER NOT NULL," +
                             "read_chipnumber VARCHAR NOT NULL," +
                             "read_seconds INTEGER NOT NULL," +
                             "read_milliseconds INTEGER NOT NULL," +
@@ -994,8 +946,12 @@ namespace Chronokeep.Database.SQLite
                     case 44:
                         Log.D("Database.SQLite.Update", "Upgrading from version 44.");
                         command = connection.CreateCommand();
-                        command.CommandText = "DROP TABLE dayof_participant; DROP TABLE kiosk; DROP TABLE eventspecific_apparel; " +
-                            "DROP TABLE changes; DROP TABLE bib_group; DROP TABLE available_bibs; " +
+                        command.CommandText = "DROP TABLE dayof_participant;" +
+                            "DROP TABLE kiosk;" +
+                            "DROP TABLE eventspecific_apparel; " +
+                            "DROP TABLE changes;" +
+                            "DROP TABLE bib_group;" +
+                            "DROP TABLE available_bibs; " +
                             "CREATE TABLE IF NOT EXISTS distances (" +
                                 "distance_id INTEGER PRIMARY KEY," +
                                 "distance_name VARCHAR(100) NOT NULL," +
@@ -1164,7 +1120,7 @@ namespace Chronokeep.Database.SQLite
                                     Convert.ToInt32(reader["event_id"]),
                                     Convert.ToInt32(reader["distance_id"]),
                                     reader["distance_name"].ToString(),
-                                    Convert.ToInt32(reader["eventspecific_bib"]),
+                                    reader["eventspecific_bib"].ToString(),
                                     Convert.ToInt32(reader["eventspecific_checkedin"]),
                                     reader["eventspecific_comments"].ToString(),
                                     reader["eventspecific_owes"].ToString(),
@@ -1192,7 +1148,7 @@ namespace Chronokeep.Database.SQLite
                             if (distDict.ContainsKey((p.EventSpecific.DistanceName + " Early Created", p.EventSpecific.DistanceIdentifier)))
                             {
                                 p.EventSpecific.DistanceIdentifier = distDict[(p.EventSpecific.DistanceName + " Early Created", p.EventSpecific.DistanceIdentifier)].Identifier;
-                                Participants.UpdateParticipant(p, connection);
+                                Participants.V44UpdateParticipant(p, connection);
                             }
                         }
                         goto case 45;
@@ -1357,6 +1313,93 @@ namespace Chronokeep.Database.SQLite
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE participants ADD COLUMN participant_phone VARCHAR(20) DEFAULT ''; " +
                             "UPDATE settings SET value='53' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
+                        goto case 53;
+                    case 53:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 53.");
+                        command = connection.CreateCommand();
+                        command.CommandText =
+                            "CREATE TABLE IF NOT EXISTS chipreads_new (" +
+                                "read_id INTEGER PRIMARY KEY," +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "read_status INTEGER NOT NULL DEFAULT 0," +
+                                "location_id INTEGER NOT NULL," +
+                                "read_chipnumber VARCHAR NOT NULL," +
+                                "read_seconds INTEGER NOT NULL," +
+                                "read_milliseconds INTEGER NOT NULL," +
+                                "read_antenna INTEGER NOT NULL," +
+                                "read_reader TEXT NOT NULL," +
+                                "read_box TEXT NOT NULL," +
+                                "read_logindex INTEGER NOT NULL," +
+                                "read_rssi INTEGER NOT NULL," +
+                                "read_isrewind INTEGER NOT NULL," +
+                                "read_readertime TEXT NOT NULL," +
+                                "read_starttime INTEGER NOT NULL," +
+                                "read_time_seconds INTEGER NOT NULL," +
+                                "read_time_milliseconds INTEGER NOT NULL," +
+                                "read_split_seconds INTEGER NOT NULL DEFAULT 0," +
+                                "read_split_milliseconds INTEGER NOT NULL DEFAULT 0," +
+                                "read_bib VARCHAR NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
+                                "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
+                                "UNIQUE (event_id, read_chipnumber, read_bib, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
+                                ");" +
+                            "INSERT INTO chipreads_new(" +
+                                "read_id, event_id, read_status, location_id, read_chipnumber, read_seconds, read_milliseconds, read_antenna, read_reader, " +
+                                "read_box, read_logindex, read_rssi, read_isrewind, read_readertime, read_starttime, read_time_seconds, read_time_milliseconds, " +
+                                "read_split_seconds, read_split_milliseconds, read_bib, read_type " +
+                            ") SELECT " +
+                                "read_id, event_id, read_status, location_id, read_chipnumber, read_seconds, read_milliseconds, read_antenna, read_reader, " +
+                                "read_box, read_logindex, read_rssi, read_isrewind, read_readertime, read_starttime, read_time_seconds, read_time_milliseconds, " +
+                                "read_split_seconds, read_split_milliseconds, read_bib, read_type " +
+                            "FROM chipreads; " +
+                            "DROP TABLE chipreads; " +
+                            "ALTER TABLE chipreads_new RENAME TO chipreads; " +
+                            "CREATE TABLE IF NOT EXISTS bib_chip_assoc_new(" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "bib INTEGER NOT NULL," +
+                                "chip VARCHAR NOT NULL," +
+                                "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
+                                "); " +
+                            "INSERT INTO bib_chip_assoc_new(event_id, bib, chip) SELECT event_id, bib, chip FROM bib_chip_assoc; " +
+                            "DROP TABLE bib_chip_assoc; " +
+                            "ALTER TABLE bib_chip_assoc_new RENAME TO bib_chip_assoc;" +
+                            "CREATE TABLE IF NOT EXISTS eventspecific_new (" +
+                                "eventspecific_id INTEGER PRIMARY KEY," +
+                                "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "distance_id INTEGER NOT NULL REFERENCES distances(distance_id)," +
+                                "eventspecific_bib VARCHAR," +
+                                "eventspecific_checkedin INTEGER DEFAULT 0," +
+                                "eventspecific_comments VARCHAR," +
+                                "eventspecific_owes VARCHAR(50)," +
+                                "eventspecific_other VARCHAR," +
+                                "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
+                                "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_UNKNOWN + "," +
+                                "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
+                                "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT '0-110'," +
+                                "eventspecific_anonymous SMALLINT NOT NULL DEFAULT 0," +
+                                "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE," +
+                                "UNIQUE (event_id, eventspecific_bib) ON CONFLICT REPLACE" +
+                                ");" +
+                            "INSERT INTO eventspecific_new(" +
+                                "eventspecific_id, participant_id, event_id, distance_id, eventspecific_bib, eventspecific_checkedin, eventspecific_comments, " +
+                                "eventspecific_owes, eventspecific_other, eventspecific_registration_date, eventspecific_status, eventspecific_age_group_id, " +
+                                "eventspecific_age_group_name, eventspecific_anonymous" +
+                            ") SELECT " +
+                                "eventspecific_id, participant_id, event_id, distance_id, eventspecific_bib, eventspecific_checkedin, eventspecific_comments, " +
+                                "eventspecific_owes, eventspecific_other, eventspecific_registration_date, eventspecific_status, eventspecific_age_group_id, " +
+                                "eventspecific_age_group_name, eventspecific_anonymous " +
+                            "FROM eventspecific;" +
+                            "DROP TABLE eventspecific;" +
+                            "ALTER TABLE eventspecific_new RENAME TO eventspecific;" +
+                            "CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);" +
+                            "CREATE TABLE IF NOT EXISTS alarms (" +
+                                "alarm_id INTEGER PRIMARY KEY, " +
+                                "alarm_bib VARCHAR, " +
+                                "alarm_chip VARCHAR, " +
+                                "alarm_enabled INTEGER NOT NULL DEFAULT 0," +
+                                "alarm_sound INTEGER NOT NULL DEFAULT 0;" +
+                            "UPDATE settings set value='54' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;
                 }

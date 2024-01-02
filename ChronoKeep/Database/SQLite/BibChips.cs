@@ -41,7 +41,7 @@ namespace Chronokeep.Database.SQLite
                 output.Add(new BibChipAssociation
                 {
                     EventId = Convert.ToInt32(reader["event_id"]),
-                    Bib = Convert.ToInt32(reader["bib"]),
+                    Bib = reader["bib"].ToString(),
                     Chip = reader["chip"].ToString()
                 });
             }
@@ -61,7 +61,7 @@ namespace Chronokeep.Database.SQLite
                 output.Add(new BibChipAssociation
                 {
                     EventId = Convert.ToInt32(reader["event_id"]),
-                    Bib = Convert.ToInt32(reader["bib"]),
+                    Bib = reader["bib"].ToString(),
                     Chip = reader["chip"].ToString()
                 });
             }

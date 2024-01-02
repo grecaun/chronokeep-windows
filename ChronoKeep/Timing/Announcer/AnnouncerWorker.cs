@@ -20,7 +20,7 @@ namespace Chronokeep.Timing.Announcer
 
         private static bool QuittingTime = false;
         private static List<AnnouncerParticipant> participants = new List<AnnouncerParticipant>();
-        private static HashSet<int> bibSeen = new HashSet<int>();
+        private static HashSet<string> bibSeen = new HashSet<string>();
 
         private AnnouncerWorker(IMainWindow window, IDBInterface database)
         {
@@ -82,7 +82,7 @@ namespace Chronokeep.Timing.Announcer
             }
         }
 
-        private bool ProcessReads(List<ChipRead> announcerReads, Dictionary<int, Participant> participantBibDictionary)
+        private bool ProcessReads(List<ChipRead> announcerReads, Dictionary<string, Participant> participantBibDictionary)
         {
             Log.D("Timing.Announcer.AnnouncerWorker", "Processing chip reads.");
             bool newParticipants = false;
@@ -116,7 +116,7 @@ namespace Chronokeep.Timing.Announcer
         {
             // Get the event we're looking at and fill the participant bib dictionary.
             Event theEvent = database.GetCurrentEvent();
-            Dictionary<int, Participant> participantBibDictionary = new Dictionary<int, Participant>();
+            Dictionary<string, Participant> participantBibDictionary = new Dictionary<string, Participant>();
             foreach (Participant part in database.GetParticipants(theEvent.Identifier))
             {
                 if (participantBibDictionary.ContainsKey(part.Bib))

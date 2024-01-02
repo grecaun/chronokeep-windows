@@ -131,10 +131,10 @@ namespace Chronokeep.UI.Export
                 //results.RemoveAll(x => x.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON);
                 results.Sort(TimeResult.CompareBySystemTime);
                 // Key is BIB -- Using BIB here instead of event specific because we want to know about unknown runners.
-                Dictionary<int, List<TimeResult>> resultDictionary = new Dictionary<int, List<TimeResult>>();
-                Dictionary<int, bool> outputDictionary = new Dictionary<int, bool>();
+                Dictionary<string, List<TimeResult>> resultDictionary = new Dictionary<string, List<TimeResult>>();
+                Dictionary<string, bool> outputDictionary = new Dictionary<string, bool>();
                 // (Bib, Occurence) - for Time Based Race exporting.
-                Dictionary<(int, int), TimeResult> occurrenceResultDictionary = new Dictionary<(int, int), TimeResult>();
+                Dictionary<(string, int), TimeResult> occurrenceResultDictionary = new Dictionary<(string, int), TimeResult>();
                 int maxLaps = 0;
                 foreach (TimeResult result in results)
                 {
@@ -362,9 +362,9 @@ namespace Chronokeep.UI.Export
                     data.Add(line);
                 }
                 // Add data for unknown runners
-                foreach (int bib in outputDictionary.Keys)
+                foreach (string bib in outputDictionary.Keys)
                 {
-                    if (!outputDictionary[bib] && bib > 0)
+                    if (!outputDictionary[bib] && string.IsNullOrEmpty(bib))
                     {
                         object[] line = new object[headersToOutput.Count];
                         if (headerIndex.ContainsKey("Bib"))

@@ -592,7 +592,7 @@ namespace Chronokeep
             return output;
         }
 
-        public Participant GetParticipantBib(int eventIdentifier, int bib)
+        public Participant GetParticipantBib(int eventIdentifier, string bib)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 31");
             if (!mutex.WaitOne(3000))

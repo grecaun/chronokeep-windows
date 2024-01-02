@@ -50,7 +50,7 @@ namespace Chronokeep.UI.Participants
             BibBox.Focus();
         }
 
-        public ModifyParticipantWindow(TimingPage tPage, IDBInterface database, int EventSpecificId, int Bib)
+        public ModifyParticipantWindow(TimingPage tPage, IDBInterface database, int EventSpecificId, string Bib)
         {
             InitializeComponent();
             this.window = null;
@@ -65,7 +65,7 @@ namespace Chronokeep.UI.Participants
             person = database.GetParticipantEventSpecific(theEvent.Identifier, EventSpecificId);
             if (person == null)
             {
-                BibBox.Text = Bib.ToString();
+                BibBox.Text = Bib;
                 Add.Click += new RoutedEventHandler(this.Add_Click);
                 UpdateDistances();
             }
@@ -297,14 +297,14 @@ namespace Chronokeep.UI.Participants
                 // bib is taken - person object holds old bib #
                 bool ModifyBibs = false;
                 DialogBox.Show(
-                    "This bib is already taken. Assign no bib to the previous bib owner?",
+                    "This bib is already taken. Swap bibs?",
                     "Yes",
                     "No",
                     () =>
                     {
                         ModifyBibs = true;
                         offendingBib.EventSpecific.Bib = person.EventSpecific.Bib;
-                        int newBib = newPart.EventSpecific.Bib;
+                        string newBib = newPart.EventSpecific.Bib;
                         newPart.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
                         database.UpdateParticipant(newPart);
                         database.UpdateParticipant(offendingBib);
@@ -345,12 +345,6 @@ namespace Chronokeep.UI.Participants
                 eventSpecificId = person.EventSpecific.Identifier;
                 participantId = person.Identifier;
             }
-            int bib = Constants.Timing.CHIPREAD_DUMMYBIB;
-            try
-            {
-                bib = int.Parse(BibBox.Text);
-            }
-            catch { }
             string gender = "Not Specified";
             if (GenderBox.SelectedItem != null)
             {
@@ -388,7 +382,7 @@ namespace Chronokeep.UI.Participants
                     theEvent.Identifier,
                     Convert.ToInt32(((ComboBoxItem)DistanceBox.SelectedItem).Uid),
                     "",
-                    bib,
+                    BibBox.Text,
                     checkedin,
                     CommentsBox.Text,
                     "",

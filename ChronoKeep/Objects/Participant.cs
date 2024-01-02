@@ -519,7 +519,7 @@ namespace Chronokeep
 
         // Event Specific binding stuffs
         public int EventIdentifier { get => eventSpecific.EventIdentifier; }
-        public int Bib { get => eventSpecific.Bib; }
+        public string Bib { get => eventSpecific.Bib; }
         public string Distance { get => eventSpecific.DistanceName; }
         public string CheckedIn { get => eventSpecific.CheckedIn == 0 ? "No" : "Yes"; }
         public bool IsCheckedIn { get => EventSpecific.CheckedIn == 1; }

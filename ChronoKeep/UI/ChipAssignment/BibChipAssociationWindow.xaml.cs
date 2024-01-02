@@ -145,7 +145,7 @@ namespace Chronokeep
                 bool extraAssoc = Headers.IsChecked == false;
                 await Task.Run(() =>
                 {
-                    Dictionary<string, int> currentAssociations = database.GetBibChips(eventId).ToDictionary(x => x.Chip, x => x.Bib);
+                    Dictionary<string, string> currentAssociations = database.GetBibChips(eventId).ToDictionary(x => x.Chip, x => x.Bib);
                     List<BibChipAssociation> items = new List<BibChipAssociation>();
                     ImportData data = importer.Data;
                     int numEntries = data.Data.Count;
@@ -153,7 +153,7 @@ namespace Chronokeep
                     {
                         items.Add(new BibChipAssociation
                         {
-                            Bib = int.Parse(data.Headers[keys[1]]),
+                            Bib = data.Headers[keys[1]],
                             Chip = data.Headers[keys[2]]
                         });
                     }
@@ -163,7 +163,7 @@ namespace Chronokeep
                         {
                             items.Add(new BibChipAssociation
                             {
-                                Bib = int.Parse(data.Data[counter][keys[1]]),
+                                Bib = data.Data[counter][keys[1]],
                                 Chip = data.Data[counter][keys[2]]
                             });
                         }
@@ -176,7 +176,9 @@ namespace Chronokeep
                     List<BibChipAssociation> conflicts = new List<BibChipAssociation>();
                     foreach (BibChipAssociation assoc in items)
                     {
-                        if (currentAssociations.ContainsKey(assoc.Chip) && currentAssociations[assoc.Chip] != assoc.Bib)
+                        // Check to ensure we aren't trying to associate this chip with a different bib
+                        // when it already has one associated with it.
+                        if (currentAssociations.ContainsKey(assoc.Chip) && !currentAssociations[assoc.Chip].Equals(assoc.Bib, StringComparison.OrdinalIgnoreCase))
                         {
                             conflicts.Add(assoc);
                         }

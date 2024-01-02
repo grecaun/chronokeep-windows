@@ -19,7 +19,7 @@ namespace Chronokeep.UI.Timing
         IDBInterface database;
         Event theEvent;
 
-        HashSet<int> bibsAdded = new HashSet<int>();
+        HashSet<string> bibsAdded = new HashSet<string>();
         
         private const string allowedNums = "[^0-9]";
         private bool dnf = false;
@@ -151,17 +151,8 @@ namespace Chronokeep.UI.Timing
         private void AddDNF()
         {
             Log.D("UI.Timing.ManualEntryWindow", "DNF entry detected.");
-            int bib = -1;
-            try
-            {
-                bib = Convert.ToInt32(BibBox.Text);
-            }
-            catch
-            {
-                DialogBox.Show("Invalid bib value given.");
-                return;
-            }
-            if (bib < 0)
+            string bib = BibBox.Text.Trim();
+            if (string.IsNullOrEmpty(bib))
             {
                 DialogBox.Show("Invalid bib value given.");
                 return;
@@ -187,7 +178,7 @@ namespace Chronokeep.UI.Timing
                     // Store the offset start values for each distance by distance ID
                     Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = new Dictionary<int, (int, int)>();
                     // Store participants by their bib number
-                    Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
+                    Dictionary<string, Participant> participantsDictionary = new Dictionary<string, Participant>();
                     foreach (Distance div in distances)
                     {
                         distanceStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
@@ -235,17 +226,12 @@ namespace Chronokeep.UI.Timing
         private void AddEntry()
         {
             Log.D("UI.Timing.ManualEntryWindow", "Manual entry detected.");
-            int bib = -1;
+            string bib = "-1";
             try
             {
-                bib = Convert.ToInt32(BibBox.Text);
+                bib = BibBox.Text;
             }
             catch
-            {
-                DialogBox.Show("Invalid bib value given.");
-                return;
-            }
-            if (bib < 0)
             {
                 DialogBox.Show("Invalid bib value given.");
                 return;
@@ -270,7 +256,7 @@ namespace Chronokeep.UI.Timing
                 // Store the offset start values for each distance by distance ID
                 Dictionary<int, (int seconds, int milliseconds)> distanceStartOffsetDictionary = new Dictionary<int, (int, int)>();
                 // Store participants by their bib number
-                Dictionary<int, Participant> participantsDictionary = new Dictionary<int, Participant>();
+                Dictionary<string, Participant> participantsDictionary = new Dictionary<string, Participant>();
                 foreach (Distance div in distances)
                 {
                     distanceStartOffsetDictionary[div.Identifier] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);

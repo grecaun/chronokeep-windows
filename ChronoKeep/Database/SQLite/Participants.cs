@@ -141,6 +141,53 @@ namespace Chronokeep.Database.SQLite
             command.ExecuteNonQuery();
         }
 
+        internal static void V44UpdateParticipant(Participant person, SQLiteConnection connection)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "UPDATE participants SET participant_first=@first, participant_last=@last, participant_street=@street," +
+                " participant_city=@city, participant_state=@state, participant_zip=@zip, participant_birthday=@birthdate," +
+                " emergencycontact_name=@ecname, emergencycontact_phone=@ecphone, participant_email=@email, participant_mobile=@mobile," +
+                " participant_parent=@parent, participant_country=@country, participant_street2=@street2, participant_gender=@gender WHERE participant_id=@participantid";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@first", person.FirstName),
+                    new SQLiteParameter("@last", person.LastName),
+                    new SQLiteParameter("@street", person.Street),
+                    new SQLiteParameter("@city", person.City),
+                    new SQLiteParameter("@state", person.State),
+                    new SQLiteParameter("@zip", person.Zip),
+                    new SQLiteParameter("@birthdate", person.Birthdate),
+                    new SQLiteParameter("@ecname", person.ECName),
+                    new SQLiteParameter("@ecphone", person.ECPhone),
+                    new SQLiteParameter("@email", person.Email),
+                    new SQLiteParameter("@participantid", person.Identifier),
+                    new SQLiteParameter("@mobile", person.Mobile),
+                    new SQLiteParameter("@parent", person.Parent),
+                    new SQLiteParameter("@country", person.Country),
+                    new SQLiteParameter("@street2", person.Street2),
+                    new SQLiteParameter("@gender", person.Gender) });
+            command.ExecuteNonQuery();
+            command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.Text;
+            command.CommandText = "UPDATE eventspecific SET distance_id=@distanceId, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
+                "eventspecific_owes=@owes, eventspecific_other=@other, " +
+                "eventspecific_comments=@comments, eventspecific_status=@status, eventspecific_age_group_name=@ageGroupName, eventspecific_age_group_id=@ageGroupId " +
+                "WHERE eventspecific_id=@eventspecid";
+            command.Parameters.AddRange(new SQLiteParameter[] {
+                    new SQLiteParameter("@distanceId", person.EventSpecific.DistanceIdentifier),
+                    new SQLiteParameter("@bib", person.EventSpecific.Bib),
+                    new SQLiteParameter("@checkedin", person.EventSpecific.CheckedIn),
+                    new SQLiteParameter("@eventspecid", person.EventSpecific.Identifier),
+                    new SQLiteParameter("@owes", person.EventSpecific.Owes),
+                    new SQLiteParameter("@other", person.EventSpecific.Other),
+                    new SQLiteParameter("@comments", person.EventSpecific.Comments),
+                    new SQLiteParameter("@status", person.EventSpecific.Status),
+                    new SQLiteParameter("@ageGroupName", person.EventSpecific.AgeGroupName),
+                    new SQLiteParameter("@ageGroupId", person.EventSpecific.AgeGroupId)
+                });
+            command.ExecuteNonQuery();
+        }
+
         internal static List<Participant> GetParticipants(SQLiteConnection connection)
         {
             Log.D("SQLite.Participants", "Getting all participants for all events.");
@@ -200,7 +247,7 @@ namespace Chronokeep.Database.SQLite
                         Convert.ToInt32(reader["event_id"]),
                         Convert.ToInt32(reader["distance_id"]),
                         reader["distance_name"].ToString(),
-                        Convert.ToInt32(reader["eventspecific_bib"]),
+                        reader["eventspecific_bib"].ToString(),
                         Convert.ToInt32(reader["eventspecific_checkedin"]),
                         reader["eventspecific_comments"].ToString(),
                         reader["eventspecific_owes"].ToString(),
@@ -244,7 +291,7 @@ namespace Chronokeep.Database.SQLite
                         Convert.ToInt32(reader["event_id"]),
                         Convert.ToInt32(reader["distance_id"]),
                         reader["distance_name"].ToString(),
-                        Convert.ToInt32(reader["eventspecific_bib"]),
+                        reader["eventspecific_bib"].ToString(),
                         Convert.ToInt32(reader["eventspecific_checkedin"]),
                         reader["eventspecific_comments"].ToString(),
                         reader["eventspecific_owes"].ToString(),
@@ -286,7 +333,7 @@ namespace Chronokeep.Database.SQLite
             return output;
         }
 
-        internal static Participant GetParticipantBib(int eventIdentifier, int bib, SQLiteConnection connection)
+        internal static Participant GetParticipantBib(int eventIdentifier, string bib, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM participants AS p " +

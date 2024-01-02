@@ -90,7 +90,7 @@ namespace Chronokeep
         Participant GetParticipant(int eventIdentifier, int identifier);
         Participant GetParticipant(int eventIdentifier, Participant unknown);
         Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId);
-        Participant GetParticipantBib(int eventIdentifier, int bib);
+        Participant GetParticipantBib(int eventIdentifier, string bib);
 
         // Bib Chip Association Functions
         void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc);

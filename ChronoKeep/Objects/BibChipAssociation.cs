@@ -16,7 +16,7 @@ namespace Chronokeep
         }
 
         public int EventId { get; set; }
-        public int Bib { get; set; }
+        public string Bib { get; set; }
         public string Chip { get; set; }
 
         public int CompareTo(BibChipAssociation other)

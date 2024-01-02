@@ -22,10 +22,10 @@ namespace Chronokeep.Network
         private IDBInterface database;
         private Event theEvent;
         private List<TimeResult> finishResults = new List<TimeResult>();
-        private Dictionary<int, List<TimeResult>> participantResults = new Dictionary<int, List<TimeResult>>();
+        private Dictionary<string, List<TimeResult>> participantResults = new Dictionary<string, List<TimeResult>>();
 
         private byte[] resultsCache = null;
-        private Dictionary<int, byte[]> participantCache = new Dictionary<int, byte[]>();
+        private Dictionary<string, byte[]> participantCache = new Dictionary<string, byte[]>();
 
         private Mutex info_mutex = new Mutex();
 
@@ -62,7 +62,7 @@ namespace Chronokeep.Network
             theEvent = database.GetCurrentEvent();
             finishResults.Clear();
             participantResults.Clear();
-            Dictionary<int, TimeResult> lastResult = new Dictionary<int, TimeResult>();
+            Dictionary<string, TimeResult> lastResult = new Dictionary<string, TimeResult>();
             foreach (TimeResult r in database.GetTimingResults(theEvent.Identifier))
             {
                 if (!lastResult.ContainsKey(r.Bib))
@@ -80,7 +80,7 @@ namespace Chronokeep.Network
                 participantResults[r.Bib].Add(r);
             }
             finishResults.AddRange(lastResult.Values);
-            finishResults.RemoveAll(r => r.Bib < 0 || string.IsNullOrEmpty(r.First) || string.IsNullOrEmpty(r.Last));
+            finishResults.RemoveAll(r => string.IsNullOrEmpty(r.Bib) || string.IsNullOrEmpty(r.First) || string.IsNullOrEmpty(r.Last));
             // clear response caches whenever we update information
             resultsCache = null;
             participantCache.Clear();
@@ -115,14 +115,10 @@ namespace Chronokeep.Network
             Log.D("Network.HttpServer", "'" + filename + "' requested.");
             filename = filename.Substring(1);
 
-            int partBib = -1;
+            string partBib = "";
             if (filename.StartsWith("part/", StringComparison.OrdinalIgnoreCase))
             {
-                filename = filename.Substring(5);
-                if (!int.TryParse(filename, out partBib))
-                {
-                    partBib = -1;
-                }
+                partBib = filename.Substring(5);
             }
 
             byte[] message = Encoding.Default.GetBytes("");
@@ -178,7 +174,7 @@ namespace Chronokeep.Network
                     context.Response.ContentType = "text/html";
                 }
             }
-            else if (partBib >= 0)
+            else if (partBib.Length > 0)
             {
                 answer = true;
                 // Serve up HtmlParticipantTemplate

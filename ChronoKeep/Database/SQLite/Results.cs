@@ -58,14 +58,14 @@ namespace Chronokeep.Database.SQLite
             List<TimeResult> output = new List<TimeResult>();
             while (reader.Read())
             {
-                int bib = -1;
+                string bib = "";
                 if (reader["bib"] != DBNull.Value)
                 {
-                    bib = Convert.ToInt32(reader["bib"]);
+                    bib = reader["bib"].ToString();
                 }
                 else if (reader["eventspecific_bib"] != DBNull.Value)
                 {
-                    bib = Convert.ToInt32(reader["eventspecific_bib"]);
+                    bib = reader["eventspecific_bib"].ToString();
                 }
                 output.Add(new TimeResult(
                     reader["event_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["event_id"]),

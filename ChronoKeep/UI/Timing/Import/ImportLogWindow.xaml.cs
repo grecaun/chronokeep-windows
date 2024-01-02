@@ -147,7 +147,7 @@ namespace Chronokeep.UI.Timing.Import
                             Convert.ToInt32(line[12]),  // is_rewind
                             line[13].ToString(),        // reader_time
                             Convert.ToInt64(line[14]),  // start_time
-                            Convert.ToInt32(line[15]),  // read_bib
+                            line[15].ToString(),  // read_bib
                             Convert.ToInt32(line[16]),  // type
                             false                       // placeholder
                             ));

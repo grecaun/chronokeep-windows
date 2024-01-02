@@ -11,11 +11,11 @@ namespace Chronokeep.Objects
     {
         private static Mutex listMtx = new Mutex();
         private static List<Alarm> alarms = new List<Alarm>();
-        private static Dictionary<int, Alarm> bibAlarms = new Dictionary<int, Alarm>();
+        private static Dictionary<string, Alarm> bibAlarms = new Dictionary<string, Alarm>();
         private static Dictionary<string, Alarm> chipAlarms = new Dictionary<string, Alarm>();
 
         public int Identifier { get; set; }
-        public int Bib { get; set; } = -1;
+        public string Bib { get; set; } = "";
         public string Chip { get; set; } = "";
         public bool Enabled { get; set; } = true;
         // Any number not assigned to a sound (1-5 currently) is assumed to be the default.
@@ -32,13 +32,13 @@ namespace Chronokeep.Objects
             return output;
         }
 
-        public static (Dictionary<int, Alarm>, Dictionary<string, Alarm>) GetAlarmDictionarys()
+        public static (Dictionary<string, Alarm>, Dictionary<string, Alarm>) GetAlarmDictionarys()
         {
-            Dictionary<int, Alarm> outBib = new Dictionary<int, Alarm>();
+            Dictionary<string, Alarm> outBib = new Dictionary<string, Alarm>();
             Dictionary<string, Alarm> outChip = new Dictionary<string, Alarm>();
             if (listMtx.WaitOne(3000))
             {
-                outBib = new Dictionary<int, Alarm>(bibAlarms);
+                outBib = new Dictionary<string, Alarm>(bibAlarms);
                 outChip = new Dictionary<string, Alarm>(chipAlarms);
                 listMtx.ReleaseMutex();
             }
@@ -91,7 +91,7 @@ namespace Chronokeep.Objects
             if (listMtx.WaitOne(3000))
             {
                 alarms.Add(alarm);
-                if (alarm.Bib >= 0)
+                if (alarm.Bib.Length > 0)
                 {
                     bibAlarms[alarm.Bib] = alarm;
                 }
@@ -113,7 +113,7 @@ namespace Chronokeep.Objects
                 foreach (Alarm alarm in newAlarms)
                 {
                     alarms.Add(alarm);
-                    if (alarm.Bib >= 0)
+                    if (alarm.Bib.Length > 0)
                     {
                         bibAlarms.Add(alarm.Bib, alarm);
                     }
@@ -128,7 +128,7 @@ namespace Chronokeep.Objects
             return output;
         }
 
-        public static Alarm GetAlarmByBib(int bib)
+        public static Alarm GetAlarmByBib(string bib)
         {
             Alarm output = null;
             if (listMtx.WaitOne(3000))

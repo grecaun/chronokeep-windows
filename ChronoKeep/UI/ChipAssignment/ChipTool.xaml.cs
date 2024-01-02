@@ -263,7 +263,7 @@ namespace Chronokeep.UI.ChipAssignment
                 {
                     list.Add(new BibChipAssociation()
                     {
-                        Bib = bib,
+                        Bib = bib.ToString(),
                         Chip = tag.ToString()
                     });
                 }

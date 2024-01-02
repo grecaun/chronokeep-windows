@@ -148,13 +148,13 @@ namespace Chronokeep.UI.Timing
         private bool AlarmErrors(bool silent = false)
         {
             // Verify there are no repeating bibs/chips.
-            HashSet<int> bibs = new HashSet<int>();
+            HashSet<string> bibs = new HashSet<string>();
             HashSet<string> chips = new HashSet<string>();
             bool notSetExists = false;
             foreach (AnAlarmItem alarm in AlarmsBox.Items)
             {
                 Alarm al = alarm.GetUpdatedAlarm();
-                if (al.Bib >= 0 && bibs.Contains(al.Bib))
+                if (al.Bib.Length > 0 && bibs.Contains(al.Bib))
                 {
                     if (!silent)
                     {
@@ -178,7 +178,7 @@ namespace Chronokeep.UI.Timing
                 {
                     chips.Add(al.Chip);
                 }
-                if (al.Bib < 0 && al.Chip.Length == 0)
+                if (al.Bib.Length == 0 && al.Chip.Length == 0)
                 {
                     if (notSetExists)
                     {
@@ -247,13 +247,12 @@ namespace Chronokeep.UI.Timing
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(45) });
                 BibBox = new Wpf.Ui.Controls.TextBox()
                 {
-                    Text = alarm.Bib < 0 ? "" : alarm.Bib.ToString(),
+                    Text = alarm.Bib,
                     FontSize = 16,
                     Margin = new Thickness(2),
                     VerticalAlignment = VerticalAlignment.Center,
                 };
                 BibBox.GotFocus += new RoutedEventHandler(SelectAll);
-                BibBox.PreviewTextInput += new TextCompositionEventHandler(NumberValidation);
                 theGrid.Children.Add(BibBox);
                 Grid.SetColumn(BibBox, 0);
                 ChipBox = new Wpf.Ui.Controls.TextBox()
@@ -347,11 +346,6 @@ namespace Chronokeep.UI.Timing
                 page.RemoveAlarm(this);
             }
 
-            private void NumberValidation(object sender, TextCompositionEventArgs e)
-            {
-                e.Handled = allowedChars.IsMatch(e.Text);
-            }
-
             private void SelectAll(object sender, RoutedEventArgs e)
             {
                 TextBox src = (TextBox)e.OriginalSource;
@@ -360,13 +354,8 @@ namespace Chronokeep.UI.Timing
 
             public Alarm GetUpdatedAlarm()
             {
-                int tmpBib;
-                if (int.TryParse(BibBox.Text, out tmpBib) == false)
-                {
-                    tmpBib = -1;
-                }
-                theAlarm.Bib = tmpBib;
-                if (theAlarm.Bib >= 0)
+                theAlarm.Bib = BibBox.Text.Trim();
+                if (theAlarm.Bib.Length > 0)
                 {
                     theAlarm.Chip = "";
                 }

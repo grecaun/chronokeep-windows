@@ -8,10 +8,10 @@ namespace Chronokeep
 {
     public class EventSpecific
     {
-        private int identifier, eventIdentifier, distanceIdentifier, bib,
+        private int identifier, eventIdentifier, distanceIdentifier,
             checkedIn = 0, chip = -1,
             status = Constants.Timing.EVENTSPECIFIC_UNKNOWN, ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-        private string comments, distanceName, owes, other, ageGroupName = "0-110";
+        private string comments, distanceName, owes, other, ageGroupName = "0-110", bib;
         private bool anonymous;
 
         public EventSpecific() { }
@@ -32,7 +32,7 @@ namespace Chronokeep
             this.eventIdentifier = eid;
             this.distanceIdentifier = did;
             this.distanceName = distanceName ?? "";
-            this.bib = Int32.TryParse(bib, out int tempBib) ? tempBib : -1;
+            this.bib = bib;
             this.checkedIn = ci == 0 ? 0 : 1;
             this.comments = comments ?? "";
             this.owes = owes ?? "";
@@ -46,7 +46,7 @@ namespace Chronokeep
             int eid,
             int did,
             string distanceName,
-            int bib,
+            string bib,
             int ci,
             string comments,
             string owes,
@@ -82,13 +82,13 @@ namespace Chronokeep
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", -1, 0, "", "", "", 0, "0-110", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false);
+            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "0-110", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false);
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public int DistanceIdentifier { get => distanceIdentifier; set => distanceIdentifier = value; }
-        public int Bib { get => bib; set => bib = value; }
+        public string Bib { get => bib; set => bib = value; }
         public int Chip { get => chip; set => chip = value; }
         public int CheckedIn { get => checkedIn; set => checkedIn = value; }
         public string Comments { get => comments; set => comments = value; }

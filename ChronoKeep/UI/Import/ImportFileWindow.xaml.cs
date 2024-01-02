@@ -476,8 +476,8 @@ namespace Chronokeep
             List<Participant> conflicts = new List<Participant>();
             await Task.Run(() =>
             {
-                Dictionary<int, HashSet<Participant>> BibConflicts = new Dictionary<int, HashSet<Participant>>();
-                Dictionary<int, Participant> ExistingParticipants = new Dictionary<int, Participant>();
+                Dictionary<string, HashSet<Participant>> BibConflicts = new Dictionary<string, HashSet<Participant>>();
+                Dictionary<string, Participant> ExistingParticipants = new Dictionary<string, Participant>();
                 // keep track of who we need to tell the database to remove
                 existingToRemoveParticipants.AddRange(toRemove);
                 existingToRemoveParticipants.RemoveAll(x => importParticipants.Contains(x));
@@ -504,7 +504,7 @@ namespace Chronokeep
                         }
                     }
                 }
-                foreach (int bib in BibConflicts.Keys)
+                foreach (string bib in BibConflicts.Keys)
                 {
                     conflicts.AddRange(BibConflicts[bib]);
                 }

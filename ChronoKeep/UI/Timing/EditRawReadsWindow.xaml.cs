@@ -50,7 +50,7 @@ namespace Chronokeep.UI.Timing
         {
             Log.D("UI.Timing.EditRawReadsWindow", "Submit clicked.");
             // Keep track of any bibs/chips we've changed.
-            HashSet<int> bibsChanged = new HashSet<int>();
+            HashSet<string> bibsChanged = new HashSet<string>();
             HashSet<string> chipsChanged = new HashSet<string>();
             bool add = AddRadio.IsChecked == true;
             string[] firstparts = TimeBox.Text.Replace('_', '0').Split(':');

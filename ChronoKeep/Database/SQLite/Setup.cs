@@ -66,7 +66,7 @@ namespace Chronokeep.Database.SQLite
                 command.ExecuteNonQuery();
                 queries.Add("CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
-                    "bib INTEGER NOT NULL," +
+                    "bib VARCHAR NOT NULL," +
                     "chip VARCHAR NOT NULL," +
                     "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
                     ");");
@@ -149,7 +149,7 @@ namespace Chronokeep.Database.SQLite
                     "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "distance_id INTEGER NOT NULL REFERENCES distances(distance_id)," +
-                    "eventspecific_bib INTEGER," +
+                    "eventspecific_bib VARCHAR," +
                     "eventspecific_checkedin INTEGER DEFAULT 0," +
                     "eventspecific_comments VARCHAR," +
                     "eventspecific_owes VARCHAR(50)," +
@@ -178,7 +178,7 @@ namespace Chronokeep.Database.SQLite
                     "read_id INTEGER PRIMARY KEY," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "read_status INTEGER NOT NULL DEFAULT 0," +
-                    "location_id INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                    "location_id INTEGER NOT NULL," +
                     "read_chipnumber VARCHAR NOT NULL," +
                     "read_seconds INTEGER NOT NULL," +
                     "read_milliseconds INTEGER NOT NULL," +
@@ -194,7 +194,7 @@ namespace Chronokeep.Database.SQLite
                     "read_time_milliseconds INTEGER NOT NULL," +
                     "read_split_seconds INTEGER NOT NULL DEFAULT 0," +
                     "read_split_milliseconds INTEGER NOT NULL DEFAULT 0," +
-                    "read_bib INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
+                    "read_bib VARCHAR NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_DUMMYBIB + "," +
                     "read_type INTEGER NOT NULL DEFAULT " + Constants.Timing.CHIPREAD_TYPE_CHIP + "," +
                     "UNIQUE (event_id, read_chipnumber, read_bib, read_seconds, read_milliseconds) ON CONFLICT IGNORE" +
                     ");");
@@ -237,9 +237,15 @@ namespace Chronokeep.Database.SQLite
                     "ts_identifier INTEGER PRIMARY KEY," +
                     "ts_ip TEXT NOT NULL," +
                     "ts_port INTEGER NOT NULL," +
-                    "ts_location INTEGER NOT NULL REFERENCES timing_locations(location_id)," +
+                    "ts_location INTEGER NOT NULL," +
                     "ts_type TEXT NOT NULL," +
                     "UNIQUE (ts_ip, ts_location) ON CONFLICT REPLACE);");
+                queries.Add("CREATE TABLE IF NOT EXISTS alarms (" +
+                    "alarm_id INTEGER PRIMARY KEY, " +
+                    "alarm_bib VARCHAR, " +
+                    "alarm_chip VARCHAR, " +
+                    "alarm_enabled INTEGER NOT NULL DEFAULT 0," +
+                    "alarm_sound INTEGER NOT NULL DEFAULT 0;");
                 queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
 
                 using (var transaction = connection.BeginTransaction())

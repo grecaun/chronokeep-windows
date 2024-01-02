@@ -100,6 +100,7 @@ namespace Chronokeep.UI
             {
                 DialogBox.Show(string.Format("Database version greater than the max known by this client. Please update the client. Database version {0}. Max version for this client {1}", db.FoundVersion, db.MaxVersion));
                 this.Close();
+                return;
             }
             Constants.Settings.SetupSettings(database);
 
@@ -762,12 +763,12 @@ namespace Chronokeep.UI
             return false;
         }
 
-        public void NotifyAlarm(int Bib, string Chip)
+        public void NotifyAlarm(string Bib, string Chip)
         {
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
                 Alarm alarm = null;
-                if (Bib >= 0)
+                if (Bib.Length > 0)
                 {
                     alarm = Alarm.GetAlarmByBib(Bib);
                 }

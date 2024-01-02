@@ -33,17 +33,17 @@ namespace Chronokeep.Timing.Routines
             // Get all of the Chip Reads we find useful (Unprocessed, and those used
             // as results.) and sort them into groups based upon Bib, Chip, or put them
             // in the ignore pile if no chip/bib found.
-            Dictionary<int, List<ChipRead>> bibReadPairs = new Dictionary<int, List<ChipRead>>();
+            Dictionary<string, List<ChipRead>> bibReadPairs = new Dictionary<string, List<ChipRead>>();
             Dictionary<string, List<ChipRead>> chipReadPairs = new Dictionary<string, List<ChipRead>>();
             // Make sure we keep track of the last occurrence for a person at a location.
             // (Bib, Location), Last Chip Read
-            Dictionary<(int, int), (ChipRead Read, int Occurrence)> lastReadDictionary = new Dictionary<(int, int), (ChipRead Read, int Occurrence)>();
-            Dictionary<int, ChipRead> startReadDictionary = new Dictionary<int, ChipRead>();
+            Dictionary<(string, int), (ChipRead Read, int Occurrence)> bibLastReadDictionary = new Dictionary<(string, int), (ChipRead Read, int Occurrence)>();
+            Dictionary<string, ChipRead> bibStartReadDictionary = new Dictionary<string, ChipRead>();
             Dictionary<(string, int), (ChipRead Read, int Occurrence)> chipLastReadDictionary = new Dictionary<(string, int), (ChipRead Read, int Occurrence)>();
             Dictionary<string, ChipRead> chipStartReadDictionary = new Dictionary<string, ChipRead>();
             // Keep a list of DNS participants so we can mark them as DNS in results.
             // Keep a record of the DNS chipread so we can link it with the TimeResult
-            Dictionary<int, ChipRead> dnsDictionary = new Dictionary<int, ChipRead>();
+            Dictionary<string, ChipRead> bibDNSDictionary = new Dictionary<string, ChipRead>();
             Dictionary<string, ChipRead> chipDNSDictionary = new Dictionary<string, ChipRead>();
 
 
@@ -54,7 +54,7 @@ namespace Chronokeep.Timing.Routines
             // Get some variables to check if we need to sound an alarm.
             // Get a time value to check to ensure the chip read isn't too far in the past.
             DateTime before = DateTime.Now.AddMinutes(-5);
-            (Dictionary<int, Alarm> bibAlarms, Dictionary<string, Alarm> chipAlarms) = Alarm.GetAlarmDictionarys();
+            (Dictionary<string, Alarm> bibAlarms, Dictionary<string, Alarm> chipAlarms) = Alarm.GetAlarmDictionarys();
 
             foreach (ChipRead read in allChipReads)
             {
@@ -73,7 +73,7 @@ namespace Chronokeep.Timing.Routines
                         && chipAlarms.ContainsKey(read.ChipNumber)
                         && chipAlarms[read.ChipNumber].Enabled)
                     {
-                        window.NotifyAlarm(-1, read.ChipNumber);
+                        window.NotifyAlarm("", read.ChipNumber);
                     }
                 }
                 if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
@@ -90,9 +90,9 @@ namespace Chronokeep.Timing.Routines
                         }
                         else
                         {
-                            if (!dnsDictionary.ContainsKey(read.Bib))
+                            if (!bibDNSDictionary.ContainsKey(read.Bib))
                             {
-                                dnsDictionary.Add(read.Bib, read);
+                                bibDNSDictionary.Add(read.Bib, read);
                             }
                         }
                     }
@@ -101,20 +101,20 @@ namespace Chronokeep.Timing.Routines
                     // verify that we aren't inserting results BEFORE results we've already calculated.
                     else if (Constants.Timing.CHIPREAD_STATUS_USED == read.Status)
                     {
-                        if (!lastReadDictionary.ContainsKey((read.Bib, read.LocationID)))
+                        if (!bibLastReadDictionary.ContainsKey((read.Bib, read.LocationID)))
                         {
-                            lastReadDictionary[(read.Bib, read.LocationID)] = (read, 1);
+                            bibLastReadDictionary[(read.Bib, read.LocationID)] = (read, 1);
                         }
                         else
                         {
-                            lastReadDictionary[(read.Bib, read.LocationID)] = (read, lastReadDictionary[(read.Bib, read.LocationID)].Occurrence + 1);
+                            bibLastReadDictionary[(read.Bib, read.LocationID)] = (read, bibLastReadDictionary[(read.Bib, read.LocationID)].Occurrence + 1);
                         }
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_STARTTIME == read.Status && (
                         Constants.Timing.LOCATION_START == read.LocationID ||
                             (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                     {
-                        startReadDictionary[read.Bib] = read;
+                        bibStartReadDictionary[read.Bib] = read;
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status || Constants.Timing.CHIPREAD_STATUS_DNF == read.Status)
                     {
@@ -181,7 +181,7 @@ namespace Chronokeep.Timing.Routines
             List<TimeResult> newResults = new List<TimeResult>();
             List<Participant> updateParticipants = new List<Participant>();
             // start with bibs
-            foreach (int bib in bibReadPairs.Keys)
+            foreach (string bib in bibReadPairs.Keys)
             {
                 Participant part = dictionary.participantBibDictionary.ContainsKey(bib) ?
                     dictionary.participantBibDictionary[bib] :
@@ -229,12 +229,12 @@ namespace Chronokeep.Timing.Routines
                             && theEvent.CommonStartFinish)))
                         {
                             // check if we've stored a chipread as the start chipread, update it to unused if so
-                            if (startReadDictionary.ContainsKey(bib))
+                            if (bibStartReadDictionary.ContainsKey(bib))
                             {
-                                startReadDictionary[bib].Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
+                                bibStartReadDictionary[bib].Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
                             }
                             // Update the last read we've seen at this location
-                            startReadDictionary[bib] = read;
+                            bibStartReadDictionary[bib] = read;
                             if (startResult != null && newResults.Contains(startResult))
                             {
                                 newResults.Remove(startResult);
@@ -284,11 +284,11 @@ namespace Chronokeep.Timing.Routines
                             // Minimum time to create a result.
                             long minSeconds = startSeconds;
                             int minMilliseconds = startMilliseconds;
-                            if (lastReadDictionary.ContainsKey((bib, read.LocationID)))
+                            if (bibLastReadDictionary.ContainsKey((bib, read.LocationID)))
                             {
-                                occurrence = lastReadDictionary[(bib, read.LocationID)].Occurrence + 1;
-                                minSeconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeSeconds + occursWithin;
-                                minMilliseconds = lastReadDictionary[(bib, read.LocationID)].Read.TimeMilliseconds;
+                                occurrence = bibLastReadDictionary[(bib, read.LocationID)].Occurrence + 1;
+                                minSeconds = bibLastReadDictionary[(bib, read.LocationID)].Read.TimeSeconds + occursWithin;
+                                minMilliseconds = bibLastReadDictionary[(bib, read.LocationID)].Read.TimeMilliseconds;
                             }
                             // Check if this is a 'dnf' read.  If it is we set the flag to the previous finish time and
                             // IGNORE ANY SUBSEQUENT READS. PERIOD.
@@ -308,7 +308,7 @@ namespace Chronokeep.Timing.Routines
                             }
                             else
                             {
-                                lastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
+                                bibLastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
                                 int segId = Constants.Timing.SEGMENT_NONE;
                                 // Check for linked distance and set distanceId to the linked distance, or to the actual distance id.
                                 // Segments are based on the linked distance.
@@ -562,7 +562,7 @@ namespace Chronokeep.Timing.Routines
                 }
             }
             // Process the intersection of known DNS people and Finish results:
-            foreach (int bib in dnsDictionary.Keys)
+            foreach (string bib in bibDNSDictionary.Keys)
             {
                 Participant part = dictionary.participantBibDictionary.ContainsKey(bib) ?
                     dictionary.participantBibDictionary[bib] :
@@ -577,7 +577,7 @@ namespace Chronokeep.Timing.Routines
                 {
                     foreach (TimeResult finish in finishTimes[TimeResult.BibToIdentifier(bib)])
                     {
-                        finish.ReadId = dnsDictionary[bib].ReadId;
+                        finish.ReadId = bibDNSDictionary[bib].ReadId;
                         finish.Time = "DNS";
                         finish.ChipTime = "DNS";
                         finish.Status = Constants.Timing.TIMERESULT_STATUS_DNS;
@@ -588,7 +588,7 @@ namespace Chronokeep.Timing.Routines
                 else
                 {
                     newResults.Add(new TimeResult(theEvent.Identifier,
-                        dnsDictionary[bib].ReadId,
+                        bibDNSDictionary[bib].ReadId,
                         part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                         Constants.Timing.LOCATION_FINISH,
                         Constants.Timing.SEGMENT_FINISH,
@@ -596,7 +596,7 @@ namespace Chronokeep.Timing.Routines
                         "DNS",
                         TimeResult.BibToIdentifier(bib),
                         "DNS",
-                        dnsDictionary[bib].Time,
+                        bibDNSDictionary[bib].Time,
                         bib,
                         Constants.Timing.TIMERESULT_STATUS_DNS));
                 }

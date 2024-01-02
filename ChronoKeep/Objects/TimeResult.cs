@@ -11,10 +11,10 @@ namespace Chronokeep
     public class TimeResult
     {
         private int eventId, eventspecificId, locationId, segmentId,
-            occurrence, bib, readId, place, agePlace, genderPlace,
+            occurrence, readId, place, agePlace, genderPlace,
             ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds;
         private long chipSeconds, seconds;
-        private string time, locationName, segmentName, firstName, lastName,
+        private string time, locationName, segmentName, firstName, lastName, bib,
             distanceName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday, linked_distance_name = "", chip = "";
         private bool anonymous;
         DateTime systemTime;
@@ -29,11 +29,37 @@ namespace Chronokeep
         public static Event theEvent = null;
 
         // database constructor
-        public TimeResult(int eventId, int eventspecificId, int locationId, int segmentId,
-            string time, int occurrence, string first, string last, string distance, int bib,
-            int readId, string unknownId, long systemTimeSec, int systemTimeMill, string chipTime, int place,
-            int agePlace, int genderPlace, string gender, int status, string split,
-            int ageGroupId, string ageGroupName, int uploaded, string birthday, int type, string linked_distance_name, string chip, bool anonymous)
+        public TimeResult(
+            int eventId, 
+            int eventspecificId, 
+            int locationId, 
+            int segmentId,
+            string time, 
+            int occurrence, 
+            string first, 
+            string last, 
+            string distance, 
+            string bib,
+            int readId, 
+            string unknownId, 
+            long systemTimeSec, 
+            int systemTimeMill, 
+            string chipTime, 
+            int place,
+            int agePlace, 
+            int genderPlace, 
+            string gender, 
+            int status, 
+            string split,
+            int ageGroupId, 
+            string ageGroupName, 
+            int uploaded, 
+            string birthday, 
+            int type, 
+            string linked_distance_name, 
+            string chip, 
+            bool anonymous
+            )
         {
             this.eventId = eventId;
             this.eventspecificId = eventspecificId;
@@ -114,9 +140,20 @@ namespace Chronokeep
             this.anonymous = anonymous;
         }
 
-        public TimeResult(int eventId, int readId, int eventspecificId, int locationId,
-            int segmentId, int occurrence, string time, string unknownId, string chipTime,
-            DateTime systemTime, int bib, int status)
+        public TimeResult(
+            int eventId, 
+            int readId, 
+            int eventspecificId, 
+            int locationId,
+            int segmentId, 
+            int occurrence, 
+            string time, 
+            string unknownId, 
+            string chipTime,
+            DateTime systemTime, 
+            string bib, 
+            int status
+            )
         {
             this.eventId = eventId;
             this.readId = readId;
@@ -183,7 +220,7 @@ namespace Chronokeep
         public string PrettyParticipantName { get => anonymous ? string.Format("Bib {0}", bib) : string.Format("{0} {1}", firstName, lastName).Trim(); }
         public string DistanceName { get => linked_distance_name == "" ? distanceName : linked_distance_name; }
         public string RealDistanceName { get => distanceName; }
-        public int Bib { get => bib; set => bib = value; }
+        public string Bib { get => bib; set => bib = value; }
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public string UnknownId { get => unknownId; set => unknownId = value; }
         public int ReadId { get => readId; set => readId = value; }
@@ -268,9 +305,9 @@ namespace Chronokeep
             return ageGroupName;
         }
 
-        public static string BibToIdentifier(int iBib)
+        public static string BibToIdentifier(string iBib)
         {
-            return "Bib:" + iBib.ToString();
+            return "Bib:" + iBib;
         }
         public static string ChipToIdentifier(string iChip)
         {
@@ -494,7 +531,7 @@ namespace Chronokeep
 
         public bool IsNotMatch(string value)
         {
-            return !this.Bib.ToString().Equals(value.Trim(), StringComparison.OrdinalIgnoreCase) &&
+            return !this.Bib.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase) &&
                 this.ParticipantName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
         }
     }
