@@ -381,7 +381,7 @@ namespace Chronokeep
                     {
                         if (one.Occurrence.Equals(two.Occurrence))
                         {
-                            return one.systemTime.CompareTo(two.systemTime);
+                            return one.Place.CompareTo(two.Place);
                         }
                         return one.Occurrence.CompareTo(two.Occurrence);
                     }
