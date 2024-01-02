@@ -379,7 +379,11 @@ namespace Chronokeep
                 {
                     if (one.Gender.Equals(two.Gender))
                     {
-                        return one.systemTime.CompareTo(two.systemTime);
+                        if (one.Occurrence.Equals(two.Occurrence))
+                        {
+                            return one.systemTime.CompareTo(two.systemTime);
+                        }
+                        return one.Occurrence.CompareTo(two.Occurrence);
                     }
                     return one.Gender.CompareTo(two.Gender);
                 }
