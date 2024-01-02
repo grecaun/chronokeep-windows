@@ -49,6 +49,7 @@
                                         <ColumnDefinition Width="140" />
                                         <ColumnDefinition Width="140" />
                                         <ColumnDefinition Width="200" />
+                                        <ColumnDefinition Width="90" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
                                     <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
@@ -57,6 +58,7 @@
                                     <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Phone}" />
                                     <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding Mobile}" />
                                     <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding Email}" />
+                                    <TextBlock Grid.Column="7" Margin="4,4" Text="{Binding LastSeen}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>

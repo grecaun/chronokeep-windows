@@ -108,6 +108,7 @@ namespace Chronokeep
         List<TimeResult> GetStartTimes(int eventId);
         List<TimeResult> GetFinishTimes(int eventId);
         List<TimeResult> GetSegmentTimes(int eventId, int segmentId);
+        List<TimeResult> GetLastSeenResults(int eventId);
         bool UnprocessedReadsExist(int eventId);
         bool UnprocessedResultsExist(int eventId);
         void SetUploadedTimingResults(List<TimeResult> results);

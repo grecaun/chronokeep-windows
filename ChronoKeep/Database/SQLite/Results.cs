@@ -150,6 +150,57 @@ namespace Chronokeep.Database.SQLite
             return output;
         }
 
+        internal static List<TimeResult> GetLastSeenResults(int eventId, SQLiteConnection connection)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT " +
+                    "e.event_id," +
+                    "e.eventspecific_id," +
+                    "r.location_id," +
+                    "r.segment_id," +
+                    "timeresult_time," +
+                    "timeresult_occurance," +
+                    "participant_first," +
+                    "participant_last," +
+                    "d.distance_name," +
+                    "eventspecific_bib," +
+                    "r.read_id," +
+                    "timeresult_unknown_id," +
+                    "MAX(read_time_seconds) AS read_time_seconds," +
+                    "read_time_milliseconds," +
+                    "timeresult_chiptime," +
+                    "timeresult_place," +
+                    "timeresult_age_place," +
+                    "timeresult_gender_place," +
+                    "participant_gender," +
+                    "timeresult_status," +
+                    "timeresult_splittime," +
+                    "eventspecific_age_group_id," +
+                    "eventspecific_age_group_name," +
+                    "timeresult_uploaded," +
+                    "participant_birthday," +
+                    "d.distance_type," +
+                    "y.distance_name AS linked_distance_name, " +
+                    "b.bib," +
+                    "b.chip," +
+                    "eventspecific_anonymous " +
+                "FROM time_results r " +
+                "JOIN chipreads c ON c.read_id=r.read_id " +
+                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
+                "LEFT JOIN (eventspecific e " +
+                "JOIN participants p ON p.participant_id=e.participant_id " +
+                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
+                "WHERE r.event_id=@eventid " +
+                "GROUP BY e.eventspecific_id;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@eventid", eventId),
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            List<TimeResult> output = GetResultsInternal(reader);
+            return output;
+        }
+
         internal static List<TimeResult> GetFinishTimes(int eventId, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();

@@ -66,13 +66,13 @@
                 </ListView>
                 <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="130"/>
                         <ColumnDefinition Width="110"/>
                     </Grid.ColumnDefinitions>
                     <Button
                         Name="Delete"
                         Content="Delete Selected"
-                        Margin="10,5,5,5"
+                        Margin="0,5,5,5"
                         FontSize="14"
                         Height="35" 
                         Click="Delete_Click"

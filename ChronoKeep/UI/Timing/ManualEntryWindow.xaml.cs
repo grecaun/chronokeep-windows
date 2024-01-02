@@ -21,7 +21,6 @@ namespace Chronokeep.UI.Timing
 
         HashSet<string> bibsAdded = new HashSet<string>();
         
-        private const string allowedNums = "[^0-9]";
         private bool dnf = false;
 
         private ManualEntryWindow(IMainWindow window, IDBInterface database, List<TimingLocation> locations)
@@ -308,11 +307,6 @@ namespace Chronokeep.UI.Timing
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 window.NotifyTimingWorker();
             }
-        }
-
-        private void NumberValidation(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = Regex.IsMatch(e.Text, allowedNums);
         }
     }
 }

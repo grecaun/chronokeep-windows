@@ -29,7 +29,7 @@ namespace Chronokeep.UI.Timing
         Event theEvent;
         int distanceId;
 
-        private ObservableCollection<Participant> activeParticipants = new ObservableCollection<Participant>();
+        private ObservableCollection<StatsParticipant> activeParticipants = new ObservableCollection<StatsParticipant>();
         private ObservableCollection<Participant> dnsParticipants = new ObservableCollection<Participant>();
         private ObservableCollection<Participant> unknownParticipants = new ObservableCollection<Participant>();
         private ObservableCollection<Participant> dnfParticipants = new ObservableCollection<Participant>();
@@ -80,12 +80,26 @@ namespace Chronokeep.UI.Timing
             dnfParticipants.Clear();
             finishedParticipants.Clear();
             Dictionary<int, List<Participant>> partDict = database.GetDistanceParticipantsStatus(theEvent.Identifier, distanceId);
+            // Bib dictionary to add LastSeen string to active participants for display.
+            Dictionary<string, TimeResult> lastSeenDictionary = new Dictionary<string, TimeResult>();
+            foreach (TimeResult timeResult in database.GetLastSeenResults(theEvent.Identifier))
+            {
+                if (timeResult.Bib != Constants.Timing.CHIPREAD_DUMMYBIB && timeResult.Bib.Length > 0)
+                {
+                    lastSeenDictionary[timeResult.Bib] = timeResult;
+                }
+            }
             if (partDict.ContainsKey(Constants.Timing.EVENTSPECIFIC_STARTED)) // ACTIVE
             {
                 activePanel.Visibility = Visibility.Visible;
                 foreach (Participant p in partDict[Constants.Timing.EVENTSPECIFIC_STARTED])
                 {
-                    activeParticipants.Add(p);
+                    string lastSeen = p.Bib != Constants.Timing.CHIPREAD_DUMMYBIB
+                                        && p.Bib.Length > 0
+                                        && lastSeenDictionary.ContainsKey(p.Bib)
+                                        ? lastSeenDictionary[p.Bib].SegmentName
+                                        : "";
+                    activeParticipants.Add(new StatsParticipant(p, lastSeen));
                 }
             }
             else
@@ -172,6 +186,25 @@ namespace Chronokeep.UI.Timing
                 {
                     scv.ScrollToTop();
                 }
+            }
+        }
+
+        private class StatsParticipant
+        {
+            private Participant Participant;
+            public string LastSeen { get; }
+            public string Bib { get => Participant.Bib; }
+            public string FirstName { get => Participant.FirstName; }
+            public string LastName { get => Participant.LastName; }
+            public string Gender { get => Participant.Gender; }
+            public string Phone { get => Participant.Phone; }
+            public string Mobile { get => Participant.Mobile; }
+            public string Email { get => Participant.Email; }
+
+            internal StatsParticipant(Participant participant, string lastSeen)
+            {
+                Participant = participant;
+                LastSeen = lastSeen;
             }
         }
     }

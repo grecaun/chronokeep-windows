@@ -225,9 +225,6 @@ namespace Chronokeep.UI.Timing
             readonly AlarmsPage page;
             private Alarm theAlarm;
 
-            // Allow only numbers in our bib/alert count boxes.
-            private readonly Regex allowedChars = new Regex("[^0-9]");
-
             public AnAlarmItem(AlarmsPage page, Alarm alarm)
             {
                 this.page = page;
