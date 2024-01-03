@@ -126,7 +126,10 @@ namespace Chronokeep.UI.MainPages
         {
             Log.D("UI.MainPages.ChipAssignmentPage", "Save Single clicked.");
             long chip = -1, bib = -1;
-            long.TryParse(SingleBibBox.Text, out bib);
+            if (!long.TryParse(SingleBibBox.Text, out bib))
+            {
+                bib = -1;
+            }
             if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
                 long.TryParse(SingleChipBox.Text, out chip);
@@ -166,21 +169,30 @@ namespace Chronokeep.UI.MainPages
         private void SaveRangeButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ChipAssignmentPage", "Save Range clicked.");
-            long startChip = -1, endChip = -1, startBib = -1, endBib = -1;
+            long startChip = -1, endChip = -1, startBib, endBib;
             if (!long.TryParse(RangeStartBibBox.Text, out startBib) || !long.TryParse(RangeEndBibBox.Text, out endBib))
             {
+                DialogBox.Show("Invalid bibs for range based assignment.");
                 return;
             }
             ;
             if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
-                long.TryParse(RangeStartChipBox.Text, out startChip);
-                long.TryParse(RangeEndChipLabel.Text.ToString(), out endChip);
+                if (!long.TryParse(RangeStartChipBox.Text, out startChip) ||
+                    !long.TryParse(RangeEndChipLabel.Text.ToString(), out endChip))
+                {
+                    DialogBox.Show("Invalid chip values.");
+                    return;
+                }
             }
             else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
             {
-                long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip);
-                long.TryParse(RangeEndChipLabel.Text.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip);
+                if (!long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip) ||
+                    !long.TryParse(RangeEndChipLabel.Text.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip) )
+                {
+                    DialogBox.Show("Invalid chip values.");
+                    return;
+                }
             }
             Log.D("UI.MainPages.ChipAssignmentPage", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
             if (startChip == -1 || endChip == -1 || startBib == -1 || endBib == -1)
@@ -311,11 +323,17 @@ namespace Chronokeep.UI.MainPages
             long.TryParse(RangeEndBibBox.Text, out endBib);
             if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
-                long.TryParse(RangeStartChipBox.Text, out startChip);
+                if (!long.TryParse(RangeStartChipBox.Text, out startChip))
+                {
+                    return;
+                }
             }
             else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
             {
-                long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip);
+                if (!long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip))
+                {
+                    return;
+                }
             }
             endChip = endBib - startBib + startChip;
             if (startBib > -1 && endBib > -1 && startChip > -1)
@@ -361,6 +379,10 @@ namespace Chronokeep.UI.MainPages
                 List<object[]> data = new List<object[]>();
                 List<BibChipAssociation> associations = database.GetBibChips(theEvent.Identifier);
                 associations.Sort();
+                foreach (BibChipAssociation association in associations)
+                {
+                    Log.D("UI.MainPages.ChipAssignmentPage", "Checking associations ... Bib " + association.Bib + " Chip " + association.Chip);
+                }
                 string[] headers = new string[] { "Bib", "Chip" };
                 foreach (BibChipAssociation bca in associations)
                 {

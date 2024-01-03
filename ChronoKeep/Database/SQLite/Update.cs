@@ -1402,6 +1402,16 @@ namespace Chronokeep.Database.SQLite
                                 "alarm_sound INTEGER NOT NULL DEFAULT 0, " +
                                 "UNIQUE (event_id, alarm_bib, alarm_chip) ON CONFLICT REPLACE" +
                                 "); " +
+                            "CREATE TABLE IF NOT EXISTS bib_chip_assoc_new (" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                                "bib VARCHAR NOT NULL," +
+                                "chip VARCHAR NOT NULL," +
+                                "UNIQUE (event_id, chip) ON CONFLICT REPLACE" +
+                                "); " +
+                            "INSERT INTO bib_chip_assoc_new (event_id, bib, chip) " +
+                            "SELECT event_id, bib, chip FROM bib_chip_assoc; " +
+                            "DROP TABLE bib_chip_assoc; " +
+                            "ALTER TABLE bib_chip_assoc_new RENAME TO bib_chip_assoc; " +
                             "UPDATE settings set value='54' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;

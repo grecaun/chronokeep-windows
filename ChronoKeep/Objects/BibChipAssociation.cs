@@ -32,7 +32,7 @@ namespace Chronokeep
         public bool Equals(BibChipAssociation other)
         {
             if (other == null) return false;
-            return this.EventId == other.EventId && this.Bib == other.Bib;
+            return this.EventId == other.EventId && this.Bib.Equals(other.Bib, StringComparison.OrdinalIgnoreCase);
         }
     }
 }
