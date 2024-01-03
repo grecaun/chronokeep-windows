@@ -63,8 +63,7 @@ namespace Chronokeep.UI
         DispatcherTimer TimingUpdater = new DispatcherTimer();
 
         // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
-        static Mutex OneWindow = new Mutex(true,
-            "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
+        static Mutex OneWindow = new Mutex(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
         bool release = false;
 
         public MainWindow()
@@ -147,6 +146,9 @@ namespace Chronokeep.UI
             {
                 DialogBox.Show("Something went wrong trying to update the upload interval.");
             }
+
+            // Pull alarms from the database.
+            Alarm.AddAlarms(database.GetAlarms(theEvent.Identifier));
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
@@ -456,6 +458,7 @@ namespace Chronokeep.UI
         public void UpdateStatus()
         {
             Event theEvent = database.GetCurrentEvent();
+            Alarm.ClearAlarms();
             if (theEvent == null || theEvent.Identifier == -1)
             {
                 participantsButton.IsEnabled = false;
@@ -495,6 +498,9 @@ namespace Chronokeep.UI
                 agegroupsButton.Opacity = 1.0;
                 timingButton.Opacity = 1.0;
                 announcerButton.Opacity = 1.0;
+
+                // Pull alarms from the database.
+                Alarm.AddAlarms(database.GetAlarms(theEvent.Identifier));
             }
             if (OperatingSystem.IsWindowsVersionAtLeast(8))
             {
@@ -765,6 +771,7 @@ namespace Chronokeep.UI
 
         public void NotifyAlarm(string Bib, string Chip)
         {
+            Event theEvent = database.GetCurrentEvent();
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
                 Alarm alarm = null;
@@ -778,9 +785,8 @@ namespace Chronokeep.UI
                 }
                 if (alarm != null && alarm.Enabled)
                 {
-                    Alarm.RemoveAlarm(alarm);
                     alarm.Enabled = false;
-                    Alarm.AddAlarm(alarm);
+                    Alarm.SaveAlarm(theEvent.Identifier, database, alarm);
                     string soundFile = Environment.CurrentDirectory;
                     int sound = alarm.AlarmSound;
                     // Any value not between 1-5 (inclusive both) is defined to be the default sound.

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Chronokeep.Objects
 {
-    internal class Alarm : IEquatable<Alarm>, IComparable<Alarm>
+    public class Alarm : IEquatable<Alarm>, IComparable<Alarm>
     {
         private static Mutex listMtx = new Mutex();
         private static List<Alarm> alarms = new List<Alarm>();
@@ -21,8 +21,42 @@ namespace Chronokeep.Objects
         // Any number not assigned to a sound (1-5 currently) is assumed to be the default.
         public int AlarmSound { get; set; } = 0;
 
+        public Alarm(int identifier, string bib, string chip, bool enabled, int sound)
+        {
+            this.Identifier = identifier;
+            this.Bib = bib;
+            this.Chip = chip;
+            this.Enabled = enabled;
+            this.AlarmSound = sound;
+        }
+
+        public static void SaveAlarms(int eventId, IDBInterface database)
+        {
+            Log.D("Objects.Alarm", "Saving multiple alarms.");
+            if (listMtx.WaitOne(3000))
+            {
+                database.SaveAlarms(eventId, alarms);
+                listMtx.ReleaseMutex();
+            }
+            ClearAlarms();
+            AddAlarms(database.GetAlarms(eventId));
+        }
+
+        public static void SaveAlarm(int eventId, IDBInterface database, Alarm alarm)
+        {
+            Log.D("Objects.Alarm", "Saving single alarm.");
+            if (listMtx.WaitOne(3000))
+            {
+                database.SaveAlarm(eventId, alarm);
+                listMtx.ReleaseMutex();
+            }
+            ClearAlarms();
+            AddAlarms(database.GetAlarms(eventId));
+        }
+
         public static List<Alarm> GetAlarms()
         {
+            Log.D("Objects.Alarm", "Getting alarms.");
             List<Alarm> output = new List<Alarm>();
             if (listMtx.WaitOne(3000))
             {
@@ -50,7 +84,6 @@ namespace Chronokeep.Objects
             bool output = false;
             if (listMtx.WaitOne(3000))
             {
-                alarms.Remove(alarm);
                 if (bibAlarms.ContainsKey(alarm.Bib))
                 {
                     bibAlarms.Remove(alarm.Bib);
@@ -87,6 +120,7 @@ namespace Chronokeep.Objects
 
         public static bool AddAlarm(Alarm alarm)
         {
+            Log.D("Objects.Alarm", "Adding alarm.");
             bool output = false;
             if (listMtx.WaitOne(3000))
             {
@@ -107,22 +141,26 @@ namespace Chronokeep.Objects
 
         public static bool AddAlarms(List<Alarm> newAlarms)
         {
+            Log.D("Objects.Alarm", "Adding alarms.");
             bool output = false;
             if (listMtx.WaitOne(3000))
             {
+                Log.D("Objects.Alarm", "Number of alarms: " + newAlarms.Count);
                 foreach (Alarm alarm in newAlarms)
                 {
-                    alarms.Add(alarm);
                     if (alarm.Bib.Length > 0)
                     {
-                        bibAlarms.Add(alarm.Bib, alarm);
+                        bibAlarms[alarm.Bib] = alarm;
                     }
                     if (alarm.Chip.Length > 0)
                     {
-                        chipAlarms.Add(alarm.Chip, alarm);
+                        chipAlarms[alarm.Chip] = alarm;
                     }
                     output = true;
                 }
+                alarms.Clear();
+                alarms.AddRange(bibAlarms.Values);
+                alarms.AddRange(chipAlarms.Values);
                 listMtx.ReleaseMutex();
             }
             return output;

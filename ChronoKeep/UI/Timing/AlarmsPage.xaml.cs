@@ -43,8 +43,6 @@ namespace Chronokeep.UI.Timing
                 Log.E("UI.Timing.AlarmsPage", "Something went wrong and no proper event was returned.");
                 return;
             }
-            // get alarms from the database
-            // alarms = database.GetAlarms(theEvent.Identifier);
             UpdateAlarms();
         }
         
@@ -72,7 +70,6 @@ namespace Chronokeep.UI.Timing
                 return;
             }
             AlarmsBox.Items.Clear();
-            // alarms = database.GetAlarms(theEvent.Identifier);
             List<Alarm> alarms = Alarm.GetAlarms();
             alarms.Sort();
             foreach (Alarm alarm in alarms)
@@ -89,9 +86,7 @@ namespace Chronokeep.UI.Timing
             {
                 Alarm.AddAlarm(alarm.GetUpdatedAlarm());
             }
-            /*
-             * database.SaveAlarms(alarms);
-             */
+            Alarm.SaveAlarms(theEvent.Identifier, database);
         }
 
         public void Closing()
@@ -142,6 +137,13 @@ namespace Chronokeep.UI.Timing
 
         private void RemoveAlarm(AnAlarmItem alarm)
         {
+            Alarm newAlarm = alarm.GetUpdatedAlarm();
+            Log.D("UI.Timing.AlarmsPage", "Alarm has ID of " + newAlarm.Identifier);
+            if (newAlarm.Identifier >= 0)
+            {
+                database.DeleteAlarm(newAlarm);
+            }
+            Alarm.RemoveAlarm(newAlarm);
             AlarmsBox.Items.Remove(alarm);
         }
 
@@ -200,7 +202,7 @@ namespace Chronokeep.UI.Timing
         private void addButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AlarmsPage", "Add button clicked.");
-            AlarmsBox.Items.Add(new AnAlarmItem(this, new Alarm()));
+            AlarmsBox.Items.Add(new AnAlarmItem(this, new Alarm(-1, "", "", true, 0)));
         }
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
@@ -216,8 +218,8 @@ namespace Chronokeep.UI.Timing
 
         private class AnAlarmItem : ListBoxItem
         {
-            public Wpf.Ui.Controls.TextBox BibBox;
-            public Wpf.Ui.Controls.TextBox ChipBox;
+            public TextBox BibBox;
+            public TextBox ChipBox;
             public ComboBox AlarmSoundBox;
             public Wpf.Ui.Controls.ToggleSwitch EnabledBox;
             public Wpf.Ui.Controls.Button RemoveButton;
@@ -242,7 +244,7 @@ namespace Chronokeep.UI.Timing
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(175) });
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(55) });
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(45) });
-                BibBox = new Wpf.Ui.Controls.TextBox()
+                BibBox = new TextBox()
                 {
                     Text = alarm.Bib,
                     FontSize = 16,
@@ -252,7 +254,7 @@ namespace Chronokeep.UI.Timing
                 BibBox.GotFocus += new RoutedEventHandler(SelectAll);
                 theGrid.Children.Add(BibBox);
                 Grid.SetColumn(BibBox, 0);
-                ChipBox = new Wpf.Ui.Controls.TextBox()
+                ChipBox = new TextBox()
                 {
                     Text = alarm.Chip,
                     FontSize = 16,

@@ -241,11 +241,14 @@ namespace Chronokeep.Database.SQLite
                     "ts_type TEXT NOT NULL," +
                     "UNIQUE (ts_ip, ts_location) ON CONFLICT REPLACE);");
                 queries.Add("CREATE TABLE IF NOT EXISTS alarms (" +
-                    "alarm_id INTEGER PRIMARY KEY, " +
+                    "alarm_id INTEGER PRIMARY KEY ON CONFLICT REPLACE, " +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
                     "alarm_bib VARCHAR, " +
                     "alarm_chip VARCHAR, " +
                     "alarm_enabled INTEGER NOT NULL DEFAULT 0," +
-                    "alarm_sound INTEGER NOT NULL DEFAULT 0;");
+                    "alarm_sound INTEGER NOT NULL DEFAULT 0, " +
+                    "UNIQUE (event_id, alarm_bib, alarm_chip) ON CONFLICT REPLACE" +
+                    ");");
                 queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
 
                 using (var transaction = connection.BeginTransaction())

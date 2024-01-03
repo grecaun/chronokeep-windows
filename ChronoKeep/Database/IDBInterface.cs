@@ -155,5 +155,12 @@ namespace Chronokeep
         void RemoveTimingSystem(TimingSystem system);
         void RemoveTimingSystem(int systemId);
         List<TimingSystem> GetTimingSystems();
+        
+        // Alarms
+        void SaveAlarms(int eventId, List<Alarm> alarms);
+        void SaveAlarm(int eventId, Alarm alarm);
+        List<Alarm> GetAlarms(int eventId);
+        void DeleteAlarms(int eventId);
+        void DeleteAlarm(Alarm alarm);
     }
 }

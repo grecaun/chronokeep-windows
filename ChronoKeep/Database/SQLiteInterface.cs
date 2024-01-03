@@ -17,10 +17,10 @@ namespace Chronokeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 137
-         * NEXT AVAILABLE   = 138
+         * HIGHEST MUTEX ID = 143
+         * NEXT AVAILABLE   = 144
          */
-        private readonly int version = 53;
+        private readonly int version = 54;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -2012,6 +2012,82 @@ namespace Chronokeep
             connection.Close();
             mutex.ReleaseMutex();
             return output;
+        }
+
+        public void SaveAlarms(int eventId, List<Alarm> alarms)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 138");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 138");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Alarms.SaveAlarms(eventId, alarms, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public void SaveAlarm(int eventId, Alarm alarm)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 139");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 139");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Alarms.SaveAlarm(eventId, alarm, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public List<Alarm> GetAlarms(int eventId)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 141");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 141");
+                return new List<Alarm>();
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            List<Alarm> output = Alarms.GetAlarms(eventId, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
+        public void DeleteAlarms(int eventId)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 142");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 142");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Alarms.DeleteAlarms(eventId, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public void DeleteAlarm(Alarm alarm)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 143");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 143");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Alarms.DeleteAlarm(alarm, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
         }
     }
 }
