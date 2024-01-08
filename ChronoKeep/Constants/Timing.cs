@@ -120,6 +120,11 @@ namespace Chronokeep.Constants
             return UnixDateTime.AddTicks(date * TimeSpan.TicksPerSecond);
         }
 
+        public static DateTime UTCToLocalDate(long seconds, int milliseconds)
+        {
+            return UnixEpochToDate(seconds).ToLocalTime().AddMilliseconds(milliseconds);
+        }
+
         public static long UTCSecondsToRFIDSeconds(long seconds)
         {
             return RFIDDateToEpoch(UnixEpochToDate(seconds).ToLocalTime());

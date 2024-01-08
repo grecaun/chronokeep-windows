@@ -117,5 +117,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public bool SightingsSubscrubed { get; set; }
         [JsonPropertyName("readers")]
         public List<PortalReader> Readers { get; set; }
+        [JsonPropertyName("updatable")]
+        public bool Updateable { get; set; }
     }
 }

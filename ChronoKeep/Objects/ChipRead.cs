@@ -120,7 +120,8 @@ namespace Chronokeep
             int antenna, 
             string rssi, 
             string reader, 
-            int readType
+            int readType,
+            string readertime
             )
         {
             this.EventId = eventId;
@@ -139,6 +140,7 @@ namespace Chronokeep
             this.TimeSeconds = seconds;
             this.TimeMilliseconds = millisec;
             this.Type = readType;
+            this.ReaderTime = readertime;
             if (chipIsChip)
             {
                 this.ChipNumber = chipNumber;
@@ -163,7 +165,7 @@ namespace Chronokeep
             string rssi, 
             int isRewind, 
             string reader, 
-            string box, 
+            string box,
             string readertime,
             long starttime, 
             int logid, 

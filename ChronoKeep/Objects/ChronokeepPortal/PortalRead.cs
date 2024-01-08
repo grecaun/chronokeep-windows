@@ -20,6 +20,10 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public long Seconds { get; set; }
         [JsonPropertyName("milliseconds")]
         public int Milliseconds { get; set; }
+        [JsonPropertyName("reader_seconds")]
+        public long ReaderSeconds { get; set; }
+        [JsonPropertyName("reader_milliseconds")]
+        public int ReaderMilliseconds { get; set; }
         [JsonPropertyName("antenna")]
         public int Antenna { get; set; }
         [JsonPropertyName("reader")]
