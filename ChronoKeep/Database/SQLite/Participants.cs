@@ -378,7 +378,7 @@ namespace Chronokeep.Database.SQLite
         internal static Participant GetParticipant(int eventId, Participant unknown, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            if (unknown.EventSpecific.Chip != -1)
+            if (unknown.Chip.Length > 0)
             {
                 command.CommandText = "SELECT * FROM participants AS p, eventspecific AS s, distances AS d, " +
                     "bib_chip_assoc as b WHERE p.participant_id=s.participant_id AND s.event_id=@eventid " +
@@ -386,7 +386,7 @@ namespace Chronokeep.Database.SQLite
                     "s.eventspecific_bib=b.bib AND b.chip=@chip AND b.event_id=s.event_id;";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@eventid", eventId),
-                    new SQLiteParameter("@chip", unknown.EventSpecific.Chip),
+                    new SQLiteParameter("@chip", unknown.Chip),
                 });
             }
             else

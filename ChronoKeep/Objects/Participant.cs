@@ -99,6 +99,7 @@ namespace Chronokeep
             gender = (gender ?? "").Trim();
             emergencyName = (emergencyName ?? "").Trim();
             emergencyPhone = (emergencyPhone ?? "").Trim();
+            chip = (chip ?? "").Trim();
         }
 
         internal void FormatData()
@@ -545,7 +546,7 @@ namespace Chronokeep
         public string Country { get => country; }
         public string Street2 { get => street2; }
         public string Gender { get => gender; }
-        public string Chip { get => chip; }
+        public string Chip { get => chip; set => chip = value; }
         public bool Anonymous { get => eventSpecific.Anonymous; }
 
 
