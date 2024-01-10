@@ -191,30 +191,39 @@ namespace Chronokeep.Database.SQLite
         internal static List<Participant> GetParticipants(SQLiteConnection connection)
         {
             Log.D("SQLite.Participants", "Getting all participants for all events.");
-            return GetParticipantsWorker("SELECT * FROM participants p " +
+            return GetParticipantsWorker("SELECT MAX(p.participant_id) AS max_id, * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib AND c.event_id=s.event_id " +
-                "JOIN distances d ON s.distance_id = d.distance_id ORDER BY p.participant_last ASC, p.participant_first ASC", -1, -1, connection);
+                "JOIN distances d ON s.distance_id = d.distance_id " +
+                "GROUP BY p.participant_id " +
+                "ORDER BY p.participant_last ASC, p.participant_first ASC;",
+                -1, -1, connection);
         }
 
         internal static List<Participant> GetParticipants(int eventId, SQLiteConnection connection)
         {
             Log.D("SQLite.Participants", "Getting all participants for event with id of " + eventId);
-            return GetParticipantsWorker("SELECT * FROM participants p " +
+            return GetParticipantsWorker("SELECT MAX(p.participant_id) AS max_id, * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id " +
                 "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib AND c.event_id=s.event_id " +
-                "WHERE s.event_id=@event ORDER BY p.participant_last ASC, p.participant_first ASC", eventId, -1, connection);
+                "WHERE s.event_id=@event " +
+                "GROUP BY p.participant_id " +
+                "ORDER BY p.participant_last ASC, p.participant_first ASC;",
+                eventId, -1, connection);
         }
 
         internal static List<Participant> GetParticipants(int eventId, int distanceId, SQLiteConnection connection)
         {
             Log.D("SQLite.Participants", "Getting all participants for event with id of " + eventId);
-            return GetParticipantsWorker("SELECT * FROM participants p " +
+            return GetParticipantsWorker("SELECT MAX(p.participant_id) AS max_id, * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id " +
                 "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib AND c.event_id=s.event_id " +
-                "WHERE s.event_id=@event AND d.distance_id=@distance ORDER BY p.participant_last ASC, p.participant_first ASC", eventId, distanceId, connection);
+                "WHERE s.event_id=@event AND d.distance_id=@distance " +
+                "GROUP BY p.participant_id " +
+                "ORDER BY p.participant_last ASC, p.participant_first ASC;",
+                eventId, distanceId, connection);
         }
 
         internal static List<Participant> GetParticipantsWorker(string query, int eventId, int distanceId, SQLiteConnection connection)
