@@ -8,7 +8,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Edit" Height="230" Width="200" ResizeMode="NoResize"
+        Title="Edit" Height="230" Width="250" ResizeMode="NoResize"
         d:DataContext="{d:DesignInstance local:EditRawReadsWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -28,8 +28,8 @@
         </ui:TitleBar>
         <Grid Grid.Row="1" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="90"/>
-                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="140"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -51,10 +51,47 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <RadioButton Content="Add" VerticalContentAlignment="Center" HorizontalAlignment="Center" Grid.Column="0" Grid.Row="0" Name="AddRadio" GroupName="RadioGroup" IsChecked="True" KeyDown="Enter_KeyDown"/>
-                <RadioButton Content="Subtract" VerticalContentAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="0" Name="SubRadio" GroupName="RadioGroup" KeyDown="Enter_KeyDown"/>
-                <Button Content="Submit" Name="Submit" Grid.Column="0" Grid.Row="1" Margin="5,5,5,5" Click="Submit_Click" HorizontalAlignment="Center" Width="100" Height="35"/>
-                <Button Content="Cancel" Name="Cancel" Grid.Column="1" Grid.Row="1" Margin="5,5,5,5" Click="Cancel_Click" HorizontalAlignment="Center" Width="100" Height="35"/>
+                <RadioButton
+                    Content="Add"
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    Name="AddRadio"
+                    GroupName="RadioGroup"
+                    IsChecked="True"
+                    KeyDown="Enter_KeyDown"
+                    Margin="10,0,5,0"
+                    />
+                <RadioButton
+                    Content="Subtract"
+                    Grid.Column="1"
+                    Grid.Row="0"
+                    Name="SubRadio"
+                    GroupName="RadioGroup"
+                    KeyDown="Enter_KeyDown"
+                    Margin="5,0,0,0"
+                    />
+                <Button
+                    Content="Submit"
+                    Name="Submit"
+                    Grid.Column="0"
+                    Grid.Row="1"
+                    Margin="5,5,5,5"
+                    Click="Submit_Click"
+                    HorizontalAlignment="Center"
+                    Width="100"
+                    Height="35"
+                    />
+                <Button
+                    Content="Cancel"
+                    Name="Cancel"
+                    Grid.Column="1"
+                    Grid.Row="1"
+                    Margin="5,5,5,5"
+                    Click="Cancel_Click"
+                    HorizontalAlignment="Center"
+                    Width="100"
+                    Height="35"
+                    />
             </Grid>
         </Grid>
     </Grid>
