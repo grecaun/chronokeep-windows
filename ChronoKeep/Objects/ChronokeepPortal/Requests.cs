@@ -33,6 +33,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         // Participants related requests
         public static readonly string PARTICIPANTS_GET      = "participants_get";
         public static readonly string PARTICIPANTS_REMOVE   = "participants_remove";
+        public static readonly string PARTICIPANTS_ADD      = "participants_add";
 
         // Reader related requests
         public static readonly string READER_ADD        = "reader_add";
@@ -222,6 +223,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         {
             Command = PARTICIPANTS_REMOVE;
         }
+    }
+
+    public class ParticipantsAddRequest : Request
+    {
+        public ParticipantsAddRequest()
+        {
+            Command = PARTICIPANTS_ADD;
+        }
+
+        [JsonPropertyName("participants")]
+        public List<PortalParticipant> Participants { get; set; }
     }
 
     public class ReaderAddRequest : Request
