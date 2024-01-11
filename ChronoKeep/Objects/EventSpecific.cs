@@ -9,7 +9,7 @@ namespace Chronokeep
     public class EventSpecific
     {
         private int identifier, eventIdentifier, distanceIdentifier,
-            checkedIn = 0, chip = -1,
+            checkedIn = 0,
             status = Constants.Timing.EVENTSPECIFIC_UNKNOWN, ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
         private string comments, distanceName, owes, other, ageGroupName = "0-110", bib;
         private bool anonymous;
@@ -89,7 +89,6 @@ namespace Chronokeep
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public int DistanceIdentifier { get => distanceIdentifier; set => distanceIdentifier = value; }
         public string Bib { get => bib; set => bib = value; }
-        public int Chip { get => chip; set => chip = value; }
         public int CheckedIn { get => checkedIn; set => checkedIn = value; }
         public string Comments { get => comments; set => comments = value; }
         public string DistanceName { get => distanceName; set => distanceName = value; }

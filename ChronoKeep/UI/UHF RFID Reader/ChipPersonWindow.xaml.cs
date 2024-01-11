@@ -35,24 +35,24 @@ namespace Chronokeep
             if (person != null)
             {
                 Bib.Text = "Bib: " + person.EventSpecific.Bib;
-                Chip.Text = "Chip: " + person.EventSpecific.Chip;
-                First.Text = "First: " + person.FirstName;
-                Last.Text = "Last: " + person.LastName;
-                Age.Text = "Age: " + person.Age(eventDate);
-                Gender.Text = "Gender: " + person.Gender;
-                Distance.Text = "Distance: " + person.EventSpecific.DistanceName;
+                Chip.Text = "Chip: " + person.Chip;
+                Name.Text = string.Format("{0} {1}", person.FirstName, person.LastName);
+                AgeGender.Text = string.Format("{0} {1}", person.Age(eventDate), person.Gender);
+                Distance.Text = "" + person.EventSpecific.DistanceName;
                 Unknown.Text = "";
+                Unknown.Visibility = Visibility.Collapsed;
+                InfoHolder.Visibility = Visibility.Visible;
             }
             else
             {
                 Bib.Text = "";
                 Chip.Text = "";
-                First.Text = "";
-                Last.Text = "";
-                Age.Text = "";
-                Gender.Text = "";
+                Name.Text = "";
+                AgeGender.Text = "";
                 Distance.Text = "";
                 Unknown.Text = "Information not found.";
+                Unknown.Visibility = Visibility.Visible;
+                InfoHolder.Visibility = Visibility.Collapsed;
             }
             await Task.Run(() =>
             {
@@ -63,12 +63,12 @@ namespace Chronokeep
             });
             Bib.Text = "";
             Chip.Text = "";
-            First.Text = "";
-            Last.Text = "";
-            Age.Text = "";
-            Gender.Text = "";
+            Name.Text = "";
+            AgeGender.Text = "";
             Distance.Text = "";
             Unknown.Text = "";
+            Unknown.Visibility = Visibility.Collapsed;
+            InfoHolder.Visibility = Visibility.Collapsed;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

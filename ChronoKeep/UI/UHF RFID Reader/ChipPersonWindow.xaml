@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Chronokeep"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="ChipPersonWindow" Height="800" Width="800"
+        Title="ChipPersonWindow"
         WindowState="Maximized" WindowStyle="None"
         Closing="Window_Closing" KeyUp="Window_KeyUp"
         d:DataContext="{d:DesignInstance local:ChipPersonWindow, IsDesignTimeCreatable=True}"
@@ -24,27 +24,41 @@
             Grid.Row="0">
         </ui:TitleBar>
         <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="1*" />
+                <RowDefinition Height="45" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Button Content="Exit" Name="Exit" Click="Exit_Click" Width="50" VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="0" Margin="5,5,5,5"/>
-            <TextBlock FontSize="20" Name="Bib" HorizontalAlignment="Center" Grid.Column="0" Grid.Row="1"/>
-            <TextBlock FontSize="20" Name="Chip" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="1"/>
-            <TextBlock FontSize="60" Name="First" HorizontalAlignment="Center" Grid.Column="0" Grid.Row="2"/>
-            <TextBlock FontSize="60" Name="Last" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="2"/>
-            <TextBlock FontSize="60" Name="Unknown" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="2" />
-            <TextBlock FontSize="60" Name="Age" HorizontalAlignment="Center" Grid.Column="0" Grid.Row="3"/>
-            <TextBlock FontSize="60" Name="Gender" HorizontalAlignment="Center" Grid.Column="1" Grid.Row="3"/>
-            <TextBlock FontSize="60" Name="Distance" HorizontalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="4"/>
+            <Button Content="Exit"
+                    Name="Exit"
+                    Click="Exit_Click"
+                    Width="50"
+                    Height="35"
+                    VerticalAlignment="Top" 
+                    HorizontalAlignment="Right"
+                    Grid.Row="0" 
+                    Margin="5,5,5,5"
+                    />
+            <TextBlock
+                FontSize="60"
+                Name="Unknown"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Grid.Row="1"
+                Visibility="Collapsed"
+                />
+            <StackPanel
+                Grid.Row="1"
+                Name="InfoHolder"
+                VerticalAlignment="Center"
+                >
+                <TextBlock FontSize="20" Name="Bib" HorizontalAlignment="Center" />
+                <TextBlock FontSize="20" Name="Chip" HorizontalAlignment="Center" />
+                <TextBlock FontSize="60" Name="Name" HorizontalAlignment="Center" />
+                <TextBlock FontSize="60" Name="AgeGender" HorizontalAlignment="Center" />
+                <TextBlock FontSize="60" Name="Distance" HorizontalAlignment="Center" />
+                <TextBlock FontSize="20" Text="" HorizontalAlignment="Center" />
+                <TextBlock FontSize="20" Text="" HorizontalAlignment="Center" />
+            </StackPanel>
         </Grid>
     </Grid>
 </ui:UiWindow>

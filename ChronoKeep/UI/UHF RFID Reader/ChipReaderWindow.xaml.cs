@@ -96,6 +96,14 @@ namespace Chronokeep
                 connectBtn.Content = "Connect";
                 beautyBtn.Visibility = Visibility.Hidden;
                 beautyBtn.Content = "Show Info Window";
+                try
+                {
+                    KillReader();
+                }
+                catch
+                {
+                    DialogBox.Show("Something went wrong during disconnect.");
+                }
                 if (personWindow != null)
                 {
                     personWindow.Close();
@@ -110,7 +118,7 @@ namespace Chronokeep
             reader.Kill();
             if (readingThread != null)
             {
-                readingThread.Join();
+                readingThread.Join(TimeSpan.FromSeconds(1));
             }
             readingThread = null;
         }
@@ -121,10 +129,20 @@ namespace Chronokeep
             {
                 read.ReadNumber = ReadNo++;
                 chipNumbers.Items.Add(read);
-                Participant person = new Participant();
-                person.EventSpecific.Chip = (int)read.DecNumber;
-                Participant thisPerson = database.GetParticipant(eventId, person);
-                personWindow.UpdateInfo(thisPerson);
+                if (personWindow != null)
+                {
+                    Participant person = new Participant();
+                    if (database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE).Value.Equals(Constants.Settings.CHIP_TYPE_DEC))
+                    {
+                        person.Chip = read.DecNumber.ToString();
+                    }
+                    else
+                    {
+                        person.Chip = read.HexNumber;
+                    }
+                    Participant thisPerson = database.GetParticipant(eventId, person);
+                    personWindow.UpdateInfo(thisPerson);
+                }
             }));
         }
 
@@ -132,7 +150,10 @@ namespace Chronokeep
         {
             try
             {
-                personWindow.Close();
+                if (personWindow != null)
+                {
+                    personWindow.Close();
+                }
             }
             catch
             {
@@ -161,6 +182,7 @@ namespace Chronokeep
             else
             {
                 personWindow.Close();
+                personWindow = null;
             }
         }
     }
