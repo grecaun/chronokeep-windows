@@ -14,7 +14,8 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public static readonly string UNKNOWN = "unknown";
 
         // API related commands
-        public static readonly string API_ADD                       = "api_add";
+        public static readonly string API_SAVE                      = "api_save";
+        public static readonly string API_SAVE_ALL                  = "api_save_all";
         public static readonly string API_LIST                      = "api_list";
         public static readonly string API_REMOTE_AUTO_UPLOAD        = "api_remote_auto_upload";
         public static readonly string API_REMOTE_MANUAL_UPLOAD      = "api_remote_manual_upload";
@@ -69,13 +70,15 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public string Command { get; set; }
     }
 
-    public class ApiAddRequest : Request
+    public class ApiSaveRequest : Request
     {
-        public ApiAddRequest()
+        public ApiSaveRequest()
         {
-            Command = API_ADD;
+            Command = API_SAVE;
         }
 
+        [JsonPropertyName("id")]
+        public long ID { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("kind")]
@@ -84,6 +87,17 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public string URI { get; set; }
         [JsonPropertyName("token")]
         public string Token { get; set; }
+    }
+
+    public class ApiSaveAllRequest : Request
+    {
+        public ApiSaveAllRequest()
+        {
+            Command = API_SAVE_ALL;
+        }
+
+        [JsonPropertyName("list")]
+        public List<PortalAPI> List { get; set; }
     }
 
     public class ApiListRequest : Request

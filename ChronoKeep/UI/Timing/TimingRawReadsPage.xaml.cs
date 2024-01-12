@@ -20,8 +20,6 @@ namespace Chronokeep.UI.Timing
         Event theEvent;
 
         List<ChipRead> chipReads = new List<ChipRead>();
-        HashSet<string> bibsToReset = new HashSet<string>();
-        HashSet<string> chipsToReset = new HashSet<string>();
 
         public TimingRawReadsPage(TimingPage parent, IDBInterface database)
         {
@@ -76,18 +74,6 @@ namespace Chronokeep.UI.Timing
                     read.Status = Constants.Timing.CHIPREAD_STATUS_IGNORE;
                 }
                 newChipReads.Add(read);
-                if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                {
-                    bibsToReset.Add(read.ChipBib);
-                }
-                else if (read.ReadBib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                {
-                    bibsToReset.Add(read.ReadBib);
-                }
-                else
-                {
-                    chipsToReset.Add(read.ChipNumber);
-                }
             }
             database.SetChipReadStatuses(newChipReads);
             database.ResetTimingResultsEvent(theEvent.Identifier);
@@ -193,24 +179,60 @@ namespace Chronokeep.UI.Timing
                     foreach (ChipRead read in updateListView.SelectedItems)
                     {
                         readsToDelete.Add(read);
-                        if (read.ChipBib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                        {
-                            bibsToReset.Add(read.ChipBib);
-                        }
-                        else if (read.ReadBib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                        {
-                            bibsToReset.Add(read.ReadBib);
-                        }
-                        else
-                        {
-                            chipsToReset.Add(read.ChipNumber);
-                        }
                     }
                     database.DeleteChipReads(readsToDelete);
                     database.ResetTimingResultsEvent(theEvent.Identifier);
                     UpdateView();
                     parent.NotifyTimingWorker();
                 });
+        }
+
+        private void ChangeDNS_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.TimingRawReadsPage", "ChangeDNS Button clicked.");
+            List<ChipRead> newChipReads = new List<ChipRead>();
+            foreach (ChipRead read in updateListView.SelectedItems)
+            {
+                // Check what the previous status was. If it was CHIPREAD_STATUS_DNS we change it to NONE
+                if (read.Status == Constants.Timing.CHIPREAD_STATUS_DNS)
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+                }
+                // Else set it to DNS
+                else
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
+                }
+                newChipReads.Add(read);
+            }
+            database.SetChipReadStatuses(newChipReads);
+            database.ResetTimingResultsEvent(theEvent.Identifier);
+            UpdateView();
+            parent.NotifyTimingWorker();
+        }
+
+        private void ChangeDNF_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.TimingRawReadsPage", "ChangeDNF Button clicked.");
+            List<ChipRead> newChipReads = new List<ChipRead>();
+            foreach (ChipRead read in updateListView.SelectedItems)
+            {
+                // Check what the previous status was. If it was CHIPREAD_STATUS_DNF we change it to NONE
+                if (read.Status == Constants.Timing.CHIPREAD_STATUS_DNF)
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+                }
+                // Else set it to DNF
+                else
+                {
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_DNF;
+                }
+                newChipReads.Add(read);
+            }
+            database.SetChipReadStatuses(newChipReads);
+            database.ResetTimingResultsEvent(theEvent.Identifier);
+            UpdateView();
+            parent.NotifyTimingWorker();
         }
     }
 }
