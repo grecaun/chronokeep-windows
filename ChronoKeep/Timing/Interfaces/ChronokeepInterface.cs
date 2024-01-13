@@ -476,9 +476,9 @@ namespace Chronokeep.Timing.Interfaces
 
         public void StopSending() { }
 
-        public void SendStop()
+        public void SendQuit()
         {
-            SendMessage(JsonSerializer.Serialize(new ReaderStopRequest { }));
+            SendMessage(JsonSerializer.Serialize(new QuitRequest { }));
         }
 
         public void SendShutdown()

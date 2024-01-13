@@ -185,15 +185,6 @@
                         />
                 </StackPanel>
             </StackPanel>
-            <Button
-                Content="Swap View"
-                x:Name="swapButton"
-                Click="swapButton_Click"
-                Margin="5,5,5,5"
-                Width="185"
-                Height="35"
-                HorizontalAlignment="Center"
-                />
         </StackPanel>
     </Grid>
 </ui:UiWindow>

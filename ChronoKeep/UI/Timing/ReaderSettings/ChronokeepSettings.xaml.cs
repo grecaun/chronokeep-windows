@@ -99,7 +99,8 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 () =>
                 {
                     // send stop command
-                    reader.SendStop();
+                    reader.SendQuit();
+                    this.Close();
                 }
                 );
         }
@@ -115,6 +116,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     {
                         // send shutdown command
                         reader.SendShutdown();
+                        this.Close();
                     }
                 );
         }
@@ -180,21 +182,6 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Close button clicked.");
             this.Close();
-        }
-
-        private void swapButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Swap button clicked.");
-            if (loadingPanel.Visibility == Visibility.Collapsed)
-            {
-                loadingPanel.Visibility = Visibility.Visible;
-                settingsPanel.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                loadingPanel.Visibility = Visibility.Collapsed;
-                settingsPanel.Visibility = Visibility.Visible;
-            }
         }
 
         internal void UpdateView(AllPortalSettings allSettings, bool settings, bool readers, bool apis)
