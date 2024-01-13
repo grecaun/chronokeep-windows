@@ -102,7 +102,6 @@ namespace Chronokeep.Timing
             foreach (Socket sock in TimingSystemSockets)
             {
                 sock.Close();
-                TimingSystemDict.Remove(sock);
             }
         }
 
@@ -143,7 +142,11 @@ namespace Chronokeep.Timing
                 Log.D("Timing.TimingController", "Loop start.");
                 readList.Clear();
                 readList.AddRange(TimingSystemSockets);
-                Socket.Select(readList, null, null, 3000000);
+                try
+                {
+                    Socket.Select(readList, null, null, 3000000);
+                }
+                catch { }
                 foreach (Socket sock in readList)
                 {
                     Log.D("Timing.TimingController", "Reading from socket.");
