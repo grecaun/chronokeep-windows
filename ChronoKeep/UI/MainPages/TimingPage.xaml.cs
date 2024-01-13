@@ -1457,7 +1457,14 @@ namespace Chronokeep.UI.MainPages
 
             private void Settings(object sender, RoutedEventArgs e)
             {
-                DialogBox.Show("Settings not yet implemented.");
+                if (reader.SystemInterface.SettingsEditable())
+                {
+                    reader.SystemInterface.OpenSettings();
+                }
+                else
+                {
+                    DialogBox.Show("Settings not yet implemented.");
+                }
             }
 
             private void Connect(object sender, RoutedEventArgs e)
@@ -1514,10 +1521,18 @@ namespace Chronokeep.UI.MainPages
                 {
                     RewindButton.IsEnabled = true;
                     ClockButton.IsEnabled = true;
-                    SettingsButton.IsEnabled = false;
                     RewindButton.Opacity = 1.0;
                     ClockButton.Opacity = 1.0;
-                    SettingsButton.Opacity = 0.2;
+                    if (reader.SystemInterface.SettingsEditable())
+                    {
+                        SettingsButton.IsEnabled = true;
+                        SettingsButton.Opacity = 1.0;
+                    }
+                    else
+                    {
+                        SettingsButton.IsEnabled = false;
+                        SettingsButton.Opacity = 0.2;
+                    }
                 }
                 ConnectButton.IsEnabled = true;
                 ConnectButton.Opacity = 1.0;

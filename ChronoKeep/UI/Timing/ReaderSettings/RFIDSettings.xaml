@@ -16,6 +16,12 @@
         Width="800"
         >
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar
+            Grid.Row="0">
+        </ui:TitleBar>
     </Grid>
 </ui:UiWindow>

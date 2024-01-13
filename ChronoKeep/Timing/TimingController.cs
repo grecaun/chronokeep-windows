@@ -229,6 +229,14 @@ namespace Chronokeep.Timing
                         if (TimingSystemDict.ContainsKey(sock))
                         {
                             Log.D("Timing.TimingController", "Socket errored on us.");
+                            try
+                            {
+                                TimingSystemDict[sock].SystemInterface.CloseSettings();
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.E("Timing.TimingController", "Error attempting to close settings. " + ex.Message);
+                            }
                             TimingSystemSockets.Remove(sock);
                             TimingSystem disconnected = TimingSystemDict[sock];
                             TimingSystemDict.Remove(sock);

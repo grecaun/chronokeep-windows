@@ -3,6 +3,8 @@ using Chronokeep.Interfaces.Timing;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepPortal.Requests;
 using Chronokeep.Objects.ChronokeepPortal.Responses;
+using Chronokeep.UI.Timing.ReaderSettings;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,10 +13,11 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Chronokeep.Timing.Interfaces
 {
-    internal class ChronokeepInerface : ITimingSystemInterface
+    internal class ChronokeepInterface : ITimingSystemInterface
     {
         IDBInterface database;
         readonly int locationId;
@@ -23,10 +26,12 @@ namespace Chronokeep.Timing.Interfaces
         Socket sock;
         IMainWindow window = null;
 
+        private ChronokeepSettings settingsWindow = null;
+
         private static readonly Regex zeroconf = new Regex(@"^\[(?'PORTAL_NAME'[^|]*)\|(?'PORTAL_ID'[^|]*)\|(?'PORTAL_PORT'\d{1,5})\]");
         private static readonly Regex msg = new Regex(@"^[^\n]*\n");
 
-        public ChronokeepInerface(IDBInterface database, int locationId, IMainWindow window)
+        public ChronokeepInterface(IDBInterface database, int locationId, IMainWindow window)
         {
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
@@ -116,11 +121,35 @@ namespace Chronokeep.Timing.Interfaces
                             break;
                         case Response.READERS:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent readers message.");
-                            //if (!output.ContainsKey(MessageType.SETTINGVALUE))
-                            //{
-                            //    output[MessageType.SETTINGVALUE] = new List<string>();
-                            //}
-                            //output[MessageType.SETTINGVALUE].Add(message);
+                            try
+                            {
+                                ReadersResponse readRes = JsonSerializer.Deserialize<ReadersResponse>(message);
+                                if (settingsWindow != null)
+                                {
+                                    settingsWindow.UpdateView(new AllPortalSettings
+                                        {
+                                            Readers = readRes.List
+                                        },
+                                        false,  // settings
+                                        true,   // readers
+                                        false   // apis
+                                        );
+                                }
+                                if (!output.ContainsKey(MessageType.SETTINGVALUE))
+                                {
+                                    output[MessageType.SETTINGVALUE] = new List<string>();
+                                }
+                                output[MessageType.SETTINGVALUE].Add(message);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing readers. " + e.Message);
+                                if (!output.ContainsKey(MessageType.ERROR))
+                                {
+                                    output[MessageType.ERROR] = new List<string>();
+                                }
+                                output[MessageType.ERROR].Add("Error processing readers.");
+                            }
                             break;
                         case Response.ERROR:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent error message.");
@@ -146,9 +175,149 @@ namespace Chronokeep.Timing.Interfaces
                             break;
                         case Response.SETTINGS:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent settings message.");
+                            try
+                            {
+                                SettingsResponse settingsList = JsonSerializer.Deserialize<SettingsResponse>(message);
+                                if (settingsWindow != null)
+                                {
+                                    AllPortalSettings updSettings = new AllPortalSettings();
+                                    foreach (PortalSetting set in settingsList.List)
+                                    {
+                                        switch (set.Name)
+                                        {
+                                            case PortalSetting.SETTING_PORTAL_NAME:
+                                                updSettings.Name = set.Value;
+                                                break;
+                                            case PortalSetting.SETTING_SIGHTING_PERIOD:
+                                                updSettings.SightingPeriod = int.Parse(set.Value);
+                                                break;
+                                            case PortalSetting.SETTING_READ_WINDOW:
+                                                updSettings.ReadWindow = int.Parse(set.Value);
+                                                break;
+                                            case PortalSetting.SETTING_CHIP_TYPE:
+                                                updSettings.ChipType = set.Value == PortalSetting.TYPE_CHIP_DEC ? AllPortalSettings.ChipTypeEnum.DEC : AllPortalSettings.ChipTypeEnum.HEX;
+                                                break;
+                                            case PortalSetting.SETTING_PLAY_SOUND:
+                                                updSettings.PlaySound = bool.Parse(set.Value);
+                                                break;
+                                            case PortalSetting.SETTING_VOLUME:
+                                                updSettings.Volume = double.Parse(set.Value);
+                                                break;
+                                        }
+                                    }
+                                    settingsWindow.UpdateView(
+                                        updSettings,
+                                        true,   // settings
+                                        false,  // readers
+                                        false   // apis
+                                        );
+                                }
+                                if (!output.ContainsKey(MessageType.SETTINGVALUE))
+                                {
+                                    output[MessageType.SETTINGVALUE] = new List<string>();
+                                }
+                                output[MessageType.SETTINGVALUE].Add(message);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing settings. " + e.Message);
+                                if (!output.ContainsKey(MessageType.ERROR))
+                                {
+                                    output[MessageType.ERROR] = new List<string>();
+                                }
+                                output[MessageType.ERROR].Add("Error processing settings.");
+                            }
                             break;
                         case Response.API_LIST:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent api list message.");
+                            try
+                            {
+                                ApiListResponse apiList = JsonSerializer.Deserialize<ApiListResponse>(message);
+                                if (settingsWindow != null)
+                                {
+                                    settingsWindow.UpdateView(new AllPortalSettings
+                                        {
+                                            APIs = apiList.List
+                                        },
+                                        false,  // settings
+                                        false,  // readers
+                                        true    // apis
+                                        );
+                                }
+                                if (!output.ContainsKey(MessageType.SETTINGVALUE))
+                                {
+                                    output[MessageType.SETTINGVALUE] = new List<string>();
+                                }
+                                output[MessageType.SETTINGVALUE].Add(message);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing api list. " + e.Message);
+                                if (!output.ContainsKey(MessageType.ERROR))
+                                {
+                                    output[MessageType.ERROR] = new List<string>();
+                                }
+                                output[MessageType.ERROR].Add("Error processing api list.");
+                            }
+                            break;
+                        case Response.SETTINGS_ALL:
+                            Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent all settings message.");
+                            try
+                            {
+                                SettingsAllResponse allSettings = JsonSerializer.Deserialize<SettingsAllResponse>(message);
+                                if (settingsWindow != null)
+                                {
+                                    AllPortalSettings updSettings = new AllPortalSettings
+                                    {
+                                        Readers = allSettings.Readers,
+                                        APIs = allSettings.APIs,
+                                    };
+                                    foreach (PortalSetting set in allSettings.Settings)
+                                    {
+                                        switch (set.Name)
+                                        {
+                                            case PortalSetting.SETTING_PORTAL_NAME:
+                                                updSettings.Name = set.Value;
+                                                break;
+                                            case PortalSetting.SETTING_SIGHTING_PERIOD:
+                                                updSettings.SightingPeriod = int.Parse(set.Value);
+                                                break;
+                                            case PortalSetting.SETTING_READ_WINDOW:
+                                                updSettings.ReadWindow = int.Parse(set.Value);
+                                                break;
+                                            case PortalSetting.SETTING_CHIP_TYPE:
+                                                updSettings.ChipType = set.Value == PortalSetting.TYPE_CHIP_DEC ? AllPortalSettings.ChipTypeEnum.DEC : AllPortalSettings.ChipTypeEnum.HEX;
+                                                break;
+                                            case PortalSetting.SETTING_PLAY_SOUND:
+                                                updSettings.PlaySound = bool.Parse(set.Value);
+                                                break;
+                                            case PortalSetting.SETTING_VOLUME:
+                                                updSettings.Volume = double.Parse(set.Value);
+                                                break;
+                                        }
+                                    }
+                                    settingsWindow.UpdateView(
+                                        updSettings,
+                                        true,   // settings
+                                        true,   // readers
+                                        true    // apis
+                                        );
+                                }
+                                if (!output.ContainsKey(MessageType.SETTINGVALUE))
+                                {
+                                    output[MessageType.SETTINGVALUE] = new List<string>();
+                                }
+                                output[MessageType.SETTINGVALUE].Add(message);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing all settings. " + e.Message);
+                                if (!output.ContainsKey(MessageType.ERROR))
+                                {
+                                    output[MessageType.ERROR] = new List<string>();
+                                }
+                                output[MessageType.ERROR].Add("Error processing settings.");
+                            }
                             break;
                         case Response.READS:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent reads message.");
@@ -307,6 +476,89 @@ namespace Chronokeep.Timing.Interfaces
 
         public void StopSending() { }
 
+        public void SendStop()
+        {
+            SendMessage(JsonSerializer.Serialize(new ReaderStopRequest { }));
+        }
+
+        public void SendShutdown()
+        {
+            SendMessage(JsonSerializer.Serialize(new ShutdownRequest { }));
+        }
+
+        public void SendGetSettings()
+        {
+            SendMessage(JsonSerializer.Serialize(new SettingsGetAllRequest { }));
+        }
+
+        public void SendSetSettings(AllPortalSettings settings)
+        {
+            SettingsSetRequest settingsReq = new SettingsSetRequest
+            {
+                Settings = new List<PortalSetting>()
+            };
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_PORTAL_NAME,
+                Value = settings.Name
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_SIGHTING_PERIOD,
+                Value = settings.SightingPeriod.ToString()
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_READ_WINDOW,
+                Value = settings.ReadWindow.ToString()
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_CHIP_TYPE,
+                Value = settings.ChipType == AllPortalSettings.ChipTypeEnum.DEC ? PortalSetting.TYPE_CHIP_DEC : PortalSetting.TYPE_CHIP_HEX
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_VOLUME,
+                Value = settings.Volume.ToString()
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_PLAY_SOUND,
+                Value = settings.PlaySound == true ? "true" : "false"
+            });
+            SendMessage(JsonSerializer.Serialize(settingsReq));
+        }
+
+        public void SendUploadParticipants(List<PortalParticipant> participants)
+        {
+            if (participants.Count > 50)
+            {
+                int ix = 0;
+                while (ix < participants.Count)
+                {
+                    Log.D("Timing.Interfaces.ChronokeepInterface", "Sending 50 participants starting at " + ix);
+                    SendMessage(JsonSerializer.Serialize(new ParticipantsAddRequest
+                    {
+                        Participants = participants.GetRange(ix, 50)
+                    }));
+                    ix += 50;
+                }
+            }
+            else
+            {
+                SendMessage(JsonSerializer.Serialize(new ParticipantsAddRequest
+                {
+                    Participants = participants
+                }));
+            }
+        }
+
+        public void SendRemoveParticipants()
+        {
+            SendMessage(JsonSerializer.Serialize(new ParticipantsRemoveRequest()));
+        }
+
         public void Disconnect()
         {
             SendMessage(JsonSerializer.Serialize(new DisconnectRequest { }));
@@ -316,6 +568,35 @@ namespace Chronokeep.Timing.Interfaces
         {
             Log.D("Timing.Interfaces.ChronokeepInterface", "Sending message '" + msg + "'");
             sock.Send(Encoding.Default.GetBytes(msg + "\n"));
+        }
+
+        public bool SettingsEditable()
+        {
+            return true;
+        }
+
+        public void OpenSettings()
+        {
+            if (settingsWindow != null)
+            {
+                DialogBox.Show("Settings window already open.");
+                return;
+            }
+            settingsWindow = new ChronokeepSettings(this, database);
+            settingsWindow.Show();
+        }
+
+        public void CloseSettings()
+        {
+            if (settingsWindow != null)
+            {
+                settingsWindow.CloseWindow();
+            }
+        }
+
+        public void SettingsWindowFinalize()
+        {
+            settingsWindow = null;
         }
     }
 }

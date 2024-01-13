@@ -36,7 +36,7 @@ namespace Chronokeep
             {
                 Bib.Text = "Bib: " + person.EventSpecific.Bib;
                 Chip.Text = "Chip: " + person.Chip;
-                Name.Text = string.Format("{0} {1}", person.FirstName, person.LastName);
+                PersonName.Text = string.Format("{0} {1}", person.FirstName, person.LastName);
                 AgeGender.Text = string.Format("{0} {1}", person.Age(eventDate), person.Gender);
                 Distance.Text = "" + person.EventSpecific.DistanceName;
                 Unknown.Text = "";
@@ -47,7 +47,7 @@ namespace Chronokeep
             {
                 Bib.Text = "";
                 Chip.Text = "";
-                Name.Text = "";
+                PersonName.Text = "";
                 AgeGender.Text = "";
                 Distance.Text = "";
                 Unknown.Text = "Information not found.";
@@ -63,7 +63,7 @@ namespace Chronokeep
             });
             Bib.Text = "";
             Chip.Text = "";
-            Name.Text = "";
+            PersonName.Text = "";
             AgeGender.Text = "";
             Distance.Text = "";
             Unknown.Text = "";

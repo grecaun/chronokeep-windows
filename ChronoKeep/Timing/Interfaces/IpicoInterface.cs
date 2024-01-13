@@ -266,5 +266,14 @@ namespace Chronokeep.Timing.Interfaces
             Log.D("Timing.Interfaces.IpicoInterface", "Sending message '" + msg + "'");
             controlSocket.Send(Encoding.ASCII.GetBytes(msg + "\n"));
         }
+
+        public bool SettingsEditable()
+        {
+            return false;
+        }
+
+        public void OpenSettings() { }
+
+        public void CloseSettings() { }
     }
 }

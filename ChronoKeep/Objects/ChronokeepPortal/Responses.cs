@@ -12,6 +12,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public const string READERS               = "readers";
         public const string ERROR                 = "error";
         public const string SETTINGS              = "settings";
+        public const string SETTINGS_ALL          = "settings_all";
         public const string API_LIST              = "api_list";
         public const string READS                 = "reads";
         public const string SUCCESS               = "success";
@@ -45,6 +46,16 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
     {
         [JsonPropertyName("settings")]
         public List<PortalSetting> List { get; set; }
+    }
+
+    public class SettingsAllResponse : Response
+    {
+        [JsonPropertyName("settings")]
+        public List<PortalSetting> Settings { get; set; }
+        [JsonPropertyName("readers")]
+        public List<PortalReader> Readers { get; set; }
+        [JsonPropertyName("apis")]
+        public List<PortalAPI> APIs { get; set; }
     }
 
     public class ApiListResponse : Response

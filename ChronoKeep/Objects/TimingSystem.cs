@@ -117,7 +117,7 @@ namespace Chronokeep.Objects
             else if (this.Type == Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL)
             {
                 Log.D("Objects.TimingSystem", "System interface is CHRONOKEEP_PORTAL.");
-                SystemInterface = new ChronokeepInerface(database, LocationID, window);
+                SystemInterface = new ChronokeepInterface(database, LocationID, window);
             }
             else
             {

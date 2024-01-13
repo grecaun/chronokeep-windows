@@ -9,6 +9,10 @@ namespace Chronokeep.Objects.ChronokeepPortal
 {
     public class PortalReader
     {
+        public const string READER_KIND_ZEBRA = "ZEBRA";
+        public const string READER_KIND_RFID = "RFID";
+        public const string READER_KIND_IMPINJ = "IMPINJ";
+
         [JsonPropertyName("id")]
         public long ID { get; set; }
         [JsonPropertyName("name")]

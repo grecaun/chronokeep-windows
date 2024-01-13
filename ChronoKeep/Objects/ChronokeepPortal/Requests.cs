@@ -56,8 +56,9 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public static readonly string SIGHTINGS_DELETE  = "sightings_delete";
 
         // Settings related requests
-        public static readonly string SETTINGS_SET = "settings_set";
-        public static readonly string SETTINGS_GET = "settings_get"; //30
+        public static readonly string SETTINGS_SET      = "settings_set";
+        public static readonly string SETTINGS_GET      = "settings_get";
+        public static readonly string SETTINGS_GET_ALL  = "settings_get_all";
 
         // Subscription request to subscribe to new reads/sightings
         public static readonly string SUBSCRIBE = "subscribe";
@@ -430,6 +431,14 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public SettingsGetRequest()
         {
             Command = SETTINGS_GET;
+        }
+    }
+
+    public class SettingsGetAllRequest : Request
+    {
+        public SettingsGetAllRequest()
+        {
+            Command = SETTINGS_GET_ALL;
         }
     }
 

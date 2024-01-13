@@ -24,6 +24,9 @@ namespace Chronokeep.Interfaces.Timing
         void Rewind(int reader = 1);
         void SetMainSocket(Socket sock);
         void SetSettingsSocket(Socket sock);
+        bool SettingsEditable();
+        void OpenSettings();
+        void CloseSettings();
     }
 
     public enum MessageType {

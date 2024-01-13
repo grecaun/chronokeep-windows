@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chronokeep.UI.Timing.ReaderSettings"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:s="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="Chronokeep Settings" 
         d:DataContext="{d:DesignInstance local:ChronokeepSettings, IsDesignTimeCreatable=True}"
@@ -12,9 +14,186 @@
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
-        Height="450"
-        Width="800">
+        Closed="UiWindow_Closed"
+        Height="500"
+        Width="300"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        >
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar
+            Grid.Row="0">
+        </ui:TitleBar>
+        <StackPanel
+            Grid.Row="1"
+            Margin="20,10,20,20"
+            VerticalAlignment="Center"
+            >
+            <StackPanel x:Name="loadingPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0,20,0">
+                <Label Content="Loading..." FontSize="36" Margin="5,5,5,5"/>
+                <ui:ProgressRing IsIndeterminate="True" Margin="5,5,5,5"/>
+            </StackPanel>
+            <StackPanel x:Name="settingsPanel" Visibility="Collapsed" Margin="0,10,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <Label
+                        Content="Name"
+                        HorizontalContentAlignment="Right"
+                        VerticalContentAlignment="Center"
+                        Width="120"
+                        Margin="5,5,5,5"
+                        />
+                    <TextBox
+                        x:Name="nameBox"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label
+                        Content="Sighting Period"
+                        HorizontalContentAlignment="Right"
+                        VerticalContentAlignment="Center"
+                        Width="120"
+                        Margin="5,5,5,5"
+                        />
+                    <TextBox
+                        Name="sightingPeriodBox"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label
+                        Content="Read Window"
+                        HorizontalContentAlignment="Right"
+                        VerticalContentAlignment="Center"
+                        Width="120"
+                        Margin="5,5,5,5"
+                        />
+                    <TextBox
+                        x:Name="readWindowBox"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label
+                        Content="Chip Type"
+                        HorizontalContentAlignment="Right"
+                        VerticalContentAlignment="Center"
+                        Width="120"
+                        Margin="5,5,5,5"
+                        />
+                    <ComboBox
+                        x:Name="chipTypeBox"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        SelectedIndex="0"
+                        >
+                        <ComboBoxItem
+                            Content="Base 10 (Dec)"
+                            Uid="DEC"
+                            />
+                        <ComboBoxItem
+                            Content="Base 16 (Hex)"
+                            Uid="HEX"
+                            />
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label
+                        Content="Volume"
+                        HorizontalContentAlignment="Right"
+                        VerticalContentAlignment="Center"
+                        Width="120"
+                        Margin="5,5,5,5"
+                        />
+                    <Slider
+                        x:Name="volumeSlider"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        IsSnapToTickEnabled="True"
+                        Maximum="10"
+                        Minimum="0"
+                        TickFrequency="1"
+                        />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox
+                        Content="Play Sound on Read?"
+                        VerticalContentAlignment="Center"
+                        x:Name="soundBox"
+                        Margin="5,5,5,5"
+                        />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button
+                        Content="Upload Participants"
+                        x:Name="uploadParticipantsButton"
+                        Click="uploadParticipantsButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        />
+                    <Button
+                        Content="Remove Participants"
+                        x:Name="removeParticipantsButton"
+                        Click="removeParticipantsButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button
+                        Content="Stop Server"
+                        x:Name="stopServerButton"
+                        Click="stopServerButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        />
+                    <Button
+                        Content="Shutdown Server"
+                        x:Name="shutdownServerButton"
+                        Click="shutdownServerButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button
+                        Content="Save Settings"
+                        x:Name="saveButton"
+                        Click="saveButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        />
+                    <Button
+                        Content="Close"
+                        x:Name="closeButton"
+                        Click="closeButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        />
+                </StackPanel>
+            </StackPanel>
+            <Button
+                Content="Swap View"
+                x:Name="swapButton"
+                Click="swapButton_Click"
+                Margin="5,5,5,5"
+                Width="185"
+                Height="35"
+                HorizontalAlignment="Center"
+                />
+        </StackPanel>
     </Grid>
 </ui:UiWindow>

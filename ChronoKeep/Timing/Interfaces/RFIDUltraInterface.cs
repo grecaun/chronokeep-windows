@@ -680,6 +680,21 @@ namespace Chronokeep.Timing.Interfaces
             return;
         }
 
+        public bool SettingsEditable()
+        {
+            return false;
+        }
+
+        public void OpenSettings()
+        {
+            // TODO: Implement settings for RFID
+        }
+
+        public void CloseSettings()
+        {
+            // TODO: Implement settings for RFID
+        }
+
         public enum RFIDMessage
         {
             CONNECTED, VOLTAGENORMAL, VOLTAGELOW, CHIPREAD, TIME, SETTINGVALUE, SETTINGCHANGE, STATUS, UNKNOWN, ERROR

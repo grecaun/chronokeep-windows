@@ -16,7 +16,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         [JsonPropertyName("last")]
         public string Last { get; set; }
         [JsonPropertyName("age")]
-        public uint Age { get; set; }
+        public int Age { get; set; }
         [JsonPropertyName("gender")]
         public string Gender { get; set; }
         [JsonPropertyName("age_group")]
