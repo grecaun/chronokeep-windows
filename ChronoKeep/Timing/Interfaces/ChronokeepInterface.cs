@@ -559,6 +559,71 @@ namespace Chronokeep.Timing.Interfaces
             SendMessage(JsonSerializer.Serialize(new ParticipantsRemoveRequest()));
         }
 
+        public void SendSaveApi(PortalAPI api)
+        {
+            SendMessage(JsonSerializer.Serialize(new ApiSaveRequest
+            {
+                ID = api.Id,
+                Name = api.Nickname,
+                Type = api.Kind,
+                URI = api.Uri,
+                Token = api.Token,
+            }));
+        }
+
+        public void SendSaveReader(PortalReader reader)
+        {
+            SendMessage(JsonSerializer.Serialize(new ReaderAddRequest
+            {
+                Id = reader.Id,
+                Name = reader.Name,
+                Type = reader.Kind,
+                IPAddress = reader.IPAddress,
+                Port = reader.Port,
+                AutoConnect = reader.AutoConnect,
+            }));
+        }
+
+        public void SendConnectReader(PortalReader reader)
+        {
+            SendMessage(JsonSerializer.Serialize(new ReaderConnectRequest
+            {
+                Id = reader.Id,
+            }));
+        }
+
+        public void SendDisconnectReader(PortalReader reader)
+        {
+            SendMessage(JsonSerializer.Serialize(new ReaderDisconnectRequest
+            {
+                Id = reader.Id,
+            }));
+        }
+
+        public void SendStartReader(PortalReader reader)
+        {
+            SendMessage(JsonSerializer.Serialize(new ReaderStartRequest
+            {
+                Id = reader.Id,
+            }));
+        }
+
+        public void SendStopReader(PortalReader reader)
+        {
+            SendMessage(JsonSerializer.Serialize(new ReaderStopRequest
+            {
+                Id = reader.Id,
+            }));
+        }
+
+        public void SendRemoveReader(PortalReader reader)
+        {
+            SendMessage(JsonSerializer.Serialize(new ReaderRemoveRequest
+            {
+                Id = reader.Id,
+            }));
+        }
+
         public void Disconnect()
         {
             SendMessage(JsonSerializer.Serialize(new DisconnectRequest { }));

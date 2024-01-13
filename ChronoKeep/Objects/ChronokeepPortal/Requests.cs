@@ -258,6 +258,8 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
             Command = READER_ADD;
         }
 
+        [JsonPropertyName("id")]
+        public long Id { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("kind")]

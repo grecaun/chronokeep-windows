@@ -14,7 +14,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string READER_KIND_IMPINJ = "IMPINJ";
 
         [JsonPropertyName("id")]
-        public long ID { get; set; }
+        public long Id { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("kind")]
