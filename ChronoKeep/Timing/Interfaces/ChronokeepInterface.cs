@@ -571,6 +571,14 @@ namespace Chronokeep.Timing.Interfaces
             }));
         }
 
+        public void SendDeleteApi(PortalAPI api)
+        {
+            SendMessage(JsonSerializer.Serialize(new ApiRemoveRequest
+            {
+                ID = api.Id
+            }));
+        }
+
         public void SendSaveReader(PortalReader reader)
         {
             SendMessage(JsonSerializer.Serialize(new ReaderAddRequest

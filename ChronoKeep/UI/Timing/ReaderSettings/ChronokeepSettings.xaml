@@ -132,13 +132,13 @@
                 </StackPanel>
                 <Expander
                     x:Name="readerExpander"
-                    MaxHeight="200"
+                    MaxHeight="205"
                     Margin="5,5,5,5"
                     HorizontalAlignment="Stretch"
                     IsExpanded="False"
                     ExpandDirection="Down"
-                    Expanded="Expander_Expanded"
-                    Collapsed="Expander_Expanded"
+                    Expanded="ReaderExpander_Changed"
+                    Collapsed="ReaderExpander_Changed"
                     >
                     <Expander.Header>
                         <DockPanel LastChildFill="False" VerticalAlignment="Center">
@@ -146,12 +146,39 @@
                             <ui:Button x:Name="addReaderButton" Icon="Add20" DockPanel.Dock="Right" Margin="0,0,10,0" VerticalAlignment="Center" Click="addReaderButton_Click" Visibility="Collapsed" />
                         </DockPanel>
                     </Expander.Header>
-                    <ListBox
+                    <ListView
                         x:Name="readerListView"
-                        Height="200"
+                        Height="135"
                         HorizontalAlignment="Center"
                         ScrollViewer.CanContentScroll="True"
                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        VirtualizingPanel.ScrollUnit="Pixel"
+                        Margin="0,-10,0,0"
+                        />
+                </Expander>
+                <Expander
+                    x:Name="apiExpander"
+                    MaxHeight="205"
+                    Margin="5,5,5,5"
+                    HorizontalAlignment="Stretch"
+                    IsExpanded="False"
+                    ExpandDirection="Down"
+                    Expanded="APIExpander_Changed"
+                    Collapsed="APIExpander_Changed"
+                    >
+                    <Expander.Header>
+                        <DockPanel LastChildFill="False" VerticalAlignment="Center">
+                            <TextBlock Text="API Keys" Margin="5,0,0,0" VerticalAlignment="Center" />
+                            <ui:Button x:Name="addAPIButton" Icon="Add20" DockPanel.Dock="Right" Margin="0,0,10,0" VerticalAlignment="Center" Click="addAPIButton_Click" Visibility="Collapsed" />
+                        </DockPanel>
+                    </Expander.Header>
+                    <ListView
+                        x:Name="apiListView"
+                        Height="145"
+                        HorizontalAlignment="Center"
+                        ScrollViewer.CanContentScroll="True"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        VirtualizingPanel.ScrollUnit="Pixel"
                         Margin="0,-10,0,0"
                         />
                 </Expander>

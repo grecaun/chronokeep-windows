@@ -23,7 +23,8 @@ namespace Chronokeep.UI.Timing.ReaderSettings
 
         private bool saving = false;
 
-        private Dictionary<long, ReaderListItem> listItemDict = new Dictionary<long, ReaderListItem>();
+        private Dictionary<long, ReaderListItem> readerDict = new Dictionary<long, ReaderListItem>();
+        private Dictionary<long, APIListItem> apiDict = new Dictionary<long, APIListItem>();
 
         internal ChronokeepSettings(ChronokeepInterface reader, IDBInterface database)
         {
@@ -181,6 +182,19 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             this.Close();
         }
 
+        private void addAPIButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Add API button clicked.");
+            reader.SendSaveApi(new PortalAPI
+            {
+                Id = -1,
+                Nickname = "New API",
+                Kind = PortalAPI.API_TYPE_CHRONOKEEP_RESULTS,
+                Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                Uri = PortalAPI.API_URI_CHRONOKEEP_RESULTS,
+            });
+        }
+
         internal void UpdateView(AllPortalSettings allSettings, bool settings, bool readers, bool apis)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "UpdateView.");
@@ -217,26 +231,48 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     {
                         found.Add(read.Id);
                         // update if we know about them
-                        if (listItemDict.ContainsKey(read.Id))
+                        if (readerDict.ContainsKey(read.Id))
                         {
-                            listItemDict[read.Id].UpdateReader(read);
+                            readerDict[read.Id].UpdateReader(read);
                         }
+                        // otherwise add new
                         else
                         {
-                            listItemDict[read.Id] = new ReaderListItem(read, reader);
+                            readerDict[read.Id] = new ReaderListItem(read, reader);
                         }
                     }
-                    var newDictionary = listItemDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
-                    listItemDict = newDictionary;
+                    var newDictionary = readerDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
+                    readerDict = newDictionary;
                     readerListView.Items.Clear();
-                    foreach (ReaderListItem item in listItemDict.Values)
+                    foreach (ReaderListItem item in readerDict.Values)
                     {
                         readerListView.Items.Add(item);
                     }
                 }
                 if (apis)
                 {
-
+                    // keep track of which apis we are already displaying
+                    HashSet<long> found = new HashSet<long>();
+                    foreach (PortalAPI api in allSettings.APIs)
+                    {
+                        found.Add(api.Id);
+                        // update if we know about them
+                        if (apiDict.ContainsKey(api.Id))
+                        {
+                            apiDict[api.Id].UpdateAPI(api);
+                        }
+                        else
+                        {
+                            apiDict[api.Id] = new APIListItem(api, reader);
+                        }
+                    }
+                    var newDictionary = apiDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
+                    apiDict = newDictionary;
+                    apiListView.Items.Clear();
+                    foreach (APIListItem item in apiDict.Values)
+                    {
+                        apiListView.Items.Add(item);
+                    }
                 }
             }));
         }
@@ -253,6 +289,46 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         private void UiWindow_Closed(object sender, EventArgs e)
         {
             reader.SettingsWindowFinalize();
+        }
+
+        private void ReaderExpander_Changed(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Reader expander expanding/contracting.");
+            if (readerExpander.IsExpanded)
+            {
+                addReaderButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                addReaderButton.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void APIExpander_Changed(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "API expander expanding/contracting.");
+            if (apiExpander.IsExpanded)
+            {
+                addAPIButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                addAPIButton.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void addReaderButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Adding new reader.");
+            reader.SendSaveReader(new PortalReader()
+            {
+                Id = -1,
+                Name = "New Reader",
+                Kind = PortalReader.READER_KIND_ZEBRA,
+                IPAddress = "192.168.1.0",
+                Port = uint.Parse(PortalReader.READER_DEFAULT_PORT_ZEBRA),
+                AutoConnect = true,
+            });
         }
 
         private class ReaderListItem : ListViewItem
@@ -401,7 +477,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
 
             public void UpdateReader(PortalReader reader)
             {
-                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Updating reader " + reader.Id);
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Updating reader " + reader.Id);
                 this.reader = reader;
                 this.nameBox.Text = reader.Name;
                 switch (reader.Kind)
@@ -429,7 +505,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
 
             private void UpdateReaderPort(object sender, RoutedEventArgs e)
             {
-                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Changing port for reader " + reader.Id);
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Changing port for reader " + reader.Id);
                 switch (kindBox.SelectedIndex)
                 {
                     case 0:
@@ -449,7 +525,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
 
             private void ConnectReader(object sender, RoutedEventArgs e)
             {
-                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Connecting/disconnecting reader " + reader.Id);
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Connecting/disconnecting reader " + reader.Id);
                 if (reader.Connected)
                 {
                     readerInterface.SendDisconnectReader(reader);
@@ -464,7 +540,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
 
             private void StartReader(object sender, RoutedEventArgs e)
             {
-                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Stopping/starting reader " + reader.Id);
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Stopping/starting reader " + reader.Id);
                 if (reader.Reading)
                 {
                     readerInterface.SendStopReader(reader);
@@ -480,7 +556,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
 
             private void SaveReader(object sender, RoutedEventArgs e)
             {
-                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Saving reader " + reader.Id);
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Saving reader " + reader.Id);
                 reader.Name = nameBox.Text.Trim();
                 switch (kindBox.SelectedIndex)
                 {
@@ -519,7 +595,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
 
             private void DeleteReader(object sender, RoutedEventArgs e)
             {
-                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Deleting reader " + reader.Id);
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Deleting reader " + reader.Id);
                 readerInterface.SendRemoveReader(reader);
             }
 
@@ -534,31 +610,203 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }
         }
 
-        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        private class APIListItem : ListViewItem
         {
-            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Expander expanding/contracting.");
-            if (readerExpander.IsExpanded)
-            {
-                addReaderButton.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                addReaderButton.Visibility = Visibility.Collapsed;
-            }
-        }
+            private PortalAPI api = null;
+            private ChronokeepInterface reader = null;
 
-        private void addReaderButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Adding new reader.");
-            reader.SendSaveReader(new PortalReader()
+            private System.Windows.Controls.TextBox nameBox;
+            private ComboBox kindBox;
+            private System.Windows.Controls.TextBox tokenBox;
+            private System.Windows.Controls.TextBox uriBox;
+
+            private Button saveAPIButton;
+            private Button removeAPIButton;
+
+            public APIListItem(PortalAPI api, ChronokeepInterface reader)
             {
-                Id = -1,
-                Name = "New Reader",
-                Kind = PortalReader.READER_KIND_ZEBRA,
-                IPAddress = "192.168.1.0",
-                Port = uint.Parse(PortalReader.READER_DEFAULT_PORT_ZEBRA),
-                AutoConnect = true,
-            });
+                this.api = api;
+                this.reader = reader;
+                StackPanel thePanel = new StackPanel()
+                {
+                    Orientation = Orientation.Vertical,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+                this.Content = thePanel;
+                StackPanel subPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+                thePanel.Children.Add(subPanel);
+                nameBox = new System.Windows.Controls.TextBox()
+                {
+                    Text = api.Nickname,
+                    Width = 170,
+                    Margin = new Thickness(5)
+                };
+                subPanel.Children.Add(nameBox);
+                kindBox = new ComboBox()
+                {
+                    Width = 140,
+                    Margin = new Thickness(5),
+                };
+                kindBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "Remote",
+                    Uid = PortalAPI.API_TYPE_CHRONOKEEP_REMOTE
+                });
+                kindBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "Remote Self",
+                    Uid = PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF
+                });
+                kindBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "Results",
+                    Uid = PortalAPI.API_TYPE_CHRONOKEEP_RESULTS
+                });
+                kindBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "Results Self",
+                    Uid = PortalAPI.API_TYPE_CHRONOKEEP_RESULTS_SELF
+                });
+                switch (api.Kind)
+                {
+                    case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE:
+                        kindBox.SelectedIndex = 0;
+                        break;
+                    case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF:
+                        kindBox.SelectedIndex = 1;
+                        break;
+                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS:
+                        kindBox.SelectedIndex = 2;
+                        break;
+                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS_SELF:
+                        kindBox.SelectedIndex = 3;
+                        break;
+                    default:
+                        kindBox.SelectedIndex = 0;
+                        break;
+                }
+                kindBox.SelectionChanged += new SelectionChangedEventHandler(this.UpdateURI);
+                subPanel.Children.Add(kindBox);
+                subPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+                thePanel.Children.Add(subPanel);
+                tokenBox = new System.Windows.Controls.TextBox()
+                {
+                    Text = api.Token,
+                    Width = 320,
+                    Margin = new Thickness(5),
+                };
+                subPanel.Children.Add(tokenBox);
+                subPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+                thePanel.Children.Add(subPanel);
+                uriBox = new System.Windows.Controls.TextBox()
+                {
+                    Text = api.Uri,
+                    Width = 220,
+                    Margin = new Thickness(5),
+                };
+                subPanel.Children.Add(uriBox);
+                saveAPIButton = new Button()
+                {
+                    Icon = Wpf.Ui.Common.SymbolRegular.Save20,
+                    Margin = new Thickness(5),
+                    Width = 40,
+                    Height = 35,
+                };
+                saveAPIButton.Click += new RoutedEventHandler(this.SaveAPI);
+                subPanel.Children.Add(saveAPIButton);
+                removeAPIButton = new Button()
+                {
+                    Icon = Wpf.Ui.Common.SymbolRegular.Delete20,
+                    Margin = new Thickness(5),
+                    Width = 40,
+                    Height = 35,
+                };
+                removeAPIButton.Click += new RoutedEventHandler(this.DeleteAPI);
+                subPanel.Children.Add(removeAPIButton);
+                PrivateUpdateURI();
+            }
+
+            public void UpdateAPI(PortalAPI api)
+            {
+                this.api = api;
+                nameBox.Text = api.Nickname;
+                switch (api.Kind)
+                {
+                    case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE:
+                        kindBox.SelectedIndex = 0;
+                        break;
+                    case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF:
+                        kindBox.SelectedIndex = 1;
+                        break;
+                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS:
+                        kindBox.SelectedIndex = 2;
+                        break;
+                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS_SELF:
+                        kindBox.SelectedIndex = 3;
+                        break;
+                    default:
+                        kindBox.SelectedIndex = 0;
+                        break;
+                }
+                tokenBox.Text = api.Token;
+                uriBox.Text = api.Uri;
+                PrivateUpdateURI();
+            }
+
+            public void PrivateUpdateURI()
+            {
+                switch (((ComboBoxItem)kindBox.SelectedItem).Uid)
+                {
+                    case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE:
+                        uriBox.Visibility = Visibility.Collapsed;
+                        uriBox.Text = PortalAPI.API_URI_CHRONOKEEP_REMOTE;
+                        break;
+                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS:
+                        uriBox.Visibility = Visibility.Collapsed;
+                        uriBox.Text = PortalAPI.API_URI_CHRONOKEEP_RESULTS;
+                        break;
+                    case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF:
+                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS_SELF:
+                    default:
+                        uriBox.Visibility = Visibility.Visible;
+                        uriBox.Text = api.Uri;
+                        break;
+                }
+            }
+
+            private void UpdateURI(object sender, SelectionChangedEventArgs e)
+            {
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Selected type changed.");
+                PrivateUpdateURI();
+            }
+
+            private void SaveAPI(object sender, RoutedEventArgs e)
+            {
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Saving api " + api.Id);
+                api.Nickname = nameBox.Text.Trim();
+                api.Token = tokenBox.Text.Trim();
+                api.Uri = uriBox.Text.Trim();
+                api.Kind = ((ComboBoxItem)kindBox.SelectedItem).Uid;
+                reader.SendSaveApi(api);
+            }
+
+            private void DeleteAPI(object sender, RoutedEventArgs e)
+            {
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Deleting api " + api.Id);
+                reader.SendDeleteApi(api);
+            }
         }
     }
 }

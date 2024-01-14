@@ -136,8 +136,8 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
             Command = API_REMOVE;
         }
 
-        [JsonPropertyName("name")]
-        public string APIName { get; set; }
+        [JsonPropertyName("id")]
+        public long ID { get; set; }
     }
 
     public class ApiResultsEventGetRequest : Request
@@ -147,8 +147,8 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
             Command = API_RESULTS_EVENTS_GET;
         }
 
-        [JsonPropertyName("api_name")]
-        public string APIName { get; set; }
+        [JsonPropertyName("api_id")]
+        public long APIID { get; set; }
     }
 
     public class ApiResultsEventYearGetRequest : Request
@@ -158,8 +158,8 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
             Command = API_RESULTS_EVENT_YEARS_GET;
         }
 
-        [JsonPropertyName("api_name")]
-        public string APIName { get; set; }
+        [JsonPropertyName("api_id")]
+        public long APIID { get; set; }
         [JsonPropertyName("event_slug")]
         public string EventSlug { get; set; }
     }
@@ -171,8 +171,8 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
             Command = API_RESULTS_PARTICIPANTS_GET;
         }
 
-        [JsonPropertyName("api_name")]
-        public string APIName { get; set; }
+        [JsonPropertyName("api_id")]
+        public long APIID { get; set; }
         [JsonPropertyName("event_slug")]
         public string EventSlug { get; set; }
         [JsonPropertyName("event_year")]
