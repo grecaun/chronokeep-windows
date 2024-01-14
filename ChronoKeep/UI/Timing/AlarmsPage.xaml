@@ -22,10 +22,10 @@
                 <ColumnDefinition Width="55" />
                 <ColumnDefinition Width="45" />
             </Grid.ColumnDefinitions>
-            <Label Content="Bib" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="0" />
-            <Label Content="Chip" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="1" />
-            <Label Content="Sound" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="2" />
-            <Label Content="Active" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="3" />
+            <TextBlock Text="Bib" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="0" />
+            <TextBlock Text="Chip" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="1" />
+            <TextBlock Text="Sound" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="2" />
+            <TextBlock Text="Active" Margin="5,5,5,0" HorizontalAlignment="Center" Grid.Column="3" />
         </Grid>
         <ListBox
             Name="AlarmsBox"

@@ -648,6 +648,7 @@ namespace Chronokeep.Timing.Interfaces
                 return;
             }
             settingsWindow = new ChronokeepSettings(this, database);
+            window.AddWindow(settingsWindow);
             settingsWindow.Show();
         }
 
@@ -661,6 +662,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public void SettingsWindowFinalize()
         {
+            window.WindowFinalize(settingsWindow);
             settingsWindow = null;
         }
     }

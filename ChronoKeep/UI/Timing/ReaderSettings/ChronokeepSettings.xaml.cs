@@ -4,17 +4,12 @@ using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
+using Button = Wpf.Ui.Controls.Button;
 
 namespace Chronokeep.UI.Timing.ReaderSettings
 {
@@ -27,6 +22,8 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         private IDBInterface database = null;
 
         private bool saving = false;
+
+        private Dictionary<long, ReaderListItem> listItemDict = new Dictionary<long, ReaderListItem>();
 
         internal ChronokeepSettings(ChronokeepInterface reader, IDBInterface database)
         {
@@ -214,7 +211,28 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 // add readers and apis to views
                 if (readers)
                 {
-
+                    // keep track of which readers we are already displaying
+                    HashSet<long> found = new HashSet<long>();
+                    foreach (PortalReader read in allSettings.Readers)
+                    {
+                        found.Add(read.Id);
+                        // update if we know about them
+                        if (listItemDict.ContainsKey(read.Id))
+                        {
+                            listItemDict[read.Id].UpdateReader(read);
+                        }
+                        else
+                        {
+                            listItemDict[read.Id] = new ReaderListItem(read, reader);
+                        }
+                    }
+                    var newDictionary = listItemDict.Where(pair => found.Contains(pair.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
+                    listItemDict = newDictionary;
+                    readerListView.Items.Clear();
+                    foreach (ReaderListItem item in listItemDict.Values)
+                    {
+                        readerListView.Items.Add(item);
+                    }
                 }
                 if (apis)
                 {
@@ -235,6 +253,312 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         private void UiWindow_Closed(object sender, EventArgs e)
         {
             reader.SettingsWindowFinalize();
+        }
+
+        private class ReaderListItem : ListViewItem
+        {
+            private PortalReader reader;
+            private ChronokeepInterface readerInterface;
+
+            private const string IPPattern = "^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$";
+            private const string allowedChars = "[^0-9.]";
+            private const string allowedNums = "[^0-9]";
+
+            private System.Windows.Controls.TextBox nameBox;
+            private ComboBox kindBox;
+            private System.Windows.Controls.TextBox ipBox;
+            private System.Windows.Controls.TextBox portBox;
+            private ToggleSwitch autoConnectSwitch;
+            private ToggleSwitch connectedSwitch;
+            private ToggleSwitch readingSwitch;
+            private Button saveReaderButton;
+            private Button removeReaderButton;
+
+            public ReaderListItem(PortalReader reader, ChronokeepInterface readerInterface)
+            {
+                this.reader = reader;
+                this.readerInterface = readerInterface;
+                StackPanel thePanel = new StackPanel()
+                {
+                    Orientation = Orientation.Vertical,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+                this.Content = thePanel;
+                StackPanel subPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+                thePanel.Children.Add(subPanel);
+                nameBox = new System.Windows.Controls.TextBox()
+                {
+                    Text = reader.Name,
+                    Width = 190,
+                    Margin = new Thickness(5)
+                };
+                subPanel.Children.Add(nameBox);
+                kindBox = new ComboBox()
+                {
+                    Width = 120,
+                    Margin = new Thickness(5),
+                };
+                kindBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "Zebra"
+                });
+                /*kindBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "Impinj"
+                });
+                kindBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "RFID"
+                });//*/
+                kindBox.SelectedIndex = reader.Kind.Equals(PortalReader.READER_KIND_ZEBRA) ? 0
+                    //: reader.Kind.Equals(PortalReader.READER_KIND_IMPINJ) ? 1 
+                    //: reader.Kind.Equals(PortalReader.READER_KIND_RFID) ? 2 
+                    : -1;
+                kindBox.SelectionChanged += new SelectionChangedEventHandler(this.UpdateReaderPort);
+                subPanel.Children.Add(kindBox);
+                subPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+                thePanel.Children.Add(subPanel);
+                ipBox = new System.Windows.Controls.TextBox()
+                {
+                    Text = reader.IPAddress,
+                    Width = 120,
+                    Margin = new Thickness(5),
+                };
+                ipBox.PreviewTextInput += new TextCompositionEventHandler(this.IPValidation);
+                subPanel.Children.Add(ipBox);
+                portBox = new System.Windows.Controls.TextBox()
+                {
+                    Text = reader.Port.ToString(),
+                    Width = 60,
+                    Margin = new Thickness(5),
+                };
+                portBox.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                subPanel.Children.Add(portBox);
+                autoConnectSwitch = new ToggleSwitch()
+                {
+                    IsChecked = reader.AutoConnect,
+                    Content = "Auto Connect",
+                    Width = 120,
+                    Margin = new Thickness(5),
+                    FontSize = 10,
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                subPanel.Children.Add(autoConnectSwitch);
+                subPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+                thePanel.Children.Add(subPanel);
+                connectedSwitch = new ToggleSwitch()
+                {
+                    IsChecked = reader.Connected,
+                    Content = "Connected",
+                    Width = 115,
+                    Margin = new Thickness(5),
+                    FontSize = 10,
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                connectedSwitch.Checked += new RoutedEventHandler(this.ConnectReader);
+                subPanel.Children.Add(connectedSwitch);
+                readingSwitch = new ToggleSwitch()
+                {
+                    IsChecked = reader.Reading,
+                    IsEnabled = reader.Connected,
+                    Content = "Started",
+                    Width = 95,
+                    Margin = new Thickness(5),
+                    FontSize = 10,
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                readingSwitch.Checked += new RoutedEventHandler(this.StartReader);
+                subPanel.Children.Add(readingSwitch);
+                saveReaderButton = new Button()
+                {
+                    Icon = Wpf.Ui.Common.SymbolRegular.Save20,
+                    Margin = new Thickness(5),
+                    Width = 40,
+                };
+                saveReaderButton.Click += new RoutedEventHandler(this.SaveReader);
+                subPanel.Children.Add(saveReaderButton);
+                removeReaderButton = new Button()
+                {
+                    Icon = Wpf.Ui.Common.SymbolRegular.Delete20,
+                    Margin = new Thickness(5),
+                    Width = 40,
+                };
+                removeReaderButton.Click += new RoutedEventHandler(this.DeleteReader);
+                subPanel.Children.Add(removeReaderButton);
+            }
+
+            public void UpdateReader(PortalReader reader)
+            {
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Updating reader " + reader.Id);
+                this.reader = reader;
+                this.nameBox.Text = reader.Name;
+                switch (reader.Kind)
+                {
+                    case PortalReader.READER_KIND_ZEBRA:
+                        this.kindBox.SelectedIndex = 0;
+                        break;
+                    /*case PortalReader.READER_KIND_IMPINJ:
+                        this.kindBox.SelectedIndex = 1;
+                        break;
+                    case PortalReader.READER_KIND_RFID:
+                        this.kindBox.SelectedIndex = 2;
+                        break;//*/
+                    default:
+                        this.kindBox.SelectedIndex = -1;
+                        break;
+                }
+                this.ipBox.Text = reader.IPAddress;
+                this.portBox.Text = reader.Port.ToString();
+                autoConnectSwitch.IsChecked = reader.AutoConnect;
+                connectedSwitch.IsChecked = reader.Connected;
+                readingSwitch.IsChecked = reader.Reading;
+                readingSwitch.IsEnabled = reader.Connected;
+            }
+
+            private void UpdateReaderPort(object sender, RoutedEventArgs e)
+            {
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Changing port for reader " + reader.Id);
+                switch (kindBox.SelectedIndex)
+                {
+                    case 0:
+                        portBox.Text = PortalReader.READER_DEFAULT_PORT_ZEBRA;
+                        break;
+                    /*case 1:
+                        portBox.Text = PortalReader.READER_DEFAULT_PORT_IMPINJ;
+                        break;
+                    case 2:
+                        portBox.Text = PortalReader.READER_DEFAULT_PORT_RFID;
+                        break;//*/
+                    default:
+                        portBox.Text = "";
+                        return;
+                }
+            }
+
+            private void ConnectReader(object sender, RoutedEventArgs e)
+            {
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Connecting/disconnecting reader " + reader.Id);
+                if (reader.Connected)
+                {
+                    readerInterface.SendDisconnectReader(reader);
+                }
+                else
+                {
+                    readerInterface.SendConnectReader(reader);
+                }
+                connectedSwitch.IsEnabled = false;
+                readingSwitch.IsEnabled = false;
+            }
+
+            private void StartReader(object sender, RoutedEventArgs e)
+            {
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Stopping/starting reader " + reader.Id);
+                if (reader.Reading)
+                {
+                    readerInterface.SendStopReader(reader);
+                }
+                else
+                {
+                    readerInterface.SendStartReader(reader);
+                }
+                connectedSwitch.IsEnabled = false;
+                readingSwitch.IsEnabled = false;
+
+            }
+
+            private void SaveReader(object sender, RoutedEventArgs e)
+            {
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Saving reader " + reader.Id);
+                reader.Name = nameBox.Text.Trim();
+                switch (kindBox.SelectedIndex)
+                {
+                    case 0:
+                        reader.Kind = PortalReader.READER_KIND_ZEBRA;
+                        break;
+                    /*case 1:
+                        reader.Kind = PortalReader.READER_KIND_IMPINJ;
+                        break;
+                    case 2:
+                        reader.Kind = PortalReader.READER_KIND_RFID;
+                        break;//*/
+                    default:
+                        DialogBox.Show("Unknown kind specified. Unable to save.");
+                        return;
+                }
+                if (!Regex.IsMatch(ipBox.Text.Trim(), IPPattern))
+                {
+                    reader.IPAddress = "";
+                }
+                else
+                {
+                    reader.IPAddress = ipBox.Text.Trim();
+                }
+                uint portNo = 0;
+                uint.TryParse(portBox.Text.Trim(), out portNo);
+                if (portNo > 65535)
+                {
+                    portNo = 0;
+                }
+                reader.Port = portNo;
+                reader.AutoConnect = autoConnectSwitch.IsChecked == true;
+
+                readerInterface.SendSaveReader(reader);
+            }
+
+            private void DeleteReader(object sender, RoutedEventArgs e)
+            {
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Deleting reader " + reader.Id);
+                readerInterface.SendRemoveReader(reader);
+            }
+
+            private void IPValidation(object sender, TextCompositionEventArgs e)
+            {
+                e.Handled = Regex.IsMatch(e.Text, allowedChars);
+            }
+
+            private void NumberValidation(object sender, TextCompositionEventArgs e)
+            {
+                e.Handled = Regex.IsMatch(e.Text, allowedNums);
+            }
+        }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Expander expanding/contracting.");
+            if (readerExpander.IsExpanded)
+            {
+                addReaderButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                addReaderButton.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void addReaderButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings.ReaderListItem", "Adding new reader.");
+            reader.SendSaveReader(new PortalReader()
+            {
+                Id = -1,
+                Name = "New Reader",
+                Kind = PortalReader.READER_KIND_ZEBRA,
+                IPAddress = "192.168.1.0",
+                Port = uint.Parse(PortalReader.READER_DEFAULT_PORT_ZEBRA),
+                AutoConnect = true,
+            });
         }
     }
 }
