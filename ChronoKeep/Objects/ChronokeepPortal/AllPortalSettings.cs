@@ -8,6 +8,11 @@ namespace Chronokeep.Objects.ChronokeepPortal
 {
     internal class AllPortalSettings
     {
+        internal AllPortalSettings()
+        {
+            AutoUpload = PortalStatus.NOTSET;
+        }
+
         public enum ChipTypeEnum
         {
             DEC,
@@ -22,5 +27,6 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public double Volume { get; set; }
         public List<PortalReader> Readers { get; set; }
         public List<PortalAPI> APIs { get; set; }
+        public PortalStatus AutoUpload { get; set; }
     }
 }

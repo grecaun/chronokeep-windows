@@ -11,64 +11,75 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
 {
     public class Request
     {
-        public static readonly string UNKNOWN = "unknown";
+        public const string UNKNOWN = "unknown";
 
         // API related commands
-        public static readonly string API_SAVE                      = "api_save";
-        public static readonly string API_SAVE_ALL                  = "api_save_all";
-        public static readonly string API_LIST                      = "api_list";
-        public static readonly string API_REMOTE_AUTO_UPLOAD        = "api_remote_auto_upload";
-        public static readonly string API_REMOTE_MANUAL_UPLOAD      = "api_remote_manual_upload";
-        public static readonly string API_REMOVE                    = "api_remove";
-        public static readonly string API_RESULTS_EVENTS_GET        = "api_results_events_get";
-        public static readonly string API_RESULTS_EVENT_YEARS_GET   = "api_results_event_years_get";
-        public static readonly string API_RESULTS_PARTICIPANTS_GET  = "api_results_participants_get";
+        public const string API_SAVE                      = "api_save";
+        public const string API_SAVE_ALL                  = "api_save_all";
+        public const string API_LIST                      = "api_list";
+        public const string API_REMOTE_AUTO_UPLOAD        = "api_remote_auto_upload";
+        public const string API_REMOTE_MANUAL_UPLOAD      = "api_remote_manual_upload";
+        public const string API_REMOVE                    = "api_remove";
+        public const string API_RESULTS_EVENTS_GET        = "api_results_events_get";
+        public const string API_RESULTS_EVENT_YEARS_GET   = "api_results_event_years_get";
+        public const string API_RESULTS_PARTICIPANTS_GET  = "api_results_participants_get";
 
         // Connection or program related requests
-        public static readonly string CONNECT       = "connect"; 
-        public static readonly string DISCONNECT    = "disconnect";
-        public static readonly string KEEPALIVE_ACK = "keepalive_ack";
-        public static readonly string QUIT          = "quit";
-        public static readonly string SHUTDOWN      = "shutdown";
+        public const string CONNECT       = "connect"; 
+        public const string DISCONNECT    = "disconnect";
+        public const string KEEPALIVE_ACK = "keepalive_ack";
+        public const string QUIT          = "quit";
+        public const string SHUTDOWN      = "shutdown";
 
         // Participants related requests
-        public static readonly string PARTICIPANTS_GET      = "participants_get";
-        public static readonly string PARTICIPANTS_REMOVE   = "participants_remove";
-        public static readonly string PARTICIPANTS_ADD      = "participants_add";
+        public const string PARTICIPANTS_GET      = "participants_get";
+        public const string PARTICIPANTS_REMOVE   = "participants_remove";
+        public const string PARTICIPANTS_ADD      = "participants_add";
 
         // Reader related requests
-        public static readonly string READER_ADD        = "reader_add";
-        public static readonly string READER_CONNECT    = "reader_connect";
-        public static readonly string READER_DISCONNECT = "reader_disconnect";
-        public static readonly string READER_LIST       = "reader_list";
-        public static readonly string READER_REMOVE     = "reader_remove";
-        public static readonly string READER_START      = "reader_start";
-        public static readonly string READER_STOP       = "reader_stop";
+        public const string READER_ADD        = "reader_add";
+        public const string READER_CONNECT    = "reader_connect";
+        public const string READER_DISCONNECT = "reader_disconnect";
+        public const string READER_LIST       = "reader_list";
+        public const string READER_REMOVE     = "reader_remove";
+        public const string READER_START      = "reader_start";
+        public const string READER_STOP       = "reader_stop";
 
         // Reads related requests
-        public static readonly string READS_ADD         = "reads_add";
-        public static readonly string READS_DELETE_ALL  = "reads_delete_all";
-        public static readonly string READS_DELETE      = "reads_delete";
-        public static readonly string READS_GET_ALL     = "reads_get_all";
-        public static readonly string READS_GET         = "reads_get";
-        public static readonly string SIGHTINGS_GET_ALL = "sightings_get_all";
-        public static readonly string SIGHTINGS_GET     = "sightings_get";
-        public static readonly string SIGHTINGS_DELETE  = "sightings_delete";
+        public const string READS_ADD         = "reads_add";
+        public const string READS_DELETE_ALL  = "reads_delete_all";
+        public const string READS_DELETE      = "reads_delete";
+        public const string READS_GET_ALL     = "reads_get_all";
+        public const string READS_GET         = "reads_get";
+        public const string SIGHTINGS_GET_ALL = "sightings_get_all";
+        public const string SIGHTINGS_GET     = "sightings_get";
+        public const string SIGHTINGS_DELETE  = "sightings_delete";
 
         // Settings related requests
-        public static readonly string SETTINGS_SET      = "settings_set";
-        public static readonly string SETTINGS_GET      = "settings_get";
-        public static readonly string SETTINGS_GET_ALL  = "settings_get_all";
+        public const string SETTINGS_SET      = "settings_set";
+        public const string SETTINGS_GET      = "settings_get";
+        public const string SETTINGS_GET_ALL  = "settings_get_all";
 
         // Subscription request to subscribe to new reads/sightings
-        public static readonly string SUBSCRIBE = "subscribe";
+        public const string SUBSCRIBE = "subscribe";
 
         // Time related requests
-        public static readonly string TIME_GET = "time_get";
-        public static readonly string TIME_SET = "time_set";
+        public const string TIME_GET = "time_get";
+        public const string TIME_SET = "time_set";
+
+        public const string AUTO_UPLOAD_QUERY_STOP = "stop";
+        public const string AUTO_UPLOAD_QUERY_START = "start";
+        public const string AUTO_UPLOAD_QUERY_STATUS = "status";
 
         [JsonPropertyName("command")]
         public string Command { get; set; }
+    }
+
+    public enum AutoUploadQuery
+    {
+        STOP,
+        START,
+        STATUS
     }
 
     public class ApiSaveRequest : Request

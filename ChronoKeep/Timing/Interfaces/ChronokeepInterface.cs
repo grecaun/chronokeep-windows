@@ -128,7 +128,8 @@ namespace Chronokeep.Timing.Interfaces
                                 {
                                     settingsWindow.UpdateView(new AllPortalSettings
                                         {
-                                            Readers = readRes.List
+                                            Readers = readRes.List,
+                                            AutoUpload = PortalStatus.NOTSET
                                         },
                                         false,  // settings
                                         true,   // readers
@@ -237,7 +238,8 @@ namespace Chronokeep.Timing.Interfaces
                                 {
                                     settingsWindow.UpdateView(new AllPortalSettings
                                         {
-                                            APIs = apiList.List
+                                            APIs = apiList.List,
+                                            AutoUpload = PortalStatus.NOTSET
                                         },
                                         false,  // settings
                                         false,  // readers
@@ -271,6 +273,7 @@ namespace Chronokeep.Timing.Interfaces
                                     {
                                         Readers = allSettings.Readers,
                                         APIs = allSettings.APIs,
+                                        AutoUpload = allSettings.AutoUpload,
                                     };
                                     foreach (PortalSetting set in allSettings.Settings)
                                     {
@@ -403,6 +406,29 @@ namespace Chronokeep.Timing.Interfaces
                             break;
                         case Response.READ_AUTO_UPLOAD:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent read auto upload message.");
+                            try
+                            {
+                                ReadAutoUploadResponse autoUploadResponse = JsonSerializer.Deserialize<ReadAutoUploadResponse>(message);
+                                AllPortalSettings updSettings = new AllPortalSettings()
+                                {
+                                    AutoUpload = autoUploadResponse.Status,
+                                };
+                                settingsWindow.UpdateView(
+                                    updSettings,
+                                    false,   // settings
+                                    false,   // readers
+                                    false    // apis
+                                    );
+                            }
+                            catch (Exception e)
+                            {
+                                Log.E("Timing.Interfaces.ChronokeepInterface", "Error auto upload message. " + e.Message);
+                                if (!output.ContainsKey(MessageType.ERROR))
+                                {
+                                    output[MessageType.ERROR] = new List<string>();
+                                }
+                                output[MessageType.ERROR].Add("Error processing auto upload message.");
+                            }
                             break;
                         case Response.CONNECTION_SUCCESSFUL:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent connection successful message.");
@@ -629,6 +655,32 @@ namespace Chronokeep.Timing.Interfaces
             SendMessage(JsonSerializer.Serialize(new ReaderRemoveRequest
             {
                 Id = reader.Id,
+            }));
+        }
+
+        public void SendManualResultsUpload()
+        {
+            SendMessage(JsonSerializer.Serialize(new ApiRemoteManualUploadRequest()));
+        }
+
+        public void SendAutoUploadResults(AutoUploadQuery query)
+        {
+            string q_string = "";
+            switch (query)
+            {
+                case AutoUploadQuery.STOP:
+                    q_string = Request.AUTO_UPLOAD_QUERY_STOP;
+                    break;
+                case AutoUploadQuery.START:
+                    q_string = Request.AUTO_UPLOAD_QUERY_START;
+                    break;
+                case AutoUploadQuery.STATUS:
+                    q_string = Request.AUTO_UPLOAD_QUERY_STATUS;
+                    break;
+            }
+            SendMessage(JsonSerializer.Serialize(new ApiRemoteAutoUploadRequest
+            {
+                Query = q_string
             }));
         }
 

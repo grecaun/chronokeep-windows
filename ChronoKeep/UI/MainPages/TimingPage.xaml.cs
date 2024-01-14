@@ -1475,6 +1475,7 @@ namespace Chronokeep.UI.MainPages
                     reader.Status = SYSTEM_STATUS.WORKING;
                     parent.DisconnectSystem(reader);
                     UpdateStatus();
+                    reader.SystemInterface.CloseSettings();
                     return;
                 }
                 Log.D("UI.MainPages.TimingPage", "Connect button pressed. IP is " + ReaderIP.Text);

@@ -274,6 +274,22 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                         apiListView.Items.Add(item);
                     }
                 }
+                switch (allSettings.AutoUpload)
+                {
+                    case PortalStatus.RUNNING:
+                        autoResultsSwitch.IsEnabled = true;
+                        autoResultsSwitch.IsChecked = true;
+                        break;
+                    case PortalStatus.UNKNOWN:
+                    case PortalStatus.STOPPED:
+                        autoResultsSwitch.IsEnabled = true;
+                        autoResultsSwitch.IsChecked = false;
+                        break;
+                    case PortalStatus.STOPPING:
+                        autoResultsSwitch.IsEnabled = false;
+                        autoResultsSwitch.IsChecked = true;
+                        break;
+                }
             }));
         }
 
@@ -329,6 +345,29 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 Port = uint.Parse(PortalReader.READER_DEFAULT_PORT_ZEBRA),
                 AutoConnect = true,
             });
+        }
+
+        private void manualResultsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Manually uploading results.");
+            reader.SendManualResultsUpload();
+        }
+
+        private void autoResultsSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Auto upload switched.");
+            if (autoResultsSwitch.IsEnabled == false)
+            {
+                return;
+            }
+            if (autoResultsSwitch.IsChecked == false)
+            {
+                reader.SendAutoUploadResults(Objects.ChronokeepPortal.Requests.AutoUploadQuery.STOP);
+            }
+            else
+            {
+                reader.SendAutoUploadResults(Objects.ChronokeepPortal.Requests.AutoUploadQuery.START);
+            }
         }
 
         private class ReaderListItem : ListViewItem

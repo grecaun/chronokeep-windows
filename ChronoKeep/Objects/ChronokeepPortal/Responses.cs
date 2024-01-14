@@ -56,6 +56,8 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public List<PortalReader> Readers { get; set; }
         [JsonPropertyName("apis")]
         public List<PortalAPI> APIs { get; set; }
+        [JsonPropertyName("auto_upload")]
+        public PortalStatus AutoUpload { get; set; }
     }
 
     public class ApiListResponse : Response
