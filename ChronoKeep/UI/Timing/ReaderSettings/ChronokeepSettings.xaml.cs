@@ -538,8 +538,10 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 this.portBox.Text = reader.Port.ToString();
                 autoConnectSwitch.IsChecked = reader.AutoConnect;
                 connectedSwitch.IsChecked = reader.Connected;
-                readingSwitch.IsChecked = reader.Reading;
+                readingSwitch.IsChecked = reader.Reading && reader.Connected;
                 readingSwitch.IsEnabled = reader.Connected;
+                connectedSwitch.IsEnabled = true;
+                readingSwitch.IsEnabled = true;
             }
 
             private void UpdateReaderPort(object sender, RoutedEventArgs e)

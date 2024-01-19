@@ -201,7 +201,6 @@ namespace Chronokeep.Timing.Interfaces
                 {
                     string msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
                     Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- Rewind -- message :" + msg);
-                    Log.D("Timing.Interfaces.IpicoInterface", "Timing System - Message is :" + msg.Trim());
                     Dictionary<MessageType, List<string>> messageTypes = ParseMessages(msg, rewindSocket);
                     num_recvd = rewindSocket.Receive(recvd);
                 }
