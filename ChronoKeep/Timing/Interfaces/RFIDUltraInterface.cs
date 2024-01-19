@@ -1,5 +1,7 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Interfaces.Timing;
+using Chronokeep.UI.Timing.ReaderSettings;
+using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,6 +21,8 @@ namespace Chronokeep.Timing.Interfaces
         StringBuilder buffer = new StringBuilder();
         Socket sock;
         IMainWindow window = null;
+
+        private RFIDSettings settingsWindow = null;
 
         private static readonly Regex voltage = new Regex(@"^V=.*");
         private static readonly Regex connected = new Regex(@"^Connected,.*");
@@ -463,7 +467,7 @@ namespace Chronokeep.Timing.Interfaces
         }
 
         /**
-         * Max Power of ...
+         * Max Power of 30?
          */
         public void SetReaderPower(int readerNo, int power)
         {
@@ -479,6 +483,10 @@ namespace Chronokeep.Timing.Interfaces
             else
             {
                 return;
+            }
+            if (power > 30)
+            {
+                power = 30;
             }
             SendMessage("u" + code + power.ToString() + RFIDUltraCodes.SettingsTerm);
         }
@@ -585,6 +593,10 @@ namespace Chronokeep.Timing.Interfaces
          */
         public void SetUltraId(int id)
         {
+            if (id > 255 || id < 1)
+            {
+                return;
+            }
             SendMessage("u" + RFIDUltraCodes.UltraId + id + RFIDUltraCodes.SettingsTerm);
         }
 
@@ -687,12 +699,22 @@ namespace Chronokeep.Timing.Interfaces
 
         public void OpenSettings()
         {
-            // TODO: Implement settings for RFID
+            if (settingsWindow != null)
+            {
+                DialogBox.Show("Settings window already open.");
+                return;
+            }
+            settingsWindow = new RFIDSettings();
+            window.AddWindow(settingsWindow);
+            settingsWindow.Show();
         }
 
         public void CloseSettings()
         {
-            // TODO: Implement settings for RFID
+            if (settingsWindow != null)
+            {
+                settingsWindow.CloseWindow();
+            }
         }
 
         public enum RFIDMessage

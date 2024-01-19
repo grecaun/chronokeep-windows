@@ -12,8 +12,10 @@
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
-        Height="450"
-        Width="800"
+        Height="500"
+        Width="300"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
         >
     <Grid>
         <Grid.RowDefinitions>
@@ -23,5 +25,206 @@
         <ui:TitleBar
             Grid.Row="0">
         </ui:TitleBar>
+        <StackPanel
+            Grid.Row="1"
+            Margin="20,10,20,20"
+            VerticalAlignment="Center"
+            >
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Text="Ultra ID"
+                    TextAlignment="Right"
+                    VerticalAlignment="Center"
+                    Width="120"
+                    Margin="5,5,5,5"
+                    />
+                <Slider
+                    x:Name="idSlider"
+                    Width="200"
+                    Margin="5,5,5,5"
+                    IsSnapToTickEnabled="True"
+                    Maximum="255"
+                    Minimum="1"
+                    TickFrequency="1"
+                    ValueChanged="idSlider_ValueChanged"
+                    />
+                <TextBlock
+                    x:Name="idDisplay"
+                    Text="10"
+                    TextAlignment="Left"
+                    VerticalAlignment="Center"
+                    Width="40"
+                    Margin="5,5,5,5"
+                    />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Text="Chip Type"
+                    TextAlignment="Right"
+                    VerticalAlignment="Center"
+                    Width="120"
+                    Margin="5,5,5,5"
+                    />
+                <ComboBox
+                    x:Name="chipBox"
+                    Width="250"
+                    Margin="5,5,5,5"
+                    >
+                    <ComboBoxItem Content="Decimal" IsSelected="True" />
+                    <ComboBoxItem Content="Hexadecimal" />
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Text="Gating Mode"
+                    TextAlignment="Right"
+                    VerticalAlignment="Center"
+                    Width="120"
+                    Margin="5,5,5,5"
+                    />
+                <ComboBox
+                    x:Name="gatingModeBox"
+                    Width="250"
+                    Margin="5,5,5,5"
+                    >
+                    <ComboBoxItem Content ="Per Reader" IsSelected="True"/>
+                    <ComboBoxItem Content ="Per Box" />
+                    <ComboBoxItem Content ="First Time Seen"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Text="Gating Period"
+                    TextAlignment="Right"
+                    VerticalAlignment="Center"
+                    Width="120"
+                    Margin="5,5,5,5"
+                    />
+                <Slider
+                    x:Name="gatingSlider"
+                    Width="200"
+                    Margin="5,5,5,5"
+                    IsSnapToTickEnabled="True"
+                    Maximum="20"
+                    Minimum="0"
+                    TickFrequency="1"
+                    ValueChanged="gatingSlider_ValueChanged"
+                    />
+                <TextBlock
+                    x:Name="gatingDisplay"
+                    Text="10"
+                    TextAlignment="Left"
+                    VerticalAlignment="Center"
+                    Width="40"
+                    Margin="5,5,5,5"
+                    />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Text="When to Beep"
+                    TextAlignment="Right"
+                    VerticalAlignment="Center"
+                    Width="120"
+                    Margin="5,5,5,5"
+                    />
+                <ComboBox
+                    x:Name="whenBeepBox"
+                    Width="250"
+                    Margin="5,5,5,5"
+                    >
+                    <ComboBoxItem Content="Always" IsSelected="True" />
+                    <ComboBoxItem Content="Only First Seen" />
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Text="Beeper Volume"
+                    TextAlignment="Right"
+                    VerticalAlignment="Center"
+                    Width="120"
+                    Margin="5,5,5,5"
+                    />
+                <ComboBox
+                    x:Name="volumeBox"
+                    Width="250"
+                    Margin="5,5,5,5"
+                    >
+                    <ComboBoxItem Content="Off" IsSelected="True" />
+                    <ComboBoxItem Content="Soft" />
+                    <ComboBoxItem Content="Loud" />
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Text="Set Time From GPS"
+                    TextAlignment="Right"
+                    VerticalAlignment="Center"
+                    Width="120"
+                    Margin="5,5,5,5"
+                    />
+                <ComboBox
+                    x:Name="timeGPSBox"
+                    Width="250"
+                    Margin="5,5,5,5"
+                    >
+                    <ComboBoxItem Content="Don't Set" IsSelected="True" />
+                    <ComboBoxItem Content="Set" />
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock
+                    Text="Time Zone"
+                    TextAlignment="Right"
+                    VerticalAlignment="Center"
+                    Width="120"
+                    Margin="5,5,5,5"
+                    />
+                <Slider
+                    x:Name="timeZoneSlider"
+                    Width="200"
+                    Margin="5,5,5,5"
+                    IsSnapToTickEnabled="True"
+                    Maximum="23"
+                    Minimum="-23"
+                    TickFrequency="1"
+                    ValueChanged="timeZoneSlider_ValueChanged"
+                    />
+                <TextBlock
+                    x:Name="timeZoneDisplay"
+                    Text="10"
+                    TextAlignment="Left"
+                    VerticalAlignment="Center"
+                    Width="40"
+                    Margin="5,5,5,5"
+                    />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <ui:ToggleSwitch
+                    x:Name="startReadingSwitch"
+                    Content="Start Reading"
+                    Margin="5,5,5,5"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button
+                        Content="Save Settings"
+                        x:Name="saveSettingsButton"
+                        Click="saveSettingsButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        />
+                <Button
+                        Content="Close"
+                        x:Name="closeButton"
+                        Click="closeButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        />
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </ui:UiWindow>
