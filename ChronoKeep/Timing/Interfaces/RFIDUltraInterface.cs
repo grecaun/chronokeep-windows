@@ -295,10 +295,10 @@ namespace Chronokeep.Timing.Interfaces
             {
                 return;
             }
-            char[] vals = new char[4];
+            byte[] vals = new byte[4];
             for (int i = 0; i<4; i++)
             {
-                vals[i] = (char) int.Parse(nums[i]);
+                vals[i] = byte.Parse(nums[i]);
             }
             SendMessage("u" + RFIDUltraCodes.GPRSIp + vals[0] + vals[1] + vals[2] + vals[3] + RFIDUltraCodes.SettingsTerm);
         }
@@ -336,7 +336,7 @@ namespace Chronokeep.Timing.Interfaces
          * 0x09 - Malaysia
          * 0x0A - China
          */
-        public void SetRegion(char regionCode)
+        public void SetRegion(byte regionCode)
         {
             SendMessage("u" + RFIDUltraCodes.Region + "" + regionCode + RFIDUltraCodes.SettingsTerm);
         }
@@ -345,7 +345,7 @@ namespace Chronokeep.Timing.Interfaces
          * 0x00 - MACH1
          * 0x01 - LLRP
          */
-        public void SetComProtocol(char protocol)
+        public void SetComProtocol(byte protocol)
         {
             SendMessage("u" + RFIDUltraCodes.ComProto + "" + protocol + RFIDUltraCodes.SettingsTerm);
         }
@@ -354,7 +354,7 @@ namespace Chronokeep.Timing.Interfaces
          * 0x00 - Decimal
          * 0x01 - Hexadecimal
          */
-        public void SetChipOutputType(char type)
+        public void SetChipOutputType(byte type)
         {
             SendMessage("u" + RFIDUltraCodes.ChipOutType + "" + type + RFIDUltraCodes.SettingsTerm);
         }
@@ -363,9 +363,9 @@ namespace Chronokeep.Timing.Interfaces
          * 0x00 - Off
          * 0x01 - On
          */
-        public void SetAntennaStatus(int readerNo, int antennaNo, char status)
+        public void SetAntennaStatus(int readerNo, int antennaNo, byte status)
         {
-            char code = (char)0x00;
+            byte code = 0x00;
             if (readerNo == 1)
             {
                 switch (antennaNo)
@@ -420,9 +420,9 @@ namespace Chronokeep.Timing.Interfaces
          * 0x03 - Finish
          * 0x04 - MTB Downhill
          */
-        public void SetReaderMode(int readerNo, char mode)
+        public void SetReaderMode(int readerNo, byte mode)
         {
-            char code;
+            byte code;
             if (readerNo == 1)
             {
                 code = RFIDUltraCodes.Read1Mode;
@@ -444,9 +444,9 @@ namespace Chronokeep.Timing.Interfaces
          * 0x02 - Session 2
          * 0x03 - Session 3
          */
-        public void SetReaderSession(int readerNo, char session)
+        public void SetReaderSession(int readerNo, byte session)
         {
-            char code;
+            byte code;
             if (readerNo == 1)
             {
                 code = RFIDUltraCodes.Read1Session;
@@ -467,7 +467,7 @@ namespace Chronokeep.Timing.Interfaces
          */
         public void SetReaderPower(int readerNo, int power)
         {
-            char code;
+            byte code;
             if (readerNo == 1)
             {
                 code = RFIDUltraCodes.Read1Power;
@@ -490,12 +490,12 @@ namespace Chronokeep.Timing.Interfaces
             {
                 return;
             }
-            char[] vals = new char[4];
+            byte[] vals = new byte[4];
             for (int i = 0; i < 4; i++)
             {
-                vals[i] = (char)int.Parse(nums[i]);
+                vals[i] = byte.Parse(nums[i]);
             }
-            char code;
+            byte code;
             if (readerNo == 1)
             {
                 code = RFIDUltraCodes.Read1Ip;
@@ -516,7 +516,7 @@ namespace Chronokeep.Timing.Interfaces
          * 0x01 - Per box
          * 0x02 - First time seen
          */
-        public void SetGatingMode(char mode)
+        public void SetGatingMode(byte mode)
         {
             SendMessage("u" + RFIDUltraCodes.GatingMode + mode + RFIDUltraCodes.SettingsTerm);
         }
@@ -534,7 +534,7 @@ namespace Chronokeep.Timing.Interfaces
          * 0x01 - Channel B
          * 0x02 - Auto
          */
-        public void SetChannelNumber(char number)
+        public void SetChannelNumber(byte number)
         {
             SendMessage("u" + RFIDUltraCodes.GatingInterval + number + RFIDUltraCodes.SettingsTerm);
         }
@@ -544,7 +544,7 @@ namespace Chronokeep.Timing.Interfaces
          * 0x01 - Soft
          * 0x02 - Loud
          */
-        public void SetBeeperVolume(char vol)
+        public void SetBeeperVolume(byte vol)
         {
             SendMessage("u" + RFIDUltraCodes.BeeperVolume + vol + RFIDUltraCodes.SettingsTerm);
         }
@@ -554,7 +554,7 @@ namespace Chronokeep.Timing.Interfaces
          * 0x01 - Set using GPS
          * 0x02 - Loud ? (Probably an error in documentation...)
          */
-        public void SetAutoGPSTime(char gps)
+        public void SetAutoGPSTime(byte gps)
         {
             SendMessage("u" + RFIDUltraCodes.AutoSetGPS + gps + RFIDUltraCodes.SettingsTerm);
         }
@@ -575,7 +575,7 @@ namespace Chronokeep.Timing.Interfaces
          * 0x00 - Always send
          * 0x01 - Send only when requested
          */
-        public void SetDataSending(char value)
+        public void SetDataSending(byte value)
         {
             SendMessage("u" + RFIDUltraCodes.DataSending + value + RFIDUltraCodes.SettingsTerm);
         }
@@ -594,7 +594,7 @@ namespace Chronokeep.Timing.Interfaces
          */
         public void SetAntenna4Backup(int readerNo, bool value)
         {
-            char code;
+            byte code;
             if (readerNo == 1)
             {
                 code = RFIDUltraCodes.Read1Antenna4Backup;
@@ -703,49 +703,49 @@ namespace Chronokeep.Timing.Interfaces
 
     public class RFIDUltraCodes
     {
-        public static readonly char SettingsTerm = (char) 0xFF;
-        public static readonly char GPRS = (char)0x01;
-        public static readonly char GPRSIp = (char)0x02;
-        public static readonly char GPRSPort = (char)0x03;
-        public static readonly char APNName = (char)0x04;
-        public static readonly char APNUser = (char)0x05;
-        public static readonly char APNPass = (char)0x06;
-        public static readonly char Region = (char)0x07;
-        public static readonly char ComProto = (char)0x08;
-        public static readonly char ChipOutType = (char)0x09;
-        public static readonly char Read1Ant1 = (char)0x0C;
-        public static readonly char Read1Ant2 = (char)0x0D;
-        public static readonly char Read1Ant3 = (char)0x0E;
-        public static readonly char Read1Ant4 = (char)0x0F;
-        public static readonly char Read2Ant1 = (char)0x10;
-        public static readonly char Read2Ant2 = (char)0x11;
-        public static readonly char Read2Ant3 = (char)0x12;
-        public static readonly char Read2Ant4 = (char)0x13;
-        public static readonly char Read1Mode = (char)0x14;
-        public static readonly char Read2Mode = (char)0x15;
-        public static readonly char Read1Session = (char)0x16;
-        public static readonly char Read2Session = (char)0x17;
-        public static readonly char Read1Power = (char)0x18;
-        public static readonly char Read2Power = (char)0x19;
-        public static readonly char Read1Ip = (char)0x1A;
-        public static readonly char Read2Ip = (char)0x1B;
-        public static readonly char GatingMode = (char)0x1D;
-        public static readonly char GatingInterval = (char)0x1E;
-        public static readonly char ChannelNumber = (char)0x1F;
-        public static readonly char BeeperVolume = (char)0x21;
-        public static readonly char AutoSetGPS = (char)0x22;
-        public static readonly char TimeZone = (char)0x23;
-        public static readonly char DataSending = (char)0x24;
-        public static readonly char UltraId = (char)0x25;
-        public static readonly char Read1Antenna4Backup = (char)0x26;
-        public static readonly char Read2Antenna4Backup = (char)0x27;
-        public static readonly char WhenBeep = (char)0x28;
-        public static readonly char UploadURL = (char)0x29;
-        public static readonly char Gateway = (char)0x2A;
-        public static readonly char DNSServer = (char)0x2B;
-        public static readonly char SetTime = (char)0x20;
-        public static readonly char RewindDelimiter = (char)0x0D;
-        public static readonly char LogSize = (char)0x1C;
-        public static readonly char LineFeed = (char)0x0A;
+        public const byte SettingsTerm = 0xFF;
+        public const byte GPRS = 0x01;
+        public const byte GPRSIp = 0x02;
+        public const byte GPRSPort = 0x03;
+        public const byte APNName = 0x04;
+        public const byte APNUser = 0x05;
+        public const byte APNPass = 0x06;
+        public const byte Region = 0x07;
+        public const byte ComProto = 0x08;
+        public const byte ChipOutType = 0x09;
+        public const byte Read1Ant1 = 0x0C;
+        public const byte Read1Ant2 = 0x0D;
+        public const byte Read1Ant3 = 0x0E;
+        public const byte Read1Ant4 = 0x0F;
+        public const byte Read2Ant1 = 0x10;
+        public const byte Read2Ant2 = 0x11;
+        public const byte Read2Ant3 = 0x12;
+        public const byte Read2Ant4 = 0x13;
+        public const byte Read1Mode = 0x14;
+        public const byte Read2Mode = 0x15;
+        public const byte Read1Session = 0x16;
+        public const byte Read2Session = 0x17;
+        public const byte Read1Power = 0x18;
+        public const byte Read2Power = 0x19;
+        public const byte Read1Ip = 0x1A;
+        public const byte Read2Ip = 0x1B;
+        public const byte GatingMode = 0x1D;
+        public const byte GatingInterval = 0x1E;
+        public const byte ChannelNumber = 0x1F;
+        public const byte BeeperVolume = 0x21;
+        public const byte AutoSetGPS = 0x22;
+        public const byte TimeZone = 0x23;
+        public const byte DataSending = 0x24;
+        public const byte UltraId = 0x25;
+        public const byte Read1Antenna4Backup = 0x26;
+        public const byte Read2Antenna4Backup = 0x27;
+        public const byte WhenBeep = 0x28;
+        public const byte UploadURL = 0x29;
+        public const byte Gateway = 0x2A;
+        public const byte DNSServer = 0x2B;
+        public const byte SetTime = 0x20;
+        public const byte RewindDelimiter = 0x0D;
+        public const byte LogSize = 0x1C;
+        public const byte LineFeed = 0x0A;
     }
 }
