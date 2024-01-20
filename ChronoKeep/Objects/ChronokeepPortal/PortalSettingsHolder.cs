@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Chronokeep.Objects.ChronokeepPortal
 {
-    internal class AllPortalSettings
+    internal class PortalSettingsHolder
     {
-        internal AllPortalSettings()
+        internal PortalSettingsHolder()
         {
             AutoUpload = PortalStatus.NOTSET;
         }

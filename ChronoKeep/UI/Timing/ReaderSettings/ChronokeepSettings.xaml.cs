@@ -158,12 +158,12 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }
             try
             {
-                AllPortalSettings sett = new AllPortalSettings
+                PortalSettingsHolder sett = new PortalSettingsHolder
                 {
                     Name = nameBox.Text.Trim(),
                     SightingPeriod = window,
                     ReadWindow = int.Parse(readWindowBox.Text.Trim()),
-                    ChipType = chipTypeBox.SelectedIndex == 0 ? AllPortalSettings.ChipTypeEnum.DEC : AllPortalSettings.ChipTypeEnum.HEX,
+                    ChipType = chipTypeBox.SelectedIndex == 0 ? PortalSettingsHolder.ChipTypeEnum.DEC : PortalSettingsHolder.ChipTypeEnum.HEX,
                     Volume = volumeSlider.Value / 10,
                     PlaySound = soundBox.IsChecked == true,
                 };
@@ -195,7 +195,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             });
         }
 
-        internal void UpdateView(AllPortalSettings allSettings, bool settings, bool readers, bool apis)
+        internal void UpdateView(PortalSettingsHolder allSettings, bool settings, bool readers, bool apis)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "UpdateView.");
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
@@ -218,7 +218,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                         sightingPeriodBox.Text = string.Format("{0}:{1:D2}", allSettings.SightingPeriod / 60, allSettings.SightingPeriod % 60);
                     }
                     readWindowBox.Text = allSettings.ReadWindow.ToString();
-                    chipTypeBox.SelectedIndex = allSettings.ChipType == AllPortalSettings.ChipTypeEnum.DEC ? 0 : 1;
+                    chipTypeBox.SelectedIndex = allSettings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? 0 : 1;
                     volumeSlider.Value = allSettings.Volume * 10;
                     soundBox.IsChecked = allSettings.PlaySound;
                 }

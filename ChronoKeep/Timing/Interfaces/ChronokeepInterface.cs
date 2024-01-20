@@ -126,7 +126,7 @@ namespace Chronokeep.Timing.Interfaces
                                 ReadersResponse readRes = JsonSerializer.Deserialize<ReadersResponse>(message);
                                 if (settingsWindow != null)
                                 {
-                                    settingsWindow.UpdateView(new AllPortalSettings
+                                    settingsWindow.UpdateView(new PortalSettingsHolder
                                         {
                                             Readers = readRes.List,
                                             AutoUpload = PortalStatus.NOTSET
@@ -181,7 +181,7 @@ namespace Chronokeep.Timing.Interfaces
                                 SettingsResponse settingsList = JsonSerializer.Deserialize<SettingsResponse>(message);
                                 if (settingsWindow != null)
                                 {
-                                    AllPortalSettings updSettings = new AllPortalSettings();
+                                    PortalSettingsHolder updSettings = new PortalSettingsHolder();
                                     foreach (PortalSetting set in settingsList.List)
                                     {
                                         switch (set.Name)
@@ -196,7 +196,7 @@ namespace Chronokeep.Timing.Interfaces
                                                 updSettings.ReadWindow = int.Parse(set.Value);
                                                 break;
                                             case PortalSetting.SETTING_CHIP_TYPE:
-                                                updSettings.ChipType = set.Value == PortalSetting.TYPE_CHIP_DEC ? AllPortalSettings.ChipTypeEnum.DEC : AllPortalSettings.ChipTypeEnum.HEX;
+                                                updSettings.ChipType = set.Value == PortalSetting.TYPE_CHIP_DEC ? PortalSettingsHolder.ChipTypeEnum.DEC : PortalSettingsHolder.ChipTypeEnum.HEX;
                                                 break;
                                             case PortalSetting.SETTING_PLAY_SOUND:
                                                 updSettings.PlaySound = bool.Parse(set.Value);
@@ -236,7 +236,7 @@ namespace Chronokeep.Timing.Interfaces
                                 ApiListResponse apiList = JsonSerializer.Deserialize<ApiListResponse>(message);
                                 if (settingsWindow != null)
                                 {
-                                    settingsWindow.UpdateView(new AllPortalSettings
+                                    settingsWindow.UpdateView(new PortalSettingsHolder
                                         {
                                             APIs = apiList.List,
                                             AutoUpload = PortalStatus.NOTSET
@@ -269,7 +269,7 @@ namespace Chronokeep.Timing.Interfaces
                                 SettingsAllResponse allSettings = JsonSerializer.Deserialize<SettingsAllResponse>(message);
                                 if (settingsWindow != null)
                                 {
-                                    AllPortalSettings updSettings = new AllPortalSettings
+                                    PortalSettingsHolder updSettings = new PortalSettingsHolder
                                     {
                                         Readers = allSettings.Readers,
                                         APIs = allSettings.APIs,
@@ -289,7 +289,7 @@ namespace Chronokeep.Timing.Interfaces
                                                 updSettings.ReadWindow = int.Parse(set.Value);
                                                 break;
                                             case PortalSetting.SETTING_CHIP_TYPE:
-                                                updSettings.ChipType = set.Value == PortalSetting.TYPE_CHIP_DEC ? AllPortalSettings.ChipTypeEnum.DEC : AllPortalSettings.ChipTypeEnum.HEX;
+                                                updSettings.ChipType = set.Value == PortalSetting.TYPE_CHIP_DEC ? PortalSettingsHolder.ChipTypeEnum.DEC : PortalSettingsHolder.ChipTypeEnum.HEX;
                                                 break;
                                             case PortalSetting.SETTING_PLAY_SOUND:
                                                 updSettings.PlaySound = bool.Parse(set.Value);
@@ -409,7 +409,7 @@ namespace Chronokeep.Timing.Interfaces
                             try
                             {
                                 ReadAutoUploadResponse autoUploadResponse = JsonSerializer.Deserialize<ReadAutoUploadResponse>(message);
-                                AllPortalSettings updSettings = new AllPortalSettings()
+                                PortalSettingsHolder updSettings = new PortalSettingsHolder()
                                 {
                                     AutoUpload = autoUploadResponse.Status,
                                 };
@@ -517,7 +517,7 @@ namespace Chronokeep.Timing.Interfaces
             SendMessage(JsonSerializer.Serialize(new SettingsGetAllRequest { }));
         }
 
-        public void SendSetSettings(AllPortalSettings settings)
+        public void SendSetSettings(PortalSettingsHolder settings)
         {
             SettingsSetRequest settingsReq = new SettingsSetRequest
             {
@@ -541,7 +541,7 @@ namespace Chronokeep.Timing.Interfaces
             settingsReq.Settings.Add(new PortalSetting
             {
                 Name = PortalSetting.SETTING_CHIP_TYPE,
-                Value = settings.ChipType == AllPortalSettings.ChipTypeEnum.DEC ? PortalSetting.TYPE_CHIP_DEC : PortalSetting.TYPE_CHIP_HEX
+                Value = settings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? PortalSetting.TYPE_CHIP_DEC : PortalSetting.TYPE_CHIP_HEX
             });
             settingsReq.Settings.Add(new PortalSetting
             {

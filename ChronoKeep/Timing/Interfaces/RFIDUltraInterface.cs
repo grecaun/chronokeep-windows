@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Chronokeep.Timing.Interfaces
 {
-    class RFIDUltraInterface : ITimingSystemInterface
+    public class RFIDUltraInterface : ITimingSystemInterface
     {
         IDBInterface database;
         readonly int locationId;
@@ -626,7 +626,7 @@ namespace Chronokeep.Timing.Interfaces
          * 0x00 - beep always
          * 0x01 - beep when first seen
          */
-        public void SetWhenToBeep(char value)
+        public void SetWhenToBeep(byte value)
         {
             SendMessage("u" + RFIDUltraCodes.WhenBeep + value + RFIDUltraCodes.SettingsTerm);
         }
@@ -704,9 +704,15 @@ namespace Chronokeep.Timing.Interfaces
                 DialogBox.Show("Settings window already open.");
                 return;
             }
-            settingsWindow = new RFIDSettings();
+            settingsWindow = new RFIDSettings(this);
             window.AddWindow(settingsWindow);
             settingsWindow.Show();
+        }
+
+        public void SettingsWindowFinalize()
+        {
+            window.WindowFinalize(settingsWindow);
+            settingsWindow = null;
         }
 
         public void CloseSettings()
