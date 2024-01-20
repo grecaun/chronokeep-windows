@@ -13,7 +13,7 @@ namespace Chronokeep.Objects.RFID
             UltraID = -1;
             ChipType = ChipTypeEnum.UNKNOWN;
             GatingMode = GatingModeEnum.UNKNOWN;
-            GatingPeriod = -1;
+            GatingInterval = -1;
             Beep = BeepEnum.UNKNOWN;
             BeepVolume = BeepVolumeEnum.UNKNOWN;
             SetFromGPS = GPSEnum.UNKNOWN;
@@ -24,7 +24,7 @@ namespace Chronokeep.Objects.RFID
         public int UltraID { get; set; }
         public ChipTypeEnum ChipType { get; set; }
         public GatingModeEnum GatingMode { get; set; }
-        public int GatingPeriod { get; set; }
+        public int GatingInterval { get; set; }
         public BeepEnum Beep { get; set; }
         public BeepVolumeEnum BeepVolume { get; set; }
         public GPSEnum SetFromGPS { get; set; }

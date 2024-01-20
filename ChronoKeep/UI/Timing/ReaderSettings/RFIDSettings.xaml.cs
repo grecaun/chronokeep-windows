@@ -2,18 +2,7 @@
 using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.UIObjects;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing.ReaderSettings
@@ -29,6 +18,8 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         {
             InitializeComponent();
             this.reader = reader;
+            reader.GetStatus();
+            reader.QuerySettings();
         }
 
         public void UpdateView(RFIDSettingsHolder settings)
@@ -60,10 +51,10 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     gatingModeBox.SelectedIndex = 2;
                     break;
             }
-            if (settings.GatingPeriod >= 0 && settings.GatingPeriod < 21)
+            if (settings.GatingInterval >= 0 && settings.GatingInterval < 21)
             {
-                gatingSlider.Value = settings.GatingPeriod;
-                gatingDisplay.Text = settings.GatingPeriod.ToString();
+                gatingSlider.Value = settings.GatingInterval;
+                gatingDisplay.Text = settings.GatingInterval.ToString();
             }
             switch (settings.Beep)
             {
