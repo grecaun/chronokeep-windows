@@ -33,7 +33,7 @@ namespace Chronokeep.API
             this.Errors = 0;
         }
 
-        public static async Task<AddResultsResponse> DeleteResults(ResultsAPI api, string slug, string year)
+        public static async Task<AddResultsResponse> DeleteResults(APIObject api, string slug, string year)
         {
             AddResultsResponse response = null;
             try
@@ -123,10 +123,10 @@ namespace Chronokeep.API
                     mainWindow.UpdateTimingFromController();
                     return;
                 }
-                ResultsAPI api;
+                APIObject api;
                 try
                 {
-                    api = database.GetResultsAPI(theEvent.API_ID);
+                    api = database.GetAPI(theEvent.API_ID);
                 }
                 catch
                 {

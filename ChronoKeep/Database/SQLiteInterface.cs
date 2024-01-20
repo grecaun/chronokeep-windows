@@ -1932,7 +1932,7 @@ namespace Chronokeep
          * Results API Functions
          */
 
-        public int AddResultsAPI(ResultsAPI anAPI)
+        public int AddAPI(APIObject anAPI)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 125");
             if (!mutex.WaitOne(3000))
@@ -1948,7 +1948,7 @@ namespace Chronokeep
             return outVal;
         }
 
-        public void UpdateResultsAPI(ResultsAPI anAPI)
+        public void UpdateAPI(APIObject anAPI)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 126");
             if (!mutex.WaitOne(3000))
@@ -1963,7 +1963,7 @@ namespace Chronokeep
             mutex.ReleaseMutex();
         }
 
-        public void RemoveResultsAPI(int identifier)
+        public void RemoveAPI(int identifier)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 127");
             if (!mutex.WaitOne(3000))
@@ -1978,7 +1978,7 @@ namespace Chronokeep
             mutex.ReleaseMutex();
         }
 
-        public ResultsAPI GetResultsAPI(int identifier)
+        public APIObject GetAPI(int identifier)
         {
             if (identifier < 0)
             {
@@ -1992,23 +1992,23 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            ResultsAPI output = ResultsAPIs.GetResultsAPI(identifier, connection);
+            APIObject output = ResultsAPIs.GetResultsAPI(identifier, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
         }
 
-        public List<ResultsAPI> GetAllResultsAPI()
+        public List<APIObject> GetAllAPI()
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 129");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 129");
-                return new List<ResultsAPI>();
+                return new List<APIObject>();
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<ResultsAPI> output = ResultsAPIs.GetAllResultsAPI(connection);
+            List<APIObject> output = ResultsAPIs.GetAllResultsAPI(connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;

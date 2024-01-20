@@ -431,7 +431,7 @@ namespace Chronokeep.UI.MainPages
                 Upload.Content = "Upload";
                 return;
             }
-            ResultsAPI api = database.GetResultsAPI(theEvent.API_ID);
+            APIObject api = database.GetAPI(theEvent.API_ID);
             string[] event_ids = theEvent.API_Event_ID.Split(',');
             if (event_ids.Length != 2)
             {
@@ -505,10 +505,10 @@ namespace Chronokeep.UI.MainPages
             {
                 Log.D("UI.MainPages.ParticipantsPage", "Deleting uploaded participants data.");
                 Delete.Content = "Working";
-                ResultsAPI api = null;
+                APIObject api = null;
                 try
                 {
-                    api = database.GetResultsAPI(theEvent.API_ID);
+                    api = database.GetAPI(theEvent.API_ID);
                     Log.D("UI.MainPages.ParticipantsPage", "API found.");
                 }
                 catch { }

@@ -25,7 +25,7 @@ namespace Chronokeep.UI.API
     {
         APIWindow window;
         IDBInterface database;
-        Dictionary<string, ResultsAPI> apiDict;
+        Dictionary<string, APIObject> apiDict;
 
         public APIPage1(APIWindow window, IDBInterface database)
         {
@@ -34,8 +34,9 @@ namespace Chronokeep.UI.API
             this.database = database;
 
             AppSetting last_api = database.GetAppSetting(Constants.Settings.LAST_USED_API_ID);
-            List<ResultsAPI> apis = database.GetAllResultsAPI();
-            apiDict = new Dictionary<string, ResultsAPI>();
+            List<APIObject> apis = database.GetAllAPI();
+            apis.RemoveAll(x => !Constants.APIConstants.API_RESULTS[x.Type]);
+            apiDict = new Dictionary<string, APIObject>();
             int api_id = -1;
             if (last_api != null)
             {
@@ -50,7 +51,7 @@ namespace Chronokeep.UI.API
             }
             int ix = 0;
             int count = 0;
-            foreach (ResultsAPI api in apis)
+            foreach (APIObject api in apis)
             {
                 apiDict[api.Identifier.ToString()] = api;
                 APIBox.Items.Add(new ComboBoxItem
@@ -67,7 +68,7 @@ namespace Chronokeep.UI.API
             APIBox.SelectedIndex = ix;
             Event theEvent = database.GetCurrentEvent();
             // Check if we've actually got a linked event, then unlink it.
-            if (theEvent != null && theEvent.API_ID != Constants.ResultsAPI.NULL_ID && theEvent.API_Event_ID != Constants.ResultsAPI.NULL_EVENT_ID)
+            if (theEvent != null && theEvent.API_ID != Constants.APIConstants.NULL_ID && theEvent.API_Event_ID != Constants.APIConstants.NULL_EVENT_ID)
             {
                 unlinkButton.Visibility = Visibility.Visible;
             }
@@ -87,10 +88,10 @@ namespace Chronokeep.UI.API
         {
             Event theEvent = database.GetCurrentEvent();
             // Check if we've actually got a linked event, then unlink it.
-            if (theEvent != null && theEvent.API_ID != Constants.ResultsAPI.NULL_ID && theEvent.API_Event_ID != Constants.ResultsAPI.NULL_EVENT_ID)
+            if (theEvent != null && theEvent.API_ID != Constants.APIConstants.NULL_ID && theEvent.API_Event_ID != Constants.APIConstants.NULL_EVENT_ID)
             {
-                theEvent.API_ID = Constants.ResultsAPI.NULL_ID;
-                theEvent.API_Event_ID = Constants.ResultsAPI.NULL_EVENT_ID;
+                theEvent.API_ID = Constants.APIConstants.NULL_ID;
+                theEvent.API_Event_ID = Constants.APIConstants.NULL_EVENT_ID;
                 database.UpdateEvent(theEvent);
             }
             else

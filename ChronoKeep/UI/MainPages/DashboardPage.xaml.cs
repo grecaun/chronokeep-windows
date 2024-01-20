@@ -323,8 +323,8 @@ namespace Chronokeep.UI.MainPages
         private int SaveEvent(Event ev, IDBInterface loadFrom, IDBInterface saveTo)
         {
             // Make some modifications, note that we cannot guarantee API compatibility between events.
-            ev.API_Event_ID = Constants.ResultsAPI.NULL_EVENT_ID;
-            ev.API_ID = Constants.ResultsAPI.NULL_ID;
+            ev.API_Event_ID = Constants.APIConstants.NULL_EVENT_ID;
+            ev.API_ID = Constants.APIConstants.NULL_ID;
             int oldEventId = ev.Identifier, newEventId = -1;
             ev.Identifier = -1;
             saveTo.AddEvent(ev);

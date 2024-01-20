@@ -26,7 +26,7 @@ namespace Chronokeep.UI.API
     public partial class APIPage3
     {
         APIWindow window;
-        ResultsAPI api;
+        APIObject api;
         Event theEvent;
         string slug;
 
@@ -82,7 +82,7 @@ namespace Chronokeep.UI.API
             holdingLabel.Visibility = Visibility.Hidden;
         }
 
-        public APIPage3(APIWindow window, ResultsAPI api, Event theEvent, string slug)
+        public APIPage3(APIWindow window, APIObject api, Event theEvent, string slug)
         {
             InitializeComponent();
             this.window = window;

@@ -21,11 +21,11 @@ namespace Chronokeep
         void SetAppSetting(AppSetting setting);
 
         // Results API Functions
-        int AddResultsAPI(ResultsAPI anAPI);
-        void UpdateResultsAPI(ResultsAPI anAPI);
-        void RemoveResultsAPI(int identifier);
-        ResultsAPI GetResultsAPI(int identifier);
-        List<ResultsAPI> GetAllResultsAPI();
+        int AddAPI(APIObject anAPI);
+        void UpdateAPI(APIObject anAPI);
+        void RemoveAPI(int identifier);
+        APIObject GetAPI(int identifier);
+        List<APIObject> GetAllAPI();
 
         // Event Functions
         void AddEvent(Event anEvent);

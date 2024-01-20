@@ -21,7 +21,7 @@ namespace Chronokeep.Network.API
             return client;
         }
 
-        public static async Task<bool> IsHealthy(ResultsAPI api)
+        public static async Task<bool> IsHealthy(APIObject api)
         {
             string content;
             try
@@ -50,7 +50,7 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
-        public static async Task<GetEventsResponse> GetEvents(ResultsAPI api)
+        public static async Task<GetEventsResponse> GetEvents(APIObject api)
         {
             string content;
             Log.D("Network.API.APIHandlers", "Getting events.");
@@ -86,7 +86,7 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
-        public static async Task<GetEventYearsResponse> GetEventYears(ResultsAPI api, string slug)
+        public static async Task<GetEventYearsResponse> GetEventYears(APIObject api, string slug)
         {
             string content;
             Log.D("Network.API.APIHandlers", "Getting event years.");
@@ -130,7 +130,7 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
-        public static async Task<ModifyEventResponse> AddEvent(ResultsAPI api, APIEvent ev)
+        public static async Task<ModifyEventResponse> AddEvent(APIObject api, APIEvent ev)
         {
             string content;
             Log.D("Network.API.APIHandlers", "Adding event.");
@@ -174,7 +174,7 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
-        public static async Task<EventYearResponse> AddEventYear(ResultsAPI api, string slug, APIEventYear year)
+        public static async Task<EventYearResponse> AddEventYear(APIObject api, string slug, APIEventYear year)
         {
             string content;
             Log.D("Network.API.APIHandlers", "Adding event year.");
@@ -219,7 +219,7 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
-        public static async Task<AddResultsResponse> UploadResults(ResultsAPI api, string slug, string year, List<APIResult> results)
+        public static async Task<AddResultsResponse> UploadResults(APIObject api, string slug, string year, List<APIResult> results)
         {
             string content;
             Log.D("Network.API.APIHandlers", "Uploading results.");
@@ -265,7 +265,7 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
-        public static async Task<AddResultsResponse> DeleteResults(ResultsAPI api, string slug, string year)
+        public static async Task<AddResultsResponse> DeleteResults(APIObject api, string slug, string year)
         {
             string content;
             Log.D("Network.API.APIHandlers", "Deleting results.");
@@ -310,7 +310,7 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
-        public static async Task<AddResultsResponse> UploadParticipants(ResultsAPI api, string slug, string year, List<APIPerson> people)
+        public static async Task<AddResultsResponse> UploadParticipants(APIObject api, string slug, string year, List<APIPerson> people)
         {
             string content;
             Log.D("Network.API.APIHandlers", "Uploading participants.");
@@ -356,7 +356,7 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
-        public static async Task<AddResultsResponse> DeleteParticipants(ResultsAPI api, string slug, string year)
+        public static async Task<AddResultsResponse> DeleteParticipants(APIObject api, string slug, string year)
         {
             string content;
             Log.D("Network.API.APIHandlers", "Deleting participants.");

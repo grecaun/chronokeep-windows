@@ -16,7 +16,7 @@ namespace Chronokeep.UI.API
         Event theEvent;
 
         // Variables relating to information we're collecting.
-        ResultsAPI api;
+        APIObject api;
         string slug, year;
 
 
@@ -29,7 +29,8 @@ namespace Chronokeep.UI.API
             this.MinWidth = 300;
             this.Width = 300;
             theEvent = database.GetCurrentEvent();
-            List<ResultsAPI> apis = database.GetAllResultsAPI();
+            List<APIObject> apis = database.GetAllAPI();
+            apis.RemoveAll(x => !Constants.APIConstants.API_RESULTS[x.Type]);
             if (theEvent == null || theEvent.Identifier < 1 || apis.Count < 1)
             {
                 Log.E("UI.API.APIWindow", "event not found or no apis set up");
@@ -45,7 +46,7 @@ namespace Chronokeep.UI.API
             return new APIWindow(window, database);
         }
 
-        public void GotoPage2(ResultsAPI api)
+        public void GotoPage2(APIObject api)
         {
             this.api = api;
             database.SetAppSetting(Constants.Settings.LAST_USED_API_ID, api.Identifier.ToString());

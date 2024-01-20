@@ -24,7 +24,7 @@ namespace Chronokeep.UI.MainPages
     {
         private IMainWindow mWindow;
         private IDBInterface database;
-        private List<ResultsAPI> resultsAPI;
+        private List<APIObject> resultsAPI;
 
         public APIPage(IMainWindow mWindow, IDBInterface database)
         {
@@ -55,8 +55,8 @@ namespace Chronokeep.UI.MainPages
         public void UpdateView()
         {
             APIBox.Items.Clear();
-            resultsAPI = database.GetAllResultsAPI();
-            foreach (ResultsAPI api in resultsAPI)
+            resultsAPI = database.GetAllAPI();
+            foreach (APIObject api in resultsAPI)
             {
                 APIBox.Items.Add(new AnAPI(this, api));
             }
@@ -77,7 +77,7 @@ namespace Chronokeep.UI.MainPages
             {
                 UpdateResultsAPI();
             }
-            database.AddResultsAPI(new ResultsAPI());
+            database.AddAPI(new APIObject());
             UpdateView();
         }
 
@@ -99,23 +99,23 @@ namespace Chronokeep.UI.MainPages
             foreach (AnAPI listDiv in APIBox.Items)
             {
                 listDiv.UpdateResultsAPI();
-                database.UpdateResultsAPI(listDiv.theAPI);
+                database.UpdateAPI(listDiv.theAPI);
             }
         }
 
-        public void RemoveAPI(ResultsAPI api)
+        public void RemoveAPI(APIObject api)
         {
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateResultsAPI();
             }
-            database.RemoveResultsAPI(api.Identifier);
+            database.RemoveAPI(api.Identifier);
             UpdateView();
         }
 
-        public void UpdateResultsAPI(ResultsAPI api)
+        public void UpdateResultsAPI(APIObject api)
         {
-            database.UpdateResultsAPI(api);
+            database.UpdateAPI(api);
             UpdateView();
         }
 
@@ -142,9 +142,9 @@ namespace Chronokeep.UI.MainPages
             public Button Remove { get; private set; }
 
             readonly APIPage page;
-            public ResultsAPI theAPI;
+            public APIObject theAPI;
 
-            public AnAPI(APIPage page, ResultsAPI api)
+            public AnAPI(APIPage page, APIObject api)
             {
                 theAPI = api;
                 this.page = page;
@@ -198,16 +198,15 @@ namespace Chronokeep.UI.MainPages
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                APIType.Items.Add(new ComboBoxItem()
+                foreach (string uid in Constants.APIConstants.API_TYPE_NAMES.Keys)
                 {
-                    Content = Constants.ResultsAPI.API_TYPE_NAMES[Constants.ResultsAPI.CHRONOKEEP],
-                    Uid = Constants.ResultsAPI.CHRONOKEEP
-                });
-                APIType.Items.Add(new ComboBoxItem()
-                {
-                    Content = Constants.ResultsAPI.API_TYPE_NAMES[Constants.ResultsAPI.CHRONOKEEP_SELF],
-                    Uid = Constants.ResultsAPI.CHRONOKEEP_SELF
-                });
+                    APIType.Items.Add(new ComboBoxItem()
+                    {
+                        Content = Constants.APIConstants.API_TYPE_NAMES[uid],
+                        Uid = uid,
+                        IsSelected = theAPI.Type.Equals(uid),
+                    });
+                }
                 typePanel.Children.Add(APIType);
                 thePanel.Children.Add(typePanel);
                 Grid.SetColumn(typePanel, 1);
@@ -234,17 +233,7 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(urlPanel);
                 Grid.SetColumn(urlPanel, 2);
 
-                int ix = 0;
-                if (theAPI.Type == Constants.ResultsAPI.CHRONOKEEP_SELF)
-                {
-                    ix = 1;
-                    APIURL.IsEnabled = true;
-                }
-                else
-                {
-                    APIURL.IsEnabled = false;
-                }
-                APIType.SelectedIndex = ix;
+                APIURL.IsEnabled = Constants.APIConstants.API_SELF_HOSTED[theAPI.Type];
                 APIType.SelectionChanged += new SelectionChangedEventHandler(this.APIType_SelectionChanged);
 
                 StackPanel tokenPanel = new StackPanel();
@@ -314,11 +303,14 @@ namespace Chronokeep.UI.MainPages
                 // Ensure we've got something selected, and then change the URL if they've selected Chronokeep.
                 if (APIType.SelectedItem != null)
                 {
-                    if (((ComboBoxItem)APIType.SelectedItem).Uid == Constants.ResultsAPI.CHRONOKEEP) {
-                        theAPI.URL = Constants.ResultsAPI.CHRONOKEEP_URL;
+                    string type = ((ComboBoxItem)APIType.SelectedItem).Uid;
+                    if (!Constants.APIConstants.API_SELF_HOSTED[type])
+                    {
+                        theAPI.URL = Constants.APIConstants.API_URL[type];
                         APIURL.Text = theAPI.URL;
                         APIURL.IsEnabled = false;
-                    } else
+                    }
+                    else
                     {
                         APIURL.IsEnabled = true;
                     }

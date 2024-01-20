@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace Chronokeep.Objects
 {
-    public class ResultsAPI
+    public class APIObject
     {
         private int id;
         private string type, url, nickname, auth_token;
 
-        public ResultsAPI()
+        public APIObject()
         {
-            type = Constants.ResultsAPI.CHRONOKEEP;
-            url = Constants.ResultsAPI.CHRONOKEEP_URL;
+            type = Constants.APIConstants.CHRONOKEEP_RESULTS;
+            url = Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS];
             auth_token = "";
             nickname = "";
         }
 
-        public ResultsAPI(int id, string type, string url, string nickname, string auth_token)
+        public APIObject(int id, string type, string url, string nickname, string auth_token)
         {
             this.id = id;
             this.type = type;

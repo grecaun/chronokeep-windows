@@ -10,7 +10,7 @@ namespace Chronokeep.Database.SQLite
 {
     class ResultsAPIs
     {
-        internal static int AddResultsAPI(ResultsAPI anAPI, SQLiteConnection connection)
+        internal static int AddResultsAPI(APIObject anAPI, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO results_api (api_type, api_url, api_auth_token, api_nickname)" +
@@ -27,7 +27,7 @@ namespace Chronokeep.Database.SQLite
             return (int)outVal;
         }
 
-        internal static void UpdateResultsAPI(ResultsAPI anAPI, SQLiteConnection connection)
+        internal static void UpdateResultsAPI(APIObject anAPI, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE results_api SET api_type=@type, api_url=@url, api_auth_token=@token, api_nickname=@nickname WHERE api_id=@id;";
@@ -54,7 +54,7 @@ namespace Chronokeep.Database.SQLite
             }
         }
 
-        internal static ResultsAPI GetResultsAPI(int identifier, SQLiteConnection connection)
+        internal static APIObject GetResultsAPI(int identifier, SQLiteConnection connection)
         {
             if (identifier < 0)
             {
@@ -64,10 +64,10 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "SELECT * FROM results_api WHERE api_id=@id";
             command.Parameters.Add(new SQLiteParameter("@id", identifier));
             SQLiteDataReader reader = command.ExecuteReader();
-            ResultsAPI output = null;
+            APIObject output = null;
             if (reader.Read())
             {
-                output = new ResultsAPI(
+                output = new APIObject(
                     Convert.ToInt32(reader["api_id"]),
                     reader["api_type"].ToString(),
                     reader["api_url"].ToString(),
@@ -79,15 +79,15 @@ namespace Chronokeep.Database.SQLite
             return output;
         }
 
-        internal static List<ResultsAPI> GetAllResultsAPI(SQLiteConnection connection)
+        internal static List<APIObject> GetAllResultsAPI(SQLiteConnection connection)
         {
-            List<ResultsAPI> output = new List<ResultsAPI>();
+            List<APIObject> output = new List<APIObject>();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM results_api;";
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new ResultsAPI(
+                output.Add(new APIObject(
                     Convert.ToInt32(reader["api_id"]),
                     reader["api_type"].ToString(),
                     reader["api_url"].ToString(),

@@ -15,8 +15,8 @@ namespace Chronokeep
         private string name, date, yearcode = "";
         private long start_seconds = -1;
         private int start_milliseconds;
-        private int api_id = Constants.ResultsAPI.NULL_ID;
-        private string api_event_id = Constants.ResultsAPI.NULL_EVENT_ID;
+        private int api_id = Constants.APIConstants.NULL_ID;
+        private string api_event_id = Constants.APIConstants.NULL_EVENT_ID;
         private int display_placements = 1;
 
         public Event() { }

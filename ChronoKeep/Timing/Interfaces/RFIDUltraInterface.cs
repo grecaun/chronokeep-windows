@@ -269,7 +269,6 @@ namespace Chronokeep.Timing.Interfaces
                         settingsHolder = new RFIDSettingsHolder();
                     }
                     char settingID = message[1];
-                    int tmp = -1;
                     switch (settingID)
                     {
                         case RFIDUltraCodes.UltraId:

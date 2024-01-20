@@ -27,7 +27,7 @@ namespace Chronokeep.UI.API
     {
         APIWindow window;
         IDBInterface database;
-        ResultsAPI api;
+        APIObject api;
         Event theEvent;
 
         GetEventsResponse events;
@@ -84,7 +84,7 @@ namespace Chronokeep.UI.API
             holdingLabel.Visibility = Visibility.Hidden;
         }
 
-        public APIPage2(APIWindow window, IDBInterface database, ResultsAPI api, Event theEvent)
+        public APIPage2(APIWindow window, IDBInterface database, APIObject api, Event theEvent)
         {
             InitializeComponent();
             this.window = window;
@@ -118,16 +118,16 @@ namespace Chronokeep.UI.API
                     switch (theEvent.EventType)
                     {
                         case Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA:
-                            type = Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_BACKYARD_ULTRA;
+                            type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_BACKYARD_ULTRA;
                             break;
                         case Constants.Timing.EVENT_TYPE_TIME:
-                            type = Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_TIME;
+                            type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_TIME;
                             break;
                         case Constants.Timing.EVENT_TYPE_DISTANCE:
-                            type = Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_DISTANCE;
+                            type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_DISTANCE;
                             break;
                         default:
-                            type = Constants.ResultsAPI.CHRONOKEEP_EVENT_TYPE_UNKNOWN;
+                            type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_UNKNOWN;
                             break;
 
                     }
