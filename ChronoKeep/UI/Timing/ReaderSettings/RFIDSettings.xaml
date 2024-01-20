@@ -15,8 +15,8 @@
         Closed="UiWindow_Closed"
         Height="500"
         Width="300"
-        ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
         >
     <Grid>
         <Grid.RowDefinitions>
@@ -29,20 +29,24 @@
         <StackPanel
             Grid.Row="1"
             Margin="20,10,20,20"
-            VerticalAlignment="Center"
             >
-            <StackPanel
+            <StackPanel x:Name="loadingPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0,20,0">
+                <TextBlock Text="Loading..." FontSize="36" Margin="5,5,5,5"/>
+                <ui:ProgressRing IsIndeterminate="True" Margin="5,5,5,5"/>
+            </StackPanel>
+            <StackPanel x:Name="settingsPanel" Visibility="Collapsed" Margin="0,10,0,0">
+                <StackPanel
                 Orientation="Horizontal"
                 Height="45"
                 >
-                <TextBlock
+                    <TextBlock
                     Text="Ultra ID"
                     TextAlignment="Right"
                     VerticalAlignment="Center"
                     Width="100"
                     Margin="5,5,5,5"
                     />
-                <Slider
+                    <Slider
                     x:Name="idSlider"
                     Width="200"
                     Margin="5,5,5,5"
@@ -53,7 +57,7 @@
                     ValueChanged="idSlider_ValueChanged"
                     VerticalAlignment="Center"
                     />
-                <TextBlock
+                    <TextBlock
                     x:Name="idDisplay"
                     Text="10"
                     TextAlignment="Left"
@@ -61,62 +65,80 @@
                     Width="40"
                     Margin="5,5,5,5"
                     />
-            </StackPanel>
-            <StackPanel
+                    <ui:Button
+                    Name="saveID"
+                    Icon="Save16"
+                    Click="saveID_Click"
+                    Margin="5,5,5,5"
+                    />
+                </StackPanel>
+                <StackPanel
                 Orientation="Horizontal"
                 Height="45"
                 >
-                <TextBlock
+                    <TextBlock
                     Text="Chip Type"
                     TextAlignment="Right"
                     VerticalAlignment="Center"
                     Width="100"
                     Margin="5,5,5,5"
                     />
-                <ComboBox
+                    <ComboBox
                     x:Name="chipBox"
                     Width="250"
                     Margin="5,5,5,5"
                     VerticalAlignment="Center"
                     >
-                    <ComboBoxItem Content="Decimal" IsSelected="True" />
-                    <ComboBoxItem Content="Hexadecimal" />
-                </ComboBox>
-            </StackPanel>
-            <StackPanel
+                        <ComboBoxItem Content="Decimal" IsSelected="True" />
+                        <ComboBoxItem Content="Hexadecimal" />
+                    </ComboBox>
+                    <ui:Button
+                    Name="saveChip"
+                    Icon="Save16"
+                    Click="saveChip_Click"
+                    Margin="5,5,5,5"
+                    />
+                </StackPanel>
+                <StackPanel
                 Orientation="Horizontal"
                 Height="45"
                 >
-                <TextBlock
+                    <TextBlock
                     Text="Gating Mode"
                     TextAlignment="Right"
                     VerticalAlignment="Center"
                     Width="100"
                     Margin="5,5,5,5"
                     />
-                <ComboBox
+                    <ComboBox
                     x:Name="gatingModeBox"
                     Width="250"
                     Margin="5,5,5,5"
                     VerticalAlignment="Center"
                     >
-                    <ComboBoxItem Content ="Per Reader" IsSelected="True"/>
-                    <ComboBoxItem Content ="Per Box" />
-                    <ComboBoxItem Content ="First Time Seen"/>
-                </ComboBox>
-            </StackPanel>
-            <StackPanel
+                        <ComboBoxItem Content ="Per Reader" IsSelected="True"/>
+                        <ComboBoxItem Content ="Per Box" />
+                        <ComboBoxItem Content ="First Time Seen"/>
+                    </ComboBox>
+                    <ui:Button
+                    Name="saveGatingMode"
+                    Icon="Save16"
+                    Click="saveGatingMode_Click"
+                    Margin="5,5,5,5"
+                    />
+                </StackPanel>
+                <StackPanel
                 Orientation="Horizontal"
                 Height="45"
                 >
-                <TextBlock
+                    <TextBlock
                     Text="Gating Interval"
                     TextAlignment="Right"
                     VerticalAlignment="Center"
                     Width="100"
                     Margin="5,5,5,5"
                     />
-                <Slider
+                    <Slider
                     x:Name="gatingSlider"
                     Width="200"
                     Margin="5,5,5,5"
@@ -127,7 +149,7 @@
                     ValueChanged="gatingSlider_ValueChanged"
                     VerticalAlignment="Center"
                     />
-                <TextBlock
+                    <TextBlock
                     x:Name="gatingDisplay"
                     Text="10"
                     TextAlignment="Left"
@@ -135,62 +157,80 @@
                     Width="40"
                     Margin="5,5,5,5"
                     />
-            </StackPanel>
-            <StackPanel
+                    <ui:Button
+                    Name="saveGatingInterval"
+                    Icon="Save16"
+                    Click="saveGatingInterval_Click"
+                    Margin="5,5,5,5"
+                    />
+                </StackPanel>
+                <StackPanel
                 Orientation="Horizontal"
                 Height="45"
                 >
-                <TextBlock
+                    <TextBlock
                     Text="When to Beep"
                     TextAlignment="Right"
                     VerticalAlignment="Center"
                     Width="100"
                     Margin="5,5,5,5"
                     />
-                <ComboBox
+                    <ComboBox
                     x:Name="whenBeepBox"
                     Width="250"
                     Margin="5,5,5,5"
                     VerticalAlignment="Center"
                     >
-                    <ComboBoxItem Content="Always" IsSelected="True" />
-                    <ComboBoxItem Content="Only First Seen" />
-                </ComboBox>
-            </StackPanel>
-            <StackPanel
+                        <ComboBoxItem Content="Always" IsSelected="True" />
+                        <ComboBoxItem Content="Only First Seen" />
+                    </ComboBox>
+                    <ui:Button
+                    Name="saveWhenBeep"
+                    Icon="Save16"
+                    Click="saveWhenBeep_Click"
+                    Margin="5,5,5,5"
+                    />
+                </StackPanel>
+                <StackPanel
                 Orientation="Horizontal"
                 Height="45"
                 >
-                <TextBlock
+                    <TextBlock
                     Text="Beeper Volume"
                     TextAlignment="Right"
                     VerticalAlignment="Center"
                     Width="100"
                     Margin="5,5,5,5"
                     />
-                <ComboBox
+                    <ComboBox
                     x:Name="volumeBox"
                     Width="250"
                     Margin="5,5,5,5"
                     VerticalAlignment="Center"
                     >
-                    <ComboBoxItem Content="Off" IsSelected="True" />
-                    <ComboBoxItem Content="Soft" />
-                    <ComboBoxItem Content="Loud" />
-                </ComboBox>
-            </StackPanel>
-            <StackPanel
+                        <ComboBoxItem Content="Off" IsSelected="True" />
+                        <ComboBoxItem Content="Soft" />
+                        <ComboBoxItem Content="Loud" />
+                    </ComboBox>
+                    <ui:Button
+                    Name="saveVolume"
+                    Icon="Save16"
+                    Click="saveVolume_Click"
+                    Margin="5,5,5,5"
+                    />
+                </StackPanel>
+                <StackPanel
                 Orientation="Horizontal"
                 Height="45"
                 >
-                <TextBlock
+                    <TextBlock
                     Text="Time Zone"
                     TextAlignment="Right"
                     VerticalAlignment="Center"
                     Width="100"
                     Margin="5,5,5,5"
                     />
-                <Slider
+                    <Slider
                     x:Name="timeZoneSlider"
                     Width="200"
                     Margin="5,5,5,5"
@@ -201,7 +241,7 @@
                     ValueChanged="timeZoneSlider_ValueChanged"
                     VerticalAlignment="Center"
                     />
-                <TextBlock
+                    <TextBlock
                     x:Name="timeZoneDisplay"
                     Text="10"
                     TextAlignment="Left"
@@ -209,28 +249,35 @@
                     Width="40"
                     Margin="5,5,5,5"
                     />
-            </StackPanel>
-            <StackPanel
+                    <ui:Button
+                    Name="saveTimezone"
+                    Icon="Save16"
+                    Click="saveTimezone_Click"
+                    Margin="5,5,5,5"
+                    />
+                </StackPanel>
+                <StackPanel
                 Orientation="Horizontal"
                 Height="45"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 >
-                <ui:ToggleSwitch
+                    <ui:ToggleSwitch
                     x:Name="setGPSSwitch"
                     Content="Set Time From GPS?"
                     Margin="5,5,5,5"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
+                    Click="setGPSSwitch_Click"
                     />
-            </StackPanel>
-            <StackPanel
+                </StackPanel>
+                <StackPanel
                 Orientation="Horizontal"
                 Height="45"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 >
-                <ui:ToggleSwitch
+                    <ui:ToggleSwitch
                     x:Name="readingSwitch"
                     Content="Reading?"
                     Margin="5,5,5,5"
@@ -238,21 +285,13 @@
                     HorizontalAlignment="Center"
                     Click="readingSwitch_Click"
                     />
-            </StackPanel>
-            <StackPanel
+                </StackPanel>
+                <StackPanel
                 Orientation="Horizontal"
                 Height="45"
                 HorizontalAlignment="Center"
                 >
-                <Button
-                        Content="Save Settings"
-                        x:Name="saveSettingsButton"
-                        Click="saveSettingsButton_Click"
-                        Width="165"
-                        Height="35"
-                        Margin="5,5,5,5"
-                        />
-                <Button
+                    <Button
                         Content="Close"
                         x:Name="closeButton"
                         Click="closeButton_Click"
@@ -260,6 +299,7 @@
                         Height="35"
                         Margin="5,5,5,5"
                         />
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </Grid>

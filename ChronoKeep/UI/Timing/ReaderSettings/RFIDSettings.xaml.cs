@@ -17,6 +17,8 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         public RFIDSettings(RFIDUltraInterface reader)
         {
             InitializeComponent();
+            this.MinWidth = 100;
+            this.MinHeight = 100;
             this.reader = reader;
             reader.GetStatus();
             reader.QuerySettings();
@@ -25,161 +27,118 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         public void UpdateView(RFIDSettingsHolder settings)
         {
             Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Updating View.");
-            if (settings.UltraID > 0 && settings.UltraID < 256)
+            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
             {
-                idSlider.Value = settings.UltraID;
-                idDisplay.Text = settings.UltraID.ToString();
-            }
-            switch (settings.ChipType)
-            {
-                case RFIDSettingsHolder.ChipTypeEnum.DEC:
-                    chipBox.SelectedIndex = 0;
-                    break;
-                case RFIDSettingsHolder.ChipTypeEnum.HEX:
-                    chipBox.SelectedIndex = 1;
-                    break;
-            }
-            switch (settings.GatingMode)
-            {
-                case RFIDSettingsHolder.GatingModeEnum.PER_READER:
-                    gatingModeBox.SelectedIndex = 0;
-                    break;
-                case RFIDSettingsHolder.GatingModeEnum.PER_BOX:
-                    gatingModeBox.SelectedIndex = 1;
-                    break;
-                case RFIDSettingsHolder.GatingModeEnum.FIRST_TIME_SEEN:
-                    gatingModeBox.SelectedIndex = 2;
-                    break;
-            }
-            if (settings.GatingInterval >= 0 && settings.GatingInterval < 21)
-            {
-                gatingSlider.Value = settings.GatingInterval;
-                gatingDisplay.Text = settings.GatingInterval.ToString();
-            }
-            switch (settings.Beep)
-            {
-                case RFIDSettingsHolder.BeepEnum.ALWAYS:
-                    whenBeepBox.SelectedIndex = 0;
-                    break;
-                case RFIDSettingsHolder.BeepEnum.ONLY_FIRST_SEEN:
-                    whenBeepBox.SelectedIndex = 1;
-                    break;
-            }
-            switch (settings.BeepVolume)
-            {
-                case RFIDSettingsHolder.BeepVolumeEnum.OFF:
-                    volumeBox.SelectedIndex = 0;
-                    break;
-                case RFIDSettingsHolder.BeepVolumeEnum.SOFT:
-                    volumeBox.SelectedIndex = 1;
-                    break;
-                case RFIDSettingsHolder.BeepVolumeEnum.LOUD:
-                    volumeBox.SelectedIndex = 2;
-                    break;
-            }
-            switch (settings.SetFromGPS)
-            {
-                case RFIDSettingsHolder.GPSEnum.SET:
-                    setGPSSwitch.IsChecked = true;
-                    break;
-                case RFIDSettingsHolder.GPSEnum.DONT_SET:
-                    setGPSSwitch.IsChecked = false;
-                    break;
-            }
-            if (settings.TimeZone > -24 && settings.TimeZone < 24)
-            {
-                timeZoneSlider.Value = settings.TimeZone;
-                timeZoneDisplay.Text = settings.TimeZone.ToString();
-            }
-            switch (settings.Status)
-            {
-                case RFIDSettingsHolder.StatusEnum.STARTED:
-                    readingSwitch.IsChecked = true;
-                    break;
-                case RFIDSettingsHolder.StatusEnum.STOPPED:
-                    readingSwitch.IsChecked = false;
-                    break;
-            }
+                if (settings.UltraID > 0 && settings.UltraID < 256)
+                {
+                    idSlider.Value = settings.UltraID;
+                    idDisplay.Text = settings.UltraID.ToString();
+                }
+                switch (settings.ChipType)
+                {
+                    case RFIDSettingsHolder.ChipTypeEnum.DEC:
+                        chipBox.SelectedIndex = 0;
+                        break;
+                    case RFIDSettingsHolder.ChipTypeEnum.HEX:
+                        chipBox.SelectedIndex = 1;
+                        break;
+                }
+                switch (settings.GatingMode)
+                {
+                    case RFIDSettingsHolder.GatingModeEnum.PER_READER:
+                        gatingModeBox.SelectedIndex = 0;
+                        break;
+                    case RFIDSettingsHolder.GatingModeEnum.PER_BOX:
+                        gatingModeBox.SelectedIndex = 1;
+                        break;
+                    case RFIDSettingsHolder.GatingModeEnum.FIRST_TIME_SEEN:
+                        gatingModeBox.SelectedIndex = 2;
+                        break;
+                }
+                if (settings.GatingInterval >= 0 && settings.GatingInterval < 21)
+                {
+                    gatingSlider.Value = settings.GatingInterval;
+                    gatingDisplay.Text = settings.GatingInterval.ToString();
+                }
+                switch (settings.Beep)
+                {
+                    case RFIDSettingsHolder.BeepEnum.ALWAYS:
+                        whenBeepBox.SelectedIndex = 0;
+                        break;
+                    case RFIDSettingsHolder.BeepEnum.ONLY_FIRST_SEEN:
+                        whenBeepBox.SelectedIndex = 1;
+                        break;
+                }
+                switch (settings.BeepVolume)
+                {
+                    case RFIDSettingsHolder.BeepVolumeEnum.OFF:
+                        volumeBox.SelectedIndex = 0;
+                        break;
+                    case RFIDSettingsHolder.BeepVolumeEnum.SOFT:
+                        volumeBox.SelectedIndex = 1;
+                        break;
+                    case RFIDSettingsHolder.BeepVolumeEnum.LOUD:
+                        volumeBox.SelectedIndex = 2;
+                        break;
+                }
+                switch (settings.SetFromGPS)
+                {
+                    case RFIDSettingsHolder.GPSEnum.SET:
+                        setGPSSwitch.IsChecked = true;
+                        break;
+                    case RFIDSettingsHolder.GPSEnum.DONT_SET:
+                        setGPSSwitch.IsChecked = false;
+                        break;
+                }
+                if (settings.TimeZone > -24 && settings.TimeZone < 24)
+                {
+                    timeZoneSlider.Value = settings.TimeZone;
+                    timeZoneDisplay.Text = settings.TimeZone.ToString();
+                }
+                switch (settings.Status)
+                {
+                    case RFIDSettingsHolder.StatusEnum.STARTED:
+                        readingSwitch.IsChecked = true;
+                        break;
+                    case RFIDSettingsHolder.StatusEnum.STOPPED:
+                        readingSwitch.IsChecked = false;
+                        break;
+                }
+                loadingPanel.Visibility = Visibility.Collapsed;
+                settingsPanel.Visibility = Visibility.Visible;
+            }));
         }
 
         private void timeZoneSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Time zone changed.");
-            timeZoneDisplay.Text = timeZoneSlider.Value.ToString();
+            if (timeZoneDisplay != null && timeZoneSlider != null)
+            {
+                timeZoneDisplay.Text = timeZoneSlider.Value.ToString();
+            }
         }
 
-        private void saveSettingsButton_Click(object sender, RoutedEventArgs e)
+        /*private void saveSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Save button clicked.");
-            try
+            DialogBox.Show(
+                "Saving settings will reboot the reader and forcibly close the connection. Proceed?",
+                "Yes",
+                "No",
+                () =>
             {
-                reader.SetUltraId(Convert.ToInt32(Math.Floor(idSlider.Value)));
-                byte byteVal = 0x00;
-                switch (chipBox.SelectedIndex)
+                try
                 {
-                    case 0:     // Decimal
-                        byteVal = 0x00;
-                        break;
-                    case 1:     // Hexadecimal
-                        byteVal = 0x01;
-                        break;
                 }
-                reader.SetChipOutputType(byteVal);
-                byteVal = 0x00;
-                switch (gatingModeBox.SelectedIndex)
+                catch (Exception ex)
                 {
-                    case 0:     // Per reader
-                        byteVal = 0x00;
-                        break;
-                    case 1:     // Per box
-                        byteVal = 0x01;
-                        break;
-                    case 2:     // First time seen
-                        byteVal = 0x02;
-                        break;
+                    Log.E("UI.Timing.ReaderSettings.RFIDSettings", "Error saving settings. " + ex.Message);
+                    DialogBox.Show("Error saving settings.");
                 }
-                reader.SetGatingMode(byteVal);
-                reader.SetGatingInterval(Convert.ToInt32(Math.Floor(gatingSlider.Value)));
-                byteVal = 0x00;
-                switch (whenBeepBox.SelectedIndex)
-                {
-                    case 0:     // always
-                        byteVal = 0x00;
-                        break;
-                    case 1:     // when first seen
-                        byteVal = 0x01;
-                        break;
-                }
-                reader.SetWhenToBeep(byteVal);
-                byteVal = 0x00;
-                switch (volumeBox.SelectedIndex)
-                {
-                    case 0:     // off
-                        byteVal = 0x00;
-                        break;
-                    case 1:     // soft
-                        byteVal = 0x01;
-                        break;
-                    case 2:     // loud
-                        byteVal = 0x02;
-                        break;
-                }
-                reader.SetBeeperVolume(byteVal);
-                reader.SetTimeZone(Convert.ToInt32(Math.Floor(timeZoneSlider.Value)));
-                byteVal = 0x00;
-                if (setGPSSwitch.IsChecked == true)
-                {
-                    byteVal = 0x01;
-                }
-                reader.SetAutoGPSTime(byteVal);
-            }
-            catch (Exception ex)
-            {
-                Log.E("UI.Timing.ReaderSettings.RFIDSettings", "Error saving settings. " + ex.Message);
-                DialogBox.Show("Error saving settings.");
-                return;
-            }
-        }
+                reader.Disconnect();
+                reader.CloseSettings();
+            });
+        }//*/
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
@@ -190,13 +149,19 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         private void gatingSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Gating changed.");
-            gatingDisplay.Text = gatingSlider.Value.ToString();
+            if (gatingDisplay != null && gatingSlider != null)
+            {
+                gatingDisplay.Text = gatingSlider.Value.ToString();
+            }
         }
 
         private void idSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Log.D("UI.Timing.ReaderSettings.RFIDSettings", "ID changed.");
-            idDisplay.Text = idSlider.Value.ToString();
+            if (idDisplay != null && idSlider != null)
+            {
+                idDisplay.Text = idSlider.Value.ToString();
+            }
         }
 
         public void CloseWindow()
@@ -226,6 +191,112 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         private void UiWindow_Closed(object sender, EventArgs e)
         {
             reader.SettingsWindowFinalize();
+        }
+
+        private void saveID_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Save ID button clicked.");
+            DialogBox.Show(
+                "Saving ID will reboot the reader and forcibly close the connection. Proceed?",
+                "Yes",
+                "No",
+                () =>
+                {
+                    reader.SetUltraId(Convert.ToInt32(Math.Floor(idSlider.Value)));
+                });
+        }
+
+        private void saveChip_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Save Chip button clicked.");
+            char byteVal = (char)0x00;
+            switch (chipBox.SelectedIndex)
+            {
+                case 0:     // Decimal
+                    byteVal = (char)0x00;
+                    break;
+                case 1:     // Hexadecimal
+                    byteVal = (char)0x01;
+                    break;
+            }
+            reader.SetChipOutputType(byteVal);
+        }
+
+        private void saveGatingMode_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Save Gating Mode button clicked.");
+            char byteVal = (char)0x00;
+            switch (gatingModeBox.SelectedIndex)
+            {
+                case 0:     // Per reader
+                    byteVal = (char)0x00;
+                    break;
+                case 1:     // Per box
+                    byteVal = (char)0x01;
+                    break;
+                case 2:     // First time seen
+                    byteVal = (char)0x02;
+                    break;
+            }
+            reader.SetGatingMode(byteVal);
+        }
+
+        private void saveGatingInterval_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Save Gating Interval button clicked.");
+            reader.SetGatingInterval(Convert.ToInt32(Math.Floor(gatingSlider.Value)));
+        }
+
+        private void saveWhenBeep_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Save When to Beep button clicked.");
+            char byteVal = (char)0x00;
+            switch (whenBeepBox.SelectedIndex)
+            {
+                case 0:     // always
+                    byteVal = (char)0x00;
+                    break;
+                case 1:     // when first seen
+                    byteVal = (char)0x01;
+                    break;
+            }
+            reader.SetWhenToBeep(byteVal);
+        }
+
+        private void saveVolume_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Save Volume button clicked.");
+            char byteVal = '0';
+            switch (volumeBox.SelectedIndex)
+            {
+                case 0:     // off
+                    byteVal = (char)0x00;
+                    break;
+                case 1:     // soft
+                    byteVal = (char)0x01;
+                    break;
+                case 2:     // loud
+                    byteVal = (char)0x02;
+                    break;
+            }
+            reader.SetBeeperVolume(byteVal);
+        }
+
+        private void saveTimezone_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Save Timezone button clicked.");
+            reader.SetTimeZone(Convert.ToInt32(Math.Floor(timeZoneSlider.Value)));
+        }
+
+        private void setGPSSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Set Time Via GPS button clicked.");
+            char byteVal = (char)0x00;
+            if (setGPSSwitch.IsChecked == true)
+            {
+                byteVal = (char)0x01;
+            }
+            reader.SetAutoGPSTime(byteVal);
         }
     }
 }
