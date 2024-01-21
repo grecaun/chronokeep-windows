@@ -313,9 +313,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Objects\ChronokeepRemote\" />
-  </ItemGroup>
   <Target Name="PreBuild" AfterTargets="PreBuildEvent">
     <Exec Command="git describe --tag &gt; &quot;$(ProjectDir)version.txt&quot;" />
   </Target>
