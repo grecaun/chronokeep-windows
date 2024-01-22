@@ -252,6 +252,7 @@ namespace Chronokeep.Database.SQLite
                 queries.Add("CREATE TABLE IF NOT EXISTS remote_readers(" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
                     "api_id INTEGER NOT NULL REFERENCES results_api(api_id), " +
+                    "location_id INTEGER NOT NULL DEFAULT -1, " +
                     "reader_name VARCHAR NOT NULL, " +
                     "UNIQUE(event_id, api_id, reader_name) ON CONFLICT REPLACE" +
                     ");");

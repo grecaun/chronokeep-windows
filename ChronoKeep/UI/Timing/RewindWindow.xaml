@@ -23,7 +23,7 @@
             Grid.Row="0">
         </ui:TitleBar>
         <xctf:BusyIndicator Name="busyIndicator" Grid.Row="1">
-            <StackPanel VerticalAlignment="Top" Margin="10,10,10,10">
+            <StackPanel VerticalAlignment="Top" Margin="10,10,10,10" Grid.Row="1">
                 <TextBlock Text="Rewind" FontSize="18" TextAlignment="Center" VerticalAlignment="Center"/>
                 <Grid>
                     <Grid.ColumnDefinitions>

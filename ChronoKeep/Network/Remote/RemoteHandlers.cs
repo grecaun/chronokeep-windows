@@ -50,7 +50,7 @@ namespace Chronokeep.Network.Remote
             throw new APIException(content);
         }
 
-        public static async Task<GetReadsResponse> GetReads(APIObject api, string reader, int start, int end)
+        public static async Task<GetReadsResponse> GetReads(APIObject api, string reader, long start, long end)
         {
             string content;
             Log.D("Network.Remote.RemoteHandlers", "Getting reads.");

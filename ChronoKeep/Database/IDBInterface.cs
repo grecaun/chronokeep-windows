@@ -164,9 +164,9 @@ namespace Chronokeep
         void DeleteAlarms(int eventId);
         void DeleteAlarm(Alarm alarm);
         // Remote Readers
-        void AddRemoteReaders(int eventId, List<RemoteReader> remoteReaders);
-        void DeleteRemoteReaders(int eventId, List<string> readerNames);
-        void DeleteRemoteReader(int eventId, string readerName);
+        void AddRemoteReaders(int eventId, List<RemoteReader> readers);
+        void DeleteRemoteReaders(int eventId, List<RemoteReader> readers);
+        void DeleteRemoteReader(int eventId, RemoteReader reader);
         List<RemoteReader> GetRemoteReaders(int eventId);
     }
 }

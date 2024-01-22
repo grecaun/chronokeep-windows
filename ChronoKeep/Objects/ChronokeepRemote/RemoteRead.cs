@@ -21,6 +21,22 @@ namespace Chronokeep.Objects.ChronokeepRemote
         public string Reader { get; set; }
         [JsonPropertyName("rssi")]
         public string RSSI { get; set; }
+
+        public ChipRead ConvertToChipRead(int eventId, int locationId)
+        {
+            return new ChipRead(
+                eventId,
+                locationId,
+                IdentType == IdentType.chip ? Identifier : Constants.Timing.CHIPREAD_DUMMYCHIP,
+                IdentType == IdentType.bib ? Identifier : Constants.Timing.CHIPREAD_DUMMYBIB,
+                Seconds,
+                Milliseconds,
+                Antenna,
+                Reader,
+                RSSI,
+                IdentType == IdentType.chip ? Constants.Timing.CHIPREAD_TYPE_CHIP : Constants.Timing.CHIPREAD_TYPE_MANUAL
+                );
+        }
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

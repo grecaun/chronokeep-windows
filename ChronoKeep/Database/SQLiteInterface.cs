@@ -14,7 +14,7 @@ namespace Chronokeep
          * HIGHEST MUTEX ID = 147
          * NEXT AVAILABLE   = 148
          */
-        private readonly int version = 55;
+        private readonly int version = 56;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -2084,7 +2084,7 @@ namespace Chronokeep
             mutex.ReleaseMutex();
         }
 
-        public void AddRemoteReaders(int eventId, List<RemoteReader> remoteReaders)
+        public void AddRemoteReaders(int eventId, List<RemoteReader> readers)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 144");
             if (!mutex.WaitOne(3000))
@@ -2094,12 +2094,12 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            RemoteReaders.AddRemoteReaders(eventId, remoteReaders, connection);
+            RemoteReaders.AddRemoteReaders(eventId, readers, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
 
-        public void DeleteRemoteReaders(int eventId, List<string> readerNames)
+        public void DeleteRemoteReaders(int eventId, List<RemoteReader> readers)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 145");
             if (!mutex.WaitOne(3000))
@@ -2109,12 +2109,12 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            RemoteReaders.DeleteRemoteReaders(eventId, readerNames, connection);
+            RemoteReaders.DeleteRemoteReaders(eventId, readers, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
 
-        public void DeleteRemoteReader(int eventId, string readerName)
+        public void DeleteRemoteReader(int eventId, RemoteReader reader)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 146");
             if (!mutex.WaitOne(3000))
@@ -2124,7 +2124,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            RemoteReaders.DeleteRemoteReader(eventId, readerName, connection);
+            RemoteReaders.DeleteRemoteReader(eventId, reader, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }

@@ -1426,6 +1426,14 @@ namespace Chronokeep.Database.SQLite
                             ");" +
                             "UPDATE settings set value='55' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
+                        goto case 55;
+                    case 55:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 54.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE remote_readers ADD COLUMN " +
+                            "location_id INTEGER NOT NULL DEFAULT " + Constants.Timing.LOCATION_DUMMY + ";" +
+                            "UPDATE settings set value='56' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

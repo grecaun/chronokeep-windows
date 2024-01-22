@@ -16,13 +16,14 @@ namespace Chronokeep.Database.SQLite
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "INSERT INTO remote_readers (event_id, api_id, reader_name) VALUES (@event, @api, @name);";
+                command.CommandText = "INSERT INTO remote_readers (event_id, api_id, location_id, reader_name) VALUES (@event, @api, @location, @name);";
                 foreach (RemoteReader reader in remoteReaders)
                 {
                     command.Parameters.AddRange(new SQLiteParameter[]
                     {
                     new SQLiteParameter("@event", eventId),
                     new SQLiteParameter("@api", reader.APIIDentifier),
+                    new SQLiteParameter("@location", reader.LocationID),
                     new SQLiteParameter("@name", reader.Name)
                     });
                     command.ExecuteNonQuery();
@@ -67,7 +68,9 @@ namespace Chronokeep.Database.SQLite
             {
                 output.Add(new RemoteReader(
                         reader["reader_name"].ToString(),
-                        Convert.ToInt32(reader["api_id"])
+                        Convert.ToInt32(reader["api_id"]),
+                        Convert.ToInt32(reader["location_id"]),
+                        Convert.ToInt32(reader["event_id"])
                     ));
             }
             reader.Close();

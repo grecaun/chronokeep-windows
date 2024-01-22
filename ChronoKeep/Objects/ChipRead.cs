@@ -1,10 +1,4 @@
-﻿using Chronokeep.Objects.ChronokeepPortal;
-using DocumentFormat.OpenXml.Drawing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Chronokeep
 {
@@ -134,7 +128,6 @@ namespace Chronokeep
             this.IsRewind = 0;
             this.Reader = reader;
             this.Box = "Chronokeep Portal";
-            this.ReaderTime = "";
             this.StartTime = 0;
             this.LogId = 0;
             this.TimeSeconds = seconds;
@@ -325,7 +318,7 @@ namespace Chronokeep
             long start_time,
             string read_bib,
             int type,
-            bool fake)
+            bool _fake)
         {
             this.EventId = eventId;
             this.LocationID = locationId;
@@ -345,6 +338,40 @@ namespace Chronokeep
             this.StartTime = start_time;
             this.ReadBib = read_bib;
             this.Type = type;
+        }
+
+        // Constructor used for loading data from a remote reader.
+        public ChipRead(
+            int eventId,
+            int locationId,
+            string chip,
+            string bib,
+            long seconds,
+            int milliseconds,
+            int antenna,
+            string reader,
+            string rssi,
+            int type
+            )
+        {
+            this.EventId = eventId;
+            this.LocationID = locationId;
+            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            this.ChipNumber = chip;
+            this.ReadBib = bib;
+            this.TimeSeconds = Constants.Timing.UTCSecondsToRFIDSeconds(seconds);
+            this.TimeMilliseconds = milliseconds;
+            this.Seconds = Constants.Timing.UTCSecondsToRFIDSeconds(seconds);
+            this.Milliseconds = milliseconds;
+            this.Antenna = antenna;
+            this.Reader = reader;
+            this.RSSI = rssi;
+            this.Type = type;
+            this.IsRewind = 0;
+            this.Box = "Remote Reader";
+            this.ReaderTime = "";
+            this.StartTime = 0;
+            this.LogId = 0;
         }
 
         public string TimeString

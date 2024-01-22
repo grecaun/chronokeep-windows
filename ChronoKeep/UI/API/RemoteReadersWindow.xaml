@@ -1,0 +1,40 @@
+﻿<ui:UiWindow x:Class="Chronokeep.UI.API.RemoteReadersWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Chronokeep.UI.API"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d"
+        Title="Remote Readers"
+        d:DataContext="{d:DesignInstance local:RemoteReadersWindow, IsDesignTimeCreatable=True}"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica"
+        WindowCornerPreference="Round"
+        WindowStartupLocation="CenterScreen"
+        Height="450"
+        Width="800"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        Closed="UiWindow_Closed"
+        >
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar
+            Grid.Row="0">
+        </ui:TitleBar>
+        <StackPanel Grid.Row="1">
+            <StackPanel x:Name="loadingPanel" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0,20,0">
+                <TextBlock Text="Loading..." FontSize="36" Margin="5,5,5,5"/>
+                <ui:ProgressRing IsIndeterminate="True" Margin="5,5,5,5"/>
+            </StackPanel>
+            <ListView x:Name="apiListView" Visibility="Collapsed" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button x:Name="Close" Content="Close" Click="Close_Click" Height="35" Width="150" Margin="5,5,5,5" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</ui:UiWindow>
