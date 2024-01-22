@@ -249,6 +249,12 @@ namespace Chronokeep.Database.SQLite
                     "alarm_sound INTEGER NOT NULL DEFAULT 0, " +
                     "UNIQUE (event_id, alarm_bib, alarm_chip) ON CONFLICT REPLACE" +
                     ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS remote_readers(" +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                    "api_id INTEGER NOT NULL REFERENCES results_api(api_id), " +
+                    "reader_name VARCHAR NOT NULL, " +
+                    "UNIQUE(event_id, api_id, reader_name) ON CONFLICT REPLACE" +
+                    ");");
                 queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
 
                 using (var transaction = connection.BeginTransaction())

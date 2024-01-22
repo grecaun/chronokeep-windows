@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Chronokeep.Database.SQLite
 {
-    class ResultsAPIs
+    class APIs
     {
-        internal static int AddResultsAPI(APIObject anAPI, SQLiteConnection connection)
+        internal static int AddAPI(APIObject anAPI, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO results_api (api_type, api_url, api_auth_token, api_nickname)" +
@@ -27,7 +27,7 @@ namespace Chronokeep.Database.SQLite
             return (int)outVal;
         }
 
-        internal static void UpdateResultsAPI(APIObject anAPI, SQLiteConnection connection)
+        internal static void UpdateAPI(APIObject anAPI, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE results_api SET api_type=@type, api_url=@url, api_auth_token=@token, api_nickname=@nickname WHERE api_id=@id;";
@@ -42,7 +42,7 @@ namespace Chronokeep.Database.SQLite
             command.ExecuteNonQuery();
         }
 
-        internal static void RemoveResultsAPI(int identifier, SQLiteConnection connection)
+        internal static void RemoveAPI(int identifier, SQLiteConnection connection)
         {
             using (var transaction = connection.BeginTransaction())
             {
@@ -54,7 +54,7 @@ namespace Chronokeep.Database.SQLite
             }
         }
 
-        internal static APIObject GetResultsAPI(int identifier, SQLiteConnection connection)
+        internal static APIObject GetAPI(int identifier, SQLiteConnection connection)
         {
             if (identifier < 0)
             {
@@ -79,7 +79,7 @@ namespace Chronokeep.Database.SQLite
             return output;
         }
 
-        internal static List<APIObject> GetAllResultsAPI(SQLiteConnection connection)
+        internal static List<APIObject> GetAllAPI(SQLiteConnection connection)
         {
             List<APIObject> output = new List<APIObject>();
             SQLiteCommand command = connection.CreateCommand();

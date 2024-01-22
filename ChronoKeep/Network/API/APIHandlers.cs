@@ -7,19 +7,12 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using static Chronokeep.Network.Util.Helpers;
 
 namespace Chronokeep.Network.API
 {
     public class APIHandlers
     {
-        private static HttpClient GetHttpClient()
-        {
-            var client = new HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(10);
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            return client;
-        }
 
         public static async Task<bool> IsHealthy(APIObject api)
         {

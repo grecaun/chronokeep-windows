@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Objects;
+using Chronokeep.Objects.ChronokeepRemote;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -162,5 +163,10 @@ namespace Chronokeep
         List<Alarm> GetAlarms(int eventId);
         void DeleteAlarms(int eventId);
         void DeleteAlarm(Alarm alarm);
+        // Remote Readers
+        void AddRemoteReaders(int eventId, List<RemoteReader> remoteReaders);
+        void DeleteRemoteReaders(int eventId, List<string> readerNames);
+        void DeleteRemoteReader(int eventId, string readerName);
+        List<RemoteReader> GetRemoteReaders(int eventId);
     }
 }

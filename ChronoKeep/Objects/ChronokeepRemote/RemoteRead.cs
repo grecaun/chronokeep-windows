@@ -12,14 +12,28 @@ namespace Chronokeep.Objects.ChronokeepRemote
         [JsonPropertyName("milliseconds")]
         public int Milliseconds { get; set; }
         [JsonPropertyName("ident_type")]
-        public string IdentType { get; set; }
+        public IdentType IdentType { get; set; }
         [JsonPropertyName("type")]
-        public string Type { get; set; }
+        public ReadType Type { get; set; }
         [JsonPropertyName("antenna")]
         public int Antenna { get; set; }
         [JsonPropertyName("reader")]
         public string Reader { get; set; }
         [JsonPropertyName("rssi")]
         public string RSSI { get; set; }
+    }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum IdentType
+    {
+        bib,
+        chip,
+    }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum ReadType
+    {
+        reader,
+        manual,
     }
 }

@@ -1,0 +1,77 @@
+﻿using Chronokeep.Objects.ChronokeepRemote;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System;
+using System.Collections.Generic;
+using System.Data.SQLite;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Chronokeep.Database.SQLite
+{
+    internal class RemoteReaders
+    {
+        public static void AddRemoteReaders(int eventId, List<RemoteReader> remoteReaders, SQLiteConnection connection)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                SQLiteCommand command = connection.CreateCommand();
+                command.CommandText = "INSERT INTO remote_readers (event_id, api_id, reader_name) VALUES (@event, @api, @name);";
+                foreach (RemoteReader reader in remoteReaders)
+                {
+                    command.Parameters.AddRange(new SQLiteParameter[]
+                    {
+                    new SQLiteParameter("@event", eventId),
+                    new SQLiteParameter("@api", reader.APIIDentifier),
+                    new SQLiteParameter("@name", reader.Name)
+                    });
+                    command.ExecuteNonQuery();
+                }
+                transaction.Commit();
+            }
+        }
+
+        public static void DeleteRemoteReaders(int eventId, List<RemoteReader> remoteReaders, SQLiteConnection connection)
+        {
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (RemoteReader reader in remoteReaders)
+                {
+                    DeleteRemoteReader(eventId, reader, connection);
+                }
+                transaction.Commit();
+            }
+        }
+
+        public static void DeleteRemoteReader(int eventId, RemoteReader reader, SQLiteConnection connection)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM remote_readers WHERE event_id=@event AND api_id=@api AND reader_name=@name;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                    new SQLiteParameter("@event", eventId),
+                    new SQLiteParameter("@api", reader.APIIDentifier),
+                    new SQLiteParameter("@name", reader.Name)
+            });
+            command.ExecuteNonQuery();
+        }
+
+        public static List<RemoteReader> GetRemoteReaders(int eventId, SQLiteConnection connection)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM remote_readers WHERE event_id=@event;";
+            command.Parameters.Add(new SQLiteParameter("@event", eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            List<RemoteReader> output = new List<RemoteReader>();
+            while (reader.Read())
+            {
+                output.Add(new RemoteReader(
+                        reader["reader_name"].ToString(),
+                        Convert.ToInt32(reader["api_id"])
+                    ));
+            }
+            reader.Close();
+            return output;
+        }
+    }
+}

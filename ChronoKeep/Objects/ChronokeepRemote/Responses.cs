@@ -14,7 +14,7 @@ namespace Chronokeep.Objects.ChronokeepRemote
         public List<RemoteRead> Reads { get; set; }
     }
 
-    public class UploadReadsResponse
+    public class DeleteReadsResponse
     {
         [JsonPropertyName("count")]
         public long Count { get; set; }

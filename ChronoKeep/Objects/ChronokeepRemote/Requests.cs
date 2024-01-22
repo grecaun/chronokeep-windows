@@ -6,12 +6,6 @@ namespace Chronokeep.Objects.ChronokeepRemote
     /*
      * Reads requests
      */
-    public class UploadReadsRequest
-    {
-        [JsonPropertyName("reads")]
-        public List<RemoteRead> Reads { get; set; }
-    }
-
     public class GetReadsRequest
     {
         [JsonPropertyName("reader")]

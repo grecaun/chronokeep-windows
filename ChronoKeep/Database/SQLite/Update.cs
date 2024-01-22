@@ -1414,6 +1414,18 @@ namespace Chronokeep.Database.SQLite
                             "ALTER TABLE bib_chip_assoc_new RENAME TO bib_chip_assoc; " +
                             "UPDATE settings set value='54' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
+                        goto case 54;
+                    case 54:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 54.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE TABLE IF NOT EXISTS remote_readers(" +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                            "api_id INTEGER NOT NULL REFERENCES results_api(api_id), " +
+                            "reader_name VARCHAR NOT NULL, " +
+                            "UNIQUE(event_id, api_id, reader_name) ON CONFLICT REPLACE" +
+                            ");" +
+                            "UPDATE settings set value='55' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

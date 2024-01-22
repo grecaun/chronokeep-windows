@@ -41,7 +41,6 @@ namespace Chronokeep.UI.MainPages
 
         private Event theEvent;
         List<TimingLocation> locations;
-        List<TimeResult> results = new List<TimeResult>();
 
         private DateTime startTime;
         DispatcherTimer Timer = new DispatcherTimer();
@@ -1158,6 +1157,26 @@ namespace Chronokeep.UI.MainPages
             subPage = new AlarmsPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
+        }
+
+        private void remoteReadersButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.TimingPage", "Remote readers button clicked.");
+        }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            if (remoteReadersButton != null)
+            {
+                if (readerExpander.IsExpanded == true)
+                {
+                    remoteReadersButton.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    remoteReadersButton.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         private class AReaderBox : ListBoxItem

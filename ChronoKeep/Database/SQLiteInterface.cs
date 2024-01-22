@@ -1,26 +1,20 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using Chronokeep.Database;
 using Chronokeep.Database.SQLite;
 using Chronokeep.Objects;
+using Chronokeep.Objects.ChronokeepRemote;
 
 namespace Chronokeep
 {
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 143
-         * NEXT AVAILABLE   = 144
+         * HIGHEST MUTEX ID = 147
+         * NEXT AVAILABLE   = 148
          */
-        private readonly int version = 54;
+        private readonly int version = 55;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -1942,7 +1936,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            int outVal = ResultsAPIs.AddResultsAPI(anAPI, connection);
+            int outVal = APIs.AddAPI(anAPI, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return outVal;
@@ -1958,7 +1952,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            ResultsAPIs.UpdateResultsAPI(anAPI, connection);
+            APIs.UpdateAPI(anAPI, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
@@ -1973,7 +1967,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            ResultsAPIs.RemoveResultsAPI(identifier, connection);
+            APIs.RemoveAPI(identifier, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
@@ -1992,7 +1986,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            APIObject output = ResultsAPIs.GetResultsAPI(identifier, connection);
+            APIObject output = APIs.GetAPI(identifier, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -2008,7 +2002,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<APIObject> output = ResultsAPIs.GetAllResultsAPI(connection);
+            List<APIObject> output = APIs.GetAllAPI(connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -2088,6 +2082,67 @@ namespace Chronokeep
             Alarms.DeleteAlarm(alarm, connection);
             connection.Close();
             mutex.ReleaseMutex();
+        }
+
+        public void AddRemoteReaders(int eventId, List<RemoteReader> remoteReaders)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 144");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 144");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            RemoteReaders.AddRemoteReaders(eventId, remoteReaders, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public void DeleteRemoteReaders(int eventId, List<string> readerNames)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 145");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 145");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            RemoteReaders.DeleteRemoteReaders(eventId, readerNames, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public void DeleteRemoteReader(int eventId, string readerName)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 146");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 146");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            RemoteReaders.DeleteRemoteReader(eventId, readerName, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public List<RemoteReader> GetRemoteReaders(int eventId)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 147");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 147");
+                return new List<RemoteReader>();
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            List<RemoteReader> output = RemoteReaders.GetRemoteReaders(eventId, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
         }
     }
 }

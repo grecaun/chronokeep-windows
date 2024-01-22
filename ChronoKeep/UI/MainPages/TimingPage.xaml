@@ -190,7 +190,13 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Expander MaxHeight="235" Margin="5,0,5,5" HorizontalAlignment="Stretch" Header="Readers" IsExpanded="True" ExpandDirection="Down" Grid.Row="0">
+            <Expander MaxHeight="235" Margin="5,0,5,5" HorizontalAlignment="Stretch" IsExpanded="True" ExpandDirection="Down" Grid.Row="0" Expanded="Expander_Expanded" Collapsed="Expander_Expanded" x:Name="readerExpander">
+                <Expander.Header>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Center">
+                        <TextBlock Text="Readers" Margin="5,0,0,0" VerticalAlignment="Center" />
+                        <ui:Button Content="Remote Readers" x:Name="remoteReadersButton" DockPanel.Dock="Right" Margin="0,0,10,0" VerticalAlignment="Center" Click="remoteReadersButton_Click" Visibility="Visible" />
+                    </DockPanel>
+                </Expander.Header>
                 <ListBox Name="ReadersBox" HorizontalAlignment="Stretch" KeyboardNavigation.TabNavigation="Continue" Height="170"
                          ScrollViewer.CanContentScroll="True"
                          ScrollViewer.VerticalScrollBarVisibility="Visible">
