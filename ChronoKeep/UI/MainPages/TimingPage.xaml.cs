@@ -5,6 +5,7 @@ using Chronokeep.IO.HtmlTemplates;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
+using Chronokeep.UI.API;
 using Chronokeep.UI.Export;
 using Chronokeep.UI.IO;
 using Chronokeep.UI.Timing;
@@ -46,6 +47,7 @@ namespace Chronokeep.UI.MainPages
         DispatcherTimer Timer = new DispatcherTimer();
         private bool TimerStarted = false;
         private SetTimeWindow timeWindow = null;
+        private RemoteReadersWindow remoteWindow = null;
 
         ObservableCollection<DistanceStat> stats = new ObservableCollection<DistanceStat>();
 
@@ -211,6 +213,18 @@ namespace Chronokeep.UI.MainPages
                 ManualAPIButton.IsEnabled = true;
             }
 
+            if (mWindow.IsRemoteRunning())
+            {
+                remoteControllerSwitch.IsChecked = true;
+                remoteErrorsBlock.Text = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
+            }
+            else
+            {
+                remoteControllerSwitch.IsChecked = false;
+                remoteErrorsBlock.Text = "";
+            }
+            remoteControllerSwitch.IsEnabled = true;
+
             UpdateDNSButton();
         }
 
@@ -350,6 +364,18 @@ namespace Chronokeep.UI.MainPages
                 AutoAPIButton.Content = "Auto Upload";
                 ManualAPIButton.IsEnabled = true;
             }
+
+            if (mWindow.IsRemoteRunning())
+            {
+                remoteControllerSwitch.IsChecked = true;
+                remoteErrorsBlock.Text = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
+            }
+            else
+            {
+                remoteControllerSwitch.IsChecked = false;
+                remoteErrorsBlock.Text = "";
+            }
+            remoteControllerSwitch.IsEnabled = true;
 
             UpdateDNSButton();
 
@@ -1162,6 +1188,8 @@ namespace Chronokeep.UI.MainPages
         private void remoteReadersButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Remote readers button clicked.");
+            RemoteReadersWindow win = RemoteReadersWindow.CreateWindow(mWindow, database);
+            win.Show();
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -1177,6 +1205,21 @@ namespace Chronokeep.UI.MainPages
                     remoteReadersButton.Visibility = Visibility.Collapsed;
                 }
             }
+        }
+
+        private void remoteControllerSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.TimingPage", "Remote toggle switch checked.");
+            remoteControllerSwitch.IsEnabled = false;
+            mWindow.StartRemote();
+
+        }
+
+        private void remoteControllerSwitch_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.TimingPage", "Remote toggle switch unchecked.");
+            remoteControllerSwitch.IsEnabled = false;
+            mWindow.StopRemote();
         }
 
         private class AReaderBox : ListBoxItem

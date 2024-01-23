@@ -195,6 +195,8 @@
                     <DockPanel LastChildFill="False" VerticalAlignment="Center">
                         <TextBlock Text="Readers" Margin="5,0,0,0" VerticalAlignment="Center" />
                         <ui:Button Content="Remote Readers" x:Name="remoteReadersButton" DockPanel.Dock="Right" Margin="0,0,10,0" VerticalAlignment="Center" Click="remoteReadersButton_Click" Visibility="Visible" />
+                        <ui:ToggleSwitch x:Name="remoteControllerSwitch" Margin="0,0,10,0" VerticalAlignment="Center" DockPanel.Dock="Right" Checked="remoteControllerSwitch_Checked" Unchecked="remoteControllerSwitch_Unchecked"/>
+                        <TextBlock x:Name="remoteErrorsBlock" Margin="0,0,5,0" VerticalAlignment="Center" DockPanel.Dock="Right" />
                     </DockPanel>
                 </Expander.Header>
                 <ListBox Name="ReadersBox" HorizontalAlignment="Stretch" KeyboardNavigation.TabNavigation="Continue" Height="170"

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Chronokeep.Network.Remote;
+using Chronokeep.Objects.ChronokeepRemote;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,5 +36,35 @@ namespace Chronokeep.Objects
         public string URL { get => url; set => url = value; }
         public string Nickname { get => nickname; set => nickname = value; }
         public string AuthToken { get => auth_token; set => auth_token = value; }
+
+        public async Task<List<RemoteReader>> GetReaders()
+        {
+            if (type != Constants.APIConstants.CHRONOKEEP_REMOTE && type != Constants.APIConstants.CHRONOKEEP_REMOTE_SELF)
+            {
+                throw new Exception("not a valid reader type");
+            }
+            var response = await RemoteHandlers.GetReaders(this);
+            return response.Readers;
+        }
+
+        public async Task<List<ChipRead>> GetReads(RemoteReader reader, DateTime start, DateTime end)
+        {
+            if (type != Constants.APIConstants.CHRONOKEEP_REMOTE && type != Constants.APIConstants.CHRONOKEEP_REMOTE_SELF)
+            {
+                throw new Exception("not a valid reader type");
+            }
+            var result = await RemoteHandlers.GetReads(
+                            this,
+                            reader.Name,
+                            Constants.Timing.UnixDateToEpoch(start.ToUniversalTime()),
+                            Constants.Timing.UnixDateToEpoch(end.ToUniversalTime())
+                            );
+            List<ChipRead> output = new List<ChipRead>();
+            foreach (RemoteRead read in result.Reads)
+            {
+                output.Add(read.ConvertToChipRead(reader.EventID, reader.LocationID));
+            }
+            return output;
+        }
     }
 }

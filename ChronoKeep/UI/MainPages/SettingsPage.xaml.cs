@@ -80,22 +80,6 @@ namespace Chronokeep.UI.MainPages
                 Content = "Dark",
                 Uid = Constants.Settings.THEME_DARK
             });
-            for (int i=1; i<=60; i++)
-            {
-                UploadIntervalBox.Items.Add(new ComboBoxItem()
-                {
-                    Content = i.ToString(),
-                    Uid = i.ToString(),
-                });
-            }
-            for (int i=15; i<=180; i+=5)
-            {
-                AnnouncerWindowBox.Items.Add(new ComboBoxItem()
-                {
-                    Content = i.ToString(),
-                    Uid = i.ToString(),
-                });
-            }
             UpdateView();
         }
 
@@ -140,14 +124,19 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.SettingsPage", "Setting selected theme to Dark. " + (ThemeOffset + 2));
                 ThemeColorBox.SelectedIndex = ThemeOffset + 2;
             }
-            int uploadInt;
-            if (int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).Value, out uploadInt) && uploadInt > 0 && uploadInt < 60) {
-                UploadIntervalBox.SelectedIndex = uploadInt - 1;
+            if (int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).Value, out int uploadInt) && uploadInt > 0 && uploadInt < 60) {
+                uploadSlider.Value = uploadInt;
+                uploadBlock.Text = uploadInt.ToString();
             }
-            int announcerWindow;
-            if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).Value, out announcerWindow) && announcerWindow >= 15 && announcerWindow <= 180)
+            if (int.TryParse(database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL).Value, out int downloadInt) && downloadInt > 0 && downloadInt < 60)
             {
-                AnnouncerWindowBox.SelectedIndex = (announcerWindow - 15) / 5;
+                downloadSlider.Value = downloadInt;
+                downloadBlock.Text = downloadInt.ToString();
+            }
+            if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).Value, out int announcerWindow) && announcerWindow >= 15 && announcerWindow <= 180)
+            {
+                announcerSlider.Value = announcerWindow;
+                announcerBlock.Text = announcerWindow.ToString();
             }
             int alarm = 1;
             if (int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND).Value, out alarm))
@@ -226,17 +215,13 @@ namespace Chronokeep.UI.MainPages
             database.SetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE, UpdatePage.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.EXIT_NO_PROMPT, ExitNoPrompt.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.CHECK_UPDATES, CheckUpdates.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
-            database.SetAppSetting(Constants.Settings.UPLOAD_INTERVAL, ((ComboBoxItem)UploadIntervalBox.SelectedItem).Uid);
+            database.SetAppSetting(Constants.Settings.UPLOAD_INTERVAL, Convert.ToInt32(uploadSlider.Value).ToString());
+            Globals.UploadInterval = Convert.ToInt32(uploadSlider.Value);
+            database.SetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL, Convert.ToInt32(downloadSlider.Value).ToString());
+            Globals.DownloadInterval = Convert.ToInt32(downloadSlider.Value);
+            database.SetAppSetting(Constants.Settings.ANNOUNCER_WINDOW, Convert.ToInt32(announcerSlider.Value).ToString());
+            Globals.AnnouncerWindow = Convert.ToInt32(announcerSlider.Value);
             database.SetAppSetting(Constants.Settings.ALARM_SOUND, ((ComboBoxItem)AlarmSoundBox.SelectedItem).Uid);
-            if (!int.TryParse(((ComboBoxItem)UploadIntervalBox.SelectedItem).Uid, out Globals.UploadInterval))
-            {
-                DialogBox.Show("Something went wrong trying to update the upload interval.");
-            }
-            database.SetAppSetting(Constants.Settings.ANNOUNCER_WINDOW, ((ComboBoxItem)AnnouncerWindowBox.SelectedItem).Uid);
-            if (!int.TryParse(((ComboBoxItem)AnnouncerWindowBox.SelectedItem).Uid, out Globals.AnnouncerWindow))
-            {
-                DialogBox.Show("Something went wrong trying to update the announcer window.");
-            }
         }
 
         private void ChangeExport_Click(object sender, RoutedEventArgs e)
@@ -338,6 +323,30 @@ namespace Chronokeep.UI.MainPages
             catch (Exception ex)
             {
                 DialogBox.Show("Error trying to play sound. " + ex.Message);
+            }
+        }
+
+        private void uploadSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (uploadSlider != null && uploadBlock != null)
+            {
+                uploadBlock.Text = uploadSlider.Value.ToString();
+            }
+        }
+
+        private void downloadSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (downloadSlider != null && downloadBlock != null)
+            {
+                downloadBlock.Text = downloadSlider.Value.ToString();
+            }
+        }
+
+        private void announcerSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (announcerSlider != null && announcerBlock != null)
+            {
+                announcerBlock.Text = announcerSlider.Value.ToString();
             }
         }
     }

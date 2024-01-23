@@ -1,16 +1,13 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Network.API;
-using Chronokeep.Network.Remote;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
 using Xceed.Wpf.Toolkit;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using Button = Wpf.Ui.Controls.Button;
 
 namespace Chronokeep.UI.API
@@ -20,6 +17,8 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class RemoteReadersWindow : UiWindow
     {
+        private static RemoteReadersWindow theOne = null;
+
         IMainWindow window;
         IDBInterface database;
         Event theEvent;
@@ -27,7 +26,16 @@ namespace Chronokeep.UI.API
         List<APIObject> remoteAPIs;
         HashSet<(int, string)> readerNames = new();
 
-        public RemoteReadersWindow(IMainWindow window, IDBInterface database)
+        public static RemoteReadersWindow CreateWindow(IMainWindow window, IDBInterface database)
+        {
+            if (theOne == null)
+            {
+                theOne = new RemoteReadersWindow(window, database);
+            }
+            return theOne;
+        }
+
+        private RemoteReadersWindow(IMainWindow window, IDBInterface database)
         {
             InitializeComponent();
             this.window = window;
@@ -55,8 +63,8 @@ namespace Chronokeep.UI.API
                 // fetch all readers from the remote apis
                 foreach (APIObject api in remoteAPIs)
                 {
-                    var response = await RemoteHandlers.GetReaders(api);
-                    apiListView.Items.Add(new APIExpander(api, response.Readers, readerNames, database));
+                    var readers = await api.GetReaders();
+                    apiListView.Items.Add(new APIExpander(api, readers, readerNames, database));
                 }
             }
             catch (APIException ex)
@@ -72,13 +80,42 @@ namespace Chronokeep.UI.API
         private void UiWindow_Closed(object sender, EventArgs e)
         {
             Log.D("UI.API.RemoteReaders", "Window is closed.");
+            theOne = null;
             window.WindowFinalize(this);
         }
 
         private void Close_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             Log.D("UI.API.RemoteReaders", "Close button clicked.");
-            this.Close();
+            List<RemoteReader> readersToSave = new();
+            List<RemoteReader> otherReaders = new();
+            foreach (APIExpander item in apiListView.Items)
+            {
+                var downDict = item.GetAutoDownloadDictionary();
+                foreach (RemoteReader reader in downDict.Keys)
+                {
+                    if (downDict[reader])
+                    {
+                        readersToSave.Add(reader);
+                    }
+                    else
+                    {
+                        otherReaders.Add(reader);
+                    }
+                }
+            }
+            List<RemoteReader> deleteReaders = new();
+            foreach (RemoteReader reader in otherReaders)
+            {
+                if (readerNames.Contains((reader.APIIDentifier, reader.Name)))
+                {
+                    deleteReaders.Add(reader);
+                }
+            }
+            database.DeleteRemoteReaders(theEvent.Identifier, deleteReaders);
+            database.AddRemoteReaders(theEvent.Identifier, readersToSave);
+            // notify mainwindow to update/start remote reader thread
+            Close();
         }
 
         internal class APIExpander : ListViewItem
@@ -107,6 +144,16 @@ namespace Chronokeep.UI.API
                     readerListView.Items.Add(new ReaderListItem(reader, api, readerNames, database));
                 }
             }
+
+            public Dictionary<RemoteReader, bool> GetAutoDownloadDictionary()
+            {
+                var output = new Dictionary<RemoteReader, bool>();
+                foreach (ReaderListItem item in readerListView.Items)
+                {
+                    output[item.GetUpdatedReader()] = item.AutoDownloadReads();
+                }
+                return output;
+            }
         }
 
         internal class ReaderListItem : ListViewItem
@@ -117,6 +164,7 @@ namespace Chronokeep.UI.API
 
             ToggleSwitch autoFetch;
             TextBlock nameBlock;
+            ComboBox locationBox;
             DatePicker startDatePicker;
             DatePicker endDatePicker;
             MaskedTextBox startTimeBox;
@@ -129,6 +177,22 @@ namespace Chronokeep.UI.API
                 this.database = database;
 
                 string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
+                var theEvent = database.GetCurrentEvent();
+                if (theEvent == null || theEvent.Identifier < 1)
+                {
+                    return;
+                }
+                this.reader.EventID = theEvent.Identifier;
+                List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
+                if (!theEvent.CommonStartFinish)
+                {
+                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+                }
+                else
+                {
+                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                }
                 StackPanel thePanel = new()
                 {
                     Orientation = Orientation.Horizontal,
@@ -154,6 +218,27 @@ namespace Chronokeep.UI.API
                     Margin = new System.Windows.Thickness(5),
                 };
                 thePanel.Children.Add(nameBlock);
+                locationBox = new()
+                {
+                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
+                    Margin = new System.Windows.Thickness(5),
+                    Height = 35,
+                    Width = 100,
+                };
+                foreach (TimingLocation loc in locations)
+                {
+                    locationBox.Items.Add(new ComboBoxItem()
+                    {
+                        Content = loc.Name,
+                        Uid = loc.Identifier.ToString(),
+                        IsSelected = reader.LocationID == loc.Identifier,
+                    });
+                }
+                if (locationBox.SelectedItem == null)
+                {
+                    locationBox.SelectedIndex = 0;
+                }
+                thePanel.Children.Add(locationBox);
                 startDatePicker = new()
                 {
                     Text = dateStr,
@@ -208,18 +293,22 @@ namespace Chronokeep.UI.API
                     }
                     try
                     {
-                        var result = await RemoteHandlers.GetReads(
-                            this.api,
-                            this.reader.Name,
-                            Constants.Timing.UnixDateToEpoch(startDate.ToUniversalTime()),
-                            Constants.Timing.UnixDateToEpoch(endDate.ToUniversalTime())
-                            );
-                        List<ChipRead> toUpload = new List<ChipRead>();
-                        foreach (RemoteRead read in result.Reads)
+                        var theEvent = database.GetCurrentEvent();
+                        if (theEvent == null || theEvent.Identifier < 1)
                         {
-                            toUpload.Add(read.ConvertToChipRead(this.reader.EventID, this.reader.LocationID));
+                            return;
                         }
-                        this.database.AddChipReads(toUpload);
+                        this.reader.EventID = theEvent.Identifier;
+                        if (locationBox.SelectedItem == null)
+                        {
+                            this.reader.LocationID = Constants.Timing.LOCATION_FINISH;
+                        }
+                        else
+                        {
+                            this.reader.LocationID = Convert.ToInt32(((ComboBoxItem)locationBox.SelectedItem).Uid);
+                        }
+                        var reads = await api.GetReads(this.reader, startDate, endDate);
+                        this.database.AddChipReads(reads);
                     }
                     catch (APIException ex)
                     {
@@ -228,6 +317,28 @@ namespace Chronokeep.UI.API
                     }
                 });
                 thePanel.Children.Add(rewind);
+            }
+
+            public RemoteReader GetUpdatedReader()
+            {
+                var output = new RemoteReader();
+                output.Name = reader.Name;
+                output.EventID = reader.EventID;
+                output.APIIDentifier = api.Identifier;
+                if (locationBox.SelectedItem != null && int.TryParse(((ComboBoxItem)locationBox.SelectedItem).Uid, out var locId))
+                {
+                    output.LocationID = locId;
+                }
+                else
+                {
+                    output.LocationID = Constants.Timing.LOCATION_FINISH;
+                }
+                return output;
+            }
+
+            public bool AutoDownloadReads()
+            {
+                return autoFetch.IsChecked == true;
             }
         }
     }

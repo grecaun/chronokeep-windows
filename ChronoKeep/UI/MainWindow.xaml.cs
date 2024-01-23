@@ -49,6 +49,9 @@ namespace Chronokeep.UI
         // API objects.
         Thread APIControllerThread = null;
         APIController APIController = null;
+        // Remote Reads objects
+        Thread RemoteThread = null;
+        RemoteReadsController RemoteController = null;
 
         // Announcer objects
         AnnouncerWindow announcerWindow = null;
@@ -145,6 +148,12 @@ namespace Chronokeep.UI
             if (!int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).Value, out Globals.UploadInterval))
             {
                 DialogBox.Show("Something went wrong trying to update the upload interval.");
+            }
+
+            // Set the global download interval.
+            if (!int.TryParse(database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL).Value, out Globals.DownloadInterval))
+            {
+                DialogBox.Show("Something went wrong trying to update the download interval.");
             }
 
             // Pull alarms from the database.
@@ -388,7 +397,7 @@ namespace Chronokeep.UI
 
         public int APIErrors()
         {
-            return APIController.Errors;
+            return APIController != null ? APIController.Errors : 0;
         }
 
         public void WindowFinalize(Window w)
@@ -408,6 +417,50 @@ namespace Chronokeep.UI
                     ((TimingPage)page).NewMessage();
                 }
             }));
+        }
+
+        public async void StartRemote()
+        {
+            await Task.Run(() =>
+            {
+                Log.D("UI.MainWindow", "Checking Remote Thread");
+                if (!RemoteReadsController.IsRunning())
+                {
+                    Log.D("UI.MainWindow", "Starting Remote Thread");
+                    RemoteController = new RemoteReadsController(this, database);
+                    RemoteThread = new Thread(new ThreadStart(RemoteController.Run));
+                    RemoteThread.Start();
+                }
+            });
+        }
+
+        public bool StopRemote()
+        {
+            try
+            {
+                Log.D("UI.MainWindow", "Stopping Remote Controller");
+                if (RemoteController != null)
+                {
+                    RemoteController.Shutdown();
+                }
+                RemoteController = null;
+            }
+            catch
+            {
+                return false;
+            }
+            page.UpdateView();
+            return true;
+        }
+
+        public bool IsRemoteRunning()
+        {
+            return RemoteReadsController.IsRunning();
+        }
+
+        public int RemoteErrors()
+        {
+            return RemoteController != null ? RemoteController.Errors : 0;
         }
 
         public void UpdateAnnouncerWindow()

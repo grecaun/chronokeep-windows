@@ -47,5 +47,11 @@ namespace Chronokeep.Interfaces
         bool StopAPIController();
         bool IsAPIControllerRunning();
         int APIErrors();
+
+        // Remote Controller related calls.
+        void StartRemote();
+        bool StopRemote();
+        bool IsRemoteRunning();
+        int RemoteErrors();
     }
 }

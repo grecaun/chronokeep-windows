@@ -149,7 +149,7 @@
             >
             <Button
                 Name="apiPageButton"
-                Content="Manage Results API"
+                Content="Manage API"
                 Margin="0,0,0,5"
                 Click="apiPageButton_Click"
                 FontSize="16"

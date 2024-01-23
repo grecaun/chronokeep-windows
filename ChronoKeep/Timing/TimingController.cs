@@ -132,7 +132,7 @@ namespace Chronokeep.Timing
             }
             else
             {
-                Log.D("Timing.TimingController", "Unable to aquire mutex.");
+                Log.D("Timing.TimingController", "Unable to acquire mutex.");
                 return;
             }
             bool UpdateTiming = false;

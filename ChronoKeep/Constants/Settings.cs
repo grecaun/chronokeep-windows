@@ -27,6 +27,7 @@ namespace Chronokeep.Constants
         public static readonly string CHECK_UPDATES         = "SETTING_CHECK_UPDATES";
         public static readonly string CURRENT_THEME         = "SETTING_THEME";
         public static readonly string UPLOAD_INTERVAL       = "SETTING_UPLOAD_INTERVAL";
+        public static readonly string DOWNLOAD_INTERVAL     = "SETTINGS_DOWNLOAD_INTERVAL";
         public static readonly string ANNOUNCER_WINDOW      = "SETTING_ANNOUNCER_WINDOW";
         public static readonly string ALARM_SOUND           = "SETTING_ALARM_SOUND";
 
@@ -96,6 +97,10 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(UPLOAD_INTERVAL) == null)
             {
                 database.SetAppSetting(UPLOAD_INTERVAL, DEFAULT_INTERVAL);
+            }
+            if (database.GetAppSetting(DOWNLOAD_INTERVAL) == null)
+            {
+                database.SetAppSetting(DOWNLOAD_INTERVAL, DEFAULT_INTERVAL);
             }
             if (database.GetAppSetting(ANNOUNCER_WINDOW) == null)
             {

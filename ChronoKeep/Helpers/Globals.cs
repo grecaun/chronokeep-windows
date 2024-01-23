@@ -5,6 +5,7 @@ namespace Chronokeep.Helpers
     internal class Globals
     {
         public static int UploadInterval = -1;
+        public static int DownloadInterval = -1;
         public static int AnnouncerWindow = 45;
 
         public static void SetupValues(IDBInterface db)
@@ -12,6 +13,10 @@ namespace Chronokeep.Helpers
             if (!int.TryParse(db.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).Value, out UploadInterval))
             {
                 DialogBox.Show("Something went wrong trying to get the upload interval.");
+            }
+            if (!int.TryParse(db.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL).Value, out DownloadInterval))
+            {
+                DialogBox.Show("Something went wrong trying to get the download interval.");
             }
             if (!int.TryParse(db.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).Value, out AnnouncerWindow))
             {

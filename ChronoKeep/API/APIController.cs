@@ -79,11 +79,6 @@ namespace Chronokeep.API
                 waiter.Release();
                 mut.ReleaseMutex();
             }
-            else
-            {
-                // Unable to get mutex.
-                return;
-            }
         }
 
         public async void Run()
@@ -103,7 +98,7 @@ namespace Chronokeep.API
             }
             else
             {
-                Log.D("API.APIController", "Unable to aquire mutex.");
+                Log.D("API.APIController", "Unable to acquire mutex.");
                 return;
             }
             mainWindow.UpdateTimingFromController();
@@ -267,7 +262,7 @@ namespace Chronokeep.API
                     Log.D("API.APIController", "Error with API mutex.");
                     KeepAlive = false;
                     Running = false;
-                    // Unable to get mutex.
+                    mainWindow.UpdateTimingFromController();
                     return;
                 }
             }
