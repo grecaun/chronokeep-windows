@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {

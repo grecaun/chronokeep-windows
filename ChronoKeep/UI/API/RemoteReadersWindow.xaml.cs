@@ -2,6 +2,7 @@
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
+using Chronokeep.Timing.Remote;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -115,6 +116,7 @@ namespace Chronokeep.UI.API
             database.DeleteRemoteReaders(theEvent.Identifier, deleteReaders);
             database.AddRemoteReaders(theEvent.Identifier, readersToSave);
             // notify mainwindow to update/start remote reader thread
+            RemoteReadersNotifier.GetRemoteReadersNotifier().Notify();
             Close();
         }
 

@@ -5,12 +5,10 @@ using Chronokeep.Objects;
 using Chronokeep.Objects.API;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Chronokeep.API
+namespace Chronokeep.Timing.API
 {
     class APIController
     {

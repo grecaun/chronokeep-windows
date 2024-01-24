@@ -14,8 +14,6 @@ using System.Windows.Input;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
 using Chronokeep.Network.API;
-using Chronokeep.API;
-using DocumentFormat.OpenXml.Bibliography;
 using Chronokeep.UI.UIObjects;
 
 namespace Chronokeep.UI.MainPages

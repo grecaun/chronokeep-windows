@@ -4,7 +4,6 @@ using System;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using Wpf.Ui.Controls;
 
 namespace Chronokeep

@@ -4,8 +4,6 @@ using Chronokeep.UI.Participants;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace Chronokeep.UI.Timing
 {

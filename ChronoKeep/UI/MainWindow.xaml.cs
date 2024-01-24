@@ -1,5 +1,4 @@
-﻿using Chronokeep.API;
-using Chronokeep.Database;
+﻿using Chronokeep.Database;
 using Chronokeep.Interfaces;
 using Chronokeep.Network;
 using Chronokeep.Objects;
@@ -17,13 +16,12 @@ using Chronokeep.Timing.Announcer;
 using Wpf.Ui.Mvvm.Contracts;
 using System.Windows.Controls;
 using Wpf.Ui.Controls.Interfaces;
-using System.Net;
-using System.Runtime.InteropServices;
 using System.Windows.Threading;
 using Chronokeep.UI.UIObjects;
 using Chronokeep.Helpers;
-using Chronokeep.UI.Timing;
 using System.Media;
+using Chronokeep.Timing.API;
+using Chronokeep.Timing.Remote;
 
 namespace Chronokeep.UI
 {

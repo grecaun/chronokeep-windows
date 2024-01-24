@@ -1,10 +1,10 @@
-﻿using Chronokeep.API;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Interfaces;
 using Chronokeep.IO;
 using Chronokeep.IO.HtmlTemplates;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
+using Chronokeep.Timing.API;
 using Chronokeep.UI.API;
 using Chronokeep.UI.Export;
 using Chronokeep.UI.IO;
@@ -47,7 +47,6 @@ namespace Chronokeep.UI.MainPages
         DispatcherTimer Timer = new DispatcherTimer();
         private bool TimerStarted = false;
         private SetTimeWindow timeWindow = null;
-        private RemoteReadersWindow remoteWindow = null;
 
         ObservableCollection<DistanceStat> stats = new ObservableCollection<DistanceStat>();
 

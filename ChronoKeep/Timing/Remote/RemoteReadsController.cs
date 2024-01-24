@@ -1,14 +1,15 @@
 ﻿using Chronokeep.Helpers;
 using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.Timing;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Chronokeep.API
+namespace Chronokeep.Timing.Remote
 {
-    class RemoteReadsController
+    class RemoteReadsController : IRemoteReadersChangeSubscriber
     {
         readonly IMainWindow mainWindow;
         readonly IDBInterface database;
@@ -78,6 +79,8 @@ namespace Chronokeep.API
             // keep looping until told to stop
             Dictionary<int, APIObject> apiDictionary = new();
             List<RemoteReader> readers = new();
+            // Subscribe to reader changes.
+            RemoteReadersNotifier.GetRemoteReadersNotifier().Subscribe(this);
             while (true)
             {
                 // check if we need to update our list of readers
@@ -85,6 +88,7 @@ namespace Chronokeep.API
                 {
                     if (UpdateReaders)
                     {
+                        Log.D("API.RemoteReadsController", "Updating readers.");
                         var theEvent = database.GetCurrentEvent();
                         readers = database.GetRemoteReaders(theEvent.Identifier);
                         apiDictionary.Clear();
@@ -173,6 +177,7 @@ namespace Chronokeep.API
                         Running = false;
                         mut.ReleaseMutex();
                         mainWindow.UpdateTimingFromController();
+                        RemoteReadersNotifier.GetRemoteReadersNotifier().Unsubscribe(this);
                         return;
                     }
                     mut.ReleaseMutex();
@@ -183,8 +188,18 @@ namespace Chronokeep.API
                     KeepAlive = false;
                     Running = false;
                     mainWindow.UpdateTimingFromController();
+                    RemoteReadersNotifier.GetRemoteReadersNotifier().Unsubscribe(this);
                     return;
                 }
+            }
+        }
+
+        public void NotifyRemoteReadersChange()
+        {
+            if (mut.WaitOne(3000))
+            {
+                UpdateReaders = true;
+                mut.ReleaseMutex();
             }
         }
     }

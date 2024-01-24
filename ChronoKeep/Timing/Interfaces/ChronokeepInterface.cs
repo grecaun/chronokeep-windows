@@ -13,7 +13,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace Chronokeep.Timing.Interfaces
 {

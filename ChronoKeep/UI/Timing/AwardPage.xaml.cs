@@ -1,12 +1,8 @@
-﻿using Chronokeep.Database.SQLite;
-using Chronokeep.Interfaces;
-using Chronokeep.IO;
+﻿using Chronokeep.Interfaces;
 using Chronokeep.IO.HtmlTemplates.Printables;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
-using Microsoft.AspNetCore.Html;
-using Microsoft.Extensions.Options;
 using Microsoft.Win32;
 using System;
 using System.Collections;
@@ -20,7 +16,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {
