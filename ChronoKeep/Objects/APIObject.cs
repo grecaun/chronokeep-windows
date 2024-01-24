@@ -57,6 +57,10 @@ namespace Chronokeep.Objects
                             Constants.Timing.UnixDateToEpoch(end.ToUniversalTime())
                             );
             List<ChipRead> output = new List<ChipRead>();
+            if (result.Reads == null)
+            {
+                return output;
+            }
             foreach (RemoteRead read in result.Reads)
             {
                 output.Add(read.ConvertToChipRead(reader.EventID, reader.LocationID));

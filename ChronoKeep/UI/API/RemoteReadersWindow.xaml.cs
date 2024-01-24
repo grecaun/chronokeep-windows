@@ -25,7 +25,6 @@ namespace Chronokeep.UI.API
         Event theEvent;
 
         List<APIObject> remoteAPIs;
-        HashSet<(int, string)> readerNames = new();
 
         public static RemoteReadersWindow CreateWindow(IMainWindow window, IDBInterface database)
         {
@@ -52,10 +51,6 @@ namespace Chronokeep.UI.API
             }
             remoteAPIs = database.GetAllAPI();
             remoteAPIs.RemoveAll( x => x.Type != Constants.APIConstants.CHRONOKEEP_REMOTE && x.Type != Constants.APIConstants.CHRONOKEEP_REMOTE_SELF );
-            foreach (RemoteReader reader in database.GetRemoteReaders(theEvent.Identifier))
-            {
-                readerNames.Add((reader.APIIDentifier, reader.Name));
-            }
             GetReaders();
         }
 
@@ -63,11 +58,16 @@ namespace Chronokeep.UI.API
         {
             try
             {
+                Dictionary<(int, string), RemoteReader> savedReaders = new();
+                foreach (RemoteReader reader in database.GetRemoteReaders(theEvent.Identifier))
+                {
+                    savedReaders[(reader.APIIDentifier, reader.Name)] = reader;
+                }
                 // fetch all readers from the remote apis
                 foreach (APIObject api in remoteAPIs)
                 {
                     var readers = await api.GetReaders();
-                    apiListView.Items.Add(new APIExpander(api, readers, readerNames, database));
+                    apiListView.Items.Add(new APIExpander(api, readers, savedReaders, database));
                 }
             }
             catch (APIException ex)
@@ -108,6 +108,11 @@ namespace Chronokeep.UI.API
                 }
             }
             List<RemoteReader> deleteReaders = new();
+            HashSet<(int, string)> readerNames = new();
+            foreach (RemoteReader reader in database.GetRemoteReaders(theEvent.Identifier))
+            {
+                readerNames.Add((reader.APIIDentifier, reader.Name));
+            }
             foreach (RemoteReader reader in otherReaders)
             {
                 if (readerNames.Contains((reader.APIIDentifier, reader.Name)))
@@ -126,7 +131,7 @@ namespace Chronokeep.UI.API
         {
             private ListView readerListView;
 
-            public APIExpander(APIObject api, List<RemoteReader> readers, HashSet<(int, string)> readerNames, IDBInterface database)
+            public APIExpander(APIObject api, List<RemoteReader> readers, Dictionary<(int, string), RemoteReader> savedReaders, IDBInterface database)
             {
                 Expander expander = new()
                 {
@@ -146,7 +151,12 @@ namespace Chronokeep.UI.API
                 expander.Content = readerListView;
                 foreach (RemoteReader reader in readers)
                 {
-                    readerListView.Items.Add(new ReaderListItem(reader, api, readerNames, database));
+                    reader.APIIDentifier = api.Identifier;
+                    if (savedReaders.ContainsKey((reader.APIIDentifier, reader.Name)))
+                    {
+                        reader.LocationID = savedReaders[(reader.APIIDentifier, reader.Name)].LocationID;
+                    }
+                    readerListView.Items.Add(new ReaderListItem(reader, api, savedReaders, database));
                 }
             }
 
@@ -175,7 +185,12 @@ namespace Chronokeep.UI.API
             MaskedTextBox startTimeBox;
             MaskedTextBox endTimeBox;
 
-            public ReaderListItem(RemoteReader reader, APIObject api, HashSet<(int, string)> readerNames, IDBInterface database)
+            public ReaderListItem(
+                RemoteReader reader,
+                APIObject api,
+                Dictionary<(int, string), RemoteReader> savedReaders,
+                IDBInterface database
+                )
             {
                 this.reader = reader;
                 this.api = api;
@@ -210,7 +225,7 @@ namespace Chronokeep.UI.API
                     Height = 35,
                     Width = 55,
                     VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                    IsChecked = readerNames.Contains((reader.APIIDentifier, reader.Name)),
+                    IsChecked = savedReaders.ContainsKey((reader.APIIDentifier, reader.Name)),
                     Margin = new System.Windows.Thickness(5),
                 };
                 thePanel.Children.Add(autoFetch);
@@ -283,7 +298,7 @@ namespace Chronokeep.UI.API
                     Margin = new System.Windows.Thickness(5)
                 };
                 thePanel.Children.Add(endTimeBox);
-                Button rewind = new Button()
+                Button rewind = new()
                 {
                     Icon = Wpf.Ui.Common.SymbolRegular.Rewind16,
                     Height = 35,
