@@ -20,7 +20,7 @@ namespace Chronokeep.Objects.ChronokeepRemote
             this.EventID = event_id;
         }
 
-        [JsonPropertyName("Name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
         public int APIIDentifier { get; set; }
         public int LocationID { get; set; }

@@ -41,6 +41,8 @@ namespace Chronokeep.UI.API
             InitializeComponent();
             this.window = window;
             this.database = database;
+            this.MinWidth = 10;
+            this.MinHeight = 10;
             theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
@@ -132,6 +134,7 @@ namespace Chronokeep.UI.API
                     IsExpanded = true,
                     HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
                     VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
+                    Width = 1050,
                     Margin = new System.Windows.Thickness(5),
                 };
                 this.Content = expander;
@@ -215,7 +218,6 @@ namespace Chronokeep.UI.API
                 {
                     Text = reader.Name,
                     VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                    Height = 35,
                     Width = 100,
                     Margin = new System.Windows.Thickness(5),
                 };
@@ -225,7 +227,7 @@ namespace Chronokeep.UI.API
                     VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
                     Margin = new System.Windows.Thickness(5),
                     Height = 35,
-                    Width = 100,
+                    Width = 170,
                 };
                 foreach (TimingLocation loc in locations)
                 {
@@ -245,7 +247,7 @@ namespace Chronokeep.UI.API
                 {
                     Text = dateStr,
                     Height = 35,
-                    Width = 100,
+                    Width = 200,
                     Margin = new System.Windows.Thickness(5)
                 };
                 thePanel.Children.Add(startDatePicker);
@@ -254,7 +256,10 @@ namespace Chronokeep.UI.API
                     Text = "00:00:00",
                     Mask = "00:00:00",
                     Height = 35,
-                    Width = 100,
+                    Width = 80,
+                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
+                    TextAlignment = System.Windows.TextAlignment.Center,
                     Margin = new System.Windows.Thickness(5)
                 };
                 thePanel.Children.Add(startTimeBox);
@@ -262,7 +267,7 @@ namespace Chronokeep.UI.API
                 {
                     Text = dateStr,
                     Height = 35,
-                    Width = 100,
+                    Width = 200,
                     Margin = new System.Windows.Thickness(5)
                 };
                 thePanel.Children.Add(endDatePicker);
@@ -271,7 +276,10 @@ namespace Chronokeep.UI.API
                     Text = "23:59:59",
                     Mask = "00:00:00",
                     Height = 35,
-                    Width = 100,
+                    Width = 80,
+                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
+                    TextAlignment = System.Windows.TextAlignment.Center,
                     Margin = new System.Windows.Thickness(5)
                 };
                 thePanel.Children.Add(endTimeBox);
