@@ -47,6 +47,7 @@ namespace Chronokeep.UI.MainPages
         DispatcherTimer Timer = new DispatcherTimer();
         private bool TimerStarted = false;
         private SetTimeWindow timeWindow = null;
+        private RewindWindow rewindWindow = null;
 
         ObservableCollection<DistanceStat> stats = new ObservableCollection<DistanceStat>();
 
@@ -303,6 +304,19 @@ namespace Chronokeep.UI.MainPages
                 read.UpdateLocations(locations);
                 read.UpdateStatus();
                 connected += read.reader.Status == SYSTEM_STATUS.DISCONNECTED ? 0 : 1;
+                if (read.reader.Status == SYSTEM_STATUS.DISCONNECTED)
+                {
+                    if (timeWindow != null && timeWindow.IsTimingSystem(read.reader))
+                    {
+                        timeWindow.Close();
+                        timeWindow = null;
+                    }
+                    if (rewindWindow != null && rewindWindow.IsTimingSystem(read.reader))
+                    {
+                        rewindWindow.Close();
+                        rewindWindow = null;
+                    }
+                }
             }
             if (total < 4)
             {
@@ -533,6 +547,15 @@ namespace Chronokeep.UI.MainPages
             timeWindow = new SetTimeWindow(this, system);
             timeWindow.ShowDialog();
             timeWindow = null;
+        }
+
+        public void OpenRewindWindow(TimingSystem system)
+        {
+            Log.D("UI.MainPages.TimingPage", "Opening Rewind Window.");
+            rewindWindow = new RewindWindow(system);
+            rewindWindow.ShowDialog();
+            rewindWindow = null;
+
         }
 
         public void SetAllTimingSystemsToTime(DateTime time, bool now)
@@ -1237,6 +1260,8 @@ namespace Chronokeep.UI.MainPages
             private List<TimingLocation> locations;
             public TimingSystem reader;
 
+            public RewindWindow rewind = null;
+
             private const string IPPattern = "^([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\\.([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])$";
             private const string allowedChars = "[^0-9.]";
             private const string allowedNums = "[^0-9]";
@@ -1642,8 +1667,7 @@ namespace Chronokeep.UI.MainPages
             private void Rewind(object sender, RoutedEventArgs e)
             {
                 Log.D("UI.MainPages.TimingPage", "Settings button pressed. IP is " + ReaderIP.Text);
-                RewindWindow rewind = new RewindWindow(reader);
-                rewind.ShowDialog();
+                parent.OpenRewindWindow(reader);
             }
 
             private void Clock(object sender, RoutedEventArgs e)

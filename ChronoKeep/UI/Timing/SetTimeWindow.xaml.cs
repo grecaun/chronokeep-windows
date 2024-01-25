@@ -25,6 +25,11 @@ namespace Chronokeep.UI.Timing
             this.SizeToContent = SizeToContent.Height;
         }
 
+        public bool IsTimingSystem(TimingSystem timingSystem)
+        {
+            return this.timingSystem.Equals(timingSystem);
+        }
+
         public void UpdateTime()
         {
             TimeLabel.Text = string.Format("Time is {0}", timingSystem.SystemTime);

@@ -35,6 +35,11 @@ namespace Chronokeep.UI.Timing
             }
         }
 
+        public bool IsTimingSystem(TimingSystem timingSystem)
+        {
+            return this.system.Equals(timingSystem);
+        }
+
         private void SetYesterday_Click(object sender, RoutedEventArgs e)
         {
             string dateStr = DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy");
