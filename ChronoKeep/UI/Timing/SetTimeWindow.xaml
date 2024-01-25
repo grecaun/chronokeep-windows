@@ -37,6 +37,7 @@
                 </Grid>
             </RadioButton>
             <CheckBox Name="SetAllCheckBox" Content="Set all connected readers" FontSize="14" VerticalContentAlignment="Center" Margin="10,5,10,5"/>
+            <TextBlock Name="CurrentTimeLabel" VerticalAlignment="Center" TextAlignment="Center" Text="" FontSize="14" Margin="10,5,10,5"/>
             <TextBlock Name="TimeLabel" VerticalAlignment="Center" TextAlignment="Center" Text="" FontSize="14" Margin="10,5,10,5"/>
             <Grid>
                 <Grid.ColumnDefinitions>
