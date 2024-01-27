@@ -18,6 +18,8 @@ namespace Chronokeep.Timing.Interfaces
 {
     internal class ChronokeepInterface : ITimingSystemInterface
     {
+        private const int PARTICIPANTS_COUNT = 50;
+
         IDBInterface database;
         readonly int locationId;
         Event theEvent;
@@ -557,18 +559,23 @@ namespace Chronokeep.Timing.Interfaces
 
         public void SendUploadParticipants(List<PortalParticipant> participants)
         {
-            if (participants.Count > 50)
+            if (participants.Count > PARTICIPANTS_COUNT)
             {
-                int ix = 0;
-                while (ix < participants.Count)
+                int loopCounter = participants.Count / PARTICIPANTS_COUNT;
+                int leftOver = participants.Count % PARTICIPANTS_COUNT;
+                for (int ix = 0; ix < loopCounter; ix++)
                 {
-                    Log.D("Timing.Interfaces.ChronokeepInterface", "Sending 50 participants starting at " + ix);
+                    Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} participants starting at {1}", PARTICIPANTS_COUNT, ix * PARTICIPANTS_COUNT));
                     SendMessage(JsonSerializer.Serialize(new ParticipantsAddRequest
                     {
-                        Participants = participants.GetRange(ix, 50)
+                        Participants = participants.GetRange(ix * PARTICIPANTS_COUNT, PARTICIPANTS_COUNT)
                     }));
-                    ix += 50;
                 }
+                Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} participants starting at {1}", leftOver, loopCounter * PARTICIPANTS_COUNT));
+                SendMessage(JsonSerializer.Serialize(new ParticipantsAddRequest
+                {
+                    Participants = participants.GetRange(loopCounter * PARTICIPANTS_COUNT, leftOver)
+                }));
             }
             else
             {
