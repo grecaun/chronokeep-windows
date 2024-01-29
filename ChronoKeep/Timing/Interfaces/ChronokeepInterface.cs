@@ -572,10 +572,13 @@ namespace Chronokeep.Timing.Interfaces
                     }));
                 }
                 Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} participants starting at {1}", leftOver, loopCounter * PARTICIPANTS_COUNT));
-                SendMessage(JsonSerializer.Serialize(new ParticipantsAddRequest
+                if (leftOver > 0)
                 {
-                    Participants = participants.GetRange(loopCounter * PARTICIPANTS_COUNT, leftOver)
-                }));
+                    SendMessage(JsonSerializer.Serialize(new ParticipantsAddRequest
+                    {
+                        Participants = participants.GetRange(loopCounter * PARTICIPANTS_COUNT, leftOver)
+                    }));
+                }
             }
             else
             {
