@@ -571,9 +571,9 @@ namespace Chronokeep.Timing.Interfaces
                         Participants = participants.GetRange(ix * PARTICIPANTS_COUNT, PARTICIPANTS_COUNT)
                     }));
                 }
-                Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} participants starting at {1}", leftOver, loopCounter * PARTICIPANTS_COUNT));
                 if (leftOver > 0)
                 {
+                    Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} participants starting at {1}", leftOver, loopCounter * PARTICIPANTS_COUNT));
                     SendMessage(JsonSerializer.Serialize(new ParticipantsAddRequest
                     {
                         Participants = participants.GetRange(loopCounter * PARTICIPANTS_COUNT, leftOver)

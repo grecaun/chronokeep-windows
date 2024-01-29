@@ -482,7 +482,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     FontSize = 10,
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                connectedSwitch.Checked += new RoutedEventHandler(this.ConnectReader);
+                connectedSwitch.Click += new RoutedEventHandler(this.ConnectReader);
                 subPanel.Children.Add(connectedSwitch);
                 readingSwitch = new ToggleSwitch()
                 {
@@ -494,7 +494,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     FontSize = 10,
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
-                readingSwitch.Checked += new RoutedEventHandler(this.StartReader);
+                readingSwitch.Click += new RoutedEventHandler(this.StartReader);
                 subPanel.Children.Add(readingSwitch);
                 saveReaderButton = new Button()
                 {
@@ -539,9 +539,8 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 autoConnectSwitch.IsChecked = reader.AutoConnect;
                 connectedSwitch.IsChecked = reader.Connected;
                 readingSwitch.IsChecked = reader.Reading && reader.Connected;
-                readingSwitch.IsEnabled = reader.Connected;
                 connectedSwitch.IsEnabled = true;
-                readingSwitch.IsEnabled = true;
+                readingSwitch.IsEnabled = reader.Connected;
             }
 
             private void UpdateReaderPort(object sender, RoutedEventArgs e)

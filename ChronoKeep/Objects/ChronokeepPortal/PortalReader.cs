@@ -24,9 +24,9 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public uint Port { get; set; }
         [JsonPropertyName("auto_connect")]
         public bool AutoConnect { get; set; }
-        [JsonPropertyName("Reading")]
+        [JsonPropertyName("reading")]
         public bool Reading { get; set; } = false;
-        [JsonPropertyName("Connected")]
+        [JsonPropertyName("connected")]
         public bool Connected { get; set; } = false;
     }
 }
