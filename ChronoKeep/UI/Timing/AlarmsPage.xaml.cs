@@ -299,6 +299,48 @@ namespace Chronokeep.UI.Timing
                         Uid = "5",
                     }
                     );
+                AlarmSoundBox.Items.Add(
+                    new ComboBoxItem
+                    {
+                        Content = "Emily 1",
+                        Uid = "6",
+                    }
+                    );
+                AlarmSoundBox.Items.Add(
+                    new ComboBoxItem
+                    {
+                        Content = "Emily 2",
+                        Uid = "7",
+                    }
+                    );
+                AlarmSoundBox.Items.Add(
+                    new ComboBoxItem
+                    {
+                        Content = "Emily 3",
+                        Uid = "8",
+                    }
+                    );
+                AlarmSoundBox.Items.Add(
+                    new ComboBoxItem
+                    {
+                        Content = "Michael 1",
+                        Uid = "9",
+                    }
+                    );
+                AlarmSoundBox.Items.Add(
+                    new ComboBoxItem
+                    {
+                        Content = "Michael 2",
+                        Uid = "10",
+                    }
+                    );
+                AlarmSoundBox.Items.Add(
+                    new ComboBoxItem
+                    {
+                        Content = "Michael 3",
+                        Uid = "11",
+                    }
+                    );
                 AlarmSoundBox.SelectedIndex = alarm.AlarmSound;
                 theGrid.Children.Add(AlarmSoundBox);
                 Grid.SetColumn(AlarmSoundBox, 2);

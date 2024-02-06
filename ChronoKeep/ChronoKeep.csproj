@@ -309,6 +309,24 @@
     <None Update="Sounds\alert-5.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Sounds\emily-alert-runner-here.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sounds\emily-runner-arrived.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sounds\emily-runner-here.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sounds\michael-alert-runner-here.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sounds\michael-runner-arrived.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sounds\michael-runner-here.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="wkhtmltopdf.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

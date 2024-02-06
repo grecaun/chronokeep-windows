@@ -863,6 +863,24 @@ namespace Chronokeep.UI
                         case 5:
                             soundFile += "\\Sounds\\alert-5.wav";
                             break;
+                        case 6:
+                            soundFile += "\\Sounds\\emily-runner-here.wav";
+                            break;
+                        case 7:
+                            soundFile += "\\Sounds\\emily-runner-arrived.wav";
+                            break;
+                        case 8:
+                            soundFile += "\\Sounds\\emily-alert-runner-here.wav";
+                            break;
+                        case 9:
+                            soundFile += "\\Sounds\\michael-runner-here.wav";
+                            break;
+                        case 10:
+                            soundFile += "\\Sounds\\michael-runner-arrived.wav";
+                            break;
+                        case 11:
+                            soundFile += "\\Sounds\\michael-alert-runner-here.wav";
+                            break;
                         default:
                             soundFile += "\\Sounds\\alert-1.wav";
                             break;
