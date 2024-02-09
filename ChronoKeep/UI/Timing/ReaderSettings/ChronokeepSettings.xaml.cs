@@ -163,9 +163,13 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     Name = nameBox.Text.Trim(),
                     SightingPeriod = window,
                     ReadWindow = int.Parse(readWindowBox.Text.Trim()),
-                    ChipType = chipTypeBox.SelectedIndex == 0 ? PortalSettingsHolder.ChipTypeEnum.DEC : PortalSettingsHolder.ChipTypeEnum.HEX,
+                    ChipType = chipTypeBox.SelectedIndex == 0 ? PortalSettingsHolder.ChipTypeEnum.DEC
+                        : PortalSettingsHolder.ChipTypeEnum.HEX,
                     Volume = volumeSlider.Value / 10,
                     PlaySound = soundBox.IsChecked == true,
+                    Voice = voiceBox.SelectedIndex == 0 ? PortalSettingsHolder.VoiceType.EMILY
+                        : voiceBox.SelectedIndex == 1 ? PortalSettingsHolder.VoiceType.MICHAEL
+                        : PortalSettingsHolder.VoiceType.CUSTOM,
                 };
                 reader.SendSetSettings(sett);
             }
@@ -221,6 +225,18 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     chipTypeBox.SelectedIndex = allSettings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? 0 : 1;
                     volumeSlider.Value = allSettings.Volume * 10;
                     soundBox.IsChecked = allSettings.PlaySound;
+                    switch (allSettings.Voice)
+                    {
+                        case PortalSettingsHolder.VoiceType.EMILY:
+                            voiceBox.SelectedIndex = 0;
+                            break;
+                        case PortalSettingsHolder.VoiceType.MICHAEL:
+                            voiceBox.SelectedIndex = 1;
+                            break;
+                        case PortalSettingsHolder.VoiceType.CUSTOM:
+                            voiceBox.SelectedIndex = 2;
+                            break;
+                    }
                 }
                 // add readers and apis to views
                 if (readers)

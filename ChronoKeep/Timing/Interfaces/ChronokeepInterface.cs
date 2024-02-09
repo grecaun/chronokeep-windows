@@ -205,6 +205,24 @@ namespace Chronokeep.Timing.Interfaces
                                             case PortalSetting.SETTING_VOLUME:
                                                 updSettings.Volume = double.Parse(set.Value);
                                                 break;
+                                            case PortalSetting.SETTING_VOICE:
+                                                if (set.Value == PortalSetting.VOICE_EMILY)
+                                                {
+                                                    updSettings.Voice = PortalSettingsHolder.VoiceType.EMILY;
+                                                }
+                                                else if (set.Value == PortalSetting.VOICE_MICHAEL)
+                                                {
+                                                    updSettings.Voice = PortalSettingsHolder.VoiceType.MICHAEL;
+                                                }
+                                                else if (set.Value == PortalSetting.VOICE_CUSTOM)
+                                                {
+                                                    updSettings.Voice = PortalSettingsHolder.VoiceType.CUSTOM;
+                                                }
+                                                else
+                                                {
+                                                    updSettings.Voice = PortalSettingsHolder.VoiceType.EMILY;
+                                                }
+                                                break;
                                         }
                                     }
                                     settingsWindow.UpdateView(
@@ -297,6 +315,24 @@ namespace Chronokeep.Timing.Interfaces
                                                 break;
                                             case PortalSetting.SETTING_VOLUME:
                                                 updSettings.Volume = double.Parse(set.Value);
+                                                break;
+                                            case PortalSetting.SETTING_VOICE:
+                                                if (set.Value == PortalSetting.VOICE_EMILY)
+                                                {
+                                                    updSettings.Voice = PortalSettingsHolder.VoiceType.EMILY;
+                                                }
+                                                else if (set.Value == PortalSetting.VOICE_MICHAEL)
+                                                {
+                                                    updSettings.Voice = PortalSettingsHolder.VoiceType.MICHAEL;
+                                                }
+                                                else if (set.Value == PortalSetting.VOICE_CUSTOM)
+                                                {
+                                                    updSettings.Voice = PortalSettingsHolder.VoiceType.CUSTOM;
+                                                }
+                                                else
+                                                {
+                                                    updSettings.Voice = PortalSettingsHolder.VoiceType.EMILY;
+                                                }
                                                 break;
                                         }
                                     }
@@ -542,7 +578,8 @@ namespace Chronokeep.Timing.Interfaces
             settingsReq.Settings.Add(new PortalSetting
             {
                 Name = PortalSetting.SETTING_CHIP_TYPE,
-                Value = settings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? PortalSetting.TYPE_CHIP_DEC : PortalSetting.TYPE_CHIP_HEX
+                Value = settings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? PortalSetting.TYPE_CHIP_DEC
+                    : PortalSetting.TYPE_CHIP_HEX
             });
             settingsReq.Settings.Add(new PortalSetting
             {
@@ -553,6 +590,13 @@ namespace Chronokeep.Timing.Interfaces
             {
                 Name = PortalSetting.SETTING_PLAY_SOUND,
                 Value = settings.PlaySound == true ? "true" : "false"
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_VOICE,
+                Value = settings.Voice == PortalSettingsHolder.VoiceType.EMILY ? PortalSetting.VOICE_EMILY
+                    : settings.Voice == PortalSettingsHolder.VoiceType.MICHAEL ? PortalSetting.VOICE_MICHAEL
+                    : PortalSetting.VOICE_CUSTOM
             });
             SendMessage(JsonSerializer.Serialize(settingsReq));
         }

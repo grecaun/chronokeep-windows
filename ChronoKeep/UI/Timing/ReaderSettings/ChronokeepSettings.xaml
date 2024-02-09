@@ -104,6 +104,14 @@
                             />
                     </ComboBox>
                 </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <CheckBox
+                        Content="Play Sound on Read?"
+                        VerticalContentAlignment="Center"
+                        x:Name="soundBox"
+                        Margin="5,5,5,5"
+                        />
+                </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
                         Text="Volume"
@@ -122,13 +130,33 @@
                         TickFrequency="1"
                         />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <CheckBox
-                        Content="Play Sound on Read?"
-                        VerticalContentAlignment="Center"
-                        x:Name="soundBox"
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        Text="Voice"
+                        TextAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="120"
                         Margin="5,5,5,5"
                         />
+                    <ComboBox
+                        x:Name="voiceBox"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        SelectedIndex="0"
+                        >
+                        <ComboBoxItem
+                            Content="Emily"
+                            Uid="emily"
+                            />
+                        <ComboBoxItem
+                            Content="Michael"
+                            Uid="michael"
+                            />
+                        <ComboBoxItem
+                            Content="Custom"
+                            Uid="custom"
+                            />
+                    </ComboBox>
                 </StackPanel>
                 <Expander
                     x:Name="readerExpander"

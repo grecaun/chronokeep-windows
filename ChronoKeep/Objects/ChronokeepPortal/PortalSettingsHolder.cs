@@ -15,6 +15,13 @@ namespace Chronokeep.Objects.ChronokeepPortal
             HEX
         }
 
+        public enum VoiceType
+        {
+            EMILY,
+            MICHAEL,
+            CUSTOM
+        }
+
         public string Name { get; set; }
         public int SightingPeriod { get; set; }
         public int ReadWindow { get; set; }
@@ -24,5 +31,6 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public List<PortalReader> Readers { get; set; }
         public List<PortalAPI> APIs { get; set; }
         public PortalStatus AutoUpload { get; set; }
+        public VoiceType Voice { get; set; }
     }
 }

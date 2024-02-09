@@ -10,9 +10,14 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string SETTING_CHIP_TYPE = "SETTING_CHIP_TYPE";
         public const string SETTING_PLAY_SOUND = "SETTING_PLAY_SOUND";
         public const string SETTING_VOLUME = "SETTING_VOLUME";
+        public const string SETTING_VOICE = "SETTING_VOICE";
 
         public const string TYPE_CHIP_DEC = "DEC";
         public const string TYPE_CHIP_HEX = "HEX";
+
+        public const string VOICE_EMILY = "emily";
+        public const string VOICE_MICHAEL = "michael";
+        public const string VOICE_CUSTOM = "custom";
 
         [JsonPropertyName("name")]
         public string Name { get; set; }
