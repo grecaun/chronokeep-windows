@@ -16,7 +16,7 @@ namespace Chronokeep.Constants
         public const int IPICO_CONTROL_PORT = 9999;
         public const int CHRONO_PORTAL_ZCONF_PORT = 4488;
 
-        public const string CHRONO_PORTAL_ZCONF_IP = "224.0.44.88";
+        //public const string CHRONO_PORTAL_ZCONF_IP = "224.0.44.88";
         public const string CHRONO_PORTAL_CONNECT_MSG = "[DISCOVER_CHRONO_SERVER_REQUEST]";
 
         public static readonly Dictionary<string, string> SYSTEM_NAMES = new Dictionary<string, string>()

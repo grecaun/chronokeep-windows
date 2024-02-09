@@ -66,7 +66,7 @@ namespace Chronokeep.Timing
             Log.D("Timing.TimingController", "-- UPDATE -- Creating interface for communication with timing system.");
             system.CreateTimingSystemInterface(database, mainWindow);
             List<Socket> sockets = system.Connect();
-            if (sockets == null)
+            if (sockets == null || sockets.Count < 1)
             {
                 Log.D("Timing.TimingController", "No sockets returned.");
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
@@ -252,23 +252,30 @@ namespace Chronokeep.Timing
                 }
                 // Check Sockets we've started to connect to and verify that they've successfully connected.
                 List<Socket> toRemove = new List<Socket>();
-                foreach (Socket sock in TimingSystemSockets)
+                try
                 {
-                    TimingSystem sys = TimingSystemDict[sock];
-                    if (sys != null)
+                    foreach (Socket sock in TimingSystemSockets)
                     {
-                        if (sys.Status != SYSTEM_STATUS.CONNECTED && sys.TimedOut()) // Not connected & Timed out.
+                        TimingSystem sys = TimingSystemDict[sock];
+                        if (sys != null)
                         {
-                            sys.Status = SYSTEM_STATUS.DISCONNECTED;
-                            mainWindow.UpdateTimingFromController();
-                            TimingSystemDict.Remove(sock);
+                            if (sys.Status != SYSTEM_STATUS.CONNECTED && sys.TimedOut()) // Not connected & Timed out.
+                            {
+                                sys.Status = SYSTEM_STATUS.DISCONNECTED;
+                                mainWindow.UpdateTimingFromController();
+                                TimingSystemDict.Remove(sock);
+                                toRemove.Add(sock);
+                            }
+                        }
+                        else // Socket not found in dictionary.
+                        {
                             toRemove.Add(sock);
                         }
                     }
-                    else // Socket not found in dictionary.
-                    {
-                        toRemove.Add(sock);
-                    }
+                }
+                catch (Exception e)
+                {
+                    Log.E("Timing.TimingController", "Something went wrong trying to remove a socket. " + e.Message);
                 }
                 TimingSystemSockets.RemoveAll(i => toRemove.Contains(i));
                 Log.D("Timing.TimingController", "Loop end.");

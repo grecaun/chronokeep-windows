@@ -208,8 +208,8 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 {
                     this.Close();
                 }
+                sacrifice.Visibility = Visibility.Collapsed;
                 settingsPanel.Visibility = Visibility.Visible;
-                loadingPanel.Visibility = Visibility.Collapsed;
                 if (settings)
                 {
                     nameBox.Text = allSettings.Name;

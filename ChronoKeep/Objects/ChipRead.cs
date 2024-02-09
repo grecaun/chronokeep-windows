@@ -485,9 +485,14 @@ namespace Chronokeep
             {
                 return one.Time.CompareTo(two.Time);
             }
-            string oneBib = one.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? one.ChipBib : one.ReadBib;
-            string twoBib = two.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? two.ChipBib : two.ReadBib;
-            return oneBib.CompareTo(twoBib);
+            string stringBibOne = one.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? one.ChipBib : one.ReadBib;
+            string stringBibTwo = two.ReadBib == Constants.Timing.CHIPREAD_DUMMYBIB ? two.ChipBib : two.ReadBib;
+            int intBibOne, intBibTwo;
+            if (int.TryParse(stringBibOne, out intBibOne) && int.TryParse(stringBibTwo, out intBibTwo))
+            {
+                return intBibOne.CompareTo(intBibTwo);
+            }
+            return stringBibOne.CompareTo(stringBibTwo);
         }
 
         public bool IsNotMatch(string value)

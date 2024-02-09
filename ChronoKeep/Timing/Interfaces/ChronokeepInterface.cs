@@ -46,10 +46,11 @@ namespace Chronokeep.Timing.Interfaces
             sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
+                Log.D("Timing.Interfaces.ChronokeepInterface", "Attempting to get port from server.");
                 using (UdpClient client = new UdpClient(AddressFamily.InterNetwork))
                 {
                     byte[] msg = Encoding.Default.GetBytes(Constants.Readers.CHRONO_PORTAL_CONNECT_MSG);
-                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(Constants.Readers.CHRONO_PORTAL_ZCONF_IP), Constants.Readers.CHRONO_PORTAL_ZCONF_PORT);
+                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(IP_Address), Constants.Readers.CHRONO_PORTAL_ZCONF_PORT);
                     client.Send(msg, msg.Length, endPoint);
                     byte[] data = client.Receive(ref endPoint);
                     string response = Encoding.Default.GetString(data);

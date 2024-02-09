@@ -617,6 +617,11 @@ namespace Chronokeep
         public static int CompareByBib(Participant one, Participant two)
         {
             if (two == null || one == null) return 1;
+            int bibOne, bibTwo;
+            if (int.TryParse(one.Bib, out bibOne) && int.TryParse(two.Bib, out bibTwo))
+            {
+                return bibOne.CompareTo(bibTwo);
+            }
             return one.Bib.CompareTo(two.Bib);
         }
 

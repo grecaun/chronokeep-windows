@@ -1590,6 +1590,7 @@ namespace Chronokeep.UI.MainPages
 
             private void SetConnected()
             {
+                ReaderType.IsEnabled = false;
                 ReaderIP.IsEnabled = false;
                 ReaderPort.IsEnabled = false;
                 ReaderLocation.IsEnabled = false;
@@ -1628,6 +1629,7 @@ namespace Chronokeep.UI.MainPages
 
             private void SetDisconnected()
             {
+                ReaderType.IsEnabled = true;
                 ReaderIP.IsEnabled = true;
                 ReaderPort.IsEnabled = Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL == reader.Type ? false : true;
                 ReaderLocation.IsEnabled = true;
@@ -1648,6 +1650,7 @@ namespace Chronokeep.UI.MainPages
 
             private void SetWorking()
             {
+                ReaderType.IsEnabled = false;
                 ReaderIP.IsEnabled = false;
                 ReaderPort.IsEnabled = false;
                 ReaderLocation.IsEnabled = false;

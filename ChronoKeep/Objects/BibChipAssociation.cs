@@ -20,6 +20,11 @@ namespace Chronokeep
             if (other == null) return 1;
             else if (this.EventId == other.EventId)
             {
+                int bibOne, bibTwo;
+                if (int.TryParse(this.Bib, out bibOne) && int.TryParse(other.Bib, out bibTwo))
+                {
+                    return bibOne.CompareTo(bibTwo);
+                }
                 return this.Bib.CompareTo(other.Bib);
             }
             return this.EventId.CompareTo(other.EventId);

@@ -104,7 +104,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                         readingSwitch.IsChecked = false;
                         break;
                 }
-                loadingPanel.Visibility = Visibility.Collapsed;
+                sacrifice.Visibility = Visibility.Collapsed;
                 settingsPanel.Visibility = Visibility.Visible;
             }));
         }
