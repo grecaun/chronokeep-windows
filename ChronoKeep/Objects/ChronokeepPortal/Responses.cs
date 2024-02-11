@@ -6,6 +6,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
     public class Response
     {
         public const string READERS               = "readers";
+        public const string READER_ANTENNAS       = "reader_antennas";
         public const string ERROR                 = "error";
         public const string SETTINGS              = "settings";
         public const string SETTINGS_ALL          = "settings_all";
@@ -30,6 +31,14 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
     {
         [JsonPropertyName("readers")]
         public List<PortalReader> List { get; set; }
+    }
+
+    public class ReaderAntennasResponse: Response
+    {
+        [JsonPropertyName("reader_name")]
+        public string reader_name { get; set; }
+        [JsonPropertyName("antennas")]
+        public Dictionary<uint, bool> Antennas { get; set; }
     }
 
     public class ErrorResponse : Response

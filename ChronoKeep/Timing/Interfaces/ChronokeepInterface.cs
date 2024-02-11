@@ -131,11 +131,8 @@ namespace Chronokeep.Timing.Interfaces
                                     settingsWindow.UpdateView(new PortalSettingsHolder
                                         {
                                             Readers = readRes.List,
-                                            AutoUpload = PortalStatus.NOTSET
-                                        },
-                                        false,  // settings
-                                        true,   // readers
-                                        false   // apis
+                                            Changes = { PortalSettingsHolder.ChangeType.READERS }
+                                        }
                                         );
                                 }
                                 if (!output.ContainsKey(MessageType.SETTINGVALUE))
@@ -152,6 +149,31 @@ namespace Chronokeep.Timing.Interfaces
                                     output[MessageType.ERROR] = new List<string>();
                                 }
                                 output[MessageType.ERROR].Add("Error processing readers.");
+                            }
+                            break;
+                        case Response.READER_ANTENNAS:
+                            Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent reader antennas message.");
+                            try
+                            {
+                                ReaderAntennasResponse antRes = JsonSerializer.Deserialize<ReaderAntennasResponse>(message);
+                                if (settingsWindow != null)
+                                {
+                                    settingsWindow.UpdateView(new PortalSettingsHolder
+                                    {
+                                        Antennas = antRes.Antennas,
+                                        Changes = { PortalSettingsHolder.ChangeType.ANTENNAS }
+                                    }
+                                    );
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing reader antennas. " + e.Message);
+                                if (!output.ContainsKey(MessageType.ERROR))
+                                {
+                                    output[MessageType.ERROR] = new List<string>();
+                                }
+                                output[MessageType.ERROR].Add("Error processing reader antennas.");
                             }
                             break;
                         case Response.ERROR:
@@ -225,13 +247,9 @@ namespace Chronokeep.Timing.Interfaces
                                                 }
                                                 break;
                                         }
+                                        updSettings.Changes.Add(PortalSettingsHolder.ChangeType.SETTINGS);
                                     }
-                                    settingsWindow.UpdateView(
-                                        updSettings,
-                                        true,   // settings
-                                        false,  // readers
-                                        false   // apis
-                                        );
+                                    settingsWindow.UpdateView(updSettings);
                                 }
                                 if (!output.ContainsKey(MessageType.SETTINGVALUE))
                                 {
@@ -259,11 +277,8 @@ namespace Chronokeep.Timing.Interfaces
                                     settingsWindow.UpdateView(new PortalSettingsHolder
                                         {
                                             APIs = apiList.List,
-                                            AutoUpload = PortalStatus.NOTSET
-                                        },
-                                        false,  // settings
-                                        false,  // readers
-                                        true    // apis
+                                            Changes = { PortalSettingsHolder.ChangeType.APIS }
+                                        }
                                         );
                                 }
                                 if (!output.ContainsKey(MessageType.SETTINGVALUE))
@@ -337,11 +352,11 @@ namespace Chronokeep.Timing.Interfaces
                                                 break;
                                         }
                                     }
+                                    updSettings.Changes.Add(PortalSettingsHolder.ChangeType.SETTINGS);
+                                    updSettings.Changes.Add(PortalSettingsHolder.ChangeType.READERS);
+                                    updSettings.Changes.Add(PortalSettingsHolder.ChangeType.APIS);
                                     settingsWindow.UpdateView(
-                                        updSettings,
-                                        true,   // settings
-                                        true,   // readers
-                                        true    // apis
+                                        updSettings
                                         );
                                 }
                                 if (!output.ContainsKey(MessageType.SETTINGVALUE))
@@ -447,15 +462,10 @@ namespace Chronokeep.Timing.Interfaces
                             try
                             {
                                 ReadAutoUploadResponse autoUploadResponse = JsonSerializer.Deserialize<ReadAutoUploadResponse>(message);
-                                PortalSettingsHolder updSettings = new PortalSettingsHolder()
-                                {
-                                    AutoUpload = autoUploadResponse.Status,
-                                };
-                                settingsWindow.UpdateView(
-                                    updSettings,
-                                    false,   // settings
-                                    false,   // readers
-                                    false    // apis
+                                settingsWindow.UpdateView(new PortalSettingsHolder()
+                                    {
+                                        AutoUpload = autoUploadResponse.Status,
+                                    }
                                     );
                             }
                             catch (Exception e)

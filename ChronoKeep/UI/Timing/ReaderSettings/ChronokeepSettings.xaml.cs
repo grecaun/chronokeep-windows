@@ -199,7 +199,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             });
         }
 
-        internal void UpdateView(PortalSettingsHolder allSettings, bool settings, bool readers, bool apis)
+        internal void UpdateView(PortalSettingsHolder allSettings)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "UpdateView.");
             Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
@@ -210,7 +210,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 }
                 sacrifice.Visibility = Visibility.Collapsed;
                 settingsPanel.Visibility = Visibility.Visible;
-                if (settings)
+                if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.SETTINGS))
                 {
                     nameBox.Text = allSettings.Name;
                     if (allSettings.SightingPeriod > 3600)
@@ -239,7 +239,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     }
                 }
                 // add readers and apis to views
-                if (readers)
+                if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.READERS))
                 {
                     // keep track of which readers we are already displaying
                     HashSet<long> found = new HashSet<long>();
@@ -265,7 +265,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                         readerListView.Items.Add(item);
                     }
                 }
-                if (apis)
+                if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.APIS))
                 {
                     // keep track of which apis we are already displaying
                     HashSet<long> found = new HashSet<long>();
@@ -288,6 +288,14 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     foreach (APIListItem item in apiDict.Values)
                     {
                         apiListView.Items.Add(item);
+                    }
+                }
+                if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.ANTENNAS))
+                {
+                    Dictionary<string, ReaderListItem> readerNameDict = new Dictionary<string, ReaderListItem>();
+                    foreach (ReaderListItem reader in readerDict.Values)
+                    {
+                        readerNameDict.Add(reader.GetReaderName(), reader);
                     }
                 }
                 switch (allSettings.AutoUpload)
@@ -318,7 +326,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }));
         }
 
-        private void UiWindow_Closed(object sender, EventArgs e)
+        private void Window_Closed(object sender, EventArgs e)
         {
             reader.SettingsWindowFinalize();
         }
@@ -415,6 +423,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     HorizontalAlignment = HorizontalAlignment.Center,
                 };
                 this.Content = thePanel;
+                // first row
                 StackPanel subPanel = new StackPanel()
                 {
                     Orientation = Orientation.Horizontal,
@@ -451,6 +460,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     : -1;
                 kindBox.SelectionChanged += new SelectionChangedEventHandler(this.UpdateReaderPort);
                 subPanel.Children.Add(kindBox);
+                // second row
                 subPanel = new StackPanel()
                 {
                     Orientation = Orientation.Horizontal,
@@ -483,6 +493,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 subPanel.Children.Add(autoConnectSwitch);
+                // third row
                 subPanel = new StackPanel()
                 {
                     Orientation = Orientation.Horizontal,
@@ -528,6 +539,29 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 removeReaderButton.Click += new RoutedEventHandler(this.DeleteReader);
                 subPanel.Children.Add(removeReaderButton);
+                // fourth row
+                subPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+                thePanel.Children.Add(subPanel);
+                foreach (uint number in reader.Antennas.Keys)
+                {
+                    //subPanel.Children.Add(
+                    //    new InfoBadge
+                    //    );
+                }
+            }
+
+            public string GetReaderName()
+            {
+                return reader.Name;
+            }
+
+            public void UpdateAntennas(Dictionary<uint, bool> antennas)
+            {
+                reader.Antennas = antennas;
             }
 
             public void UpdateReader(PortalReader reader)

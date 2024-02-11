@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Chronokeep.Objects.ChronokeepPortal
 {
@@ -28,5 +29,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public bool Reading { get; set; } = false;
         [JsonPropertyName("connected")]
         public bool Connected { get; set; } = false;
+        [JsonPropertyName("antennas")]
+        public Dictionary<uint, bool> Antennas { get; set; }
     }
 }
