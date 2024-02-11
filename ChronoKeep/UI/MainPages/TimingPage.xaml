@@ -5,11 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        xmlns:local="clr-namespace:Chronokeep.UI.MainPages"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        d:DesignHeight="950" d:DesignWidth="1000"
-        Title="TimingPage" Loaded="Page_Loaded">
+        d:DesignHeight="950"
+        d:DesignWidth="1000"
+        Title="TimingPage"
+        Loaded="Page_Loaded"
+        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+        >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -18,46 +21,163 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="310" />
         </Grid.ColumnDefinitions>
-        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" x:Name="controlScroll">
+        <ScrollViewer
+            Grid.Column="1"
+            VerticalScrollBarVisibility="Auto"
+            x:Name="controlScroll"
+            >
             <StackPanel>
-                <TextBlock Name="EllapsedTime" Text="00:00:00" TextAlignment="Center" Margin="0,0,10,0" FontWeight="Bold" FontSize="40"/>
-                <StackPanel Orientation="Horizontal" Width="200" HorizontalAlignment="Center">
-                    <TextBlock Name="StartTimeLabel" Text="Start Time" FontSize="14" Width="65" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,10,0" />
-                    <xctk:MaskedTextBox Name="StartTime" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" Width="125" Height="30" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontWeight="Bold" FontSize="16" KeyDown="StartTimeKeyDown" LostFocus="StartTimeLostFocus"/>
+                <TextBlock
+                    Name="EllapsedTime"
+                    Text="00:00:00"
+                    TextAlignment="Center"
+                    Margin="0,0,10,0"
+                    FontWeight="Bold"
+                    FontSize="40"
+                    />
+                <StackPanel
+                    Orientation="Horizontal"
+                    Width="200"
+                    HorizontalAlignment="Center"
+                    >
+                    <TextBlock
+                        Name="StartTimeLabel"
+                        Text="Start Time"
+                        FontSize="14"
+                        Width="65"
+                        VerticalAlignment="Center"
+                        TextAlignment="Right"
+                        Margin="0,0,10,0"
+                        />
+                    <xctk:MaskedTextBox
+                        Name="StartTime"
+                        ValueDataType="{x:Type s:String}"
+                        Mask="00:00:00.000"
+                        Width="125"
+                        Height="30"
+                        VerticalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        FontWeight="Bold"
+                        FontSize="16"
+                        KeyDown="StartTimeKeyDown"
+                        LostFocus="StartTimeLostFocus"
+                        />
                 </StackPanel>
-                <Button Name="StartRace" Content="Start Race" Width="250" Height="35" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Margin="0,5,0,0" Click="StartRaceClick" />
+                <Button
+                    Name="StartRace"
+                    Content="Start Race"
+                    Width="250"
+                    Height="35"
+                    HorizontalAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    Margin="0,5,0,0"
+                    Click="StartRaceClick"
+                    />
                 <Grid Width="250">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Name="WaveButton" Content="Set Wave Times" Height="35" HorizontalAlignment="Stretch" Margin="0,5,1,0" Click="ChangeWaves" Grid.Column="0"/>
-                    <Button Name="AlarmButton" Content="Alarms" Height="35" HorizontalAlignment="Stretch" Margin="1,5,0,0" Click="AlarmButton_Click" Grid.Column="1"/>
+                    <Button
+                        Name="WaveButton"
+                        Content="Set Wave Times"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,5,1,0"
+                        Click="ChangeWaves"
+                        Grid.Column="0"
+                        />
+                    <Button
+                        Name="AlarmButton"
+                        Content="Alarms"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        Margin="1,5,0,0"
+                        Click="AlarmButton_Click"
+                        Grid.Column="1"
+                        />
                 </Grid>
                 <Grid Width="250">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Manual Entry" Height="35" HorizontalAlignment="Stretch" Margin="0,5,1,0" Click="ManualEntry" IsEnabled="True" Grid.Column="0"/>
-                    <Button x:Name="DNFButton" Content="Add DNF" Height="35" HorizontalAlignment="Stretch" Margin="1,5,0,0" Click="AddDNF_Click" Grid.Column="1"/>
+                    <Button
+                        Content="Manual Entry"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,5,1,0"
+                        Click="ManualEntry"
+                        IsEnabled="True"
+                        Grid.Column="0"
+                        />
+                    <Button
+                        x:Name="DNFButton"
+                        Content="Add DNF"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        Margin="1,5,0,0"
+                        Click="AddDNF_Click"
+                        Grid.Column="1"
+                        />
                 </Grid>
                 <Grid Width="250">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Load Log" Height="35" HorizontalAlignment="Stretch" Margin="0,5,1,0" Click="LoadLog" IsEnabled="True"  Grid.Column="0"/>
-                    <Button x:Name="SaveLogButton" Content="Save Log" Height="35" HorizontalAlignment="Stretch" Margin="1,5,0,0" Click="SaveLog" IsEnabled="True" Grid.Column="1"/>
+                    <Button
+                        Content="Load Log"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,5,1,0"
+                        Click="LoadLog"
+                        IsEnabled="True"
+                        Grid.Column="0"
+                        />
+                    <Button
+                        x:Name="SaveLogButton"
+                        Content="Save Log"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        Margin="1,5,0,0"
+                        Click="SaveLog"
+                        IsEnabled="True"
+                        Grid.Column="1"
+                        />
                 </Grid>
-                <TextBox Name="searchBox" Width="250" Height="35" Margin="0,5,0,0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextChanged="SearchBox_TextChanged"/>
-                <ComboBox Name="viewOnlyBox" Width="250" Height="35" HorizontalAlignment="Stretch" Margin="0,5,0,0" SelectionChanged="ViewOnlyBox_SelectionChanged">
+                <TextBox
+                    Name="searchBox"
+                    Width="250" 
+                    Height="35"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    TextChanged="SearchBox_TextChanged"
+                    />
+                <ComboBox
+                    Name="viewOnlyBox"
+                    Width="250"
+                    Height="35"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,5,0,0"
+                    SelectionChanged="ViewOnlyBox_SelectionChanged"
+                    >
                     <ComboBoxItem Content="Hide Unknown" IsSelected="True"/>
                     <ComboBoxItem Content="Show All" />
                     <ComboBoxItem Content="Show Only Starts" />
                     <ComboBoxItem Content="Show Only Finishes" />
                 </ComboBox>
-                <ComboBox Name="SortBy" Width="250" Height="35" HorizontalAlignment="Stretch" Margin="0,5,0,0" SelectionChanged="SortBy_SelectionChanged">
+                <ComboBox
+                    Name="SortBy"
+                    Width="250"
+                    Height="35"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,5,0,0"
+                    SelectionChanged="SortBy_SelectionChanged"
+                    >
                     <ComboBoxItem Content="System Time" IsSelected="True" />
                     <ComboBoxItem Content="Gun Time" />
                     <ComboBoxItem Content="Bib"/>
@@ -66,7 +186,12 @@
                     <ComboBoxItem Content="Age Group"/>
                     <ComboBoxItem Content="Gender"/>
                 </ComboBox>
-                <Expander Name="statsExpander" Header="Stats" Margin="5,5,5,0" IsExpanded="True">
+                <Expander
+                    Name="statsExpander"
+                    Header="Stats"
+                    Margin="5,5,5,0"
+                    IsExpanded="True"
+                    >
                     <StackPanel>
                         <Grid Margin="3,0,3,0">
                             <Grid.ColumnDefinitions>
@@ -77,17 +202,60 @@
                                 <ColumnDefinition Width="35" />
                                 <ColumnDefinition Width="35" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Margin="2,4" Text="Distance" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="1" Margin="2,4" Text="DNS" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Margin="2,4" Text="DNF" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="3" Margin="2,4" Text="Fin" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="4" Margin="2,4" Text="Act" FontSize="12" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="5" Margin="2,4" Text="Tot" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock 
+                                Grid.Column="0"
+                                Margin="2,4"
+                                Text="Distance"
+                                FontSize="12"
+                                VerticalAlignment="Center"
+                                />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="2,4"
+                                Text="DNS"
+                                FontSize="12"
+                                VerticalAlignment="Center"
+                                />
+                            <TextBlock 
+                                Grid.Column="2"
+                                Margin="2,4"
+                                Text="DNF"
+                                FontSize="12"
+                                VerticalAlignment="Center"
+                                />
+                            <TextBlock 
+                                Grid.Column="3"
+                                Margin="2,4"
+                                Text="Fin"
+                                FontSize="12"
+                                VerticalAlignment="Center"
+                                />
+                            <TextBlock 
+                                Grid.Column="4"
+                                Margin="2,4"
+                                Text="Act"
+                                FontSize="12"
+                                VerticalAlignment="Center"
+                                />
+                            <TextBlock
+                                Grid.Column="5"
+                                Margin="2,4"
+                                Text="Tot"
+                                FontSize="12" 
+                                VerticalAlignment="Center"
+                                />
                         </Grid>
-                        <ListView x:Name="statsListView" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Top" SelectionMode="Single" FontSize="10" MouseDoubleClick="StatsListView_MouseDoubleClick"
-                                  ScrollViewer.CanContentScroll="False"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  PreviewMouseWheel="statsListView_PreviewMouseWheel">
+                        <ListView 
+                            x:Name="statsListView" 
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            VerticalContentAlignment="Top"
+                            SelectionMode="Single"
+                            FontSize="10"
+                            MouseDoubleClick="StatsListView_MouseDoubleClick"
+                            ScrollViewer.CanContentScroll="False"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            PreviewMouseWheel="statsListView_PreviewMouseWheel">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
@@ -99,19 +267,59 @@
                                             <ColumnDefinition Width="35" />
                                             <ColumnDefinition Width="35" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Margin="2,4" Text="{Binding DistanceName}" FontSize="12" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1" Margin="2,4" Text="{Binding DNS}" FontSize="12" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="2" Margin="2,4" Text="{Binding DNF}" FontSize="12" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="3" Margin="2,4" Text="{Binding Finished}" FontSize="12" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="4" Margin="2,4" Text="{Binding Active}" FontSize="12" VerticalAlignment="Center"/>
-                                        <TextBlock Grid.Column="5" Margin="2,4" Text="{Binding Total}" FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Margin="2,4" 
+                                            Text="{Binding DistanceName}"
+                                            FontSize="12"
+                                            VerticalAlignment="Center"
+                                            />
+                                        <TextBlock 
+                                            Grid.Column="1"
+                                            Margin="2,4"
+                                            Text="{Binding DNS}" 
+                                            FontSize="12" 
+                                            VerticalAlignment="Center"
+                                            />
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Margin="2,4"
+                                            Text="{Binding DNF}"
+                                            FontSize="12"
+                                            VerticalAlignment="Center"
+                                            />
+                                        <TextBlock 
+                                            Grid.Column="3"
+                                            Margin="2,4"
+                                            Text="{Binding Finished}"
+                                            FontSize="12"
+                                            VerticalAlignment="Center"
+                                            />
+                                        <TextBlock 
+                                            Grid.Column="4"
+                                            Margin="2,4"
+                                            Text="{Binding Active}"
+                                            FontSize="12" 
+                                            VerticalAlignment="Center"
+                                            />
+                                        <TextBlock 
+                                            Grid.Column="5"
+                                            Margin="2,4"
+                                            Text="{Binding Total}"
+                                            FontSize="12" 
+                                            VerticalAlignment="Center"/>
                                     </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
                     </StackPanel>
                 </Expander>
-                <Expander Name="extraExpander" Header="More" Margin="5,5,5,0" IsExpanded="True">
+                <Expander
+                    Name="extraExpander"
+                    Header="More"
+                    Margin="5,5,5,0"
+                    IsExpanded="True"
+                    >
                     <StackPanel>
                         <StackPanel x:Name="apiPanel">
                             <Grid>
@@ -119,8 +327,24 @@
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
-                                <Button x:Name="AutoAPIButton" Content="Auto Upload" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="AutoAPI_Click" Grid.Column="0"/>
-                                <Button x:Name="ManualAPIButton" Content="Manual Upload" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="ManualAPI_Click" Grid.Column="1"/>
+                                <Button
+                                    x:Name="AutoAPIButton"
+                                    Content="Auto Upload"
+                                    Height="35" 
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,5,5,0"
+                                    Click="AutoAPI_Click" 
+                                    Grid.Column="0"
+                                    />
+                                <Button 
+                                    x:Name="ManualAPIButton"
+                                    Content="Manual Upload"
+                                    Height="35" 
+                                    HorizontalAlignment="Stretch"
+                                    Margin="5,5,0,0" 
+                                    Click="ManualAPI_Click"
+                                    Grid.Column="1"
+                                    />
                             </Grid>
                         </StackPanel>
                         <Grid>
@@ -129,21 +353,93 @@
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <Button Name="recalculateButton" Content="Recalculate" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="Recalculate_Click"/>
-                                <Button Content="Export Results" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="Export_Click"/>
-                                <Button Content="Export Boston" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="Export_BAA_Click"/>
-                                <Button Content="Export UltraSignup" FontSize="9" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="Export_US_Click"/>
-                                <Button Content="Create HTML" Height="35" HorizontalAlignment="Stretch" Margin="0,5,5,0" Click="CreateHTML_Click" />
+                                <Button
+                                    Name="recalculateButton" 
+                                    Content="Recalculate"
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,5,5,0" 
+                                    Click="Recalculate_Click"
+                                    />
+                                <Button
+                                    Content="Export Results" 
+                                    Height="35" 
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,5,5,0"
+                                    Click="Export_Click"
+                                    />
+                                <Button
+                                    Content="Export Boston" 
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,5,5,0"
+                                    Click="Export_BAA_Click"
+                                    />
+                                <Button
+                                    Content="Export UltraSignup"
+                                    FontSize="9"
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,5,5,0"
+                                    Click="Export_US_Click"
+                                    />
+                                <Button
+                                    Content="Create HTML"
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,5,5,0"
+                                    Click="CreateHTML_Click" 
+                                    />
                             </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <Button Content="Raw Data" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="RawReads_Click"/>
-                                <Button Name="printButton" Content="Print" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="Print_Click"/>
-                                <Button Name="dnsMode" Content="Start DNS Mode" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="dnsMode_Click" />
-                                <Button Content="Awards" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="Award_Click"/>
-                                <Button x:Name="HttpServerButton" Content="Start Web" Height="35" HorizontalAlignment="Stretch" Margin="5,5,0,0" Click="HTMLServerButton_Click"/>
+                            <StackPanel 
+                                Grid.Column="1"
+                                >
+                                <Button 
+                                    Content="Raw Data"
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="5,5,0,0"
+                                    Click="RawReads_Click"
+                                    />
+                                <Button 
+                                    Name="printButton"
+                                    Content="Print"
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="5,5,0,0"
+                                    Click="Print_Click"
+                                    />
+                                <Button
+                                    Name="dnsMode"
+                                    Content="Start DNS Mode"
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="5,5,0,0"
+                                    Click="dnsMode_Click"
+                                    />
+                                <Button 
+                                    Content="Awards"
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="5,5,0,0"
+                                    Click="Award_Click"
+                                    />
+                                <Button
+                                    x:Name="HttpServerButton"
+                                    Content="Start Web"
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="5,5,0,0"
+                                    Click="HTMLServerButton_Click"
+                                    />
                             </StackPanel>
                         </Grid>
-                        <DockPanel Name="IPContainer" Visibility="Collapsed" HorizontalAlignment="Center" Margin="0,10,0,0">
+                        <DockPanel 
+                            Name="IPContainer"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Center"
+                            Margin="0,10,0,0"
+                            >
                             <TextBlock
                                 Text="IP:"
                                 Width="75"
@@ -162,7 +458,11 @@
                                 FontSize="16"
                                 />
                         </DockPanel>
-                        <DockPanel Name="PortContainer" Visibility="Collapsed" HorizontalAlignment="Center">
+                        <DockPanel
+                            Name="PortContainer"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Center"
+                            >
                             <TextBlock
                                 Text="Port:"
                                 Width="75"
@@ -190,18 +490,60 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Expander MaxHeight="235" Margin="5,0,5,5" HorizontalAlignment="Stretch" IsExpanded="True" ExpandDirection="Down" Grid.Row="0" Expanded="Expander_Expanded" Collapsed="Expander_Expanded" x:Name="readerExpander">
+            <Expander 
+                MaxHeight="235"
+                Margin="5,0,5,5"
+                HorizontalAlignment="Stretch"
+                IsExpanded="True"
+                ExpandDirection="Down"
+                Grid.Row="0"
+                Expanded="Expander_Expanded"
+                Collapsed="Expander_Expanded"
+                x:Name="readerExpander"
+                >
                 <Expander.Header>
-                    <DockPanel LastChildFill="False" VerticalAlignment="Center">
-                        <TextBlock Text="Readers" Margin="5,0,0,0" VerticalAlignment="Center" />
-                        <ui:Button Content="Remote Readers" x:Name="remoteReadersButton" DockPanel.Dock="Right" Margin="0,0,10,0" VerticalAlignment="Center" Click="remoteReadersButton_Click" Visibility="Visible" />
-                        <ui:ToggleSwitch x:Name="remoteControllerSwitch" Margin="0,0,10,0" VerticalAlignment="Center" DockPanel.Dock="Right" Checked="remoteControllerSwitch_Checked" Unchecked="remoteControllerSwitch_Unchecked"/>
-                        <TextBlock x:Name="remoteErrorsBlock" Margin="0,0,5,0" VerticalAlignment="Center" DockPanel.Dock="Right" />
+                    <DockPanel
+                        LastChildFill="False"
+                        VerticalAlignment="Center"
+                        >
+                        <TextBlock
+                            Text="Readers"
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            />
+                        <ui:Button 
+                            Content="Remote Readers" 
+                            x:Name="remoteReadersButton" 
+                            DockPanel.Dock="Right" 
+                            Margin="0,0,10,0" 
+                            VerticalAlignment="Center" 
+                            Click="remoteReadersButton_Click" 
+                            Visibility="Visible"
+                            />
+                        <ui:ToggleSwitch 
+                            x:Name="remoteControllerSwitch" 
+                            Margin="0,0,10,0" 
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            Checked="remoteControllerSwitch_Checked"
+                            Unchecked="remoteControllerSwitch_Unchecked"
+                            />
+                        <TextBlock 
+                            x:Name="remoteErrorsBlock"
+                            Margin="0,0,5,0"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            />
                     </DockPanel>
                 </Expander.Header>
-                <ListBox Name="ReadersBox" HorizontalAlignment="Stretch" KeyboardNavigation.TabNavigation="Continue" Height="170"
-                         ScrollViewer.CanContentScroll="True"
-                         ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <ListBox 
+                    Name="ReadersBox" 
+                    HorizontalAlignment="Stretch"
+                    KeyboardNavigation.TabNavigation="Continue"
+                    Height="170"
+                    ScrollViewer.CanContentScroll="True"
+                    ScrollViewer.VerticalScrollBarVisibility="Visible"
+                    >
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -210,7 +552,13 @@
                     </ListBox.ItemContainerStyle>
                 </ListBox>
             </Expander>
-            <Frame Name="TimingFrame" NavigationUIVisibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" />
+            <Frame
+                Name="TimingFrame"
+                NavigationUIVisibility="Hidden"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Grid.Row="1"
+                />
         </Grid>
     </Grid>
 </Page>

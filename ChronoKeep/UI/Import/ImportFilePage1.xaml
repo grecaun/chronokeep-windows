@@ -6,8 +6,11 @@
       xmlns:local="clr-namespace:Chronokeep"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d"
-      d:DesignHeight="300" d:DesignWidth="400"
-      Title="ImportFilePage1">
+      d:DesignHeight="300"
+      d:DesignWidth="400"
+      Title="ImportFilePage1"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      >
     <Grid>
         <ListBox x:Name="headerListBox" KeyboardNavigation.TabNavigation="Continue" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" >
             <ListBox.ItemContainerStyle>

@@ -6,9 +6,11 @@
       xmlns:local="clr-namespace:Chronokeep.UI.Import"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d"
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="ImportFilePage2Alt">
-
+      d:DesignHeight="450"
+      d:DesignWidth="800"
+      Title="ImportFilePage2Alt"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>

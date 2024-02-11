@@ -6,9 +6,11 @@
       xmlns:local="clr-namespace:Chronokeep.UI.API"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="300"
-      Title="APIPage3">
-
+      d:DesignHeight="450"
+      d:DesignWidth="300"
+      Title="APIPage3"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      >
     <StackPanel>
         <TextBlock
             Name="holdingLabel" 

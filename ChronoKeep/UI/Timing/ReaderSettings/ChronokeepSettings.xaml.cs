@@ -525,7 +525,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(readingSwitch);
                 saveReaderButton = new Button()
                 {
-                    Content = SymbolRegular.Save20,
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Save24 },
                     Margin = new Thickness(5),
                     Width = 40,
                 };
@@ -533,7 +533,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(saveReaderButton);
                 removeReaderButton = new Button()
                 {
-                    Content = SymbolRegular.Delete20,
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
                     Margin = new Thickness(5),
                     Width = 40,
                 };
@@ -809,7 +809,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(uriBox);
                 saveAPIButton = new Button()
                 {
-                    Content = SymbolRegular.Save20,
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Save24 },
                     Margin = new Thickness(5),
                     Width = 40,
                     Height = 35,
@@ -818,7 +818,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(saveAPIButton);
                 removeAPIButton = new Button()
                 {
-                    Content = SymbolRegular.Delete20,
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
                     Margin = new Thickness(5),
                     Width = 40,
                     Height = 35,

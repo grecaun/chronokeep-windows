@@ -301,7 +301,7 @@ namespace Chronokeep.UI.API
                 thePanel.Children.Add(endTimeBox);
                 Button rewind = new()
                 {
-                    Content = SymbolRegular.Rewind16.GetString(),
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Rewind24 },
                     Height = 35,
                     Width = 35,
                     Margin = new System.Windows.Thickness(5),

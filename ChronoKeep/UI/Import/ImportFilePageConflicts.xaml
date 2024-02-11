@@ -8,7 +8,9 @@
       mc:Ignorable="d" 
       d:DesignHeight="450"
       d:DesignWidth="400"
-      Title="ImportPageMultiples">
+      Title="ImportPageMultiples"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

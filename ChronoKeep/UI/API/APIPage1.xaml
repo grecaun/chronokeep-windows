@@ -8,7 +8,9 @@
       mc:Ignorable="d" 
       d:DesignHeight="450"
       d:DesignWidth="300"
-      Title="APIPage1">
+      Title="APIPage1"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      >
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2">
         <TextBlock Text="Select API to use:" FontSize="16" TextAlignment="Center" Margin="0,0,0,5"/>
         <ComboBox Name="APIBox" Width="250" VerticalAlignment="Center" Margin="0,0,0,15" />

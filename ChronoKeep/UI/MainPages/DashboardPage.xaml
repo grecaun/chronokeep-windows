@@ -8,8 +8,11 @@
       xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d"
-      d:DesignHeight="450" d:DesignWidth="660"
-      Title="DashboardPage">
+      d:DesignHeight="450"
+      d:DesignWidth="660"
+      Title="DashboardPage"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      >
 
     <Grid>
         <Grid.ColumnDefinitions>

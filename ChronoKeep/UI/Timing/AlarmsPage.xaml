@@ -6,8 +6,11 @@
       xmlns:local="clr-namespace:Chronokeep.UI.Timing"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="800"
-      Title="AwardPage">
+      d:DesignHeight="600"
+      d:DesignWidth="800"
+      Title="AwardPage"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"/>

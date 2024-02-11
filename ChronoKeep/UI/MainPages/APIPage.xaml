@@ -6,8 +6,11 @@
       xmlns:local="clr-namespace:Chronokeep.UI.MainPages"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="APIPage">
+      d:DesignHeight="450"
+      d:DesignWidth="800"
+      Title="APIPage"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      >
     <Grid>
         <TextBlock Name="nothing" Text="Event not set. Please choose an event before selecting this option." Visibility="Collapsed" />
         <Grid Name="everything">

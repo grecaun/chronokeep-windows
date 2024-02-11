@@ -22,102 +22,164 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         <ui:TitleBar
-            Title="Chronokeep"
             FontSize="14"
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            Margin="42,0,0,0">
+            Margin="36,0,0,0"
+            >
         </ui:TitleBar>
         <ui:NavigationView
-            PaneDisplayMode="LeftFluent"
+            PaneDisplayMode="LeftMinimal"
             IsBackButtonVisible="Collapsed"
             x:Name="RootNavigation"
             Grid.Column="0"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            FrameMargin="0"
+            Margin="0,5,0,0"
+            Transition="FadeInWithSlide"
+            MaxWidth="150"
             >
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem
-                            Content="Dashboard"
-                            Icon="Home24"
-                            Click="DashboardButton_Click"
-                            x:Name="dashboardButton"
-                            />
+                    Content="Dashboard"
+                    Click="DashboardButton_Click"
+                    x:Name="dashboardButton"
+                    MaxWidth="142"
+                    HorizontalAlignment="Left"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Home24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                            Content="Timing"
-                            Icon="ClipboardClock24"
-                            Click="TimingButton_Click"
-                            x:Name="timingButton"
-                            />
+                    Content="Timing"
+                    Click="TimingButton_Click"
+                    x:Name="timingButton"
+                    MaxWidth="142"
+                    HorizontalAlignment="Left"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="ClipboardClock24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                            Content="Announcer"
-                            Icon="AlertUrgent24"
-                            Click="Announcer_Click"
-                            x:Name="announcerButton"
-                            />
+                    Content="Announcer"
+                    Click="Announcer_Click"
+                    x:Name="announcerButton"
+                    MaxWidth="142"
+                    HorizontalAlignment="Left"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="AlertUrgent24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                            Content="Participants"
-                            Icon="Person24"
-                            Click="ParticipantsButton_Click"
-                            x:Name="participantsButton"
-                            />
+                    Content="Participants"
+                    Click="ParticipantsButton_Click"
+                    x:Name="participantsButton"
+                    MaxWidth="142"
+                    HorizontalAlignment="Left"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Person24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                            Content="Chips"
-                            Icon="DeveloperBoard24"
-                            Click="ChipsButton_Click"
-                            x:Name="chipsButton"
-                            />
+                    Content="Chips"
+                    Click="ChipsButton_Click"
+                    x:Name="chipsButton"
+                    MaxWidth="142"
+                    HorizontalAlignment="Left"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="DeveloperBoard24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                            Content="Locations"
-                            Icon="Map24"
-                            Click="LocationsButton_Click"
-                            x:Name="locationsButton"
-                            />
+                    Content="Locations"
+                    Click="LocationsButton_Click"
+                    x:Name="locationsButton"
+                    MaxWidth="142"
+                    HorizontalAlignment="Left"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Map24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                            Content="Distances"
-                            Icon="Ruler24"
-                            Click="DistancesButton_Click"
-                            x:Name="distancesButton"
-                            />
+                    Content="Distances"
+                    Click="DistancesButton_Click"
+                    x:Name="distancesButton"
+                    MaxWidth="142"
+                    HorizontalAlignment="Left"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Ruler24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                            Content="Segments"
-                            Icon="Organization24"
-                            Click="SegmentsButton_Click"
-                            x:Name="segmentsButton"
-                            />
+                    Content="Segments"
+                    Click="SegmentsButton_Click"
+                    x:Name="segmentsButton"
+                    MaxWidth="142"
+                    HorizontalAlignment="Left"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Organization24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                            Content="Age Groups"
-                            Icon="Trophy24"
-                            Click="AgegroupsButton_Click"
-                            x:Name="agegroupsButton"
-                            />
+                    Content="Age Groups"
+                    Click="AgegroupsButton_Click"
+                    x:Name="agegroupsButton"
+                    MaxWidth="142"
+                    HorizontalAlignment="Left"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Trophy24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem
-                            Content="Settings"
-                            Icon="Settings24"
-                            Click="SettingsButton_Click"
-                            x:Name="settingsButton"
-                            />
+                    Content="Settings"
+                    Click="SettingsButton_Click"
+                    x:Name="settingsButton"
+                    MaxWidth="142"
+                    HorizontalAlignment="Left"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Settings24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                            Content="About"
-                            Icon="Info24"
-                            Click="AboutButton_Click"
-                            x:Name="aboutButton"
-                            />
+                    Content="About"
+                    Click="AboutButton_Click"
+                    x:Name="aboutButton"
+                    HorizontalAlignment="Left"
+                    Width="142"
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Settings24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>
         </ui:NavigationView>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <Grid 
+            Grid.Column="1"
+            Grid.Row="1"
+            >
             <Border
-                Grid.Column="1"
-                Grid.Row="1"
                 Background="{DynamicResource ControlFillColorDefaultBrush}"
                 CornerRadius="8,0,0,0">
-                <Frame x:Name="TheFrame" Grid.Row="1" Margin="6" />
+                <Frame x:Name="TheFrame" Margin="6" />
             </Border>
         </Grid>
     </Grid>
