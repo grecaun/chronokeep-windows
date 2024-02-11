@@ -30,6 +30,6 @@ namespace Chronokeep.Objects.ChronokeepPortal
         [JsonPropertyName("connected")]
         public bool Connected { get; set; } = false;
         [JsonPropertyName("antennas")]
-        public Dictionary<uint, bool> Antennas { get; set; }
+        public int[] Antennas { get; set; }
     }
 }

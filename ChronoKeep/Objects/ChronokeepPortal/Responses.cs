@@ -38,7 +38,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         [JsonPropertyName("reader_name")]
         public string reader_name { get; set; }
         [JsonPropertyName("antennas")]
-        public Dictionary<uint, bool> Antennas { get; set; }
+        public int[] Antennas { get; set; }
     }
 
     public class ErrorResponse : Response

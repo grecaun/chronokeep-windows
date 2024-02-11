@@ -35,7 +35,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public List<PortalAPI> APIs { get; set; }
         public PortalStatus AutoUpload { get; set; } = PortalStatus.NOTSET;
         public VoiceType Voice { get; set; }
-        public Dictionary<uint, bool> Antennas { get; set; }
+        public int[] Antennas { get; set; }
         public HashSet<ChangeType> Changes { get; set; } = new HashSet<ChangeType>();
     }
 }

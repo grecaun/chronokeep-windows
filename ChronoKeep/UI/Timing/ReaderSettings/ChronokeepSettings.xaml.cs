@@ -410,6 +410,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             private ToggleSwitch autoConnectSwitch;
             private ToggleSwitch connectedSwitch;
             private ToggleSwitch readingSwitch;
+            private StackPanel antennaPanel;
             private Button saveReaderButton;
             private Button removeReaderButton;
 
@@ -539,22 +540,25 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 removeReaderButton.Click += new RoutedEventHandler(this.DeleteReader);
                 subPanel.Children.Add(removeReaderButton);
+                // fourth row
+                antennaPanel = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+                thePanel.Children.Add(antennaPanel);
                 if (reader.Antennas != null)
                 {
-                    // fourth row
-                    subPanel = new StackPanel()
+                    for (int ix=0; ix<reader.Antennas.Length; ix++)
                     {
-                        Orientation = Orientation.Horizontal,
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    };
-                    thePanel.Children.Add(subPanel);
-                    foreach (uint number in reader.Antennas.Keys)
-                    {
-                        subPanel.Children.Add(new InfoBadge()
+                        if (reader.Antennas[ix] != Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_NONE)
                         {
-                            Severity = reader.Antennas[number] ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Caution,
-                            Value = number.ToString(),
-                        });
+                            antennaPanel.Children.Add(new InfoBadge()
+                            {
+                                Severity = reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Caution,
+                                Value = (ix + 1).ToString(),
+                            });
+                        }
                     }
                 }
             }
@@ -564,9 +568,21 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 return reader.Name;
             }
 
-            public void UpdateAntennas(Dictionary<uint, bool> antennas)
+            public void UpdateAntennas(int[] antennas)
             {
                 reader.Antennas = antennas;
+                antennaPanel.Children.Clear();
+                for (int ix = 0; ix < reader.Antennas.Length; ix++)
+                {
+                    if (reader.Antennas[ix] != Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_NONE)
+                    {
+                        antennaPanel.Children.Add(new InfoBadge()
+                        {
+                            Severity = reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Caution,
+                            Value = (ix + 1).ToString(),
+                        });
+                    }
+                }
             }
 
             public void UpdateReader(PortalReader reader)
