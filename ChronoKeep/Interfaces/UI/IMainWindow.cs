@@ -53,5 +53,7 @@ namespace Chronokeep.Interfaces
         bool StopRemote();
         bool IsRemoteRunning();
         int RemoteErrors();
+        // Theme related calls
+        void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system);
     }
 }

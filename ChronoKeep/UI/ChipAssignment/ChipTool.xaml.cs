@@ -12,7 +12,7 @@ namespace Chronokeep.UI.ChipAssignment
     /// <summary>
     /// Interaction logic for ChipTool.xaml
     /// </summary>
-    public partial class ChipTool : UiWindow
+    public partial class ChipTool : FluentWindow
     {
         IWindowCallback window;
         IDBInterface database;
@@ -46,7 +46,7 @@ namespace Chronokeep.UI.ChipAssignment
             public System.Windows.Controls.TextBox StartBib { get; private set; }
             public System.Windows.Controls.TextBox EndBib { get; private set; }
             public System.Windows.Controls.TextBox StartChip { get; private set; }
-            public TextBlock EndChip { get; private set; }
+            public Wpf.Ui.Controls.TextBlock EndChip { get; private set; }
             public System.Windows.Controls.Button Remove { get; private set; }
 
             ListBox parent;
@@ -100,7 +100,7 @@ namespace Chronokeep.UI.ChipAssignment
                 StartChip.TextChanged += new TextChangedEventHandler(this.StartChip_TextChanged);
                 StartChip.GotFocus += new RoutedEventHandler(SelectAll);
                 StartChip.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                EndChip = new TextBlock
+                EndChip = new Wpf.Ui.Controls.TextBlock
                 {
                     Text = string.Format("{0}", lastEndChip + 1),
                     Margin = new Thickness(7, 2, 2, 2),

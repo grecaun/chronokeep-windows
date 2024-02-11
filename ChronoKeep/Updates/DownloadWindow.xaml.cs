@@ -15,7 +15,7 @@ namespace Chronokeep.Updates
     /// <summary>
     /// Interaction logic for DownloadWindow.xaml
     /// </summary>
-    public partial class DownloadWindow : UiWindow
+    public partial class DownloadWindow : FluentWindow
     {
         private string uri;
         private string download_uri;

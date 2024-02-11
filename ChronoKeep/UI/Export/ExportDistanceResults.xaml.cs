@@ -20,7 +20,7 @@ namespace Chronokeep.UI.Export
     /// <summary>
     /// Interaction logic for ExportDistanceResults.xaml
     /// </summary>
-    public partial class ExportDistanceResults : UiWindow
+    public partial class ExportDistanceResults : FluentWindow
     {
         IMainWindow window;
         IDBInterface database;

@@ -9,7 +9,7 @@ namespace Chronokeep
     /// <summary>
     /// Interaction logic for ChipPersonWindow.xaml
     /// </summary>
-    public partial class ChipPersonWindow : UiWindow
+    public partial class ChipPersonWindow : FluentWindow
     {
         private ChipReaderWindow readerWindow;
         private string eventDate;

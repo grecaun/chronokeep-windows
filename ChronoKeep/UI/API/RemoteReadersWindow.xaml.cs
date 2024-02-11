@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 using Xceed.Wpf.Toolkit;
 using Button = Wpf.Ui.Controls.Button;
 
@@ -16,7 +17,7 @@ namespace Chronokeep.UI.API
     /// <summary>
     /// Interaction logic for RemoteReaders.xaml
     /// </summary>
-    public partial class RemoteReadersWindow : UiWindow
+    public partial class RemoteReadersWindow : FluentWindow
     {
         private static RemoteReadersWindow theOne = null;
 
@@ -178,7 +179,7 @@ namespace Chronokeep.UI.API
             private IDBInterface database;
 
             ToggleSwitch autoFetch;
-            TextBlock nameBlock;
+            Wpf.Ui.Controls.TextBlock nameBlock;
             ComboBox locationBox;
             DatePicker startDatePicker;
             DatePicker endDatePicker;
@@ -300,7 +301,7 @@ namespace Chronokeep.UI.API
                 thePanel.Children.Add(endTimeBox);
                 Button rewind = new()
                 {
-                    Icon = Wpf.Ui.Common.SymbolRegular.Rewind16,
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Rewind24 },
                     Height = 35,
                     Width = 35,
                     Margin = new System.Windows.Thickness(5),

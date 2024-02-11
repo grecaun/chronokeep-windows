@@ -12,7 +12,7 @@ namespace Chronokeep.UI.Timing
     /// <summary>
     /// Interaction logic for EditRawReadsWindow.xaml
     /// </summary>
-    public partial class EditRawReadsWindow : UiWindow
+    public partial class EditRawReadsWindow : FluentWindow
     {
         TimingPage parent;
         IDBInterface database;

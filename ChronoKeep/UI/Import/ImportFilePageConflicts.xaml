@@ -1,4 +1,4 @@
-﻿<ui:UiPage x:Class="Chronokeep.UI.Import.ImportFilePageConflicts"
+﻿<Page x:Class="Chronokeep.UI.Import.ImportFilePageConflicts"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,7 +8,9 @@
       mc:Ignorable="d" 
       d:DesignHeight="450"
       d:DesignWidth="400"
-      Title="ImportPageMultiples">
+      Title="ImportPageMultiples"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -42,4 +44,4 @@
             </ListBox.ItemContainerStyle>
         </ListBox>
     </Grid>
-</ui:UiPage>
+</Page>

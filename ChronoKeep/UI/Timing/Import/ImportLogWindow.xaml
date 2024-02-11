@@ -1,4 +1,4 @@
-﻿<ui:UiWindow x:Class="Chronokeep.UI.Timing.Import.ImportLogWindow"
+﻿<ui:FluentWindow x:Class="Chronokeep.UI.Timing.Import.ImportLogWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -27,4 +27,4 @@
             <Frame x:Name="Frame"  NavigationUIVisibility="Hidden" IsTabStop="False" />
         </Grid>
     </Grid>
-</ui:UiWindow>
+</ui:FluentWindow>

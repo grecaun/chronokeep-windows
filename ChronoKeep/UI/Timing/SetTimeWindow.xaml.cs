@@ -9,7 +9,7 @@ namespace Chronokeep.UI.Timing
     /// <summary>
     /// Interaction logic for SetTimeWindow.xaml
     /// </summary>
-    public partial class SetTimeWindow : UiWindow
+    public partial class SetTimeWindow : FluentWindow
     {
         TimingPage parent;
         TimingSystem timingSystem;

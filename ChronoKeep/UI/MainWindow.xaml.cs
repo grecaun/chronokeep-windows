@@ -13,9 +13,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Chronokeep.Timing.Announcer;
-using Wpf.Ui.Mvvm.Contracts;
-using System.Windows.Controls;
-using Wpf.Ui.Controls.Interfaces;
 using System.Windows.Threading;
 using Chronokeep.UI.UIObjects;
 using Chronokeep.Helpers;
@@ -28,7 +25,7 @@ namespace Chronokeep.UI
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : INavigationWindow, IMainWindow
+    public partial class MainWindow : IMainWindow
     {
         IDBInterface database;
         IMainPage page;
@@ -65,18 +62,18 @@ namespace Chronokeep.UI
 
         // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
         static Mutex OneWindow = new Mutex(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
-        bool release = false;
 
         public MainWindow()
         {
             InitializeComponent();
+
             // Check that no other instance of this program are running.
             if (!OneWindow.WaitOne(TimeSpan.Zero, true))
             {
                 DialogBox.Show("Chronokeep is already running.");
                 this.Close();
             }
-            release = true;
+            OneWindow.ReleaseMutex();
 
             string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
             string path = Path.Combine(dirPath, dbName);
@@ -124,17 +121,6 @@ namespace Chronokeep.UI
                 Updates.Check.Do(this);
             }
 
-            // Check for current theme color and apply it.
-            AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
-            if (OperatingSystem.IsWindowsVersionAtLeast(7))
-            {
-                var theme = Wpf.Ui.Appearance.ThemeType.Light;
-                if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
-                {
-                    theme = Wpf.Ui.Appearance.ThemeType.Dark;
-                }
-                Wpf.Ui.Appearance.Theme.Apply(theme, Wpf.Ui.Appearance.BackgroundType.Mica, false);
-            }
             DataContext = this;
 
             // Set timing update to every half second.
@@ -156,6 +142,20 @@ namespace Chronokeep.UI
 
             // Pull alarms from the database.
             Alarm.AddAlarms(database.GetAlarms(theEvent.Identifier));
+        }
+
+
+        public void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system)
+        {
+            Wpf.Ui.Appearance.ApplicationThemeManager.Apply(theme);
+            if (system)
+            {
+                Wpf.Ui.Appearance.SystemThemeWatcher.Watch(this);
+            }
+            else
+            {
+                Wpf.Ui.Appearance.SystemThemeWatcher.UnWatch(this);
+            }
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
@@ -320,10 +320,6 @@ namespace Chronokeep.UI
                 }
             }
             if (page != null) page.Closing();
-            if (release)
-            {
-                OneWindow.ReleaseMutex();
-            }
             TimingUpdater.Stop();
         }
 
@@ -638,6 +634,18 @@ namespace Chronokeep.UI
             TimingWorkerThread = new Thread(new ThreadStart(TimingWorker.Run));
             TimingWorkerThread.Start();
             TimingWorker.Notify();
+            // Check for current theme color and apply it.
+            AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
+            if (OperatingSystem.IsWindowsVersionAtLeast(7))
+            {
+                Wpf.Ui.Appearance.ApplicationTheme theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
+                bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
+                if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
+                {
+                    theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
+                }
+                UpdateTheme(theme, system);
+            }
         }
 
         public void SwitchPage(IMainPage iPage)
@@ -753,32 +761,6 @@ namespace Chronokeep.UI
         }
 
         public void Exit()
-        {
-            Close();
-        }
-
-        public Frame GetFrame()
-        {
-            return TheFrame;
-        }
-
-        public INavigation GetNavigation()
-        {
-            return RootNavigation;
-        }
-
-        public bool Navigate(Type pageType)
-        { return true; }
-
-        public void SetPageService(IPageService pageService)
-        { }
-
-        public void ShowWindow()
-        {
-            Show();
-        }
-
-        public void CloseWindow()
         {
             Close();
         }

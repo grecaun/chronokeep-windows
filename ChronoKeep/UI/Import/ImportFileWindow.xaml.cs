@@ -17,7 +17,7 @@ namespace Chronokeep
     /// <summary>
     /// Interaction logic for ImportFileWindow.xaml
     /// </summary>
-    public partial class ImportFileWindow : UiWindow
+    public partial class ImportFileWindow : FluentWindow
     {
         IDataImporter importer;
         IMainWindow window = null;

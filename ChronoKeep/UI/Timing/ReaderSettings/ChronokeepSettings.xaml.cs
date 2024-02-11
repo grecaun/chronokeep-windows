@@ -16,7 +16,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
     /// <summary>
     /// Interaction logic for ChronokeepSettings.xaml
     /// </summary>
-    public partial class ChronokeepSettings : UiWindow
+    public partial class ChronokeepSettings : FluentWindow
     {
         private ChronokeepInterface reader = null;
         private IDBInterface database = null;
@@ -525,7 +525,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(readingSwitch);
                 saveReaderButton = new Button()
                 {
-                    Icon = Wpf.Ui.Common.SymbolRegular.Save20,
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Save24 },
                     Margin = new Thickness(5),
                     Width = 40,
                 };
@@ -533,7 +533,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(saveReaderButton);
                 removeReaderButton = new Button()
                 {
-                    Icon = Wpf.Ui.Common.SymbolRegular.Delete20,
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
                     Margin = new Thickness(5),
                     Width = 40,
                 };
@@ -809,7 +809,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(uriBox);
                 saveAPIButton = new Button()
                 {
-                    Icon = Wpf.Ui.Common.SymbolRegular.Save20,
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Save24 },
                     Margin = new Thickness(5),
                     Width = 40,
                     Height = 35,
@@ -818,7 +818,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(saveAPIButton);
                 removeAPIButton = new Button()
                 {
-                    Icon = Wpf.Ui.Common.SymbolRegular.Delete20,
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
                     Margin = new Thickness(5),
                     Width = 40,
                     Height = 35,

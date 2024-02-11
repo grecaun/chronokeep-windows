@@ -11,7 +11,7 @@ namespace Chronokeep
     /// <summary>
     /// Interaction logic for ChipReaderWindow.xaml
     /// </summary>
-    public partial class ChipReaderWindow : UiWindow
+    public partial class ChipReaderWindow : FluentWindow
     {
         public static byte deviceNo = 0;
         private static Thread readingThread;

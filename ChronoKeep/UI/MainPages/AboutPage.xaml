@@ -1,4 +1,4 @@
-﻿<ui:UiPage x:Class="Chronokeep.UI.MainPages.AboutPage"
+﻿<Page x:Class="Chronokeep.UI.MainPages.AboutPage"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,7 +9,7 @@
         Title="AboutPage"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         FlowDirection="LeftToRight"
-        Scrollable="True"
+        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         >
     <StackPanel Margin="10,10,10,10">
         <TextBlock
@@ -45,16 +45,22 @@
             FontWeight="Medium"
             Text="Links"
             />
-        <ui:Hyperlink
+        <ui:HyperlinkButton
             Content="Project website on Github"
-            Icon="Link24"
             NavigateUri="https://github.com/grecaun/chronokeep-windows"
-            />
-        <ui:Hyperlink
+            >
+            <ui:HyperlinkButton.Icon>
+                <ui:SymbolIcon Symbol="Link24"/>
+            </ui:HyperlinkButton.Icon>
+        </ui:HyperlinkButton>
+        <ui:HyperlinkButton
             Content="Latest release on Github"
-            Icon="Link24"
             NavigateUri="https://github.com/grecaun/chronokeep-windows/releases/latest"
-            />
+            >
+            <ui:HyperlinkButton.Icon>
+                <ui:SymbolIcon Symbol="Link24"/>
+            </ui:HyperlinkButton.Icon>
+        </ui:HyperlinkButton>
         <TextBlock
             Padding="0,24,0,8"
             FontSize="14"
@@ -68,16 +74,58 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="0,0,32,0">
-                <ui:Hyperlink Icon="Link24" Content="SQLite" NavigateUri="https://system.data.sqlite.org/" />
-                <ui:Hyperlink Icon="Link24" Content="wkhtmltopdf" NavigateUri="https://wkhtmltopdf.org/" />
+                <ui:HyperlinkButton
+                    Content="SQLite"
+                    NavigateUri="https://system.data.sqlite.org/"
+                    >
+                    <ui:HyperlinkButton.Icon>
+                        <ui:SymbolIcon Symbol="Link24"/>
+                    </ui:HyperlinkButton.Icon>
+                </ui:HyperlinkButton>
+                <ui:HyperlinkButton
+                    Content="wkhtmltopdf"
+                    NavigateUri="https://wkhtmltopdf.org/"
+                    >
+                    <ui:HyperlinkButton.Icon>
+                        <ui:SymbolIcon Symbol="Link24"/>
+                    </ui:HyperlinkButton.Icon>
+                </ui:HyperlinkButton>
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="0,0,32,0">
-                <ui:Hyperlink Icon="Link24" Content="WPF UI" NavigateUri="https://github.com/lepoco/wpfui" />
-                <ui:Hyperlink Icon="Link24" Content="Ghostscript" NavigateUri="https://www.ghostscript.com/" />
+                <ui:HyperlinkButton
+                    Content="WPF UI"
+                    NavigateUri="https://github.com/lepoco/wpfui"
+                    >
+                    <ui:HyperlinkButton.Icon>
+                        <ui:SymbolIcon Symbol="Link24"/>
+                    </ui:HyperlinkButton.Icon>
+                </ui:HyperlinkButton>
+                <ui:HyperlinkButton
+                    Content="Ghostscript"
+                    NavigateUri="https://www.ghostscript.com/"
+                    >
+                    <ui:HyperlinkButton.Icon>
+                        <ui:SymbolIcon Symbol="Link24"/>
+                    </ui:HyperlinkButton.Icon>
+                </ui:HyperlinkButton>
             </StackPanel>
             <StackPanel Grid.Column="2">
-                <ui:Hyperlink Icon="Link24" Content="Extended WPF Toolkit" NavigateUri="https://github.com/xceedsoftware/wpftoolkit" />
-                <ui:Hyperlink Icon="Link24" Content="ClosedXML" NavigateUri="https://closedxml.github.io/ClosedXML/" />
+                <ui:HyperlinkButton
+                    Content="Extended WPF Toolkit"
+                    NavigateUri="https://github.com/xceedsoftware/wpftoolkit"
+                    >
+                    <ui:HyperlinkButton.Icon>
+                        <ui:SymbolIcon Symbol="Link24"/>
+                    </ui:HyperlinkButton.Icon>
+                </ui:HyperlinkButton>
+                <ui:HyperlinkButton
+                    Content="ClosedXML"
+                    NavigateUri="https://closedxml.github.io/ClosedXML/"
+                    >
+                    <ui:HyperlinkButton.Icon>
+                        <ui:SymbolIcon Symbol="Link24"/>
+                    </ui:HyperlinkButton.Icon>
+                </ui:HyperlinkButton>
             </StackPanel>
         </Grid>
         <TextBlock
@@ -86,10 +134,13 @@
             FontWeight="Medium"
             Text="Application Folders"
             />
-        <ui:Hyperlink
+        <ui:HyperlinkButton
             Click="OpenDataFolder_Click"
             Content="Data"
-            Icon="Folder24"
-            />
+            >
+            <ui:HyperlinkButton.Icon>
+                <ui:SymbolIcon Symbol="Folder24"/>
+            </ui:HyperlinkButton.Icon>
+        </ui:HyperlinkButton>
     </StackPanel>
-</ui:UiPage>
+</Page>

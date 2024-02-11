@@ -1,4 +1,4 @@
-﻿<ui:UiPage x:Class="Chronokeep.UI.MainPages.ChipAssigmentPage"
+﻿<Page x:Class="Chronokeep.UI.MainPages.ChipAssigmentPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,8 +6,12 @@
       xmlns:local="clr-namespace:Chronokeep.UI.MainPages"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d"
-      d:DesignHeight="450" d:DesignWidth="800"
-      Title="ChipAssigmentPage" Loaded="Page_Loaded">
+      d:DesignHeight="450"
+      d:DesignWidth="800"
+      Title="ChipAssigmentPage"
+      Loaded="Page_Loaded"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      >
     <Grid>
         <TextBlock 
             Name="nothing"
@@ -306,4 +310,4 @@
             </StackPanel>
         </Grid>
     </Grid>
-</ui:UiPage>
+</Page>
