@@ -33,261 +33,282 @@
             <StackPanel x:Name="sacrifice" Visibility="Hidden" Margin="1,1,1,1" Height="1" />
             <StackPanel x:Name="settingsPanel" Visibility="Hidden" Margin="0,10,0,0">
                 <StackPanel
-                Orientation="Horizontal"
-                Height="45"
-                >
+                    Orientation="Horizontal"
+                    Height="45"
+                    >
                     <TextBlock
-                    Text="Ultra ID"
-                    TextAlignment="Right"
-                    VerticalAlignment="Center"
-                    Width="100"
-                    Margin="5,5,5,5"
-                    />
+                        Text="Ultra ID"
+                        TextAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="100"
+                        Margin="5,5,5,5"
+                        />
                     <Slider
-                    x:Name="idSlider"
-                    Width="200"
-                    Margin="5,5,5,5"
-                    IsSnapToTickEnabled="True"
-                    Maximum="255"
-                    Minimum="1"
-                    TickFrequency="1"
-                    ValueChanged="idSlider_ValueChanged"
-                    VerticalAlignment="Center"
-                    />
+                        x:Name="idSlider"
+                        Width="200"
+                        Margin="5,5,5,5"
+                        IsSnapToTickEnabled="True"
+                        Maximum="255"
+                        Minimum="1"
+                        TickFrequency="1"
+                        ValueChanged="idSlider_ValueChanged"
+                        VerticalAlignment="Center"
+                        />
                     <TextBlock
-                    x:Name="idDisplay"
-                    Text="10"
-                    TextAlignment="Left"
-                    VerticalAlignment="Center"
-                    Width="40"
-                    Margin="5,5,5,5"
-                    />
+                        x:Name="idDisplay"
+                        Text="10"
+                        TextAlignment="Left"
+                        VerticalAlignment="Center"
+                        Width="40"
+                        Margin="5,5,5,5"
+                        />
                     <ui:Button
-                    Name="saveID"
-                    Icon="Save16"
-                    Click="saveID_Click"
-                    Margin="5,5,5,5"
-                    />
+                        Name="saveID"
+                        Click="saveID_Click"
+                        Margin="5,5,5,5"
+                        >
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Save24"/>
+                        </ui:Button.Icon>
+                    </ui:Button>
                 </StackPanel>
                 <StackPanel
-                Orientation="Horizontal"
-                Height="45"
-                >
-                    <TextBlock
-                    Text="Chip Type"
-                    TextAlignment="Right"
-                    VerticalAlignment="Center"
-                    Width="100"
-                    Margin="5,5,5,5"
-                    />
-                    <ComboBox
-                    x:Name="chipBox"
-                    Width="250"
-                    Margin="5,5,5,5"
-                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Height="45"
                     >
+                    <TextBlock
+                        Text="Chip Type"
+                        TextAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="100"
+                        Margin="5,5,5,5"
+                        />
+                    <ComboBox
+                        x:Name="chipBox"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        VerticalAlignment="Center"
+                        >
                         <ComboBoxItem Content="Decimal" IsSelected="True" />
                         <ComboBoxItem Content="Hexadecimal" />
                     </ComboBox>
                     <ui:Button
-                    Name="saveChip"
-                    Icon="Save16"
-                    Click="saveChip_Click"
-                    Margin="5,5,5,5"
-                    />
+                        Name="saveChip"
+                        Click="saveChip_Click"
+                        Margin="5,5,5,5"
+                        >
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Save24"/>
+                        </ui:Button.Icon>
+                    </ui:Button>
                 </StackPanel>
                 <StackPanel
-                Orientation="Horizontal"
-                Height="45"
-                >
-                    <TextBlock
-                    Text="Gating Mode"
-                    TextAlignment="Right"
-                    VerticalAlignment="Center"
-                    Width="100"
-                    Margin="5,5,5,5"
-                    />
-                    <ComboBox
-                    x:Name="gatingModeBox"
-                    Width="250"
-                    Margin="5,5,5,5"
-                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Height="45"
                     >
+                    <TextBlock
+                        Text="Gating Mode"
+                        TextAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="100"
+                        Margin="5,5,5,5"
+                        />
+                    <ComboBox
+                        x:Name="gatingModeBox"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        VerticalAlignment="Center"
+                        >
                         <ComboBoxItem Content ="Per Reader" IsSelected="True"/>
                         <ComboBoxItem Content ="Per Box" />
                         <ComboBoxItem Content ="First Time Seen"/>
                     </ComboBox>
                     <ui:Button
-                    Name="saveGatingMode"
-                    Icon="Save16"
-                    Click="saveGatingMode_Click"
-                    Margin="5,5,5,5"
-                    />
+                        Name="saveGatingMode"
+                        Click="saveGatingMode_Click"
+                        Margin="5,5,5,5"
+                        >
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Save24"/>
+                        </ui:Button.Icon>
+                    </ui:Button>
                 </StackPanel>
                 <StackPanel
-                Orientation="Horizontal"
-                Height="45"
-                >
-                    <TextBlock
-                    Text="Gating Interval"
-                    TextAlignment="Right"
-                    VerticalAlignment="Center"
-                    Width="100"
-                    Margin="5,5,5,5"
-                    />
-                    <Slider
-                    x:Name="gatingSlider"
-                    Width="200"
-                    Margin="5,5,5,5"
-                    IsSnapToTickEnabled="True"
-                    Maximum="20"
-                    Minimum="0"
-                    TickFrequency="1"
-                    ValueChanged="gatingSlider_ValueChanged"
-                    VerticalAlignment="Center"
-                    />
-                    <TextBlock
-                    x:Name="gatingDisplay"
-                    Text="10"
-                    TextAlignment="Left"
-                    VerticalAlignment="Center"
-                    Width="40"
-                    Margin="5,5,5,5"
-                    />
-                    <ui:Button
-                    Name="saveGatingInterval"
-                    Icon="Save16"
-                    Click="saveGatingInterval_Click"
-                    Margin="5,5,5,5"
-                    />
-                </StackPanel>
-                <StackPanel
-                Orientation="Horizontal"
-                Height="45"
-                >
-                    <TextBlock
-                    Text="When to Beep"
-                    TextAlignment="Right"
-                    VerticalAlignment="Center"
-                    Width="100"
-                    Margin="5,5,5,5"
-                    />
-                    <ComboBox
-                    x:Name="whenBeepBox"
-                    Width="250"
-                    Margin="5,5,5,5"
-                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Height="45"
                     >
+                    <TextBlock
+                        Text="Gating Interval"
+                        TextAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="100"
+                        Margin="5,5,5,5"
+                        />
+                    <Slider
+                        x:Name="gatingSlider"
+                        Width="200"
+                        Margin="5,5,5,5"
+                        IsSnapToTickEnabled="True"
+                        Maximum="20"
+                        Minimum="0"
+                        TickFrequency="1"
+                        ValueChanged="gatingSlider_ValueChanged"
+                        VerticalAlignment="Center"
+                        />
+                    <TextBlock
+                        x:Name="gatingDisplay"
+                        Text="10"
+                        TextAlignment="Left"
+                        VerticalAlignment="Center"
+                        Width="40"
+                        Margin="5,5,5,5"
+                        />
+                    <ui:Button
+                        Name="saveGatingInterval"
+                        Click="saveGatingInterval_Click"
+                        Margin="5,5,5,5"
+                        >
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Save24"/>
+                        </ui:Button.Icon>
+                    </ui:Button>
+                </StackPanel>
+                <StackPanel
+                    Orientation="Horizontal"
+                    Height="45"
+                    >
+                    <TextBlock
+                        Text="When to Beep"
+                        TextAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="100"
+                        Margin="5,5,5,5"
+                        />
+                    <ComboBox
+                        x:Name="whenBeepBox"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        VerticalAlignment="Center"
+                        >
                         <ComboBoxItem Content="Always" IsSelected="True" />
                         <ComboBoxItem Content="Only First Seen" />
                     </ComboBox>
                     <ui:Button
-                    Name="saveWhenBeep"
-                    Icon="Save16"
-                    Click="saveWhenBeep_Click"
-                    Margin="5,5,5,5"
-                    />
+                        Name="saveWhenBeep"
+                        Click="saveWhenBeep_Click"
+                        Margin="5,5,5,5"
+                        >
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Save24"/>
+                        </ui:Button.Icon>
+                    </ui:Button>
                 </StackPanel>
                 <StackPanel
-                Orientation="Horizontal"
-                Height="45"
-                >
-                    <TextBlock
-                    Text="Beeper Volume"
-                    TextAlignment="Right"
-                    VerticalAlignment="Center"
-                    Width="100"
-                    Margin="5,5,5,5"
-                    />
-                    <ComboBox
-                    x:Name="volumeBox"
-                    Width="250"
-                    Margin="5,5,5,5"
-                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Height="45"
                     >
+                    <TextBlock
+                        Text="Beeper Volume"
+                        TextAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="100"
+                        Margin="5,5,5,5"
+                        />
+                    <ComboBox
+                        x:Name="volumeBox"
+                        Width="250"
+                        Margin="5,5,5,5"
+                        VerticalAlignment="Center"
+                        >
                         <ComboBoxItem Content="Off" IsSelected="True" />
                         <ComboBoxItem Content="Soft" />
                         <ComboBoxItem Content="Loud" />
                     </ComboBox>
                     <ui:Button
-                    Name="saveVolume"
-                    Icon="Save16"
-                    Click="saveVolume_Click"
-                    Margin="5,5,5,5"
-                    />
+                        Name="saveVolume"
+                        Click="saveVolume_Click"
+                        Margin="5,5,5,5"
+                        >
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Save24"/>
+                        </ui:Button.Icon>
+                    </ui:Button>
                 </StackPanel>
                 <StackPanel
-                Orientation="Horizontal"
-                Height="45"
-                >
+                    Orientation="Horizontal"
+                    Height="45"
+                    >
                     <TextBlock
-                    Text="Time Zone"
-                    TextAlignment="Right"
-                    VerticalAlignment="Center"
-                    Width="100"
-                    Margin="5,5,5,5"
-                    />
+                        Text="Time Zone"
+                        TextAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="100"
+                        Margin="5,5,5,5"
+                        />
                     <Slider
-                    x:Name="timeZoneSlider"
-                    Width="200"
-                    Margin="5,5,5,5"
-                    IsSnapToTickEnabled="True"
-                    Maximum="23"
-                    Minimum="-23"
-                    TickFrequency="1"
-                    ValueChanged="timeZoneSlider_ValueChanged"
-                    VerticalAlignment="Center"
-                    />
+                        x:Name="timeZoneSlider"
+                        Width="200"
+                        Margin="5,5,5,5"
+                        IsSnapToTickEnabled="True"
+                        Maximum="23"
+                        Minimum="-23"
+                        TickFrequency="1"
+                        ValueChanged="timeZoneSlider_ValueChanged"
+                        VerticalAlignment="Center"
+                        />
                     <TextBlock
-                    x:Name="timeZoneDisplay"
-                    Text="10"
-                    TextAlignment="Left"
-                    VerticalAlignment="Center"
-                    Width="40"
-                    Margin="5,5,5,5"
-                    />
+                        x:Name="timeZoneDisplay"
+                        Text="10"
+                        TextAlignment="Left"
+                        VerticalAlignment="Center"
+                        Width="40"
+                        Margin="5,5,5,5"
+                        />
                     <ui:Button
-                    Name="saveTimezone"
-                    Icon="Save16"
-                    Click="saveTimezone_Click"
-                    Margin="5,5,5,5"
-                    />
+                        Name="saveTimezone"
+                        Click="saveTimezone_Click"
+                        Margin="5,5,5,5"
+                        >
+                        <ui:Button.Icon>
+                            <ui:SymbolIcon Symbol="Save24"/>
+                        </ui:Button.Icon>
+                    </ui:Button>
                 </StackPanel>
                 <StackPanel
-                Orientation="Horizontal"
-                Height="45"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                >
-                    <ui:ToggleSwitch
-                    x:Name="setGPSSwitch"
-                    Content="Set Time From GPS?"
-                    Margin="5,5,5,5"
-                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Height="45"
                     HorizontalAlignment="Center"
-                    Click="setGPSSwitch_Click"
-                    />
-                </StackPanel>
-                <StackPanel
-                Orientation="Horizontal"
-                Height="45"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                >
-                    <ui:ToggleSwitch
-                    x:Name="readingSwitch"
-                    Content="Reading?"
-                    Margin="5,5,5,5"
                     VerticalAlignment="Center"
-                    HorizontalAlignment="Center"
-                    Click="readingSwitch_Click"
-                    />
+                    >
+                    <ui:ToggleSwitch
+                        x:Name="setGPSSwitch"
+                        Content="Set Time From GPS?"
+                        Margin="5,5,5,5"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Click="setGPSSwitch_Click"
+                        />
                 </StackPanel>
                 <StackPanel
-                Orientation="Horizontal"
-                Height="45"
-                HorizontalAlignment="Center"
-                >
+                    Orientation="Horizontal"
+                    Height="45"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    >
+                    <ui:ToggleSwitch
+                        x:Name="readingSwitch"
+                        Content="Reading?"
+                        Margin="5,5,5,5"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Click="readingSwitch_Click"
+                        />
+                </StackPanel>
+                <StackPanel
+                    Orientation="Horizontal"
+                    Height="45"
+                    HorizontalAlignment="Center"
+                    >
                     <Button
                         Content="Close"
                         x:Name="closeButton"

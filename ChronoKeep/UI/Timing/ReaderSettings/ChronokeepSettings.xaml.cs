@@ -539,18 +539,23 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 removeReaderButton.Click += new RoutedEventHandler(this.DeleteReader);
                 subPanel.Children.Add(removeReaderButton);
-                // fourth row
-                subPanel = new StackPanel()
+                if (reader.Antennas != null)
                 {
-                    Orientation = Orientation.Horizontal,
-                    HorizontalAlignment = HorizontalAlignment.Center
-                };
-                thePanel.Children.Add(subPanel);
-                foreach (uint number in reader.Antennas.Keys)
-                {
-                    //subPanel.Children.Add(
-                    //    new InfoBadge
-                    //    );
+                    // fourth row
+                    subPanel = new StackPanel()
+                    {
+                        Orientation = Orientation.Horizontal,
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    };
+                    thePanel.Children.Add(subPanel);
+                    foreach (uint number in reader.Antennas.Keys)
+                    {
+                        subPanel.Children.Add(new InfoBadge()
+                        {
+                            Severity = reader.Antennas[number] ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Caution,
+                            Value = number.ToString(),
+                        });
+                    }
                 }
             }
 

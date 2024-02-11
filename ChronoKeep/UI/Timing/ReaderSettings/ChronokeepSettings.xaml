@@ -168,7 +168,18 @@
                     <Expander.Header>
                         <DockPanel LastChildFill="False" VerticalAlignment="Center">
                             <TextBlock Text="Readers" Margin="5,0,0,0" VerticalAlignment="Center" />
-                            <ui:Button x:Name="addReaderButton" Icon="Add20" DockPanel.Dock="Right" Margin="0,0,10,0" VerticalAlignment="Center" Click="addReaderButton_Click" Visibility="Collapsed" />
+                            <ui:Button
+                                x:Name="addReaderButton"
+                                DockPanel.Dock="Right"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Center"
+                                Click="addReaderButton_Click"
+                                Visibility="Collapsed"
+                                >
+                                <ui:Button.Icon>
+                                    <ui:SymbolIcon Symbol="Add24"/>
+                                </ui:Button.Icon>
+                            </ui:Button>
                         </DockPanel>
                     </Expander.Header>
                     <ListView
@@ -194,7 +205,18 @@
                     <Expander.Header>
                         <DockPanel LastChildFill="False" VerticalAlignment="Center">
                             <TextBlock Text="API Keys" Margin="5,0,0,0" VerticalAlignment="Center" />
-                            <ui:Button x:Name="addAPIButton" Icon="Add20" DockPanel.Dock="Right" Margin="0,0,10,0" VerticalAlignment="Center" Click="addAPIButton_Click" Visibility="Collapsed" />
+                            <ui:Button
+                                x:Name="addAPIButton"
+                                DockPanel.Dock="Right"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Center"
+                                Click="addAPIButton_Click"
+                                Visibility="Collapsed"
+                                >
+                                <ui:Button.Icon>
+                                    <ui:SymbolIcon Symbol="Add24"/>
+                                </ui:Button.Icon>
+                            </ui:Button>
                         </DockPanel>
                     </Expander.Header>
                     <ListView
