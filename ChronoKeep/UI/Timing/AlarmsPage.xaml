@@ -1,4 +1,4 @@
-﻿<ui:UiPage x:Class="Chronokeep.UI.Timing.AlarmsPage"
+﻿<Page x:Class="Chronokeep.UI.Timing.AlarmsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -44,4 +44,4 @@
             <Button Width="150" Name="doneButton" Content="Done" Click="DoneButton_Click" Height="35" Margin="10,0,0,0"/>
         </StackPanel>
     </Grid>
-</ui:UiPage>
+</Page>

@@ -1377,7 +1377,7 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(ReaderLocation, 3);
                 ClockButton = new Wpf.Ui.Controls.Button()
                 {
-                    Icon = Wpf.Ui.Common.SymbolRegular.Clock20,
+                    Content = Wpf.Ui.Controls.SymbolRegular.Clock20,
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -1390,7 +1390,7 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(ClockButton, 4);
                 RewindButton = new Wpf.Ui.Controls.Button()
                 {
-                    Icon = Wpf.Ui.Common.SymbolRegular.Rewind20,
+                    Content = Wpf.Ui.Controls.SymbolRegular.Rewind20,
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -1403,7 +1403,7 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(RewindButton, 5);
                 SettingsButton = new Wpf.Ui.Controls.Button()
                 {
-                    Icon = Wpf.Ui.Common.SymbolRegular.Settings20,
+                    Content = Wpf.Ui.Controls.SymbolRegular.Settings20,
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -1414,7 +1414,7 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(SettingsButton, 6);
                 ConnectButton = new Wpf.Ui.Controls.Button()
                 {
-                    Icon = Wpf.Ui.Common.SymbolRegular.Play20,
+                    Content = Wpf.Ui.Controls.SymbolRegular.Play20,
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -1425,7 +1425,7 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(ConnectButton, 7);
                 RemoveButton = new Wpf.Ui.Controls.Button()
                 {
-                    Icon = Wpf.Ui.Common.SymbolRegular.Delete20,
+                    Content = Wpf.Ui.Controls.SymbolRegular.Delete20,
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -1557,7 +1557,7 @@ namespace Chronokeep.UI.MainPages
 
             private void Connect(object sender, RoutedEventArgs e)
             {
-                if (Wpf.Ui.Common.SymbolRegular.Play20 != ConnectButton.Icon)
+                if (Wpf.Ui.Controls.SymbolRegular.Play20 != (Wpf.Ui.Controls.SymbolRegular)ConnectButton.Content)
                 {
                     Log.D("UI.MainPages.TimingPage", "Disconnect pressed.");
                     reader.Status = SYSTEM_STATUS.WORKING;
@@ -1626,7 +1626,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 ConnectButton.IsEnabled = true;
                 ConnectButton.Opacity = 1.0;
-                ConnectButton.Icon = Wpf.Ui.Common.SymbolRegular.Stop20;
+                ConnectButton.Content = Wpf.Ui.Controls.SymbolRegular.Stop20;
             }
 
             private void SetDisconnected()
@@ -1647,7 +1647,7 @@ namespace Chronokeep.UI.MainPages
                 ClockButton.Opacity = 0.2;
                 RewindButton.Opacity = 0.2;
                 SettingsButton.Opacity = 0.2;
-                ConnectButton.Icon = Wpf.Ui.Common.SymbolRegular.Play20;
+                ConnectButton.Content = Wpf.Ui.Controls.SymbolRegular.Play20;
             }
 
             private void SetWorking()
@@ -1666,7 +1666,7 @@ namespace Chronokeep.UI.MainPages
                 ConnectButton.Opacity = 0.2;
                 RemoveButton.Opacity = 0.2;
                 SettingsButton.Opacity = 0.2;
-                ConnectButton.Icon = Wpf.Ui.Common.SymbolRegular.CatchUp20;
+                ConnectButton.Content = Wpf.Ui.Controls.SymbolRegular.CatchUp20;
             }
 
             private void Rewind(object sender, RoutedEventArgs e)

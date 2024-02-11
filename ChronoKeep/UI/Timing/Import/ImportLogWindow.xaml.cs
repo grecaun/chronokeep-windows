@@ -13,7 +13,7 @@ namespace Chronokeep.UI.Timing.Import
     /// <summary>
     /// Interaction logic for ImportLogWindow.xaml
     /// </summary>
-    public partial class ImportLogWindow : UiWindow
+    public partial class ImportLogWindow : FluentWindow
     {
         IMainWindow window;
         IDBInterface database;

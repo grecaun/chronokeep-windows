@@ -13,9 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Chronokeep.Timing.Announcer;
-using Wpf.Ui.Mvvm.Contracts;
 using System.Windows.Controls;
-using Wpf.Ui.Controls.Interfaces;
 using System.Windows.Threading;
 using Chronokeep.UI.UIObjects;
 using Chronokeep.Helpers;
@@ -28,7 +26,7 @@ namespace Chronokeep.UI
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : INavigationWindow, IMainWindow
+    public partial class MainWindow : IMainWindow
     {
         IDBInterface database;
         IMainPage page;
@@ -128,12 +126,12 @@ namespace Chronokeep.UI
             AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
             if (OperatingSystem.IsWindowsVersionAtLeast(7))
             {
-                var theme = Wpf.Ui.Appearance.ThemeType.Light;
+                var theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
                 if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
                 {
-                    theme = Wpf.Ui.Appearance.ThemeType.Dark;
+                    theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
                 }
-                Wpf.Ui.Appearance.Theme.Apply(theme, Wpf.Ui.Appearance.BackgroundType.Mica, false);
+                Wpf.Ui.Appearance.ApplicationThemeManager.Apply(theme);
             }
             DataContext = this;
 
@@ -753,32 +751,6 @@ namespace Chronokeep.UI
         }
 
         public void Exit()
-        {
-            Close();
-        }
-
-        public Frame GetFrame()
-        {
-            return TheFrame;
-        }
-
-        public INavigation GetNavigation()
-        {
-            return RootNavigation;
-        }
-
-        public bool Navigate(Type pageType)
-        { return true; }
-
-        public void SetPageService(IPageService pageService)
-        { }
-
-        public void ShowWindow()
-        {
-            Show();
-        }
-
-        public void CloseWindow()
         {
             Close();
         }

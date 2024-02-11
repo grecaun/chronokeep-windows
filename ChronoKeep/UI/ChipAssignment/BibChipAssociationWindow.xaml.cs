@@ -14,7 +14,7 @@ namespace Chronokeep
     /// <summary>
     /// Interaction logic for BibChipAssociationWindow.xaml
     /// </summary>
-    public partial class BibChipAssociationWindow : UiWindow
+    public partial class BibChipAssociationWindow : FluentWindow
     {
         IDataImporter importer;
         IWindowCallback window = null;

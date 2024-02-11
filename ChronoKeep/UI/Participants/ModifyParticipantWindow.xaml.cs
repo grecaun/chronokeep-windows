@@ -14,7 +14,7 @@ namespace Chronokeep.UI.Participants
     /// <summary>
     /// Interaction logic for ModifyParticipantWindow.xaml
     /// </summary>
-    public partial class ModifyParticipantWindow : UiWindow
+    public partial class ModifyParticipantWindow : FluentWindow
     {
         IMainWindow window;
         IDBInterface database;

@@ -12,7 +12,7 @@ namespace Chronokeep.UI.Timing
     /// <summary>
     /// Interaction logic for ManualEntryWindow.xaml
     /// </summary>
-    public partial class ManualEntryWindow : UiWindow
+    public partial class ManualEntryWindow : FluentWindow
     {
         IMainWindow window;
         IDBInterface database;

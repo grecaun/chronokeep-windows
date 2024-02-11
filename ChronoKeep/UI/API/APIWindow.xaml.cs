@@ -9,7 +9,7 @@ namespace Chronokeep.UI.API
     /// <summary>
     /// Interaction logic for APIWindow.xaml
     /// </summary>
-    public partial class APIWindow : UiWindow
+    public partial class APIWindow : FluentWindow
     {
         IWindowCallback window = null;
         IDBInterface database;

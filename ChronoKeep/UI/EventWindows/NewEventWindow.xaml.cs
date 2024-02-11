@@ -13,7 +13,7 @@ namespace Chronokeep
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class NewEventWindow : UiWindow
+    public partial class NewEventWindow : FluentWindow
     {
         IDBInterface database = null;
         IWindowCallback window = null;

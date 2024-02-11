@@ -10,7 +10,7 @@ namespace Chronokeep.UI
     /// <summary>
     /// Interaction logic for ChangeEventWindow.xaml
     /// </summary>
-    public partial class ChangeEventWindow : UiWindow
+    public partial class ChangeEventWindow : FluentWindow
     {
         private IWindowCallback window;
         private IDBInterface database;

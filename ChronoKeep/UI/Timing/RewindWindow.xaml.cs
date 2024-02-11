@@ -11,7 +11,7 @@ namespace Chronokeep.UI.Timing
     /// <summary>
     /// Interaction logic for RewindWindow.xaml
     /// </summary>
-    public partial class RewindWindow : UiWindow
+    public partial class RewindWindow : FluentWindow
     {
         TimingSystem system;
 

@@ -15,7 +15,7 @@ namespace Chronokeep.UI.Export
     /// <summary>
     /// Interaction logic for ExportResults.xaml
     /// </summary>
-    public partial class ExportResults : UiWindow
+    public partial class ExportResults : FluentWindow
     {
         IMainWindow window;
         IDBInterface database;

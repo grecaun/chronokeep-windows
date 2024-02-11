@@ -267,12 +267,12 @@ namespace Chronokeep.UI.MainPages
             if (selectedItem != null)
             {
                 database.SetAppSetting(Constants.Settings.CURRENT_THEME, ((ComboBoxItem)ThemeColorBox.SelectedItem).Uid);
-                var theme = Wpf.Ui.Appearance.ThemeType.Light;
+                var theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
                 if ((selectedItem.Uid == Constants.Settings.THEME_SYSTEM && SystemTheme == 0) || selectedItem.Uid == Constants.Settings.THEME_DARK)
                 {
-                    theme = Wpf.Ui.Appearance.ThemeType.Dark;
+                    theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
                 }
-                Wpf.Ui.Appearance.Theme.Apply(theme, Wpf.Ui.Appearance.BackgroundType.Mica, true, true);
+                Wpf.Ui.Appearance.ApplicationThemeManager.Apply(theme);
             }
         }
 

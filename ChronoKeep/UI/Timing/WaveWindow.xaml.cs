@@ -12,7 +12,7 @@ namespace Chronokeep.UI.Timing
     /// <summary>
     /// Interaction logic for WaveWindow.xaml
     /// </summary>
-    public partial class WaveWindow : UiWindow
+    public partial class WaveWindow : FluentWindow
     {
         IMainWindow window;
         IDBInterface database;
@@ -127,7 +127,7 @@ namespace Chronokeep.UI.Timing
         private class AWave : ListBoxItem
         {
             public MaskedTextBox StartOffset { get; private set; }
-            public TextBlock WaveType { get; private set; }
+            public Wpf.Ui.Controls.TextBlock WaveType { get; private set; }
             private int Wave;
             private int waveType = 1;
 
@@ -137,7 +137,7 @@ namespace Chronokeep.UI.Timing
                 DockPanel thePanel = new DockPanel();
                 this.Content = thePanel;
                 thePanel.VerticalAlignment = VerticalAlignment.Center;
-                thePanel.Children.Add(new TextBlock()
+                thePanel.Children.Add(new Wpf.Ui.Controls.TextBlock()
                 {
                     Text = num.ToString(),
                     FontSize = 14,
@@ -155,7 +155,7 @@ namespace Chronokeep.UI.Timing
                     startSeconds *= -1;
                     startMilliseconds *= -1;
                 }
-                WaveType = new TextBlock()
+                WaveType = new Wpf.Ui.Controls.TextBlock()
                 {
                     Width = 25,
                     Margin = new Thickness(0, 0, 3, 0),

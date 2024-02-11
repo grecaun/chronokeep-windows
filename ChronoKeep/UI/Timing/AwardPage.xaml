@@ -1,4 +1,4 @@
-﻿<ui:UiPage x:Class="Chronokeep.UI.Timing.AwardPage"
+﻿<Page x:Class="Chronokeep.UI.Timing.AwardPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -80,4 +80,4 @@
             <Button Width="100" Name="doneButton" Content="Done" Click="DoneButton_Click" Margin="2,0,0,0" Height="35"/>
         </DockPanel>
     </Grid>
-</ui:UiPage>
+</Page>

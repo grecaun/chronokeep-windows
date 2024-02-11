@@ -13,7 +13,7 @@ namespace Chronokeep.UI.Announcer
     /// <summary>
     /// Interaction logic for AnnouncerWindow.xaml
     /// </summary>
-    public partial class AnnouncerWindow : UiWindow
+    public partial class AnnouncerWindow : FluentWindow
     {
         IMainWindow window = null;
         AnnouncerWorker announcerWorker = null;
