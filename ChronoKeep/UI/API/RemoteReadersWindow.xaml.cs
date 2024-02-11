@@ -80,7 +80,7 @@ namespace Chronokeep.UI.API
             apiListView.Visibility = System.Windows.Visibility.Visible;
         }
 
-        private void UiWindow_Closed(object sender, EventArgs e)
+        private void Window_Closed(object sender, EventArgs e)
         {
             Log.D("UI.API.RemoteReaders", "Window is closed.");
             theOne = null;

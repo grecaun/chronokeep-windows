@@ -68,16 +68,16 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="0,0,32,0">
-                <ui:Hyperlink Content="SQLite" NavigateUri="https://system.data.sqlite.org/" />
-                <ui:Hyperlink Content="wkhtmltopdf" NavigateUri="https://wkhtmltopdf.org/" />
+                <ui:Hyperlink Icon="Link24" Content="SQLite" NavigateUri="https://system.data.sqlite.org/" />
+                <ui:Hyperlink Icon="Link24" Content="wkhtmltopdf" NavigateUri="https://wkhtmltopdf.org/" />
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="0,0,32,0">
-                <ui:Hyperlink Content="WPF UI" NavigateUri="https://github.com/lepoco/wpfui" />
-                <ui:Hyperlink Content="Ghostscript" NavigateUri="https://www.ghostscript.com/" />
+                <ui:Hyperlink Icon="Link24" Content="WPF UI" NavigateUri="https://github.com/lepoco/wpfui" />
+                <ui:Hyperlink Icon="Link24" Content="Ghostscript" NavigateUri="https://www.ghostscript.com/" />
             </StackPanel>
             <StackPanel Grid.Column="2">
-                <ui:Hyperlink Content="Extended WPF Toolkit" NavigateUri="https://github.com/xceedsoftware/wpftoolkit" />
-                <ui:Hyperlink Content="ClosedXML" NavigateUri="https://closedxml.github.io/ClosedXML/" />
+                <ui:Hyperlink Icon="Link24" Content="Extended WPF Toolkit" NavigateUri="https://github.com/xceedsoftware/wpftoolkit" />
+                <ui:Hyperlink Icon="Link24" Content="ClosedXML" NavigateUri="https://closedxml.github.io/ClosedXML/" />
             </StackPanel>
         </Grid>
         <TextBlock

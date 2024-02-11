@@ -188,7 +188,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }
         }
 
-        private void UiWindow_Closed(object sender, EventArgs e)
+        private void Window_Closed(object sender, EventArgs e)
         {
             reader.SettingsWindowFinalize();
         }

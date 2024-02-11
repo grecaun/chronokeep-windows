@@ -12,7 +12,7 @@
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
-        Closed="UiWindow_Closed"
+        Closed="Window_Closed"
         Height="500"
         Width="300"
         SizeToContent="WidthAndHeight"

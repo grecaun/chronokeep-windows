@@ -16,7 +16,7 @@
         Width="340"
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
-        Closed="UiWindow_Closed"
+        Closed="Window_Closed"
         >
     <Grid>
         <Grid.RowDefinitions>
