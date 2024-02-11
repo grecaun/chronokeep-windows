@@ -160,7 +160,11 @@ namespace Chronokeep.Timing.Interfaces
                                 {
                                     settingsWindow.UpdateView(new PortalSettingsHolder
                                     {
-                                        Antennas = antRes.Antennas,
+                                        Antennas = new PortalSettingsHolder.ReaderAntennas()
+                                        {
+                                            ReaderName = antRes.ReaderName,
+                                            Antennas = antRes.Antennas,
+                                        },
                                         Changes = { PortalSettingsHolder.ChangeType.ANTENNAS }
                                     }
                                     );

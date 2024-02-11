@@ -157,7 +157,6 @@
                 </StackPanel>
                 <Expander
                     x:Name="readerExpander"
-                    MaxHeight="205"
                     Margin="5,5,5,5"
                     HorizontalAlignment="Stretch"
                     IsExpanded="False"
@@ -184,7 +183,7 @@
                     </Expander.Header>
                     <ListView
                         x:Name="readerListView"
-                        Height="135"
+                        Height="160"
                         HorizontalAlignment="Center"
                         ScrollViewer.CanContentScroll="True"
                         ScrollViewer.VerticalScrollBarVisibility="Auto"

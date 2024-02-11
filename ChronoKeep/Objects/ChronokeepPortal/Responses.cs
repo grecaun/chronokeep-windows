@@ -36,7 +36,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
     public class ReaderAntennasResponse: Response
     {
         [JsonPropertyName("reader_name")]
-        public string reader_name { get; set; }
+        public string ReaderName { get; set; }
         [JsonPropertyName("antennas")]
         public int[] Antennas { get; set; }
     }

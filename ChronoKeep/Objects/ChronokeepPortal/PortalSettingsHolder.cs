@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Chronokeep.Objects.ChronokeepPortal
 {
@@ -25,6 +26,12 @@ namespace Chronokeep.Objects.ChronokeepPortal
             ANTENNAS
         }
 
+        public class ReaderAntennas
+        {
+            public string ReaderName { get; set; }
+            public int[] Antennas { get; set; }
+        }
+
         public string Name { get; set; }
         public int SightingPeriod { get; set; }
         public int ReadWindow { get; set; }
@@ -35,7 +42,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public List<PortalAPI> APIs { get; set; }
         public PortalStatus AutoUpload { get; set; } = PortalStatus.NOTSET;
         public VoiceType Voice { get; set; }
-        public int[] Antennas { get; set; }
+        public ReaderAntennas Antennas { get; set; }
         public HashSet<ChangeType> Changes { get; set; } = new HashSet<ChangeType>();
     }
 }

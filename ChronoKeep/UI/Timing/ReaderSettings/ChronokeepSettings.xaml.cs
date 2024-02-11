@@ -295,8 +295,13 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     Dictionary<string, ReaderListItem> readerNameDict = new Dictionary<string, ReaderListItem>();
                     foreach (ReaderListItem reader in readerDict.Values)
                     {
-                        readerNameDict.Add(reader.GetReaderName(), reader);
+                        if (reader.GetReaderName().Equals(allSettings.Antennas.ReaderName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            reader.UpdateAntennas(allSettings.Antennas.Antennas);
+                            break;
+                        }
                     }
+
                 }
                 switch (allSettings.AutoUpload)
                 {
@@ -555,7 +560,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                         {
                             antennaPanel.Children.Add(new InfoBadge()
                             {
-                                Severity = reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Caution,
+                                Severity = reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Critical,
                                 Value = (ix + 1).ToString(),
                             });
                         }
@@ -578,7 +583,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     {
                         antennaPanel.Children.Add(new InfoBadge()
                         {
-                            Severity = reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Caution,
+                            Severity = reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Critical,
                             Value = (ix + 1).ToString(),
                         });
                     }
@@ -612,6 +617,18 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 readingSwitch.IsChecked = reader.Reading && reader.Connected;
                 connectedSwitch.IsEnabled = true;
                 readingSwitch.IsEnabled = reader.Connected;
+                antennaPanel.Children.Clear();
+                for (int ix = 0; ix < reader.Antennas.Length; ix++)
+                {
+                    if (this.reader.Antennas[ix] != Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_NONE)
+                    {
+                        antennaPanel.Children.Add(new InfoBadge()
+                        {
+                            Severity = this.reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Critical,
+                            Value = (ix + 1).ToString(),
+                        });
+                    }
+                }
             }
 
             private void UpdateReaderPort(object sender, RoutedEventArgs e)
