@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Chronokeep" Height="700" Width="1300" MinHeight="600" MinWidth="800"
+        Title="Chronokeep" Height="700" Width="1320" MinHeight="600" MinWidth="800"
         Closing="Window_Closing" Loaded="Window_Loaded"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:local="clr-namespace:Chronokeep.UI"
