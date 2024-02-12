@@ -49,7 +49,17 @@ namespace Chronokeep.Timing.Interfaces
                 try
                 {
                     Log.D("Timing.Interfaces.IpicoInterface", "Attempting to connect to " + IpAddress + ":" + Constants.Readers.IPICO_CONTROL_PORT);
-                    controlSocket.Connect(IpAddress, Constants.Readers.IPICO_CONTROL_PORT);
+                    IAsyncResult result = controlSocket.BeginConnect(IpAddress, Constants.Readers.IPICO_CONTROL_PORT, null, null);
+                    result.AsyncWaitHandle.WaitOne(Constants.Readers.TIMEOUT, true);
+                    if (controlSocket.Connected)
+                    {
+                        controlSocket.EndConnect(result);
+                    }
+                    else
+                    {
+                        controlSocket.Close();
+                        throw new ApplicationException("Failed to connect to reader's control socket.");
+                    }
                     output.Add(controlSocket);
                 }
                 catch
@@ -66,7 +76,17 @@ namespace Chronokeep.Timing.Interfaces
             try
             {
                 Log.D("Timing.Interfaces.IpicoInterface", "Attempting to connect to " + IpAddress + ":" + Constants.Readers.IPICO_DEFAULT_PORT);
-                streamSocket.Connect(IpAddress, Constants.Readers.IPICO_DEFAULT_PORT);
+                IAsyncResult result = streamSocket.BeginConnect(IpAddress, Constants.Readers.IPICO_DEFAULT_PORT, null, null);
+                result.AsyncWaitHandle.WaitOne(Constants.Readers.TIMEOUT, true);
+                if (streamSocket.Connected)
+                {
+                    streamSocket.EndConnect(result);
+                }
+                else
+                {
+                    streamSocket.Close();
+                    throw new ApplicationException("Failed to connect to reader's stream socket.");
+                }
                 output.Add(streamSocket);
             }
             catch

@@ -20,6 +20,8 @@ namespace Chronokeep.Constants
         public const byte CHRONOKEEP_ANTENNA_STATUS_DISCONNECTED = 1;
         public const byte CHRONOKEEP_ANTENNA_STATUS_CONNECTED = 2;
 
+        public const int TIMEOUT = 3000;
+
         //public const string CHRONO_PORTAL_ZCONF_IP = "224.0.44.88";
         public const string CHRONO_PORTAL_CONNECT_MSG = "[DISCOVER_CHRONO_SERVER_REQUEST]";
 

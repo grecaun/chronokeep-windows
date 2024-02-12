@@ -48,7 +48,17 @@ namespace Chronokeep.Timing.Interfaces
             Log.D("Timing.Interfaces.RFIDUltraInterface", "Attempting to connect to " + IpAddress + ":" + Port.ToString());
             try
             {
-                sock.Connect(IpAddress, Port);
+                IAsyncResult result = sock.BeginConnect(IpAddress, Port, null, null);
+                result.AsyncWaitHandle.WaitOne(Constants.Readers.TIMEOUT, true);
+                if (sock.Connected)
+                {
+                    sock.EndConnect(result);
+                }
+                else
+                {
+                    sock.Close();
+                    throw new ApplicationException("Failed to connect to reader.");
+                }
                 output.Add(sock);
             }
             catch

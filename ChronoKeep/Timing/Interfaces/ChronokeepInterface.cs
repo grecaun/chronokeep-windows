@@ -52,6 +52,7 @@ namespace Chronokeep.Timing.Interfaces
                     byte[] msg = Encoding.Default.GetBytes(Constants.Readers.CHRONO_PORTAL_CONNECT_MSG);
                     IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(IP_Address), Constants.Readers.CHRONO_PORTAL_ZCONF_PORT);
                     client.Send(msg, msg.Length, endPoint);
+                    client.Client.ReceiveTimeout = Constants.Readers.TIMEOUT;
                     byte[] data = client.Receive(ref endPoint);
                     string response = Encoding.Default.GetString(data);
                     Match match = zeroconf.Match(response);
