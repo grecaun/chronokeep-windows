@@ -68,7 +68,7 @@ namespace Chronokeep.UI.API
                 foreach (APIObject api in remoteAPIs)
                 {
                     var readers = await api.GetReaders();
-                    apiListView.Items.Add(new APIExpander(api, readers, savedReaders, database));
+                    apiListView.Items.Add(new APIExpander(api, readers, savedReaders, database, window));
                 }
             }
             catch (APIException ex)
@@ -132,7 +132,7 @@ namespace Chronokeep.UI.API
         {
             private ListView readerListView;
 
-            public APIExpander(APIObject api, List<RemoteReader> readers, Dictionary<(int, string), RemoteReader> savedReaders, IDBInterface database)
+            public APIExpander(APIObject api, List<RemoteReader> readers, Dictionary<(int, string), RemoteReader> savedReaders, IDBInterface database, IMainWindow mainWindow)
             {
                 Expander expander = new()
                 {
@@ -157,7 +157,7 @@ namespace Chronokeep.UI.API
                     {
                         reader.LocationID = savedReaders[(reader.APIIDentifier, reader.Name)].LocationID;
                     }
-                    readerListView.Items.Add(new ReaderListItem(reader, api, savedReaders, database));
+                    readerListView.Items.Add(new ReaderListItem(reader, api, savedReaders, database, mainWindow));
                 }
             }
 
@@ -177,6 +177,7 @@ namespace Chronokeep.UI.API
             private RemoteReader reader;
             private APIObject api;
             private IDBInterface database;
+            private IMainWindow mainWindow;
 
             ToggleSwitch autoFetch;
             Wpf.Ui.Controls.TextBlock nameBlock;
@@ -190,12 +191,14 @@ namespace Chronokeep.UI.API
                 RemoteReader reader,
                 APIObject api,
                 Dictionary<(int, string), RemoteReader> savedReaders,
-                IDBInterface database
+                IDBInterface database,
+                IMainWindow mainWindow
                 )
             {
                 this.reader = reader;
                 this.api = api;
                 this.database = database;
+                this.mainWindow = mainWindow;
 
                 string dateStr = DateTime.Now.ToString("MM/dd/yyyy");
                 var theEvent = database.GetCurrentEvent();
@@ -335,6 +338,7 @@ namespace Chronokeep.UI.API
                         }
                         var reads = await api.GetReads(this.reader, startDate, endDate);
                         this.database.AddChipReads(reads);
+                        mainWindow.UpdateTimingFromController();
                     }
                     catch (APIException ex)
                     {

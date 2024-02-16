@@ -147,13 +147,12 @@ namespace Chronokeep.Timing.Remote
                 if (api_error)
                 {
                     Errors += 1;
-                    mainWindow.UpdateTimingFromController();
                 }
                 else if (Errors > 0)
                 {
                     Errors = 0;
-                    mainWindow.UpdateTimingFromController();
                 }
+                mainWindow.UpdateTimingFromController();
                 // wait for our sleep period
                 Log.D("API.RemoteReadsController", "Waiting to download more reads.");
                 int sleepFor = Globals.DownloadInterval;
