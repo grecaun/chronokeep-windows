@@ -753,6 +753,11 @@ namespace Chronokeep.Timing.Interfaces
             }));
         }
 
+        public void SendDeleteAllReads()
+        {
+            SendMessage(JsonSerializer.Serialize(new ReadsDeleteAllRequest()));
+        }
+
         public void Disconnect()
         {
             SendMessage(JsonSerializer.Serialize(new DisconnectRequest { }));

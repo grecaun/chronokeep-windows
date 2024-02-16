@@ -936,5 +936,23 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 reader.SendDeleteApi(api);
             }
         }
+
+        private void deleteReadsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "User requests deletion of reader chip reads.");
+            DialogBox.Show("This will delete all of the chip reads from the reader.  This action is not reversible. Continue?", "Yes", "No", () =>
+            {
+                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Clearing chip reads from reader.");
+                reader.SendDeleteAllReads();
+            });
+        }
+
+        private void volumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (volumeSlider != null && volumeBlock != null)
+            {
+                volumeBlock.Text = volumeSlider.Value.ToString();
+            }
+        }
     }
 }

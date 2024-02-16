@@ -34,7 +34,7 @@
             VerticalAlignment="Center"
             >
             <StackPanel x:Name="sacrifice" Margin="1,1,1,1" Height="1" />
-            <StackPanel x:Name="settingsPanel" Visibility="Hidden" Margin="0,10,0,0">
+            <StackPanel x:Name="settingsPanel" Visibility="Hidden" Margin="0,-25,0,0">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
                         Text="Name"
@@ -119,12 +119,23 @@
                         />
                     <Slider
                         x:Name="volumeSlider"
-                        Width="250"
-                        Margin="5,5,5,5"
+                        Width="210"
+                        Margin="10,5,5,5"
                         IsSnapToTickEnabled="True"
                         Maximum="10"
                         Minimum="0"
                         TickFrequency="1"
+                        ValueChanged="volumeSlider_ValueChanged"
+                        />
+                    <TextBlock
+                        FontSize="14"
+                        x:Name="volumeBlock"
+                        Width="30"
+                        Margin="0,5,5,5"
+                        VerticalAlignment="Center"
+                        Grid.Column="2"
+                        HorizontalAlignment="Center"
+                        TextAlignment="Center"
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
@@ -262,6 +273,16 @@
                         Width="180"
                         Height="35"
                         Margin="10,5,5,5"
+                        />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button
+                        Content="Clear Reads"
+                        x:Name="deleteReadsButton"
+                        Click="deleteReadsButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
