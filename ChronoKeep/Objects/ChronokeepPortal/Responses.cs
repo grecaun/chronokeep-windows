@@ -137,5 +137,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public List<PortalReader> Readers { get; set; }
         [JsonPropertyName("updatable")]
         public bool Updateable { get; set; }
+        [JsonPropertyName("auto_upload")]
+        public PortalStatus AutoUpload { get; set; }
     }
 }
