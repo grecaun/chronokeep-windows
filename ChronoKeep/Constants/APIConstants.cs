@@ -19,10 +19,10 @@ namespace Chronokeep.Constants
 
         public static readonly Dictionary<string, string> API_TYPE_NAMES = new()
         {
-            { CHRONOKEEP_RESULTS,       "Chronokeep Results" },
-            { CHRONOKEEP_RESULTS_SELF,  "Chronokeep Results (Self Hosted)" },
-            { CHRONOKEEP_REMOTE,        "Chronokeep Remote" },
-            { CHRONOKEEP_REMOTE_SELF,   "Chronokeep Remote (Self Hosted)" }
+            { CHRONOKEEP_RESULTS,       "Results" },
+            { CHRONOKEEP_RESULTS_SELF,  "Results (SH)" },
+            { CHRONOKEEP_REMOTE,        "Remote" },
+            { CHRONOKEEP_REMOTE_SELF,   "Remote (SH)" }
         };
 
         public static readonly Dictionary<string, bool> API_SELF_HOSTED = new()

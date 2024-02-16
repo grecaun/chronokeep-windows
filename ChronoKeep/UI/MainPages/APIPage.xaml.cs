@@ -252,10 +252,10 @@ namespace Chronokeep.UI.MainPages
                     Content = "Remove",
                     FontSize = 14,
                     Width = 95,
-                    Height = 40,
-                    Margin = new Thickness(0, 5, 0, 5),
+                    Height = 38,
+                    Margin = new Thickness(0, 5, 0, 9),
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
+                    VerticalAlignment = VerticalAlignment.Bottom
                 };
                 Remove.Click += new RoutedEventHandler(this.Remove_Click);
                 thePanel.Children.Add(Remove);
