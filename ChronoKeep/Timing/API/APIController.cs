@@ -142,7 +142,7 @@ namespace Chronokeep.Timing.API
                 // Get results to upload.
                 List<TimeResult> results = database.GetNonUploadedResults(theEvent.Identifier);
                 // Remove all results to upload that don't have a place set and are not DNF/DNS results.
-                results.RemoveAll(x => x.Place < 1 && x.Status != Constants.Timing.TIMERESULT_STATUS_DNF && x.Status != Constants.Timing.TIMERESULT_STATUS_DNS);
+                results.RemoveAll(x => x.Place < 1 && (x.Status == Constants.Timing.TIMERESULT_STATUS_DNF || x.Status == Constants.Timing.TIMERESULT_STATUS_DNS));
                 Log.D("API.APIController", "Results count: " + results.Count.ToString());
                 if (results.Count > 0)
                 {
