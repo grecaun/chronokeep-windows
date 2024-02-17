@@ -28,6 +28,7 @@ namespace Chronokeep.UI.MainPages
         private Dictionary<int, List<Segment>> allSegments = new Dictionary<int, List<Segment>>();
         private List<Segment> SegmentsToRemove = new List<Segment>();
         private List<Segment> SegmentsToAdd = new List<Segment>();
+        private Dictionary<int, TimingLocation> LocationDict = new Dictionary<int, TimingLocation>();
 
         public SegmentsPage(IMainWindow mWindow, IDBInterface database)
         {
@@ -40,15 +41,19 @@ namespace Chronokeep.UI.MainPages
                 locations = database.GetTimingLocations(theEvent.Identifier);
                 if (theEvent.CommonStartFinish)
                 {
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences - 1, theEvent.FinishIgnoreWithin));
                 }
                 else
                 {
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 1, theEvent.StartWindow));
+                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences - 1, theEvent.FinishIgnoreWithin));
+                }
+                foreach (TimingLocation loc in locations)
+                {
+                    LocationDict.Add(loc.Identifier, loc);
                 }
                 distances = database.GetDistances(theEvent.Identifier);
                 distances.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
+                distances.RemoveAll(x => x.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID);
             }
             UpdateSegments();
         }
@@ -161,16 +166,16 @@ namespace Chronokeep.UI.MainPages
                     ((ASegment)seg).UpdateSegment();
                     Segment thisSegment = ((ASegment)seg).mySegment;
                     segments.Add(thisSegment);
-                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + thisSegment.DistanceId + " Segment Name " + thisSegment.Name + " segment ID " + thisSegment.Identifier);
                 }
             }
-            SegmentsToAdd.RemoveAll(x => x.Occurrence >= theEvent.FinishMaxOccurrences);
+            SegmentsToAdd.RemoveAll(x => x.Occurrence > LocationDict[x.LocationId].MaxOccurrences || x.Occurrence < 1);
             database.AddSegments(SegmentsToAdd);
             database.RemoveSegments(SegmentsToRemove);
             Log.D("UI.MainPages.SegmentsPage", "Segments to remove count is " + SegmentsToRemove.Count);
             UpdateTimingWorker = true;
             segments.RemoveAll(x => (SegmentsToAdd.Contains(x) || SegmentsToRemove.Contains(x)));
-            segments.RemoveAll(x => x.Occurrence >= theEvent.FinishMaxOccurrences);
+            segments.RemoveAll(x => x.Occurrence > LocationDict[x.LocationId].MaxOccurrences || x.Occurrence < 1);
             database.UpdateSegments(segments);
             Log.D("UI.MainPages.SegmentsPage", "Segments to update count is " + segments.Count);
             SegmentsToAdd.Clear();
@@ -221,14 +226,14 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
-        public void AddSegment(int distanceId, int occurrence)
+        public void AddSegment(int distanceId)
         {
             Log.D("UI.MainPages.SegmentsPage", "Adding segment.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
-            Segment newSeg = new Segment(theEvent.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, occurrence, 0.0, 0.0, Constants.Distances.MILES, "Finish " + occurrence);
+            Segment newSeg = new Segment(theEvent.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, 0, 0.0, 0.0, Constants.Distances.MILES, "");
             SegmentsToAdd.Add(newSeg);
             allSegments[distanceId].Add(newSeg);
             UpdateView();
@@ -419,7 +424,7 @@ namespace Chronokeep.UI.MainPages
                 int.TryParse(numAdd.Text, out count);
                 for (int i = 0; i < count; i++)
                 {
-                    page.AddSegment(selectedDistance, finish_occurrences + i);
+                    page.AddSegment(selectedDistance);
                 }
             }
 
@@ -739,8 +744,8 @@ namespace Chronokeep.UI.MainPages
                     mySegment.SegmentDistance = Convert.ToDouble(SegDistance.Text);
                     mySegment.CumulativeDistance = Convert.ToDouble(CumDistance.Text);
                     mySegment.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
-                    if (Occurrence != null) mySegment.Occurrence = Convert.ToInt32(((ComboBoxItem)Occurrence.SelectedItem).Uid);
-                    else mySegment.Occurrence = 1;
+                    if (Occurrence != null && Occurrence.SelectedItem != null) mySegment.Occurrence = Convert.ToInt32(((ComboBoxItem)Occurrence.SelectedItem).Uid);
+                    else mySegment.Occurrence = 0;
                 }
                 catch
                 {
