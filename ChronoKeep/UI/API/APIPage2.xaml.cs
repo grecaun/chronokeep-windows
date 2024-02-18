@@ -96,6 +96,11 @@ namespace Chronokeep.UI.API
 
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
+            if (EventBox == null || EventBox.SelectedItem == null)
+            {
+                window.Close();
+                return;
+            }
             string slug = ((ComboBoxItem)EventBox.SelectedItem).Uid;
             if (slug == "NEW")
             {
