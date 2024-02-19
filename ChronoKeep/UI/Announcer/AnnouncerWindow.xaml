@@ -31,7 +31,7 @@
         </Grid.RowDefinitions>
         <ui:TitleBar Grid.Row="0">
         </ui:TitleBar>
-        <Grid Grid.Row="1" Margin="8,0" x:Name="AnnouncerHeader" Visibility="Collapsed">
+        <Grid Grid.Row="1" Margin="18,0" x:Name="AnnouncerHeader" Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="150" />
@@ -49,7 +49,7 @@
             <TextBlock Grid.Column="5" Text="Age G" FontSize="20" Margin="4,4" />
             <TextBlock Grid.Column="6" Text="Comments" FontSize="20" Margin="4,4" />
         </Grid>
-        <Grid Grid.Row="1" Margin="8,0" x:Name="ResultsHeader">
+        <Grid Grid.Row="1" Margin="18,0" x:Name="ResultsHeader">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="170" />
                 <ColumnDefinition Width="80" />
@@ -71,6 +71,7 @@
             Visibility="Collapsed"
             AlternationCount="2"
             ItemContainerStyle="{StaticResource alternatingStyle}"
+            Margin="10,0"
             >
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -102,6 +103,7 @@
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             AlternationCount="2"
             ItemContainerStyle="{StaticResource alternatingStyle}"
+            Margin="10,0"
             >
             <ListView.ItemTemplate>
                 <DataTemplate>

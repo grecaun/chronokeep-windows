@@ -141,7 +141,10 @@ namespace Chronokeep.UI
             }
 
             // Pull alarms from the database.
-            Alarm.AddAlarms(database.GetAlarms(theEvent.Identifier));
+            if (theEvent != null && theEvent.Identifier != -1)
+            {
+                Alarm.AddAlarms(database.GetAlarms(theEvent.Identifier));
+            }
         }
 
 

@@ -67,7 +67,7 @@ namespace Chronokeep.UI.API
             yearBox.Text = theEvent.YearCode;
             dateBox.Text = theEvent.Date;
             yearPanel.Visibility = Visibility.Visible;
-            holdingLabel.Visibility = Visibility.Hidden;
+            holdingLabel.Visibility = Visibility.Collapsed;
         }
 
         public APIPage3(APIWindow window, APIObject api, Event theEvent, string slug)

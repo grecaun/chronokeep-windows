@@ -27,7 +27,7 @@ namespace Chronokeep.UI.API
             this.database = database;
             this.MinHeight = 100;
             this.MinWidth = 300;
-            this.Width = 300;
+            this.Width = 330;
             theEvent = database.GetCurrentEvent();
             List<APIObject> apis = database.GetAllAPI();
             apis.RemoveAll(x => !Constants.APIConstants.API_RESULTS[x.Type]);

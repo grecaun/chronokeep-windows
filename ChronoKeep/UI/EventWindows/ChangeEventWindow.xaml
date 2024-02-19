@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Chronokeep"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Change Event" Height="300" Width="400"  Closing="Window_Closing" Topmost="True"
+        Title="Change Event" Height="400" Width="500"  Closing="Window_Closing" Topmost="True"
         d:DataContext="{d:DesignInstance local:ChangeEventWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -15,13 +15,13 @@
         >
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="35" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ui:TitleBar
             Grid.Row="0">
         </ui:TitleBar>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Margin="5">
             <Grid.Resources>
                 <Style TargetType="ListViewItem" x:Key="alternatingStyle">
                     <Style.Triggers>
@@ -32,11 +32,20 @@
                 </Style>
             </Grid.Resources>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="60"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Margin="9,0,10,0">
+            <Grid Grid.Row="0" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ui:SymbolIcon Symbol="Search24" Grid.Column="0" Margin="20,0,10,10" VerticalAlignment="Center"/>
+                <ui:TextBox Height="40" Margin="5,0,15,15" Name="searchBox" TextChanged="searchBox_TextChanged" PlaceholderText="Search..." Grid.Column="1" />
+            </Grid>
+            <Grid Grid.Row="1" Margin="19,0,19,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="250" />
                     <ColumnDefinition Width="70" />
@@ -48,8 +57,8 @@
             </Grid>
             <ListView
                 x:Name="eventList"
-                Grid.Row="1"
-                Margin="4,0,4,0"
+                Grid.Row="2"
+                Margin="14,0,14,0"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 Width="Auto"
                 Height="Auto"
@@ -72,9 +81,10 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center">
-                <Button Name="changeButton" Height="35" Width="150" FontSize="16" Content="Change" Margin="20,0,10,0" Click="ChangeButton_Click" HorizontalAlignment="Center"/>
-                <Button Name="cancelButton" Height="35" Width="150" FontSize="16" Content="Cancel" Margin="10,0,20,0" Click="CancelButton_Click" HorizontalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Center">
+                <Button Name="changeButton" Height="35" Width="150" FontSize="16" Content="Change" Margin="10,0,10,0" Click="ChangeButton_Click" HorizontalAlignment="Center"/>
+                <Button Name="deleteButton" Height="35" Width="150" FontSize="16" Content="Delete" Margin="0,0,0,0" Click="deleteButton_Click" HorizontalAlignment="Center"/>
+                <Button Name="cancelButton" Height="35" Width="150" FontSize="16" Content="Cancel" Margin="10,0,10,0" Click="CancelButton_Click" HorizontalAlignment="Center"/>
             </StackPanel>
         </Grid>
     </Grid>

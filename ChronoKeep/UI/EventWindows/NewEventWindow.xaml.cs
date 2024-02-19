@@ -18,14 +18,16 @@ namespace Chronokeep
         IDBInterface database = null;
         IWindowCallback window = null;
 
+        private Dictionary<string, Event> eventDict = new Dictionary<string, Event>();
+
         public NewEventWindow(IMainWindow mainWindow)
         {
             InitializeComponent();
             datePicker.SelectedDate = DateTime.Today;
-            CopyLabel.Visibility = Visibility.Collapsed;
+            //CopyLabel.Visibility = Visibility.Collapsed;
             oldEvent.Visibility = Visibility.Collapsed;
             this.MinWidth = 350;
-            this.MinHeight = 350;
+            this.MinHeight = 200;
             this.Width = 350;
             this.Height = 310;
         }
@@ -36,26 +38,20 @@ namespace Chronokeep
             this.window = window;
             this.database = database;
             this.MinWidth = 350;
-            this.MinHeight = 350;
+            this.MinHeight = 200;
             this.Width = 350;
             this.Height = 310;
             oldEvent.Items.Clear();
-            oldEvent.Items.Add(new ComboBoxItem
-            {
-                Content = "None",
-                Uid = "-1"
-            });
             List<Event> events = database.GetEvents();
             events.Sort();
+            List<string> eventNames = new List<string>();
             foreach (Event e in events)
             {
-                oldEvent.Items.Add(new ComboBoxItem
-                {
-                    Content = (e.YearCode + " " + e.Name).Trim(),
-                    Uid = e.Identifier.ToString()
-                });
+                string name = string.Format("{0} {1}", e.YearCode, e.Name);
+                eventDict.Add(name, e);
+                eventNames.Add(name);
             }
-            oldEvent.SelectedIndex = 0;
+            oldEvent.OriginalItemsSource = eventNames;
         }
 
         public static NewEventWindow NewWindow(IWindowCallback window, IDBInterface database)
@@ -85,7 +81,11 @@ namespace Chronokeep
             }
             else
             {
-                int oldEventId = Convert.ToInt32(((ComboBoxItem)oldEvent.SelectedItem).Uid);
+                int oldEventId = -1;
+                if (oldEvent.Text.Length > 0 && eventDict.ContainsKey(oldEvent.Text))
+                {
+                    oldEventId = eventDict[oldEvent.Text].Identifier;
+                }
                 Event newEvent = new Event(nameString, dateVal, yearString);
                 database.AddEvent(newEvent);
                 newEvent.Identifier = database.GetEventID(newEvent);

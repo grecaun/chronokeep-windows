@@ -17,7 +17,7 @@
             Text="Retrieving Events, Please Hold."
             FontSize="18" 
             VerticalAlignment="Center"
-            MaxWidth="250" 
+            MaxWidth="250"
             HorizontalAlignment="Center" 
             TextWrapping="Wrap" 
             Visibility="Visible"
@@ -28,6 +28,7 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center" 
             Visibility="Collapsed"
+            Margin="5,0"
             >
             <TextBlock
                 Text="Select Event to link to:"

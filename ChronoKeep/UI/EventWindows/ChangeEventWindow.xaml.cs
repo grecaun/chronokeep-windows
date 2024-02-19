@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.UI.UIObjects;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,6 +37,11 @@ namespace Chronokeep.UI
                 events = database.GetEvents();
             });
             events.Sort();
+            if (searchBox.Text.Length > 0)
+            {
+                Log.D("UI.ChangeEventWindow", "searchBox.Text " + searchBox.Text);
+                events.RemoveAll(x => !x.Name.Contains(searchBox.Text, StringComparison.OrdinalIgnoreCase));
+            }
             eventList.ItemsSource = events;
             if (events.Count < 1)
             {
@@ -59,6 +65,23 @@ namespace Chronokeep.UI
                 return;
             }
             this.Close();
+        }
+
+        private void deleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.ChangeEventWindow", "Delete button clicked.");
+            Event one = (Event)eventList.SelectedItem;
+            if (one != null)
+            {
+                Log.D("UI.ChangeEventWindow", "Selected event has ID of " + one.Identifier);
+                database.RemoveEvent(one.Identifier);
+                UpdateEventBox();
+            }
+            else
+            {
+                Log.D("UI.ChangeEventWindow", "No event selected.");
+                DialogBox.Show("No event selected.");
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -88,6 +111,11 @@ namespace Chronokeep.UI
                 return;
             }
             this.Close();
+        }
+
+        private void searchBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            UpdateEventBox();
         }
     }
 }
