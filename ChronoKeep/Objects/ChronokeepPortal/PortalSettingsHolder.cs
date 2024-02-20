@@ -44,5 +44,6 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public VoiceType Voice { get; set; }
         public ReaderAntennas Antennas { get; set; }
         public HashSet<ChangeType> Changes { get; set; } = new HashSet<ChangeType>();
+        public string PortalVersion { get; set; }
     }
 }

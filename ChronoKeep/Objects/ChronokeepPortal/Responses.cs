@@ -63,6 +63,8 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public List<PortalAPI> APIs { get; set; }
         [JsonPropertyName("auto_upload")]
         public PortalStatus AutoUpload { get; set; }
+        [JsonPropertyName("portal_version")]
+        public string PortalVersion { get; set; }
     }
 
     public class ApiListResponse : Response
@@ -139,5 +141,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public bool Updateable { get; set; }
         [JsonPropertyName("auto_upload")]
         public PortalStatus AutoUpload { get; set; }
+        [JsonPropertyName("portal_version")]
+        public string PortalVersion { get; set; }
     }
 }

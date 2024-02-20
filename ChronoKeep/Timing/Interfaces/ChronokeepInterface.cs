@@ -316,6 +316,7 @@ namespace Chronokeep.Timing.Interfaces
                                         Readers = allSettings.Readers,
                                         APIs = allSettings.APIs,
                                         AutoUpload = allSettings.AutoUpload,
+                                        PortalVersion = allSettings.PortalVersion,
                                     };
                                     foreach (PortalSetting set in allSettings.Settings)
                                     {

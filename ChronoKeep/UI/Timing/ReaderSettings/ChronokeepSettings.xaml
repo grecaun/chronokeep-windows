@@ -26,6 +26,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ui:TitleBar
+            Margin="10,0,0,0"
+            Name="titleBar"
             Grid.Row="0">
         </ui:TitleBar>
         <StackPanel
