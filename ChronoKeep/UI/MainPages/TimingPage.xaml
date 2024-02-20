@@ -517,8 +517,8 @@
                             DockPanel.Dock="Right" 
                             Margin="0,0,10,0" 
                             VerticalAlignment="Center" 
-                            Click="remoteReadersButton_Click" 
-                            Visibility="Visible"
+                            Click="remoteReadersButton_Click"
+                            Visibility="Collapsed"
                             />
                         <ui:ToggleSwitch 
                             x:Name="remoteControllerSwitch" 
@@ -527,6 +527,7 @@
                             DockPanel.Dock="Right"
                             Checked="remoteControllerSwitch_Checked"
                             Unchecked="remoteControllerSwitch_Unchecked"
+                            Visibility="Collapsed"
                             />
                         <TextBlock 
                             x:Name="remoteErrorsBlock"

@@ -56,6 +56,8 @@ namespace Chronokeep.UI.MainPages
         private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
         private int[] baseIP = { 0, 0, 0, 0 };
 
+        private bool remote_api = false;
+
         public TimingPage(IMainWindow window, IDBInterface database)
         {
             InitializeComponent();
@@ -226,6 +228,24 @@ namespace Chronokeep.UI.MainPages
             remoteControllerSwitch.IsEnabled = true;
 
             UpdateDNSButton();
+
+            // check if we have a remote api set up
+            foreach (APIObject api in database.GetAllAPI())
+            {
+                if (api.Type == Constants.APIConstants.CHRONOKEEP_REMOTE_SELF || api.Type == Constants.APIConstants.CHRONOKEEP_REMOTE)
+                {
+                    if (remoteControllerSwitch != null)
+                    {
+                        remoteControllerSwitch.Visibility = Visibility.Visible;
+                    }
+                    if (remoteReadersButton != null)
+                    {
+                        remoteReadersButton.Visibility = readerExpander.IsExpanded ? Visibility.Visible : Visibility.Collapsed;
+                    }
+                    remote_api = true;
+                    break;
+                }
+            }
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -1223,7 +1243,7 @@ namespace Chronokeep.UI.MainPages
         {
             if (remoteReadersButton != null)
             {
-                if (readerExpander.IsExpanded == true)
+                if (readerExpander.IsExpanded == true && remote_api)
                 {
                     remoteReadersButton.Visibility = Visibility.Visible;
                 }
