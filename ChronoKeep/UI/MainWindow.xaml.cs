@@ -612,9 +612,12 @@ namespace Chronokeep.UI
 
         public void TimingSystemDisconnected(TimingSystem system)
         {
-            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
-                DialogBox.Show(string.Format("Reader at {0} has unexpectedly disconnected. IP Address was {1}.", system.LocationName, system.IPAddress));
+                if (!system.SystemInterface.WasShutdown())
+                {
+                    DialogBox.Show(string.Format("Reader at {0} has unexpectedly disconnected. IP Address was {1}.", system.LocationName, system.IPAddress));
+                }
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
                 UpdateTiming();
                 if (announcerWindow != null) announcerWindow.UpdateView();

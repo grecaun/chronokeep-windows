@@ -292,5 +292,10 @@ namespace Chronokeep.Timing.Interfaces
         public void OpenSettings() { }
 
         public void CloseSettings() { }
+
+        public bool WasShutdown()
+        {
+            return false;
+        }
     }
 }

@@ -9,8 +9,8 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string READ_IDENT_TYPE_CHIP   = "chip";
         public const string READ_IDENT_TYPE_BIB    = "bib";
 
-        [JsonPropertyName("chip")]
-        public string Chip { get; set; }
+        [JsonPropertyName("identifier")]
+        public string Identifier { get; set; }
         [JsonPropertyName("seconds")]
         public long Seconds { get; set; }
         [JsonPropertyName("milliseconds")]

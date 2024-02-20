@@ -644,7 +644,10 @@ namespace Chronokeep.UI.MainPages
                 connected--;
             }
             Log.D("UI.MainPages.TimingPage", connected + " systems connected or trying to connect/disconnect.");
-            if (total > 4 && connected < total - 1)
+            // This code appears to remove the connected reader if there are more than 4 readers displayed and at least 2 disconnected readers
+            // this should not be necessary to do, just leave them all there and let the program deal with it the next time
+            // the window opens
+            /*if (total > 4 && connected < total - 1)
             {
                 AReaderBox removeMe = null;
                 foreach (AReaderBox aReader in ReadersBox.Items)
@@ -657,7 +660,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 ReadersBox.Items.Remove(removeMe);
                 total = ReadersBox.Items.Count;
-            }
+            } //*/
             return sys.Status == SYSTEM_STATUS.DISCONNECTED;
         }
 

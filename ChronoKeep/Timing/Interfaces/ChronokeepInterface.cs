@@ -27,6 +27,8 @@ namespace Chronokeep.Timing.Interfaces
         Socket sock;
         IMainWindow window = null;
 
+        private bool wasShutdown = false;
+
         private ChronokeepSettings settingsWindow = null;
 
         private static readonly Regex zeroconf = new Regex(@"^\[(?'PORTAL_NAME'[^|]*)\|(?'PORTAL_ID'[^|]*)\|(?'PORTAL_PORT'\d{1,5})\]");
@@ -393,7 +395,7 @@ namespace Chronokeep.Timing.Interfaces
                                             theEvent.Identifier,
                                             locationId,
                                             pRead.IdentType == PortalRead.READ_IDENT_TYPE_CHIP,
-                                            pRead.Chip,
+                                            pRead.Identifier,
                                             Constants.Timing.UTCSecondsToRFIDSeconds(pRead.Seconds),
                                             pRead.Milliseconds,
                                             pRead.Antenna,
@@ -558,11 +560,13 @@ namespace Chronokeep.Timing.Interfaces
         public void SendQuit()
         {
             SendMessage(JsonSerializer.Serialize(new QuitRequest { }));
+            wasShutdown = true;
         }
 
         public void SendShutdown()
         {
             SendMessage(JsonSerializer.Serialize(new ShutdownRequest { }));
+            wasShutdown = true;
         }
 
         public void SendGetSettings()
@@ -798,6 +802,11 @@ namespace Chronokeep.Timing.Interfaces
         {
             window.WindowFinalize(settingsWindow);
             settingsWindow = null;
+        }
+
+        public bool WasShutdown()
+        {
+            return wasShutdown;
         }
     }
 }

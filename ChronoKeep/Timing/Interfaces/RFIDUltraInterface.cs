@@ -926,6 +926,11 @@ namespace Chronokeep.Timing.Interfaces
             }
         }
 
+        public bool WasShutdown()
+        {
+            return false;
+        }
+
         public enum RFIDMessage
         {
             CONNECTED, VOLTAGENORMAL, VOLTAGELOW, CHIPREAD, TIME, SETTINGVALUE, SETTINGCHANGE, STATUS, UNKNOWN, ERROR

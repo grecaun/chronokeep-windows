@@ -9,8 +9,8 @@ namespace Chronokeep.Database.SQLite
         internal static void AddChipRead(ChipRead read, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO chipreads (event_id, read_status, location_id, read_chipnumber, read_seconds," +
-                "read_milliseconds, read_antenna, read_reader, read_box, read_logindex, read_rssi, read_isrewind, read_readertime," +
+            command.CommandText = "INSERT INTO chipreads (event_id, read_status, location_id, read_chipnumber, read_seconds, " +
+                "read_milliseconds, read_antenna, read_reader, read_box, read_logindex, read_rssi, read_isrewind, read_readertime, " +
                 "read_starttime, read_time_seconds, read_time_milliseconds, read_bib, read_type)" +
                 " VALUES (@event, @status, @loc, @chip, @sec, @milli, @ant, @reader, @box, @logix, @rssi, @rewind, @readertime, " +
                 "@starttime, @timesec, @timemill, @bib, @type);";

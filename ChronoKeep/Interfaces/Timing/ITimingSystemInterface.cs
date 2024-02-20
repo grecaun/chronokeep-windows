@@ -24,6 +24,7 @@ namespace Chronokeep.Interfaces.Timing
         bool SettingsEditable();
         void OpenSettings();
         void CloseSettings();
+        bool WasShutdown();
     }
 
     public enum MessageType {
