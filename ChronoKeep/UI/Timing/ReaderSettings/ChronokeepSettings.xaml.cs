@@ -959,5 +959,21 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 volumeBlock.Text = volumeSlider.Value.ToString();
             }
         }
+
+        private void restartServerButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Restart button clicked.");
+            DialogBox.Show(
+                "This will restart the portal software. Do you want to proceed?",
+                "Yes",
+                "No",
+                () =>
+                {
+                    // send restart command
+                    reader.SendRestart();
+                    this.Close();
+                }
+                );
+        }
     }
 }
