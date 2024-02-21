@@ -24,6 +24,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public const string KEEPALIVE_ACK = "keepalive_ack";
         public const string QUIT          = "quit";
         public const string SHUTDOWN      = "shutdown";
+        public const string RESTART       = "restart";
 
         // Participants related requests
         public const string PARTICIPANTS_GET      = "participants_get";
@@ -226,6 +227,14 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public ShutdownRequest()
         {
             Command = SHUTDOWN;
+        }
+    }
+
+    public class RestartRequest : Request
+    {
+        public RestartRequest()
+        {
+            Command = RESTART;
         }
     }
 

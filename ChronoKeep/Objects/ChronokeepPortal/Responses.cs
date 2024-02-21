@@ -103,6 +103,8 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
     {
         [JsonPropertyName("list")]
         public List<PortalSighting> List { get; set; }
+        [JsonPropertyName("bib_chips")]
+        public List<BibChip> BibChips { get; set; }
     }
 
     public class EventsResponse : Response
