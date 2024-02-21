@@ -878,7 +878,7 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             Log.D("UI.MainPages.TimingPage", "Stats double cliked. Distance is " + selected.DistanceName);
-            subPage = new DistanceStatsPage(this, database, selected.DistanceID, selected.DistanceName);
+            subPage = new DistanceStatsPage(this, mWindow, database, selected.DistanceID, selected.DistanceName);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
 

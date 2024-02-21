@@ -40,6 +40,7 @@
                         PreviewMouseWheel="activeListView_PreviewMouseWheel"
                         AlternationCount="2"
                         ItemContainerStyle="{StaticResource alternatingStyle}"
+                        MouseDoubleClick="ListView_MouseDoubleClick"
                         >
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -51,8 +52,8 @@
                                         <ColumnDefinition Width="60" />
                                         <ColumnDefinition Width="140" />
                                         <ColumnDefinition Width="140" />
-                                        <ColumnDefinition Width="200" />
-                                        <ColumnDefinition Width="90" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="150" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
                                     <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
@@ -60,8 +61,8 @@
                                     <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Gender}" />
                                     <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Phone}" />
                                     <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding Mobile}" />
-                                    <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding Email}" />
-                                    <TextBlock Grid.Column="7" Margin="4,4" Text="{Binding LastSeen}" />
+                                    <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding LastSeen}" />
+                                    <TextBlock Grid.Column="7" Margin="4,4" Text="{Binding LastSeenTime}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -78,6 +79,7 @@
                         PreviewMouseWheel="activeListView_PreviewMouseWheel"
                         AlternationCount="2"
                         ItemContainerStyle="{StaticResource alternatingStyle}"
+                        MouseDoubleClick="ListView_MouseDoubleClick"
                         >
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -87,17 +89,11 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="60" />
-                                        <ColumnDefinition Width="140" />
-                                        <ColumnDefinition Width="140" />
-                                        <ColumnDefinition Width="200" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
                                     <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
                                     <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding LastName}" />
                                     <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Gender}" />
-                                    <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Phone}" />
-                                    <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding Mobile}" />
-                                    <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding Email}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -123,17 +119,11 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="60" />
-                                        <ColumnDefinition Width="140" />
-                                        <ColumnDefinition Width="140" />
-                                        <ColumnDefinition Width="200" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
                                     <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
                                     <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding LastName}" />
                                     <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Gender}" />
-                                    <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Phone}" />
-                                    <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding Mobile}" />
-                                    <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding Email}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -150,6 +140,7 @@
                         PreviewMouseWheel="activeListView_PreviewMouseWheel"
                         AlternationCount="2"
                         ItemContainerStyle="{StaticResource alternatingStyle}"
+                        MouseDoubleClick="ListView_MouseDoubleClick"
                         >
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -159,17 +150,11 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="60" />
-                                        <ColumnDefinition Width="140" />
-                                        <ColumnDefinition Width="140" />
-                                        <ColumnDefinition Width="200" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
                                     <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
                                     <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding LastName}" />
                                     <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Gender}" />
-                                    <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Phone}" />
-                                    <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding Mobile}" />
-                                    <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding Email}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -186,6 +171,7 @@
                         PreviewMouseWheel="activeListView_PreviewMouseWheel"
                         AlternationCount="2"
                         ItemContainerStyle="{StaticResource alternatingStyle}"
+                        MouseDoubleClick="ListView_MouseDoubleClick"
                         >
                         <ListView.ItemTemplate>
                             <DataTemplate>
@@ -195,17 +181,11 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="60" />
-                                        <ColumnDefinition Width="140" />
-                                        <ColumnDefinition Width="140" />
-                                        <ColumnDefinition Width="200" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
                                     <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
                                     <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding LastName}" />
                                     <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Gender}" />
-                                    <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Phone}" />
-                                    <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding Mobile}" />
-                                    <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding Email}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
