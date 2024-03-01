@@ -212,7 +212,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 settingsPanel.Visibility = Visibility.Visible;
                 if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.SETTINGS))
                 {
-                    if (allSettings.PortalVersion.Length > 0)
+                    if (allSettings.PortalVersion != null && allSettings.PortalVersion.Length > 0)
                     {
                         titleBar.Title = string.Format("v{0}", allSettings.PortalVersion.Trim());
                     }

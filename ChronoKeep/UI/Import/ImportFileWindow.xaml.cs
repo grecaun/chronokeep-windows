@@ -51,31 +51,31 @@ namespace Chronokeep
             "Registration Date",
             "Anonymous"
         };
-        private static readonly int FIRST = 1;
-        private static readonly int LAST = 2;
-        private static readonly int GENDER = 3;
-        private static readonly int BIRTHDAY = 4;
-        private static readonly int STREET = 5;
-        private static readonly int STREET2 = 6;
-        private static readonly int CITY = 7;
-        private static readonly int STATE = 8;
-        private static readonly int ZIP = 9;
-        private static readonly int COUNTRY = 10;
-        private static readonly int EMAIL = 11;
-        private static readonly int PHONE = 12;
-        private static readonly int MOBILE = 13;
-        private static readonly int PARENT = 14;
-        private static readonly int BIB = 15;
-        private static readonly int OWES = 16;
-        private static readonly int COMMENTS = 17;
-        private static readonly int OTHER = 18;
-        private static readonly int DISTANCE = 19;
-        private static readonly int EMERGENCYNAME = 20;
-        private static readonly int EMERGENCYPHONE = 21;
-        private static readonly int AGE = 22;
+        internal static readonly int FIRST = 1;
+        internal static readonly int LAST = 2;
+        internal static readonly int GENDER = 3;
+        internal static readonly int BIRTHDAY = 4;
+        internal static readonly int STREET = 5;
+        internal static readonly int STREET2 = 6;
+        internal static readonly int CITY = 7;
+        internal static readonly int STATE = 8;
+        internal static readonly int ZIP = 9;
+        internal static readonly int COUNTRY = 10;
+        internal static readonly int EMAIL = 11;
+        internal static readonly int PHONE = 12;
+        internal static readonly int MOBILE = 13;
+        internal static readonly int PARENT = 14;
+        internal static readonly int BIB = 15;
+        internal static readonly int OWES = 16;
+        internal static readonly int COMMENTS = 17;
+        internal static readonly int OTHER = 18;
+        internal static readonly int DISTANCE = 19;
+        internal static readonly int EMERGENCYNAME = 20;
+        internal static readonly int EMERGENCYPHONE = 21;
+        internal static readonly int AGE = 22;
         internal static readonly int APPARELITEM = 23;
-        private static readonly int REGISTRATIONDATE = 24;
-        private static readonly int ANONYMOUS = 25;
+        internal static readonly int REGISTRATIONDATE = 24;
+        internal static readonly int ANONYMOUS = 25;
         Page page1 = null;
         Page page2 = null;
         Page multiplesPage = null;
@@ -152,12 +152,24 @@ namespace Chronokeep
             if (page1 != null)
             {
                 List<string> repeats = ((ImportFilePage1)page1).RepeatHeaders();
+                List<string> requiredNotFound = ((ImportFilePage1)page1).RequiredNotFound();
                 if (repeats != null)
                 {
                     StringBuilder sb = new StringBuilder("Repeats for the following headers were found:");
                     foreach (string s in repeats)
                     {
-                        sb.Append(" " + s);
+                        sb.Append("\n");
+                        sb.Append(s);
+                    }
+                    DialogBox.Show(sb.ToString());
+                }
+                else if (requiredNotFound != null)
+                {
+                    StringBuilder sb = new StringBuilder("Required fields not found:");
+                    foreach (string s in requiredNotFound)
+                    {
+                        sb.Append("\n");
+                        sb.Append(s);
                     }
                     DialogBox.Show(sb.ToString());
                 }
@@ -272,18 +284,18 @@ namespace Chronokeep
                     {
                         if (id.DistanceId == -1)
                         {
-                            theDiv = (Distance)divHashName[id.NameFromFile];
-                            if (theDiv == null)
+                            if (divHashName.ContainsKey(id.NameFromFile))
+                            {
+                                theDiv = (Distance)divHashName[id.NameFromFile];
+                                divHash.Add(id.NameFromFile, theDiv);
+                            }
+                            else
                             {
                                 Distance div = new Distance(id.NameFromFile, theEvent.Identifier);
                                 database.AddDistance(div);
                                 div.Identifier = database.GetDistanceID(div);
                                 divHash.Add(div.Name, div);
                                 Log.D("ImportFileWindow", "Div name is " + div.Name);
-                            }
-                            else
-                            {
-                                divHash.Add(id.NameFromFile, theDiv);
                             }
                         }
                         else
@@ -315,6 +327,8 @@ namespace Chronokeep
                 }
                 int numEntries = data.Data.Count;
                 importParticipants = new List<Participant>();
+                // new distances might have been added
+                distances = database.GetDistances(theEvent.Identifier);
                 for (int counter = 0; counter < numEntries; counter++)
                 {
                     Distance thisDiv = distances[0];
@@ -562,7 +576,7 @@ namespace Chronokeep
             {
                 return LAST;
             }
-            else if (string.Equals(s, "Gender", StringComparison.OrdinalIgnoreCase))
+            else if (s.IndexOf("Gender", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return GENDER;
             }
@@ -582,11 +596,11 @@ namespace Chronokeep
             {
                 return CITY;
             }
-            else if (string.Equals(s, "State", StringComparison.OrdinalIgnoreCase))
+            else if (s.IndexOf("State", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("Province", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return STATE;
             }
-            else if (string.Equals(s, "Zip", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Zip Code", StringComparison.OrdinalIgnoreCase))
+            else if (s.IndexOf("Zip", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return ZIP;
             }
@@ -598,11 +612,11 @@ namespace Chronokeep
             {
                 return PHONE;
             }
-            else if (string.Equals(s, "Mobile", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Mobile Phone Number", StringComparison.OrdinalIgnoreCase))
+            else if (s.IndexOf("Mobile", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return MOBILE;
             }
-            else if (string.Equals(s, "Email", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Email Address", StringComparison.OrdinalIgnoreCase))
+            else if (s.IndexOf("Email", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return EMAIL;
             }
@@ -614,7 +628,7 @@ namespace Chronokeep
             {
                 return BIB;
             }
-            else if (string.Equals(s, "Shirt Size", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Shirt", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "T-Shirt", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "TShirt", StringComparison.OrdinalIgnoreCase))
+            else if (s.IndexOf("Shirt", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return APPARELITEM;
             }
@@ -625,10 +639,6 @@ namespace Chronokeep
             else if (string.Equals(s, "Comments", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Notes", StringComparison.OrdinalIgnoreCase))
             {
                 return COMMENTS;
-            }
-            else if (string.Equals(s, "Second Shirt", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "2nd Shirt", StringComparison.OrdinalIgnoreCase))
-            {
-                return APPARELITEM;
             }
             else if (string.Equals(s, "Hat", StringComparison.OrdinalIgnoreCase))
             {
