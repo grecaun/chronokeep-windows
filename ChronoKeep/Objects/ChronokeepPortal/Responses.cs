@@ -22,6 +22,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public const string CONNECTION_SUCCESSFUL = "connection_successful";
         public const string KEEPALIVE             = "keepalive";
         public const string DISCONNECT            = "disconnect";
+        public const string NOTIFICATION          = "notification";
 
         [JsonPropertyName("command")]
         public string Command { get; set; }
@@ -145,5 +146,13 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public PortalStatus AutoUpload { get; set; }
         [JsonPropertyName("portal_version")]
         public string PortalVersion { get; set; }
+    }
+
+    public class NotificationResponse : Response
+    {
+        [JsonPropertyName("kind")]
+        public string Type { get; set; }
+        [JsonPropertyName("time")]
+        public string Time { get; set; }
     }
 }

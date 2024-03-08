@@ -13,6 +13,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace Chronokeep.Timing.Interfaces
 {
@@ -30,6 +32,7 @@ namespace Chronokeep.Timing.Interfaces
         private bool wasShutdown = false;
 
         private ChronokeepSettings settingsWindow = null;
+        private string reader_ip = "";
 
         private static readonly Regex zeroconf = new Regex(@"^\[(?'PORTAL_NAME'[^|]*)\|(?'PORTAL_ID'[^|]*)\|(?'PORTAL_PORT'\d{1,5})\]");
         private static readonly Regex msg = new Regex(@"^[^\n]*\n");
@@ -44,6 +47,7 @@ namespace Chronokeep.Timing.Interfaces
 
         public List<Socket> Connect(string IP_Address, int Port)
         {
+            reader_ip = IP_Address;
             List<Socket> output = new List<Socket>();
             sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
@@ -498,6 +502,57 @@ namespace Chronokeep.Timing.Interfaces
                             if (!output.ContainsKey(MessageType.DISCONNECT))
                             {
                                 output[MessageType.DISCONNECT] = new List<string>();
+                            }
+                            break;
+                        case Response.NOTIFICATION:
+                            Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent notification message.");
+                            try
+                            {
+                                NotificationResponse notRes = JsonSerializer.Deserialize<NotificationResponse>(message);
+                                string msg = "";
+                                switch (notRes.Type)
+                                {
+                                    case PortalNotification.UPS_DISCONNECTED:
+                                        msg = "Portal at " + reader_ip + " UPS has been disconnected.";
+                                        break;
+                                    case PortalNotification.UPS_CONNECTED:
+                                        msg = "Portal at " + reader_ip + " UPS connection has been re-established.";
+                                        break;
+                                    case PortalNotification.UPS_ON_BATTERY:
+                                        msg = "Portal at " + reader_ip + " UPS is working from battery power. Unit will most likely shutdown soon.";
+                                        break;
+                                    case PortalNotification.UPS_LOW_BATTERY:
+                                        msg = "Portal at " + reader_ip + " UPS battery is low. Shutdown imminent.";
+                                        break;
+                                    case PortalNotification.UPS_ONLINE:
+                                        msg = "Portal at " + reader_ip + " UPS is back on line power.";
+                                        break;
+                                    case PortalNotification.SHUTTING_DOWN:
+                                        msg = "Portal at " + reader_ip + " is shutting down.";
+                                        break;
+                                    case PortalNotification.RESTARTING:
+                                        msg = "Portal at " + reader_ip + " is restarting.";
+                                        break;
+                                    case PortalNotification.HIGH_TEMP:
+                                        msg = "Portal at " + reader_ip + " temperature is high.";
+                                        break;
+                                    case PortalNotification.MAX_TEMP:
+                                        msg = "Portal at " + reader_ip + " temperature is very high. Throttling will most likely occur.";
+                                        break;
+                                }
+                                Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
+                                {
+                                    DialogBox.Show(msg);
+                                });
+                            }
+                            catch (Exception e)
+                            {
+                                Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing reader antennas. " + e.Message);
+                                if (!output.ContainsKey(MessageType.ERROR))
+                                {
+                                    output[MessageType.ERROR] = new List<string>();
+                                }
+                                output[MessageType.ERROR].Add("Error processing reader antennas.");
                             }
                             break;
                         default:

@@ -668,6 +668,7 @@ namespace Chronokeep.UI
             Log.D("UI.MainWindow", "Announer window button clicked.");
             if (announcerWindow != null)
             {
+                announcerWindow.Focus();
                 return;
             }
             announcerWindow = new AnnouncerWindow(this, database);
