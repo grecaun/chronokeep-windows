@@ -519,7 +519,7 @@ namespace Chronokeep.Timing.Interfaces
                                         msg = "Portal at " + reader_ip + " UPS connection has been re-established.";
                                         break;
                                     case PortalNotification.UPS_ON_BATTERY:
-                                        msg = "Portal at " + reader_ip + " UPS is working from battery power. Unit will most likely shutdown soon.";
+                                        msg = "Portal at " + reader_ip + " UPS is working from battery power.";
                                         break;
                                     case PortalNotification.UPS_LOW_BATTERY:
                                         msg = "Portal at " + reader_ip + " UPS battery is low. Shutdown imminent.";
