@@ -43,8 +43,8 @@
                 <TextBlock Text="Location" Margin="10,10,0,10" FontSize="16" Width="80" TextAlignment="Right" VerticalAlignment="Center"/>
                 <ComboBox Name="LocationBox" FontSize="16" Margin="5,10,10,10"/>
             </DockPanel>
-            <RadioButton Name="NetTimeButton" Content="Net Time" GroupName="TimeGroup" Margin="95,5,0,0" IsChecked="True" FontSize="14" VerticalContentAlignment="Center"/>
-            <RadioButton Name="ClockTimeButton" Content="Clock Time" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center"/>
+            <RadioButton Name="NetTimeButton" Content="Net Time" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center"/>
+            <RadioButton Name="ClockTimeButton" Content="Clock Time" GroupName="TimeGroup" Margin="95,5,0,0" IsChecked="True" FontSize="14" VerticalContentAlignment="Center"/>
             <RadioButton Name="TimeofDayButton" Content="Time of Day" GroupName="TimeGroup" Margin="95,5,0,0" FontSize="14" VerticalContentAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10,10,10,15">
                 <Button Name="Add" Content="Add" Click="Add_Click" Width="100" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Center"/>

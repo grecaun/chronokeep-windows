@@ -109,9 +109,10 @@ namespace Chronokeep.UI.Timing
             chipReads.Clear();
             chipReads.AddRange(reads);
             string search = parent.GetSearchValue();
+            bool manualOnly = onlyManualBox.IsChecked == true;
             await Task.Run(() =>
             {
-                SortWorker(reads, sortType, search);
+                SortWorker(reads, sortType, search, manualOnly);
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
@@ -136,9 +137,13 @@ namespace Chronokeep.UI.Timing
 
         public void EditSelected() { }
 
-        private void SortWorker(List<ChipRead> reads, SortType sortType, string search)
+        private void SortWorker(List<ChipRead> reads, SortType sortType, string search, bool manualOnly)
         {
             reads.RemoveAll(read => read.IsNotMatch(search));
+            if (manualOnly)
+            {
+                reads.RemoveAll(read => read.Type == Constants.Timing.CHIPREAD_TYPE_CHIP);
+            }
             if (sortType == SortType.BIB)
             {
                 reads.Sort(ChipRead.CompareByBib);
@@ -155,9 +160,10 @@ namespace Chronokeep.UI.Timing
         {
             List<ChipRead> reads = new List<ChipRead>(chipReads);
             string search = parent.GetSearchValue();
+            bool manualOnly = onlyManualBox.IsChecked == true;
             await Task.Run(() =>
             {
-                SortWorker(reads, sortType, search);
+                SortWorker(reads, sortType, search, manualOnly);
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
@@ -231,6 +237,12 @@ namespace Chronokeep.UI.Timing
             database.ResetTimingResultsEvent(theEvent.Identifier);
             UpdateView();
             parent.NotifyTimingWorker();
+        }
+
+        private void onlyManualBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.TimingRawReadsPage", "Manual entries only box checked status changed.");
+            UpdateView();
         }
     }
 }

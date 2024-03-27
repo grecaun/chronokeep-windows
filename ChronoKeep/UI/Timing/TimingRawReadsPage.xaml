@@ -93,13 +93,14 @@
                 <TextBlock Grid.Column="8" Margin="4,4" Text="Type"/>
             </Grid>
         </Grid>
-        <DockPanel LastChildFill="False" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button Name="DeleteButton" Content="Delete" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="DeleteButton_Click"/>
-            <Button Name="IgnoreButton" Content="Ignore" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="IgnoreButton_Click"/>
-            <Button Name="ChangeDNS" Content="Set DNS" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="ChangeDNS_Click"/>
-            <Button Name="ChangeDNF" Content="Set DNF" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="ChangeDNF_Click"/>
-            <Button Name="Shift" Content="Edit" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="Shift_Click" />
-            <Button Name="DoneButton" Content="Done" Height="35" FontSize="16" Width="120" Margin="5,5,5,5" Click="DoneButton_Click"/>
+        <DockPanel Grid.Row="1" LastChildFill="False" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <CheckBox x:Name="onlyManualBox" Content="Show Only Manual Reads" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Margin="5,5,5,5" Unchecked="onlyManualBox_Unchecked" Checked="onlyManualBox_Unchecked"/>
+            <Button Name="DeleteButton" Content="Delete" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="DeleteButton_Click"/>
+            <Button Name="IgnoreButton" Content="Ignore" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="IgnoreButton_Click"/>
+            <Button Name="ChangeDNS" Content="Set DNS" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="ChangeDNS_Click"/>
+            <Button Name="ChangeDNF" Content="Set DNF" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="ChangeDNF_Click"/>
+            <Button Name="Shift" Content="Edit" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="Shift_Click" />
+            <Button Name="DoneButton" Content="Done" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="DoneButton_Click"/>
         </DockPanel>
     </Grid>
 </Page>
