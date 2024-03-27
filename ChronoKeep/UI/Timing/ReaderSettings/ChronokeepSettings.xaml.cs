@@ -166,6 +166,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     ChipType = chipTypeBox.SelectedIndex == 0 ? PortalSettingsHolder.ChipTypeEnum.DEC
                         : PortalSettingsHolder.ChipTypeEnum.HEX,
                     Volume = volumeSlider.Value / 10,
+                    UploadInterval = (int)uploadSlider.Value,
                     PlaySound = soundBox.IsChecked == true,
                     Voice = voiceBox.SelectedIndex == 0 ? PortalSettingsHolder.VoiceType.EMILY
                         : voiceBox.SelectedIndex == 1 ? PortalSettingsHolder.VoiceType.MICHAEL
@@ -229,6 +230,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     readWindowBox.Text = allSettings.ReadWindow.ToString();
                     chipTypeBox.SelectedIndex = allSettings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? 0 : 1;
                     volumeSlider.Value = allSettings.Volume * 10;
+                    uploadSlider.Value = allSettings.UploadInterval;
                     soundBox.IsChecked = allSettings.PlaySound;
                     switch (allSettings.Voice)
                     {
@@ -957,6 +959,14 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             if (volumeSlider != null && volumeBlock != null)
             {
                 volumeBlock.Text = volumeSlider.Value.ToString();
+            }
+        }
+
+        private void uploadSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (uploadSlider != null && uploadBlock != null)
+            {
+                uploadBlock.Text = uploadSlider.Value.ToString();
             }
         }
 

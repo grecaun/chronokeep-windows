@@ -11,6 +11,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string SETTING_PLAY_SOUND = "SETTING_PLAY_SOUND";
         public const string SETTING_VOLUME = "SETTING_VOLUME";
         public const string SETTING_VOICE = "SETTING_VOICE";
+        public const string SETTING_UPLOAD_INTERVAL = "SETTING_UPLOAD_INTERVAL";
 
         public const string TYPE_CHIP_DEC = "DEC";
         public const string TYPE_CHIP_HEX = "HEX";

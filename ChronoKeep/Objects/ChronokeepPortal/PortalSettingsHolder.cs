@@ -45,5 +45,6 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public ReaderAntennas Antennas { get; set; }
         public HashSet<ChangeType> Changes { get; set; } = new HashSet<ChangeType>();
         public string PortalVersion { get; set; }
+        public int UploadInterval { get; set; }
     }
 }

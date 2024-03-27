@@ -257,6 +257,9 @@ namespace Chronokeep.Timing.Interfaces
                                                     updSettings.Voice = PortalSettingsHolder.VoiceType.EMILY;
                                                 }
                                                 break;
+                                            case PortalSetting.SETTING_UPLOAD_INTERVAL:
+                                                updSettings.UploadInterval = int.Parse(set.Value);
+                                                break;
                                         }
                                         updSettings.Changes.Add(PortalSettingsHolder.ChangeType.SETTINGS);
                                     }
@@ -361,6 +364,9 @@ namespace Chronokeep.Timing.Interfaces
                                                 {
                                                     updSettings.Voice = PortalSettingsHolder.VoiceType.EMILY;
                                                 }
+                                                break;
+                                            case PortalSetting.SETTING_UPLOAD_INTERVAL:
+                                                updSettings.UploadInterval = int.Parse(set.Value);
                                                 break;
                                         }
                                     }
@@ -672,6 +678,11 @@ namespace Chronokeep.Timing.Interfaces
             {
                 Name = PortalSetting.SETTING_PLAY_SOUND,
                 Value = settings.PlaySound == true ? "true" : "false"
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_UPLOAD_INTERVAL,
+                Value = settings.UploadInterval.ToString()
             });
             settingsReq.Settings.Add(new PortalSetting
             {
