@@ -336,7 +336,7 @@ namespace Chronokeep.UI.API
                         {
                             this.reader.LocationID = Convert.ToInt32(((ComboBoxItem)locationBox.SelectedItem).Uid);
                         }
-                        var reads = await api.GetReads(this.reader, startDate, endDate);
+                        (var reads, var note) = await api.GetReads(this.reader, startDate, endDate);
                         this.database.AddChipReads(reads);
                         mainWindow.UpdateTimingFromController();
                     }

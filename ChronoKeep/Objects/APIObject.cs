@@ -44,7 +44,7 @@ namespace Chronokeep.Objects
             return response.Readers;
         }
 
-        public async Task<List<ChipRead>> GetReads(RemoteReader reader, DateTime start, DateTime end)
+        public async Task<(List<ChipRead>, RemoteNotification)> GetReads(RemoteReader reader, DateTime start, DateTime end)
         {
             if (type != Constants.APIConstants.CHRONOKEEP_REMOTE && type != Constants.APIConstants.CHRONOKEEP_REMOTE_SELF)
             {
@@ -59,13 +59,13 @@ namespace Chronokeep.Objects
             List<ChipRead> output = new List<ChipRead>();
             if (result.Reads == null)
             {
-                return output;
+                return (output, result.Notification);
             }
             foreach (RemoteRead read in result.Reads)
             {
                 output.Add(read.ConvertToChipRead(reader.EventID, reader.LocationID));
             }
-            return output;
+            return (output, result.Notification);
         }
     }
 }

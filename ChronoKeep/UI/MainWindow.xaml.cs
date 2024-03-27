@@ -19,6 +19,8 @@ using Chronokeep.Helpers;
 using System.Media;
 using Chronokeep.Timing.API;
 using Chronokeep.Timing.Remote;
+using Chronokeep.Objects.ChronokeepRemote;
+using Chronokeep.Objects.ChronokeepPortal;
 
 namespace Chronokeep.UI
 {
@@ -880,6 +882,14 @@ namespace Chronokeep.UI
                 {
                     ((TimingPage)page).UpdateAlarms();
                 }
+            }));
+        }
+
+        public void ShowNotificationDialog(string ReaderName, RemoteNotification notification)
+        {
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            {
+                DialogBox.Show(PortalNotification.GetRemoteNotificationMessage(ReaderName, notification.Type));
             }));
         }
     }

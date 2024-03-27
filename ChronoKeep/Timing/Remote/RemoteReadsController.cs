@@ -25,6 +25,7 @@ namespace Chronokeep.Timing.Remote
 
         public int Errors { get; private set; }
         private Dictionary<RemoteReader, DateTime> lastReaderTime = new Dictionary<RemoteReader, DateTime>();
+        private Dictionary<RemoteReader, long> RemoteNotificationDictionary = new Dictionary<RemoteReader, long>();
 
         public RemoteReadsController(IMainWindow mainWindow, IDBInterface database)
         {
@@ -125,7 +126,16 @@ namespace Chronokeep.Timing.Remote
                         List<ChipRead> reads = new();
                         try
                         {
-                            reads = await apiDictionary[reader.APIIDentifier].GetReads(reader, start, end);
+                            RemoteNotification note;
+                            (reads, note) = await apiDictionary[reader.APIIDentifier].GetReads(reader, start, end);
+                            Log.D("API.RemoteReadsController", note == null ? "null" : note.Type);
+                            if (note != null
+                                && (!RemoteNotificationDictionary.ContainsKey(reader)
+                                    || RemoteNotificationDictionary[reader] != note.Id))
+                            {
+                                mainWindow.ShowNotificationDialog(reader.Name, note);
+                                RemoteNotificationDictionary[reader] = note.Id;
+                            }
                         }
                         catch (Exception ex)
                         {

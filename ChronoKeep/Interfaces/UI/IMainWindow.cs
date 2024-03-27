@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Objects;
+using Chronokeep.Objects.ChronokeepRemote;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -53,6 +54,8 @@ namespace Chronokeep.Interfaces
         bool StopRemote();
         bool IsRemoteRunning();
         int RemoteErrors();
+        void ShowNotificationDialog(string ReaderName, RemoteNotification notification);
+
         // Theme related calls
         void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system);
     }
