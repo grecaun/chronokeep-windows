@@ -733,19 +733,16 @@ namespace Chronokeep.Timing.Routines
                 }
             }
             // Get Dictionaries for storing the last known place (age group, gender)
-            // The key is as follows: (Distance ID, Age Group ID, int - Gender ID (M=1,F=2, U=3, NB=4))
+            // The key is as follows: (Distance ID, Age Group ID, int - Gender)
             // The value stored is the last place given
-            Dictionary<(int, int, int), int> ageGroupPlaceDictionary = new Dictionary<(int, int, int), int>();
-            // The key is as follows: (Distance ID, Gender ID (M=1, F=2, U=3, NB=4))
+            Dictionary<(int, int, string), int> ageGroupPlaceDictionary = new Dictionary<(int, int, string), int>();
+            // The key is as follows: (Distance ID, Gender)
             // The value stored is the last place given
-            Dictionary<(int, int), int> genderPlaceDictionary = new Dictionary<(int, int), int>();
+            Dictionary<(int, string), int> genderPlaceDictionary = new Dictionary<(int, string), int>();
             // The key is as follows: (Distance ID)
             // The value stored is the last place given
             Dictionary<int, int> placeDictionary = new Dictionary<int, int>();
-            int ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
             int distanceId = -1;
-            int age = -1;
-            int gender = -1;
             Participant person = null;
             List<TimeResult> topResults = personLastResult.Values.ToList<TimeResult>();
             topResults.Sort((x1, x2) =>
@@ -806,25 +803,6 @@ namespace Chronokeep.Timing.Routines
                     {
                         distanceId = person.EventSpecific.DistanceIdentifier;
                     }
-                    distanceId = person.EventSpecific.DistanceIdentifier;
-                    age = person.GetAge(theEvent.Date);
-                    gender = Constants.Timing.TIMERESULT_GENDER_UNKNOWN;
-                    if (person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase)
-                        || person.Gender.Equals("Male", StringComparison.OrdinalIgnoreCase))
-                    {
-                        gender = Constants.Timing.TIMERESULT_GENDER_MALE;
-                    }
-                    else if (person.Gender.Equals("F", StringComparison.OrdinalIgnoreCase)
-                        || person.Gender.Equals("Female", StringComparison.OrdinalIgnoreCase))
-                    {
-                        gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
-                    }
-                    else if (person.Gender.Equals("NB", StringComparison.OrdinalIgnoreCase)
-                        || person.Gender.Equals("Non-Binary", StringComparison.OrdinalIgnoreCase))
-                    {
-                        gender = Constants.Timing.TIMERESULT_GENDER_NON_BINARY;
-                    }
-                    ageGroupId = person.EventSpecific.AgeGroupId;
                     // Since Results were sorted before we started, let's assume that the first item
                     // is the fastest/best and if we can't find the key, add one starting at 0
                     if (!placeDictionary.ContainsKey(distanceId))
@@ -832,16 +810,16 @@ namespace Chronokeep.Timing.Routines
                         placeDictionary[distanceId] = 0;
                     }
                     result.Place = ++placeDictionary[distanceId];
-                    if (!genderPlaceDictionary.ContainsKey((distanceId, gender)))
+                    if (!genderPlaceDictionary.ContainsKey((distanceId, person.Gender)))
                     {
-                        genderPlaceDictionary[(distanceId, gender)] = 0;
+                        genderPlaceDictionary[(distanceId, person.Gender)] = 0;
                     }
-                    result.GenderPlace = ++genderPlaceDictionary[(distanceId, gender)];
-                    if (!ageGroupPlaceDictionary.ContainsKey((distanceId, ageGroupId, gender)))
+                    result.GenderPlace = ++genderPlaceDictionary[(distanceId, person.Gender)];
+                    if (!ageGroupPlaceDictionary.ContainsKey((distanceId, person.EventSpecific.AgeGroupId, person.Gender)))
                     {
-                        ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)] = 0;
+                        ageGroupPlaceDictionary[(distanceId, person.EventSpecific.AgeGroupId, person.Gender)] = 0;
                     }
-                    result.AgePlace = ++ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)];
+                    result.AgePlace = ++ageGroupPlaceDictionary[(distanceId, person.EventSpecific.AgeGroupId, person.Gender)];
                     foreach (TimeResult otherResult in personResults[result.EventSpecificId])
                     {
                         otherResult.Place = result.Place;
