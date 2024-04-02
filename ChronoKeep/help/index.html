@@ -7,89 +7,175 @@
         <title>Chronokeep - Getting Started</title>
     </head>
     <body>
-        <main class="d-flex flex-nowrap">
-            <div class="d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
-                    <a href="index.html" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-                        <img class="bi pe-none me-2" src="icons/icon.png" width="40">
-                        <span class="fs-4">Chronokeep</span>
-                        </a>
-                    <hr>
-                    <ul class="nav nav-pills flex-column mb-auto">
-                        <li class="nav-item">
-                            <a href="index.html" class="nav-link active" aria-current="page">
-                                <i class="bi bi-arrow-up-right-square pe-none me-w" width="16"></i>
-                                Getting Started
-                            </a>
-                        </li>
-                        <li>
-                            <a href="dashboard.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-house pe-none me-w" width="16"></i>
-                                Dashboard
-                            </a>
-                        </li>
-                        <li>
-                            <a href="timing.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-clipboard pe-none me-w" width="16"></i>
-                                Timing
-                            </a>
-                        </li>
-                        <li>
-                            <a href="announcer.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-bell pe-none me-w" width="16"></i>
-                                Announcer
-                            </a>
-                        </li>
-                        <li>
-                            <a href="participants.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-person pe-none me-w" width="16"></i>
-                                Participants
-                            </a>
-                        </li>
-                        <li>
-                            <a href="chips.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-cpu pe-none me-w" width="16"></i>
-                                Chips
-                            </a>
-                        </li>
-                        <li>
-                            <a href="locations.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-map pe-none me-w" width="16"></i>
-                                Locations
-                            </a>
-                        </li>
-                        <li>
-                            <a href="distances.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-rulers pe-none me-w" width="16"></i>
-                                Distances
-                            </a>
-                        </li>
-                        <li>
-                            <a href="segments.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-chevron-bar-right pe-none me-w" width="16"></i>
-                                Segments
-                            </a>
-                        </li>
-                        <li>
-                            <a href="age-groups.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-trophy pe-none me-w" width="16"></i>
-                                Age Groups
-                            </a>
-                        </li>
-                        <li>
-                            <a href="settings.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-gear pe-none me-w" width="16"></i>
-                                Settings
-                            </a>
-                        </li>
-                        <li>
-                            <a href="about.html" class="nav-link link-body-emphasis">
-                                <i class="bi bi-question-circle pe-none me-w" width="16"></i>
-                                About
-                            </a>
-                        </li>
-                    </ul>
+        <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
+            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="#"><img class="bi pe-none me-2" src="icons/icon.png" width="24">Chronokeep</a>
+            <ul class="navbar-nav flex-row d-md-none">
+                <li class="nav-item text-nowrap">
+                    <button class="nav-link px-3 text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="bi bi-list pe-none me-w" width="16"></i>
+                    </button>
+                </li>
+            </ul>
+        </header>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
+                    <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
+                        <div class="offcanvas-header">
+                            <h5 class="offcanvas-title" id="sidebarMenuLabel">Chronokeep</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
+                        </div>
+                        <div class="ckeep-nav offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
+                            <ul class="nav">
+                                <li class="nav-item">
+                                    <a href="index.html" class="nav-link d-flex align-items-center gap-2 active" aria-current="page">
+                                        <i class="bi bi-arrow-up-right-square pe-none me-w" width="16"></i>
+                                        Getting Started
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="dashboard.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-house pe-none me-w" width="16"></i>
+                                        Dashboard
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="timing.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-clipboard pe-none me-w" width="16"></i>
+                                        Timing
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="announcer.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-bell pe-none me-w" width="16"></i>
+                                        Announcer
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="participants.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-person pe-none me-w" width="16"></i>
+                                        Participants
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="chips.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-cpu pe-none me-w" width="16"></i>
+                                        Chips
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="locations.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-map pe-none me-w" width="16"></i>
+                                        Locations
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="distances.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-rulers pe-none me-w" width="16"></i>
+                                        Distances
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="segments.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-chevron-bar-right pe-none me-w" width="16"></i>
+                                        Segments
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="age-groups.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-trophy pe-none me-w" width="16"></i>
+                                        Age Groups
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="settings.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-gear pe-none me-w" width="16"></i>
+                                        Settings
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="about.html" class="nav-link d-flex align-items-center gap-2 link-body-emphasis">
+                                        <i class="bi bi-question-circle pe-none me-w" width="16"></i>
+                                        About
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                    <div class="d-flex flex-column">
+                        <div>Getting Started!</div>
+                        <hr>
+                        <div>The navigation bar to the right will take you to a page detailing all of the information needed to use every feature of this program.  Below you will find a short guide meant to introduce the user to the essential features required to use the software to time a race.</div>
+                        <hr>
+                        <div>Quick Start</div>
+                        <br>
+                        <div>When opening the program for the first time you will find yourself on the Dashboard page with no event selected.  If you've already got an event created, you will see information about that event.  Below are examples of each of these states.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <img>
+                        <br>
+                        <div>To start, create a new event by clicking new event.  Input the event name, a year-code (typically the year, unless you've got multiples of the same event in a year, in which case you'd use something like 2001-1 and 2001-2) as well as the date the event starts. If necessary, you can copy information from an old event.  This copies distances, age groups, segments, location information, and event information.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <div>Most events are going to be distance based (Marathons, 5k, etc).  Should you need another type of event, click edit and select the event type from the dropdown.  Time based events would be a 12 hour event, whereas a Backyard Ultra is an event where each runner must complete a certain distance in a time period and they keep going until there is only one runner left.  Support for Backyard Ultras is currently in a beta state.</div>
+                        <br>
+                        <div>To upload results to the internet, you must set up an API connected. Click Manage API to add api information.  Uploading of results to the internet requires a Chronokeep Results API Key from a self-hosted solution or the the Chronokeep hosted API.  To upload/download reads from a remote reader set up a self-hosted or chronokeep hosted Remote API.  Once you have the results set up you can link the event to the API.  Select the API you want to upload to on the first page.  The next page will link it to an existing event or create a new event.  The last will do the same for the year.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <img>
+                        <br>
+                        <img>
+                        <br>
+                        <img>
+                        <br>
+                        <div>At this point you should import participants from the participants page.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <div>There are a few fields that are required (First Name, Last Name, Age/DOB, Bib). Should you want to keep a runner's information secret when uploading to a results page, make sure to select anonymous for the field as required. Any value found there indicates the person should be anonymous. The next page will allow you to link distances from the import information to distances already in the system. Auto will automatically match distance names or create distances if the name doesn't exist. Most of the time this is the final page you see. If there are errors with the import page you will see another screen detailing multiples or conflicts. This page will allow you to select which (or both) entries you want to keep.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <img>
+                        <br>
+                        <img>
+                        <br>
+                        <div>Now go to the chips page. Here you will assign chip values to the bibs. If your chips are base 10 (0,1,2,3,4,5,6,7,8,9) make sure Dec is selected at the top. If they're base 16 (0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F) select Hex. If you already have this information in a spreadsheet you can import it. Otherwise the easiest way to do this is to assign a range. Input the low end of the bib range, then the high end. Input the low end of the chips and the high end is automatically entered. Save the range and the values are automatically updated. If you have non-numerical bibs you cannot use the Assign Range feature.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <div>Now set up Locations. If you've got remote readers set up locations for these. If not, adjust the Start Window (the period after the event starts where chip reads will be counted as start times and not finish/segment times at the start location) and the ignore within (the time period at the location where reads will not be counted as new result values) values. Adjust the Max Occurrences (the number of times the location should be crossed for any given event, if your event has one distance that crosses the location 3 times and another that crosses it only once, set this to 3) value if the event is a distance based event.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <div>Setting up distancen information is the next step. Set the start time and wave number for each distance. If two distances start at the same time they should share wave numbers, but if they do not then the wave numbers need to be different. The + symbol next to the start time indicates if the time is a positive or negative offset from the start time. For time based events set the Max Time for the distance (12:00:00 for 12 hours). For distance events set the Occurrence to the the value indicating when the runner finishes. For example, if the runner finishes the distance after the second time crossing the finish line, select 2. Linked distances are useful for ranking people together when you have early starts or people dropping distances from other distances. The rank priority indicates how runners are sorted for ranking. 0 is the default ranking, any value greater than that indicates runners in those distances are ranked below any value lesser than that distance's priority. I.e 0 > 1 > 2. The type box will show a rank letter next to the rank when uploading results. E for early start, U for unranked, and V for virtual.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <div>Segments are used for giving names to where a runner is after crossing a location for the X time. The distance value is useful when multiple locations are available to ensure runners are counted at the right segment.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <div>Age groups if set up will automatically allow users to be ranked by age group & gender. The box on the right allow you to set up pre-programmed age groups.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <div>Pre-race setup is now complete. Go to the timing page and connect to your reader. Mostly this means changing the type to the correct type of timing system as well as setting the IP address correctly. The IP address box is the field to the right of the reader type dropdown. To connect click the play button. Once connected it is usually a good idea to set the time of the system to the computer's time. To do so click the button with the clock on it. Click set now to set the clock. This will display the system time and your computer time if successful. You can also check the current clock of the system by clicking the get time button. At this point you should start your timing system reading. This may already be done automatically or might need to be done manually. It is a good idea to ensure that it is correctly working before the event starts though.</div>
+                        <br>
+                        <img>
+                        <br>
+                        <div>Now everything is ready to start. To start the event click the start button at the top right of the timing page. If necessary you can adjust the start time later, but using the start button is the best way to start the event.</div>
+                        <br>
+                        <div>Congratulations! You have now started an event.</div>
+                    </div>
+                </main>
             </div>
-        </main>
+        </div>
         <script type="text/javascript" src='js/jquery.min.js'></script>
         <script type="text/javascript" src='js/bootstrap.min.js'></script>
     </body>
