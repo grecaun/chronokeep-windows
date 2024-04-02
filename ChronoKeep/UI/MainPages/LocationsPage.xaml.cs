@@ -198,13 +198,14 @@ namespace Chronokeep.UI.MainPages
                 occPanel.Children.Add(MaxOccurrences);
                 settingsGrid.Children.Add(occPanel);
                 Grid.SetColumn(occPanel, 0);
+                DockPanel ignPanel = new DockPanel();
+                string labelLabel = myLocation.Identifier == Constants.Timing.LOCATION_START ? "Start Window" : "Ignore Within";
+                int labelWidth = 120;
                 if (myLocation.Identifier == Constants.Timing.LOCATION_START || Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                 {
                     occPanel.Visibility = Visibility.Collapsed;
+                    labelWidth = 140;
                 }
-                DockPanel ignPanel = new DockPanel();
-                string labelLabel = myLocation.Identifier == Constants.Timing.LOCATION_START ? "Start Window" : "Ignore Within";
-                int labelWidth = myLocation.Identifier == Constants.Timing.LOCATION_START ? 140 : 120;
                 ignPanel.Children.Add(new TextBlock()
                 {
                     Text = labelLabel,
