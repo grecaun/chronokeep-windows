@@ -799,7 +799,7 @@ namespace Chronokeep.UI.MainPages
             return searchBox.Text.Trim();
         }
 
-        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void SearchBox_TextChanged(Wpf.Ui.Controls.AutoSuggestBox sender, Wpf.Ui.Controls.AutoSuggestBoxTextChangedEventArgs args)
         {
             UpdateSubView();
         }

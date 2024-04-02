@@ -375,7 +375,7 @@ namespace Chronokeep.UI.MainPages
             UpdateDistancesBox();
         }
 
-        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void SearchBox_TextChanged(Wpf.Ui.Controls.AutoSuggestBox sender, Wpf.Ui.Controls.AutoSuggestBoxTextChangedEventArgs args)
         {
             List<Participant> newParts = new List<Participant>(participants);
             switch (((ComboBoxItem)SortBox.SelectedItem).Content)

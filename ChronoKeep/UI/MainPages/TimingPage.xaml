@@ -147,7 +147,7 @@
                         Grid.Column="1"
                         />
                 </Grid>
-                <TextBox
+                <ui:AutoSuggestBox
                     Name="searchBox"
                     Width="250" 
                     Height="35"
@@ -156,6 +156,7 @@
                     HorizontalContentAlignment="Center"
                     VerticalContentAlignment="Center"
                     TextChanged="SearchBox_TextChanged"
+                    PlaceholderText="Search"
                     />
                 <ComboBox
                     Name="viewOnlyBox"
