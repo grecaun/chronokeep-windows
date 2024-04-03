@@ -26,7 +26,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
                         </div>
                         <div class="ckeep-nav offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto">
-                            <ul class="nav">
+                            <ul class="nav flex-column">
                                 <li class="nav-item">
                                     <a href="index.html" class="nav-link d-flex align-items-center gap-2 active" aria-current="page">
                                         <i class="bi bi-arrow-up-right-square pe-none me-w" width="16"></i>
@@ -103,75 +103,315 @@
                         </div>
                     </div>
                 </div>
-                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                    <div class="d-flex flex-column">
-                        <div>Getting Started!</div>
+                <main class="col-md-9 ms-sm-auto col-md-10 px-md-4">
+                    <div class="chrono-container container-fluid">
+                        <h1 class="text-center">Getting Started!</h1>
                         <hr>
                         <div>The navigation bar to the right will take you to a page detailing all of the information needed to use every feature of this program.  Below you will find a short guide meant to introduce the user to the essential features required to use the software to time a race.</div>
                         <hr>
-                        <div>Quick Start</div>
-                        <br>
-                        <div>When opening the program for the first time you will find yourself on the Dashboard page with no event selected.  If you've already got an event created, you will see information about that event.  Below are examples of each of these states.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <img>
-                        <br>
-                        <div>To start, create a new event by clicking new event.  Input the event name, a year-code (typically the year, unless you've got multiples of the same event in a year, in which case you'd use something like 2001-1 and 2001-2) as well as the date the event starts. If necessary, you can copy information from an old event.  This copies distances, age groups, segments, location information, and event information.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <div>Most events are going to be distance based (Marathons, 5k, etc).  Should you need another type of event, click edit and select the event type from the dropdown.  Time based events would be a 12 hour event, whereas a Backyard Ultra is an event where each runner must complete a certain distance in a time period and they keep going until there is only one runner left.  Support for Backyard Ultras is currently in a beta state.</div>
-                        <br>
-                        <div>To upload results to the internet, you must set up an API connected. Click Manage API to add api information.  Uploading of results to the internet requires a Chronokeep Results API Key from a self-hosted solution or the the Chronokeep hosted API.  To upload/download reads from a remote reader set up a self-hosted or chronokeep hosted Remote API.  Once you have the results set up you can link the event to the API.  Select the API you want to upload to on the first page.  The next page will link it to an existing event or create a new event.  The last will do the same for the year.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <img>
-                        <br>
-                        <img>
-                        <br>
-                        <img>
-                        <br>
-                        <div>At this point you should import participants from the participants page.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <div>There are a few fields that are required (First Name, Last Name, Age/DOB, Bib). Should you want to keep a runner's information secret when uploading to a results page, make sure to select anonymous for the field as required. Any value found there indicates the person should be anonymous. The next page will allow you to link distances from the import information to distances already in the system. Auto will automatically match distance names or create distances if the name doesn't exist. Most of the time this is the final page you see. If there are errors with the import page you will see another screen detailing multiples or conflicts. This page will allow you to select which (or both) entries you want to keep.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <img>
-                        <br>
-                        <img>
-                        <br>
-                        <div>Now go to the chips page. Here you will assign chip values to the bibs. If your chips are base 10 (0,1,2,3,4,5,6,7,8,9) make sure Dec is selected at the top. If they're base 16 (0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F) select Hex. If you already have this information in a spreadsheet you can import it. Otherwise the easiest way to do this is to assign a range. Input the low end of the bib range, then the high end. Input the low end of the chips and the high end is automatically entered. Save the range and the values are automatically updated. If you have non-numerical bibs you cannot use the Assign Range feature.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <div>Now set up Locations. If you've got remote readers set up locations for these. If not, adjust the Start Window (the period after the event starts where chip reads will be counted as start times and not finish/segment times at the start location) and the ignore within (the time period at the location where reads will not be counted as new result values) values. Adjust the Max Occurrences (the number of times the location should be crossed for any given event, if your event has one distance that crosses the location 3 times and another that crosses it only once, set this to 3) value if the event is a distance based event.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <div>Setting up distancen information is the next step. Set the start time and wave number for each distance. If two distances start at the same time they should share wave numbers, but if they do not then the wave numbers need to be different. The + symbol next to the start time indicates if the time is a positive or negative offset from the start time. For time based events set the Max Time for the distance (12:00:00 for 12 hours). For distance events set the Occurrence to the the value indicating when the runner finishes. For example, if the runner finishes the distance after the second time crossing the finish line, select 2. Linked distances are useful for ranking people together when you have early starts or people dropping distances from other distances. The rank priority indicates how runners are sorted for ranking. 0 is the default ranking, any value greater than that indicates runners in those distances are ranked below any value lesser than that distance's priority. I.e 0 > 1 > 2. The type box will show a rank letter next to the rank when uploading results. E for early start, U for unranked, and V for virtual.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <div>Segments are used for giving names to where a runner is after crossing a location for the X time. The distance value is useful when multiple locations are available to ensure runners are counted at the right segment.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <div>Age groups if set up will automatically allow users to be ranked by age group & gender. The box on the right allow you to set up pre-programmed age groups.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <div>Pre-race setup is now complete. Go to the timing page and connect to your reader. Mostly this means changing the type to the correct type of timing system as well as setting the IP address correctly. The IP address box is the field to the right of the reader type dropdown. To connect click the play button. Once connected it is usually a good idea to set the time of the system to the computer's time. To do so click the button with the clock on it. Click set now to set the clock. This will display the system time and your computer time if successful. You can also check the current clock of the system by clicking the get time button. At this point you should start your timing system reading. This may already be done automatically or might need to be done manually. It is a good idea to ensure that it is correctly working before the event starts though.</div>
-                        <br>
-                        <img>
-                        <br>
-                        <div>Now everything is ready to start. To start the event click the start button at the top right of the timing page. If necessary you can adjust the start time later, but using the start button is the best way to start the event.</div>
-                        <br>
-                        <div>Congratulations! You have now started an event.</div>
+                        <h3 class="text-center">Quick Start</h3>
+                        <div class="row justify-content-center">
+                            <p>When opening the program for the first time you will find yourself on the Dashboard page with no event selected.  If you've already got an event created, you will see information about that event.  Below are examples of each of these states.</p>
+                            <a class="col-md-5 mb-3" data-bs-toggle="modal" data-bs-target="#dashboard-empty">
+                                <img class="img-fluid" alt="empty dashboard" src="images/Dashboard-Empty.png">
+                            </a>
+                            <div class="modal fade" id="dashboard-empty" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="empty dashboard" src="images/Dashboard-Empty.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                            <a class="col-md-5 mb-3" data-bs-toggle="modal" data-bs-target="#dashboard-time">
+                                <img class="img-fluid" alt="dashboard with time based event active" src="images/Dashboard-Time.png">
+                            </a>
+                            <div class="modal fade" id="dashboard-time" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="dashboard with time based event active" src="images/Dashboard-Time.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>To start, create a new event by clicking new event.  Input the event name, a year-code (typically the year, unless you've got multiples of the same event in a year, in which case you'd use something like 2001-1 and 2001-2) as well as the date the event starts. If necessary, you can copy information from an old event.  This copies distances, age groups, segments, location information, and event information.</p>
+                            <a class="col-sm-4 mb-3" data-bs-toggle="modal" data-bs-target="#new-event">
+                                <img class="img-fluid" alt="new event window" src="images/New-Event.png">
+                            </a>
+                            <div class="modal fade" id="new-event" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="new event window" src="images/New-Event.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>Most events are going to be distance based (Marathons, 5k, etc).  Should you need another type of event, click edit and select the event type from the dropdown.  Time based events would be a 12 hour event, whereas a Backyard Ultra is an event where each runner must complete a certain distance in a time period and they keep going until there is only one runner left.  Support for Backyard Ultras is currently in a beta state.</p>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>To upload results to the internet, you must set up an API connected. Click Manage API to add api information.  Uploading of results to the internet requires a Chronokeep Results API Key from a self-hosted solution or the the Chronokeep hosted API.  To upload/download reads from a remote reader set up a self-hosted or chronokeep hosted Remote API.  Once you have the results set up you can link the event to the API.  Select the API you want to upload to on the first page.  The next page will link it to an existing event or create a new event.  The last will do the same for the year.</p>
+                            <a class="col-md-4 mb-3" data-bs-toggle="modal" data-bs-target="#manage-api">
+                                <img class="img-fluid" alt="manage api page" src="images/Manage-API.png">
+                            </a>
+                            <div class="modal fade" id="manage-api" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="manage api page" src="images/Manage-API.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                            <a class="col-md-2 col-sm-4 mb-3" data-bs-toggle="modal" data-bs-target="#link-api-1">
+                                <img class="img-fluid" alt="link api window 1" src="images/Link-API-1.png">
+                            </a>
+                            <div class="modal fade" id="link-api-1" tabindex="-1" 1-label" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="link api window 1" src="images/Link-API-1.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                            <a class="col-md-2 col-sm-4 mb-3" data-bs-toggle="modal" data-bs-target="#link-api-2">
+                                <img class="img-fluid" alt="link api window 2" src="images/Link-API-2.png">
+                            </a>
+                            <div class="modal fade" id="link-api-2" tabindex="-1" 2-label" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="link api window 2" src="images/Link-API-2.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                            <a class="col-md-2 col-sm-4 mb-3" data-bs-toggle="modal" data-bs-target="#link-api-3">
+                                <img class="img-fluid" alt="link api window 3" src="images/Link-API-3.png">
+                            </a>
+                            <div class="modal fade" id="link-api-3" tabindex="-1" 3-label" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="link api window 3" src="images/Link-API-3.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>At this point you should import participants from the participants page.</p>
+                            <a class="col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#participants">
+                                <img class="img-fluid" alt="participants page" src="images/Participants.png">
+                            </a>
+                            <div class="modal fade" id="participants" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="participants page" src="images/Participants.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>There are a few fields that are required (First Name, Last Name, Age/DOB, Bib). Should you want to keep a runner's information secret when uploading to a results page, make sure to select anonymous for the field as required. Any value found there indicates the person should be anonymous. The next page will allow you to link distances from the import information to distances already in the system. Auto will automatically match distance names or create distances if the name doesn't exist. Most of the time this is the final page you see. If there are errors with the import page you will see another screen detailing multiples or conflicts. This page will allow you to select which (or both) entries you want to keep.</p>
+                            <a class="col-sm-4 mb-3" data-bs-toggle="modal" data-bs-target="#import-first">
+                                <img class="img-fluid" alt="import participants window headers" src="images/Import-First.png">
+                            </a>
+                            <div class="modal fade" id="import-first" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="import participants window headers" src="images/Import-First.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                            <a class="col-sm-4 mb-3" data-bs-toggle="modal" data-bs-target="#import-distances">
+                                <img class="img-fluid" alt="import participants window distances" src="images/Import-Distances.png">
+                            </a>
+                            <div class="modal fade" id="import-distances" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="import participants window distances" src="images/Import-Distances.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                            <a class="col-sm-4 mb-3" data-bs-toggle="modal" data-bs-target="#import-conflicts">
+                                <img class="img-fluid" alt="import participants window conflicts" src="images/Imports-Conflicts.png">
+                            </a>
+                            <div class="modal fade" id="import-conflicts" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="import participants window conflicts" src="images/Imports-Conflicts.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>Now go to the chips page. Here you will assign chip values to the bibs. If your chips are base 10 (0,1,2,3,4,5,6,7,8,9) make sure Dec is selected at the top. If they're base 16 (0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F) select Hex. If you already have this information in a spreadsheet you can import it. Otherwise the easiest way to do this is to assign a range. Input the low end of the bib range, then the high end. Input the low end of the chips and the high end is automatically entered. Save the range and the values are automatically updated. If you have non-numerical bibs you cannot use the Assign Range feature.</p>
+                            <a class="col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#chips">
+                                <img class="img-fluid" alt="chips page" src="images/Chips.png">
+                            </a>
+                            <div class="modal fade" id="chips" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="chips page" src="images/Chips.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>Now set up Locations. If you've got remote readers set up locations for these. If not, adjust the Start Window (the period after the event starts where chip reads will be counted as start times and not finish/segment times at the start location) and the ignore within (the time period at the location where reads will not be counted as new result values) values. Adjust the Max Occurrences (the number of times the location should be crossed for any given event, if your event has one distance that crosses the location 3 times and another that crosses it only once, set this to 3) value if the event is a distance based event.</p>
+                            <a class="col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#locations-distance">
+                                <img class="img-fluid" alt="distance based locations page" src="images/Locations-Distance.png">
+                            </a>
+                            <div class="modal fade" id="locations-distance" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="distance based locations page" src="images/Locations-Distance.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                            <a class="col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#locations-time">
+                                <img class="img-fluid" alt="time based locations page" src="images/Locations-Time.png">
+                            </a>
+                            <div class="modal fade" id="locations-time" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="time based locations page" src="images/Locations-Time.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>Setting up distance information is the next step. Set the start time and wave number for each distance. If two distances start at the same time they should share wave numbers, but if they do not then the wave numbers need to be different. The + symbol next to the start time indicates if the time is a positive or negative offset from the start time. For time based events set the Max Time for the distance (12:00:00 for 12 hours). For distance events set the Occurrence to the the value indicating when the runner finishes. For example, if the runner finishes the distance after the second time crossing the finish line, select 2. Linked distances are useful for ranking people together when you have early starts or people dropping distances from other distances. The rank priority indicates how runners are sorted for ranking. 0 is the default ranking, any value greater than that indicates runners in those distances are ranked below any value lesser than that distance's priority. I.e 0 > 1 > 2. The type box will show a rank letter next to the rank when uploading results. E for early start, U for unranked, and V for virtual.</p>
+                            <a class="col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#distances-distance">
+                                <img class="img-fluid" alt="distance based distances page" src="images/Distances-Distance.png">
+                            </a>
+                            <div class="modal fade" id="distances-distance" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="distance based distances page" src="images/Distances-Distance.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                            <a class="col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#distances-time">
+                                <img class="img-fluid" alt="time based distances page" src="images/Distances-Time.png">
+                            </a>
+                            <div class="modal fade" id="distances-time" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="time based distances page" src="images/Distances-Time.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>Segments are used for giving names to where a runner is after crossing a location for the X time. The distance value is useful when multiple locations are available to ensure runners are counted at the right segment.</p>
+                            <a class="col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#segments">
+                                <img class="img-fluid" alt="segments page" src="images/Segments.png">
+                            </a>
+                            <div class="modal fade" id="segments" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="segments page" src="images/Segments.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>Age groups if set up will automatically allow users to be ranked by age group & gender. The box on the right allow you to set up pre-programmed age groups.</p>
+                            <a class="col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#age-groups">
+                                <img class="img-fluid" alt="age groups page" src="images/Age-Groups.png">
+                            </a>
+                            <div class="modal fade" id="age-groups" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="age groups page" src="images/Age-Groups.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>Pre-race setup is now complete. Go to the timing page and connect to your reader. Mostly this means changing the type to the correct type of timing system as well as setting the IP address correctly. The IP address box is the field to the right of the reader type dropdown. To connect click the play button. Once connected it is usually a good idea to set the time of the system to the computer's time. To do so click the button with the clock on it. Click set now to set the clock. This will display the system time and your computer time if successful. You can also check the current clock of the system by clicking the get time button. At this point you should start your timing system reading. This may already be done automatically or might need to be done manually. It is a good idea to ensure that it is correctly working before the event starts though.</p>
+                            <a class="col-md-6 mb-3" data-bs-toggle="modal" data-bs-target="#timing-default">
+                                <img class="img-fluid" alt="timing page" src="images/Timing-Default.png">
+                            </a>
+                            <div class="modal fade" id="timing-default" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="timing page" src="images/Timing-Default.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>Now everything is ready to start. To start the event click the start button at the top right of the timing page. If necessary you can adjust the start time later, but using the start button is the best way to start the event.</p>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>Congratulations! You have now started an event.</p>
+                        </div>
+                        <div class="row justify-content-center">
+                            <p>After you've started the event, it is helpful to familiarize yourself with the buttons on the timing page. At the top of the page you've got a button to set the wave times for an event, an alarms button to set alarms to alert you when a person is recorded at any location, a manual entry button to enter a recording for a participant at any location if for some reason they were not recorded by your timing system, a button to set a person as finished (time based event) or Did Not Finish (distance based event), a button to load a log of chip reads, and a button to save chip reads in a file.</p>
+                            <p>Below that you'll find a search bar where you can search for a participant by name or bib. Below this field you can limit what you'll see on the page. The final box is used to sort results.</p>
+                            <p>The stats display is collapsible and displays information about how many runners have been recorded and what state they're in. DNS (Did Not Start), DNF (Did Not Finish), Fin (Finished), Act (Active), Tot (Total runners). Each line can be double clicked to show more information about participants in each category.</p>
+                            <p>Finally, at the bottom of the right panel are more buttons. If you've linked the event to a results API then you'll see two buttons related to uploading results.</p>
+                            <ul class="px-5">
+                                <li>Auto Upload - Sets the program to automatically upload results periodically to the results API. When set to auto upload the button text changes and the manual upload button is disabled.</li>
+                                <li>Manual Upload - Manually uploads results.</li>
+                                <li>Recalculate - Tells the program to recalculate results. It also clears results from the results API if event is linked. Used if there is some error with the results.</li>
+                                <li>Raw Data - Changes the page to display chip read information to allow the user to ignore/modify data.</li>
+                                <li>Export Results - Exports timing results.</li>
+                                <li>Print - Brings up options to print results.</li>
+                                <li>Export Boston - Exports results in a format useful for submitting to the Boston Marathon for qualifying marathon participants.</li>
+                                <li>Start DNS Mode - Used to record chips as DNS.</li>
+                                <li>Export UltraSignup - Exports results in a format useful for uploading to UltraSignup.</li>
+                                <li>Awards - Brings up options to print awards.</li>
+                                <li>Create HTML - Exports results in HTML format.</li>
+                                <li>Start Web - Starts a local web server for displaying results. The information to connect to the website will be displayed below the bottom two buttons</li>
+                            </ul>
+                            <a class="col-sm-4 mb-3" data-bs-toggle="modal" data-bs-target="#timing-page-buttons">
+                                <img class="img-fluid" alt="timing page buttons" src="images/Timing-Page-Buttons.png">
+                            </a>
+                            <div class="modal fade" id="timing-page-buttons" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-body row justify-content-center">
+                                            <img class="img-fluid" alt="timing page buttons" src="images/Timing-Page-Buttons.png">
+                                        </div>
+                                    </div>"
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </main>
             </div>
