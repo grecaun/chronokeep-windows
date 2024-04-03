@@ -28,6 +28,12 @@ namespace Chronokeep.UI.MainPages
                 }
             }
             Log.D("UI.MainPages.AboutPage", "Version: " + gitVersion);
+            string dirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Settings.HELP_DIR);
+            if (Directory.Exists(dirPath))
+            {
+                dirPath = Path.Combine(dirPath, "index.html");
+                HelpDocsButton.NavigateUri = dirPath;
+            }
             VersionLabel.Text = gitVersion;
         }
 

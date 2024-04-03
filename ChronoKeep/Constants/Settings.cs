@@ -11,6 +11,7 @@ namespace Chronokeep.Constants
     class Settings
     {
         public static readonly string PROGRAM_DIR           = "Chronokeep";
+        public static readonly string HELP_DIR              = "help";
 
         public static readonly string SERVER_NAME           = "SETTING_SERVER_NAME";
         public static readonly string DATABASE_VERSION      = "DATABASE_VERSION";
