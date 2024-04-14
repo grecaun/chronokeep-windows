@@ -35,6 +35,14 @@
                     FontWeight="Bold"
                     FontSize="40"
                     />
+                <ComboBox
+                    Name="EllapsedRelativeToBox"
+                    Margin="0,0,0,5"
+                    Width="250"
+                    Height="35"
+                    HorizontalAlignment="Stretch"
+                    SelectionChanged="EllapsedRelativeToBox_SelectionChanged"
+                    Visibility="Collapsed" />
                 <StackPanel
                     Orientation="Horizontal"
                     Width="200"

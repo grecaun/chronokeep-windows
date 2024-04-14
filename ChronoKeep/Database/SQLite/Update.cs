@@ -1463,7 +1463,7 @@ namespace Chronokeep.Database.SQLite
                             "DROP TABLE eventspecific; " +
                             "ALTER TABLE eventspecific_new RENAME TO eventspecific; " +
                             "UPDATE settings set value='57' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
-                        //command.ExecuteNonQuery();
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

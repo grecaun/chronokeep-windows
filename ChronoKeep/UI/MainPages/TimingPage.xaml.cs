@@ -58,6 +58,10 @@ namespace Chronokeep.UI.MainPages
 
         private bool remote_api = false;
 
+        Dictionary<int, (long seconds, int milliseconds)> waveTimes = new Dictionary<int, (long, int)>();
+        HashSet<int> waves = new HashSet<int>();
+        int selectedWave = -1;
+
         public TimingPage(IMainWindow window, IDBInterface database)
         {
             InitializeComponent();
@@ -121,6 +125,35 @@ namespace Chronokeep.UI.MainPages
             {
                 StartTime.Text = Constants.Timing.ToTimeOfDay(theEvent.StartSeconds, theEvent.StartMilliseconds);
                 UpdateStartTime();
+            }
+
+            // Check for multiple wave times, show an ellapsed relative to box if so
+            waves.Clear();
+            waveTimes.Clear();
+            EllapsedRelativeToBox.Items.Clear();
+            EllapsedRelativeToBox.Items.Add(new ComboBoxItem
+            {
+                Content = "Start Time",
+                Uid = "-1"
+            });
+            EllapsedRelativeToBox.SelectedIndex = 0;
+            foreach (Distance div in database.GetDistances(theEvent.Identifier))
+            {
+                EllapsedRelativeToBox.Items.Add(new ComboBoxItem
+                {
+                    Content = div.Name + " (Wave " + div.Wave + ")",
+                    Uid = div.Wave.ToString()
+                });
+                waveTimes[div.Wave] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
+                waves.Add(div.Wave);
+            }
+            if (waves.Count > 1)
+            {
+                EllapsedRelativeToBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
             }
 
             // Populate the list of readers with connected readers (or at least 4 readers)
@@ -412,6 +445,52 @@ namespace Chronokeep.UI.MainPages
 
             UpdateDNSButton();
 
+            // Check if there are waves we don't know about and only update the box if so.
+            HashSet<int> newWaves = new HashSet<int>();
+            foreach (Distance div in database.GetDistances(theEvent.Identifier))
+            {
+                newWaves.Add(div.Wave);
+            }
+            bool newWavesExist = false;
+            foreach (int wave in newWaves)
+            {
+                if (!waves.Contains(wave))
+                {
+                    newWavesExist = true;
+                    break;
+                }
+            }
+            if (newWavesExist == true)
+            {
+                waves.Clear();
+                waveTimes.Clear();
+                EllapsedRelativeToBox.Items.Clear();
+                EllapsedRelativeToBox.Items.Add(new ComboBoxItem
+                {
+                    Content = "Start Time",
+                    Uid = "-1"
+                });
+                EllapsedRelativeToBox.SelectedIndex = 0;
+                foreach (Distance div in database.GetDistances(theEvent.Identifier))
+                {
+                    EllapsedRelativeToBox.Items.Add(new ComboBoxItem
+                    {
+                        Content = div.Name + " (Wave " + div.Wave + ")",
+                        Uid = div.Wave.ToString()
+                    });
+                    waveTimes[div.Wave] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
+                    waves.Add(div.Wave);
+                }
+                if (waves.Count > 1)
+                {
+                    EllapsedRelativeToBox.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
+                }
+            }
+
             subPage.UpdateView();
         }
 
@@ -443,6 +522,11 @@ namespace Chronokeep.UI.MainPages
         private void Timer_Click(object sender, EventArgs e)
         {
             TimeSpan ellapsed = DateTime.Now - startTime;
+            if (selectedWave != -1 && waveTimes.ContainsKey(selectedWave))
+            {
+                ellapsed = ellapsed.Subtract(TimeSpan.FromSeconds(waveTimes[selectedWave].seconds));
+                ellapsed = ellapsed.Subtract(TimeSpan.FromMilliseconds(waveTimes[selectedWave].milliseconds));
+            }
             EllapsedTime.Text = string.Format("{0:D2}:{1:D2}:{2:D2}", Math.Abs(ellapsed.Days) * 24 + Math.Abs(ellapsed.Hours), Math.Abs(ellapsed.Minutes), Math.Abs(ellapsed.Seconds));
         }
 
@@ -1270,6 +1354,23 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.TimingPage", "Remote toggle switch unchecked.");
             remoteControllerSwitch.IsEnabled = false;
             mWindow.StopRemote();
+        }
+
+        private void EllapsedRelativeToBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Log.D("UI.MainPages.TimingPage", "EllapsedRelativeToBox selection changed.");
+            selectedWave = -1;
+            if (EllapsedRelativeToBox.SelectedIndex > 0)
+            {
+                try
+                {
+                    selectedWave = Convert.ToInt32(((ComboBoxItem)EllapsedRelativeToBox.SelectedItem).Uid);
+                }
+                catch
+                {
+                    selectedWave = -1;
+                }
+            }
         }
 
         private class AReaderBox : ListBoxItem
