@@ -20,6 +20,9 @@ namespace Chronokeep.Timing
         private static bool ResetDictionariesBool = true;
 
         private static TimingDictionary dictionary = new TimingDictionary();
+        // Keep track of what alerts have been sent out (EventID, Bib)
+        internal static HashSet<(int, string)> AlertsSent = new HashSet<(int, string)>();
+
 
         private TimingWorker(IMainWindow window, IDBInterface database)
         {
@@ -205,6 +208,14 @@ namespace Chronokeep.Timing
 
         public void Run()
         {
+            // get sms alerts from database
+            int eventId = database.GetCurrentEvent().Identifier;
+            /*
+             * foreach (string bib in databse.GetSMSAlerts(eventId)
+             * {
+             *      AlertsSent.Add((eventId, bib));
+             * }
+             */
             int counter = 1;
             do
             {
@@ -307,6 +318,22 @@ namespace Chronokeep.Timing
                         Log.D("Timing.TimingWorker", string.Format("Time to process placements was: {0} hours {1} minutes {2} seconds {3} milliseconds", time.Hours, time.Minutes, time.Seconds, time.Milliseconds));
 #endif
                         window.NetworkUpdateResults();
+                    }
+                    if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType) // && SMS set up && SMS enabled on event)
+                    {
+                        foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
+                        {
+                            if (false == AlertsSent.Contains((theEvent.Identifier, result.Bib)))
+                            {
+                                AlertsSent.Add((theEvent.Identifier, result.Bib));
+                                // database.SaveSMSAlert(theEvent.Identifier, result.Bib);
+                                // Check here to add user to sent alerts regardless of whether or not the participant wants SMS sent.
+                                // if (result.SendSMSEnabled())
+                                // {
+                                //      result.SendSMS();
+                                // }
+                            }
+                        }
                     }
                     if (touched)
                     {
