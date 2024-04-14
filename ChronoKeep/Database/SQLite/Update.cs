@@ -1451,6 +1451,13 @@ namespace Chronokeep.Database.SQLite
                             "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT ''," +
                             "eventspecific_anonymous SMALLINT NOT NULL DEFAULT 0," +
                             "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE" +
+                            "); " + 
+                            "CREATE TABLE IF NOT EXISTS sms_alert(" +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                            "sms_bib INTEGER NOT NULL" +
+                            "); " +
+                            "CREATE TABLE IF NOT EXISTS sms_ban_list(" +
+                            "banned_phone VARCHAR(100)" +
                             "); " +
                             "INSERT INTO eventspecific_new SELECT * FROM eventspecific; " +
                             "DROP TABLE eventspecific; " +

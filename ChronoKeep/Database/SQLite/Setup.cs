@@ -251,6 +251,13 @@ namespace Chronokeep.Database.SQLite
                     "reader_name VARCHAR NOT NULL, " +
                     "UNIQUE(event_id, api_id, reader_name) ON CONFLICT REPLACE" +
                     ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS sms_alert(" +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                    "sms_bib INTEGER NOT NULL" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS sms_ban_list(" +
+                    "banned_phone VARCHAR(100)" +
+                    ");");
                 queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
 
                 using (var transaction = connection.BeginTransaction())

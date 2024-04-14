@@ -31,6 +31,7 @@ namespace Chronokeep.Constants
         public static readonly string DOWNLOAD_INTERVAL     = "SETTINGS_DOWNLOAD_INTERVAL";
         public static readonly string ANNOUNCER_WINDOW      = "SETTING_ANNOUNCER_WINDOW";
         public static readonly string ALARM_SOUND           = "SETTING_ALARM_SOUND";
+        public static readonly string SMS_API_KEY           = "SMS_API_KEY";
 
         public static readonly string NULL_EVENT_ID     = "-1";
 
@@ -110,6 +111,10 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(ALARM_SOUND) == null)
             {
                 database.SetAppSetting(ALARM_SOUND, DEFAULT_ALARM);
+            }
+            if (database.GetAppSetting(SMS_API_KEY) == null)
+            {
+                database.SetAppSetting(SMS_API_KEY, "");
             }
         }
     }
