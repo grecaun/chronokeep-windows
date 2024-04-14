@@ -319,7 +319,7 @@ namespace Chronokeep.Timing
                     }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType) // && SMS set up && SMS enabled on event)
                     {
-                        foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
+                        foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
                         {
                             if (false == AlertsSent.Contains((theEvent.Identifier, result.Bib)))
                             {
