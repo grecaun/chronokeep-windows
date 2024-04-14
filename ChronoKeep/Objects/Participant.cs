@@ -586,6 +586,10 @@ namespace Chronokeep
 
         public string Age(string eventDate)
         {
+            if (birthdate == null || birthdate.Length > 1)
+            {
+                return "";
+            }
             DateTime eventDateTime = Convert.ToDateTime(eventDate);
             DateTime myDateTime = Convert.ToDateTime(birthdate);
             int numYears = eventDateTime.Year - myDateTime.Year;
@@ -598,6 +602,10 @@ namespace Chronokeep
 
         public int GetAge(string eventDate)
         {
+            if (birthdate == null || birthdate.Length > 1)
+            {
+                return -1;
+            }
             DateTime eventDateTime = Convert.ToDateTime(eventDate);
             DateTime myDateTime = Convert.ToDateTime(birthdate);
             int numYears = eventDateTime.Year - myDateTime.Year;

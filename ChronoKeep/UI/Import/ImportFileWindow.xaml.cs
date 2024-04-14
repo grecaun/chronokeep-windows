@@ -338,14 +338,17 @@ namespace Chronokeep
                         // Always set distance to our backyard distance if we're importing for a backyard ultra event. Otherwise figure out the proper distance.
                         thisDiv = BackYardUltra ? backyardDistance : (Distance)divHash[Utils.UppercaseFirst(data.Data[counter][keys[DISTANCE]].Trim().ToLower())];
                     }
-                    string birthday = "01/01/1900";
+                    string birthday = "";
                     int age = -1;
                     if (keys[BIRTHDAY] == 0 && keys[AGE] != 0) // birthday not set but age is
                     {
-                        Log.D("ImportFileWindow", string.Format("Counter is {0} and keys[AGE] is {1}", counter, keys[AGE]));
-                        Log.D("ImportFileWindow", "Age of participant is " + data.Data[counter][keys[AGE]]);
-                        age = Convert.ToInt32(data.Data[counter][keys[AGE]]);
-                        birthday = string.Format("01/01/{0,4}", thisYear - age);
+                        Log.D("ImportFileWindow", string.Format("Counter is {0} and keys[AGE] is {1} - age of participant is {2}", counter, keys[AGE], data.Data[counter][keys[AGE]]));
+                        try
+                        {
+                            age = Convert.ToInt32(data.Data[counter][keys[AGE]]);
+                            birthday = string.Format("01/01/{0,4}", thisYear - age);
+                        }
+                        catch { }
                     }
                     else if (keys[BIRTHDAY] != 0)
                     {
@@ -385,7 +388,7 @@ namespace Chronokeep
                     if (AgeGroups == null || age < 0)
                     {
                         output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                        output.EventSpecific.AgeGroupName = "0-110";
+                        output.EventSpecific.AgeGroupName = "";
                     }
                     else if (AgeGroups.ContainsKey((agDivId, age)))
                     {
@@ -402,7 +405,7 @@ namespace Chronokeep
                     else
                     {
                         output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                        output.EventSpecific.AgeGroupName = "0-110";
+                        output.EventSpecific.AgeGroupName = "";
                     }
                     importParticipants.Add(output);
                 }

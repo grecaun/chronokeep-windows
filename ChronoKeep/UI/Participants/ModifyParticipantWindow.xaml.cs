@@ -388,7 +388,7 @@ namespace Chronokeep.UI.Participants
                     "",
                     OtherBox.Text,
                     Constants.Timing.EVENTSPECIFIC_UNKNOWN,
-                    "0-110",
+                    "",
                     Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
                     AnonymousBox.IsChecked == true
                     ),
@@ -411,7 +411,7 @@ namespace Chronokeep.UI.Participants
             {
                 Log.D("UI.Participants.ModifyParticipantWindow", "Age Groups not found or Age is less than 0.");
                 output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                output.EventSpecific.AgeGroupName = "0-110";
+                output.EventSpecific.AgeGroupName = "";
             }
             else if (AgeGroups.ContainsKey((agDivId, age)))
             {
@@ -429,7 +429,7 @@ namespace Chronokeep.UI.Participants
             {
                 Log.D("UI.Participants.ModifyParticipantWindow", "Age Group not found.");
                 output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                output.EventSpecific.AgeGroupName = "0-110";
+                output.EventSpecific.AgeGroupName = "";
             }
             return output;
         }

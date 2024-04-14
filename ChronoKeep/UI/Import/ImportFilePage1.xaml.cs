@@ -24,7 +24,7 @@ namespace Chronokeep
         {
             Log.D("UI.ImportFilePage1", "Checking for required fields.");
             List<string> output = null;
-            bool first = false, last = false, age = false, gender = false, bib = false;
+            bool first = false, last = false;
             foreach (ListBoxItem item in headerListBox.Items)
             {
                 int val = ((HeaderListBoxItem)item).HeaderBox.SelectedIndex;
@@ -36,26 +36,10 @@ namespace Chronokeep
                 {
                     last = true;
                 }
-                else if (val == ImportFileWindow.BIRTHDAY || val == ImportFileWindow.AGE)
-                {
-                    age = true;
-                }
-                else if (val == ImportFileWindow.GENDER)
-                {
-                    gender = true;
-                }
-                else if (val == ImportFileWindow.BIB)
-                {
-                    bib = true;
-                }
             }
-            if (!bib || !first || !last || !age || !gender)
+            if (!first || !last)
             {
                 output = new List<string>();
-                if (!bib)
-                {
-                    output.Add("Bib");
-                }
                 if (!first)
                 {
                     output.Add("First Name");
@@ -63,14 +47,6 @@ namespace Chronokeep
                 if (!last)
                 {
                     output.Add("Last Name");
-                }
-                if (!gender)
-                {
-                    output.Add("Gender");
-                }
-                if (!age)
-                {
-                    output.Add("Birthday or Age");
                 }
             }
             return output;

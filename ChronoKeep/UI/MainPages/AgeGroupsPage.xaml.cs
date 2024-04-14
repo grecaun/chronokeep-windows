@@ -252,7 +252,7 @@ namespace Chronokeep.UI.MainPages
                     if (AgeGroups == null || age < 0)
                     {
                         person.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                        person.EventSpecific.AgeGroupName = "0-110";
+                        person.EventSpecific.AgeGroupName = "";
                     }
                     else if (AgeGroups.ContainsKey((agDivId, age)))
                     {
@@ -269,7 +269,7 @@ namespace Chronokeep.UI.MainPages
                     else
                     {
                         person.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                        person.EventSpecific.AgeGroupName = "0-110";
+                        person.EventSpecific.AgeGroupName = "";
                     }
                 }
                 database.UpdateParticipants(participants);

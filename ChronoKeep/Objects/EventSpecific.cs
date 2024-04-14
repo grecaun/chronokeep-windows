@@ -5,7 +5,7 @@
         private int identifier, eventIdentifier, distanceIdentifier,
             checkedIn = 0,
             status = Constants.Timing.EVENTSPECIFIC_UNKNOWN, ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-        private string comments, distanceName, owes, other, ageGroupName = "0-110", bib;
+        private string comments, distanceName, owes, other, ageGroupName = "", bib;
         private bool anonymous;
 
         public EventSpecific() { }
@@ -76,7 +76,7 @@
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "0-110", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false);
+            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false);
         }
 
         public int Identifier { get => identifier; set => identifier = value; }

@@ -1425,12 +1425,38 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 55;
                     case 55:
-                        Log.D("Database.SQLite.Update", "Upgrading from version 54.");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 55.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE remote_readers ADD COLUMN " +
                             "location_id INTEGER NOT NULL DEFAULT " + Constants.Timing.LOCATION_DUMMY + ";" +
                             "UPDATE settings set value='56' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
+                        goto case 56;
+                    case 56:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 56");
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE TABLE IF NOT EXISTS eventspecific_new (" +
+                            "eventspecific_id INTEGER PRIMARY KEY," +
+                            "participant_id INTEGER NOT NULL REFERENCES participants(participant_id)," +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
+                            "distance_id INTEGER NOT NULL REFERENCES distances(distance_id)," +
+                            "eventspecific_bib VARCHAR," +
+                            "eventspecific_checkedin INTEGER DEFAULT 0," +
+                            "eventspecific_comments VARCHAR," +
+                            "eventspecific_owes VARCHAR(50)," +
+                            "eventspecific_other VARCHAR," +
+                            "eventspecific_registration_date VARCHAR NOT NULL DEFAULT ''," +
+                            "eventspecific_status INT NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_UNKNOWN + "," +
+                            "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
+                            "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT ''," +
+                            "eventspecific_anonymous SMALLINT NOT NULL DEFAULT 0," +
+                            "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE" +
+                            "); " +
+                            "INSERT INTO eventspecific_new SELECT * FROM eventspecific; " +
+                            "DROP TABLE eventspecific; " +
+                            "ALTER TABLE eventspecific_new RENAME TO eventspecific; " +
+                            "UPDATE settings set value='57' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        //command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();
