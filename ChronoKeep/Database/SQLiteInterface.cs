@@ -11,8 +11,8 @@ namespace Chronokeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 147
-         * NEXT AVAILABLE   = 148
+         * HIGHEST MUTEX ID = 149
+         * NEXT AVAILABLE   = 150
          */
         private readonly int version = 57;
         readonly string connectionInfo;
@@ -2140,6 +2140,37 @@ namespace Chronokeep
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<RemoteReader> output = RemoteReaders.GetRemoteReaders(eventId, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
+        public void AddSMSAlert(int eventId, string bib)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 148");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 148");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            SMSAlerts.AddSMSAlert(eventId, bib, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public List<string> GetSMSAlerts(int eventId)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 149");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 149");
+                return new List<string>();
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            List<string> output = SMSAlerts.GetSMSAlerts(eventId, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;

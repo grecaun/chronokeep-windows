@@ -163,5 +163,8 @@ namespace Chronokeep
         void DeleteRemoteReaders(int eventId, List<RemoteReader> readers);
         void DeleteRemoteReader(int eventId, RemoteReader reader);
         List<RemoteReader> GetRemoteReaders(int eventId);
+        // SMS Alerts
+        void AddSMSAlert(int eventId, string bib);
+        List<string> GetSMSAlerts(int eventId);
     }
 }

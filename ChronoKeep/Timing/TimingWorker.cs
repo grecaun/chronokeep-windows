@@ -210,12 +210,10 @@ namespace Chronokeep.Timing
         {
             // get sms alerts from database
             int eventId = database.GetCurrentEvent().Identifier;
-            /*
-             * foreach (string bib in databse.GetSMSAlerts(eventId)
-             * {
-             *      AlertsSent.Add((eventId, bib));
-             * }
-             */
+            foreach (string bib in database.GetSMSAlerts(eventId))
+            {
+                AlertsSent.Add((eventId, bib));
+            }
             int counter = 1;
             do
             {
@@ -325,13 +323,21 @@ namespace Chronokeep.Timing
                         {
                             if (false == AlertsSent.Contains((theEvent.Identifier, result.Bib)))
                             {
-                                AlertsSent.Add((theEvent.Identifier, result.Bib));
-                                // database.SaveSMSAlert(theEvent.Identifier, result.Bib);
-                                // Check here to add user to sent alerts regardless of whether or not the participant wants SMS sent.
+                                // Only add alert sent if successful if the participant wants SMS sent.
                                 // if (result.SendSMSEnabled())
                                 // {
-                                //      result.SendSMS();
+                                //      if (result.SendSMS())
+                                //      {
+                                AlertsSent.Add((theEvent.Identifier, result.Bib));
+                                //          database.SaveSMSAlert(theEvent.Identifier, result.Bib);
+                                //      }
                                 // }
+                                // else 
+                                // {
+                                //      AlertsSent.Add((theEvent.Identifier, result.Bib));
+                                //      database.SaveSMSAlert(theEvent.Identifier, result.Bib);
+                                // }
+                                //
                             }
                         }
                     }
