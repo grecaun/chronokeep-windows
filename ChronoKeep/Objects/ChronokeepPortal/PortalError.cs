@@ -20,6 +20,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public static readonly string NO_REMOTE_API         = "NO_REMOTE_API";
         public static readonly string STARTING_UP           = "STARTING_UP";
         public static readonly string INVALID_READ          = "INVALID_READ";
+        public static readonly string NOT_ALLOWED           = "NOT_ALLOWED";
 
         [JsonPropertyName("error_type")]
         public string Type { get; set; }

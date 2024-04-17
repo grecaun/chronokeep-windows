@@ -3,6 +3,8 @@ using Chronokeep.Interfaces.Timing;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepPortal.Requests;
 using Chronokeep.Objects.ChronokeepPortal.Responses;
+using Chronokeep.Objects.ChronokeepRemote;
+using Chronokeep.UI;
 using Chronokeep.UI.Timing.ReaderSettings;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -197,6 +199,13 @@ namespace Chronokeep.Timing.Interfaces
                                     output[MessageType.ERROR] = new List<string>();
                                 }
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error sent to us is of type '" + err.Value.Type + "' and has message '" + err.Value.Message + "'.");
+                                if (PortalError.NOT_ALLOWED == err.Value.Type)
+                                {
+                                    window.ShowNotificationDialog("", new RemoteNotification
+                                    {
+                                        Type = err.Value.Type
+                                    });
+                                }
                                 output[MessageType.ERROR].Add(err.Value.Message);
                             }
                             catch (Exception e)

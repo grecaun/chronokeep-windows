@@ -889,7 +889,14 @@ namespace Chronokeep.UI
         {
             Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
-                DialogBox.Show(PortalNotification.GetRemoteNotificationMessage(ReaderName, notification.Type));
+                if (notification.Type == PortalError.NOT_ALLOWED)
+                {
+                    DialogBox.Show("Unable to set time with a reader connected.");
+                }
+                else
+                {
+                    DialogBox.Show(PortalNotification.GetRemoteNotificationMessage(ReaderName, notification.Type));
+                }
             }));
         }
     }
