@@ -406,7 +406,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }
         }
 
-        private class ReaderListItem : ListViewItem
+        private class ReaderListItem : Wpf.Ui.Controls.ListViewItem
         {
             private PortalReader reader;
             private ChronokeepInterface readerInterface;
@@ -745,7 +745,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }
         }
 
-        private class APIListItem : ListViewItem
+        private class APIListItem : Wpf.Ui.Controls.ListViewItem
         {
             private PortalAPI api = null;
             private ChronokeepInterface reader = null;

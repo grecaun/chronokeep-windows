@@ -110,6 +110,7 @@ namespace Chronokeep.Database.SQLite
                     "distance_linked_id INTEGER NOT NULL REFERENCES distances(distance_id) DEFAULT -1," +
                     "distance_type INTEGER NOT NULL DEFAULT 0," +
                     "distance_ranking_order INTEGER NOT NULL DEFAULT 0, " +
+                    "distance_sms_enabled INTEGER NOT NULL DEFAULT 0, " +
                     "UNIQUE (distance_name, event_id) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS timing_locations (" +
@@ -155,6 +156,7 @@ namespace Chronokeep.Database.SQLite
                     "eventspecific_age_group_id INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYAGEGROUP + "," +
                     "eventspecific_age_group_name VARCHAR NOT NULL DEFAULT ''," +
                     "eventspecific_anonymous SMALLINT NOT NULL DEFAULT 0," +
+                    "eventspecific_sms_enabled SMALLINT NOT NULL DEFAULT 0, " +
                     "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS segments (" +

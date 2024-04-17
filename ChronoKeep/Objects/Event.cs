@@ -100,6 +100,7 @@ namespace Chronokeep
         public bool DistanceSpecificSegments { get => distance_specific_segments != 0; set => distance_specific_segments = value ? 1 : 0; }
         public bool RankByGun { get => rank_by_gun != 0; set => rank_by_gun = value ? 1 : 0; }
         public string YearCode { get => yearcode; set => yearcode = value; }
+        public string Year { get => date.Split('/').Length == 3 ? date.Split('/')[2] : ""; }
         public int StartWindow { get => start_window; set => start_window = value; }
         public int FinishMaxOccurrences { get => finish_max_occurrences; set => finish_max_occurrences = value; }
         public int FinishIgnoreWithin { get => finish_ignore_within; set => finish_ignore_within = value; }

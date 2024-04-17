@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects;
 using Chronokeep.Objects.API;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.Participants;

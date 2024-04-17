@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -131,6 +132,7 @@ namespace Chronokeep.Timing
             dictionary.distanceEndDict[0] = dictionary.distanceStartDict[0];
             // Distances so we can get their start offset.
             dictionary.distanceDictionary.Clear();
+            dictionary.distanceNameDictionary.Clear();
             List<Distance> distances = database.GetDistances(theEvent.Identifier);
             foreach (Distance d in distances)
             {
@@ -139,6 +141,7 @@ namespace Chronokeep.Timing
                     Log.E("Timing.TimingWorker", "Multiples of a Distance found in distances set.");
                 }
                 dictionary.distanceDictionary[d.Identifier] = d;
+                dictionary.distanceNameDictionary[d.Name] = d;
                 Log.D("Timing.TimingWorker", "Distance " + d.Name + " offsets are " + d.StartOffsetSeconds + " " + d.StartOffsetMilliseconds);
                 dictionary.distanceStartDict[d.Identifier] = (dictionary.distanceStartDict[0].Seconds + d.StartOffsetSeconds, dictionary.distanceStartDict[0].Milliseconds + d.StartOffsetMilliseconds);
                 dictionary.distanceEndDict[d.Identifier] = (dictionary.distanceStartDict[d.Identifier].Seconds + d.EndSeconds, dictionary.distanceStartDict[d.Identifier].Milliseconds);
@@ -157,6 +160,8 @@ namespace Chronokeep.Timing
             }
             // Dictionary for looking up linked distances
             dictionary.linkedDistanceDictionary.Clear();
+            dictionary.linkedDistanceIdentifierDictionary.Clear();
+            dictionary.mainDistances.Clear();
             foreach (Distance d in distances)
             {
                 // Check if its a linked distance
@@ -184,7 +189,14 @@ namespace Chronokeep.Timing
                     // No linked distance found, use distance and 0 as ranking int.
                     dictionary.linkedDistanceDictionary[d.Name] = (d, 0);
                     dictionary.linkedDistanceIdentifierDictionary[d.Identifier] = d.Identifier;
+                    // not a linked distance, add it to mainDistances so we can check if there's only one distance
+                    dictionary.mainDistances.Add(d);
                 }
+            }
+            dictionary.apiURLs.Clear();
+            foreach (APIObject api in database.GetAllAPI())
+            {
+                dictionary.apiURLs.Add(api.Identifier, api.URL);
             }
             RecalculateDNS(theEvent);
         }
@@ -321,23 +333,26 @@ namespace Chronokeep.Timing
                     {
                         foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
                         {
-                            if (false == AlertsSent.Contains((theEvent.Identifier, result.Bib)))
+                            // verify the distance is set to allow sms alerts and the runner hasn't been notified already
+                            if (dictionary.distanceNameDictionary.ContainsKey(result.RealDistanceName)
+                                && true == dictionary.distanceNameDictionary[result.RealDistanceName].SMSEnabled
+                                && false == AlertsSent.Contains((theEvent.Identifier, result.Bib)))
                             {
-                                // Only add alert sent if successful if the participant wants SMS sent.
-                                // if (result.SendSMSEnabled())
-                                // {
-                                //      if (result.SendSMS())
-                                //      {
-                                AlertsSent.Add((theEvent.Identifier, result.Bib));
-                                //          database.SaveSMSAlert(theEvent.Identifier, result.Bib);
-                                //      }
-                                // }
-                                // else 
-                                // {
-                                //      AlertsSent.Add((theEvent.Identifier, result.Bib));
-                                //      database.SaveSMSAlert(theEvent.Identifier, result.Bib);
-                                // }
-                                //
+                                // Only send alert if participant wants it sent
+                                if (dictionary.participantBibDictionary.ContainsKey(result.Bib) && true == dictionary.participantBibDictionary[result.Bib].EventSpecific.SMSEnabled)
+                                {
+                                    if (result.SendSMSAlert(theEvent, dictionary))
+                                    {
+                                        AlertsSent.Add((theEvent.Identifier, result.Bib));
+                                        database.AddSMSAlert(theEvent.Identifier, result.Bib);
+                                    }
+                                }
+                                else
+                                {
+                                    AlertsSent.Add((theEvent.Identifier, result.Bib));
+                                    database.AddSMSAlert(theEvent.Identifier, result.Bib);
+                                }
+
                             }
                         }
                     }

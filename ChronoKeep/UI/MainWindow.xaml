@@ -51,8 +51,7 @@
                     Content="Dashboard"
                     Click="DashboardButton_Click"
                     x:Name="dashboardButton"
-                    MaxWidth="142"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Home24" />
@@ -62,8 +61,7 @@
                     Content="Timing"
                     Click="TimingButton_Click"
                     x:Name="timingButton"
-                    MaxWidth="142"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="ClipboardClock24" />
@@ -73,8 +71,7 @@
                     Content="Announcer"
                     Click="Announcer_Click"
                     x:Name="announcerButton"
-                    MaxWidth="142"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="AlertUrgent24" />
@@ -84,8 +81,7 @@
                     Content="Participants"
                     Click="ParticipantsButton_Click"
                     x:Name="participantsButton"
-                    MaxWidth="142"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Person24" />
@@ -95,8 +91,7 @@
                     Content="Chips"
                     Click="ChipsButton_Click"
                     x:Name="chipsButton"
-                    MaxWidth="142"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="DeveloperBoard24" />
@@ -106,8 +101,7 @@
                     Content="Locations"
                     Click="LocationsButton_Click"
                     x:Name="locationsButton"
-                    MaxWidth="142"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Map24" />
@@ -117,8 +111,7 @@
                     Content="Distances"
                     Click="DistancesButton_Click"
                     x:Name="distancesButton"
-                    MaxWidth="142"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Ruler24" />
@@ -128,8 +121,7 @@
                     Content="Segments"
                     Click="SegmentsButton_Click"
                     x:Name="segmentsButton"
-                    MaxWidth="142"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Organization24" />
@@ -139,8 +131,7 @@
                     Content="Age Groups"
                     Click="AgegroupsButton_Click"
                     x:Name="agegroupsButton"
-                    MaxWidth="142"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Trophy24" />
@@ -152,8 +143,7 @@
                     Content="Settings"
                     Click="SettingsButton_Click"
                     x:Name="settingsButton"
-                    MaxWidth="142"
-                    HorizontalAlignment="Left"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Settings24" />
@@ -163,8 +153,7 @@
                     Content="About"
                     Click="AboutButton_Click"
                     x:Name="aboutButton"
-                    HorizontalAlignment="Left"
-                    Width="142"
+                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="QuestionCircle24" />

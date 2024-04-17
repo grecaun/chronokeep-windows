@@ -4,6 +4,7 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="Chronokeep" #>
+<#@ import namespace="Chronokeep.Objects" #>
 <!doctype html>
 <html lang="en">
 	<head>

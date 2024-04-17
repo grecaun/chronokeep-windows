@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Chronokeep.Timing;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Chronokeep
+namespace Chronokeep.Objects
 {
     public class TimeResult
     {
@@ -26,34 +27,34 @@ namespace Chronokeep
 
         // database constructor
         public TimeResult(
-            int eventId, 
-            int eventspecificId, 
-            int locationId, 
+            int eventId,
+            int eventspecificId,
+            int locationId,
             int segmentId,
-            string time, 
-            int occurrence, 
-            string first, 
-            string last, 
-            string distance, 
+            string time,
+            int occurrence,
+            string first,
+            string last,
+            string distance,
             string bib,
-            int readId, 
-            string unknownId, 
-            long systemTimeSec, 
-            int systemTimeMill, 
-            string chipTime, 
+            int readId,
+            string unknownId,
+            long systemTimeSec,
+            int systemTimeMill,
+            string chipTime,
             int place,
-            int agePlace, 
-            int genderPlace, 
-            string gender, 
-            int status, 
+            int agePlace,
+            int genderPlace,
+            string gender,
+            int status,
             string split,
-            int ageGroupId, 
-            string ageGroupName, 
-            int uploaded, 
-            string birthday, 
-            int type, 
-            string linked_distance_name, 
-            string chip, 
+            int ageGroupId,
+            string ageGroupName,
+            int uploaded,
+            string birthday,
+            int type,
+            string linked_distance_name,
+            string chip,
             bool anonymous
             )
         {
@@ -63,42 +64,42 @@ namespace Chronokeep
             this.segmentId = segmentId;
             this.time = time;
             this.occurrence = occurrence;
-            this.locationName = locations != null ? locations.ContainsKey(this.locationId) ?
+            locationName = locations != null ? locations.ContainsKey(this.locationId) ?
                 locations[this.locationId].Name : "Unknown" : "Unknown";
             if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
             {
-                this.segmentName = "Finish";
+                segmentName = "Finish";
             }
             else if (Constants.Timing.SEGMENT_START == this.segmentId)
             {
-                this.segmentName = "Start";
+                segmentName = "Start";
             }
             else if (segments != null && segments.ContainsKey(this.segmentId))
             {
-                this.segmentName = segments[this.segmentId].Name;
+                segmentName = segments[this.segmentId].Name;
             }
             else
             {
-                this.segmentName = "";
+                segmentName = "";
             }
-            if (raceType == Constants.Timing.EVENT_TYPE_TIME && Constants.Timing.SEGMENT_FINISH == this.SegmentId)
+            if (raceType == Constants.Timing.EVENT_TYPE_TIME && Constants.Timing.SEGMENT_FINISH == SegmentId)
             {
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
-                    this.segmentName = string.Format("Lap {0}", occurrence);
+                    segmentName = string.Format("Lap {0}", occurrence);
                 }
                 else if (Constants.Timing.SEGMENT_START != this.segmentId)
                 {
-                    this.segmentName = string.Format("{0} {1}", this.segmentName, occurrence);
+                    segmentName = string.Format("{0} {1}", segmentName, occurrence);
                 }
             }
-            this.firstName = first;
-            this.lastName = last;
-            this.distanceName = distance;
+            firstName = first;
+            lastName = last;
+            distanceName = distance;
             this.bib = bib;
             this.unknownId = unknownId;
             this.readId = readId;
-            this.systemTime = Constants.Timing.RFIDEpochToDate(systemTimeSec).AddMilliseconds(systemTimeMill);
+            systemTime = Constants.Timing.RFIDEpochToDate(systemTimeSec).AddMilliseconds(systemTimeMill);
             this.chipTime = chipTime;
             this.place = place;
             this.agePlace = agePlace;
@@ -111,8 +112,8 @@ namespace Chronokeep
             chipMilliseconds = 0;
             if (chipTimeMatch.Success)
             {
-                chipSeconds = (Convert.ToInt64(chipTimeMatch.Groups[1].Value) * 3600)
-                   + (Convert.ToInt64(chipTimeMatch.Groups[2].Value) * 60)
+                chipSeconds = Convert.ToInt64(chipTimeMatch.Groups[1].Value) * 3600
+                   + Convert.ToInt64(chipTimeMatch.Groups[2].Value) * 60
                    + Convert.ToInt64(chipTimeMatch.Groups[3].Value);
                 chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
             }
@@ -121,13 +122,13 @@ namespace Chronokeep
             milliseconds = 0;
             if (timeMatch.Success)
             {
-                seconds = (Convert.ToInt64(timeMatch.Groups[1].Value) * 3600)
-                   + (Convert.ToInt64(timeMatch.Groups[2].Value) * 60)
+                seconds = Convert.ToInt64(timeMatch.Groups[1].Value) * 3600
+                   + Convert.ToInt64(timeMatch.Groups[2].Value) * 60
                    + Convert.ToInt64(timeMatch.Groups[3].Value);
                 milliseconds = Convert.ToInt32(timeMatch.Groups[4].Value);
             }
             this.status = status;
-            this.splitTime = split;
+            splitTime = split;
             this.uploaded = uploaded;
             this.birthday = birthday;
             this.type = type;
@@ -137,17 +138,17 @@ namespace Chronokeep
         }
 
         public TimeResult(
-            int eventId, 
-            int readId, 
-            int eventspecificId, 
+            int eventId,
+            int readId,
+            int eventspecificId,
             int locationId,
-            int segmentId, 
-            int occurrence, 
-            string time, 
-            string unknownId, 
+            int segmentId,
+            int occurrence,
+            string time,
+            string unknownId,
             string chipTime,
-            DateTime systemTime, 
-            string bib, 
+            DateTime systemTime,
+            string bib,
             int status
             )
         {
@@ -166,7 +167,7 @@ namespace Chronokeep
             agePlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             genderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             this.status = status;
-            this.splitTime = "";
+            splitTime = "";
         }
 
         public static void SetupStaticVariables(IDBInterface database)
@@ -221,7 +222,7 @@ namespace Chronokeep
         public string UnknownId { get => unknownId; set => unknownId = value; }
         public int ReadId { get => readId; set => readId = value; }
         public int Place { get => place; set => place = value; }
-        public string PlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? (place < 1 ? "" : place.ToString()) : ""; }
+        public string PlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? place < 1 ? "" : place.ToString() : ""; }
         public string PrettyPlaceStr
         {
             get => type == Constants.Timing.DISTANCE_TYPE_EARLY && place > 0 ? string.Format("{0}e", place) :
@@ -229,9 +230,9 @@ namespace Chronokeep
                 Finish && place > 0 ? place.ToString() : "";
         }
         public int AgePlace { get => agePlace; set => agePlace = value; }
-        public string AgePlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? (agePlace < 1 ? "" : agePlace.ToString()) : ""; }
+        public string AgePlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? agePlace < 1 ? "" : agePlace.ToString() : ""; }
         public int GenderPlace { get => genderPlace; set => genderPlace = value; }
-        public string GenderPlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? (genderPlace < 1 ? "" : genderPlace.ToString()) : ""; }
+        public string GenderPlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? genderPlace < 1 ? "" : genderPlace.ToString() : ""; }
         public int Type { get => type; set => type = value; }
         public string Identifier { get => unknownId; }
         public string PrettyType
@@ -272,13 +273,13 @@ namespace Chronokeep
         public int ChipMilliseconds { get => chipMilliseconds; set => chipMilliseconds = value; }
         public long Seconds { get => seconds; set => seconds = value; }
         public int Milliseconds { get => milliseconds; set => milliseconds = value; }
-        public int Uploaded { get => uploaded; set => uploaded = (value == Constants.Timing.TIMERESULT_UPLOADED_FALSE ? Constants.Timing.TIMERESULT_UPLOADED_FALSE : Constants.Timing.TIMERESULT_UPLOADED_TRUE); }
+        public int Uploaded { get => uploaded; set => uploaded = value == Constants.Timing.TIMERESULT_UPLOADED_FALSE ? Constants.Timing.TIMERESULT_UPLOADED_FALSE : Constants.Timing.TIMERESULT_UPLOADED_TRUE; }
         public string Birthday { get => birthday; set => birthday = value; }
         public string Chip { get => chip; set => chip = value; }
         public bool Anonymous { get => anonymous; set => anonymous = value; }
         public string AgeGenderString
         {
-            get => theEvent != null ? string.Format("{0} {1}", this.Age(theEvent.Date), this.PrettyGender) : string.Format("? {0}", this.PrettyGender);
+            get => theEvent != null ? string.Format("{0} {1}", Age(theEvent.Date), PrettyGender) : string.Format("? {0}", PrettyGender);
         }
         public bool Finish { get => segmentId == Constants.Timing.SEGMENT_FINISH; }
 
@@ -319,7 +320,7 @@ namespace Chronokeep
             DateTime eventDateTime = Convert.ToDateTime(eventDate);
             DateTime myDateTime = Convert.ToDateTime(birthday);
             int numYears = eventDateTime.Year - myDateTime.Year;
-            if (eventDateTime.Month < myDateTime.Month || (eventDateTime.Month == myDateTime.Month && eventDateTime.Day < myDateTime.Day))
+            if (eventDateTime.Month < myDateTime.Month || eventDateTime.Month == myDateTime.Month && eventDateTime.Day < myDateTime.Day)
             {
                 numYears--;
             }
@@ -342,11 +343,11 @@ namespace Chronokeep
             Match oneMatch = timeRegex.Match(one.Time);
             Match twoMatch = timeRegex.Match(two.Time);
             if (oneMatch == null || twoMatch == null) return 1;
-            long oneTime = (Convert.ToInt64(oneMatch.Groups[1].Value) * 3600)
-                + (Convert.ToInt64(oneMatch.Groups[2].Value) * 60)
+            long oneTime = Convert.ToInt64(oneMatch.Groups[1].Value) * 3600
+                + Convert.ToInt64(oneMatch.Groups[2].Value) * 60
                 + Convert.ToInt64(oneMatch.Groups[3].Value);
-            long twoTime = (Convert.ToInt64(twoMatch.Groups[1].Value) * 3600)
-                + (Convert.ToInt64(twoMatch.Groups[2].Value) * 60)
+            long twoTime = Convert.ToInt64(twoMatch.Groups[1].Value) * 3600
+                + Convert.ToInt64(twoMatch.Groups[2].Value) * 60
                 + Convert.ToInt64(twoMatch.Groups[3].Value);
             return oneTime.CompareTo(twoTime);
         }
@@ -357,11 +358,11 @@ namespace Chronokeep
             Match oneMatch = timeRegex.Match(one.chipTime);
             Match twoMatch = timeRegex.Match(two.chipTime);
             if (oneMatch == null || twoMatch == null) return 1;
-            long oneTime = (Convert.ToInt64(oneMatch.Groups[1].Value) * 3600)
-                + (Convert.ToInt64(oneMatch.Groups[2].Value) * 60)
+            long oneTime = Convert.ToInt64(oneMatch.Groups[1].Value) * 3600
+                + Convert.ToInt64(oneMatch.Groups[2].Value) * 60
                 + Convert.ToInt64(oneMatch.Groups[3].Value);
-            long twoTime = (Convert.ToInt64(twoMatch.Groups[1].Value) * 3600)
-                + (Convert.ToInt64(twoMatch.Groups[2].Value) * 60)
+            long twoTime = Convert.ToInt64(twoMatch.Groups[1].Value) * 3600
+                + Convert.ToInt64(twoMatch.Groups[2].Value) * 60
                 + Convert.ToInt64(twoMatch.Groups[3].Value);
             return oneTime.CompareTo(twoTime);
         }
@@ -436,11 +437,11 @@ namespace Chronokeep
         public int CompareChip(TimeResult other)
         {
             if (other == null) return 1;
-            if (this.chipSeconds == other.chipSeconds)
+            if (chipSeconds == other.chipSeconds)
             {
-                return this.chipMilliseconds.CompareTo(other.chipMilliseconds);
+                return chipMilliseconds.CompareTo(other.chipMilliseconds);
             }
-            return this.chipSeconds.CompareTo(other.chipSeconds);
+            return chipSeconds.CompareTo(other.chipSeconds);
         }
 
         public static int CompareByDistanceChip(TimeResult one, TimeResult two)
@@ -511,11 +512,11 @@ namespace Chronokeep
                 Match oneMatch = timeRegex.Match(one.Time);
                 Match twoMatch = timeRegex.Match(two.Time);
                 if (oneMatch == null || twoMatch == null) return 1;
-                long oneTime = (Convert.ToInt64(oneMatch.Groups[1].Value) * 3600)
-                    + (Convert.ToInt64(oneMatch.Groups[2].Value) * 60)
+                long oneTime = Convert.ToInt64(oneMatch.Groups[1].Value) * 3600
+                    + Convert.ToInt64(oneMatch.Groups[2].Value) * 60
                     + Convert.ToInt64(oneMatch.Groups[3].Value);
-                long twoTime = (Convert.ToInt64(twoMatch.Groups[1].Value) * 3600)
-                    + (Convert.ToInt64(twoMatch.Groups[2].Value) * 60)
+                long twoTime = Convert.ToInt64(twoMatch.Groups[1].Value) * 3600
+                    + Convert.ToInt64(twoMatch.Groups[2].Value) * 60
                     + Convert.ToInt64(twoMatch.Groups[3].Value);
                 return oneTime.CompareTo(twoTime);
             }
@@ -544,8 +545,24 @@ namespace Chronokeep
 
         public bool IsNotMatch(string value)
         {
-            return !this.Bib.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase) &&
-                this.ParticipantName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
+            return !Bib.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                ParticipantName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
+        }
+
+        public bool SendSMSAlert(Event theEvent, TimingDictionary dictionary)
+        {
+            //"{FIRST} {LAST} has finished the {YEAR} {RACE} {DISTANCE?} in {CHIP TIME}. {RESULTS LINK}"
+            string SMS = "";
+            if (dictionary.mainDistances.Count > 1)
+            {
+                SMS = string.Format("{0} {1} has finished the {2} {3} {4} in {5}. {6}", First, Last, theEvent.Year, theEvent.Name, DistanceName, ChipTime, theEvent.API_Event_ID);
+            }
+            else
+            {
+                SMS = string.Format("{0} {1} has finished the {2} {3} in {4}. {5}", First, Last, theEvent.Year, theEvent.Name, DistanceName, ChipTime, theEvent.API_Event_ID);
+            }
+            Log.D("Objects.TimeResult", string.Format("SMS Message to be sent: {0}", SMS));
+            return true;
         }
     }
 }

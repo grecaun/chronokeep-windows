@@ -390,7 +390,8 @@ namespace Chronokeep.UI.Participants
                     Constants.Timing.EVENTSPECIFIC_UNKNOWN,
                     "",
                     Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
-                    AnonymousBox.IsChecked == true
+                    AnonymousBox.IsChecked == true,
+                    false
                     ),
                 EmailBox.Text,
                 PhoneBox.Text,

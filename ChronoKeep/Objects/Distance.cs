@@ -12,6 +12,7 @@ namespace Chronokeep
             end_seconds = 0;
         private int wave = 1, start_offset_seconds = 0, start_offset_milliseconds = 0;
         private int linked_distance = Constants.Timing.DISTANCE_NO_LINKED_ID, type = 0, ranking = 0;
+        private bool sms_enabled = false;
 
         public Distance() { }
 
@@ -36,7 +37,7 @@ namespace Chronokeep
         public Distance(int identifier, string name, int eventIdentifier,
             double distance, int distance_unit, int finish_location, int finish_occurrence,
             int start_location, int start_within, int wave, int start_offset_seconds, int start_offset_milliseconds,
-            int endseconds, int linked_distance, int type, int ranking)
+            int endseconds, int linked_distance, int type, int ranking, bool sms_enabled)
         {
             this.identifier = identifier;
             this.name = name;
@@ -54,6 +55,7 @@ namespace Chronokeep
             this.linked_distance = linked_distance;
             this.type = type;
             this.ranking = ranking;
+            this.sms_enabled = sms_enabled;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -72,6 +74,7 @@ namespace Chronokeep
         public int LinkedDistance { get => linked_distance; set => linked_distance = value; }
         public int Type { get => type; set => type = value; }
         public int Ranking { get => ranking; set => ranking = value; }
+        public bool SMSEnabled { get => sms_enabled; set => sms_enabled = value; }
 
         public int CompareTo(Distance other)
         {

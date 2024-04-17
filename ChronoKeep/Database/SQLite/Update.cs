@@ -1084,7 +1084,8 @@ namespace Chronokeep.Database.SQLite
                                 Convert.ToInt32(reader["distance_end_offset_seconds"]),
                                 Convert.ToInt32(reader["distance_linked_id"]),
                                 Convert.ToInt32(reader["distance_type"]),
-                                Convert.ToInt32(reader["distance_ranking_order"])
+                                Convert.ToInt32(reader["distance_ranking_order"]),
+                                false
                                 ));
                         }
                         reader.Close();
@@ -1125,6 +1126,7 @@ namespace Chronokeep.Database.SQLite
                                     Convert.ToInt32(reader["eventspecific_status"]),
                                     reader["eventspecific_age_group_name"].ToString(),
                                     Convert.ToInt32(reader["eventspecific_age_group_id"]),
+                                    false,
                                     false
                                     ),
                                 reader["participant_email"].ToString(),
@@ -1433,7 +1435,7 @@ namespace Chronokeep.Database.SQLite
                         command.ExecuteNonQuery();
                         goto case 56;
                     case 56:
-                        Log.D("Database.SQLite.Update", "Upgrading from version 56");
+                        Log.D("Database.SQLite.Update", "Upgrading from version 56.");
                         command = connection.CreateCommand();
                         command.CommandText = "CREATE TABLE IF NOT EXISTS eventspecific_new (" +
                             "eventspecific_id INTEGER PRIMARY KEY," +
@@ -1463,6 +1465,16 @@ namespace Chronokeep.Database.SQLite
                             "DROP TABLE eventspecific; " +
                             "ALTER TABLE eventspecific_new RENAME TO eventspecific; " +
                             "UPDATE settings set value='57' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
+                        goto case 57;
+                    case 57:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 57.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE distances ADD COLUMN " +
+                            "distance_sms_enabled INTEGER NOT NULL DEFAULT 0; " +
+                            "ALTER TABLE eventspecific ADD COLUMN " +
+                            "eventspecific_sms_enabled SMALLINT NOT NULL DEFAULT 0; " +
+                            "UPDATE settings set value='58' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;
                 }

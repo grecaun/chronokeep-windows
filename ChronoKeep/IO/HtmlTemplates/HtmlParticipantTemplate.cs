@@ -13,6 +13,7 @@ namespace Chronokeep.IO.HtmlTemplates
     using System.Text;
     using System.Collections.Generic;
     using Chronokeep;
+    using Chronokeep.Objects;
     using System;
     
     /// <summary>
@@ -29,6 +30,7 @@ namespace Chronokeep.IO.HtmlTemplates
         /// </summary>
         public virtual string TransformText()
         {
+            this.Write("\n");
             this.Write("\n");
             this.Write("\n");
             this.Write("\n");

@@ -4,9 +4,10 @@
     {
         private int identifier, eventIdentifier, distanceIdentifier,
             checkedIn = 0,
-            status = Constants.Timing.EVENTSPECIFIC_UNKNOWN, ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+            status = Constants.Timing.EVENTSPECIFIC_UNKNOWN,
+            ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
         private string comments, distanceName, owes, other, ageGroupName = "", bib;
-        private bool anonymous;
+        private bool anonymous, sms_enabled;
 
         public EventSpecific() { }
 
@@ -32,6 +33,7 @@
             this.owes = owes ?? "";
             this.other = other ?? "";
             this.anonymous = anonymous;
+            this.sms_enabled = false;
         }
 
         // Constructor the database uses
@@ -48,7 +50,8 @@
             int status,
             string ageGroupName,
             int ageGroupId,
-            bool anonymous
+            bool anonymous,
+            bool sms_enabled
             )
         {
             this.identifier = id;
@@ -76,7 +79,7 @@
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false);
+            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false, false);
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -93,5 +96,6 @@
         public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public bool Anonymous { get => anonymous; set => anonymous = value; }
+        public bool SMSEnabled { get => sms_enabled; set => sms_enabled = value; }
     }
 }

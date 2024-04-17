@@ -128,9 +128,9 @@ namespace Chronokeep.UI.API
             Close();
         }
 
-        internal class APIExpander : ListViewItem
+        internal class APIExpander : Wpf.Ui.Controls.ListViewItem
         {
-            private ListView readerListView;
+            private Wpf.Ui.Controls.ListView readerListView;
 
             public APIExpander(APIObject api, List<RemoteReader> readers, Dictionary<(int, string), RemoteReader> savedReaders, IDBInterface database, IMainWindow mainWindow)
             {
@@ -172,7 +172,7 @@ namespace Chronokeep.UI.API
             }
         }
 
-        internal class ReaderListItem : ListViewItem
+        internal class ReaderListItem : Wpf.Ui.Controls.ListViewItem
         {
             private RemoteReader reader;
             private APIObject api;
