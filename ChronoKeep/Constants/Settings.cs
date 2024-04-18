@@ -31,7 +31,9 @@ namespace Chronokeep.Constants
         public static readonly string DOWNLOAD_INTERVAL     = "SETTINGS_DOWNLOAD_INTERVAL";
         public static readonly string ANNOUNCER_WINDOW      = "SETTING_ANNOUNCER_WINDOW";
         public static readonly string ALARM_SOUND           = "SETTING_ALARM_SOUND";
-        public static readonly string SMS_API_KEY           = "SMS_API_KEY";
+        public static readonly string TWILIO_ACCOUNT_SID    = "TWILIO_ACCOUNT_SID";
+        public static readonly string TWILIO_AUTH_TOKEN     = "TWILIO_AUTH_TOKEN";
+        public static readonly string TWILIO_PHONE_NUMBER   = "TWILIO_PHONE_NUMBER";
 
         public static readonly string NULL_EVENT_ID     = "-1";
 
@@ -112,9 +114,17 @@ namespace Chronokeep.Constants
             {
                 database.SetAppSetting(ALARM_SOUND, DEFAULT_ALARM);
             }
-            if (database.GetAppSetting(SMS_API_KEY) == null)
+            if (database.GetAppSetting(TWILIO_ACCOUNT_SID) == null)
             {
-                database.SetAppSetting(SMS_API_KEY, "");
+                database.SetAppSetting(TWILIO_ACCOUNT_SID, "");
+            }
+            if (database.GetAppSetting(TWILIO_AUTH_TOKEN) == null)
+            {
+                database.SetAppSetting(TWILIO_AUTH_TOKEN, "");
+            }
+            if (database.GetAppSetting(TWILIO_PHONE_NUMBER) == null)
+            {
+                database.SetAppSetting(TWILIO_PHONE_NUMBER, "");
             }
         }
     }
