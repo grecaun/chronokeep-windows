@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Chronokeep.UI.Participants"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Participant" Height="805" Width="520" Closing="Window_Closing" ResizeMode="NoResize"
+        Title="Participant" Height="835" Width="520" Closing="Window_Closing" ResizeMode="NoResize"
         d:DataContext="{d:DesignInstance local:ModifyParticipantWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -21,7 +21,7 @@
         <ui:TitleBar
             Grid.Row="0">
         </ui:TitleBar>
-        <StackPanel VerticalAlignment="Center" Grid.Row="1">
+        <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="0,-20,0,0">
             <DockPanel>
                 <TextBlock Text="Bib" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="BibBox" FontSize="16" Margin="0,5,15,5" Width="100" VerticalContentAlignment="Center" KeyDown="Box_KeyDown"/>
