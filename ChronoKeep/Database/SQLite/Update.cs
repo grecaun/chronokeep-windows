@@ -1476,6 +1476,21 @@ namespace Chronokeep.Database.SQLite
                             "eventspecific_sms_enabled SMALLINT NOT NULL DEFAULT 0; " +
                             "UPDATE settings set value='58' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
+                        goto case 58;
+                    case 58:
+                        Log.D("Database.SQLite.Update", "Upgrading from verison 58.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE TABLE IF NOT EXISTS email_ban_list(" +
+                            "banned_email VARCHAR(100), " +
+                            "UNIQUE(banned_email)" +
+                            "); " +
+                            "DROP TABLE sms_ban_list; " +
+                            "CREATE TABLE IF NOT EXISTS sms_ban_list(" +
+                            "banned_phone VARCHAR(100), " +
+                            "UNIQUE(banned_phone)" +
+                            "); " +
+                            "UPDATE settings set value='59' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

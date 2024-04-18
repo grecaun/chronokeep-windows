@@ -167,6 +167,7 @@ namespace Chronokeep.UI.Participants
             ECNameBox.Text = person.ECName;
             ECPhoneBox.Text = person.ECPhone;
             AnonymousBox.IsChecked = person.Anonymous;
+            SMSBox.IsChecked = person.EventSpecific.SMSEnabled;
             Add.Content = "Update";
             Done.Content = "Cancel";
         }
@@ -196,6 +197,7 @@ namespace Chronokeep.UI.Participants
             ECNameBox.Text = "";
             ECPhoneBox.Text = "";
             AnonymousBox.IsChecked = false;
+            SMSBox.IsChecked = false;
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -391,7 +393,7 @@ namespace Chronokeep.UI.Participants
                     "",
                     Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
                     AnonymousBox.IsChecked == true,
-                    false
+                    SMSBox.IsChecked == true
                     ),
                 EmailBox.Text,
                 PhoneBox.Text,

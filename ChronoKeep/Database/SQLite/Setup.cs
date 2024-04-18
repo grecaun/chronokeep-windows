@@ -258,7 +258,12 @@ namespace Chronokeep.Database.SQLite
                     "sms_bib INTEGER NOT NULL" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS sms_ban_list(" +
-                    "banned_phone VARCHAR(100)" +
+                    "banned_phone VARCHAR(100), " +
+                    "UNIQUE (banned_phone)" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS email_ban_list(" +
+                    "banned_email VARCHAR(100), " +
+                    "UNIQUE(banned_email)" +
                     ");");
                 queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
 

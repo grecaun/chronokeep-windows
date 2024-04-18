@@ -21,7 +21,8 @@
             string comments,
             string owes,
             string other,
-            bool anonymous
+            bool anonymous,
+            bool sms_enabled
             )
         {
             this.eventIdentifier = eid;
@@ -33,7 +34,7 @@
             this.owes = owes ?? "";
             this.other = other ?? "";
             this.anonymous = anonymous;
-            this.sms_enabled = false;
+            this.sms_enabled = sms_enabled;
         }
 
         // Constructor the database uses
@@ -67,6 +68,7 @@
             this.ageGroupName = ageGroupName;
             this.ageGroupId = ageGroupId;
             this.anonymous = anonymous;
+            this.sms_enabled = sms_enabled;
         }
 
         internal void Trim()

@@ -49,7 +49,8 @@ namespace Chronokeep
             "Age",
             "Apparel",
             "Registration Date",
-            "Anonymous"
+            "Anonymous",
+            "SMS Enabled"
         };
         internal static readonly int FIRST = 1;
         internal static readonly int LAST = 2;
@@ -76,6 +77,7 @@ namespace Chronokeep
         internal static readonly int APPARELITEM = 23;
         internal static readonly int REGISTRATIONDATE = 24;
         internal static readonly int ANONYMOUS = 25;
+        internal static readonly int SMS_ENABLED = 26;
         Page page1 = null;
         Page page2 = null;
         Page multiplesPage = null;
@@ -371,7 +373,8 @@ namespace Chronokeep
                             data.Data[counter][keys[COMMENTS]], // comments
                             data.Data[counter][keys[OWES]], // owes
                             data.Data[counter][keys[OTHER]], // other
-                            data.Data[counter][keys[ANONYMOUS]] != null ? data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 : false // Set Anonymous if anything is in the field
+                            data.Data[counter][keys[ANONYMOUS]] != null ? data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 : false, // Set Anonymous if anything is in the field
+                            data.Data[counter][keys[SMS_ENABLED]] != null ? data.Data[counter][keys[SMS_ENABLED]].Trim().Length > 0 : false // set SMS_Enabled the same way Anonymous is
                             ),
                         data.Data[counter][keys[EMAIL]], // email
                         data.Data[counter][keys[PHONE]], // phone
@@ -571,11 +574,11 @@ namespace Chronokeep
         internal static int GetHeaderBoxIndex(string s)
         {
             Log.D("ImportFileWindow", "Looking for a value for: " + s);
-            if (string.Equals(s, "First Name", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "First", StringComparison.OrdinalIgnoreCase))
+            if (s.IndexOf("First", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return FIRST;
             }
-            else if (string.Equals(s, "Last Name", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Last", StringComparison.OrdinalIgnoreCase))
+            else if (s.IndexOf("Last", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return LAST;
             }
@@ -599,7 +602,7 @@ namespace Chronokeep
             {
                 return CITY;
             }
-            else if (s.IndexOf("State", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("Province", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if ((s.IndexOf("State", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("Province", StringComparison.OrdinalIgnoreCase) >= 0) && s.IndexOf("statement", StringComparison.OrdinalIgnoreCase) == -1)
             {
                 return STATE;
             }
@@ -631,10 +634,10 @@ namespace Chronokeep
             {
                 return BIB;
             }
-            else if (s.IndexOf("Shirt", StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                return APPARELITEM;
-            }
+            //else if (s.IndexOf("Shirt", StringComparison.OrdinalIgnoreCase) >= 0)
+            //{
+            //    return APPARELITEM;
+            //}
             else if (string.Equals(s, "Owes", StringComparison.OrdinalIgnoreCase))
             {
                 return OWES;
@@ -643,10 +646,10 @@ namespace Chronokeep
             {
                 return COMMENTS;
             }
-            else if (string.Equals(s, "Hat", StringComparison.OrdinalIgnoreCase))
-            {
-                return APPARELITEM;
-            }
+            //else if (string.Equals(s, "Hat", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    return APPARELITEM;
+            //}
             else if (string.Equals(s, "Other", StringComparison.OrdinalIgnoreCase))
             {
                 return OTHER;
@@ -663,10 +666,10 @@ namespace Chronokeep
             {
                 return EMERGENCYPHONE;
             }
-            else if (string.Equals(s, "Fleece", StringComparison.OrdinalIgnoreCase))
-            {
-                return APPARELITEM;
-            }
+            //else if (string.Equals(s, "Fleece", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    return APPARELITEM;
+            //}
             else if (string.Equals(s, "Age", StringComparison.OrdinalIgnoreCase))
             {
                 return AGE;
@@ -678,6 +681,10 @@ namespace Chronokeep
             else if (string.Equals(s, "Anonymous", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Private", StringComparison.OrdinalIgnoreCase))
             {
                 return ANONYMOUS;
+            }
+            else if (s.IndexOf("sms", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return SMS_ENABLED;
             }
             return 0;
         }

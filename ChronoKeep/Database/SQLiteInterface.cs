@@ -11,10 +11,10 @@ namespace Chronokeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 149
-         * NEXT AVAILABLE   = 150
+         * HIGHEST MUTEX ID = 155
+         * NEXT AVAILABLE   = 156
          */
-        private readonly int version = 58;
+        private readonly int version = 59;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -2174,6 +2174,102 @@ namespace Chronokeep
             connection.Close();
             mutex.ReleaseMutex();
             return output;
+        }
+
+        public List<string> GetBannedPhones()
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 150");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 150");
+                return new List<string>();
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            List<string> output = Banned.GetBannedPhones(connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
+        public void AddBannedPhone(string phone)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 151");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 151");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Banned.AddBannedPhone(phone, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return;
+        }
+
+        public void AddBannedPhones(List<string> phones)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 152");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 152");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Banned.AddBannedPhones(phones, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return;
+        }
+
+        public List<string> GetBannedEmails()
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 153");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 153");
+                return new List<string>();
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            List<string> output = Banned.GetBannedEmails(connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
+        public void AddBannedEmail(string email)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 154");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 154");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Banned.AddBannedEmail(email, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return;
+        }
+
+        public void AddBannedEmails(List<string> emails)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 155");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 155");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Banned.AddBannedEmails(emails, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return;
         }
     }
 }

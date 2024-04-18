@@ -561,7 +561,9 @@ namespace Chronokeep.Objects
             {
                 SMS = string.Format("{0} {1} has finished the {2} {3} in {4}. {5}", First, Last, theEvent.Year, theEvent.Name, DistanceName, ChipTime, theEvent.API_Event_ID);
             }
-            Log.D("Objects.TimeResult", string.Format("SMS Message to be sent: {0}", SMS));
+            Log.D("Objects.TimeResult", string.Format("SMS Message to be sent: {0} - API URL", SMS, dictionary.apiURLs.ContainsKey(theEvent.API_ID) ? dictionary.apiURLs[theEvent.API_ID] : "Unknown"));
+            // Verify phone number isn't in our list of banned phone numbers (i.e. they've told us to not send texts)
+            // return true if it is in the banned list, otherwise try to send it, and return true if we were able to send it
             return true;
         }
     }

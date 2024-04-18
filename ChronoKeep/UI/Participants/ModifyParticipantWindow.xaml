@@ -71,8 +71,10 @@
             <DockPanel>
                 <TextBlock Text="Country" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="CountryBox" FontSize="16" Margin="0,5,15,5" Width="180" KeyDown="Box_KeyDown"/>
-                <TextBlock Text="Private" FontSize="16" Margin="0,0,5,0" Width="70" VerticalAlignment="Center" />
+                <TextBlock Text="Private" FontSize="16" Margin="0,0,5,0" Width="70" VerticalAlignment="Center"/>
                 <CheckBox Name="AnonymousBox" Margin="0,5,15,5" VerticalContentAlignment="Center"/>
+                <TextBlock Text="SMS" FontSize="16" Margin="0,0,5,0" Width="40" VerticalAlignment="Center"/>
+                <CheckBox Name="SMSBox" Margin="0,5,15,5" VerticalContentAlignment="Center"/>
             </DockPanel>
             <DockPanel>
                 <TextBlock Text="Email" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
