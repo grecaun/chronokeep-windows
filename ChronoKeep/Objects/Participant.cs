@@ -602,7 +602,7 @@ namespace Chronokeep
 
         public int GetAge(string eventDate)
         {
-            if (birthdate == null || birthdate.Length > 1)
+            if (birthdate == null || birthdate.Length < 1)
             {
                 return -1;
             }
