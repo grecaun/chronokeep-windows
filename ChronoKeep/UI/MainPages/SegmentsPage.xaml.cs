@@ -169,13 +169,13 @@ namespace Chronokeep.UI.MainPages
                     Log.D("UI.MainPages.SegmentsPage", "Distance ID " + thisSegment.DistanceId + " Segment Name " + thisSegment.Name + " segment ID " + thisSegment.Identifier);
                 }
             }
-            SegmentsToAdd.RemoveAll(x => x.Occurrence > LocationDict[x.LocationId].MaxOccurrences || x.Occurrence < 1);
+            SegmentsToAdd.RemoveAll(x => !LocationDict.ContainsKey(x.LocationId) || x.Occurrence > LocationDict[x.LocationId].MaxOccurrences || x.Occurrence < 1);
             database.AddSegments(SegmentsToAdd);
             database.RemoveSegments(SegmentsToRemove);
             Log.D("UI.MainPages.SegmentsPage", "Segments to remove count is " + SegmentsToRemove.Count);
             UpdateTimingWorker = true;
             segments.RemoveAll(x => (SegmentsToAdd.Contains(x) || SegmentsToRemove.Contains(x)));
-            segments.RemoveAll(x => x.Occurrence > LocationDict[x.LocationId].MaxOccurrences || x.Occurrence < 1);
+            segments.RemoveAll(x => !LocationDict.ContainsKey(x.LocationId) || x.Occurrence > LocationDict[x.LocationId].MaxOccurrences || x.Occurrence < 1);
             database.UpdateSegments(segments);
             Log.D("UI.MainPages.SegmentsPage", "Segments to update count is " + segments.Count);
             SegmentsToAdd.Clear();
@@ -740,7 +740,14 @@ namespace Chronokeep.UI.MainPages
                 try
                 {
                     mySegment.Name = SegName.Text;
-                    mySegment.LocationId = Convert.ToInt32(((ComboBoxItem)Location.SelectedItem).Uid);
+                    try
+                    {
+                        mySegment.LocationId = Convert.ToInt32(((ComboBoxItem)Location.SelectedItem).Uid);
+                    }
+                    catch
+                    {
+                        mySegment.LocationId = Constants.Timing.LOCATION_DUMMY;
+                    }
                     mySegment.SegmentDistance = Convert.ToDouble(SegDistance.Text);
                     mySegment.CumulativeDistance = Convert.ToDouble(CumDistance.Text);
                     mySegment.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
