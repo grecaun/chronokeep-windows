@@ -24,6 +24,20 @@ namespace Chronokeep.Timing.Routines
             {
                 finishTimes[result.Identifier] = result;
             }
+            // Get the last known time we've seen each participant
+            Dictionary<int, TimeResult> LastSeen = new Dictionary<int, TimeResult>();
+            foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
+            {
+                // if there is no time result
+                // or we've seen the person but our time is BEFORE the one we're looking at
+                // set the last seen as this result
+                if (!LastSeen.ContainsKey(result.EventSpecificId)
+                    || (LastSeen.ContainsKey(result.EventSpecificId)
+                        && (LastSeen[result.EventSpecificId].Seconds < result.Seconds || (LastSeen[result.EventSpecificId].Seconds == result.Seconds && LastSeen[result.EventSpecificId].Milliseconds < result.Milliseconds))))
+                {
+                    LastSeen[result.EventSpecificId] = result;
+                }
+            }
             // Get all of the Chip Reads we find useful (Unprocessed, and those used as a result.)
             // and then sort them into groups based upon Bib, Chip, or put them in the ignore pile if
             // they have no bib or chip.
@@ -239,10 +253,8 @@ namespace Chronokeep.Timing.Routines
                         {
                             // If we're within the start period
                             // And the location is the Start, or we've got a combined start finish location
-                            if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds)) &&
-                                (Constants.Timing.LOCATION_START == read.LocationID
-                                    || (Constants.Timing.LOCATION_FINISH == read.LocationID
-                                        && theEvent.CommonStartFinish)))
+                            if ((read.TimeSeconds < maxStartSeconds || (read.TimeSeconds == maxStartSeconds && read.TimeMilliseconds <= startMilliseconds))
+                                && (Constants.Timing.LOCATION_START == read.LocationID || (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish)))
                             {
                                 // check if we've stored a chipread as the start chipread, update it to unused if so
                                 if (bibLastReadDictionary.ContainsKey((bib, read.LocationID)))
@@ -332,6 +344,46 @@ namespace Chronokeep.Timing.Routines
                                     occurrence = bibLastReadDictionary[(bib, read.LocationID)].Occurrence + 1;
                                     minSeconds = bibLastReadDictionary[(bib, read.LocationID)].Read.TimeSeconds + occursWithin;
                                     minMilliseconds = bibLastReadDictionary[(bib, read.LocationID)].Read.TimeMilliseconds;
+                                }
+                                // Verify we know which occurrence we're supposed to be at
+                                if (part != null && d != null)
+                                {
+                                    // The distanceId is either the participant's current distance
+                                    int distanceId = d.Identifier;
+                                    // the common distance ID
+                                    if (theEvent.DistanceSpecificSegments == false)
+                                    {
+                                        distanceId = Constants.Timing.COMMON_SEGMENTS_DISTANCEID;
+                                    }
+                                    // or the main (linked) distance for the person's distance
+                                    else if (dictionary.linkedDistanceIdentifierDictionary.ContainsKey(distanceId))
+                                    {
+                                        distanceId = dictionary.linkedDistanceIdentifierDictionary[distanceId];
+                                    }
+                                    // Check if we know the last time the person was seen
+                                    if (LastSeen.ContainsKey(part.EventSpecific.Identifier)
+                                        && dictionary.DistanceSegmentOrder.ContainsKey(distanceId)
+                                        && dictionary.SegmentByIDDictionary.ContainsKey(LastSeen[part.EventSpecific.Identifier].SegmentId))
+                                    {
+                                        // Find the next possible occurrence
+                                        Segment lastSegment = dictionary.SegmentByIDDictionary[LastSeen[part.EventSpecific.Identifier].SegmentId];
+                                        foreach (Segment seg in dictionary.DistanceSegmentOrder[distanceId])
+                                        {
+                                            // find the next segment at the location where the Cumulative (total) distance is greater than the distance
+                                            // when we last saw the runner
+                                            if (seg.LocationId == read.LocationID && seg.CumulativeDistance > lastSegment.CumulativeDistance)
+                                            {
+                                                // if we are set to set the occurrence too low
+                                                if (occurrence < seg.Occurrence)
+                                                {
+                                                    // set it properly
+                                                    occurrence = seg.Occurrence;
+                                                }
+                                                // break the loop since the occurrence is correct
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 // Check if we're past the max occurances allowed for this spot.
                                 // Also check if we've passed the finish occurrence for the finish line and that distance

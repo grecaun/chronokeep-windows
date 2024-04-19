@@ -30,6 +30,10 @@ namespace Chronokeep.Timing
         public HashSet<Distance> mainDistances = new HashSet<Distance>();
         public Dictionary<int, string> apiURLs = new Dictionary<int, string>();
 
+        // Dictionaries for keeping track of Segments by distance
+        public Dictionary<int, List<Segment>> DistanceSegmentOrder = new Dictionary<int, List<Segment>>();
+        public Dictionary<int, Segment> SegmentByIDDictionary = new Dictionary<int, Segment>();
+
         // HashSet to keep track of chips & bibs of DNS entries.
         public HashSet<string> dnsChips = new HashSet<string>();
         public HashSet<string> dnsBibs = new HashSet<string>();

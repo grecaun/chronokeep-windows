@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
@@ -103,6 +104,9 @@ namespace Chronokeep.Timing
             // Segments so we can give a result a segment ID if it's at the right location
             // and occurrence. Stored in a dictionary for obvious reasons.
             dictionary.segmentDictionary.Clear();
+            // Keep track of the list of Segments by distance
+            dictionary.DistanceSegmentOrder.Clear();
+            dictionary.SegmentByIDDictionary.Clear();
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
                 if (dictionary.segmentDictionary.ContainsKey((seg.DistanceId, seg.LocationId, seg.Occurrence)))
@@ -110,6 +114,12 @@ namespace Chronokeep.Timing
                     Log.E("Timing.TimingWorker", "Multiples of a segment found in segment set.");
                 }
                 dictionary.segmentDictionary[(seg.DistanceId, seg.LocationId, seg.Occurrence)] = seg;
+                if (!dictionary.DistanceSegmentOrder.ContainsKey(seg.DistanceId))
+                {
+                    dictionary.DistanceSegmentOrder[seg.DistanceId] = new List<Segment>();
+                }
+                dictionary.DistanceSegmentOrder[seg.DistanceId].Add(seg);
+                dictionary.SegmentByIDDictionary[seg.Identifier] = seg;
             }
             // Participants so we can check their Distance.
             dictionary.participantBibDictionary.Clear();
@@ -197,6 +207,38 @@ namespace Chronokeep.Timing
             foreach (APIObject api in database.GetAllAPI())
             {
                 dictionary.apiURLs.Add(api.Identifier, api.URL);
+            }
+            // Clear distance segment list if no distance values are set
+            List<int> distanceNotSet = new List<int>();
+            // Sort the segments in our dictionary.
+            foreach (List<Segment> segments in dictionary.DistanceSegmentOrder.Values)
+            {
+                int distanceCount = 0;
+                int distanceId = -1;
+                foreach (Segment segment in segments)
+                {
+                    distanceId = segment.DistanceId;
+                    if (segment.CumulativeDistance > 0)
+                    {
+                        distanceCount += 1;
+                    }
+                }
+                if (distanceCount == segments.Count)
+                {
+                    segments.Sort((x1, x2) =>
+                    {
+                        return x1.CumulativeDistance.CompareTo(x2.CumulativeDistance);
+                    });
+                }
+                else
+                {
+                    distanceNotSet.Add(distanceId);
+                }
+            }
+            // remove all that we didn't find with distances specified
+            foreach (int distanceId in distanceNotSet)
+            {
+                dictionary.DistanceSegmentOrder.Remove(distanceId);
             }
             RecalculateDNS(theEvent);
         }

@@ -158,14 +158,17 @@ namespace Chronokeep
         List<Alarm> GetAlarms(int eventId);
         void DeleteAlarms(int eventId);
         void DeleteAlarm(Alarm alarm);
+
         // Remote Readers
         void AddRemoteReaders(int eventId, List<RemoteReader> readers);
         void DeleteRemoteReaders(int eventId, List<RemoteReader> readers);
         void DeleteRemoteReader(int eventId, RemoteReader reader);
         List<RemoteReader> GetRemoteReaders(int eventId);
+
         // SMS Alerts
         void AddSMSAlert(int eventId, string bib);
         List<string> GetSMSAlerts(int eventId);
+
         // Banned phones/emails functions
         List<string> GetBannedPhones();
         void AddBannedPhone(string phone);
