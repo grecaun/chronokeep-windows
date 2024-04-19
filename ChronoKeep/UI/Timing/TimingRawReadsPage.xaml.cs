@@ -27,12 +27,6 @@ namespace Chronokeep.UI.Timing
             this.database = database;
             theEvent = database.GetCurrentEvent();
             Log.D("UI.Timing.TimingRawReadsPage", "Current event fetched.");
-            UpdateView();
-            Log.D("UI.Timing.TimingRawReadsPage", "View updated.");
-            updateListView.SelectedIndex = updateListView.Items.Count - 1;
-            updateListView.ScrollIntoView(updateListView.SelectedItem);
-            updateListView.SelectedItem = null;
-            Log.D("UI.Timing.TimingRawReadsPage", "We're at the bottom.");
         }
 
         private void IgnoreButton_Click(object sender, RoutedEventArgs e)
@@ -97,32 +91,30 @@ namespace Chronokeep.UI.Timing
             editRawReadsWindow.ShowDialog();
         }
 
-        public async void UpdateView()
+        public void UpdateView()
         {
             Log.D("UI.Timing.TimingRawReadsPage", "Update View called.");
-            List<ChipRead> reads = new List<ChipRead>();
-            SortType sortType = parent.GetSortType();
-            await Task.Run(() =>
-            {
-                reads.AddRange(database.GetChipReads(theEvent.Identifier));
-            });
-            chipReads.Clear();
-            chipReads.AddRange(reads);
-            string search = parent.GetSearchValue();
-            bool manualOnly = onlyManualBox.IsChecked == true;
-            await Task.Run(() =>
-            {
-                SortWorker(reads, sortType, search, manualOnly);
-            });
-            updateListView.SelectedItems.Clear();
-            updateListView.ItemsSource = reads;
-            updateListView.Items.Refresh();
         }
 
         public void CancelableUpdateView(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            UpdateView();
+            PrivateUpdateView();
+        }
+
+        private void PrivateUpdateView()
+        {
+            List<ChipRead> reads = new List<ChipRead>();
+            SortType sortType = parent.GetSortType();
+            reads.AddRange(database.GetChipReads(theEvent.Identifier));
+            chipReads.Clear();
+            chipReads.AddRange(reads);
+            string search = parent.GetSearchValue();
+            bool manualOnly = onlyManualBox.IsChecked == true;
+            SortWorker(reads, sortType, search, manualOnly);
+            updateListView.SelectedItems.Clear();
+            updateListView.ItemsSource = reads;
+            updateListView.Items.Refresh();
         }
 
         public void Closing() { }
@@ -186,7 +178,7 @@ namespace Chronokeep.UI.Timing
                     }
                     database.DeleteChipReads(readsToDelete);
                     database.ResetTimingResultsEvent(theEvent.Identifier);
-                    UpdateView();
+                    PrivateUpdateView();
                     parent.NotifyTimingWorker();
                 });
         }
@@ -211,7 +203,7 @@ namespace Chronokeep.UI.Timing
             }
             database.SetChipReadStatuses(newChipReads);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            UpdateView();
+            PrivateUpdateView();
             parent.NotifyTimingWorker();
         }
 
@@ -235,14 +227,32 @@ namespace Chronokeep.UI.Timing
             }
             database.SetChipReadStatuses(newChipReads);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            UpdateView();
+            PrivateUpdateView();
             parent.NotifyTimingWorker();
         }
 
         private void onlyManualBox_Unchecked(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.TimingRawReadsPage", "Manual entries only box checked status changed.");
-            UpdateView();
+            List<ChipRead> reads = new List<ChipRead>();
+            reads.AddRange(chipReads);
+            string search = parent.GetSearchValue();
+            SortType sortType = parent.GetSortType();
+            bool manualOnly = onlyManualBox.IsChecked == true;
+            SortWorker(reads, sortType, search, manualOnly);
+            updateListView.SelectedItems.Clear();
+            updateListView.ItemsSource = reads;
+            updateListView.Items.Refresh();
+        }
+
+        private void updateListView_Loaded(object sender, RoutedEventArgs e)
+        {
+            PrivateUpdateView();
+            Log.D("UI.Timing.TimingRawReadsPage", "View updated.");
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
+            updateListView.SelectedItem = null;
+            Log.D("UI.Timing.TimingRawReadsPage", "We're at the bottom.");
         }
     }
 }

@@ -2205,7 +2205,6 @@ namespace Chronokeep
             Banned.AddBannedPhone(phone, connection);
             connection.Close();
             mutex.ReleaseMutex();
-            return;
         }
 
         public void AddBannedPhones(List<string> phones)
@@ -2221,7 +2220,6 @@ namespace Chronokeep
             Banned.AddBannedPhones(phones, connection);
             connection.Close();
             mutex.ReleaseMutex();
-            return;
         }
 
         public List<string> GetBannedEmails()
@@ -2253,7 +2251,6 @@ namespace Chronokeep
             Banned.AddBannedEmail(email, connection);
             connection.Close();
             mutex.ReleaseMutex();
-            return;
         }
 
         public void AddBannedEmails(List<string> emails)
@@ -2269,7 +2266,6 @@ namespace Chronokeep
             Banned.AddBannedEmails(emails, connection);
             connection.Close();
             mutex.ReleaseMutex();
-            return;
         }
     }
 }

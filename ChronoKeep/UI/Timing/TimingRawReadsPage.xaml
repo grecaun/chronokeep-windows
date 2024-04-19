@@ -42,6 +42,8 @@
                     Grid.Row="1"
                     AlternationCount="2"
                     ItemContainerStyle="{StaticResource alternatingStyle}"
+                    Margin="0,0,0,0"
+                    Loaded="updateListView_Loaded"
                     >
                 <ListView.ItemTemplate>
                     <DataTemplate>

@@ -98,12 +98,9 @@ namespace Chronokeep.Timing.Routines
                         {
                             read.Status = Constants.Timing.CHIPREAD_STATUS_AFTER_DNS;
                         }
-                        else
+                        else if (!bibDNSDictionary.ContainsKey(read.Bib))
                         {
-                            if (!bibDNSDictionary.ContainsKey(read.Bib))
-                            {
-                                bibDNSDictionary.Add(read.Bib, read);
-                            }
+                            bibDNSDictionary.Add(read.Bib, read);
                         }
                     }
                     // if we process all the used reads before putting them in the list
@@ -156,12 +153,9 @@ namespace Chronokeep.Timing.Routines
                         {
                             read.Status = Constants.Timing.CHIPREAD_STATUS_AFTER_DNS;
                         }
-                        else
+                        else if (!chipDNSDictionary.ContainsKey(read.ChipNumber))
                         {
-                            if (!chipDNSDictionary.ContainsKey(read.ChipNumber))
-                            {
-                                chipDNSDictionary.Add(read.ChipNumber, read);
-                            }
+                            chipDNSDictionary.Add(read.ChipNumber, read);
                         }
                     }
                     // Otherwise check the status and everything as we did for Bib reads.
@@ -448,7 +442,8 @@ namespace Chronokeep.Timing.Routines
                                     // for information for that person.
                                     if (Constants.Timing.SEGMENT_FINISH != segId || !bibDNFDictionary.ContainsKey(bib))
                                     {
-                                        newResults.Add(new TimeResult(theEvent.Identifier,
+
+                                        TimeResult newResult = new TimeResult(theEvent.Identifier,
                                             read.ReadId,
                                             part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                                             read.LocationID,
@@ -460,9 +455,11 @@ namespace Chronokeep.Timing.Routines
                                             read.Time,
                                             bib,
                                             Constants.Timing.TIMERESULT_STATUS_NONE
-                                            ));
+                                            );
+                                        newResults.Add(newResult);
                                         if (part != null)
                                         {
+                                            LastSeen[part.EventSpecific.Identifier] = newResult;
                                             // If they've finished, mark them as such.
                                             if (Constants.Timing.SEGMENT_FINISH == segId
                                                 && !bibDNFDictionary.ContainsKey(bib))
