@@ -4,7 +4,6 @@ using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
 
@@ -128,6 +127,7 @@ namespace Chronokeep
                         DistanceTranslationDict[DistanceDict[newD.Name]] = newD.Identifier;
                     }
                     // Translate linked distance id's.
+                    // this is a separate process due to potential issues with ordering
                     foreach (Distance newD in newDistances)
                     {
                         if (Constants.Timing.DISTANCE_NO_LINKED_ID != newD.LinkedDistance)
@@ -146,13 +146,24 @@ namespace Chronokeep
                     // Get locations from old event.
                     List<TimingLocation> locations = database.GetTimingLocations(oldEventId);
                     List<TimingLocation> newLocations = new List<TimingLocation>();
+                    // translates a location name into the old distance identifier
+                    Dictionary<string, int> LocationDict = new Dictionary<string, int>();
+                    // translates the old location id to the new location id
+                    Dictionary<int, int> LocationTranslationDict = new Dictionary<int, int>();
                     foreach (TimingLocation loc in locations)
                     {
                         loc.EventIdentifier = newEvent.Identifier;
                         newLocations.Add(loc);
+                        LocationDict[loc.Name] = loc.Identifier;
                     }
                     // Update database with new locations
                     database.AddTimingLocations(newLocations);
+                    // retrieve newly added locations
+                    newLocations = database.GetTimingLocations(newEvent.Identifier);
+                    foreach (TimingLocation newLoc in newLocations)
+                    {
+                        LocationTranslationDict[LocationDict[newLoc.Name]] = newLoc.Identifier;
+                    }
                     // Get old segments from the database.
                     List<Segment> segments = database.GetSegments(oldEventId);
                     List<Segment> newSegments = new List<Segment>();
@@ -162,6 +173,10 @@ namespace Chronokeep
                         if (newEvent.DistanceSpecificSegments && DistanceTranslationDict.ContainsKey(s.DistanceId))
                         {
                             s.DistanceId = DistanceTranslationDict[s.DistanceId];
+                        }
+                        if (Constants.Timing.LOCATION_FINISH != s.LocationId && Constants.Timing.LOCATION_START != s.LocationId && LocationTranslationDict.ContainsKey(s.LocationId))
+                        {
+                            s.LocationId = LocationTranslationDict[s.LocationId];
                         }
                         newSegments.Add(s);
                     }
