@@ -31,9 +31,15 @@ namespace Chronokeep.Constants
         public static readonly string DOWNLOAD_INTERVAL     = "SETTINGS_DOWNLOAD_INTERVAL";
         public static readonly string ANNOUNCER_WINDOW      = "SETTING_ANNOUNCER_WINDOW";
         public static readonly string ALARM_SOUND           = "SETTING_ALARM_SOUND";
+
         public static readonly string TWILIO_ACCOUNT_SID    = "TWILIO_ACCOUNT_SID";
         public static readonly string TWILIO_AUTH_TOKEN     = "TWILIO_AUTH_TOKEN";
         public static readonly string TWILIO_PHONE_NUMBER   = "TWILIO_PHONE_NUMBER";
+
+        public static readonly string MAILGUN_API_KEY       = "MAILGUN_API_KEY";
+        public static readonly string MAILGUN_API_URL       = "MAILGUN_API_URL";
+        public static readonly string MAILGUN_FROM_EMAIL    = "MAILGUN_FROM_EMAIL";
+        public static readonly string MAILGUN_FROM_NAME     = "MAILGUN_FROM_NAME";
 
         public static readonly string NULL_EVENT_ID     = "-1";
 
@@ -125,6 +131,22 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(TWILIO_PHONE_NUMBER) == null)
             {
                 database.SetAppSetting(TWILIO_PHONE_NUMBER, "");
+            }
+            if (database.GetAppSetting(MAILGUN_API_KEY) == null)
+            {
+                database.SetAppSetting(MAILGUN_API_KEY, "");
+            }
+            if (database.GetAppSetting(MAILGUN_API_URL) == null)
+            {
+                database.SetAppSetting(MAILGUN_API_URL, "");
+            }
+            if (database.GetAppSetting(MAILGUN_FROM_EMAIL) == null)
+            {
+                database.SetAppSetting(MAILGUN_FROM_EMAIL, "");
+            }
+            if (database.GetAppSetting(MAILGUN_FROM_NAME) == null)
+            {
+                database.SetAppSetting(MAILGUN_FROM_NAME, "");
             }
         }
     }
