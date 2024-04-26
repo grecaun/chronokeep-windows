@@ -318,6 +318,11 @@ namespace Chronokeep.UI
                 StopAnnouncer();
             }
             catch { }
+            try
+            {
+                StopZeroConf();
+            }
+            catch { }
             if (httpServer != null)
             {
                 httpServer.Stop();
@@ -335,6 +340,20 @@ namespace Chronokeep.UI
             }
             if (page != null) page.Closing();
             TimingUpdater.Stop();
+        }
+
+        private bool StopZeroConf()
+        {
+            try
+            {
+                Log.D("UI.MainWindow", "Stopping Zero Conf.");
+                ZConfServer.Stop();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
 
         private bool StopTimingWorker()

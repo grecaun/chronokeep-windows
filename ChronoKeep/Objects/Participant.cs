@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Chronokeep
+namespace Chronokeep.Objects
 {
     public class Participant : IEquatable<Participant>, IComparable<Participant>
     {
@@ -23,14 +23,14 @@ namespace Chronokeep
             string ecName, string ecPhone
             )
         {
-            this.birthdate = birthday.Trim();
-            this.firstName = first ?? "Unknown";
-            this.lastName = last ?? "Unknown";
+            birthdate = birthday.Trim();
+            firstName = first ?? "Unknown";
+            lastName = last ?? "Unknown";
             this.street = street;
             this.city = city;
             this.state = state;
             this.zip = zip;
-            this.eventSpecific = epi;
+            eventSpecific = epi;
             this.email = email ?? "";
             this.phone = phone ?? "";
             this.mobile = mobile ?? "";
@@ -38,8 +38,8 @@ namespace Chronokeep
             this.country = country ?? "";
             this.street2 = street2 ?? "";
             this.gender = gender ?? "";
-            this.emergencyName = ecName ?? "Emergency Services";
-            this.emergencyPhone = ecPhone ?? "911";
+            emergencyName = ecName ?? "Emergency Services";
+            emergencyPhone = ecPhone ?? "911";
             Trim();
             FormatData();
         }
@@ -51,15 +51,15 @@ namespace Chronokeep
             string ecName, string ecPhone, string chip
             )
         {
-            this.identifier = id;
-            this.birthdate = birthday;
-            this.firstName = first ?? "Unknown";
-            this.lastName = last ?? "Unknown";
+            identifier = id;
+            birthdate = birthday;
+            firstName = first ?? "Unknown";
+            lastName = last ?? "Unknown";
             this.street = street ?? "";
             this.city = city ?? "";
             this.state = state ?? "";
             this.zip = zip ?? "";
-            this.eventSpecific = epi ?? EventSpecific.Blank();
+            eventSpecific = epi ?? EventSpecific.Blank();
             this.email = email ?? "";
             this.phone = phone ?? "";
             this.mobile = mobile ?? "";
@@ -67,8 +67,8 @@ namespace Chronokeep
             this.country = country ?? "";
             this.street2 = street2 ?? "";
             this.gender = gender ?? "";
-            this.emergencyName = ecName ?? "Emergency Services";
-            this.emergencyPhone = ecPhone ?? "911";
+            emergencyName = ecName ?? "Emergency Services";
+            emergencyPhone = ecPhone ?? "911";
             this.chip = chip;
             Trim();
         }
@@ -103,37 +103,38 @@ namespace Chronokeep
         {
             if (firstName != null && firstName.Length > 0)
             {
-                this.firstName = CapitalizeFirst(firstName);
+                firstName = CapitalizeFirst(firstName);
             }
             if (lastName != null && lastName.Length > 0)
             {
-                this.lastName = CapitalizeFirst(lastName);
+                lastName = CapitalizeFirst(lastName);
             }
             if (city != null && city.Length > 0)
             {
-                this.city = CapitalizeFirst(city);
+                city = CapitalizeFirst(city);
             }
-            if (street != null && street.Length > 0) {
+            if (street != null && street.Length > 0)
+            {
                 string[] addressArray = street.Split(',');
                 if (addressArray.Length == 2 && street2.Length == 0)
                 {
-                    this.street = addressArray[0];
-                    this.street2 = addressArray[1];
+                    street = addressArray[0];
+                    street2 = addressArray[1];
                 }
                 else if (addressArray.Length > 2)
                 {
-                    this.street = addressArray[0];
+                    street = addressArray[0];
                 }
             }
             if (country != null && country.Length > 0)
             {
                 if (country.Equals("US", StringComparison.OrdinalIgnoreCase) || country.Equals("United States of America", StringComparison.OrdinalIgnoreCase) || country.Equals("United States", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.country = "USA";
+                    country = "USA";
                 }
                 else if (country.Equals("Canad", StringComparison.OrdinalIgnoreCase) || country.Equals("Canada", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.country = "CA";
+                    country = "CA";
                 }
             }
             if (state != null && state.Length > 0)
@@ -416,11 +417,11 @@ namespace Chronokeep
                 tmpPhone = phone.Replace("-", "").Replace("+", "").Replace("(", "").Replace(")", "").Replace(" ", "").Replace(",", "").Replace(".", "").Trim();
                 if (tmpPhone.Length == 10)
                 {
-                    this.phone = tmpPhone.Substring(0, 3) + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
+                    phone = tmpPhone.Substring(0, 3) + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
                 }
                 else if (tmpPhone.Length == 11)
                 {
-                    this.phone = tmpPhone.Substring(0, 1) + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
+                    phone = tmpPhone.Substring(0, 1) + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
                 }
             }
             if (mobile != null && mobile.Length > 0)
@@ -428,11 +429,11 @@ namespace Chronokeep
                 tmpPhone = mobile.Replace("-", "").Replace("+", "").Replace("(", "").Replace(")", "").Replace(" ", "").Replace(",", "").Replace(".", "").Trim();
                 if (tmpPhone.Length == 10)
                 {
-                    this.mobile = tmpPhone.Substring(0, 3) + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
+                    mobile = tmpPhone.Substring(0, 3) + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
                 }
                 else if (tmpPhone.Length == 11)
                 {
-                    this.mobile = tmpPhone.Substring(0, 1) + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
+                    mobile = tmpPhone.Substring(0, 1) + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
                 }
             }
             if (emergencyPhone != null && emergencyPhone.Length > 0)
@@ -440,48 +441,49 @@ namespace Chronokeep
                 tmpPhone = emergencyPhone.Replace("-", "").Replace("+", "").Replace("(", "").Replace(")", "").Replace(" ", "").Replace(",", "").Replace(".", "").Trim();
                 if (tmpPhone.Length == 10)
                 {
-                    this.emergencyPhone = tmpPhone.Substring(0, 3) + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
+                    emergencyPhone = tmpPhone.Substring(0, 3) + "-" + tmpPhone.Substring(3, 3) + "-" + tmpPhone.Substring(6, 4);
                 }
                 else if (tmpPhone.Length == 11)
                 {
-                    this.emergencyPhone = tmpPhone.Substring(0, 1) + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
+                    emergencyPhone = tmpPhone.Substring(0, 1) + "-" + tmpPhone.Substring(1, 3) + "-" + tmpPhone.Substring(4, 3) + "-" + tmpPhone.Substring(7, 4);
                 }
             }
             if (gender != null && gender.Length > 0)
             {
-                this.gender = CapitalizeFirstAll(gender.Trim());
+                gender = CapitalizeFirstAll(gender.Trim());
                 if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.gender = "Man";
+                    gender = "Man";
                 }
                 else if (gender.Equals("F", StringComparison.OrdinalIgnoreCase) ||
                     gender.Equals("W", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.gender = "Woman";
+                    gender = "Woman";
                 }
                 else if (gender.Equals("NB", StringComparison.OrdinalIgnoreCase) ||
                     gender.Equals("Non-Binary", StringComparison.OrdinalIgnoreCase) ||
                     gender.Equals("non binary", StringComparison.OrdinalIgnoreCase) ||
                     gender.Equals("nonbinary", StringComparison.OrdinalIgnoreCase))
                 {
-                    this.gender = "Non-Binary";
+                    gender = "Non-Binary";
                 }
             }
             else
             {
-                this.gender = "NS";
+                gender = "NS";
             }
             try
             {
                 DateTime birthDateTime = DateTime.Parse(birthdate);
                 birthdate = birthDateTime.ToShortDateString();
-            } catch
+            }
+            catch
             {
                 birthdate = "01/01/0001";
             }
         }
 
-        internal Boolean AllCaps(string val)
+        internal bool AllCaps(string val)
         {
             return val.Equals(val.ToUpper());
         }
@@ -529,7 +531,7 @@ namespace Chronokeep
         // Emergency Contact binding stuffs
         public string ECName { get => emergencyName; }
         public string ECPhone { get => emergencyPhone; }
-        
+
         public string FirstName { get => firstName; }
         public string LastName { get => lastName; }
         public string Street { get => street; }
@@ -537,7 +539,7 @@ namespace Chronokeep
         public string State { get => state; }
         public string Zip { get => zip; }
         public string Email { get => email; }
-        public string Phone { get=> phone; }
+        public string Phone { get => phone; }
         public string Mobile { get => mobile; }
         public string Parent { get => parent; }
         public string Country { get => country; }
@@ -550,38 +552,38 @@ namespace Chronokeep
         public int CompareTo(Participant other)
         {
             if (other == null) return 1;
-            if (this.EventSpecific.DistanceIdentifier == other.EventSpecific.DistanceIdentifier)
+            if (EventSpecific.DistanceIdentifier == other.EventSpecific.DistanceIdentifier)
             {
-                if (this.LastName == other.LastName)
+                if (LastName == other.LastName)
                 {
-                    return this.FirstName.CompareTo(other.FirstName);
+                    return FirstName.CompareTo(other.FirstName);
                 }
-                return this.LastName.CompareTo(other.LastName);
+                return LastName.CompareTo(other.LastName);
             }
-            return this.EventSpecific.DistanceName.CompareTo(other.EventSpecific.DistanceName);
+            return EventSpecific.DistanceName.CompareTo(other.EventSpecific.DistanceName);
         }
 
         public bool Equals(Participant other)
         {
             if (other == null) return false;
-            return this.Identifier == other.Identifier
-                && this.Bib == other.Bib
-                && this.EventIdentifier == other.EventIdentifier
-                && this.FirstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
-                && this.LastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
-                && this.Street.Equals(other.Street, StringComparison.OrdinalIgnoreCase)
-                && this.Zip.Equals(other.Zip, StringComparison.OrdinalIgnoreCase)
-                && this.Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
+            return Identifier == other.Identifier
+                && Bib == other.Bib
+                && EventIdentifier == other.EventIdentifier
+                && FirstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
+                && LastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
+                && Street.Equals(other.Street, StringComparison.OrdinalIgnoreCase)
+                && Zip.Equals(other.Zip, StringComparison.OrdinalIgnoreCase)
+                && Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
         }
 
         public bool Is(Participant other)
         {
             if (other == null) return false;
-            return this.FirstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
-                && this.LastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
-                && this.Street.Equals(other.Street, StringComparison.OrdinalIgnoreCase)
-                && this.Zip.Equals(other.Zip, StringComparison.OrdinalIgnoreCase)
-                && this.Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
+            return FirstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
+                && LastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
+                && Street.Equals(other.Street, StringComparison.OrdinalIgnoreCase)
+                && Zip.Equals(other.Zip, StringComparison.OrdinalIgnoreCase)
+                && Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
         }
 
         public string Age(string eventDate)
@@ -593,7 +595,7 @@ namespace Chronokeep
             DateTime eventDateTime = Convert.ToDateTime(eventDate);
             DateTime myDateTime = Convert.ToDateTime(birthdate);
             int numYears = eventDateTime.Year - myDateTime.Year;
-            if (eventDateTime.Month < myDateTime.Month || (eventDateTime.Month == myDateTime.Month && eventDateTime.Day < myDateTime.Day))
+            if (eventDateTime.Month < myDateTime.Month || eventDateTime.Month == myDateTime.Month && eventDateTime.Day < myDateTime.Day)
             {
                 numYears--;
             }
@@ -609,7 +611,7 @@ namespace Chronokeep
             DateTime eventDateTime = Convert.ToDateTime(eventDate);
             DateTime myDateTime = Convert.ToDateTime(birthdate);
             int numYears = eventDateTime.Year - myDateTime.Year;
-            if (eventDateTime.Month < myDateTime.Month || (eventDateTime.Month == myDateTime.Month && eventDateTime.Day < myDateTime.Day))
+            if (eventDateTime.Month < myDateTime.Month || eventDateTime.Month == myDateTime.Month && eventDateTime.Day < myDateTime.Day)
             {
                 numYears--;
             }
@@ -645,14 +647,14 @@ namespace Chronokeep
 
         public bool IsNotMatch(string value)
         {
-            return this.EventSpecific.Bib.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
-                && this.FirstName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
-                && this.LastName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
+            return EventSpecific.Bib.ToString().IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
+                && FirstName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1
+                && LastName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
         }
 
         public string PrettyAnonymous
         {
-            get => this.Anonymous == true ? "Yes" : "";
+            get => Anonymous == true ? "Yes" : "";
         }
     }
 }
