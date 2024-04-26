@@ -20,7 +20,7 @@ namespace Chronokeep.IO.HtmlTemplates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+    #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class HtmlParticipantTemplate : HtmlParticipantTemplateBase
     {
@@ -39,14 +39,14 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("\n<!doctype html>\n<html lang=\"en\">\n\t<head>\n\t\t<link rel=\'stylesheet\' href=\'css/boot" +
                     "strap.min.css\'>\n\t\t<link rel=\'stylesheet\' href=\'css/style.min.css\'>\n\t\t<title>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.Name));
             
             #line default
             #line hidden
             this.Write(" - ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(finish != null ? finish.PrettyParticipantName : "Unknown"));
             
             #line default
@@ -55,14 +55,14 @@ namespace Chronokeep.IO.HtmlTemplates
                     "-auto\">\n                <div class=\"p-2\">\n                    <div class=\"text-c" +
                     "enter text-important display-4 m-0\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.YearCode));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.Name));
             
             #line default
@@ -75,7 +75,7 @@ namespace Chronokeep.IO.HtmlTemplates
                 <div class=""p-2"">
                     <div class=""text-center text-important display-4 m-0"">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(finish != null ? finish.PrettyParticipantName : "Unknown"));
             
             #line default
@@ -83,7 +83,7 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("</div>\n                    <div class=\"text-center text-important text-secondary " +
                     "m-0\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(finish == null ? "" : finish.Gender.Length < 1 || finish.Gender == "Not Specified" ? finish.Age(theEvent.Date) : string.Format("{0} - {1}", finish.Gender, finish.Age(theEvent.Date))));
             
             #line default
@@ -91,14 +91,14 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("</div>\n                </div>\n                <div class=\"h3 m-2 mt-0 text-center" +
                     " text-important text-secondary mx-auto\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(finish != null ? finish.DistanceName : ""));
             
             #line default
             #line hidden
             this.Write("</div>\n                <div class=\"bib-box h4 m-2 p-2 mx-auto\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(finish != null ? finish.Bib : ""));
             
             #line default
@@ -110,7 +110,7 @@ namespace Chronokeep.IO.HtmlTemplates
                     <div class=""row d-flex justify-content-left align-items-center gx-4 gy-3 mb-4"">
                         ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  if (start != null) { 
             
             #line default
@@ -119,21 +119,21 @@ namespace Chronokeep.IO.HtmlTemplates
                     "                  <div class=\"h5 border-bottom\">Start Time</div>\n               " +
                     "                 <div class=\"h5\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(start.Time.Substring(0, start.Time.Length > 3 ? start.Time.Length -2 : start.Time.Length)));
             
             #line default
             #line hidden
             this.Write("</div>\n                            </div>\n                        ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n                        ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  if (finish != null && finish.Finish) { 
             
             #line default
@@ -142,21 +142,21 @@ namespace Chronokeep.IO.HtmlTemplates
                     "                  <div class=\"h5 border-bottom\">Chip Time</div>\n                " +
                     "                <div class=\"h5\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(finish.ChipTime.Substring(0, finish.ChipTime.Length > 3 ? finish.ChipTime.Length -2 : finish.ChipTime.Length)));
             
             #line default
             #line hidden
             this.Write("</div>\n                            </div>\n                        ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n                        ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  if (finish != null && finish.Finish) { 
             
             #line default
@@ -165,21 +165,21 @@ namespace Chronokeep.IO.HtmlTemplates
                     "                  <div class=\"h5 border-bottom\">Time</div>\n                     " +
                     "           <div class=\"h5\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(finish != null ? finish.Time.Substring(0, finish.Time.Length > 3 ? finish.Time.Length -2 : finish.Time.Length) : ""));
             
             #line default
             #line hidden
             this.Write("</div>\n                            </div>\n                        ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n                    </div>\n                    ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  if (finish != null && finish.Finish && finish.Place > 0) { 
             
             #line default
@@ -190,14 +190,14 @@ namespace Chronokeep.IO.HtmlTemplates
                                 <div class=""h5 border-bottom"">Overall</div>
                                 <div class=""h5"">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(finish.Place));
             
             #line default
             #line hidden
             this.Write("</div>\n                            </div>\n                            ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  if (finish.GenderPlace > 0) { 
             
             #line default
@@ -205,28 +205,28 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("\n                                <div class=\"col-sm-4 text-center\">\n             " +
                     "                       <div class=\"h5 border-bottom\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(rankingGender));
             
             #line default
             #line hidden
             this.Write("</div>\n                                    <div class=\"h5\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(finish.GenderPlace));
             
             #line default
             #line hidden
             this.Write("</div>\n                                </div>\n                            ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n                            ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  if (finish.Gender.Length > 0 && finish.AgeGroupName.Length > 0 && finish.AgePlace > 0) { 
             
             #line default
@@ -234,35 +234,35 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("\n                                <div class=\"col-sm-4 text-center\">\n             " +
                     "                       <div class=\"h5 border-bottom\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Format("{0} {1}", rankingGender, finish.AgeGroupName)));
             
             #line default
             #line hidden
             this.Write("</div>\n                                    <div class=\"h5\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(finish.AgePlace));
             
             #line default
             #line hidden
             this.Write("</div>\n                                </div>\n                            ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n                        </div>\n                    ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n                </div>\n            </div>\n            ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  if (resultList.Count > 0) { 
             
             #line default
@@ -271,7 +271,7 @@ namespace Chronokeep.IO.HtmlTemplates
                     "                   <table class=\"table table-sm text-center\">\n                  " +
                     "      ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME) { 
             
             #line default
@@ -290,49 +290,49 @@ namespace Chronokeep.IO.HtmlTemplates
                             <tbody>
                                 ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  foreach (TimeResult r in resultList) { 
             
             #line default
             #line hidden
             this.Write("\n                                    <tr key=\"");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Format("segment-{0}-{1}", r.LocationId, r.Occurrence)));
             
             #line default
             #line hidden
             this.Write("\">\n                                        <td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture((r.SegmentName == "Finish")? string.Format("Lap {0}", r.Occurrence) : r.SegmentName));
             
             #line default
             #line hidden
             this.Write("</td>\n                                        <td class=\"overflow-hidden-sm\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)));
             
             #line default
             #line hidden
             this.Write("</td>\n                                        <td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.ChipTime.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)));
             
             #line default
             #line hidden
             this.Write("</td>\n                                    </tr>\n                                ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n                            </tbody>\n                        ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } else { 
             
             #line default
@@ -353,63 +353,63 @@ namespace Chronokeep.IO.HtmlTemplates
                                 <tbody>
                                 ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  foreach (TimeResult r in resultList) { 
             
             #line default
             #line hidden
             this.Write("\n                                    <tr key=\"");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Format("segment-{0}-{1}", r.LocationId, r.Occurrence)));
             
             #line default
             #line hidden
             this.Write("\">\n                                        <td class=\"overflow-hidden-sm\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Place > 0 ? r.Place : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n                                        <td class=\"overflow-hidden-sm\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.AgePlace > 0 ? r.AgePlace : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n                                        <td class=\"overflow-hidden-sm\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.GenderPlace > 0 ? r.GenderPlace : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n                                        <td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.ChipTime.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)));
             
             #line default
             #line hidden
             this.Write("</td>\n                                    </tr>\n                                ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n                            </tbody>\n                        ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n                    </table>\n                </div>\n            ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlParticipantTemplate.tt"
  } 
             
             #line default

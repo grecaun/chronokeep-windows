@@ -37,6 +37,9 @@ namespace Chronokeep.UI
         HttpServer httpServer = null;
         int httpServerPort = 6933;
 
+        Thread ZConfThread = null;
+        ZeroConf ZConfServer = null;
+
         // Timing objects.
         Thread TimingControllerThread = null;
         TimingController TimingController = null;
@@ -147,6 +150,12 @@ namespace Chronokeep.UI
             {
                 Alarm.AddAlarms(database.GetAlarms(theEvent.Identifier));
             }
+
+            // Start zero conf thread
+            AppSetting zconfName = database.GetAppSetting(Constants.Settings.SERVER_NAME);
+            ZConfServer = new ZeroConf(zconfName != null && zconfName.Value != null ? zconfName.Value : null);
+            ZConfThread = new Thread(new ThreadStart(ZConfServer.Run));
+            ZConfThread.Start();
         }
 
 

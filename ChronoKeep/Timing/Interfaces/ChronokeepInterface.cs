@@ -57,8 +57,8 @@ namespace Chronokeep.Timing.Interfaces
                 Log.D("Timing.Interfaces.ChronokeepInterface", "Attempting to get port from server.");
                 using (UdpClient client = new UdpClient(AddressFamily.InterNetwork))
                 {
-                    byte[] msg = Encoding.Default.GetBytes(Constants.Readers.CHRONO_PORTAL_CONNECT_MSG);
-                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(IP_Address), Constants.Readers.CHRONO_PORTAL_ZCONF_PORT);
+                    byte[] msg = Encoding.Default.GetBytes(Constants.Network.CHRONOKEEP_ZCONF_CONNECT_MSG);
+                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(IP_Address), Constants.Network.CHRONOKEEP_ZCONF_PORT);
                     client.Send(msg, msg.Length, endPoint);
                     client.Client.ReceiveTimeout = Constants.Readers.TIMEOUT;
                     byte[] data = client.Receive(ref endPoint);
@@ -73,7 +73,7 @@ namespace Chronokeep.Timing.Interfaces
                             + ". Port is "
                             + match.Groups["PORTAL_PORT"].Value
                             );
-                        int port = Constants.Readers.CHRONO_PORTAL_ZCONF_PORT;
+                        int port = Constants.Network.CHRONOKEEP_ZCONF_PORT;
                         if (!int.TryParse(match.Groups["PORTAL_PORT"].Value, out port))
                         {
                             Log.E("Timing.Interfaces.ChronokeepInterface", "Error parsing port.");

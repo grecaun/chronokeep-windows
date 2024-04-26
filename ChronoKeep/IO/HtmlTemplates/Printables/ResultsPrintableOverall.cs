@@ -20,7 +20,7 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+    #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class ResultsPrintableOverall : ResultsPrintableOverallBase
     {
@@ -102,14 +102,14 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
 	<body>
 		<div class='text-important table-header'>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.YearCode));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.Name));
             
             #line default
@@ -117,14 +117,14 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             this.Write("</div>\n\t\t<div class=\'text-important table-h3\'>Overall Results</div>\n\t\t<div class=" +
                     "\'text-important table-h4\'>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.Date));
             
             #line default
             #line hidden
             this.Write("</div>\n\t\t<div class=\'events-panel panel panel-default\'>\n\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
  foreach (string d in distanceResults.Keys.OrderBy(i => i))
 			{ 
             
@@ -133,7 +133,7 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             this.Write("\n\t\t\t<div>\n\t\t\t\t<table>\n\t\t\t\t\t<tr><td colspan=\'10\' class=\'table-header text-importan" +
                     "t\'>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
@@ -149,21 +149,21 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
 						<td colspan='2' class=""text-important table-label"">AG Place</td>
 						<td class=""text-important table-label"">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Laps" : "Finish Gun"));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td class=\"text-important table-label\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Time" : "Finish Chip"));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
  foreach (TimeResult r in distanceResults[d])
 					{ 
             
@@ -171,63 +171,63 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             #line hidden
             this.Write("\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.PlaceStr));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyType));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib.ToString()));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.ParticipantName));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Gender != "Not Specified" ? r.Gender : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Age(theEvent.Date)));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Gender != "Not Specified" ? r.AgePlaceStr : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.AgeGroupName));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME
 								? r.Occurrence
 								: r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)));
@@ -236,7 +236,7 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             #line hidden
             this.Write("\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME
 								? r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)
 								: r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length)));
@@ -245,14 +245,14 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             #line hidden
             this.Write("\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
  if (dnfResultsDictionary.ContainsKey(d)) {
 					foreach (TimeResult r in dnfResultsDictionary[d])
 					{ 
@@ -261,35 +261,35 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             #line hidden
             this.Write("\n\t\t\t\t\t<tr>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyType));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib.ToString()));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.ParticipantName));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Gender != "Not Specified" ? r.Gender : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t<td>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Age(theEvent.Date)));
             
             #line default
@@ -297,14 +297,14 @@ namespace Chronokeep.IO.HtmlTemplates.Printables
             this.Write("</td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td></td>\n\t\t\t\t\t\t<td>DNF</td>\n\t\t\t\t\t\t<td>DNF</td>\n\t\t\t\t\t" +
                     "</tr>\n\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
  }} 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t</table>\n\t\t\t</div>\n\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\Printables\ResultsPrintableOverall.tt"
  } 
             
             #line default

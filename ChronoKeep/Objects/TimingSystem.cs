@@ -38,7 +38,7 @@ namespace Chronokeep.Objects
             }
             else if (type == Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL)
             {
-                this.Port = Constants.Readers.CHRONO_PORTAL_ZCONF_PORT;
+                this.Port = Constants.Network.CHRONOKEEP_ZCONF_PORT;
             }
         }
 
@@ -95,7 +95,7 @@ namespace Chronokeep.Objects
             }
             else if (type == Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL)
             {
-                this.Port = Constants.Readers.CHRONO_PORTAL_ZCONF_PORT;
+                this.Port = Constants.Network.CHRONOKEEP_ZCONF_PORT;
             }
         }
 

@@ -20,7 +20,7 @@ namespace Chronokeep.IO.HtmlTemplates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+    #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class HtmlResultsTemplate : HtmlResultsTemplateBase
     {
@@ -39,7 +39,7 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("\n<!doctype html>\n<html lang=\"en\">\n\t<head>\n\t\t<link rel=\'stylesheet\' href=\'css/boot" +
                     "strap.min.css\'>\n\t\t<link rel=\'stylesheet\' href=\'css/style.min.css\'>\n\t\t<title>");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.Name));
             
             #line default
@@ -52,21 +52,21 @@ namespace Chronokeep.IO.HtmlTemplates
                 <div class=""col-md-10 flex-fill text-center mx-auto m-1"">
                     <p class=""text-important mb-2 mt-1 h1"">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.YearCode));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(theEvent.Name));
             
             #line default
             #line hidden
             this.Write("</p>\n                </div>\n\t\t\t</div>\n\t\t\t<div>\n\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  if (distanceResults.Keys.Count < 1) { 
             
             #line default
@@ -75,7 +75,7 @@ namespace Chronokeep.IO.HtmlTemplates
                     "t\">\n\t\t\t\t\t\t<div class=\"text-center\">\n\t\t\t\t\t\t\t<h2>No results to display.</h2>\n\t\t\t\t\t" +
                     "\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } else { 
             
             #line default
@@ -84,84 +84,84 @@ namespace Chronokeep.IO.HtmlTemplates
                     "items-stretch shadow-sm p-0 mb-3 border border-light\">\n\t\t\t\t\t\t\t<div class=\"p-0\">\n" +
                     "\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  if (distanceResults.Keys.Count > 1) { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t<ul class=\"nav nav-tabs nav-fill\">\n\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  foreach (string d in distanceResults.Keys ) { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t<li class=\"nav-item\" key=\"distance-");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
             this.Write("\">\n\t\t\t\t\t\t\t\t\t\t\t\t<a class=\"nav-link text-important h5 text-secondary\" href=\"#");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
             this.Write("\" role=\"button\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
             this.Write("</a>\n\t\t\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t</ul>\n\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t<div id=\"results-parent\">\n\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  foreach (string d in distanceResults.Keys) { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t<div class=\"table-responsive-sm m-3\" key=\"");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
             this.Write("\" id=\"");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
             this.Write("\">\n\t\t\t\t\t\t\t\t\t\t\t<table class=\"table table-sm\">\n\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME) { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  if (distanceResults.Keys.Count > 1) { 
             
             #line default
@@ -169,14 +169,14 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"table-distance-header text-import" +
                     "ant text-center\" colSpan=\"10\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
@@ -197,70 +197,70 @@ namespace Chronokeep.IO.HtmlTemplates
 													<tbody>
 														");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  foreach (TimeResult r in distanceResults[d]) { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr key=\"");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib));
             
             #line default
             #line hidden
             this.Write("\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-sm text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyPlaceStr));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  if (linkPart) { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<a class=\"nav-link m-0 p-0\" href=\"part/");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib));
             
             #line default
             #line hidden
             this.Write("\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyParticipantName));
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  if (linkPart) { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</a>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
@@ -268,63 +268,63 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\"" +
                     ">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Age(theEvent.Date)));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish && r.PrettyGender.Length > 0 ? r.AgePlaceStr : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyGender));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish && r.PrettyGender.Length > 0  ? r.GenderPlaceStr : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length)));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture((r.SegmentName == "Finish")? string.Format("Lap {0}", r.Occurrence) : r.SegmentName));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } else { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t<thead>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  if (distanceResults.Keys.Count > 1) { 
             
             #line default
@@ -332,14 +332,14 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"table-distance-header text-import" +
                     "ant text-center\" colSpan=\"10\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(d));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
@@ -360,70 +360,70 @@ namespace Chronokeep.IO.HtmlTemplates
 													<tbody>
 														");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  foreach (TimeResult r in distanceResults[d]) { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<tr key=\"");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib));
             
             #line default
             #line hidden
             this.Write("\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-sm text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyPlaceStr));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  if (linkPart) { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<a class=\"nav-link m-0 p-0\" href=\"part/");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Bib));
             
             #line default
             #line hidden
             this.Write("\">\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyParticipantName));
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  if (linkPart) { 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</a>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
@@ -431,70 +431,70 @@ namespace Chronokeep.IO.HtmlTemplates
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\"" +
                     ">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Age(theEvent.Date)));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish && r.PrettyGender.Length > 0 ? r.AgePlaceStr : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.PrettyGender));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish && r.PrettyGender.Length > 0 ? r.GenderPlaceStr : ""));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"overflow-hidden-lg text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.ChipTime.Substring(0, r.ChipTime.Length > 3 ? r.ChipTime.Length -2 : r.ChipTime.Length)));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<td class=\"text-center\">");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(r.Finish? r.Time.Substring(0, r.Time.Length > 3 ? r.Time.Length -2 : r.Time.Length) : r.SegmentName));
             
             #line default
             #line hidden
             this.Write("</td>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t\t\t</tbody>\n\t\t\t\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t\t\t\t</table>\n\t\t\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  if (theEvent.EventType == Constants.Timing.EVENT_TYPE_DISTANCE) { 
             
             #line default
@@ -503,14 +503,14 @@ namespace Chronokeep.IO.HtmlTemplates
                     "er p-3 mb-3 border border-light overflow-hidden-lg\'>*Results are ranked based up" +
                     "on the Time and not the Chip Time.</div>\n\t\t\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
             #line hidden
             this.Write("\n\t\t\t\t\t</div>\n\t\t\t\t");
             
-            #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
+            #line 1 "C:\Users\greca\Workspace\windows\ChronoKeep\IO\HtmlTemplates\HtmlResultsTemplate.tt"
  } 
             
             #line default
