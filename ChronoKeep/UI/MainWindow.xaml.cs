@@ -21,6 +21,7 @@ using Chronokeep.Timing.API;
 using Chronokeep.Timing.Remote;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Objects.ChronokeepPortal;
+using Chronokeep.Network.Registration;
 
 namespace Chronokeep.UI
 {
@@ -37,8 +38,11 @@ namespace Chronokeep.UI
         HttpServer httpServer = null;
         int httpServerPort = 6933;
 
+        // Zero Conf/Registration objects.
         Thread ZConfThread = null;
         ZeroConf ZConfServer = null;
+        Thread RegistrationThread = null;
+        RegistrationWorker RegistrationWorker = null;
 
         // Timing objects.
         Thread TimingControllerThread = null;
@@ -49,6 +53,7 @@ namespace Chronokeep.UI
         // API objects.
         Thread APIControllerThread = null;
         APIController APIController = null;
+
         // Remote Reads objects
         Thread RemoteThread = null;
         RemoteReadsController RemoteController = null;
@@ -150,12 +155,6 @@ namespace Chronokeep.UI
             {
                 Alarm.AddAlarms(database.GetAlarms(theEvent.Identifier));
             }
-
-            // Start zero conf thread
-            AppSetting zconfName = database.GetAppSetting(Constants.Settings.SERVER_NAME);
-            ZConfServer = new ZeroConf(zconfName != null && zconfName.Value != null ? zconfName.Value : null);
-            ZConfThread = new Thread(new ThreadStart(ZConfServer.Run));
-            ZConfThread.Start();
         }
 
 
@@ -320,7 +319,7 @@ namespace Chronokeep.UI
             catch { }
             try
             {
-                StopZeroConf();
+                StopRegistration();
             }
             catch { }
             if (httpServer != null)
@@ -342,18 +341,62 @@ namespace Chronokeep.UI
             TimingUpdater.Stop();
         }
 
-        private bool StopZeroConf()
+        public bool IsRegistrationRunning()
         {
+            return (RegistrationWorker != null && RegistrationWorker.IsRunning()) && (ZConfServer != null && ZConfServer.IsRunning());
+        }
+
+        public bool StopRegistration()
+        {
+            bool output = true;
             try
             {
-                Log.D("UI.MainWindow", "Stopping Zero Conf.");
+                Log.D("UI.MainWindow", "Stopping zero conf.");
                 ZConfServer.Stop();
             }
             catch
             {
-                return false;
+                output = false;
             }
-            return true;
+            try
+            {
+                Log.D("UI.MainWindow", "Stopping registration.");
+                RegistrationWorker.Stop();
+            }
+            catch
+            {
+                output = false;
+            }
+            return output;
+        }
+
+        public bool StartRegistration()
+        {
+            bool output = true;
+            try
+            {
+                Log.D("UI.MainWindow", "Starting zero conf.");
+                AppSetting zconfName = database.GetAppSetting(Constants.Settings.SERVER_NAME);
+                ZConfServer = new ZeroConf(zconfName != null && zconfName.Value != null ? zconfName.Value : null);
+                ZConfThread = new Thread(new ThreadStart(ZConfServer.Run));
+                ZConfThread.Start();
+            }
+            catch
+            {
+                output = false;
+            }
+            try
+            {
+                Log.D("UI.MainWindow", "Starting registration.");
+                RegistrationWorker = RegistrationWorker.NewWorker(database);
+                RegistrationThread = new Thread(new ThreadStart(RegistrationWorker.Run));
+                RegistrationThread.Start();
+            }
+            catch
+            {
+                output = false;
+            }
+            return output;
         }
 
         private bool StopTimingWorker()

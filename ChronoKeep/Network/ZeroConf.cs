@@ -12,6 +12,8 @@ namespace Chronokeep.Network
         string servername;
         public static string serverid;
 
+        private static bool running = false;
+
         public ZeroConf(string name)
         {
             char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
@@ -28,6 +30,7 @@ namespace Chronokeep.Network
 
         public void Run()
         {
+            running = true;
             udpClient = new UdpClient();
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Constants.Network.CHRONOKEEP_ZCONF_PORT);
             udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
@@ -60,6 +63,7 @@ namespace Chronokeep.Network
                     Log.E("Network.ZeroConf", "Shutting down.");
                 }
             }
+            running = false;
         }
 
         public void Stop()
@@ -70,6 +74,11 @@ namespace Chronokeep.Network
             {
                 udpClient.Close();
             }
+        }
+
+        public bool IsRunning()
+        {
+            return running;
         }
 
         public void SetName(string name)

@@ -180,6 +180,16 @@
                 HorizontalAlignment="Stretch"
                 Height="40"
                 />
+            <Button
+                Name="registrationButton"
+                Content="Start Registration"
+                Margin="0,5,0,5"
+                Click="registrationButton_Click"
+                FontSize="16"
+                VerticalContentAlignment="Center"
+                HorizontalAlignment="Stretch"
+                Height="40"
+                />
         </StackPanel>
     </Grid>
 </Page>

@@ -10,9 +10,9 @@ using System.Threading;
 
 namespace Chronokeep.Network.Registration
 {
-    internal class Worker
+    internal class RegistrationWorker
     {
-        private static Worker instance;
+        private static RegistrationWorker instance;
 
         private bool running = false;
         private bool keepalive = false;
@@ -27,16 +27,16 @@ namespace Chronokeep.Network.Registration
 
         private static readonly Regex msgRegex = new Regex(@"^[^\n]*\n");
 
-        private Worker(IDBInterface database)
+        private RegistrationWorker(IDBInterface database)
         {
             this.database = database;
         }
 
-        public static Worker NewWorker(IDBInterface database)
+        public static RegistrationWorker NewWorker(IDBInterface database)
         {
             if (instance == null)
             {
-                instance = new Worker(database);
+                instance = new RegistrationWorker(database);
             }
             return instance;
         }
@@ -54,15 +54,22 @@ namespace Chronokeep.Network.Registration
 
         public void Stop()
         {
+            Log.D("Network.Registration.RegistrationWorker", "Instructed to stop registration.");
             if (threadMutex.WaitOne(3000))
             {
                 keepalive = false;
                 threadMutex.ReleaseMutex();
             }
+            try
+            {
+                server.Close();
+            }
+            catch { }
         }
 
         public void Run()
         {
+            Log.D("Network.Registration.RegistrationWorker", "Starting Registration thread.");
             Event theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 1)
             {
@@ -87,12 +94,16 @@ namespace Chronokeep.Network.Registration
             {
                 readList.Clear();
                 readList.AddRange(clients);
-                Socket.Select(readList, null, null, 60000000);
+                try
+                {
+                    Socket.Select(readList, null, null, 60000000);
+                }
+                catch { }
                 foreach (Socket sock in readList)
                 {
-                    if (sock == server)
+                    if (sock == server && sock.Connected)
                     {
-                        Log.D("Network.Registration.Worker", "New incoming connection to registration.");
+                        Log.D("Network.Registration.RegistrationWorker", "New incoming connection to registration.");
                         Socket newSock = sock.Accept();
                         clients.Add(newSock);
                         bufferDictionary[sock] = new StringBuilder();
@@ -113,7 +124,7 @@ namespace Chronokeep.Network.Registration
                             int num_recvd = sock.Receive(recvd);
                             if (num_recvd == 0)
                             {
-                                Log.D("Network.Registration.Worker", "Client disconnected.");
+                                Log.D("Network.Registration.RegistrationWorker", "Client disconnected.");
                                 clients.Remove(sock);
                                 bufferDictionary.Remove(sock);
                                 sock.Close();
@@ -123,7 +134,7 @@ namespace Chronokeep.Network.Registration
                                 string msg = Encoding.UTF8.GetString(recvd, 0, num_recvd);
                                 StringBuilder buffer = bufferDictionary[sock];
                                 buffer.Append(msg);
-                                Log.D("Network.Registration.Worker", string.Format("Message received: {0}", msg.Trim()));
+                                Log.D("Network.Registration.RegistrationWorker", string.Format("Message received: {0}", msg.Trim()));
                                 Match m = msgRegex.Match(buffer.ToString());
                                 while (m.Success)
                                 {
@@ -135,7 +146,7 @@ namespace Chronokeep.Network.Registration
                                         switch (res.Command)
                                         {
                                             case Request.GET_PARTICIPANTS:
-                                                Log.D("Network.Registration.Worker","Received get participant message.");
+                                                Log.D("Network.Registration.RegistrationWorker","Received get participant message.");
                                                 SendMessage(sock, JsonSerializer.Serialize(new ParticipantsResponse
                                                 {
                                                     Participants = GetParticipants(database, theEvent),
@@ -143,7 +154,7 @@ namespace Chronokeep.Network.Registration
                                                 }));
                                                 break;
                                             case Request.ADD_PARTICIPANT:
-                                                Log.D("Network.Registration.Worker", "Received add participant message.");
+                                                Log.D("Network.Registration.RegistrationWorker", "Received add participant message.");
                                                 try
                                                 {
                                                     ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message);
@@ -151,11 +162,11 @@ namespace Chronokeep.Network.Registration
                                                 }
                                                 catch (Exception e)
                                                 {
-                                                    Log.E("Network.Registration.Worker", string.Format("Error deserializing json for add participant. {0}", e.Message));
+                                                    Log.E("Network.Registration.RegistrationWorker", string.Format("Error deserializing json for add participant. {0}", e.Message));
                                                 }
                                                 break;
                                             case Request.UPDATE_PARTICIPANT:
-                                                Log.D("Network.Registration.Worker", "Received update participant message.");
+                                                Log.D("Network.Registration.RegistrationWorker", "Received update participant message.");
                                                 try
                                                 {
                                                     ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message);
@@ -163,23 +174,23 @@ namespace Chronokeep.Network.Registration
                                                 }
                                                 catch (Exception e)
                                                 {
-                                                    Log.E("Network.Registration.Worker", string.Format("Error deserializing json for add participant. {0}", e.Message));
+                                                    Log.E("Network.Registration.RegistrationWorker", string.Format("Error deserializing json for add participant. {0}", e.Message));
                                                 }
                                                 break;
                                             case Request.DISCONNECT:
-                                                Log.D("Network.Registration.Worker", "Received disconnect message.");
+                                                Log.D("Network.Registration.RegistrationWorker", "Received disconnect message.");
                                                 clients.Remove(sock);
                                                 bufferDictionary.Remove(sock);
                                                 sock.Close();
                                                 break;
                                             default:
-                                                Log.D("Network.Registration.Worker", "Unknown message received.");
+                                                Log.D("Network.Registration.RegistrationWorker", "Unknown message received.");
                                                 break;
                                         }
                                     }
                                     catch (Exception e)
                                     {
-                                        Log.E("Network.Registration.Worker", string.Format("Error deserializing json. {0}", e.Message));
+                                        Log.E("Network.Registration.RegistrationWorker", string.Format("Error deserializing json. {0}", e.Message));
                                     }
                                     m = msgRegex.Match(buffer.ToString());
                                 }
@@ -187,7 +198,7 @@ namespace Chronokeep.Network.Registration
                         }
                         catch (Exception e)
                         {
-                            Log.D("Network.Registration.Worker", string.Format("Error communicating with socket. {0}", e.Message));
+                            Log.D("Network.Registration.RegistrationWorker", string.Format("Error communicating with socket. {0}", e.Message));
                             clients.Remove(sock);
                             bufferDictionary.Remove(sock);
                             sock.Close();
@@ -205,6 +216,7 @@ namespace Chronokeep.Network.Registration
                     threadMutex.ReleaseMutex();
                 }
             }
+            Log.D("Network.Registration.RegistrationWorker", "Thread exiting.");
         }
 
         public List<Participant> GetParticipants(IDBInterface database, Event theEvent)
@@ -241,7 +253,7 @@ namespace Chronokeep.Network.Registration
 
         public void SendMessage(Socket sock, string msg)
         {
-            Log.D("Network.Registration.Worker", string.Format("Sending message '{0}'", msg));
+            Log.D("Network.Registration.RegistrationWorker", string.Format("Sending message '{0}'", msg));
             sock.Send(Encoding.Default.GetBytes(msg + "\n"));
         }
     }

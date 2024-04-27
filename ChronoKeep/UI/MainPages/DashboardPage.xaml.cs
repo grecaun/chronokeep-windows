@@ -79,6 +79,14 @@ namespace Chronokeep.UI.MainPages
             {
                 apiLinkButton.Content = "Link to API Event";
             }
+            if (mWindow.IsRegistrationRunning())
+            {
+                registrationButton.Content = "Stop Registration";
+            }
+            else
+            {
+                registrationButton.Content = "Start Registration";
+            }
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
@@ -705,6 +713,21 @@ namespace Chronokeep.UI.MainPages
                 commonAgeCheckBox.IsEnabled = true;
                 rankByGunCheckBox.IsEnabled = true;
                 segmentCheckBox.IsEnabled = true;
+            }
+        }
+
+        private void registrationButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.DashboardPage", "Registration button clicked.");
+            if (mWindow.IsRegistrationRunning())
+            {
+                mWindow.StopRegistration();
+                registrationButton.Content = "Start Registration";
+            }
+            else
+            {
+                mWindow.StartRegistration();
+                registrationButton.Content = "Stop Registration";
             }
         }
     }

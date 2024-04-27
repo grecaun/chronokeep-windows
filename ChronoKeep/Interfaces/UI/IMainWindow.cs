@@ -58,5 +58,10 @@ namespace Chronokeep.Interfaces
 
         // Theme related calls
         void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system);
+
+        // Registration related calls
+        bool StartRegistration();
+        bool StopRegistration();
+        bool IsRegistrationRunning();
     }
 }
