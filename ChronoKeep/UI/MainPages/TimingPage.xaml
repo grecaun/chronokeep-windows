@@ -371,6 +371,14 @@
                                     Click="Recalculate_Click"
                                     />
                                 <Button
+                                    Name="sendEmailsButton" 
+                                    Content="Send Emails"
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,5,5,0" 
+                                    Click="sendEmailsButton_Click"
+                                    />
+                                <Button
                                     Content="Export Results" 
                                     Height="35" 
                                     HorizontalAlignment="Stretch"
@@ -409,6 +417,14 @@
                                     HorizontalAlignment="Stretch"
                                     Margin="5,5,0,0"
                                     Click="RawReads_Click"
+                                    />
+                                <Button
+                                    Name="modifySMSButton" 
+                                    Content="Modify SMS"
+                                    Height="35"
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,5,5,0" 
+                                    Click="modifySMSButton_Click"
                                     />
                                 <Button 
                                     Name="printButton"

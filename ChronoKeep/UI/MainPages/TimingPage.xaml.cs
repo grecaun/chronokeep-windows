@@ -1373,6 +1373,16 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
+        private void modifySMSButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.TimingPage", "Modify SMS button clicked.");
+        }
+
+        private void sendEmailsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.TimingPage", "Send Emails button clicked.");
+        }
+
         private class AReaderBox : ListBoxItem
         {
             public ComboBox ReaderType { get; private set; }
