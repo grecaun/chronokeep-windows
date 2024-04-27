@@ -138,7 +138,7 @@ namespace Chronokeep.Constants
             }
             if (database.GetAppSetting(MAILGUN_API_URL) == null)
             {
-                database.SetAppSetting(MAILGUN_API_URL, "");
+                database.SetAppSetting(MAILGUN_API_URL, "https://api.mailgun.net/v3/");
             }
             if (database.GetAppSetting(MAILGUN_FROM_EMAIL) == null)
             {
@@ -147,6 +147,10 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(MAILGUN_FROM_NAME) == null)
             {
                 database.SetAppSetting(MAILGUN_FROM_NAME, "");
+            }
+            if (database.GetAppSetting(SERVER_NAME) == null)
+            {
+                database.SetAppSetting(SERVER_NAME, "Chronokeep Registration");
             }
         }
     }

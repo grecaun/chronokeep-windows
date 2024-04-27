@@ -352,7 +352,10 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Stopping zero conf.");
-                ZConfServer.Stop();
+                if (ZConfServer != null)
+                {
+                    ZConfServer.Stop();
+                }
             }
             catch
             {
@@ -361,7 +364,10 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Stopping registration.");
-                RegistrationWorker.Stop();
+                if (RegistrationWorker != null)
+                {
+                    RegistrationWorker.Stop();
+                }
             }
             catch
             {

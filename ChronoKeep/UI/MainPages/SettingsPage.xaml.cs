@@ -129,6 +129,14 @@ namespace Chronokeep.UI.MainPages
             {
                 AlarmSoundBox.SelectedIndex = alarm - 1;
             }
+            RegistrationServerNameBox.Text = database.GetAppSetting(Constants.Settings.SERVER_NAME).Value;
+            TwilioAccountSIDBox.Text = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID).Value;
+            TwilioAuthTokenBox.Text = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN).Value;
+            TwilioPhoneNumberBox.Text = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER).Value;
+            MailgunFromNameBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME).Value;
+            MailgunFromEmailBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL).Value;
+            MailgunAPIKeyBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY).Value;
+            MailgunAPIURLBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL).Value;
         }
 
         private async void ResetDB_Click(object sender, RoutedEventArgs e)
@@ -208,6 +216,14 @@ namespace Chronokeep.UI.MainPages
             database.SetAppSetting(Constants.Settings.ANNOUNCER_WINDOW, Convert.ToInt32(announcerSlider.Value).ToString());
             Globals.AnnouncerWindow = Convert.ToInt32(announcerSlider.Value);
             database.SetAppSetting(Constants.Settings.ALARM_SOUND, ((ComboBoxItem)AlarmSoundBox.SelectedItem).Uid);
+            database.SetAppSetting(Constants.Settings.SERVER_NAME, RegistrationServerNameBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID, TwilioAccountSIDBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN, TwilioAuthTokenBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER, TwilioPhoneNumberBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.MAILGUN_FROM_NAME, MailgunFromNameBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL, MailgunFromEmailBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.MAILGUN_API_KEY, MailgunAPIKeyBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.MAILGUN_API_URL, MailgunAPIURLBox.Text.Trim());
         }
 
         private void ChangeExport_Click(object sender, RoutedEventArgs e)
