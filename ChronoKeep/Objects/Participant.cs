@@ -656,5 +656,28 @@ namespace Chronokeep.Objects
         {
             get => Anonymous == true ? "Yes" : "";
         }
+
+        public void Update(
+            string FirstName,
+            string LastName,
+            string Gender,
+            string Birthdate,
+            Distance d,
+            string Bib,
+            bool SMSEnabled,
+            string Mobile)
+        {
+            firstName = FirstName;
+            lastName = LastName;
+            gender = Gender;
+            birthdate = Birthdate;
+            EventSpecific.DistanceIdentifier = d.Identifier;
+            EventSpecific.DistanceName = d.Name;
+            EventSpecific.Bib = Bib;
+            EventSpecific.SMSEnabled = SMSEnabled;
+            mobile = Mobile;
+            Trim();
+            FormatData();
+        }
     }
 }

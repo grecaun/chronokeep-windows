@@ -282,6 +282,7 @@ namespace Chronokeep
                 // Ensure we don't add more distances for backyard ultra events.
                 if (!BackYardUltra)
                 {
+                    bool newDistances = false;
                     foreach (ImportDistance id in fileDistances)
                     {
                         if (id.DistanceId == -1)
@@ -298,6 +299,7 @@ namespace Chronokeep
                                 div.Identifier = database.GetDistanceID(div);
                                 divHash.Add(div.Name, div);
                                 Log.D("ImportFileWindow", "Div name is " + div.Name);
+                                newDistances = true;
                             }
                         }
                         else
@@ -313,6 +315,10 @@ namespace Chronokeep
                             }
                         }
                     }
+                    if (newDistances)
+                    {
+                        window.UpdateRegistrationDistances();
+                    }
                 }
                 else
                 {
@@ -325,6 +331,7 @@ namespace Chronokeep
                         backyardDistance = new Distance("Backyard", theEvent.Identifier);
                         database.AddDistance(backyardDistance);
                         backyardDistance.Identifier = database.GetDistanceID(backyardDistance);
+                        window.UpdateRegistrationDistances();
                     }
                 }
                 int numEntries = data.Data.Count;

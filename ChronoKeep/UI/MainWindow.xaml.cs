@@ -278,7 +278,7 @@ namespace Chronokeep.UI
                 return;
             }
             if (database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).Value == Constants.Settings.SETTING_FALSE &&
-                (TimingController.IsRunning() || AnnouncerOpen()))
+                (BackgroundProcessesRunning()))
             {
                 bool AllowClose = false;
                 DialogBox.Show(
@@ -397,6 +397,10 @@ namespace Chronokeep.UI
                 output = false;
             }
             return output;
+        }
+        public void UpdateRegistrationDistances()
+        {
+            RegistrationWorker.UpdateDistances();
         }
 
         private bool StopTimingWorker()
@@ -858,6 +862,40 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Error getting DNSMutex.");
             }
             return output;
+        }
+
+        public bool BackgroundProcessesRunning()
+        {
+            return TimingController.IsRunning() || AnnouncerOpen() || IsRegistrationRunning() || IsAPIControllerRunning() || IsRemoteRunning();
+        }
+
+        public void StopBackgroundProcesses()
+        {
+            try
+            {
+                StopTimingController();
+            }
+            catch { }
+            try
+            {
+                StopAnnouncer();
+            }
+            catch { }
+            try
+            {
+                StopRegistration();
+            }
+            catch { }
+            try
+            {
+                StopAPIController();
+            }
+            catch { }
+            try
+            {
+                StopRemote();
+            }
+            catch { }
         }
 
         public bool StartDidNotStartMode()

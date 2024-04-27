@@ -181,7 +181,7 @@ namespace Chronokeep.UI.MainPages
         private bool CancelEventChangeAsync(EventClickType clickType)
         {
             Log.D("UI.DashboardPage", "Checking if we need to cancel the change.");
-            if (TimingController.IsRunning() || mWindow.AnnouncerOpen() || mWindow.IsAPIControllerRunning())
+            if (mWindow.BackgroundProcessesRunning())
             {
 
                 DialogBox.Show(
@@ -190,9 +190,7 @@ namespace Chronokeep.UI.MainPages
                     "No",
                     () =>
                     {
-                        mWindow.ShutdownTimingController();
-                        mWindow.StopAPIController();
-                        mWindow.StopAnnouncer();
+                        mWindow.StopBackgroundProcesses();
                         switch (clickType)
                         {
                             case EventClickType.NewEvent:

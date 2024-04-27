@@ -186,6 +186,7 @@ namespace Chronokeep.UI.MainPages
             {
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 mWindow.NotifyTimingWorker();
+                mWindow.UpdateRegistrationDistances();
             }
         }
 

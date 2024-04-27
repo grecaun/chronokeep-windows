@@ -17,7 +17,5 @@ namespace Chronokeep.Objects.Registration
     {
         [JsonPropertyName("participant")]
         public Participant Participant { get; set; }
-        [JsonPropertyName("old_bib")]
-        public string OldBib { get; set; }
     }
 }

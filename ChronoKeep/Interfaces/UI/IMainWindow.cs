@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
+using Chronokeep.Timing;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -24,6 +25,9 @@ namespace Chronokeep.Interfaces
         void UpdateTimingFromController();
         void UpdateTiming();
         void UpdateAnnouncerWindow();
+        void UpdateRegistrationDistances();
+        bool BackgroundProcessesRunning();
+        void StopBackgroundProcesses();
 
         // Timing System related calls.
         void ConnectTimingSystem(TimingSystem system);

@@ -25,6 +25,9 @@ namespace Chronokeep.Network.Registration
         private Dictionary<Socket, StringBuilder> bufferDictionary = new Dictionary<Socket, StringBuilder>();
         private IDBInterface database;
 
+        private bool updateDistanceDictionary = true;
+        private Dictionary<string, Distance> distanceDictionary = new Dictionary<string, Distance>();
+
         private static readonly Regex msgRegex = new Regex(@"^[^\n]*\n");
 
         private RegistrationWorker(IDBInterface database)
@@ -67,6 +70,15 @@ namespace Chronokeep.Network.Registration
             catch { }
         }
 
+        public void UpdateDistances()
+        {
+            if (threadMutex.WaitOne(3000))
+            {
+                updateDistanceDictionary = true;
+                threadMutex.ReleaseMutex();
+            }
+        }
+
         public void Run()
         {
             Log.D("Network.Registration.RegistrationWorker", "Starting Registration thread.");
@@ -103,6 +115,21 @@ namespace Chronokeep.Network.Registration
                 {
                     if (sock == server && sock.Connected)
                     {
+                        bool update = false;
+                        if (threadMutex.WaitOne(3000))
+                        {
+                            update = updateDistanceDictionary;
+                            updateDistanceDictionary = false;
+                            threadMutex.ReleaseMutex();
+                        }
+                        if (update)
+                        {
+                            foreach (Distance d in database.GetDistances(theEvent.Identifier))
+                            {
+                                distanceDictionary[d.Name] = d;
+                            }
+                            SendParticipants(theEvent);
+                        }
                         Log.D("Network.Registration.RegistrationWorker", "New incoming connection to registration.");
                         Socket newSock = sock.Accept();
                         clients.Add(newSock);
@@ -149,8 +176,8 @@ namespace Chronokeep.Network.Registration
                                                 Log.D("Network.Registration.RegistrationWorker","Received get participant message.");
                                                 SendMessage(sock, JsonSerializer.Serialize(new ParticipantsResponse
                                                 {
-                                                    Participants = GetParticipants(database, theEvent),
-                                                    Distances = GetDistances(database, theEvent),
+                                                    Participants = GetParticipants(theEvent),
+                                                    Distances = GetDistances(theEvent),
                                                 }));
                                                 break;
                                             case Request.ADD_PARTICIPANT:
@@ -158,11 +185,58 @@ namespace Chronokeep.Network.Registration
                                                 try
                                                 {
                                                     ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message);
-                                                    // deal with request
+                                                    if (distanceDictionary.ContainsKey(addReq.Participant.Distance))
+                                                    {
+                                                        Objects.Participant newPart = new Objects.Participant(
+                                                            addReq.Participant.FirstName,
+                                                            addReq.Participant.LastName,
+                                                            "", // street
+                                                            "", // city
+                                                            "", // state
+                                                            "", // zip
+                                                            addReq.Participant.Birthdate,
+                                                            new EventSpecific(
+                                                                theEvent.Identifier,
+                                                                distanceDictionary[addReq.Participant.Distance].Identifier,
+                                                                addReq.Participant.Distance,
+                                                                addReq.Participant.Bib,
+                                                                0,  // checked-in
+                                                                "", // comments
+                                                                "", // owes
+                                                                "", // other
+                                                                false,
+                                                                addReq.Participant.TextEnabled
+                                                                ),
+                                                            "", // email
+                                                            "", // phone
+                                                            addReq.Participant.Mobile,
+                                                            "", // parent
+                                                            "", // country
+                                                            "", // street2
+                                                            addReq.Participant.Gender,
+                                                            "", // emergency name
+                                                            ""  // emergency phone
+                                                            );
+                                                        newPart.Trim();
+                                                        newPart.FormatData();
+                                                        database.AddParticipant(newPart);
+                                                        SendParticipants(theEvent);
+                                                    }
+                                                    else
+                                                    {
+                                                        SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
+                                                        {
+                                                            Error = "Distance Not Found"
+                                                        }));
+                                                    }
                                                 }
                                                 catch (Exception e)
                                                 {
                                                     Log.E("Network.Registration.RegistrationWorker", string.Format("Error deserializing json for add participant. {0}", e.Message));
+                                                    SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
+                                                    {
+                                                        Error = "Participant Not Found"
+                                                    }));
                                                 }
                                                 break;
                                             case Request.UPDATE_PARTICIPANT:
@@ -170,11 +244,44 @@ namespace Chronokeep.Network.Registration
                                                 try
                                                 {
                                                     ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message);
-                                                    // deal with request
+                                                    Objects.Participant updatedPart = database.GetParticipantEventSpecific(theEvent.Identifier, addReq.Participant.Id);
+                                                    if (updatedPart == null)
+                                                    {
+                                                        SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
+                                                        {
+                                                            Error = "Participant Not Found"
+                                                        }));
+                                                    }
+                                                    else if (!distanceDictionary.ContainsKey(addReq.Participant.Distance))
+                                                    {
+                                                        SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
+                                                        {
+                                                            Error = "Distance Not Found"
+                                                        }));
+                                                    }
+                                                    else
+                                                    {
+                                                        updatedPart.Update(
+                                                            addReq.Participant.FirstName,
+                                                            addReq.Participant.LastName,
+                                                            addReq.Participant.Gender,
+                                                            addReq.Participant.Birthdate,
+                                                            distanceDictionary[addReq.Participant.Distance],
+                                                            addReq.Participant.Bib,
+                                                            addReq.Participant.TextEnabled,
+                                                            addReq.Participant.Mobile
+                                                            );
+                                                        database.UpdateParticipant(updatedPart);
+                                                        SendParticipants(theEvent);
+                                                    }
                                                 }
                                                 catch (Exception e)
                                                 {
                                                     Log.E("Network.Registration.RegistrationWorker", string.Format("Error deserializing json for add participant. {0}", e.Message));
+                                                    SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
+                                                    {
+                                                        Error = "Participant Not Found"
+                                                    }));
                                                 }
                                                 break;
                                             case Request.DISCONNECT:
@@ -185,6 +292,10 @@ namespace Chronokeep.Network.Registration
                                                 break;
                                             default:
                                                 Log.D("Network.Registration.RegistrationWorker", "Unknown message received.");
+                                                SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
+                                                {
+                                                    Error = "Unknown Message"
+                                                }));
                                                 break;
                                         }
                                     }
@@ -219,7 +330,22 @@ namespace Chronokeep.Network.Registration
             Log.D("Network.Registration.RegistrationWorker", "Thread exiting.");
         }
 
-        public List<Participant> GetParticipants(IDBInterface database, Event theEvent)
+        public void SendParticipants(Event theEvent)
+        {
+            foreach (Socket sock in clients)
+            {
+                if (sock != server)
+                {
+                    SendMessage(sock, JsonSerializer.Serialize(new ParticipantsResponse
+                    {
+                        Participants = GetParticipants(theEvent),
+                        Distances = GetDistances(theEvent),
+                    }));
+                }
+            }
+        }
+
+        public List<Participant> GetParticipants(Event theEvent)
         {
             List<Participant> output = new List<Participant>();
             List<Objects.Participant> participants = database.GetParticipants(theEvent.Identifier);
@@ -234,21 +360,15 @@ namespace Chronokeep.Network.Registration
                     Birthdate = participant.Birthdate,
                     Distance = participant.Distance,
                     Mobile = participant.Mobile,
-                    TextEnabled = false // TODO FIX
+                    TextEnabled = participant.EventSpecific.SMSEnabled
                 });
             }
             return output;
         }
 
-        public List<string> GetDistances(IDBInterface database, Event theEvent)
+        public List<string> GetDistances(Event theEvent)
         {
-            List<string> output = new List<string>();
-            List<Distance> distances = database.GetDistances(theEvent.Identifier);
-            foreach (Distance distance in distances)
-            {
-                output.Add(distance.Name);
-            }
-            return output;
+            return new List<string>(distanceDictionary.Keys);
         }
 
         public void SendMessage(Socket sock, string msg)
