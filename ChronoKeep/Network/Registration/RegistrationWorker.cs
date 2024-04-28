@@ -226,7 +226,7 @@ namespace Chronokeep.Network.Registration
                                                     {
                                                         SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
                                                         {
-                                                            Error = "Distance Not Found"
+                                                            Error = RegistrationError.DISTANCE_NOT_FOUND
                                                         }));
                                                     }
                                                 }
@@ -235,7 +235,7 @@ namespace Chronokeep.Network.Registration
                                                     Log.E("Network.Registration.RegistrationWorker", string.Format("Error deserializing json for add participant. {0}", e.Message));
                                                     SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
                                                     {
-                                                        Error = "Participant Not Found"
+                                                        Error = RegistrationError.PARTICIPANT_NOT_FOUND
                                                     }));
                                                 }
                                                 break;
@@ -249,14 +249,14 @@ namespace Chronokeep.Network.Registration
                                                     {
                                                         SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
                                                         {
-                                                            Error = "Participant Not Found"
+                                                            Error = RegistrationError.PARTICIPANT_NOT_FOUND
                                                         }));
                                                     }
                                                     else if (!distanceDictionary.ContainsKey(addReq.Participant.Distance))
                                                     {
                                                         SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
                                                         {
-                                                            Error = "Distance Not Found"
+                                                            Error = RegistrationError.DISTANCE_NOT_FOUND
                                                         }));
                                                     }
                                                     else
@@ -280,7 +280,7 @@ namespace Chronokeep.Network.Registration
                                                     Log.E("Network.Registration.RegistrationWorker", string.Format("Error deserializing json for add participant. {0}", e.Message));
                                                     SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
                                                     {
-                                                        Error = "Participant Not Found"
+                                                        Error = RegistrationError.PARTICIPANT_NOT_FOUND
                                                     }));
                                                 }
                                                 break;
@@ -294,7 +294,7 @@ namespace Chronokeep.Network.Registration
                                                 Log.D("Network.Registration.RegistrationWorker", "Unknown message received.");
                                                 SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
                                                 {
-                                                    Error = "Unknown Message"
+                                                    Error = RegistrationError.UNKNOWN_MESSAGE
                                                 }));
                                                 break;
                                         }
