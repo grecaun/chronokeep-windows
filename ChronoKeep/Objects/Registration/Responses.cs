@@ -16,6 +16,11 @@ namespace Chronokeep.Objects.Registration
 
     public class ConnectionSuccessfulResponse : Response
     {
+        public ConnectionSuccessfulResponse()
+        {
+            Command = CONNECTION_SUCCESSFUL;
+        }
+
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("kind")]
@@ -26,6 +31,11 @@ namespace Chronokeep.Objects.Registration
 
     public class ParticipantsResponse : Response
     {
+        public ParticipantsResponse()
+        {
+            Command = PARTICIPANTS;
+        }
+
         [JsonPropertyName("participants")]
         public List<Participant> Participants { get; set; }
         [JsonPropertyName("distances")]
@@ -34,7 +44,20 @@ namespace Chronokeep.Objects.Registration
 
     public class ErrorResponse : Response
     {
+        public ErrorResponse()
+        {
+            Command = ERROR;
+        }
+
         [JsonPropertyName("error")]
         public string Error { get; set; }
+    }
+
+    public class DisconnectResponse : Response
+    {
+        public DisconnectResponse()
+        {
+            Command = DISCONNECT;
+        }
     }
 }
