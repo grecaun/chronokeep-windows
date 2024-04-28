@@ -14,6 +14,6 @@ namespace Chronokeep.Constants
         public const int    CHRONOKEEP_ZCONF_PORT          = 4488;
 
         public const string CHRONOKEEP_REGISTRATION_TYPE = "CHRONOKEEP_WINDOWS";
-        public const ulong  CHRONOKEEP_REGISTRATION_VERS = 1;
+        public const int    CHRONOKEEP_REGISTRATION_VERS = 1;
     }
 }

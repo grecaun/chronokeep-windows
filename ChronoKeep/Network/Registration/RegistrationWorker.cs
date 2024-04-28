@@ -134,14 +134,6 @@ namespace Chronokeep.Network.Registration
                         Socket newSock = sock.Accept();
                         clients.Add(newSock);
                         bufferDictionary[sock] = new StringBuilder();
-                        AppSetting nameSetting = database.GetAppSetting(Constants.Settings.SERVER_NAME);
-                        string nameString = nameSetting != null && nameSetting.Value != null ? nameSetting.Value : Constants.Network.DEFAULT_CHRONOKEEP_SERVER_NAME;
-                        SendMessage(newSock, JsonSerializer.Serialize(new ConnectionSuccessfulResponse
-                        {
-                            Name = nameString,
-                            Type = Constants.Network.CHRONOKEEP_REGISTRATION_TYPE,
-                            Version = Constants.Network.CHRONOKEEP_REGISTRATION_VERS
-                        }));
                     }
                     else
                     {
@@ -172,6 +164,17 @@ namespace Chronokeep.Network.Registration
                                         Request res = JsonSerializer.Deserialize<Request>(message);
                                         switch (res.Command)
                                         {
+                                            case Request.CONNECT:
+                                                Log.D("Network.Registration.RegistrationWorker", "Received connect message.");
+                                                AppSetting nameSetting = database.GetAppSetting(Constants.Settings.SERVER_NAME);
+                                                string nameString = nameSetting != null && nameSetting.Value != null ? nameSetting.Value : Constants.Network.DEFAULT_CHRONOKEEP_SERVER_NAME;
+                                                SendMessage(sock, JsonSerializer.Serialize(new ConnectionSuccessfulResponse
+                                                {
+                                                    Name = nameString,
+                                                    Type = Constants.Network.CHRONOKEEP_REGISTRATION_TYPE,
+                                                    Version = Constants.Network.CHRONOKEEP_REGISTRATION_VERS
+                                                }));
+                                                break;
                                             case Request.GET_PARTICIPANTS:
                                                 Log.D("Network.Registration.RegistrationWorker","Received get participant message.");
                                                 SendMessage(sock, JsonSerializer.Serialize(new ParticipantsResponse

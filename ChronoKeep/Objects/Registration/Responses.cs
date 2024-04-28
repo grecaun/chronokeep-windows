@@ -26,7 +26,7 @@ namespace Chronokeep.Objects.Registration
         [JsonPropertyName("kind")]
         public string Type { get; set; }
         [JsonPropertyName("version")]
-        public ulong Version { get; set; }
+        public int Version { get; set; }
     }
 
     public class ParticipantsResponse : Response

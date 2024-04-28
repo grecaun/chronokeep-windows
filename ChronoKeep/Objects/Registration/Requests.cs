@@ -8,6 +8,7 @@ namespace Chronokeep.Objects.Registration
         public const string UPDATE_PARTICIPANT  = "participant_update";
         public const string ADD_PARTICIPANT     = "participant_add";
         public const string DISCONNECT          = "disconnect";
+        public const string CONNECT             = "connect";
 
         [JsonPropertyName("command")]
         public string Command { get; set; }
