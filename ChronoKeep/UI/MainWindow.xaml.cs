@@ -394,7 +394,7 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Starting registration.");
-                RegistrationWorker = RegistrationWorker.NewWorker(database);
+                RegistrationWorker = new RegistrationWorker(database);
                 RegistrationThread = new Thread(new ThreadStart(RegistrationWorker.Run));
                 RegistrationThread.Start();
             }

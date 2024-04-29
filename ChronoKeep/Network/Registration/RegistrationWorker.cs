@@ -10,10 +10,8 @@ using System.Threading;
 
 namespace Chronokeep.Network.Registration
 {
-    internal class RegistrationWorker
+    public class RegistrationWorker
     {
-        private static RegistrationWorker instance;
-
         private bool running = false;
         private bool keepalive = false;
 
@@ -30,18 +28,9 @@ namespace Chronokeep.Network.Registration
 
         private static readonly Regex msgRegex = new Regex(@"^[^\n]*\n");
 
-        private RegistrationWorker(IDBInterface database)
+        public RegistrationWorker(IDBInterface database)
         {
             this.database = database;
-        }
-
-        public static RegistrationWorker NewWorker(IDBInterface database)
-        {
-            if (instance == null)
-            {
-                instance = new RegistrationWorker(database);
-            }
-            return instance;
         }
 
         public bool IsRunning()
@@ -102,34 +91,39 @@ namespace Chronokeep.Network.Registration
             server.Bind(new IPEndPoint(IPAddress.Any, NetCore.TCPPort()));
             server.Listen(10);
             clients.Add(server);
+            int counter = 0;
             while (true)
             {
+                Log.D("Network.Registration.RegistrationWorker", string.Format("Registration loop number {0}.", ++counter));
                 readList.Clear();
                 readList.AddRange(clients);
                 try
                 {
                     Socket.Select(readList, null, null, 60000000);
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    Log.D("Network.Registration.RegistrationWorker", string.Format("Exception raised while using select. {0}", e.Message));
+                }
+                bool update = false;
+                if (threadMutex.WaitOne(3000))
+                {
+                    update = updateDistanceDictionary;
+                    updateDistanceDictionary = false;
+                    threadMutex.ReleaseMutex();
+                }
+                if (update)
+                {
+                    foreach (Distance d in database.GetDistances(theEvent.Identifier))
+                    {
+                        distanceDictionary[d.Name] = d;
+                    }
+                    SendParticipants(theEvent);
+                }
                 foreach (Socket sock in readList)
                 {
                     if (sock == server && sock.Connected)
                     {
-                        bool update = false;
-                        if (threadMutex.WaitOne(3000))
-                        {
-                            update = updateDistanceDictionary;
-                            updateDistanceDictionary = false;
-                            threadMutex.ReleaseMutex();
-                        }
-                        if (update)
-                        {
-                            foreach (Distance d in database.GetDistances(theEvent.Identifier))
-                            {
-                                distanceDictionary[d.Name] = d;
-                            }
-                            SendParticipants(theEvent);
-                        }
                         Log.D("Network.Registration.RegistrationWorker", "New incoming connection to registration.");
                         Socket newSock = sock.Accept();
                         clients.Add(newSock);
@@ -335,9 +329,10 @@ namespace Chronokeep.Network.Registration
 
         public void SendParticipants(Event theEvent)
         {
+            Log.D("Network.Registration.RegistrationWorker", "Attempting to send participants message. There are " + clients.Count + " clients connected.") ;
             foreach (Socket sock in clients)
             {
-                if (sock != server)
+                if (sock != null && sock != server && sock.Connected)
                 {
                     SendMessage(sock, JsonSerializer.Serialize(new ParticipantsResponse
                     {
