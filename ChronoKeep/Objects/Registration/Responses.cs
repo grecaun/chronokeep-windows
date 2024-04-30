@@ -5,10 +5,10 @@ namespace Chronokeep.Objects.Registration
 {
     public class Response
     {
-        public const string ERROR = "error";
+        public const string ERROR = "registration_error";
         public const string DISCONNECT = "disconnect";
-        public const string PARTICIPANTS = "participants";
-        public const string CONNECTION_SUCCESSFUL = "connection_successful";
+        public const string PARTICIPANTS = "registration_participants";
+        public const string CONNECTION_SUCCESSFUL = "registration_connection_successful";
 
         [JsonPropertyName("command")]
         public string Command { get; set; }

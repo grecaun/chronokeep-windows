@@ -52,11 +52,6 @@ namespace Chronokeep.Network.Registration
                 keepalive = false;
                 threadMutex.ReleaseMutex();
             }
-            try
-            {
-                server.Close();
-            }
-            catch { }
         }
 
         public void UpdateDistances()
@@ -92,14 +87,15 @@ namespace Chronokeep.Network.Registration
             server.Listen(10);
             clients.Add(server);
             int counter = 0;
-            while (true)
+            while (running)
             {
                 Log.D("Network.Registration.RegistrationWorker", string.Format("Registration loop number {0}.", ++counter));
                 readList.Clear();
                 readList.AddRange(clients);
                 try
                 {
-                    Socket.Select(readList, null, null, 60000000);
+                    // 5 seconds
+                    Socket.Select(readList, null, null, 5_000_000);
                 }
                 catch (Exception e)
                 {
@@ -122,12 +118,12 @@ namespace Chronokeep.Network.Registration
                 }
                 foreach (Socket sock in readList)
                 {
-                    if (sock == server && sock.Connected)
+                    if (sock == server)
                     {
                         Log.D("Network.Registration.RegistrationWorker", "New incoming connection to registration.");
                         Socket newSock = sock.Accept();
                         clients.Add(newSock);
-                        bufferDictionary[sock] = new StringBuilder();
+                        bufferDictionary[newSock] = new StringBuilder();
                     }
                     else
                     {
@@ -241,7 +237,7 @@ namespace Chronokeep.Network.Registration
                                                 try
                                                 {
                                                     ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message);
-                                                    Objects.Participant updatedPart = database.GetParticipantEventSpecific(theEvent.Identifier, addReq.Participant.Id);
+                                                    Objects.Participant updatedPart = database.GetParticipant(theEvent.Identifier, addReq.Participant.Id);
                                                     if (updatedPart == null)
                                                     {
                                                         SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
@@ -302,6 +298,7 @@ namespace Chronokeep.Network.Registration
                                     }
                                     m = msgRegex.Match(buffer.ToString());
                                 }
+                                bufferDictionary[sock] = buffer;
                             }
                         }
                         catch (Exception e)
@@ -323,6 +320,18 @@ namespace Chronokeep.Network.Registration
                     }
                     threadMutex.ReleaseMutex();
                 }
+            }
+            foreach (Socket sock in clients)
+            {
+                try
+                {
+                    if (sock != server)
+                    {
+                        SendMessage(sock, JsonSerializer.Serialize(new DisconnectResponse()));
+                    }
+                    sock.Close();
+                }
+                catch { }
             }
             Log.D("Network.Registration.RegistrationWorker", "Thread exiting.");
         }
@@ -351,6 +360,7 @@ namespace Chronokeep.Network.Registration
             {
                 output.Add(new Participant
                 {
+                    Id = participant.Identifier,
                     Bib = participant.Bib,
                     FirstName = participant.FirstName,
                     LastName = participant.LastName,

@@ -333,7 +333,7 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "SELECT * FROM participants AS p " +
                 "JOIN eventspecific AS s ON p.participant_id=s.participant_id " +
                 "JOIN distances AS d ON s.distance_id=d.distance_id " +
-                "JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib " +
+                "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib " +
                 "WHERE s.event_id=@eventid " +
                 "AND s.eventspecific_id=@eventSpecId";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventIdentifier));
@@ -350,7 +350,7 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "SELECT * FROM participants AS p " +
                 "JOIN eventspecific AS s ON p.participant_id=s.participant_id " +
                 "JOIN distances AS d ON s.distance_id=d.distance_id " +
-                "JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib " +
+                "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib " +
                 "WHERE s.event_id=@eventid " +
                 "AND s.eventspecific_bib=@bib";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventIdentifier));
@@ -367,7 +367,7 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "SELECT * FROM participants AS p " +
                 "JOIN eventspecific AS s ON p.participant_id=s.participant_id " +
                 "JOIN distances AS d ON s.distance_id=d.distance_id " +
-                "JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib " +
+                "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib " +
                 "WHERE s.event_id=@eventid AND p.participant_id=@partId";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             command.Parameters.Add(new SQLiteParameter("@partId", identifier));
@@ -397,7 +397,7 @@ namespace Chronokeep.Database.SQLite
                 command.CommandText = "SELECT * FROM participants AS p " +
                     "JOIN eventspecific AS s ON p.participant_id=s.participant_id " +
                     "JOIN distances AS d ON s.distance_id=d.distance_id " +
-                    "JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib " +
+                    "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib " +
                     "WHERE s.event_id=@eventid " +
                     "AND p.participant_first=@first AND p.participant_last=@last AND p.participant_street=@street " +
                     "AND p.participant_city=@city AND p.participant_state=@state AND p.participant_zip=@zip " +
