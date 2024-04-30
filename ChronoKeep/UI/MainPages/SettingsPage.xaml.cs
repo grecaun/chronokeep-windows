@@ -217,9 +217,12 @@ namespace Chronokeep.UI.MainPages
             Globals.AnnouncerWindow = Convert.ToInt32(announcerSlider.Value);
             database.SetAppSetting(Constants.Settings.ALARM_SOUND, ((ComboBoxItem)AlarmSoundBox.SelectedItem).Uid);
             database.SetAppSetting(Constants.Settings.SERVER_NAME, RegistrationServerNameBox.Text.Trim());
-            database.SetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID, TwilioAccountSIDBox.Text.Trim());
-            database.SetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN, TwilioAuthTokenBox.Text.Trim());
-            database.SetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER, TwilioPhoneNumberBox.Text.Trim());
+
+            Constants.Globals.SetTwilioCredentials(TwilioAccountSIDBox.Text.Trim(), TwilioAuthTokenBox.Text.Trim(), TwilioPhoneNumberBox.Text.Trim());
+            database.SetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID, Constants.Globals.TwilioCredentials.AccountSID);
+            database.SetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN, Constants.Globals.TwilioCredentials.AuthToken);
+            database.SetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER, Constants.Globals.TwilioCredentials.PhoneNumber);
+
             database.SetAppSetting(Constants.Settings.MAILGUN_FROM_NAME, MailgunFromNameBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL, MailgunFromEmailBox.Text.Trim());
             database.SetAppSetting(Constants.Settings.MAILGUN_API_KEY, MailgunAPIKeyBox.Text.Trim());

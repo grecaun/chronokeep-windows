@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace Chronokeep.Objects
 {
@@ -551,6 +552,27 @@ namespace Chronokeep.Objects
 
         public bool SendSMSAlert(Event theEvent, TimingDictionary dictionary)
         {
+            Participant part = dictionary.participantBibDictionary.ContainsKey(bib) ? dictionary.participantBibDictionary[bib] : null;
+            if (part == null || part.EventSpecific.SMSEnabled == false)
+            {
+                return false;
+            }
+            string validPhone = Constants.Globals.GetValidPhone(part.Mobile);
+            if (validPhone.Length == 0)
+            {
+                validPhone = Constants.Globals.GetValidPhone(part.Phone);
+            }
+            // Invalid length. +15555551234 is a valid phone
+            if (validPhone.Length != 12 || Constants.Globals.TwilioCredentials.PhoneNumber.Length != 12)
+            {
+                return false;
+            }
+            // Verify phone number isn't in our list of banned phone numbers (i.e. they've told us to not send texts)
+            // return true if it is in the banned list, otherwise try to send it, and return true if we were able to send it
+            if (Constants.Globals.BannedPhones.Contains(validPhone))
+            {
+                return false;
+            }
             //"{FIRST} {LAST} has finished the {YEAR} {RACE} {DISTANCE?} in {CHIP TIME}. {RESULTS LINK}"
             string SMS = "";
             if (dictionary.mainDistances.Count > 1)
@@ -562,8 +584,16 @@ namespace Chronokeep.Objects
                 SMS = string.Format("{0} {1} has finished the {2} {3} in {4}. {5}", First, Last, theEvent.Year, theEvent.Name, DistanceName, ChipTime, theEvent.API_Event_ID);
             }
             Log.D("Objects.TimeResult", string.Format("SMS Message to be sent: {0} - API URL", SMS, dictionary.apiURLs.ContainsKey(theEvent.API_ID) ? dictionary.apiURLs[theEvent.API_ID] : "Unknown"));
-            // Verify phone number isn't in our list of banned phone numbers (i.e. they've told us to not send texts)
-            // return true if it is in the banned list, otherwise try to send it, and return true if we were able to send it
+            var messageOptions = new CreateMessageOptions(
+                new Twilio.Types.PhoneNumber(Constants.Globals.TwilioCredentials.PhoneNumber)
+                );
+            messageOptions.From = new Twilio.Types.PhoneNumber(validPhone);
+            messageOptions.Body = SMS;
+            var message = MessageResource.Create(messageOptions);
+            if (message.ErrorMessage != null)
+            {
+                return false;
+            }
             return true;
         }
     }

@@ -423,7 +423,7 @@
                                     Content="Modify SMS"
                                     Height="35"
                                     HorizontalAlignment="Stretch"
-                                    Margin="0,5,5,0" 
+                                    Margin="5,5,0,0" 
                                     Click="modifySMSButton_Click"
                                     />
                                 <Button 

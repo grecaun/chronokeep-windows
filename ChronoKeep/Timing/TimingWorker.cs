@@ -381,15 +381,11 @@ namespace Chronokeep.Timing
                                 && false == AlertsSent.Contains((theEvent.Identifier, result.Bib)))
                             {
                                 // Only send alert if participant wants it sent
-                                if (dictionary.participantBibDictionary.ContainsKey(result.Bib) && true == dictionary.participantBibDictionary[result.Bib].EventSpecific.SMSEnabled)
-                                {
-                                    if (result.SendSMSAlert(theEvent, dictionary))
-                                    {
-                                        AlertsSent.Add((theEvent.Identifier, result.Bib));
-                                        database.AddSMSAlert(theEvent.Identifier, result.Bib);
-                                    }
-                                }
-                                else
+                                // Do not add to the AlertsSent database because they
+                                // may change their mind later and
+                                // we still want to be able to send a SMS to them
+                                // Only add to the database/dictionary if successful.
+                                if (result.SendSMSAlert(theEvent, dictionary))
                                 {
                                     AlertsSent.Add((theEvent.Identifier, result.Bib));
                                     database.AddSMSAlert(theEvent.Identifier, result.Bib);

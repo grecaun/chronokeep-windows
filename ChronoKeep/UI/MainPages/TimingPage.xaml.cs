@@ -10,6 +10,7 @@ using Chronokeep.UI.Export;
 using Chronokeep.UI.IO;
 using Chronokeep.UI.Timing;
 using Chronokeep.UI.Timing.Import;
+using Chronokeep.UI.Timing.Notifications;
 using Chronokeep.UI.UIObjects;
 using Microsoft.Win32;
 using System;
@@ -1376,6 +1377,8 @@ namespace Chronokeep.UI.MainPages
         private void modifySMSButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Modify SMS button clicked.");
+            SMSWaveEnabledWindow smsWindow = new SMSWaveEnabledWindow(mWindow, database);
+            smsWindow.Show();
         }
 
         private void sendEmailsButton_Click(object sender, RoutedEventArgs e)

@@ -155,6 +155,9 @@ namespace Chronokeep.UI
             {
                 Alarm.AddAlarms(database.GetAlarms(theEvent.Identifier));
             }
+
+            // Setup global twilio account credentials.
+            Constants.Globals.SetTwilioCredentials(database);
         }
 
 
