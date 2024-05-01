@@ -16,7 +16,7 @@ namespace Chronokeep.Constants
         // keep track of banned emails
         public static List<string> BannedEmails = new List<string>();
 
-        private static Regex phoneRegex = new Regex("^(?:\\+?1)?\\s*(?:\\d{3}|\\(\\d{3}\\))\\s*\\d{3}(?:\\-?|\\s*)\\d{4}$");
+        private static Regex phoneRegex = new Regex("^(?:\\+?1)?\\s*(?:\\d{3}|\\(\\d{3}\\))\\s*\\-?\\s*\\d{3}\\s*\\-?\\s*\\d{4}$");
         private static Regex whitespace = new Regex("\\s+");
 
         public static string GetValidPhone(string phone)

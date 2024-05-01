@@ -266,6 +266,7 @@ namespace Chronokeep.Objects
             get => raceType == Constants.Timing.EVENT_TYPE_TIME ? splitTime : chipTime;
         }
         public string ChipTime { get => chipTime; set => chipTime = value; }
+        public string ChipTimeNoMilliseconds { get => chipTime.Split('.').Length > 0 ? chipTime.Split('.')[0] : chipTime; }
         public string Gender { get => gender; set => gender = value; }
         public string AgeGroupName { get => PrettyAgeGroupName(); set => ageGroupName = value; }
         public int Status { get => status; set => status = value; }
@@ -563,34 +564,48 @@ namespace Chronokeep.Objects
                 validPhone = Constants.Globals.GetValidPhone(part.Phone);
             }
             // Invalid length. +15555551234 is a valid phone
+            Log.D("Objects.TimeResult", string.Format("Checking phone number length. '{0}' '{1}'", validPhone, Constants.Globals.TwilioCredentials.PhoneNumber));
             if (validPhone.Length != 12 || Constants.Globals.TwilioCredentials.PhoneNumber.Length != 12)
             {
                 return false;
             }
             // Verify phone number isn't in our list of banned phone numbers (i.e. they've told us to not send texts)
             // return true if it is in the banned list, otherwise try to send it, and return true if we were able to send it
+            Log.D("Objects.TimeResult", "Checking banned phones.");
             if (Constants.Globals.BannedPhones.Contains(validPhone))
             {
                 return false;
             }
             //"{FIRST} {LAST} has finished the {YEAR} {RACE} {DISTANCE?} in {CHIP TIME}. {RESULTS LINK}"
             string SMS = "";
+            string resultsURL = "";
+            if (dictionary.apiURLs.ContainsKey(theEvent.API_ID) &&
+                Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] == dictionary.apiURLs[theEvent.API_ID])
+            {
+                resultsURL = " More @ chronokeep.com.";
+            }
             if (dictionary.mainDistances.Count > 1)
             {
-                SMS = string.Format("{0} {1} has finished the {2} {3} {4} in {5}. {6}", First, Last, theEvent.Year, theEvent.Name, DistanceName, ChipTime, theEvent.API_Event_ID);
+                SMS = string.Format("{0} {1} has finished the {2} {3} {4} in {5}.{6} Reply STOP to opt-out.", First, Last, theEvent.Year, theEvent.Name, DistanceName, ChipTimeNoMilliseconds, resultsURL);
             }
             else
             {
-                SMS = string.Format("{0} {1} has finished the {2} {3} in {4}. {5}", First, Last, theEvent.Year, theEvent.Name, DistanceName, ChipTime, theEvent.API_Event_ID);
+                SMS = string.Format("{0} {1} has finished the {2} {3} in {4}.{5} Reply STOP to opt-out.", First, Last, theEvent.Year, theEvent.Name, ChipTimeNoMilliseconds, resultsURL);
             }
-            Log.D("Objects.TimeResult", string.Format("SMS Message to be sent: {0} - API URL", SMS, dictionary.apiURLs.ContainsKey(theEvent.API_ID) ? dictionary.apiURLs[theEvent.API_ID] : "Unknown"));
-            var messageOptions = new CreateMessageOptions(
-                new Twilio.Types.PhoneNumber(Constants.Globals.TwilioCredentials.PhoneNumber)
-                );
-            messageOptions.From = new Twilio.Types.PhoneNumber(validPhone);
-            messageOptions.Body = SMS;
-            var message = MessageResource.Create(messageOptions);
-            if (message.ErrorMessage != null)
+            try
+            {
+                var messageOptions = new CreateMessageOptions(
+                    new Twilio.Types.PhoneNumber(validPhone)
+                    );
+                messageOptions.From = new Twilio.Types.PhoneNumber(Constants.Globals.TwilioCredentials.PhoneNumber);
+                messageOptions.Body = SMS;
+                var message = MessageResource.Create(messageOptions);
+                if (message.ErrorMessage != null)
+                {
+                    return false;
+                }
+            }
+            catch
             {
                 return false;
             }

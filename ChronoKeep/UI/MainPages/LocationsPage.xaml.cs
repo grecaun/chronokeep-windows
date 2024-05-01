@@ -94,21 +94,32 @@ namespace Chronokeep.UI.MainPages
                 locItem.UpdateLocation();
                 if (locItem.myLocation.Identifier == Constants.Timing.LOCATION_FINISH)
                 {
-                    theEvent.FinishMaxOccurrences = locItem.myLocation.MaxOccurrences;
-                    theEvent.FinishIgnoreWithin = locItem.myLocation.IgnoreWithin;
-                    database.SetFinishOptions(theEvent);
+                    if (theEvent.FinishMaxOccurrences != locItem.myLocation.MaxOccurrences
+                        || theEvent.FinishIgnoreWithin != locItem.myLocation.IgnoreWithin)
+                    {
+                        theEvent.FinishMaxOccurrences = locItem.myLocation.MaxOccurrences;
+                        theEvent.FinishIgnoreWithin = locItem.myLocation.IgnoreWithin;
+                        database.SetFinishOptions(theEvent);
+                        UpdateTimingWorker = true;
+                    }
                 }
                 else if (locItem.myLocation.Identifier == Constants.Timing.LOCATION_START)
                 {
-                    theEvent.StartWindow = locItem.myLocation.IgnoreWithin;
-                    database.SetStartWindow(theEvent);
+                    if (theEvent.StartWindow != locItem.myLocation.IgnoreWithin)
+                    {
+                        theEvent.StartWindow = locItem.myLocation.IgnoreWithin;
+                        database.SetStartWindow(theEvent);
+                    }
                 }
                 else
                 {
-                    database.UpdateTimingLocation(locItem.myLocation);
+                    if (locItem.IsUpdated())
+                    {
+                        database.UpdateTimingLocation(locItem.myLocation);
+                        UpdateTimingWorker = true;
+                    }
                 }
             }
-            UpdateTimingWorker = true;
         }
 
         public void Keyboard_Ctrl_A()
@@ -264,6 +275,20 @@ namespace Chronokeep.UI.MainPages
                 this.page.RemoveLocation(myLocation);
             }
 
+            public bool IsUpdated()
+            {
+                try
+                {
+                    string[] parts = IgnoreWithin.Text.Replace('_', '0').Split(':');
+                    int hours = Convert.ToInt32(parts[0]), minutes = Convert.ToInt32(parts[1]), seconds = Convert.ToInt32(parts[2]);
+                    return myLocation.MaxOccurrences != Convert.ToInt32(MaxOccurrences) && myLocation.IgnoreWithin != (hours * 3600) + (minutes * 60) + seconds;
+                }
+                catch
+                {
+                    return true;
+                }
+            }
+
             public void UpdateLocation()
             {
                 Log.D("UI.MainPages.LocationsPage", "Updating location.");
@@ -312,12 +337,16 @@ namespace Chronokeep.UI.MainPages
 
         public void Closing()
         {
+            Log.D("UI.MainPages.LocationsPage", "Location page closing.");
             if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
             {
                 UpdateDatabase();
             }
             if (UpdateTimingWorker)
             {
+                Log.D("UI.MainPages.LocationsPage", "Resetting results.");
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
             }
         }

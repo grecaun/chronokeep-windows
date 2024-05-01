@@ -44,7 +44,7 @@ namespace Chronokeep.Timing
         public static bool NewResultsExist()
         {
             bool output = false;
-            Log.D("Timing.TimingWorker", "Mutex Wait 02");
+            //Log.D("Timing.TimingWorker", "Mutex Wait 02");
             if (ResultsMutex.WaitOne(3000))
             {
                 output = NewResults;
