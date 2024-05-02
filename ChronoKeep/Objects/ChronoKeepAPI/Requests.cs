@@ -86,4 +86,17 @@ namespace Chronokeep.Objects.API
         [JsonPropertyName("identifiers")]
         public List<string> Identifiers { get; set; }
     }
+
+    // Banned emails/phone numbers requests
+    public class ModifyBannedPhoneRequest
+    {
+        [JsonPropertyName("phone")]
+        public string Phone { get; set; }
+    }
+
+    public class ModifyBannedEmailRequest
+    {
+        [JsonPropertyName("email")]
+        public string Email { get; set; }
+    }
 }

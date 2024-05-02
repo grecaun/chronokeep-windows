@@ -374,6 +374,7 @@ namespace Chronokeep.Timing
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType) // && SMS set up && SMS enabled on event)
                     {
                         // Update banned phones list.
+                        Constants.Globals.UpdateBannedPhones();
                         foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
                         {
                             // verify the distance is set to allow sms alerts and the runner hasn't been notified already

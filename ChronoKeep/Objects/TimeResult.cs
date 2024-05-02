@@ -569,16 +569,15 @@ namespace Chronokeep.Objects
                 validPhone = Constants.Globals.GetValidPhone(part.Phone);
             }
             // Invalid length. +15555551234 is a valid phone
-            Log.D("Objects.TimeResult", string.Format("Checking phone number length. '{0}' '{1}'", validPhone, Constants.Globals.TwilioCredentials.PhoneNumber));
             if (validPhone.Length != 12 || Constants.Globals.TwilioCredentials.PhoneNumber.Length != 12)
             {
                 return false;
             }
             // Verify phone number isn't in our list of banned phone numbers (i.e. they've told us to not send texts)
             // return true if it is in the banned list, otherwise try to send it, and return true if we were able to send it
-            Log.D("Objects.TimeResult", "Checking banned phones.");
             if (Constants.Globals.BannedPhones.Contains(validPhone))
             {
+                Log.D("Objects.TimeResult", "Phone number is banned.");
                 return false;
             }
             //"{FIRST} {LAST} has finished the {YEAR} {RACE} {DISTANCE?} in {CHIP TIME}. {RESULTS LINK}"
@@ -599,6 +598,7 @@ namespace Chronokeep.Objects
             }
             try
             {
+                Log.D("Objects.TimeResult", SMS);
                 var messageOptions = new CreateMessageOptions(
                     new Twilio.Types.PhoneNumber(validPhone)
                     );

@@ -50,4 +50,17 @@ namespace Chronokeep.Objects.API
         [JsonPropertyName("message")]
         public string Message { get; set; }
     }
+
+    // Banned emails/phone number responses
+    public class GetBannedPhonesResponse
+    {
+        [JsonPropertyName("phones")]
+        public List<string> Phones { get; set; }
+    }
+
+    public class GetBannedEmailsResponse
+    {
+        [JsonPropertyName("emails")]
+        public List<string> Emails { get; set; }
+    }
 }

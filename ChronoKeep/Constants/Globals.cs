@@ -1,4 +1,6 @@
-﻿using Chronokeep.Objects.Notifications;
+﻿using Chronokeep.Network.API;
+using Chronokeep.Objects.API;
+using Chronokeep.Objects.Notifications;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -16,17 +18,42 @@ namespace Chronokeep.Constants
         // keep track of banned emails
         public static List<string> BannedEmails = new List<string>();
 
-        private static Regex phoneRegex = new Regex("^(?:\\+?1)?\\s*(?:\\d{3}|\\(\\d{3}\\))\\s*\\-?\\s*\\d{3}\\s*\\-?\\s*\\d{4}$");
+        private static Regex phoneRegex = new Regex("^(?:\\+?1)?\\s*\\-?\\s*(?:\\d{3}|\\(\\d{3}\\))\\s*\\-?\\s*\\d{3}\\s*\\-?\\s*\\d{4}$");
         private static Regex whitespace = new Regex("\\s+");
+
+        public static async void UpdateBannedPhones()
+        {
+            BannedPhones.Clear();
+            GetBannedPhonesResponse phonesResponse = await APIHandlers.GetBannedPhones();
+            if (phonesResponse.Phones != null)
+            {
+                foreach (string phone in phonesResponse.Phones)
+                {
+                    string p = GetValidPhone(phone);
+                    if (p.Length > 0)
+                    {
+                        BannedPhones.Add(p);
+                    }
+                }
+            }
+        }
+
+        public static async void UpdateBannedEmails()
+        {
+            BannedEmails.Clear();
+            GetBannedEmailsResponse emailsResponse = await APIHandlers.GetBannedEmails();
+            if (emailsResponse.Emails != null)
+            {
+                BannedEmails.AddRange(emailsResponse.Emails);
+            }
+        }
 
         public static string GetValidPhone(string phone)
         {
             string output = "";
-            Log.D("Constants.Globals", string.Format("phone is {0}", phone));
             if (phoneRegex.Match(phone).Success)
             {
                 string tmp = whitespace.Replace(phone.Replace("-", "").Replace(")", "").Replace("(", ""), "");
-                Log.D("Constants.Globals", string.Format("regex found match - length: {0} - tmp: {1}", tmp.Length, tmp));
                 if (tmp.Length == 10)
                 {
                     output = string.Format("+1{0}", tmp);

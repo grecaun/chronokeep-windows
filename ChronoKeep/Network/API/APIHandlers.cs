@@ -393,5 +393,259 @@ namespace Chronokeep.Network.API
             }
             throw new APIException(content);
         }
+
+        public static async Task<GetBannedPhonesResponse> GetBannedPhones()
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Getting banned phone numbers.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/phones/get"),
+                        Content = new StringContent(
+                            "",
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<GetBannedPhonesResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown getting banned phone numbers: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
+        public static async void AddBannedPhone(string phone)
+        {
+            string validPhone = Constants.Globals.GetValidPhone(phone);
+            if (validPhone == null || validPhone.Length == 0)
+            {
+                throw new APIException("Invalid phone number.");
+            }
+            string content;
+            Log.D("Network.API.APIHandlers", "Blocking phone number.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/phones/add"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new ModifyBannedPhoneRequest
+                            {
+                                Phone = validPhone,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        return;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown blocking phone number: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
+        public static async void UnblockBannedPhone(string phone)
+        {
+            string validPhone = Constants.Globals.GetValidPhone(phone);
+            if (validPhone == null || validPhone.Length == 0)
+            {
+                throw new APIException("Invalid phone number.");
+            }
+            string content;
+            Log.D("Network.API.APIHandlers", "Unblocking phone number.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/phones/unblock"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new ModifyBannedPhoneRequest
+                            {
+                                Phone = validPhone,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        return;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown unblocking phone number: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
+        public static async Task<GetBannedEmailsResponse> GetBannedEmails()
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Getting banned emails.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/emails/get"),
+                        Content = new StringContent(
+                            "",
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<GetBannedEmailsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown getting banned emails: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
+        public static async void AddBannedEmail(string email)
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Blocking email.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/emails/add"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new ModifyBannedEmailRequest
+                            {
+                                Email = email,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        return;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown blocking email: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
+        public static async void UnblockBannedEmail(string email)
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Unblocking email.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/emails/unblock"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new ModifyBannedEmailRequest
+                            {
+                                Email = email,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        return;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown unblocking email: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
     }
 }
