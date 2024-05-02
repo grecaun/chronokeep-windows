@@ -13,7 +13,8 @@ namespace Chronokeep.Objects
             ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds;
         private long chipSeconds, seconds;
         private string time, locationName, segmentName, firstName, lastName, bib,
-            distanceName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday, linked_distance_name = "", chip = "";
+            distanceName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday,
+            linked_distance_name = "", chip = "", participantId = "";
         private bool anonymous;
         DateTime systemTime;
 
@@ -56,7 +57,8 @@ namespace Chronokeep.Objects
             int type,
             string linked_distance_name,
             string chip,
-            bool anonymous
+            bool anonymous,
+            string participantId
             )
         {
             this.eventId = eventId;
@@ -136,8 +138,10 @@ namespace Chronokeep.Objects
             this.linked_distance_name = linked_distance_name;
             this.chip = chip;
             this.anonymous = anonymous;
+            this.participantId = participantId;
         }
 
+        // Used by routines to add new results to the database.
         public TimeResult(
             int eventId,
             int readId,
@@ -284,6 +288,7 @@ namespace Chronokeep.Objects
             get => theEvent != null ? string.Format("{0} {1}", Age(theEvent.Date), PrettyGender) : string.Format("? {0}", PrettyGender);
         }
         public bool Finish { get => segmentId == Constants.Timing.SEGMENT_FINISH; }
+        public string ParticipantId { get => participantId; }
 
         public string PrettyAgeGroupName()
         {

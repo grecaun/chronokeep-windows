@@ -83,7 +83,7 @@ namespace Chronokeep.Objects.API
         public string Slug { get; set; }
         [JsonPropertyName("year")]
         public string Year { get; set; }
-        [JsonPropertyName("bibs")]
-        public List<string> Bibs { get; set; }
+        [JsonPropertyName("identifiers")]
+        public List<string> Identifiers { get; set; }
     }
 }

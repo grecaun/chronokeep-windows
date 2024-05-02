@@ -6,6 +6,7 @@ namespace Chronokeep.Objects.API
     {
         public APIPerson(Event theEvent, Participant person)
         {
+            this.Identifier = person.Identifier.ToString();
             this.Bib = person.Bib.ToString();
             this.First = person.Anonymous ? "" : person.FirstName;
             this.Last = person.Anonymous ? "" : person.LastName;
@@ -17,6 +18,8 @@ namespace Chronokeep.Objects.API
             this.Anonymous = person.Anonymous;
         }
 
+        [JsonPropertyName("id")]
+        public string Identifier { get; set; }
         [JsonPropertyName("bib")]
         public string Bib { get; set; }
         [JsonPropertyName("first")]
