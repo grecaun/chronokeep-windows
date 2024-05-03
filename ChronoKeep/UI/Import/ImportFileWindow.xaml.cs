@@ -381,7 +381,7 @@ namespace Chronokeep
                             data.Data[counter][keys[OWES]], // owes
                             data.Data[counter][keys[OTHER]], // other
                             data.Data[counter][keys[ANONYMOUS]] != null ? data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 : false, // Set Anonymous if anything is in the field
-                            data.Data[counter][keys[SMS_ENABLED]] != null ? data.Data[counter][keys[SMS_ENABLED]].Trim().Length > 0 : false // set SMS_Enabled the same way Anonymous is
+                            data.Data[counter][keys[SMS_ENABLED]] != null ? data.Data[counter][keys[SMS_ENABLED]].Trim().Equals("yes", StringComparison.OrdinalIgnoreCase) : false // set SMS_Enabled only if the value is yes
                             ),
                         data.Data[counter][keys[EMAIL]], // email
                         data.Data[counter][keys[PHONE]], // phone

@@ -558,6 +558,10 @@ namespace Chronokeep.Objects
 
         public bool SendSMSAlert(Event theEvent, TimingDictionary dictionary)
         {
+            if (Constants.Globals.TwilioCredentials.AccountSID.Length < 1 || Constants.Globals.TwilioCredentials.AuthToken.Length < 1)
+            {
+                return false;
+            }
             Participant part = dictionary.participantBibDictionary.ContainsKey(bib) ? dictionary.participantBibDictionary[bib] : null;
             if (part == null || part.EventSpecific.SMSEnabled == false)
             {
@@ -581,7 +585,7 @@ namespace Chronokeep.Objects
                 return false;
             }
             //"{FIRST} {LAST} has finished the {YEAR} {RACE} {DISTANCE?} in {CHIP TIME}. {RESULTS LINK}"
-            string SMS = "";
+            string SMS;
             string resultsURL = "";
             if (dictionary.apiURLs.ContainsKey(theEvent.API_ID) &&
                 Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] == dictionary.apiURLs[theEvent.API_ID])
