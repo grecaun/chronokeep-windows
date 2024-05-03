@@ -1,0 +1,44 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Chronokeep" #>
+<#@ import namespace="Chronokeep.Objects" #>
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title><#= eventName #> Results</title>
+	</head>
+	<body>
+		<table width="100%" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<td align="center" style="padding:10px;">
+					<table class="content" border="0" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%;min-width:350px;">
+						<tr>
+							<td class="header" style="background-color: #345C72; padding: 20px; text-align: center; color: white; font-size: 32px; border-radius: 15px">
+								Congratulations <#= participantName #>!
+							</td>
+						</tr>
+						<tr>
+							<td class="body" style="padding: 20px; text-align: center; font-size: 18px; line-height: 1.6;">
+								<p style="margin-top:10px;">You finished the <#= eventName #><#= distanceName #>! Well done!<br>
+								Your official finish time is <strong><#= time #></strong>.</p>
+								<p>Here's a certificate to celebrate you.</p>
+								<img src="<#= certificateUrl #>" style="max-width:100%;border-radius:10px;">
+								<#= resultsLink #>
+							</td>
+						</tr>
+						<tr>
+							<td class="footer" style="background-color: #333333; padding: 20px; text-align: center; color: white; font-size: 14px; border-radius: 15px">
+								You're receiving this email because this email was used to sign up for the <#= eventName #>.<#= unsubscribe #>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

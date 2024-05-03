@@ -133,6 +133,7 @@
     <None Remove="IO\HtmlTemplates\css\bootstrap.rtl.css.map" />
     <None Remove="IO\HtmlTemplates\css\bootstrap.rtl.min.css" />
     <None Remove="IO\HtmlTemplates\css\bootstrap.rtl.min.css.map" />
+    <None Remove="IO\HtmlTemplates\HtmlCertificateEmailTemplate.tt" />
     <None Remove="IO\HtmlTemplates\HtmlParticipantTemplate.tt" />
     <None Remove="IO\HtmlTemplates\HtmlResultsPrint.tt" />
     <None Remove="IO\HtmlTemplates\js\bootstrap.bundle.js" />
@@ -157,6 +158,11 @@
   <ItemGroup>
     <Compile Update="IO\HtmlTemplates\HtmlParticipantTemplate.cs">
       <DependentUpon>HtmlParticipantTemplate.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="IO\HtmlTemplates\HtmlCertificateEmailTemplate.cs">
+      <DependentUpon>HtmlCertificateEmailTemplate.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
@@ -266,6 +272,10 @@
     <Content Include="icon.ico" />
     <Content Include="IO\HtmlTemplates\HtmlParticipantTemplate.tt">
       <LastGenOutput>HtmlParticipantTemplate.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </Content>
+    <Content Include="IO\HtmlTemplates\HtmlCertificateEmailTemplate.tt">
+      <LastGenOutput>HtmlCertificateEmailTemplate.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </Content>
     <Content Include="IO\HtmlTemplates\Printables\AwardsPrintable.tt">
