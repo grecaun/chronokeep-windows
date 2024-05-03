@@ -138,7 +138,7 @@ namespace Chronokeep.Constants
             }
             if (database.GetAppSetting(MAILGUN_API_URL) == null)
             {
-                database.SetAppSetting(MAILGUN_API_URL, "https://api.mailgun.net/v3/");
+                database.SetAppSetting(MAILGUN_API_URL, "");
             }
             if (database.GetAppSetting(MAILGUN_FROM_EMAIL) == null)
             {
