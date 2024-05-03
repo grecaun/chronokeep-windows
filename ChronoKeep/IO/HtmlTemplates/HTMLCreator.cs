@@ -115,7 +115,7 @@ namespace Chronokeep.IO.HtmlTemplates
             {
                 resultsLink = string.Format("<p><a href=\"https://www.chronokeep.com/results/{0}/{1}\">Click here for more results.</a></p>", event_ids[0], event_ids[1]);
             }
-            unsubscribe = string.Format(" If you don't want to receive these emails <a href=\"https://www.chronokeep.com/unsubscribe/{0}\">click here</a>.", email);
+            unsubscribe = string.Format("<br>If you don't want to receive these emails <a href=\"https://www.chronokeep.com/unsubscribe/{0}\">click here</a>.", email);
         }
     }
 }

@@ -1,9 +1,11 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Constants;
+using Chronokeep.Interfaces;
 using Chronokeep.IO;
 using Chronokeep.IO.HtmlTemplates;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
+using Chronokeep.Objects.Notifications;
 using Chronokeep.Timing.API;
 using Chronokeep.UI.API;
 using Chronokeep.UI.Export;
@@ -18,6 +20,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -1381,9 +1384,54 @@ namespace Chronokeep.UI.MainPages
             smsWindow.Show();
         }
 
-        private void sendEmailsButton_Click(object sender, RoutedEventArgs e)
+        private async void sendEmailsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Send Emails button clicked.");
+            List<TimeResult> finishTimes = database.GetFinishTimes(theEvent.Identifier);
+            APIObject api = database.GetAPI(theEvent.API_ID);
+            Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
+            int distances = 0;
+            foreach (Participant p in database.GetParticipants(theEvent.Identifier))
+            {
+                participantDictionary[p.Identifier.ToString()] = p;
+            }
+            foreach (Distance d in database.GetDistances(theEvent.Identifier))
+            {
+                if (Constants.Timing.DISTANCE_NO_LINKED_ID == d.LinkedDistance)
+                {
+                    distances++;
+                }
+            }
+            Globals.UpdateBannedEmails();
+            HttpClient client = new();
+            MailgunCredentials credentials = Globals.GetMailgunCredentials(database);
+            if (!credentials.Valid())
+            {
+                return;
+            }
+            string base64String = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", credentials.Username, credentials.APIKey)));
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(@"Basic", base64String);
+            foreach (TimeResult result in finishTimes)
+            {
+                string email = participantDictionary[result.ParticipantId].Email;
+                if (email.Length > 0 && !Globals.BannedEmails.Contains(email))
+                {
+                    MultipartFormDataContent postData = new MultipartFormDataContent
+                    {
+                        { new StringContent(credentials.From()), "from" },
+                        { new StringContent(email), "to" },
+                        { new StringContent(string.Format("{0} {1}", theEvent.Year, theEvent.Name)), "subject" },
+                        { new StringContent(new HtmlCertificateEmailTemplate(
+                            theEvent,
+                            result,
+                            email,
+                            distances == 1,
+                            api
+                            ).TransformText()), "html" }
+                    };
+                    await client.PostAsync(string.Format("https://api.mailgun.net/v3/{0}/messages", credentials.Domain), postData);
+                }
+            }
         }
 
         private class AReaderBox : ListBoxItem

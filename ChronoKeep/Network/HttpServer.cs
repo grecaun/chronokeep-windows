@@ -236,24 +236,24 @@ namespace Chronokeep.Network
                 }
                 else
                 {
+                    message = Encoding.Default.GetBytes("");
                     if (participantResults.ContainsKey(emailBib))
                     {
                         if (finishDictionary.ContainsKey(emailBib) && participantDictionary.ContainsKey(finishDictionary[emailBib].ParticipantId))
                         {
-                            HtmlCertificateEmailTemplate email = new HtmlCertificateEmailTemplate(
-                                theEvent,
-                                finishDictionary[emailBib],
-                                participantDictionary[finishDictionary[emailBib].ParticipantId].Email,
-                                distanceNames.Count == 1,
-                                apiDictionary.ContainsKey(theEvent.API_ID) ? apiDictionary[theEvent.API_ID] : null
-                                );
-                            emailCache[emailBib] = Encoding.Default.GetBytes(email.TransformText());
+                            if (!emailCache.ContainsKey(emailBib))
+                            {
+                                HtmlCertificateEmailTemplate email = new HtmlCertificateEmailTemplate(
+                                    theEvent,
+                                    finishDictionary[emailBib],
+                                    participantDictionary[finishDictionary[emailBib].ParticipantId].Email,
+                                    distanceNames.Count == 1,
+                                    apiDictionary.ContainsKey(theEvent.API_ID) ? apiDictionary[theEvent.API_ID] : null
+                                    );
+                                emailCache[emailBib] = Encoding.Default.GetBytes(email.TransformText());
+                            }
                             message = emailCache[emailBib];
                             context.Response.ContentType = "text/html";
-                        }
-                        else
-                        {
-                            message = Encoding.Default.GetBytes("");
                         }
                     }
                     Log.D("Network.HttpServer", "Email html");
