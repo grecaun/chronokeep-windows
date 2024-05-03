@@ -1404,7 +1404,7 @@ namespace Chronokeep.UI.MainPages
             }
             Globals.UpdateBannedEmails();
             HttpClient client = new();
-            MailgunCredentials credentials = Globals.GetMailgunCredentials(database);
+            MailgunCredentials credentials = MailgunCredentials.GetCredentials(database);
             if (!credentials.Valid())
             {
                 return;
