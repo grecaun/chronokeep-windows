@@ -389,7 +389,7 @@ namespace Chronokeep
                         data.Data[counter][keys[PARENT]], // parent
                         data.Data[counter][keys[COUNTRY]], // country
                         data.Data[counter][keys[STREET2]],  // street2
-                        data.Data[counter][keys[GENDER]],  // gender
+                        data.Data[counter][keys[GENDER]] != null ? data.Data[counter][keys[GENDER]] : "",  // gender
                         data.Data[counter][keys[EMERGENCYNAME]], // Emergency Name
                         data.Data[counter][keys[EMERGENCYPHONE]]  // Emergency Phone
                         );
@@ -496,7 +496,6 @@ namespace Chronokeep
                 ProcessMultiplestoRemove(new List<Participant>());
             }
         }
-
 
         private async void ProcessMultiplestoRemove(List<Participant> toRemove)
         {

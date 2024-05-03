@@ -80,13 +80,11 @@ namespace Chronokeep.Database.SQLite
             command.ExecuteNonQuery();
         }
 
-        internal static void RemoveEntry(int eventId, int participantId, SQLiteConnection connection)
+        internal static void RemoveEntry(int eventSpecificId, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@participant AND event_id=@event;";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                    new SQLiteParameter("@event", eventId),
-                    new SQLiteParameter("@participant", participantId) });
+            command.CommandText = "DELETE FROM eventspecific WHERE eventspecific_id=@eventSpecId;";
+            command.Parameters.Add(new SQLiteParameter("@eventSpecId", eventSpecificId));
             command.ExecuteNonQuery();
         }
 
@@ -191,11 +189,11 @@ namespace Chronokeep.Database.SQLite
         internal static List<Participant> GetParticipants(SQLiteConnection connection)
         {
             Log.D("SQLite.Participants", "Getting all participants for all events.");
-            return GetParticipantsWorker("SELECT MAX(p.participant_id) AS max_id, * FROM participants p " +
+            return GetParticipantsWorker("SELECT MAX(s.eventspecific_bib) AS max_id, * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib AND c.event_id=s.event_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id " +
-                "GROUP BY p.participant_id " +
+                "GROUP BY s.eventspecific_bib " +
                 "ORDER BY p.participant_last ASC, p.participant_first ASC;",
                 -1, -1, connection);
         }
@@ -203,12 +201,12 @@ namespace Chronokeep.Database.SQLite
         internal static List<Participant> GetParticipants(int eventId, SQLiteConnection connection)
         {
             Log.D("SQLite.Participants", "Getting all participants for event with id of " + eventId);
-            return GetParticipantsWorker("SELECT MAX(p.participant_id) AS max_id, * FROM participants p " +
+            return GetParticipantsWorker("SELECT MAX(s.eventspecific_bib) AS max_id, * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id " +
                 "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib AND c.event_id=s.event_id " +
                 "WHERE s.event_id=@event " +
-                "GROUP BY p.participant_id " +
+                "GROUP BY s.eventspecific_bib " +
                 "ORDER BY p.participant_last ASC, p.participant_first ASC;",
                 eventId, -1, connection);
         }
@@ -216,12 +214,12 @@ namespace Chronokeep.Database.SQLite
         internal static List<Participant> GetParticipants(int eventId, int distanceId, SQLiteConnection connection)
         {
             Log.D("SQLite.Participants", "Getting all participants for event with id of " + eventId);
-            return GetParticipantsWorker("SELECT MAX(p.participant_id) AS max_id, * FROM participants p " +
+            return GetParticipantsWorker("SELECT MAX(s.eventspecific_bib) AS max_id, * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id " +
                 "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib AND c.event_id=s.event_id " +
                 "WHERE s.event_id=@event AND d.distance_id=@distance " +
-                "GROUP BY p.participant_id " +
+                "GROUP BY s.eventspecific_bib " +
                 "ORDER BY p.participant_last ASC, p.participant_first ASC;",
                 eventId, distanceId, connection);
         }

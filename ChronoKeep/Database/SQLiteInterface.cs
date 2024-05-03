@@ -434,7 +434,7 @@ namespace Chronokeep
             mutex.ReleaseMutex();
         }
 
-        public void RemoveEntry(int eventId, int participantId)
+        public void RemoveEntry(int eventSpecificId)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 23");
             if (!mutex.WaitOne(3000))
@@ -444,14 +444,14 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            Participants.RemoveEntry(eventId, participantId, connection);
+            Participants.RemoveEntry(eventSpecificId, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
 
         public void RemoveEntry(Participant person)
         {
-            RemoveEntry(person.EventIdentifier, person.Identifier);
+            RemoveEntry(person.EventSpecific.Identifier);
         }
 
         public void RemoveEntries(List<Participant> people)
@@ -468,7 +468,7 @@ namespace Chronokeep
             {
                 foreach (Participant p in people)
                 {
-                    Participants.RemoveEntry(p.EventIdentifier, p.Identifier, connection);
+                    Participants.RemoveEntry(p.EventSpecific.Identifier, connection);
                 }
                 transaction.Commit();
             }
