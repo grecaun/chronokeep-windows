@@ -22,28 +22,42 @@ namespace Chronokeep.Constants
 
         public static async void UpdateBannedPhones()
         {
-            BannedPhones.Clear();
-            GetBannedPhonesResponse phonesResponse = await APIHandlers.GetBannedPhones();
-            if (phonesResponse.Phones != null)
+            try
             {
-                foreach (string phone in phonesResponse.Phones)
+                GetBannedPhonesResponse phonesResponse = await APIHandlers.GetBannedPhones();
+                BannedPhones.Clear();
+                if (phonesResponse.Phones != null)
                 {
-                    string p = GetValidPhone(phone);
-                    if (p.Length > 0)
+                    foreach (string phone in phonesResponse.Phones)
                     {
-                        BannedPhones.Add(p);
+                        string p = GetValidPhone(phone);
+                        if (p.Length > 0)
+                        {
+                            BannedPhones.Add(p);
+                        }
                     }
                 }
+            }
+            catch
+            {
+                Log.E("Constants.Globals", "Exception getting banned phones.");
             }
         }
 
         public static async void UpdateBannedEmails()
         {
-            BannedEmails.Clear();
-            GetBannedEmailsResponse emailsResponse = await APIHandlers.GetBannedEmails();
-            if (emailsResponse.Emails != null)
+            try
             {
-                BannedEmails.AddRange(emailsResponse.Emails);
+                GetBannedEmailsResponse emailsResponse = await APIHandlers.GetBannedEmails();
+                BannedEmails.Clear();
+                if (emailsResponse.Emails != null)
+                {
+                    BannedEmails.AddRange(emailsResponse.Emails);
+                }
+            }
+            catch
+            {
+                Log.E("Constants.Globals", "Exception getting banned emails.");
             }
         }
 

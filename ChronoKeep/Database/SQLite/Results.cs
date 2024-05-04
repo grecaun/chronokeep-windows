@@ -94,8 +94,8 @@ namespace Chronokeep.Database.SQLite
                     reader["distance_type"] == DBNull.Value ? Constants.Timing.DISTANCE_TYPE_NORMAL : Convert.ToInt32(reader["distance_type"]),
                     reader["linked_distance_name"] == DBNull.Value ? "" : reader["linked_distance_name"].ToString(),
                     reader["chip"] == DBNull.Value ? "" : reader["chip"].ToString(),
-                    reader["eventspecific_anonymous"] == DBNull.Value ? false : Convert.ToInt16(reader["eventspecific_anonymous"]) != 0,
-                    reader["part_id"].ToString()
+                    reader["eventspecific_anonymous"] != DBNull.Value && Convert.ToInt16(reader["eventspecific_anonymous"]) != 0,
+                    reader["part_id"] != DBNull.Value ? reader["part_id"].ToString() : ""
                     ));
             }
             reader.Close();
