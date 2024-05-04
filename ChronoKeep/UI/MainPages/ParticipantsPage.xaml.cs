@@ -1,20 +1,20 @@
 ﻿using Chronokeep.Interfaces;
-using Chronokeep.UI.Participants;
+using Chronokeep.Network.API;
+using Chronokeep.Objects;
+using Chronokeep.Objects.API;
 using Chronokeep.UI.IO;
+using Chronokeep.UI.Participants;
+using Chronokeep.UI.UIObjects;
 using Microsoft.Win32;
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Chronokeep.Objects;
-using Chronokeep.Objects.API;
-using Chronokeep.Network.API;
-using Chronokeep.UI.UIObjects;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -64,6 +64,52 @@ namespace Chronokeep.UI.MainPages
                     newParts.AddRange(database.GetParticipants(theEvent.Identifier, distanceId));
                 }
             });
+            Dictionary<string, BibStats> bibStats = new Dictionary<string, BibStats>();
+            foreach (Participant p in newParts)
+            {
+                if (!bibStats.ContainsKey(p.Distance))
+                {
+                    bibStats[p.Distance] = new BibStats
+                    {
+                        With = 0,
+                        Without = 0,
+                        DistanceName = p.Distance,
+                    };
+                }
+                if (p.Bib.Length > 0)
+                {
+                    bibStats[p.Distance].With += 1;
+                }
+                else
+                {
+                    bibStats[p.Distance].Without += 1;
+                }
+            }
+            BibStats totals = new BibStats
+            {
+                With = 0,
+                Without = 0,
+                DistanceName = "All"
+            };
+            List<BibStats> listStats = new List<BibStats>
+            {
+                totals
+            };
+            foreach (BibStats b in bibStats.Values)
+            {
+                listStats.Add(b);
+                totals.With += b.With;
+                totals.Without += b.Without;
+            }
+            statsListView.ItemsSource = listStats;
+            if (totals.Without > 0)
+            {
+                statsExpander.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                statsExpander.Visibility = Visibility.Collapsed;
+            }
             participants.Clear();
             participants.AddRange(newParts);
             switch (((ComboBoxItem)SortBox.SelectedItem).Content)

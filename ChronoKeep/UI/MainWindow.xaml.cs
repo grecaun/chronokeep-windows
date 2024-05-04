@@ -397,7 +397,7 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Starting registration.");
-                RegistrationWorker = new RegistrationWorker(database);
+                RegistrationWorker = new RegistrationWorker(database, this);
                 RegistrationThread = new Thread(new ThreadStart(RegistrationWorker.Run));
                 RegistrationThread.Start();
             }
@@ -492,10 +492,21 @@ namespace Chronokeep.UI
             UpdateStatus();
         }
 
+        public void UpdateParticipantsFromRegistration()
+        {
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            {
+                if (page is ParticipantsPage)
+                {
+                    page.UpdateView();
+                }
+            }));
+        }
+
         public void UpdateTimingFromController()
         {
             TimingWorker.Notify();
-            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
                 if (page is TimingPage)
                 {
@@ -552,7 +563,7 @@ namespace Chronokeep.UI
         public void UpdateAnnouncerWindow()
         {
             // Let the announcer window know that it has new information.
-            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
                 if (announcerWindow != null) announcerWindow.UpdateView();
             }));
@@ -561,7 +572,7 @@ namespace Chronokeep.UI
         public void UpdateTiming()
         {
             // Let the announcer window know that it has new information.
-            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
                 if (page is TimingPage)
                 {
@@ -935,7 +946,7 @@ namespace Chronokeep.UI
         public void NotifyAlarm(string Bib, string Chip)
         {
             Event theEvent = database.GetCurrentEvent();
-            Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(delegate ()
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
                 Alarm alarm = null;
                 if (Bib.Length > 0)

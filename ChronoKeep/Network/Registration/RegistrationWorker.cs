@@ -1,4 +1,5 @@
-﻿using Chronokeep.Objects.Registration;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects.Registration;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -28,9 +29,12 @@ namespace Chronokeep.Network.Registration
 
         private static readonly Regex msgRegex = new Regex(@"^[^\n]*\n");
 
-        public RegistrationWorker(IDBInterface database)
+        private IMainWindow mWindow = null;
+
+        public RegistrationWorker(IDBInterface database, IMainWindow mWindow)
         {
             this.database = database;
+            this.mWindow = mWindow;
         }
 
         public bool IsRunning()
@@ -215,6 +219,7 @@ namespace Chronokeep.Network.Registration
                                                         newPart.FormatData();
                                                         database.AddParticipant(newPart);
                                                         SendParticipants(theEvent);
+                                                        mWindow.UpdateParticipantsFromRegistration();
                                                     }
                                                     else
                                                     {
@@ -267,6 +272,7 @@ namespace Chronokeep.Network.Registration
                                                             );
                                                         database.UpdateParticipant(updatedPart);
                                                         SendParticipants(theEvent);
+                                                        mWindow.UpdateParticipantsFromRegistration();
                                                     }
                                                 }
                                                 catch (Exception e)

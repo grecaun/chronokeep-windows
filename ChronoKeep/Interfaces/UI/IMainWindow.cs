@@ -26,6 +26,7 @@ namespace Chronokeep.Interfaces
         void UpdateTiming();
         void UpdateAnnouncerWindow();
         void UpdateRegistrationDistances();
+        void UpdateParticipantsFromRegistration();
         bool BackgroundProcessesRunning();
         void StopBackgroundProcesses();
 
