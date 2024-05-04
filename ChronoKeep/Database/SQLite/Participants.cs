@@ -43,8 +43,8 @@ namespace Chronokeep.Database.SQLite
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, distance_id, eventspecific_bib, " +
                 "eventspecific_checkedin, eventspecific_comments, eventspecific_owes, eventspecific_other, " +
-                "eventspecific_age_group_name, eventspecific_age_group_id, eventspecific_anonymous, eventspecific_sms_enabled) " +
-                "VALUES (@participant,@event,@distance,@bib,@checkedin,@comments,@owes,@other,@ageGroupName,@ageGroupId,@anon,@sms)";
+                "eventspecific_age_group_name, eventspecific_age_group_id, eventspecific_anonymous, eventspecific_sms_enabled, eventspecific_apparel) " +
+                "VALUES (@participant,@event,@distance,@bib,@checkedin,@comments,@owes,@other,@ageGroupName,@ageGroupId,@anon,@sms,@apparel)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@participant", person.Identifier),
                 new SQLiteParameter("@event", person.EventSpecific.EventIdentifier),
@@ -57,7 +57,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@ageGroupName", person.EventSpecific.AgeGroupName),
                 new SQLiteParameter("@ageGroupId", person.EventSpecific.AgeGroupId),
                 new SQLiteParameter("@anon", person.EventSpecific.Anonymous ? 1 : 0),
-                new SQLiteParameter("@sms", person.EventSpecific.SMSEnabled ? 1 : 0)
+                new SQLiteParameter("@sms", person.EventSpecific.SMSEnabled ? 1 : 0),
+                new SQLiteParameter("@apparel", person.EventSpecific.Apparel)
             });
             command.ExecuteNonQuery();
         }
@@ -120,7 +121,7 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "UPDATE eventspecific SET distance_id=@distanceId, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
                 "eventspecific_owes=@owes, eventspecific_other=@other, " +
                 "eventspecific_comments=@comments, eventspecific_status=@status, eventspecific_age_group_name=@ageGroupName, eventspecific_age_group_id=@ageGroupId, " +
-                "eventspecific_anonymous=@anon, eventspecific_sms_enabled=@sms " +
+                "eventspecific_anonymous=@anon, eventspecific_sms_enabled=@sms, eventspecific_apparel=@apparel " +
                 "WHERE eventspecific_id=@eventspecid";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@distanceId", person.EventSpecific.DistanceIdentifier),
@@ -134,7 +135,8 @@ namespace Chronokeep.Database.SQLite
                     new SQLiteParameter("@ageGroupName", person.EventSpecific.AgeGroupName),
                     new SQLiteParameter("@ageGroupId", person.EventSpecific.AgeGroupId),
                     new SQLiteParameter("@anon", person.EventSpecific.Anonymous ? 1 : 0),
-                    new SQLiteParameter("@sms", person.EventSpecific.SMSEnabled ? 1 : 0)
+                    new SQLiteParameter("@sms", person.EventSpecific.SMSEnabled ? 1 : 0),
+                    new SQLiteParameter("@apparel", person.EventSpecific.Apparel)
                 });
             command.ExecuteNonQuery();
         }
@@ -189,11 +191,11 @@ namespace Chronokeep.Database.SQLite
         internal static List<Participant> GetParticipants(SQLiteConnection connection)
         {
             Log.D("SQLite.Participants", "Getting all participants for all events.");
-            return GetParticipantsWorker("SELECT MAX(s.eventspecific_bib) AS max_id, * FROM participants p " +
+            return GetParticipantsWorker("SELECT MAX(s.eventspecific_id) AS max_id, * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib AND c.event_id=s.event_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id " +
-                "GROUP BY s.eventspecific_bib " +
+                "GROUP BY s.eventspecific_id " +
                 "ORDER BY p.participant_last ASC, p.participant_first ASC;",
                 -1, -1, connection);
         }
@@ -201,12 +203,12 @@ namespace Chronokeep.Database.SQLite
         internal static List<Participant> GetParticipants(int eventId, SQLiteConnection connection)
         {
             Log.D("SQLite.Participants", "Getting all participants for event with id of " + eventId);
-            return GetParticipantsWorker("SELECT MAX(s.eventspecific_bib) AS max_id, * FROM participants p " +
+            return GetParticipantsWorker("SELECT MAX(s.eventspecific_id) AS max_id, * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id " +
                 "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib AND c.event_id=s.event_id " +
                 "WHERE s.event_id=@event " +
-                "GROUP BY s.eventspecific_bib " +
+                "GROUP BY s.eventspecific_id " +
                 "ORDER BY p.participant_last ASC, p.participant_first ASC;",
                 eventId, -1, connection);
         }
@@ -214,12 +216,12 @@ namespace Chronokeep.Database.SQLite
         internal static List<Participant> GetParticipants(int eventId, int distanceId, SQLiteConnection connection)
         {
             Log.D("SQLite.Participants", "Getting all participants for event with id of " + eventId);
-            return GetParticipantsWorker("SELECT MAX(s.eventspecific_bib) AS max_id, * FROM participants p " +
+            return GetParticipantsWorker("SELECT MAX(s.eventspecific_id) AS max_id, * FROM participants p " +
                 "JOIN eventspecific s ON p.participant_id = s.participant_id " +
                 "JOIN distances d ON s.distance_id = d.distance_id " +
                 "LEFT JOIN bib_chip_assoc c ON c.bib = s.eventspecific_bib AND c.event_id=s.event_id " +
                 "WHERE s.event_id=@event AND d.distance_id=@distance " +
-                "GROUP BY s.eventspecific_bib " +
+                "GROUP BY s.eventspecific_id " +
                 "ORDER BY p.participant_last ASC, p.participant_first ASC;",
                 eventId, distanceId, connection);
         }
@@ -263,7 +265,8 @@ namespace Chronokeep.Database.SQLite
                         reader["eventspecific_age_group_name"].ToString(),
                         Convert.ToInt32(reader["eventspecific_age_group_id"]),
                         Convert.ToInt16(reader["eventspecific_anonymous"]) == 0 ? false : true,
-                        Convert.ToInt16(reader["eventspecific_sms_enabled"]) == 0 ? false : true
+                        Convert.ToInt16(reader["eventspecific_sms_enabled"]) == 0 ? false : true,
+                        reader["eventspecific_apparel"].ToString()
                         ),
                     reader["participant_email"].ToString(),
                     reader["participant_phone"].ToString(),
@@ -308,7 +311,8 @@ namespace Chronokeep.Database.SQLite
                         reader["eventspecific_age_group_name"].ToString(),
                         Convert.ToInt32(reader["eventspecific_age_group_id"]),
                         Convert.ToInt16(reader["eventspecific_anonymous"]) == 0 ? false : true,
-                        Convert.ToInt16(reader["eventspecific_sms_enabled"]) == 0 ? false : true
+                        Convert.ToInt16(reader["eventspecific_sms_enabled"]) == 0 ? false : true,
+                        reader["eventspecific_apparel"].ToString()
                         ),
                     reader["participant_email"].ToString(),
                     reader["participant_phone"].ToString(),

@@ -104,7 +104,9 @@ namespace Chronokeep.UI.Participants
         private void UpdateAllFields()
         {
             if (person == null || theEvent == null || theEvent.Identifier < 0)
+            {
                 return;
+            }
             List<Distance> divs = database.GetDistances(theEvent.Identifier);
             DistanceBox.Items.Clear();
             divs.Sort();
@@ -168,6 +170,7 @@ namespace Chronokeep.UI.Participants
             ECPhoneBox.Text = person.ECPhone;
             AnonymousBox.IsChecked = person.Anonymous;
             SMSBox.IsChecked = person.EventSpecific.SMSEnabled;
+            ApparelBox.Text = person.EventSpecific.Apparel;
             Add.Content = "Update";
             Done.Content = "Cancel";
         }
@@ -198,6 +201,7 @@ namespace Chronokeep.UI.Participants
             ECPhoneBox.Text = "";
             AnonymousBox.IsChecked = false;
             SMSBox.IsChecked = false;
+            ApparelBox.Text = "";
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -393,7 +397,8 @@ namespace Chronokeep.UI.Participants
                     "",
                     Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
                     AnonymousBox.IsChecked == true,
-                    SMSBox.IsChecked == true
+                    SMSBox.IsChecked == true,
+                    ApparelBox.Text
                     ),
                 EmailBox.Text,
                 PhoneBox.Text,

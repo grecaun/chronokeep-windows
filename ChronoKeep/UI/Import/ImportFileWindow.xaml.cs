@@ -381,7 +381,8 @@ namespace Chronokeep
                             data.Data[counter][keys[OWES]], // owes
                             data.Data[counter][keys[OTHER]], // other
                             data.Data[counter][keys[ANONYMOUS]] != null ? data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 : false, // Set Anonymous if anything is in the field
-                            data.Data[counter][keys[SMS_ENABLED]] != null ? data.Data[counter][keys[SMS_ENABLED]].Trim().Equals("yes", StringComparison.OrdinalIgnoreCase) : false // set SMS_Enabled only if the value is yes
+                            data.Data[counter][keys[SMS_ENABLED]] != null ? data.Data[counter][keys[SMS_ENABLED]].Trim().Equals("yes", StringComparison.OrdinalIgnoreCase) : false, // set SMS_Enabled only if the value is yes
+                            data.Data[counter][keys[APPARELITEM]]
                             ),
                         data.Data[counter][keys[EMAIL]], // email
                         data.Data[counter][keys[PHONE]], // phone
@@ -640,10 +641,12 @@ namespace Chronokeep
             {
                 return BIB;
             }
-            //else if (s.IndexOf("Shirt", StringComparison.OrdinalIgnoreCase) >= 0)
-            //{
-            //    return APPARELITEM;
-            //}
+            else if (s.IndexOf("Shirt", StringComparison.OrdinalIgnoreCase) >= 0
+                || s.IndexOf("Hat", StringComparison.OrdinalIgnoreCase) >= 0
+                || s.IndexOf("Fleece", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return APPARELITEM;
+            }
             else if (string.Equals(s, "Owes", StringComparison.OrdinalIgnoreCase))
             {
                 return OWES;
@@ -652,10 +655,6 @@ namespace Chronokeep
             {
                 return COMMENTS;
             }
-            //else if (string.Equals(s, "Hat", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    return APPARELITEM;
-            //}
             else if (string.Equals(s, "Other", StringComparison.OrdinalIgnoreCase))
             {
                 return OTHER;
@@ -672,10 +671,6 @@ namespace Chronokeep
             {
                 return EMERGENCYPHONE;
             }
-            //else if (string.Equals(s, "Fleece", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    return APPARELITEM;
-            //}
             else if (string.Equals(s, "Age", StringComparison.OrdinalIgnoreCase))
             {
                 return AGE;

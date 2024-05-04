@@ -26,10 +26,10 @@ namespace Chronokeep.Objects
             birthdate = birthday.Trim();
             firstName = first ?? "Unknown";
             lastName = last ?? "Unknown";
-            this.street = street;
-            this.city = city;
-            this.state = state;
-            this.zip = zip;
+            this.street = street ?? "";
+            this.city = city ?? "";
+            this.state = state ?? "";
+            this.zip = zip ?? "";
             eventSpecific = epi;
             this.email = email ?? "";
             this.phone = phone ?? "";
@@ -52,7 +52,7 @@ namespace Chronokeep.Objects
             )
         {
             identifier = id;
-            birthdate = birthday;
+            birthdate = birthday ?? "";
             firstName = first ?? "Unknown";
             lastName = last ?? "Unknown";
             this.street = street ?? "";
@@ -69,7 +69,7 @@ namespace Chronokeep.Objects
             this.gender = gender ?? "";
             emergencyName = ecName ?? "Emergency Services";
             emergencyPhone = ecPhone ?? "911";
-            this.chip = chip;
+            this.chip = chip ?? "";
             Trim();
         }
 

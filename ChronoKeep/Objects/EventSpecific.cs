@@ -6,7 +6,7 @@
             checkedIn = 0,
             status = Constants.Timing.EVENTSPECIFIC_UNKNOWN,
             ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-        private string comments, distanceName, owes, other, ageGroupName = "", bib;
+        private string comments, distanceName, owes, other, ageGroupName = "", bib, apparel;
         private bool anonymous, sms_enabled;
 
         public EventSpecific() { }
@@ -22,19 +22,21 @@
             string owes,
             string other,
             bool anonymous,
-            bool sms_enabled
+            bool sms_enabled,
+            string apparel
             )
         {
             this.eventIdentifier = eid;
             this.distanceIdentifier = did;
             this.distanceName = distanceName ?? "";
-            this.bib = bib;
+            this.bib = bib ?? "";
             this.checkedIn = ci == 0 ? 0 : 1;
             this.comments = comments ?? "";
             this.owes = owes ?? "";
             this.other = other ?? "";
             this.anonymous = anonymous;
             this.sms_enabled = sms_enabled;
+            this.apparel = apparel ?? "";
         }
 
         // Constructor the database uses
@@ -52,23 +54,25 @@
             string ageGroupName,
             int ageGroupId,
             bool anonymous,
-            bool sms_enabled
+            bool sms_enabled,
+            string apparel
             )
         {
             this.identifier = id;
             this.eventIdentifier = eid;
             this.distanceIdentifier = did;
             this.distanceName = distanceName ?? "";
-            this.bib = bib;
+            this.bib = bib ?? "";
             this.checkedIn = ci != 0 ? 1 : 0;
             this.comments = comments ?? "";
             this.owes = owes ?? "";
             this.other = other ?? "";
             this.status = status;
-            this.ageGroupName = ageGroupName;
+            this.ageGroupName = ageGroupName ?? "";
             this.ageGroupId = ageGroupId;
             this.anonymous = anonymous;
             this.sms_enabled = sms_enabled;
+            this.apparel = apparel ?? "";
         }
 
         internal void Trim()
@@ -81,7 +85,7 @@
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false, false);
+            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false, false, "");
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -99,5 +103,6 @@
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public bool Anonymous { get => anonymous; set => anonymous = value; }
         public bool SMSEnabled { get => sms_enabled; set => sms_enabled = value; }
+        public string Apparel { get => apparel; set => apparel = value; }
     }
 }

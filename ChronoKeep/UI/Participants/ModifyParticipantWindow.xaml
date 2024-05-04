@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Chronokeep.UI.Participants"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Participant" Height="835" Width="520" Closing="Window_Closing" ResizeMode="NoResize"
+        Title="Participant" Height="885" Width="520" Closing="Window_Closing" ResizeMode="NoResize"
         d:DataContext="{d:DesignInstance local:ModifyParticipantWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -99,6 +99,10 @@
             <DockPanel>
                 <TextBlock Text="Comments" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="CommentsBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock Text="Apparel" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <TextBox Name="ApparelBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
                 <TextBlock Text="Other" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>

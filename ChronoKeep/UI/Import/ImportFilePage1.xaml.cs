@@ -61,7 +61,7 @@ namespace Chronokeep
             foreach (ListBoxItem item in headerListBox.Items)
             {
                 int val = ((HeaderListBoxItem)item).HeaderBox.SelectedIndex;
-                if (val > 0 && val != ImportFileWindow.APPARELITEM)
+                if (val > 0)
                 {
                     if (check[val] > 0)
                     {

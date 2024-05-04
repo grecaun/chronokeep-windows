@@ -27,5 +27,7 @@ namespace Chronokeep.Objects.Registration
         public string Mobile { get; set; }
         [JsonPropertyName("sms")]
         public bool SMSEnabled { get; set; }
+        [JsonPropertyName("apparel")]
+        public string Apparel { get; set; }
     }
 }

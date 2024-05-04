@@ -198,7 +198,8 @@ namespace Chronokeep.Network.Registration
                                                                 "", // owes
                                                                 "", // other
                                                                 false,
-                                                                addReq.Participant.SMSEnabled
+                                                                addReq.Participant.SMSEnabled,
+                                                                ""
                                                                 ),
                                                             "", // email
                                                             "", // phone
@@ -368,7 +369,8 @@ namespace Chronokeep.Network.Registration
                     Birthdate = participant.Birthdate,
                     Distance = participant.Distance,
                     Mobile = participant.Mobile,
-                    SMSEnabled = participant.EventSpecific.SMSEnabled
+                    SMSEnabled = participant.EventSpecific.SMSEnabled,
+                    Apparel = participant.EventSpecific.Apparel
                 });
             }
             return output;

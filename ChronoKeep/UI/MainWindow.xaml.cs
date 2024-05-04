@@ -409,7 +409,10 @@ namespace Chronokeep.UI
         }
         public void UpdateRegistrationDistances()
         {
-            RegistrationWorker.UpdateDistances();
+            if (RegistrationWorker != null)
+            {
+                RegistrationWorker.UpdateDistances();
+            }
         }
 
         private bool StopTimingWorker()

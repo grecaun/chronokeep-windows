@@ -1128,7 +1128,8 @@ namespace Chronokeep.Database.SQLite
                                     reader["eventspecific_age_group_name"].ToString(),
                                     Convert.ToInt32(reader["eventspecific_age_group_id"]),
                                     false,
-                                    false
+                                    false,
+                                    ""
                                     ),
                                 reader["participant_email"].ToString(),
                                 "",
@@ -1491,6 +1492,14 @@ namespace Chronokeep.Database.SQLite
                             "UNIQUE(banned_phone)" +
                             "); " +
                             "UPDATE settings set value='59' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
+                        goto case 59;
+                    case 59:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 59.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE eventspecific ADD COLUMN " +
+                            "eventspecific_apparel VARCHAR NOT NULL DEFAULT '';" +
+                            "UPDATE settings set value='60' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;
                 }
