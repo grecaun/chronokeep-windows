@@ -65,7 +65,7 @@ namespace Chronokeep.Objects
             this.eventspecificId = eventspecificId;
             this.locationId = locationId;
             this.segmentId = segmentId;
-            this.time = time;
+            this.time = time ?? "";
             this.occurrence = occurrence;
             locationName = locations != null ? locations.ContainsKey(this.locationId) ?
                 locations[this.locationId].Name : "Unknown" : "Unknown";
@@ -96,20 +96,20 @@ namespace Chronokeep.Objects
                     segmentName = string.Format("{0} {1}", segmentName, occurrence);
                 }
             }
-            firstName = first;
-            lastName = last;
-            distanceName = distance;
-            this.bib = bib;
-            this.unknownId = unknownId;
+            firstName = first ?? "";
+            lastName = last ?? "";
+            distanceName = distance ?? "";
+            this.bib = bib ?? "";
+            this.unknownId = unknownId ?? "";
             this.readId = readId;
             systemTime = Constants.Timing.RFIDEpochToDate(systemTimeSec).AddMilliseconds(systemTimeMill);
-            this.chipTime = chipTime;
+            this.chipTime = chipTime ?? "";
             this.place = place;
             this.agePlace = agePlace;
             this.genderPlace = genderPlace;
-            this.gender = gender;
+            this.gender = gender ?? "";
             this.ageGroupId = ageGroupId;
-            this.ageGroupName = ageGroupName;
+            this.ageGroupName = ageGroupName ?? "";
             Match chipTimeMatch = timeRegex.Match(chipTime);
             chipSeconds = 0;
             chipMilliseconds = 0;
@@ -131,14 +131,14 @@ namespace Chronokeep.Objects
                 milliseconds = Convert.ToInt32(timeMatch.Groups[4].Value);
             }
             this.status = status;
-            splitTime = split;
+            splitTime = split ?? "";
             this.uploaded = uploaded;
-            this.birthday = birthday;
+            this.birthday = birthday ?? "";
             this.type = type;
-            this.linked_distance_name = linked_distance_name;
-            this.chip = chip;
+            this.linked_distance_name = linked_distance_name ?? "";
+            this.chip = chip ?? "";
             this.anonymous = anonymous;
-            this.participantId = participantId;
+            this.participantId = participantId ?? "";
         }
 
         // Used by routines to add new results to the database.
@@ -163,11 +163,11 @@ namespace Chronokeep.Objects
             this.locationId = locationId;
             this.segmentId = segmentId;
             this.occurrence = occurrence;
-            this.time = time;
-            this.unknownId = unknownId;
-            this.chipTime = chipTime;
+            this.time = time ?? "";
+            this.unknownId = unknownId ?? "";
+            this.chipTime = chipTime ?? "";
             this.systemTime = systemTime;
-            this.bib = bib;
+            this.bib = bib ?? "";
             place = Constants.Timing.TIMERESULT_DUMMYPLACE;
             agePlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             genderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
@@ -213,18 +213,18 @@ namespace Chronokeep.Objects
         public int EventIdentifier { get => eventId; set => eventId = value; }
         public int SegmentId { get => segmentId; set => segmentId = value; }
         public int Occurrence { get => occurrence; set => occurrence = value; }
-        public string Time { get => time; set => time = value; }
-        public string LocationName { get => locationName; set => locationName = value; }
-        public string SegmentName { get => segmentName; set => segmentName = value; }
-        public string First { get => firstName; set => firstName = value; }
-        public string Last { get => lastName; set => lastName = value; }
+        public string Time { get => time; set => time = value ?? ""; }
+        public string LocationName { get => locationName; set => locationName = value ?? ""; }
+        public string SegmentName { get => segmentName; set => segmentName = value ?? ""; }
+        public string First { get => firstName; set => firstName = value ?? ""; }
+        public string Last { get => lastName; set => lastName = value ?? ""; }
         public string ParticipantName { get => string.Format("{0} {1}", firstName, lastName).Trim(); }
         public string PrettyParticipantName { get => anonymous ? string.Format("Bib {0}", bib) : string.Format("{0} {1}", firstName, lastName).Trim(); }
         public string DistanceName { get => linked_distance_name == "" ? distanceName : linked_distance_name; }
         public string RealDistanceName { get => distanceName; }
-        public string Bib { get => bib; set => bib = value; }
+        public string Bib { get => bib; set => bib = value ?? ""; }
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
-        public string UnknownId { get => unknownId; set => unknownId = value; }
+        public string UnknownId { get => unknownId; set => unknownId = value ?? ""; }
         public int ReadId { get => readId; set => readId = value; }
         public int Place { get => place; set => place = value; }
         public string PlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? place < 1 ? "" : place.ToString() : ""; }
@@ -269,19 +269,19 @@ namespace Chronokeep.Objects
         {
             get => raceType == Constants.Timing.EVENT_TYPE_TIME ? splitTime : chipTime;
         }
-        public string ChipTime { get => chipTime; set => chipTime = value; }
+        public string ChipTime { get => chipTime; set => chipTime = value ?? ""; }
         public string ChipTimeNoMilliseconds { get => chipTime.Split('.').Length > 0 ? chipTime.Split('.')[0] : chipTime; }
-        public string Gender { get => gender; set => gender = value; }
-        public string AgeGroupName { get => PrettyAgeGroupName(); set => ageGroupName = value; }
+        public string Gender { get => gender; set => gender = value ?? ""; }
+        public string AgeGroupName { get => PrettyAgeGroupName(); set => ageGroupName = value ?? ""; }
         public int Status { get => status; set => status = value; }
-        public string LapTime { get => splitTime; set => splitTime = value; }
+        public string LapTime { get => splitTime; set => splitTime = value ?? ""; }
         public long ChipSeconds { get => chipSeconds; set => chipSeconds = value; }
         public int ChipMilliseconds { get => chipMilliseconds; set => chipMilliseconds = value; }
         public long Seconds { get => seconds; set => seconds = value; }
         public int Milliseconds { get => milliseconds; set => milliseconds = value; }
         public int Uploaded { get => uploaded; set => uploaded = value == Constants.Timing.TIMERESULT_UPLOADED_FALSE ? Constants.Timing.TIMERESULT_UPLOADED_FALSE : Constants.Timing.TIMERESULT_UPLOADED_TRUE; }
-        public string Birthday { get => birthday; set => birthday = value; }
-        public string Chip { get => chip; set => chip = value; }
+        public string Birthday { get => birthday; set => birthday = value ?? ""; }
+        public string Chip { get => chip; set => chip = value ?? ""; }
         public bool Anonymous { get => anonymous; set => anonymous = value; }
         public string AgeGenderString
         {

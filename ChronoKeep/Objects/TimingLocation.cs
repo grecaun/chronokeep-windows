@@ -12,7 +12,7 @@ namespace Chronokeep
         public TimingLocation(int eventIdentifier, string nameString)
         {
             this.eventIdentifier = eventIdentifier;
-            this.name = nameString;
+            this.name = nameString ?? "";
             this.max_occurrences = 1;
             this.ignore_within = -1;
         }
@@ -21,7 +21,7 @@ namespace Chronokeep
         {
             this.identifier = identifier;
             this.eventIdentifier = eventIdentifier;
-            this.name = nameString;
+            this.name = nameString ?? "";
             this.max_occurrences = 1;
             this.ignore_within = -1;
         }
@@ -30,14 +30,14 @@ namespace Chronokeep
         {
             this.identifier = id;
             this.eventIdentifier = eventId;
-            this.name = name;
+            this.name = name ?? "";
             this.max_occurrences = maxOcc;
             this.ignore_within = ignore;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
-        public string Name { get => name; set => name = value; }
+        public string Name { get => name; set => name = value ?? ""; }
         public int MaxOccurrences { get => max_occurrences; set => max_occurrences = value; }
         public int IgnoreWithin { get => ignore_within; set => ignore_within = value; }
 

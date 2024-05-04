@@ -101,6 +101,14 @@ namespace Chronokeep.Objects
 
         internal void FormatData()
         {
+            if (EventSpecific.Bib == null)
+            {
+                EventSpecific.Bib = "";
+            }
+            if (EventSpecific.Apparel == null)
+            {
+                EventSpecific.Apparel = "";
+            }
             if (firstName != null && firstName.Length > 0)
             {
                 firstName = CapitalizeFirst(firstName);
@@ -545,7 +553,7 @@ namespace Chronokeep.Objects
         public string Country { get => country; }
         public string Street2 { get => street2; }
         public string Gender { get => gender; }
-        public string Chip { get => chip; set => chip = value; }
+        public string Chip { get => chip; set => chip = value ?? ""; }
         public bool Anonymous { get => eventSpecific.Anonymous; }
 
 
@@ -667,15 +675,15 @@ namespace Chronokeep.Objects
             bool SMSEnabled,
             string Mobile)
         {
-            firstName = FirstName;
-            lastName = LastName;
-            gender = Gender;
-            birthdate = Birthdate;
+            firstName = FirstName ?? "";
+            lastName = LastName ?? "";
+            gender = Gender ?? "";
+            birthdate = Birthdate ?? "";
             EventSpecific.DistanceIdentifier = d.Identifier;
-            EventSpecific.DistanceName = d.Name;
-            EventSpecific.Bib = Bib;
+            EventSpecific.DistanceName = d.Name ?? "";
+            EventSpecific.Bib = Bib ?? "";
             EventSpecific.SMSEnabled = SMSEnabled;
-            mobile = Mobile;
+            mobile = Mobile ?? "";
             Trim();
             FormatData();
         }

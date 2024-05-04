@@ -91,18 +91,18 @@
         public int Identifier { get => identifier; set => identifier = value; }
         public int EventIdentifier { get => eventIdentifier; set => eventIdentifier = value; }
         public int DistanceIdentifier { get => distanceIdentifier; set => distanceIdentifier = value; }
-        public string Bib { get => bib; set => bib = value; }
+        public string Bib { get => bib; set => bib = value ?? ""; }
         public int CheckedIn { get => checkedIn; set => checkedIn = value; }
-        public string Comments { get => comments; set => comments = value; }
-        public string DistanceName { get => distanceName; set => distanceName = value; }
-        public string Owes { get => owes; set => owes = value; }
-        public string Other { get => other; set => other = value; }
+        public string Comments { get => comments; set => comments = value ?? ""; }
+        public string DistanceName { get => distanceName; set => distanceName = value ?? ""; }
+        public string Owes { get => owes; set => owes = value ?? ""; }
+        public string Other { get => other; set => other = value ?? ""; }
         public int Status { get => status; set => status = value; }
         public string StatusStr { get => Constants.Timing.EVENTSPECIFIC_STATUS_NAMES[status]; }
-        public string AgeGroupName { get => ageGroupName; set => ageGroupName = value; }
+        public string AgeGroupName { get => ageGroupName; set => ageGroupName = value ?? ""; }
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public bool Anonymous { get => anonymous; set => anonymous = value; }
         public bool SMSEnabled { get => sms_enabled; set => sms_enabled = value; }
-        public string Apparel { get => apparel; set => apparel = value; }
+        public string Apparel { get => apparel; set => apparel = value ?? ""; }
     }
 }

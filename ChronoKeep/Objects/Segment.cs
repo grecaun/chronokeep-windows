@@ -19,7 +19,7 @@ namespace Chronokeep
             this.distance_segment = seg.distance_segment;
             this.distance_cumulative = seg.distance_cumulative;
             this.distance_unit = seg.distance_unit;
-            this.name = seg.name;
+            this.name = seg.name ?? "";
         }
 
         public Segment(int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n)
@@ -32,7 +32,7 @@ namespace Chronokeep
             this.distance_segment = dseg;
             this.distance_cumulative = dcum;
             this.distance_unit = dunit;
-            this.name = n;
+            this.name = n ?? "";
         }
 
         public Segment(int id, int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n)
@@ -45,10 +45,10 @@ namespace Chronokeep
             this.distance_segment = dseg;
             this.distance_cumulative = dcum;
             this.distance_unit = dunit;
-            this.name = n;
+            this.name = n ?? "";
         }
 
-        public string Name { get => name; set => name = value; }
+        public string Name { get => name; set => name = value ?? ""; }
         public int DistanceUnit { get => distance_unit; set => distance_unit = value; }
         public double SegmentDistance { get => distance_segment; set => distance_segment = value; }
         public double CumulativeDistance { get => distance_cumulative; set => distance_cumulative = value; }
