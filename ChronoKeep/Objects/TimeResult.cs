@@ -556,6 +556,30 @@ namespace Chronokeep.Objects
                 ParticipantName.IndexOf(value, StringComparison.OrdinalIgnoreCase) == -1;
         }
 
+        public bool SMSCanBeSent(TimingDictionary dictionary)
+        {
+            if (Constants.Globals.TwilioCredentials.AccountSID.Length < 1 || Constants.Globals.TwilioCredentials.AuthToken.Length < 1)
+            {
+                return false;
+            }
+            Participant part = dictionary.participantBibDictionary.ContainsKey(bib) ? dictionary.participantBibDictionary[bib] : null;
+            if (part == null || part.EventSpecific.SMSEnabled == false)
+            {
+                return false;
+            }
+            string validPhone = Constants.Globals.GetValidPhone(part.Mobile);
+            if (validPhone.Length == 0)
+            {
+                validPhone = Constants.Globals.GetValidPhone(part.Phone);
+            }
+            // Invalid length. +15555551234 is a valid phone
+            if (validPhone.Length != 12 || Constants.Globals.TwilioCredentials.PhoneNumber.Length != 12)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public bool SendSMSAlert(Event theEvent, TimingDictionary dictionary)
         {
             if (Constants.Globals.TwilioCredentials.AccountSID.Length < 1 || Constants.Globals.TwilioCredentials.AuthToken.Length < 1)

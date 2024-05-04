@@ -373,14 +373,29 @@ namespace Chronokeep.Timing
                     }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType) // && SMS set up && SMS enabled on event)
                     {
-                        // Update banned phones list.
-                        Constants.Globals.UpdateBannedPhones();
+                        List<TimeResult> toSendTo = new List<TimeResult>();
+                        // Check the finish results for results we can send SMS messages for.
                         foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
                         {
                             // verify the distance is set to allow sms alerts and the runner hasn't been notified already
                             if (dictionary.distanceNameDictionary.ContainsKey(result.RealDistanceName)
                                 && true == dictionary.distanceNameDictionary[result.RealDistanceName].SMSEnabled
                                 && false == AlertsSent.Contains((theEvent.Identifier, result.Bib)))
+                            {
+                                // If we can send a message to them (valid phones, credentials valid, sms opted in)
+                                // add them to the list to send sms messages
+                                if (result.SMSCanBeSent(dictionary))
+                                {
+                                    toSendTo.Add(result);
+                                }
+                            }
+                        }
+                        // Only check banned phones or try to send texts if there is something to send.
+                        if (toSendTo.Count > 0)
+                        {
+                            // Update banned phones list.
+                            Constants.Globals.UpdateBannedPhones();
+                            foreach (TimeResult result in toSendTo)
                             {
                                 // Only send alert if participant wants it sent
                                 // Do not add to the AlertsSent database because they
@@ -392,7 +407,6 @@ namespace Chronokeep.Timing
                                     AlertsSent.Add((theEvent.Identifier, result.Bib));
                                     database.AddSMSAlert(theEvent.Identifier, result.Bib);
                                 }
-
                             }
                         }
                     }
