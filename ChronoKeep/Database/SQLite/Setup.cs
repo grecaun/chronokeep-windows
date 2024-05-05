@@ -296,9 +296,15 @@ namespace Chronokeep.Database.SQLite
             }
             reader.Close();
             connection.Close();
+            AppSetting dbSetting = Settings.GetAppSetting(Constants.Settings.MINIMUM_COMPATIBLE_DATABASE, connection);
+            int maxVers = Convert.ToInt32(dbSetting.Value);
             if (oldVersion == -1) Log.D("SQLite.Setup", "Unable to get a version number. Something is terribly wrong.");
             else if (oldVersion < version) Update.UpdateDatabase(oldVersion, version, connectionInfo);
-            else if (oldVersion > version) Update.UpdateClient(oldVersion, version);
+            // Check if the db version is greater than the minimum required.
+            else if (dbSetting == null || maxVers > version)
+            {
+                Update.UpdateClient(version, maxVers);
+            }
         }
     }
 }

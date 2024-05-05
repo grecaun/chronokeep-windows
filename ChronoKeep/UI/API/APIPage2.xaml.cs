@@ -65,7 +65,7 @@ namespace Chronokeep.UI.API
                 newPanel.Visibility = Visibility.Collapsed;
             }
             nameBox.Text = theEvent.Name;
-            slugBox.Text = theEvent.Name.Replace(' ', '-').ToLower();
+            slugBox.Text = theEvent.Name.Replace(' ', '-').Replace("'","").ToLower();
             contactBox.Text = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL).Value;
             eventPanel.Visibility = Visibility.Visible;
             holdingLabel.Visibility = Visibility.Collapsed;

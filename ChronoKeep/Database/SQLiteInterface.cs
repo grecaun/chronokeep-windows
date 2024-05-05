@@ -15,6 +15,7 @@ namespace Chronokeep
          * NEXT AVAILABLE   = 156
          */
         private readonly int version = 60;
+        public const int minimum_compatible_version = 60;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 

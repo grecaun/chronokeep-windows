@@ -1,65 +1,60 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Chronokeep.Constants
 {
     class Settings
     {
-        public static readonly string PROGRAM_DIR           = "Chronokeep";
-        public static readonly string HELP_DIR              = "help";
+        public const string PROGRAM_DIR           = "Chronokeep";
+        public const string HELP_DIR              = "help";
 
-        public static readonly string SERVER_NAME           = "SETTING_SERVER_NAME";
-        public static readonly string DATABASE_VERSION      = "DATABASE_VERSION";
+        public const string SERVER_NAME           = "SETTING_SERVER_NAME";
+        public const string DATABASE_VERSION      = "DATABASE_VERSION";
 
-        public static readonly string DEFAULT_EXPORT_DIR    = "SETTING_DEFAULT_EXPORT_DIR";
-        public static readonly string DEFAULT_TIMING_SYSTEM = "SETTING_DEFAULT_TIMING_SYSTEM";
-        public static readonly string CURRENT_EVENT         = "SETTING_CURRENT_EVENT";
-        public static readonly string COMPANY_NAME          = "SETTING_COMPANY_NAME";
-        public static readonly string CONTACT_EMAIL         = "SETTING_CONTACT_EMAIL";
-        public static readonly string UPDATE_ON_PAGE_CHANGE = "SETTING_UPDATE_PAGE_CHANGE";
-        public static readonly string EXIT_NO_PROMPT        = "EXIT_NO_PROMPT";
-        public static readonly string DEFAULT_CHIP_TYPE     = "DEFAULT_CHIP_TYPE";
-        public static readonly string LAST_USED_API_ID      = "SETTING_LAST_USED_API_ID";
-        public static readonly string CHECK_UPDATES         = "SETTING_CHECK_UPDATES";
-        public static readonly string CURRENT_THEME         = "SETTING_THEME";
-        public static readonly string UPLOAD_INTERVAL       = "SETTING_UPLOAD_INTERVAL";
-        public static readonly string DOWNLOAD_INTERVAL     = "SETTINGS_DOWNLOAD_INTERVAL";
-        public static readonly string ANNOUNCER_WINDOW      = "SETTING_ANNOUNCER_WINDOW";
-        public static readonly string ALARM_SOUND           = "SETTING_ALARM_SOUND";
+        public const string DEFAULT_EXPORT_DIR          = "SETTING_DEFAULT_EXPORT_DIR";
+        public const string DEFAULT_TIMING_SYSTEM       = "SETTING_DEFAULT_TIMING_SYSTEM";
+        public const string CURRENT_EVENT               = "SETTING_CURRENT_EVENT";
+        public const string COMPANY_NAME                = "SETTING_COMPANY_NAME";
+        public const string CONTACT_EMAIL               = "SETTING_CONTACT_EMAIL";
+        public const string UPDATE_ON_PAGE_CHANGE       = "SETTING_UPDATE_PAGE_CHANGE";
+        public const string EXIT_NO_PROMPT              = "EXIT_NO_PROMPT";
+        public const string DEFAULT_CHIP_TYPE           = "DEFAULT_CHIP_TYPE";
+        public const string LAST_USED_API_ID            = "SETTING_LAST_USED_API_ID";
+        public const string CHECK_UPDATES               = "SETTING_CHECK_UPDATES";
+        public const string CURRENT_THEME               = "SETTING_THEME";
+        public const string UPLOAD_INTERVAL             = "SETTING_UPLOAD_INTERVAL";
+        public const string DOWNLOAD_INTERVAL           = "SETTINGS_DOWNLOAD_INTERVAL";
+        public const string ANNOUNCER_WINDOW            = "SETTING_ANNOUNCER_WINDOW";
+        public const string ALARM_SOUND                 = "SETTING_ALARM_SOUND";
+        public const string MINIMUM_COMPATIBLE_DATABASE = "SETTING_MINIMUM_COMPATIBLE_DATABASE";
 
-        public static readonly string TWILIO_ACCOUNT_SID    = "TWILIO_ACCOUNT_SID";
-        public static readonly string TWILIO_AUTH_TOKEN     = "TWILIO_AUTH_TOKEN";
-        public static readonly string TWILIO_PHONE_NUMBER   = "TWILIO_PHONE_NUMBER";
+        public const string TWILIO_ACCOUNT_SID    = "TWILIO_ACCOUNT_SID";
+        public const string TWILIO_AUTH_TOKEN     = "TWILIO_AUTH_TOKEN";
+        public const string TWILIO_PHONE_NUMBER   = "TWILIO_PHONE_NUMBER";
 
-        public static readonly string MAILGUN_API_KEY       = "MAILGUN_API_KEY";
-        public static readonly string MAILGUN_API_URL       = "MAILGUN_API_URL";
-        public static readonly string MAILGUN_FROM_EMAIL    = "MAILGUN_FROM_EMAIL";
-        public static readonly string MAILGUN_FROM_NAME     = "MAILGUN_FROM_NAME";
+        public const string MAILGUN_API_KEY       = "MAILGUN_API_KEY";
+        public const string MAILGUN_API_URL       = "MAILGUN_API_URL";
+        public const string MAILGUN_FROM_EMAIL    = "MAILGUN_FROM_EMAIL";
+        public const string MAILGUN_FROM_NAME     = "MAILGUN_FROM_NAME";
 
-        public static readonly string NULL_EVENT_ID     = "-1";
+        public const string NULL_EVENT_ID     = "-1";
 
-        public static readonly string SETTING_TRUE      = "TRUE";
-        public static readonly string SETTING_FALSE     = "FALSE";
+        public const string SETTING_TRUE      = "TRUE";
+        public const string SETTING_FALSE     = "FALSE";
 
-        public static readonly string THEME_SYSTEM      = "THEME_SYSTEM";
-        public static readonly string THEME_DARK        = "THEME_DARK";
-        public static readonly string THEME_LIGHT       = "THEME_LIGHT";
+        public const string THEME_SYSTEM      = "THEME_SYSTEM";
+        public const string THEME_DARK        = "THEME_DARK";
+        public const string THEME_LIGHT       = "THEME_LIGHT";
 
-        public static readonly string CHIP_TYPE_DEC     = "DEC";
-        public static readonly string CHIP_TYPE_HEX     = "HEX";
+        public const string CHIP_TYPE_DEC     = "DEC";
+        public const string CHIP_TYPE_HEX     = "HEX";
 
-        public static readonly string WAIVER_YEAR       = "[YEAR]";
-        public static readonly string WAIVER_EVENT      = "[EVENT]";
-        public static readonly string WAIVER_COMPANY    = "[COMPANY]";
+        public const string WAIVER_YEAR       = "[YEAR]";
+        public const string WAIVER_EVENT      = "[EVENT]";
+        public const string WAIVER_COMPANY    = "[COMPANY]";
 
-        public static readonly string DEFAULT_INTERVAL  = "30";
-        public static readonly string DEFAULT_ANNOUNCER = "45";
-        public static readonly string DEFAULT_ALARM     = "1";
+        public const string DEFAULT_INTERVAL  = "30";
+        public const string DEFAULT_ANNOUNCER = "45";
+        public const string DEFAULT_ALARM     = "1";
 
         public static void SetupSettings(IDBInterface database)
         {
@@ -151,6 +146,10 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(SERVER_NAME) == null)
             {
                 database.SetAppSetting(SERVER_NAME, "Chronokeep Registration");
+            }
+            if (database.GetAppSetting(MINIMUM_COMPATIBLE_DATABASE) == null)
+            {
+                database.SetAppSetting(MINIMUM_COMPATIBLE_DATABASE, SQLiteInterface.minimum_compatible_version.ToString());
             }
         }
     }
