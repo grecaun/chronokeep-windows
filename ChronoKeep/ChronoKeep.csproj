@@ -202,9 +202,7 @@
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="7.5.1" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Data.SQLite.Core">
-      <Version>1.0.118</Version>
-    </PackageReference>
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.5.1" />
     <PackageReference Include="System.Memory">
       <Version>4.5.5</Version>
