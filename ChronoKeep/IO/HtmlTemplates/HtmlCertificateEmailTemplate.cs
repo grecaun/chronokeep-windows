@@ -52,7 +52,7 @@ namespace Chronokeep.IO.HtmlTemplates
 				<td align=""center"" style=""padding:10px;"">
 					<table class=""content"" border=""0"" cellspacing=""0"" cellpadding=""0"" style=""max-width:600px;width:100%;min-width:350px;"">
 						<tr>
-							<td class=""header"" style=""background-color: #345C72; padding: 20px; text-align: center; color: white; font-size: 32px; border-radius: 15px"">
+							<td class=""header"" style=""border-bottom:1px solid #6c757d; padding: 20px; text-align: center; font-size: 32px;"">
 								Congratulations ");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlCertificateEmailTemplate.tt"
@@ -97,12 +97,9 @@ namespace Chronokeep.IO.HtmlTemplates
             
             #line default
             #line hidden
-            this.Write(@"
-							</td>
-						</tr>
-						<tr>
-							<td class=""footer"" style=""background-color: #333333; padding: 20px; text-align: center; color: white; font-size: 14px; border-radius: 15px"">
-								You're receiving this email because this email was used to sign up for the ");
+            this.Write("\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<td class=\"footer\" style=\"border-top:" +
+                    "1px solid #6c757d; padding: 20px; text-align: center; font-size: 14px;\">\n\t\t\t\t\t\t\t" +
+                    "\tYou\'re receiving this email because this email was used to sign up for the ");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlCertificateEmailTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(eventName));
@@ -116,8 +113,9 @@ namespace Chronokeep.IO.HtmlTemplates
             
             #line default
             #line hidden
-            this.Write("\n\t\t\t\t\t\t\t</td>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</td>\n\t\t\t</tr>\n\t\t</table>\n\t</body>\n</" +
-                    "html>");
+            this.Write("\n\t\t\t\t\t\t\t\t<br><br>This email was sent from an unmonitored mailbox.<br>Please conta" +
+                    "ct the race director of the event with any questions or comments.\n\t\t\t\t\t\t\t</td>\n\t" +
+                    "\t\t\t\t\t</tr>\n\t\t\t\t\t</table>\n\t\t\t\t</td>\n\t\t\t</tr>\n\t\t</table>\n\t</body>\n</html>");
             return this.GenerationEnvironment.ToString();
         }
     }

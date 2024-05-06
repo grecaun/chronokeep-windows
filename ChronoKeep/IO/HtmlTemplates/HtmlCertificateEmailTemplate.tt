@@ -18,7 +18,7 @@
 				<td align="center" style="padding:10px;">
 					<table class="content" border="0" cellspacing="0" cellpadding="0" style="max-width:600px;width:100%;min-width:350px;">
 						<tr>
-							<td class="header" style="background-color: #345C72; padding: 20px; text-align: center; color: white; font-size: 32px; border-radius: 15px">
+							<td class="header" style="border-bottom:1px solid #6c757d; padding: 20px; text-align: center; font-size: 32px;">
 								Congratulations <#= participantName #>!
 							</td>
 						</tr>
@@ -32,8 +32,9 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="footer" style="background-color: #333333; padding: 20px; text-align: center; color: white; font-size: 14px; border-radius: 15px">
+							<td class="footer" style="border-top:1px solid #6c757d; padding: 20px; text-align: center; font-size: 14px;">
 								You're receiving this email because this email was used to sign up for the <#= eventName #>.<#= unsubscribe #>
+								<br><br>This email was sent from an unmonitored mailbox.<br>Please contact the race director of the event with any questions or comments.
 							</td>
 						</tr>
 					</table>
