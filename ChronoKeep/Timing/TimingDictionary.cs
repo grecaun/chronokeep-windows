@@ -29,7 +29,7 @@ namespace Chronokeep.Timing
 
         // HashSet for non-linked distances.
         public HashSet<Distance> mainDistances = new HashSet<Distance>();
-        public Dictionary<int, string> apiURLs = new Dictionary<int, string>();
+        public Dictionary<int, APIObject> apis = new Dictionary<int, APIObject>();
 
         // Dictionaries for keeping track of Segments by distance
         public Dictionary<int, List<Segment>> DistanceSegmentOrder = new Dictionary<int, List<Segment>>();

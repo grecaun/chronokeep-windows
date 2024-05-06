@@ -611,10 +611,17 @@ namespace Chronokeep.Objects
             //"{FIRST} {LAST} has finished the {YEAR} {RACE} {DISTANCE?} in {CHIP TIME}. {RESULTS LINK}"
             string SMS;
             string resultsURL = "";
-            if (dictionary.apiURLs.ContainsKey(theEvent.API_ID) &&
-                Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] == dictionary.apiURLs[theEvent.API_ID])
+            if (dictionary.apis.ContainsKey(theEvent.API_ID) && dictionary.apis[theEvent.API_ID].WebURL.Length > 0)
             {
-                resultsURL = " More @ https://chronokeep.com.";
+                string[] event_ids = theEvent.API_Event_ID.Split(',');
+                if (event_ids.Length == 2)
+                {
+                    resultsURL = string.Format(" More results @ {0}results/{1}/{2}.", dictionary.apis[theEvent.API_ID].WebURL, event_ids[0], event_ids[1]);
+                }
+                else
+                {
+                    resultsURL = string.Format(" More results @ {0}.", dictionary.apis[theEvent.API_ID].WebURL);
+                }
             }
             if (dictionary.mainDistances.Count > 1)
             {

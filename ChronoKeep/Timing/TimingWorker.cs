@@ -203,10 +203,10 @@ namespace Chronokeep.Timing
                     dictionary.mainDistances.Add(d);
                 }
             }
-            dictionary.apiURLs.Clear();
+            dictionary.apis.Clear();
             foreach (APIObject api in database.GetAllAPI())
             {
-                dictionary.apiURLs.Add(api.Identifier, api.URL);
+                dictionary.apis[api.Identifier] = api;
             }
             // Clear distance segment list if no distance values are set
             List<int> distanceNotSet = new List<int>();
