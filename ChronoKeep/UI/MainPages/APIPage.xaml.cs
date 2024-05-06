@@ -129,7 +129,8 @@ namespace Chronokeep.UI.MainPages
             public ComboBox APIType { get; private set; }
             public TextBox APIURL { get; private set; }
             public TextBox APIToken { get; private set; }
-            public Button Remove { get; private set; }
+            public TextBox APIWebURL { get; private set; }
+            public Wpf.Ui.Controls.Button Remove { get; private set; }
 
             readonly APIPage page;
             public APIObject theAPI;
@@ -142,11 +143,12 @@ namespace Chronokeep.UI.MainPages
                 {
                     MaxHeight = 100
                 };
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(150) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(110) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(45) });
                 this.Content = thePanel;
                 this.IsTabStop = false;
 
@@ -247,19 +249,38 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(tokenPanel);
                 Grid.SetColumn(tokenPanel, 3);
 
-                Remove = new Button()
+                StackPanel webURLPanel = new StackPanel();
+                webURLPanel.Children.Add(new TextBlock
                 {
-                    Content = "Remove",
-                    FontSize = 14,
-                    Width = 95,
-                    Height = 38,
+                    Text = "API Web URL",
+                    FontSize = 15,
+                    Margin = new Thickness(10, 5, 0, 5),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    TextAlignment = TextAlignment.Center
+                });
+                APIWebURL = new TextBox
+                {
+                    FontSize = 15,
+                    Height = 45,
+                    Margin = new Thickness(10, 5, 0, 5),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Text = api.WebURL
+                };
+                webURLPanel.Children.Add(APIWebURL);
+                thePanel.Children.Add(webURLPanel);
+                Grid.SetColumn(webURLPanel, 4);
+
+                Remove = new Wpf.Ui.Controls.Button()
+                {
+                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Delete24 },
                     Margin = new Thickness(0, 5, 0, 9),
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Bottom
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Height = 38
                 };
                 Remove.Click += new RoutedEventHandler(this.Remove_Click);
                 thePanel.Children.Add(Remove);
-                Grid.SetColumn(Remove, 4);
+                Grid.SetColumn(Remove, 5);
             }
 
             private void Remove_Click(object sender, RoutedEventArgs e)
@@ -279,6 +300,11 @@ namespace Chronokeep.UI.MainPages
                 }
                 theAPI.AuthToken = APIToken.Text;
                 theAPI.Type = ((ComboBoxItem)APIType.SelectedItem).Uid;
+                theAPI.WebURL = APIWebURL.Text;
+                if (theAPI.WebURL.Length > 0 && !theAPI.WebURL.EndsWith("/"))
+                {
+                    theAPI.WebURL = theAPI.WebURL + "/";
+                }
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)
@@ -303,6 +329,16 @@ namespace Chronokeep.UI.MainPages
                     else
                     {
                         APIURL.IsEnabled = true;
+                    }
+                    if (Constants.APIConstants.API_RESULTS[type])
+                    {
+                        APIWebURL.Text = theAPI.WebURL;
+                        APIWebURL.IsEnabled = true;
+                    }
+                    else
+                    {
+                        APIWebURL.Text = "";
+                        APIWebURL.IsEnabled = false;
                     }
                 }
             }

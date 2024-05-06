@@ -169,6 +169,10 @@ namespace Chronokeep
         void AddSMSAlert(int eventId, string bib);
         List<string> GetSMSAlerts(int eventId);
 
+        // Email Alerts
+        void AddEmailAlert(int eventId, string bib);
+        List<string> GetEmailAlerts(int eventId);
+
         // Banned phones/emails functions
         List<string> GetBannedPhones();
         void AddBannedPhone(string phone);

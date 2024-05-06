@@ -6,6 +6,8 @@ namespace Chronokeep.Constants
     {
         public const string CHRONOKEEP_RESULTS        = "CHRONOKEEP_V1";
         public const string CHRONOKEEP_RESULTS_SELF   = "CHRONOKEEP_V1_SELF";
+        public const string CHRONOKEEP_RESULTS_WEB_URL = "https://www.chronokeep.com/";
+
         public const string CHRONOKEEP_REMOTE         = "CHRONOKEEP_REMOTE_V1";
         public const string CHRONOKEEP_REMOTE_SELF    = "CHRONOKEEP_REMOTE_V1_SELF";
 

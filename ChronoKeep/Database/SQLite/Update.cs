@@ -1501,6 +1501,27 @@ namespace Chronokeep.Database.SQLite
                             "eventspecific_apparel VARCHAR NOT NULL DEFAULT '';" +
                             "UPDATE settings set value='60' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
+                        goto case 60;
+                    case 60:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 60.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "DROP TABLE sms_alert; CREATE TABLE IF NOT EXISTS email_alert(" +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                            "email_bib VARCHAR NOT NULL" +
+                            ");" +
+                            "CREATE TABLE IF NOT EXISTS sms_alert(" +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                            "sms_bib VARCHAR NOT NULL" +
+                            ");" +
+                            "UPDATE settings set value='61' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
+                        goto case 61;
+                    case 61:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 61.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE results_api ADD COLUMN api_web_url VARCHAR NOT NULL DEFAULT '';" +
+                            "UPDATE settings set value='62' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

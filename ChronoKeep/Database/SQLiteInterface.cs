@@ -11,10 +11,10 @@ namespace Chronokeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 155
-         * NEXT AVAILABLE   = 156
+         * HIGHEST MUTEX ID = 157
+         * NEXT AVAILABLE   = 158
          */
-        private readonly int version = 60;
+        private readonly int version = 62;
         public const int minimum_compatible_version = 60;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
@@ -2172,6 +2172,37 @@ namespace Chronokeep
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             List<string> output = SMSAlerts.GetSMSAlerts(eventId, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
+        public void AddEmailAlert(int eventId, string bib)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 156");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 156");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            EmailAlerts.AddEmailAlert(eventId, bib, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public List<string> GetEmailAlerts(int eventId)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 157");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 157");
+                return new List<string>();
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            List<string> output = EmailAlerts.GetEmailAlerts(eventId, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;

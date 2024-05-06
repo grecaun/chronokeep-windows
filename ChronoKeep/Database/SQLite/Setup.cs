@@ -72,6 +72,7 @@ namespace Chronokeep.Database.SQLite
                     "api_url VARCHAR(150) NOT NULL," +
                     "api_auth_token VARCHAR(100) NOT NULL," +
                     "api_nickname VARCHAR(75) NOT NULL," +
+                    "api_web_url VARCHAR NOT NULL DEFAULT ''," +
                     "UNIQUE (api_url, api_auth_token) ON CONFLICT REPLACE);");
                 queries.Add("CREATE TABLE IF NOT EXISTS events (" +
                     "event_id INTEGER PRIMARY KEY," +
@@ -256,7 +257,7 @@ namespace Chronokeep.Database.SQLite
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS sms_alert(" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
-                    "sms_bib INTEGER NOT NULL" +
+                    "sms_bib VARCHAR NOT NULL" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS sms_ban_list(" +
                     "banned_phone VARCHAR(100), " +
@@ -265,6 +266,10 @@ namespace Chronokeep.Database.SQLite
                 queries.Add("CREATE TABLE IF NOT EXISTS email_ban_list(" +
                     "banned_email VARCHAR(100), " +
                     "UNIQUE(banned_email)" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS email_alert(" +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                    "email_bib VARCHAR NOT NULL" +
                     ");");
                 queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
 

@@ -9,7 +9,7 @@ namespace Chronokeep.Objects
     public class APIObject
     {
         private int id;
-        private string type, url, nickname, auth_token;
+        private string type, url, nickname, auth_token, web_url;
 
         public APIObject()
         {
@@ -19,13 +19,14 @@ namespace Chronokeep.Objects
             nickname = "";
         }
 
-        public APIObject(int id, string type, string url, string nickname, string auth_token)
+        public APIObject(int id, string type, string url, string nickname, string auth_token, string web_url)
         {
             this.id = id;
             this.type = type;
             this.url = url;
             this.nickname = nickname;
             this.auth_token = auth_token;
+            this.web_url = web_url;
         }
 
         public int Identifier { get => id; set => id = value; }
@@ -33,6 +34,7 @@ namespace Chronokeep.Objects
         public string URL { get => url; set => url = value; }
         public string Nickname { get => nickname; set => nickname = value; }
         public string AuthToken { get => auth_token; set => auth_token = value; }
+        public string WebURL { get => web_url; set => web_url = value; }
 
         public async Task<List<RemoteReader>> GetReaders()
         {

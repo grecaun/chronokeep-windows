@@ -10,14 +10,15 @@ namespace Chronokeep.Database.SQLite
         internal static int AddAPI(APIObject anAPI, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO results_api (api_type, api_url, api_auth_token, api_nickname)" +
-                " VALUES (@type, @url, @token, @nickname);";
+            command.CommandText = "INSERT INTO results_api (api_type, api_url, api_auth_token, api_nickname, api_web_url)" +
+                " VALUES (@type, @url, @token, @nickname, @weburl);";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@type", anAPI.Type),
                 new SQLiteParameter("@url", anAPI.URL),
                 new SQLiteParameter("@token", anAPI.AuthToken),
-                new SQLiteParameter("@nickname", anAPI.Nickname)
+                new SQLiteParameter("@nickname", anAPI.Nickname),
+                new SQLiteParameter("@weburl", anAPI.WebURL)
             });
             command.ExecuteNonQuery();
             long outVal = connection.LastInsertRowId;
@@ -27,14 +28,15 @@ namespace Chronokeep.Database.SQLite
         internal static void UpdateAPI(APIObject anAPI, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "UPDATE results_api SET api_type=@type, api_url=@url, api_auth_token=@token, api_nickname=@nickname WHERE api_id=@id;";
+            command.CommandText = "UPDATE results_api SET api_type=@type, api_url=@url, api_auth_token=@token, api_nickname=@nickname, api_web_url=@weburl WHERE api_id=@id;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@type", anAPI.Type),
                 new SQLiteParameter("@url", anAPI.URL),
                 new SQLiteParameter("@token", anAPI.AuthToken),
                 new SQLiteParameter("@nickname", anAPI.Nickname),
-                new SQLiteParameter("@id", anAPI.Identifier)
+                new SQLiteParameter("@id", anAPI.Identifier),
+                new SQLiteParameter("@weburl", anAPI.WebURL)
             });
             command.ExecuteNonQuery();
         }
@@ -69,7 +71,8 @@ namespace Chronokeep.Database.SQLite
                     reader["api_type"].ToString(),
                     reader["api_url"].ToString(),
                     reader["api_nickname"].ToString(),
-                    reader["api_auth_token"].ToString()
+                    reader["api_auth_token"].ToString(),
+                    reader["api_web_url"].ToString()
                     );
             }
             reader.Close();
@@ -89,7 +92,8 @@ namespace Chronokeep.Database.SQLite
                     reader["api_type"].ToString(),
                     reader["api_url"].ToString(),
                     reader["api_nickname"].ToString(),
-                    reader["api_auth_token"].ToString()
+                    reader["api_auth_token"].ToString(),
+                    reader["api_web_url"].ToString()
                     ));
             }
             reader.Close();

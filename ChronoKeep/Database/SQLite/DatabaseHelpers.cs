@@ -9,9 +9,11 @@ namespace Chronokeep.Database.SQLite
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "DROP TABLE email_ban_list;" +
-                    "DROP TABLE sms_alert;" +
+                command.CommandText =
+                    "DROP TABLE email_alert;" +
+                    "DROP TABLE email_ban_list;" +
                     "DROP TABLE sms_ban_list;" +
+                    "DROP TABLE sms_alert;" +
                     "DROP TABLE remote_readers;" +
                     "DROP TABLE alarms;" +
                     "DROP TABLE timing_systems;" +
@@ -37,9 +39,11 @@ namespace Chronokeep.Database.SQLite
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
-                command.CommandText = "DELETE FROM email_ban_list;" +
+                command.CommandText =
+                    "DELETE FROM email_alert;" +
+                    "DELETE FROM email_ban_list;" +
+                    "DELETE FROM sms_ban_list;" +
                     "DELETE FROM sms_alert;" +
-                    "DELETE FROM sms_ban_list;" + 
                     "DELETE FROM remote_readers;" +
                     "DELETE FROM alarms;" +
                     "DELETE FROM timing_systems;" +

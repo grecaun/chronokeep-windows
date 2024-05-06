@@ -1387,6 +1387,11 @@ namespace Chronokeep.UI.MainPages
         private async void sendEmailsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Send Emails button clicked.");
+            HashSet<string> sentBibs = new HashSet<string>();
+            foreach (string bib in database.GetEmailAlerts(theEvent.Identifier))
+            {
+                sentBibs.Add(bib);
+            }
             List<TimeResult> finishTimes = database.GetFinishTimes(theEvent.Identifier);
             APIObject api = database.GetAPI(theEvent.API_ID);
             Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
@@ -1414,7 +1419,7 @@ namespace Chronokeep.UI.MainPages
             foreach (TimeResult result in finishTimes)
             {
                 string email = participantDictionary[result.ParticipantId].Email;
-                if (email.Length > 0 && !Globals.BannedEmails.Contains(email))
+                if (email.Length > 0 && !Globals.BannedEmails.Contains(email) && !sentBibs.Contains(result.Bib))
                 {
                     MultipartFormDataContent postData = new MultipartFormDataContent
                     {
@@ -1429,7 +1434,15 @@ namespace Chronokeep.UI.MainPages
                             api
                             ).TransformText()), "html" }
                     };
-                    await client.PostAsync(string.Format("https://api.mailgun.net/v3/{0}/messages", credentials.Domain), postData);
+                    try
+                    {
+                        await client.PostAsync(string.Format("https://api.mailgun.net/v3/{0}/messages", credentials.Domain), postData);
+                    }
+                    catch
+                    {
+                        Log.E("UI.MainPages.TimingPage", "Error sending email.");
+                    }
+                    database.AddEmailAlert(theEvent.Identifier, result.Bib);
                 }
             }
         }
