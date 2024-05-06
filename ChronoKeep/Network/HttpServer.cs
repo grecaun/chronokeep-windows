@@ -66,7 +66,6 @@ namespace Chronokeep.Network
             finishResults.Clear();
             finishDictionary.Clear();
             participantResults.Clear();
-            distanceNames.Clear();
             foreach (TimeResult r in database.GetTimingResults(theEvent.Identifier))
             {
                 if (!finishDictionary.ContainsKey(r.Bib))
@@ -82,7 +81,14 @@ namespace Chronokeep.Network
                     participantResults[r.Bib] = new List<TimeResult>();
                 }
                 participantResults[r.Bib].Add(r);
-                distanceNames.Add(r.DistanceName);
+            }
+            distanceNames.Clear();
+            foreach (Distance d in database.GetDistances(theEvent.Identifier))
+            {
+                if (d.LinkedDistance == Constants.Timing.DISTANCE_NO_LINKED_ID)
+                {
+                    distanceNames.Add(d.Name);
+                }
             }
             finishResults.AddRange(finishDictionary.Values);
             finishResults.RemoveAll(r => string.IsNullOrEmpty(r.Bib) || string.IsNullOrEmpty(r.First) || string.IsNullOrEmpty(r.Last));
@@ -241,7 +247,7 @@ namespace Chronokeep.Network
                     {
                         if (finishDictionary.ContainsKey(emailBib) && participantDictionary.ContainsKey(finishDictionary[emailBib].ParticipantId))
                         {
-                            if (!emailCache.ContainsKey(emailBib))
+                            if (true)//!emailCache.ContainsKey(emailBib))
                             {
                                 HtmlCertificateEmailTemplate email = new HtmlCertificateEmailTemplate(
                                     theEvent,
@@ -252,6 +258,7 @@ namespace Chronokeep.Network
                                     );
                                 emailCache[emailBib] = Encoding.Default.GetBytes(email.TransformText());
                             }
+                            Log.D("Network.HttpServer", "Email html");
                             message = emailCache[emailBib];
                             context.Response.ContentType = "text/html";
                         }

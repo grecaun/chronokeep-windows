@@ -111,9 +111,16 @@ namespace Chronokeep.IO.HtmlTemplates
             certificateUrl = string.Format("https://api.chronokeep.com/certificate/{0} {1}/{2}{3}/{4}/{5}", result.First, result.Last, eventName, distanceName, time, theEvent.LongDate);
             resultsLink = "";
             string[] event_ids = theEvent.API_Event_ID.Split(',');
-            if (api != null && api.Type == Constants.APIConstants.CHRONOKEEP_RESULTS && event_ids.Length == 2)
+            if (api != null && api.WebURL.Length > 1)
             {
-                resultsLink = string.Format("<p><a href=\"https://www.chronokeep.com/results/{0}/{1}\">Click here for more results.</a></p>", event_ids[0], event_ids[1]);
+                if (event_ids.Length == 2)
+                {
+                    resultsLink = string.Format("<p><a href=\"{2}results/{0}/{1}\">Click here for more results.</a></p>", event_ids[0], event_ids[1], api.WebURL);
+                }
+                else
+                {
+                    resultsLink = string.Format("<p><a href=\"{2}\">Click here for more results.</a></p>", api.WebURL);
+                }
             }
             unsubscribe = string.Format("<br>If you don't want to receive these emails <a href=\"https://www.chronokeep.com/unsubscribe/{0}\">click here</a>.", email);
         }

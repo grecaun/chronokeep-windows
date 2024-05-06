@@ -106,6 +106,7 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.DistancesPage", "Update clicked.");
             UpdateDatabase();
             UpdateView();
+            mWindow.NetworkUpdateResults();
         }
 
         private void Revert_Click(object sender, RoutedEventArgs e)
@@ -187,6 +188,7 @@ namespace Chronokeep.UI.MainPages
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 mWindow.NotifyTimingWorker();
                 mWindow.UpdateRegistrationDistances();
+                mWindow.NetworkUpdateResults();
             }
         }
 

@@ -11,7 +11,7 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class APIWindow : FluentWindow
     {
-        IWindowCallback window = null;
+        IMainWindow window = null;
         IDBInterface database;
         Event theEvent;
 
@@ -20,7 +20,7 @@ namespace Chronokeep.UI.API
         string slug, year;
 
 
-        public APIWindow(IWindowCallback window, IDBInterface database)
+        public APIWindow(IMainWindow window, IDBInterface database)
         {
             InitializeComponent();
             this.window = window;
@@ -41,7 +41,7 @@ namespace Chronokeep.UI.API
             }
         }
 
-        public static APIWindow NewWindow(IWindowCallback window, IDBInterface database)
+        public static APIWindow NewWindow(IMainWindow window, IDBInterface database)
         {
             return new APIWindow(window, database);
         }
@@ -67,12 +67,19 @@ namespace Chronokeep.UI.API
                 theEvent.API_ID = api.Identifier;
                 theEvent.API_Event_ID = this.slug + "," + this.year;
                 database.UpdateEvent(theEvent);
-            } else
+                window.NetworkUpdateResults();
+            }
+            else
             {
                 DialogBox.Show("One or more values retrieved is invalid.");
                 return;
             }
             this.Close();
+        }
+
+        public void NetworkUpdateResults()
+        {
+            window.NetworkUpdateResults();
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

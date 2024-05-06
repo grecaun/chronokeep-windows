@@ -82,6 +82,7 @@ namespace Chronokeep.UI.API
                 theEvent.API_ID = Constants.APIConstants.NULL_ID;
                 theEvent.API_Event_ID = Constants.APIConstants.NULL_EVENT_ID;
                 database.UpdateEvent(theEvent);
+                window.NetworkUpdateResults();
             }
             else
             {
