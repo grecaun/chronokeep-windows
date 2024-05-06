@@ -614,7 +614,7 @@ namespace Chronokeep.Objects
             if (dictionary.apiURLs.ContainsKey(theEvent.API_ID) &&
                 Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] == dictionary.apiURLs[theEvent.API_ID])
             {
-                resultsURL = " More @ chronokeep.com.";
+                resultsURL = " More @ https://chronokeep.com.";
             }
             if (dictionary.mainDistances.Count > 1)
             {
