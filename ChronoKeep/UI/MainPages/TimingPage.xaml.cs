@@ -36,7 +36,7 @@ namespace Chronokeep.UI.MainPages
     /// <summary>
     /// Interaction logic for TimingPage.xaml
     /// </summary>
-    public partial class TimingPage : IMainPage
+    public partial class TimingPage : IMainPage, ITimingPage
     {
         private IMainWindow mWindow;
         private IDBInterface database;
@@ -682,7 +682,7 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
-        internal void RemoveSystem(TimingSystem sys)
+        public void RemoveSystem(TimingSystem sys)
         {
             database.RemoveTimingSystem(sys.SystemIdentifier);
             AReaderBox removed = null;
@@ -698,7 +698,7 @@ namespace Chronokeep.UI.MainPages
             UpdateView();
         }
 
-        internal bool ConnectSystem(TimingSystem sys)
+        public bool ConnectSystem(TimingSystem sys)
         {
             mWindow.ConnectTimingSystem(sys);
             if (sys.Status == SYSTEM_STATUS.CONNECTED || sys.Status == SYSTEM_STATUS.WORKING)
@@ -724,7 +724,7 @@ namespace Chronokeep.UI.MainPages
             return sys.Status != SYSTEM_STATUS.DISCONNECTED;
         }
 
-        internal bool DisconnectSystem(TimingSystem sys)
+        public bool DisconnectSystem(TimingSystem sys)
         {
             mWindow.DisconnectTimingSystem(sys);
             if (sys.Status == SYSTEM_STATUS.DISCONNECTED)

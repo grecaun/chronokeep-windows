@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Chronokeep": {
+      "commandName": "Project"
+    },
+    "Safemode": {
+      "commandName": "Project",
+      "commandLineArgs": "safe"
+    }
+  }
+}

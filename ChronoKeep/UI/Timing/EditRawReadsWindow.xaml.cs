@@ -1,4 +1,5 @@
-﻿using Chronokeep.UI.MainPages;
+﻿using Chronokeep.Interfaces;
+using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class EditRawReadsWindow : FluentWindow
     {
-        TimingPage parent;
+        ITimingPage parent;
         IDBInterface database;
         Event theEvent;
         List<ChipRead> chipReads;
@@ -22,7 +23,7 @@ namespace Chronokeep.UI.Timing
         private const string allowedChars = "[^0-9]";
         private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
 
-        public EditRawReadsWindow(TimingPage parent, IDBInterface database, List<ChipRead> chipReads)
+        public EditRawReadsWindow(ITimingPage parent, IDBInterface database, List<ChipRead> chipReads)
         {
             InitializeComponent();
             this.parent = parent;

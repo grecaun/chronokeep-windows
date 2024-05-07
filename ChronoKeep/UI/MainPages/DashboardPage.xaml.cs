@@ -183,7 +183,6 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.DashboardPage", "Checking if we need to cancel the change.");
             if (mWindow.BackgroundProcessesRunning())
             {
-
                 DialogBox.Show(
                     "There are processes running in the background. Do you wish to stop these and continue?",
                     "Yes",

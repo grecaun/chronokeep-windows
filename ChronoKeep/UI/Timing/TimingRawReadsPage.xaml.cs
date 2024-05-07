@@ -14,12 +14,12 @@ namespace Chronokeep.UI.Timing
     public partial class TimingRawReadsPage : ISubPage
     {
         IDBInterface database;
-        TimingPage parent;
+        ITimingPage parent;
         Event theEvent;
 
         List<ChipRead> chipReads = new List<ChipRead>();
 
-        public TimingRawReadsPage(TimingPage parent, IDBInterface database)
+        public TimingRawReadsPage(ITimingPage parent, IDBInterface database)
         {
             InitializeComponent();
             Log.D("UI.Timing.TimingRawReadsPage", "Page initialized.");
@@ -115,6 +115,18 @@ namespace Chronokeep.UI.Timing
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
+        }
+
+        internal void MinimumVersionUpdateView()
+        {
+            theEvent = database.GetCurrentEvent();
+            if (theEvent == null){
+                return;
+            }
+            PrivateUpdateView();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
+            updateListView.SelectedItem = null;
         }
 
         public void Closing() { }
