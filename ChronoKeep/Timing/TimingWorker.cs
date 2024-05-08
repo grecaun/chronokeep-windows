@@ -23,7 +23,7 @@ namespace Chronokeep.Timing
 
         private static TimingDictionary dictionary = new TimingDictionary();
         // Keep track of what alerts have been sent out (EventID, Bib)
-        internal static HashSet<(int, string)> AlertsSent = new HashSet<(int, string)>();
+        internal static HashSet<(int, int)> AlertsSent = new HashSet<(int, int)>();
 
 
         private TimingWorker(IMainWindow window, IDBInterface database)
@@ -264,9 +264,9 @@ namespace Chronokeep.Timing
         {
             // get sms alerts from database
             int eventId = database.GetCurrentEvent().Identifier;
-            foreach (string bib in database.GetSMSAlerts(eventId))
+            foreach (int esID in database.GetSMSAlerts(eventId))
             {
-                AlertsSent.Add((eventId, bib));
+                AlertsSent.Add((eventId, esID));
             }
             int counter = 1;
             do
@@ -380,7 +380,8 @@ namespace Chronokeep.Timing
                             // verify the distance is set to allow sms alerts and the runner hasn't been notified already
                             if (dictionary.distanceNameDictionary.ContainsKey(result.RealDistanceName)
                                 && true == dictionary.distanceNameDictionary[result.RealDistanceName].SMSEnabled
-                                && false == AlertsSent.Contains((theEvent.Identifier, result.Bib)))
+                                && Constants.Timing.EVENTSPECIFIC_UNKNOWN != result.EventSpecificId
+                                && false == AlertsSent.Contains((theEvent.Identifier, result.EventSpecificId)))
                             {
                                 // If we can send a message to them (valid phones, credentials valid, sms opted in)
                                 // add them to the list to send sms messages
@@ -402,10 +403,10 @@ namespace Chronokeep.Timing
                                 // may change their mind later and
                                 // we still want to be able to send a SMS to them
                                 // Only add to the database/dictionary if successful.
-                                if (result.SendSMSAlert(theEvent, dictionary))
+                                if (result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN && result.SendSMSAlert(theEvent, dictionary))
                                 {
-                                    AlertsSent.Add((theEvent.Identifier, result.Bib));
-                                    database.AddSMSAlert(theEvent.Identifier, result.Bib);
+                                    AlertsSent.Add((theEvent.Identifier, result.EventSpecificId));
+                                    database.AddSMSAlert(theEvent.Identifier, result.EventSpecificId);
                                 }
                             }
                         }

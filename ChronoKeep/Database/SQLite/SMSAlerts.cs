@@ -5,29 +5,33 @@ namespace Chronokeep.Database.SQLite
 {
     internal class SMSAlerts
     {
-        public static List<string> GetSMSAlerts(int eventId, SQLiteConnection connection)
+        public static List<int> GetSMSAlerts(int eventId, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM sms_alert WHERE event_id=@event;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            List<string> output = new List<string>();
+            List<int> output = new List<int>();
+            int id;
             while (reader.Read())
             {
-                output.Add(reader["sms_bib"].ToString());
+                if (int.TryParse(reader["eventspecific_id"].ToString(), out id))
+                {
+                    output.Add(id);
+                }
             }
             reader.Close();
             return output;
         }
 
-        public static void AddSMSAlert(int eventId, string bib, SQLiteConnection connection)
+        public static void AddSMSAlert(int eventId, int eventspecific_id, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "INSERT INTO sms_alert (event_id, sms_bib) VALUES (@event, @bib);";
+            command.CommandText = "INSERT INTO sms_alert (event_id, eventspecific_id) VALUES (@event, @eventspec);";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
-                new SQLiteParameter("@bib", bib)
+                new SQLiteParameter("@eventspec", eventspecific_id)
             });
             command.ExecuteNonQuery();
         }

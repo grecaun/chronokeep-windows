@@ -82,16 +82,51 @@ namespace Chronokeep.Database.SQLite
             }
         }
 
+        internal static List<ChipRead> GetChipReadsSafemode(int eventId, SQLiteConnection connection)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT * FROM chipreads WHERE event_id=@event;";
+            command.Parameters.Add(new SQLiteParameter("@event", eventId));
+            SQLiteDataReader reader = command.ExecuteReader();
+            List<ChipRead> output = new List<ChipRead>();
+            while (reader.Read())
+            {
+                output.Add(new ChipRead(
+                    Convert.ToInt32(reader["read_id"]),
+                    Convert.ToInt32(reader["event_id"]),
+                    Convert.ToInt32(reader["read_status"]),
+                    Convert.ToInt32(reader["location_id"]),
+                    reader["read_chipnumber"] != DBNull.Value ? reader["read_chipnumber"].ToString() : Constants.Timing.CHIPREAD_DUMMYCHIP,
+                    Convert.ToInt64(reader["read_seconds"]),
+                    Convert.ToInt32(reader["read_milliseconds"]),
+                    Convert.ToInt32(reader["read_antenna"]),
+                    reader["read_rssi"].ToString(),
+                    Convert.ToInt32(reader["read_isrewind"]),
+                    reader["read_reader"].ToString(),
+                    reader["read_box"].ToString(),
+                    reader["read_readertime"].ToString(),
+                    Convert.ToInt32(reader["read_starttime"]),
+                    Convert.ToInt32(reader["read_logindex"]),
+                    Convert.ToInt64(reader["read_time_seconds"]),
+                    Convert.ToInt32(reader["read_time_milliseconds"]),
+                    reader["read_bib"] != DBNull.Value ? reader["read_bib"].ToString() : Constants.Timing.CHIPREAD_DUMMYBIB,
+                    Convert.ToInt32(reader["read_type"]),
+                    Constants.Timing.CHIPREAD_DUMMYBIB,
+                    "",
+                    "",
+                    DateTime.MinValue,
+                    ""
+                    ));
+            }
+            reader.Close();
+            return output;
+        }
+
         internal static List<ChipRead> GetChipReads(Event theEvent, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b ON (c.read_chipnumber=b.chip AND c.event_id=b.event_id) ";
-                //"LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
-                //"AND e.eventspecific_bib != @dummybib) " +
-                //"LEFT JOIN participants p ON p.participant_id=e.participant_id;";
-            //command.Parameters.Add(new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB));
             SQLiteDataReader reader = command.ExecuteReader();
-            Log.D("ChipReads", "GetReads1");
             List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
             return output;
         }
@@ -100,14 +135,9 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b ON (c.read_chipnumber=b.chip AND c.event_id=b.event_id) " +
-                //"LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
-                //"AND e.eventspecific_bib != @dummybib) " +
-                //"LEFT JOIN participants p ON p.participant_id=e.participant_id " +
                 "WHERE c.event_id=@event;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
-            //command.Parameters.Add(new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB));
             SQLiteDataReader reader = command.ExecuteReader();
-            Log.D("ChipReads", "GetReads2");
             List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
             return output;
         }
@@ -116,9 +146,6 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on (c.read_chipnumber=b.chip AND c.event_id=b.event_id) " +
-                //"LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
-                //"AND e.eventspecific_bib != @dummybib) " +
-                //"LEFT JOIN participants p ON p.participant_id=e.participant_id "+
                 "WHERE c.event_id=@event AND " +
                 "(read_status=@status OR read_status=@used OR read_status=@start OR read_status=@dnf OR read_status=@dns) AND c.location_id!=@announcer;";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -129,11 +156,9 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@start", Constants.Timing.CHIPREAD_STATUS_STARTTIME),
                 new SQLiteParameter("@dnf", Constants.Timing.CHIPREAD_STATUS_DNF),
                 new SQLiteParameter("@dns", Constants.Timing.CHIPREAD_STATUS_DNS),
-                //new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB),
                 new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            Log.D("ChipReads", "GetReads3");
             List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
             return output;
         }
@@ -142,20 +167,15 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on (c.read_chipnumber=b.chip AND c.event_id=b.event_id) " +
-                //"LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
-                //"AND e.eventspecific_bib != @dummybib) " +
-                //"LEFT JOIN participants p ON p.participant_id=e.participant_id "+
                 "WHERE c.event_id=@event AND " +
                 "c.location_id=@announcer AND read_status=@none;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
                 new SQLiteParameter("@none", Constants.Timing.CHIPREAD_STATUS_NONE),
-                //new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB),
                 new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            Log.D("ChipReads", "GetReads4");
             List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
             return output;
         }
@@ -164,20 +184,15 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on (c.read_chipnumber=b.chip AND c.event_id=b.event_id) " +
-                //"LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
-                //"AND e.eventspecific_bib != @dummybib) " +
-                //"LEFT JOIN participants p ON p.participant_id=e.participant_id "+
                 "WHERE c.event_id=@event AND " +
                 "c.location_id=@announcer AND read_status=@used;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
-                //new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB),
                 new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER),
                 new SQLiteParameter("@used", Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            Log.D("ChipReads", "GetReads5");
             List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
             return output;
         }
@@ -186,9 +201,6 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on (c.read_chipnumber=b.chip AND c.event_id=b.event_id) " +
-                //"LEFT JOIN eventspecific e ON ((e.eventspecific_bib=b.bib OR e.eventspecific_bib=c.read_bib) AND e.event_id=c.event_id " +
-                //"AND e.eventspecific_bib != @dummybib) " +
-                //"LEFT JOIN participants p ON p.participant_id=e.participant_id "+
                 "WHERE c.event_id=@event AND " +
                 " read_status=@dns;";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -199,7 +211,6 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@dns", Constants.Timing.CHIPREAD_STATUS_DNS)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            Log.D("ChipReads", "GetReads6");
             List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
             return output;
         }

@@ -117,13 +117,23 @@ namespace Chronokeep.UI.Timing
             updateListView.Items.Refresh();
         }
 
-        internal void MinimumVersionUpdateView()
+        internal void SafemodeUpdateView()
         {
             theEvent = database.GetCurrentEvent();
             if (theEvent == null){
                 return;
             }
-            PrivateUpdateView();
+            List<ChipRead> reads = new List<ChipRead>();
+            SortType sortType = parent.GetSortType();
+            reads.AddRange(database.GetChipReadsSafemode(theEvent.Identifier));
+            chipReads.Clear();
+            chipReads.AddRange(reads);
+            string search = parent.GetSearchValue();
+            bool manualOnly = onlyManualBox.IsChecked == true;
+            SortWorker(reads, sortType, search, manualOnly);
+            updateListView.SelectedItems.Clear();
+            updateListView.ItemsSource = reads;
+            updateListView.Items.Refresh();
             updateListView.SelectedIndex = updateListView.Items.Count - 1;
             updateListView.ScrollIntoView(updateListView.SelectedItem);
             updateListView.SelectedItem = null;

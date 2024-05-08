@@ -245,7 +245,7 @@ namespace Chronokeep.UI.MainPages
                 }
             }
 
-            subPage.MinimumVersionUpdateView();
+            subPage.SafemodeUpdateView();
         }
 
         public void DatasetChanged()

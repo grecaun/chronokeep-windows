@@ -82,8 +82,8 @@ namespace Chronokeep.IO.HtmlTemplates
             
             #line default
             #line hidden
-            this.Write("</strong>.</p>\n\t\t\t\t\t\t\t\t<p>Here\'s a certificate to celebrate you.</p>\n\t\t\t\t\t\t\t\t<img" +
-                    " src=\"");
+            this.Write("</strong>.</p>\n\t\t\t\t\t\t\t\t<p>Here\'s a certificate to celebrate your accomplishment.<" +
+                    "/p>\n\t\t\t\t\t\t\t\t<img src=\"");
             
             #line 1 "D:\ChronoKeep\ChronoKeepWindows\ChronoKeep\IO\HtmlTemplates\HtmlCertificateEmailTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(certificateUrl));

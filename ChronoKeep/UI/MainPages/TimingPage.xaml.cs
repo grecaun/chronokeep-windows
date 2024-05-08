@@ -1387,64 +1387,79 @@ namespace Chronokeep.UI.MainPages
         private async void sendEmailsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Send Emails button clicked.");
-            HashSet<string> sentBibs = new HashSet<string>();
-            foreach (string bib in database.GetEmailAlerts(theEvent.Identifier))
-            {
-                sentBibs.Add(bib);
-            }
-            List<TimeResult> finishTimes = database.GetFinishTimes(theEvent.Identifier);
-            APIObject api = database.GetAPI(theEvent.API_ID);
-            Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
-            int distances = 0;
-            foreach (Participant p in database.GetParticipants(theEvent.Identifier))
-            {
-                participantDictionary[p.Identifier.ToString()] = p;
-            }
-            foreach (Distance d in database.GetDistances(theEvent.Identifier))
-            {
-                if (Constants.Timing.DISTANCE_NO_LINKED_ID == d.LinkedDistance)
-                {
-                    distances++;
-                }
-            }
-            Globals.UpdateBannedEmails();
-            HttpClient client = new();
-            MailgunCredentials credentials = MailgunCredentials.GetCredentials(database);
-            if (!credentials.Valid())
+            if ((string)sendEmailsButton.Content != "Send Email")
             {
                 return;
             }
-            string base64String = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", credentials.Username, credentials.APIKey)));
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(@"Basic", base64String);
-            foreach (TimeResult result in finishTimes)
+            sendEmailsButton.Content = "Sending...";
+            await Task.Run(() =>
             {
-                string email = participantDictionary[result.ParticipantId].Email;
-                if (email.Length > 0 && !Globals.BannedEmails.Contains(email) && !sentBibs.Contains(result.Bib))
+                HashSet<int> sentIDs = new HashSet<int>();
+                foreach (int es_id in database.GetEmailAlerts(theEvent.Identifier))
                 {
-                    MultipartFormDataContent postData = new MultipartFormDataContent
+                    sentIDs.Add(es_id);
+                }
+                List<TimeResult> finishTimes = database.GetFinishTimes(theEvent.Identifier);
+                APIObject api = database.GetAPI(theEvent.API_ID);
+                Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
+                int distances = 0;
+                foreach (Participant p in database.GetParticipants(theEvent.Identifier))
+                {
+                    participantDictionary[p.Identifier.ToString()] = p;
+                }
+                foreach (Distance d in database.GetDistances(theEvent.Identifier))
+                {
+                    if (Constants.Timing.DISTANCE_NO_LINKED_ID == d.LinkedDistance)
+                    {
+                        distances++;
+                    }
+                }
+                Globals.UpdateBannedEmails();
+                HttpClient client = new();
+                MailgunCredentials credentials = MailgunCredentials.GetCredentials(database);
+                if (!credentials.Valid())
+                {
+                    return;
+                }
+                string base64String = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", credentials.Username, credentials.APIKey)));
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(@"Basic", base64String);
+                foreach (TimeResult result in finishTimes)
+                {
+                    Participant part = participantDictionary.ContainsKey(result.ParticipantId) ? participantDictionary[result.ParticipantId] : null;
+                    if (part != null && result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN)
+                    {
+                        if (part.Email.Length > 0 && !Globals.BannedEmails.Contains(part.Email) && !sentIDs.Contains(result.EventSpecificId))
+                        {
+                            MultipartFormDataContent postData = new MultipartFormDataContent
                     {
                         { new StringContent(credentials.From()), "from" },
-                        { new StringContent(email), "to" },
+                        { new StringContent(part.Email), "to" },
                         { new StringContent(string.Format("{0} {1}", theEvent.Year, theEvent.Name)), "subject" },
                         { new StringContent(new HtmlCertificateEmailTemplate(
                             theEvent,
                             result,
-                            email,
+                            part.Email,
                             distances == 1,
                             api
                             ).TransformText()), "html" }
                     };
-                    try
-                    {
-                        await client.PostAsync(string.Format("https://api.mailgun.net/v3/{0}/messages", credentials.Domain), postData);
+                            try
+                            {
+                                client.PostAsync(string.Format("https://api.mailgun.net/v3/{0}/messages", credentials.Domain), postData);
+                            }
+                            catch
+                            {
+                                Log.E("UI.MainPages.TimingPage", "Error sending email.");
+                            }
+                            database.AddEmailAlert(theEvent.Identifier, result.EventSpecificId);
+                        }
                     }
-                    catch
-                    {
-                        Log.E("UI.MainPages.TimingPage", "Error sending email.");
-                    }
-                    database.AddEmailAlert(theEvent.Identifier, result.Bib);
                 }
-            }
+                Log.D("UI.MainPages.TimingPage", "Async operation to send emails finished.");
+            });
+            Log.D("UI.MainPages.TimingPage", "Changing button back and sending dialog box.");
+            DialogBox.Show("Emails sent.");
+            sendEmailsButton.Content = "Send Email";
         }
 
         private class AReaderBox : ListBoxItem

@@ -1522,6 +1522,20 @@ namespace Chronokeep.Database.SQLite
                         command.CommandText = "ALTER TABLE results_api ADD COLUMN api_web_url VARCHAR NOT NULL DEFAULT '';" +
                             "UPDATE settings set value='62' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
+                        goto case 62;
+                    case 62:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 62.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "UPDATE distances SET distance_sms_enabled=0 WHERE distance_sms_enabled!=0;" +
+                            "DROP TABLE sms_alert; DROP TABLE email_alert;" +
+                            "CREATE TABLE IF NOT EXISTS sms_alert(" +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                            "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id));" +
+                            "CREATE TABLE IF NOT EXISTS email_alert(" +
+                            "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                            "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id));" +
+                            "UPDATE settings set value='63' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

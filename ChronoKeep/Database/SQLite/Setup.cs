@@ -257,7 +257,7 @@ namespace Chronokeep.Database.SQLite
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS sms_alert(" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
-                    "sms_bib VARCHAR NOT NULL" +
+                    "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS sms_ban_list(" +
                     "banned_phone VARCHAR(100), " +
@@ -269,7 +269,7 @@ namespace Chronokeep.Database.SQLite
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS email_alert(" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
-                    "email_bib VARCHAR NOT NULL" +
+                    "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)" +
                     ");");
                 queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
 

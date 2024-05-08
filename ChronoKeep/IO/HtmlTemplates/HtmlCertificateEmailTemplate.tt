@@ -26,7 +26,7 @@
 							<td class="body" style="padding: 20px; text-align: center; font-size: 18px; line-height: 1.6;">
 								<p style="margin-top:10px;">You finished the <#= eventName #><#= distanceName #>! Well done!<br>
 								Your official finish time is <strong><#= time #></strong>.</p>
-								<p>Here's a certificate to celebrate you.</p>
+								<p>Here's a certificate to celebrate your accomplishment.</p>
 								<img src="<#= certificateUrl #>" style="max-width:100%;border-radius:10px;">
 								<#= resultsLink #>
 							</td>

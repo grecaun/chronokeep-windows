@@ -126,6 +126,7 @@ namespace Chronokeep
         void SetChipReadStatus(ChipRead read);
         void SetChipReadStatuses(List<ChipRead> reads);
         void DeleteChipReads(List<ChipRead> reads);
+        List<ChipRead> GetChipReadsSafemode(int eventId);
         List<ChipRead> GetChipReads();
         List<ChipRead> GetChipReads(int eventId);
         List<ChipRead> GetUsefulChipReads(int eventId);
@@ -166,12 +167,12 @@ namespace Chronokeep
         List<RemoteReader> GetRemoteReaders(int eventId);
 
         // SMS Alerts
-        void AddSMSAlert(int eventId, string bib);
-        List<string> GetSMSAlerts(int eventId);
+        void AddSMSAlert(int eventId, int eventspecific_id);
+        List<int> GetSMSAlerts(int eventId);
 
         // Email Alerts
-        void AddEmailAlert(int eventId, string bib);
-        List<string> GetEmailAlerts(int eventId);
+        void AddEmailAlert(int eventId, int eventspecific_id);
+        List<int> GetEmailAlerts(int eventId);
 
         // Banned phones/emails functions
         List<string> GetBannedPhones();

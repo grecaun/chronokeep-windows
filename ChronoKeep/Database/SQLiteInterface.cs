@@ -11,11 +11,11 @@ namespace Chronokeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 157
-         * NEXT AVAILABLE   = 158
+         * HIGHEST MUTEX ID = 158
+         * NEXT AVAILABLE   = 159
          */
-        private readonly int version = 62;
-        public const int minimum_compatible_version = 60;
+        private readonly int version = 63;
+        public const int minimum_compatible_version = 63;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
 
@@ -1514,8 +1514,25 @@ namespace Chronokeep
             mutex.ReleaseMutex();
         }
 
+        public List<ChipRead> GetChipReadsSafemode(int eventId)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 158");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 158");
+                return new List<ChipRead>();
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            List<ChipRead> output = ChipReads.GetChipReadsSafemode(eventId, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+            return output;
+        }
+
         public List<ChipRead> GetChipReads()
         {
+            Event theEvent = GetCurrentEvent();
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 90");
             if (!mutex.WaitOne(3000))
             {
@@ -1524,7 +1541,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<ChipRead> output = ChipReads.GetChipReads(GetCurrentEvent(), connection);
+            List<ChipRead> output = ChipReads.GetChipReads(theEvent, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -1532,6 +1549,7 @@ namespace Chronokeep
 
         public List<ChipRead> GetChipReads(int eventId)
         {
+            Event theEvent = GetCurrentEvent();
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 91");
             if (!mutex.WaitOne(3000))
             {
@@ -1540,7 +1558,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<ChipRead> output = ChipReads.GetChipReads(eventId, GetCurrentEvent(), connection);
+            List<ChipRead> output = ChipReads.GetChipReads(eventId, theEvent, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -1548,6 +1566,7 @@ namespace Chronokeep
 
         public List<ChipRead> GetUsefulChipReads(int eventId)
         {
+            Event theEvent = GetCurrentEvent();
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 92");
             if (!mutex.WaitOne(3000))
             {
@@ -1556,7 +1575,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<ChipRead> output = ChipReads.GetUsefulChipReads(eventId, GetCurrentEvent(), connection);
+            List<ChipRead> output = ChipReads.GetUsefulChipReads(eventId, theEvent, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -1564,6 +1583,7 @@ namespace Chronokeep
 
         public List<ChipRead> GetAnnouncerChipReads(int eventId)
         {
+            Event theEvent = GetCurrentEvent();
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 133");
             if (!mutex.WaitOne(3000))
             {
@@ -1572,7 +1592,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<ChipRead> output = ChipReads.GetAnnouncerChipReads(eventId, GetCurrentEvent(), connection);
+            List<ChipRead> output = ChipReads.GetAnnouncerChipReads(eventId, theEvent, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -1580,6 +1600,7 @@ namespace Chronokeep
 
         public List<ChipRead> GetAnnouncerUsedChipReads(int eventId)
         {
+            Event theEvent = GetCurrentEvent();
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 134");
             if (!mutex.WaitOne(3000))
             {
@@ -1588,7 +1609,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<ChipRead> output = ChipReads.GetAnnouncerUsedChipReads(eventId, GetCurrentEvent(), connection);
+            List<ChipRead> output = ChipReads.GetAnnouncerUsedChipReads(eventId, theEvent, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -1596,6 +1617,7 @@ namespace Chronokeep
 
         public List<ChipRead> GetDNSChipReads(int eventId)
         {
+            Event theEvent = GetCurrentEvent();
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 136");
             if (!mutex.WaitOne(3000))
             {
@@ -1604,7 +1626,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<ChipRead> output = ChipReads.GetDNSChipReads(eventId, GetCurrentEvent(), connection);
+            List<ChipRead> output = ChipReads.GetDNSChipReads(eventId, theEvent, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -2146,7 +2168,7 @@ namespace Chronokeep
             return output;
         }
 
-        public void AddSMSAlert(int eventId, string bib)
+        public void AddSMSAlert(int eventId, int eventspecific_id)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 148");
             if (!mutex.WaitOne(3000))
@@ -2156,28 +2178,28 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            SMSAlerts.AddSMSAlert(eventId, bib, connection);
+            SMSAlerts.AddSMSAlert(eventId, eventspecific_id, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
 
-        public List<string> GetSMSAlerts(int eventId)
+        public List<int> GetSMSAlerts(int eventId)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 149");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 149");
-                return new List<string>();
+                return null;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<string> output = SMSAlerts.GetSMSAlerts(eventId, connection);
+            List<int> output = SMSAlerts.GetSMSAlerts(eventId, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
         }
 
-        public void AddEmailAlert(int eventId, string bib)
+        public void AddEmailAlert(int eventId, int eventspecific_id)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 156");
             if (!mutex.WaitOne(3000))
@@ -2187,22 +2209,22 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            EmailAlerts.AddEmailAlert(eventId, bib, connection);
+            EmailAlerts.AddEmailAlert(eventId, eventspecific_id, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
 
-        public List<string> GetEmailAlerts(int eventId)
+        public List<int> GetEmailAlerts(int eventId)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 157");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 157");
-                return new List<string>();
+                return null;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<string> output = EmailAlerts.GetEmailAlerts(eventId, connection);
+            List<int> output = EmailAlerts.GetEmailAlerts(eventId, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
