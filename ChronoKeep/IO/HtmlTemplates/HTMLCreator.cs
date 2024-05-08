@@ -108,7 +108,7 @@ namespace Chronokeep.IO.HtmlTemplates
             }
             participantName = result.First;
             time = result.ChipTimeNoMilliseconds;
-            certificateUrl = string.Format("https://api.chronokeep.com/certificate/{0} {1}/{2}{3}/{4}/{5}", result.First, result.Last, eventName, distanceName, time, theEvent.LongDate);
+            certificateUrl = string.Format("https://cert.chronokeep.com/{0} {1}/{2}{3}/{4}/{5}", result.First, result.Last, eventName, distanceName, time, theEvent.LongDate);
             resultsLink = "";
             string[] event_ids = theEvent.API_Event_ID.Split(',');
             if (api != null && api.WebURL.Length > 1)
