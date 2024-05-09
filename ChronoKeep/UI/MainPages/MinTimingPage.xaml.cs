@@ -144,29 +144,7 @@ namespace Chronokeep.UI.MainPages
 
         public void UpdateDatabase() { }
 
-        public void Closing()
-        {
-            List<TimingSystem> removedSystems = database.GetTimingSystems();
-            List<TimingSystem> ourSystems = new List<TimingSystem>();
-            foreach (MinReaderBox box in ReadersBox.Items)
-            {
-                box.UpdateReader();
-                if (box.reader.IPAddress != "0.0.0.0" && box.reader.IPAddress.Length > 7 &&
-                    box.reader.IPAddress != string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]))
-                {
-                    ourSystems.Add(box.reader);
-                }
-            }
-            removedSystems.RemoveAll(x => ourSystems.Contains(x));
-            foreach (TimingSystem sys in removedSystems)
-            {
-                database.RemoveTimingSystem(sys);
-            }
-            foreach (TimingSystem sys in ourSystems)
-            {
-                database.AddTimingSystem(sys);
-            }
-        }
+        public void Closing() { }
 
         public void UpdateView()
         {
@@ -301,7 +279,6 @@ namespace Chronokeep.UI.MainPages
 
         public void RemoveSystem(TimingSystem sys)
         {
-            database.RemoveTimingSystem(sys.SystemIdentifier);
             MinReaderBox removed = null;
             foreach (MinReaderBox box in ReadersBox.Items)
             {
