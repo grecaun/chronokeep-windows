@@ -247,6 +247,7 @@ namespace Chronokeep.UI
             {
                 TimingController.ConnectTimingSystem(system);
             });
+            UpdateTiming();
             await Task.Run(() =>
             {
                 if (!TimingController.IsRunning())
@@ -263,6 +264,7 @@ namespace Chronokeep.UI
             {
                 TimingController.DisconnectTimingSystem(system);
             });
+            UpdateTiming();
         }
 
         public void ShutdownTimingController()
@@ -288,6 +290,7 @@ namespace Chronokeep.UI
                     DialogBox.Show(string.Format("Reader at {0} has unexpectedly disconnected. IP Address was {1}.", system.LocationName, system.IPAddress));
                 }
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
+                UpdateTiming();
             }));
         }
 
@@ -357,9 +360,29 @@ namespace Chronokeep.UI
 
         public void UpdateStatus() { }
 
-        public void UpdateTimingFromController() { }
+        public void UpdateTimingFromController()
+        {
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            {
+                if (page is MinTimingPage)
+                {
+                    page.UpdateView();
+                    ((MinTimingPage)page).NewMessage();
+                }
+            }));
+        }
 
-        public void UpdateTiming() { }
+        public void UpdateTiming()
+        {
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            {
+                if (page is MinTimingPage)
+                {
+                    page.UpdateView();
+                    ((MinTimingPage)page).NewMessage();
+                }
+            }));
+        }
 
         public void UpdateAnnouncerWindow() { }
 
