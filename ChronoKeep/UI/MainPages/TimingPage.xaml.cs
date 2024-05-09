@@ -1387,7 +1387,7 @@ namespace Chronokeep.UI.MainPages
         private async void sendEmailsButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Send Emails button clicked.");
-            if ((string)sendEmailsButton.Content != "Send Email")
+            if ((string)sendEmailsButton.Content != "Send Emails")
             {
                 return;
             }
@@ -1464,7 +1464,7 @@ namespace Chronokeep.UI.MainPages
             });
             Log.D("UI.MainPages.TimingPage", "Changing button back and sending dialog box.");
             DialogBox.Show("Emails sent.");
-            sendEmailsButton.Content = "Send Email";
+            sendEmailsButton.Content = "Send Emails";
         }
 
         private class AReaderBox : ListBoxItem
