@@ -69,7 +69,14 @@ namespace Chronokeep.UI.Timing
             }
             database.SetChipReadStatuses(newChipReads);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            UpdateView();
+            if (parent is TimingPage)
+            {
+                PrivateUpdateView();
+            }
+            else if (parent is MinTimingPage)
+            {
+                SafemodeUpdateView();
+            }
             parent.NotifyTimingWorker();
         }
 
@@ -200,7 +207,14 @@ namespace Chronokeep.UI.Timing
                     }
                     database.DeleteChipReads(readsToDelete);
                     database.ResetTimingResultsEvent(theEvent.Identifier);
-                    PrivateUpdateView();
+                    if (parent is TimingPage)
+                    {
+                        PrivateUpdateView();
+                    }
+                    else if (parent is MinTimingPage)
+                    {
+                        SafemodeUpdateView();
+                    }
                     parent.NotifyTimingWorker();
                 });
         }
@@ -225,7 +239,14 @@ namespace Chronokeep.UI.Timing
             }
             database.SetChipReadStatuses(newChipReads);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            PrivateUpdateView();
+            if (parent is TimingPage)
+            {
+                PrivateUpdateView();
+            }
+            else if (parent is MinTimingPage)
+            {
+                SafemodeUpdateView();
+            }
             parent.NotifyTimingWorker();
         }
 
@@ -249,7 +270,14 @@ namespace Chronokeep.UI.Timing
             }
             database.SetChipReadStatuses(newChipReads);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            PrivateUpdateView();
+            if (parent is TimingPage)
+            {
+                PrivateUpdateView();
+            }
+            else if (parent is MinTimingPage)
+            {
+                SafemodeUpdateView();
+            }
             parent.NotifyTimingWorker();
         }
 
@@ -269,7 +297,14 @@ namespace Chronokeep.UI.Timing
 
         private void updateListView_Loaded(object sender, RoutedEventArgs e)
         {
-            PrivateUpdateView();
+            if (parent is TimingPage)
+            {
+                PrivateUpdateView();
+            }
+            else if (parent is MinTimingPage)
+            {
+                SafemodeUpdateView();
+            }
             Log.D("UI.Timing.TimingRawReadsPage", "View updated.");
             updateListView.SelectedIndex = updateListView.Items.Count - 1;
             updateListView.ScrollIntoView(updateListView.SelectedItem);
