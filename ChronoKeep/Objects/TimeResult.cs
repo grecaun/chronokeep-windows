@@ -246,7 +246,7 @@ namespace Chronokeep.Objects
         }
         public string PrettyGender
         {
-            get => gender == "Man" ? "M" : gender == "Woman" ? "W" : gender == "Non-Binary" ? "NB" : gender == "Not Specified" ? "" : gender.Substring(0, 2);
+            get => gender == null ? "" : gender == "Man" ? "M" : gender == "Woman" ? "W" : gender == "Non-Binary" ? "NB" : gender == "Not Specified" ? "" : gender.Length < 2 ? "" : gender.Substring(0, 2);
         }
 
         public string PrettyTypeStr()
