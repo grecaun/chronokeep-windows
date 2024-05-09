@@ -1395,7 +1395,12 @@ namespace Chronokeep.UI.MainPages
             await Task.Run(() =>
             {
                 HashSet<int> sentIDs = new HashSet<int>();
-                foreach (int es_id in database.GetEmailAlerts(theEvent.Identifier))
+                List<int> idents = database.GetEmailAlerts(theEvent.Identifier);
+                if (idents == null)
+                {
+                    return;
+                }
+                foreach (int es_id in idents)
                 {
                     sentIDs.Add(es_id);
                 }

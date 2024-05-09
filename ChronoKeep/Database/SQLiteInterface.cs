@@ -2236,7 +2236,7 @@ namespace Chronokeep
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 150");
-                return new List<string>();
+                return null;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -2282,7 +2282,7 @@ namespace Chronokeep
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 153");
-                return new List<string>();
+                return null;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
