@@ -213,7 +213,8 @@ namespace Chronokeep.UI.Participants
             }
             Participant newPart = FromFields();
             Participant offendingBib = null;
-            if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+            // If bib isn't empty and isn't the dummybib, offer to swap bibs.
+            if (newPart.Bib.Length > 0 && newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
             {
                 offendingBib = database.GetParticipantBib(theEvent.Identifier, newPart.Bib);
             }
