@@ -117,6 +117,29 @@ namespace Chronokeep.Timing
                 dictionary.DistanceSegmentOrder[seg.DistanceId].Add(seg);
                 dictionary.SegmentByIDDictionary[seg.Identifier] = seg;
             }
+            // Add finish segments to DistanceSegmentOrder if distance is specified
+            foreach (Distance d in database.GetDistances(theEvent.Identifier))
+            {
+                if (d.DistanceValue > 0)
+                {
+                    if (!dictionary.DistanceSegmentOrder.ContainsKey(d.Identifier))
+                    {
+                        dictionary.DistanceSegmentOrder[d.Identifier] = new List<Segment>();
+                    }
+                    dictionary.DistanceSegmentOrder[d.Identifier].Add(
+                        new Segment(
+                            Constants.Timing.SEGMENT_FINISH,
+                            theEvent.Identifier,
+                            d.Identifier,
+                            Constants.Timing.LOCATION_FINISH,
+                            d.FinishOccurrence,
+                            0.0,
+                            d.DistanceValue,
+                            d.DistanceUnit,
+                            "Finish")
+                        );
+                }
+            }
             // Participants so we can check their Distance.
             dictionary.participantBibDictionary.Clear();
             dictionary.participantEventSpecificDictionary.Clear();
