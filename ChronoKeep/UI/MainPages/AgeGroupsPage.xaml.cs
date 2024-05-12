@@ -111,31 +111,31 @@ namespace Chronokeep.UI.MainPages
                 divId = Convert.ToInt32(((ComboBoxItem)Distances.SelectedItem).Uid);
             }
             database.RemoveAgeGroups(theEvent.Identifier, divId);
-            int increment;
+            int increment = 5;
             switch (DefaultGroupsBox.SelectedIndex)
             {
+                case 2:
+                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 0, 39));
+                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 40, 59));
+                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 60, 99));
+                    break;
+                case 3:
+                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 0, 19));
+                    for (int i = 20; i < 80; i += increment)
+                    {
+                        database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, i, i + increment - 1));
+                    }
+                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 80, 99));
+                    break;
                 case 0:
                     increment = 10;
-                    break;
-                case 1:
-                    increment = 5;
-                    break;
+                    goto default;
                 default:
-                    increment = 99;
+                    for (int i = 0; i < 100; i += increment)
+                    {
+                        database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, i, i + increment - 1));
+                    }
                     break;
-            }
-            if (DefaultGroupsBox.SelectedIndex != 2)
-            {
-                for (int i = 0; i < 100; i += increment)
-                {
-                    database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, i, i + increment - 1));
-                }
-            }
-            else
-            {
-                database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 0, 39));
-                database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 40, 59));
-                database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, 60, 99));
             }
             touched = true;
             UpdateAgeGroupsList();
