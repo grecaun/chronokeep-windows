@@ -4,7 +4,6 @@ using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepPortal.Requests;
 using Chronokeep.Objects.ChronokeepPortal.Responses;
 using Chronokeep.Objects.ChronokeepRemote;
-using Chronokeep.UI;
 using Chronokeep.UI.Timing.ReaderSettings;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -735,9 +734,46 @@ namespace Chronokeep.Timing.Interfaces
             }
         }
 
+        public void SendUploadBibChips(List<BibChip> bibChips)
+        {
+            if (bibChips.Count > PARTICIPANTS_COUNT)
+            {
+                int loopCounter = bibChips.Count / PARTICIPANTS_COUNT;
+                int leftover = bibChips.Count % PARTICIPANTS_COUNT;
+                for (int ix = 0; ix < loopCounter; ix++)
+                {
+                    Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} bibchips starting at {1}", PARTICIPANTS_COUNT, ix * PARTICIPANTS_COUNT));
+                    SendMessage(JsonSerializer.Serialize(new BibChipsAddRequest
+                    {
+                        BibChips = bibChips.GetRange(ix * PARTICIPANTS_COUNT, PARTICIPANTS_COUNT)
+                    }));
+                }
+                if (leftover > 0)
+                {
+                    Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} bibchips starting at {1}", leftover, loopCounter * PARTICIPANTS_COUNT));
+                    SendMessage(JsonSerializer.Serialize(new BibChipsAddRequest
+                    {
+                        BibChips = bibChips.GetRange(loopCounter * PARTICIPANTS_COUNT, leftover)
+                    }));
+                }
+            }
+            else
+            {
+                SendMessage(JsonSerializer.Serialize(new BibChipsAddRequest
+                {
+                    BibChips = bibChips
+                }));
+            }
+        }
+
         public void SendRemoveParticipants()
         {
             SendMessage(JsonSerializer.Serialize(new ParticipantsRemoveRequest()));
+        }
+
+        public void SendRemoveBibChips()
+        {
+            SendMessage(JsonSerializer.Serialize(new BibChipsRemoveRequest()));
         }
 
         public void SendSaveApi(PortalAPI api)

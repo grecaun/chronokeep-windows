@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using static Chronokeep.Network.Util.Helpers;
+using Chronokeep.Objects.ChronokeepPortal;
 
 namespace Chronokeep.Network.API
 {
@@ -303,6 +304,142 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
+        public static async Task<AddResultsResponse> UploadBibChips(APIObject api, string slug, string year, List<BibChip> bibChips)
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Uploading bibchips.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Post,
+                        RequestUri = new Uri(api.URL + "bibchips/add"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new AddBibChipsRequest
+                            {
+                                Slug = slug,
+                                Year = year,
+                                BibChips = bibChips,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown adding bibchips: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
+        public static async Task<AddResultsResponse> DeleteBibChips(APIObject api, string slug, string year)
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Deleting bibchips.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri(api.URL + "bibchips/delete"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new GetBibChipsRequest
+                            {
+                                Slug = slug,
+                                Year = year,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown deleting bibchips: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
+        public static async Task<GetBibChipsResponse> GetBibChips(APIObject api, string slug, string year)
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Getting bibchips.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(api.URL + "bibchips"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new GetBibChipsRequest
+                            {
+                                Slug = slug,
+                                Year = year,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<GetBibChipsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown getting bibchips: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
         public static async Task<AddResultsResponse> UploadParticipants(APIObject api, string slug, string year, List<APIPerson> people)
         {
             string content;
@@ -344,7 +481,7 @@ namespace Chronokeep.Network.API
             catch (Exception ex)
             {
                 Log.D("Network.API.APIHandlers", "Exception thrown.");
-                throw new APIException("Exception thrown deleting results: " + ex.Message);
+                throw new APIException("Exception thrown uploading participants: " + ex.Message);
             }
             throw new APIException(content);
         }
@@ -389,7 +526,52 @@ namespace Chronokeep.Network.API
             catch (Exception ex)
             {
                 Log.D("Network.API.APIHandlers", "Exception thrown.");
-                throw new APIException("Exception thrown deleting results: " + ex.Message);
+                throw new APIException("Exception thrown deleting participants: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
+        public static async Task<GetParticipantsResponse> GetParticipants(APIObject api, string slug, string year)
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Getting participants.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(api.URL + "participants"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new GetParticipantsRequest
+                            {
+                                Slug = slug,
+                                Year = year
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<GetParticipantsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown getting participants: " + ex.Message);
             }
             throw new APIException(content);
         }

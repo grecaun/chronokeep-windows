@@ -53,18 +53,32 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 {
                     uploadParticipants.Add(new PortalParticipant
                     {
+                        Identifier = participant.Identifier.ToString(),
                         Bib = participant.Bib,
                         First = participant.FirstName,
                         Last = participant.LastName,
-                        Age = participant.GetAge(theEvent.Date),
+                        Birthdate = participant.Birthdate,
                         Gender = participant.Gender,
                         AgeGroup = participant.EventSpecific.AgeGroupName,
                         Distance = participant.Distance,
-                        Chip = participant.Chip,
                         Anonymous = participant.Anonymous,
+                        SMSEnabled = participant.EventSpecific.SMSEnabled,
+                        Mobile = participant.Mobile,
+                        Apparel = participant.EventSpecific.Apparel,
                     });
                 }
                 reader.SendUploadParticipants(uploadParticipants);
+                List<BibChipAssociation> bibChips = database.GetBibChips(theEvent.Identifier);
+                List<BibChip> uploadBibChips = new List<BibChip>();
+                foreach (BibChipAssociation bibchip in bibChips)
+                {
+                    uploadBibChips.Add(new BibChip
+                    {
+                        Bib = bibchip.Bib,
+                        Chip = bibchip.Chip,
+                    });
+                }
+                reader.SendUploadBibChips(uploadBibChips);
                 DialogBox.Show("Participants successfully uploaded.");
             }
             catch (Exception ex)

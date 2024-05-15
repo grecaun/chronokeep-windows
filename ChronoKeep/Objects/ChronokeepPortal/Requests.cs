@@ -31,6 +31,11 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public const string PARTICIPANTS_REMOVE   = "participants_remove";
         public const string PARTICIPANTS_ADD      = "participants_add";
 
+        // BibChips related requests
+        public const string BIBCHIPS_GET          = "bib_chips_get";
+        public const string BIBCHIPS_REMOVE       = "bib_chips_remove";
+        public const string BIBCHIPS_ADD          = "bib_chips_add";
+
         // Reader related requests
         public const string READER_ADD        = "reader_add";
         public const string READER_CONNECT    = "reader_connect";
@@ -263,6 +268,33 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
 
         [JsonPropertyName("participants")]
         public List<PortalParticipant> Participants { get; set; }
+    }
+
+    public class BibChipsGetRequest : Request
+    {
+        public BibChipsGetRequest()
+        {
+            Command = BIBCHIPS_GET;
+        }
+    }
+
+    public class BibChipsRemoveRequest : Request
+    {
+        public BibChipsRemoveRequest()
+        {
+            Command = BIBCHIPS_REMOVE;
+        }
+    }
+
+    public class BibChipsAddRequest : Request
+    {
+        public BibChipsAddRequest()
+        {
+            Command = BIBCHIPS_ADD;
+        }
+
+        [JsonPropertyName("bib_chips")]
+        public List<BibChip> BibChips { get; set; }
     }
 
     public class ReaderAddRequest : Request

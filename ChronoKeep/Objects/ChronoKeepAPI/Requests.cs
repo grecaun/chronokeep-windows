@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Chronokeep.Objects.ChronokeepPortal;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Chronokeep.Objects.API
@@ -85,6 +86,25 @@ namespace Chronokeep.Objects.API
         public string Year { get; set; }
         [JsonPropertyName("identifiers")]
         public List<string> Identifiers { get; set; }
+    }
+
+    // Bibchip specific requests
+    public class GetBibChipsRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+    }
+
+    public class AddBibChipsRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+        [JsonPropertyName("bib_chips")]
+        public List<BibChip> BibChips { get; set; }
     }
 
     // Banned emails/phone numbers requests

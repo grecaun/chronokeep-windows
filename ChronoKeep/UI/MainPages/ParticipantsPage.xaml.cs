@@ -2,6 +2,7 @@
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
+using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.UI.IO;
 using Chronokeep.UI.Participants;
 using Chronokeep.UI.UIObjects;
@@ -484,6 +485,7 @@ namespace Chronokeep.UI.MainPages
             }
             // Get results to upload.
             List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+            List<BibChipAssociation> bibChips = database.GetBibChips(theEvent.Identifier);
             if (participants.Count < 1)
             {
                 Log.D("UI.MainPages.ParticipantsPage", "Nothing to upload.");
@@ -492,12 +494,34 @@ namespace Chronokeep.UI.MainPages
             }
             // Change Participant to APIPerson
             List<APIPerson> upParticipants = new List<APIPerson>();
+            List<BibChip> upBibChips = new List<BibChip>();
             Log.D("UI.MainPages.ParticipantsPage", "Participants count: " + participants.Count.ToString());
             foreach (Participant part in participants)
             {
-                upParticipants.Add(new APIPerson(theEvent, part));
+                upParticipants.Add(new APIPerson(part));
             }
-            Log.D("UI.MainPages.ParticipantsPage", "Attempting to upload " + upParticipants.Count.ToString() + " results.");
+            Log.D("UI.MainPages.ParticipantsPage", "BibChips count: " + bibChips.Count.ToString());
+            foreach (BibChipAssociation bc in bibChips)
+            {
+                upBibChips.Add(new BibChip
+                {
+                    Bib = bc.Bib,
+                    Chip = bc.Chip,
+                });
+            }
+            // Get rid of old information.
+            try
+            {
+                await APIHandlers.DeleteParticipants(api, event_ids[0], event_ids[1]);
+                await APIHandlers.DeleteBibChips(api, event_ids[0], event_ids[1]);
+            }
+            catch (APIException ex)
+            {
+                DialogBox.Show(ex.Message);
+                Upload.Content = "Upload";
+                return;
+            }
+            Log.D("UI.MainPages.ParticipantsPage", "Attempting to upload " + upParticipants.Count.ToString() + " participants.");
             int total = 0;
             int loops = upParticipants.Count / Constants.Timing.API_LOOP_COUNT;
             AddResultsResponse response;
@@ -525,6 +549,47 @@ namespace Chronokeep.UI.MainPages
                 try
                 {
                     response = await APIHandlers.UploadParticipants(api, event_ids[0], event_ids[1], upParticipants.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
+                }
+                catch (APIException ex)
+                {
+                    DialogBox.Show(ex.Message);
+                    Upload.Content = "Upload";
+                    return;
+                }
+                if (response != null)
+                {
+                    total += response.Count;
+                    Log.D("UI.MainPages.TimingPage", "Total: " + total + " Count: " + response.Count);
+                }
+                Log.D("UI.MainPages.TimingPage", "Upload finished. Count total: " + total);
+            }
+            Log.D("UI.MainPages.ParticipantsPage", "Attempting to upload " + upBibChips.Count.ToString() + " bibchips.");
+            total = 0;
+            loops = upBibChips.Count / Constants.Timing.API_LOOP_COUNT;
+            for (int i = 0; i < loops; i += 1)
+            {
+                try
+                {
+                    response = await APIHandlers.UploadBibChips(api, event_ids[0], event_ids[1], upBibChips.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
+                }
+                catch (APIException ex)
+                {
+                    DialogBox.Show(ex.Message);
+                    Upload.Content = "Upload";
+                    return;
+                }
+                if (response != null)
+                {
+                    total += response.Count;
+                    Log.D("UI.MainPages.ParticipantsPage", "Total: " + total + " Count: " + response.Count);
+                }
+            }
+            leftovers = upBibChips.Count - (loops * Constants.Timing.API_LOOP_COUNT);
+            if (leftovers > 0)
+            {
+                try
+                {
+                    response = await APIHandlers.UploadBibChips(api, event_ids[0], event_ids[1], upBibChips.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
                 }
                 catch (APIException ex)
                 {
