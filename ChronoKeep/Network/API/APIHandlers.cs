@@ -405,7 +405,7 @@ namespace Chronokeep.Network.API
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Get,
+                        Method = HttpMethod.Post,
                         RequestUri = new Uri(api.URL + "bibchips"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new GetBibChipsRequest
@@ -541,7 +541,7 @@ namespace Chronokeep.Network.API
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Get,
+                        Method = HttpMethod.Post,
                         RequestUri = new Uri(api.URL + "participants"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new GetParticipantsRequest
@@ -588,11 +588,6 @@ namespace Chronokeep.Network.API
                     {
                         Method = HttpMethod.Get,
                         RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/phones/get"),
-                        Content = new StringContent(
-                            "",
-                            Encoding.UTF8,
-                            "application/json"
-                            )
                     };
                     HttpResponseMessage response = await client.SendAsync(request);
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -631,7 +626,7 @@ namespace Chronokeep.Network.API
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Get,
+                        Method = HttpMethod.Post,
                         RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/phones/add"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new ModifyBannedPhoneRequest
@@ -677,7 +672,7 @@ namespace Chronokeep.Network.API
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Get,
+                        Method = HttpMethod.Post,
                         RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/phones/unblock"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new ModifyBannedPhoneRequest
@@ -720,11 +715,6 @@ namespace Chronokeep.Network.API
                     {
                         Method = HttpMethod.Get,
                         RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/emails/get"),
-                        Content = new StringContent(
-                            "",
-                            Encoding.UTF8,
-                            "application/json"
-                            )
                     };
                     HttpResponseMessage response = await client.SendAsync(request);
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -758,7 +748,7 @@ namespace Chronokeep.Network.API
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Get,
+                        Method = HttpMethod.Post,
                         RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/emails/add"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new ModifyBannedEmailRequest
@@ -799,7 +789,7 @@ namespace Chronokeep.Network.API
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Get,
+                        Method = HttpMethod.Post,
                         RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "blocked/emails/unblock"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new ModifyBannedEmailRequest
