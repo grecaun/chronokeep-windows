@@ -17,6 +17,7 @@ namespace Chronokeep.Objects
             url = Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS];
             auth_token = "";
             nickname = "";
+            web_url = "";
         }
 
         public APIObject(int id, string type, string url, string nickname, string auth_token, string web_url)
