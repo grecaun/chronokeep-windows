@@ -14,7 +14,6 @@ namespace Chronokeep.Network.API
 {
     public class APIHandlers
     {
-
         public static async Task<bool> IsHealthy(APIObject api)
         {
             string content;

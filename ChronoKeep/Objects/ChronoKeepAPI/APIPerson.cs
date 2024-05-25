@@ -4,6 +4,8 @@ namespace Chronokeep.Objects.API
 {
     public class APIPerson
     {
+        public APIPerson() { }
+
         public APIPerson(Participant person)
         {
             this.Identifier = person.Identifier.ToString();

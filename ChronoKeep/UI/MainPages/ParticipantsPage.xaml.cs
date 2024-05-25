@@ -468,6 +468,128 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.ParticipantsPage", "Already uploading.");
         }
 
+        public async void DownloadParticipants()
+        {
+            // Get API to upload.
+            if (theEvent.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
+            {
+                Download.Content = "Download";
+                return;
+            }
+            APIObject api = database.GetAPI(theEvent.API_ID);
+            string[] event_ids = theEvent.API_Event_ID.Split(',');
+            if (event_ids.Length != 2)
+            {
+                Download.Content = "Download";
+                return;
+            }
+            try
+            {
+                GetParticipantsResponse response = await APIHandlers.GetParticipants(api, event_ids[0], event_ids[1]);
+                Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
+                Dictionary<string, Distance> distDictionary = new Dictionary<string, Distance>();
+                foreach (Participant p in database.GetParticipants(theEvent.Identifier))
+                {
+                    partDictionary[p.Identifier.ToString()] = p;
+                }
+                foreach (Distance d in database.GetDistances(theEvent.Identifier))
+                {
+                    distDictionary[d.Name] = d;
+                }
+                foreach (APIPerson person in response.Participants)
+                {
+                    if (partDictionary.ContainsKey(person.Identifier))
+                    {
+                        if (distDictionary.ContainsKey(person.Distance))
+                        {
+                            Participant updated = new Participant(
+                                partDictionary[person.Identifier].Identifier,
+                                person.First.Length > 0 ? person.First : partDictionary[person.Identifier].FirstName,
+                                person.Last.Length > 0 ? person.Last : partDictionary[person.Identifier].LastName,
+                                partDictionary[person.Identifier].Street,
+                                partDictionary[person.Identifier].City,
+                                partDictionary[person.Identifier].State,
+                                partDictionary[person.Identifier].Zip,
+                                person.Birthdate,
+                                new EventSpecific(
+                                    partDictionary[person.Identifier].EventSpecific.Identifier,
+                                    theEvent.Identifier,
+                                    distDictionary[person.Distance].Identifier,
+                                    distDictionary[person.Distance].Name,
+                                    person.Bib,
+                                    partDictionary[person.Identifier].EventSpecific.CheckedIn,
+                                    partDictionary[person.Identifier].EventSpecific.Comments,
+                                    partDictionary[person.Identifier].EventSpecific.Owes,
+                                    partDictionary[person.Identifier].EventSpecific.Other,
+                                    partDictionary[person.Identifier].EventSpecific.Status,
+                                    partDictionary[person.Identifier].EventSpecific.AgeGroupName,
+                                    partDictionary[person.Identifier].EventSpecific.AgeGroupId,
+                                    person.Anonymous,
+                                    person.SMSEnabled,
+                                    person.Apparel
+                                    ),
+                                partDictionary[person.Identifier].Email,
+                                partDictionary[person.Identifier].Phone,
+                                person.Mobile.Length > 0 ? person.Mobile : partDictionary[person.Identifier].Mobile,
+                                partDictionary[person.Identifier].Parent,
+                                partDictionary[person.Identifier].Country,
+                                partDictionary[person.Identifier].Street2,
+                                person.Gender,
+                                partDictionary[person.Identifier].ECName,
+                                partDictionary[person.Identifier].ECPhone,
+                                partDictionary[person.Identifier].Chip
+                                );
+                            database.UpdateParticipant(updated);
+                        }
+                    }
+                    else
+                    {
+                        if (distDictionary.ContainsKey(person.Distance))
+                        {
+                            database.AddParticipant(new Participant(
+                                    person.First,
+                                    person.Last,
+                                    "",
+                                    "",
+                                    "",
+                                    "",
+                                    person.Birthdate,
+                                    new EventSpecific(
+                                        theEvent.Identifier,
+                                        distDictionary[person.Distance].Identifier,
+                                        distDictionary[person.Distance].Name,
+                                        person.Bib,
+                                        0,
+                                        "",
+                                        "",
+                                        "",
+                                        person.Anonymous,
+                                        person.SMSEnabled,
+                                        person.Apparel
+                                        ),
+                                    "",
+                                    "",
+                                    person.Mobile,
+                                    "",
+                                    "",
+                                    "",
+                                    person.Gender,
+                                    "",
+                                    ""
+                                    ));
+                        }
+                    }
+                }
+            }
+            catch (APIException ex)
+            {
+                DialogBox.Show(ex.Message);
+                Download.Content = "Download";
+                return;
+            }
+            Download.Content = "Download";
+        }
+
         private async void UploadParticipants()
         {
             // Get API to upload.
@@ -640,6 +762,19 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             Log.D("UI.MainPages.ParticipantsPage", "Already deleting.");
+        }
+
+        private void Download_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.ParticipantsPage", "Download clicked.");
+            if (Download.Content.ToString() != "Working")
+            {
+                Log.D("UI.MainPages.TimingPage", "Downloading data.");
+                Download.Content = "Working";
+                DownloadParticipants();
+                return;
+            }
+            Log.D("UI.MainPages.ParticipantsPage", "Already downloading.");
         }
     }
 }

@@ -58,6 +58,15 @@
                     HorizontalAlignment="Stretch"
                     />
                 <Button 
+                    Name="Download" 
+                    Content="Download" 
+                    FontSize="14" 
+                    Height="35" 
+                    Margin="10,5,10,5"
+                    Click="Download_Click" 
+                    HorizontalAlignment="Stretch"
+                    />
+                <Button 
                     Name="Delete"
                     Content="Delete Uploaded"
                     FontSize="14"
