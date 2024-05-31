@@ -399,6 +399,12 @@ namespace Chronokeep.UI.MainPages
                 TypeBox.Items.Add(
                     new ComboBoxItem
                     {
+                        Content = "Normal",
+                        Uid = Constants.Timing.DISTANCE_TYPE_NORMAL.ToString()
+                    });
+                TypeBox.Items.Add(
+                    new ComboBoxItem
+                    {
                         Content = "Early Start",
                         Uid = Constants.Timing.DISTANCE_TYPE_EARLY.ToString()
                     });
@@ -416,15 +422,19 @@ namespace Chronokeep.UI.MainPages
                     });
                 if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_EARLY)
                 {
-                    TypeBox.SelectedIndex = 0;
+                    TypeBox.SelectedIndex = 1;
                 }
                 else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL)
                 {
-                    TypeBox.SelectedIndex = 1;
+                    TypeBox.SelectedIndex = 2;
                 }
                 else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_VIRTUAL)
                 {
-                    TypeBox.SelectedIndex = 2;
+                    TypeBox.SelectedIndex = 3;
+                }
+                else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_NORMAL)
+                {
+                    TypeBox.SelectedIndex = 0;
                 }
                 wavePanel.Children.Add(TypeBox);
                 thePanel.Children.Add(wavePanel);
@@ -484,12 +494,12 @@ namespace Chronokeep.UI.MainPages
                 theDistance.DistanceValue = parentDiv.DistanceValue;
                 theDistance.EndSeconds = parentDiv.EndSeconds;
                 theDistance.FinishOccurrence = parent.GetDistance().FinishOccurrence;
-                int typeVal = 0;
+                int typeVal = -1;
                 if (TypeBox.SelectedItem != null)
                 {
                     int.TryParse(((ComboBoxItem)TypeBox.SelectedItem).Uid, out typeVal);
                 }
-                theDistance.Type = typeVal != 0 ? typeVal : Constants.Timing.DISTANCE_TYPE_EARLY;
+                theDistance.Type = typeVal != -1 ? typeVal : Constants.Timing.DISTANCE_TYPE_EARLY;
                 int ranking;
                 int.TryParse(Ranking.Text, out ranking);
                 if (ranking >= 0)
