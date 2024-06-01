@@ -300,6 +300,7 @@ namespace Chronokeep.UI.MainPages
                     Margin = new Thickness(0, 5, 0, 5),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
+                Ranking.GotFocus += new RoutedEventHandler(this.SelectAll);
                 Ranking.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
                 rankPanel.Children.Add(Ranking);
                 nameGrid.Children.Add(rankPanel);

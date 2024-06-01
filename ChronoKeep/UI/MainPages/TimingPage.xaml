@@ -519,7 +519,7 @@
                 MaxHeight="235"
                 Margin="5,0,5,5"
                 HorizontalAlignment="Stretch"
-                IsExpanded="True"
+                IsExpanded="False"
                 ExpandDirection="Down"
                 Grid.Row="0"
                 Expanded="Expander_Expanded"
