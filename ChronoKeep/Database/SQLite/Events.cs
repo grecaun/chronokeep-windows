@@ -13,9 +13,9 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "INSERT INTO events(event_name, event_date, event_yearcode, event_rank_by_gun, " +
                 "event_common_age_groups, event_common_start_finish, event_distance_specific_segments, " +
                 "event_start_time_seconds, event_start_time_milliseconds, event_finish_max_occurances, event_finish_ignore_within, " +
-                "event_start_window, event_type, event_display_placements)" +
+                "event_start_window, event_type, event_display_placements, event_age_groups_as_divisions)" +
                 " VALUES(@name,@date,@yearcode,@gun,@age,@start,@sepseg,@startsec,@startmill,@occ,@ign,@window," +
-                "@type,@display)";
+                "@type,@display,@agDiv)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
@@ -30,7 +30,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@ign", anEvent.FinishIgnoreWithin),
                 new SQLiteParameter("@window", anEvent.StartWindow),
                 new SQLiteParameter("@type", anEvent.EventType),
-                new SQLiteParameter("@display", anEvent.DisplayPlacements)
+                new SQLiteParameter("@display", anEvent.DisplayPlacements),
+                new SQLiteParameter("@agDiv", anEvent.AgeGroupDivision),
             });
             command.ExecuteNonQuery();
         }
@@ -58,14 +59,25 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE events SET event_name=@name, event_date=@date, event_yearcode=@yearcode," +
-                "event_common_age_groups=@age, event_common_start_finish=@start, event_rank_by_gun=@gun, " +
-                "event_distance_specific_segments=@seg, " +
-                "event_start_time_seconds=@startsec, event_start_time_milliseconds=@startmill, " +
+            command.CommandText = "UPDATE events SET " +
+                "event_name=@name," +
+                "event_date=@date," +
+                "event_yearcode=@yearcode," +
+                "event_common_age_groups=@age," +
+                "event_common_start_finish=@start," +
+                "event_rank_by_gun=@gun," +
+                "event_distance_specific_segments=@seg," +
+                "event_start_time_seconds=@startsec," +
+                "event_start_time_milliseconds=@startmill," +
                 "event_type=@type," +
-                "event_finish_max_occurances=@maxocc, event_finish_ignore_within=@ignore," +
-                "event_start_window=@startWindow, api_id=@apiid, api_event_id=@apieventid," +
-                "event_display_placements=@display WHERE event_id=@id";
+                "event_finish_max_occurances=@maxocc," +
+                "event_finish_ignore_within=@ignore," +
+                "event_start_window=@startWindow," +
+                "api_id=@apiid," +
+                "api_event_id=@apieventid," +
+                "event_display_placements=@display," +
+                "event_age_groups_as_divisions=@agDiv" +
+                " WHERE event_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@id", anEvent.Identifier),
                 new SQLiteParameter("@name", anEvent.Name),
@@ -84,6 +96,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@apiid", anEvent.API_ID),
                 new SQLiteParameter("@apieventid", anEvent.API_Event_ID),
                 new SQLiteParameter("@display", anEvent.DisplayPlacements),
+                new SQLiteParameter("@agDiv", anEvent.AgeGroupDivision),
             });
             command.ExecuteNonQuery();
         }
@@ -113,7 +126,8 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["event_type"]),
                     Convert.ToInt32(reader["api_id"]),
                     reader["api_event_id"].ToString(),
-                    Convert.ToInt32(reader["event_display_placements"])
+                    Convert.ToInt32(reader["event_display_placements"]),
+                    Convert.ToInt32(reader["event_age_groups_as_divisions"])
                     ));
             }
             reader.Close();
@@ -168,7 +182,8 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["event_type"]),
                     Convert.ToInt32(reader["api_id"]),
                     reader["api_event_id"].ToString(),
-                    Convert.ToInt32(reader["event_display_placements"])
+                    Convert.ToInt32(reader["event_display_placements"]),
+                    Convert.ToInt32(reader["event_age_groups_as_divisions"])
                     );
             }
             reader.Close();

@@ -1413,7 +1413,7 @@ namespace Chronokeep.Database.SQLite
                             "SELECT event_id, bib, chip FROM bib_chip_assoc; " +
                             "DROP TABLE bib_chip_assoc; " +
                             "ALTER TABLE bib_chip_assoc_new RENAME TO bib_chip_assoc; " +
-                            "UPDATE settings set value='54' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='54' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 54;
                     case 54:
@@ -1425,7 +1425,7 @@ namespace Chronokeep.Database.SQLite
                             "reader_name VARCHAR NOT NULL, " +
                             "UNIQUE(event_id, api_id, reader_name) ON CONFLICT REPLACE" +
                             ");" +
-                            "UPDATE settings set value='55' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='55' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 55;
                     case 55:
@@ -1433,7 +1433,7 @@ namespace Chronokeep.Database.SQLite
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE remote_readers ADD COLUMN " +
                             "location_id INTEGER NOT NULL DEFAULT " + Constants.Timing.LOCATION_DUMMY + ";" +
-                            "UPDATE settings set value='56' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='56' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 56;
                     case 56:
@@ -1466,7 +1466,7 @@ namespace Chronokeep.Database.SQLite
                             "INSERT INTO eventspecific_new SELECT * FROM eventspecific; " +
                             "DROP TABLE eventspecific; " +
                             "ALTER TABLE eventspecific_new RENAME TO eventspecific; " +
-                            "UPDATE settings set value='57' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='57' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 57;
                     case 57:
@@ -1476,7 +1476,7 @@ namespace Chronokeep.Database.SQLite
                             "distance_sms_enabled INTEGER NOT NULL DEFAULT 0; " +
                             "ALTER TABLE eventspecific ADD COLUMN " +
                             "eventspecific_sms_enabled SMALLINT NOT NULL DEFAULT 0; " +
-                            "UPDATE settings set value='58' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='58' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 58;
                     case 58:
@@ -1491,7 +1491,7 @@ namespace Chronokeep.Database.SQLite
                             "banned_phone VARCHAR(100), " +
                             "UNIQUE(banned_phone)" +
                             "); " +
-                            "UPDATE settings set value='59' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='59' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 59;
                     case 59:
@@ -1499,7 +1499,7 @@ namespace Chronokeep.Database.SQLite
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE eventspecific ADD COLUMN " +
                             "eventspecific_apparel VARCHAR NOT NULL DEFAULT '';" +
-                            "UPDATE settings set value='60' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='60' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 60;
                     case 60:
@@ -1513,14 +1513,14 @@ namespace Chronokeep.Database.SQLite
                             "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
                             "sms_bib VARCHAR NOT NULL" +
                             ");" +
-                            "UPDATE settings set value='61' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='61' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 61;
                     case 61:
                         Log.D("Database.SQLite.Update", "Upgrading from version 61.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE results_api ADD COLUMN api_web_url VARCHAR NOT NULL DEFAULT '';" +
-                            "UPDATE settings set value='62' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='62' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         goto case 62;
                     case 62:
@@ -1534,7 +1534,15 @@ namespace Chronokeep.Database.SQLite
                             "CREATE TABLE IF NOT EXISTS email_alert(" +
                             "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
                             "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id));" +
-                            "UPDATE settings set value='63' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                            "UPDATE settings SET value='63' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
+                        goto case 63;
+                    case 63:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 63.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events ADD COLUMN event_age_groups_as_divisions " +
+                            "INTEGER NOT NULL DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + ";" +
+                            "UPDATE settings SET value='64' WHERE setting='"+Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;
                 }
