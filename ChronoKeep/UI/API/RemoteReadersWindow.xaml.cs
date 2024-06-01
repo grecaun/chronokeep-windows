@@ -208,6 +208,7 @@ namespace Chronokeep.UI.API
                 }
                 this.reader.EventID = theEvent.Identifier;
                 List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 if (!theEvent.CommonStartFinish)
                 {
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));

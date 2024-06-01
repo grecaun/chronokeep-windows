@@ -1,6 +1,8 @@
-﻿using Chronokeep.Helpers;
+﻿using Chronokeep.Constants;
+using Chronokeep.Helpers;
 using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing.Announcer;
 using System;
 using System.Collections.Generic;
@@ -52,7 +54,16 @@ namespace Chronokeep.UI.Announcer
 
         public void UpdateTiming()
         {
-            if (!window.AnnouncerConnected())
+            List<RemoteReader> readers = database.GetRemoteReaders(theEvent.Identifier);
+            bool remote_announcer = false;
+            foreach (RemoteReader reader in readers)
+            {
+                if (reader.LocationID == Constants.Timing.LOCATION_ANNOUNCER)
+                {
+                    remote_announcer = true;
+                }
+            }
+            if (!window.AnnouncerConnected() || remote_announcer)
             {
                 AnnouncerBox.Visibility = Visibility.Collapsed;
                 AnnouncerHeader.Visibility = Visibility.Collapsed;
@@ -63,7 +74,7 @@ namespace Chronokeep.UI.Announcer
                 // Ensure results are sorted.
                 results.Sort(TimeResult.CompareBySystemTime);
                 results.RemoveAll((x) => TimeResult.IsNotFinish(x) || x.IsDNF());
-                DateTime cutoff = DateTime.Now.AddSeconds(-1 * Globals.AnnouncerWindow);
+                DateTime cutoff = DateTime.Now.AddSeconds(-1 * Helpers.Globals.AnnouncerWindow);
                 // Remove all result values where x.SystemTime is less than 0 (i.e. cutoff occurred after x.SystemTime)
                 results.RemoveAll((x) => DateTime.Compare(cutoff, x.SystemTime) > 0);
                 // Reverse all entries so the last person to cross the line is at the top.
@@ -76,8 +87,17 @@ namespace Chronokeep.UI.Announcer
 
         public void UpdateView()
         {
+            List<RemoteReader> readers = database.GetRemoteReaders(theEvent.Identifier);
+            bool remote_announcer = false;
+            foreach (RemoteReader reader in readers)
+            {
+                if (reader.LocationID == Constants.Timing.LOCATION_ANNOUNCER)
+                {
+                    remote_announcer = true;
+                }
+            }
             // Check if we've got an announcer reader connected.
-            if (window.AnnouncerConnected())
+            if (window.AnnouncerConnected() || remote_announcer)
             {
                 AnnouncerBox.Visibility = Visibility.Visible;
                 AnnouncerHeader.Visibility = Visibility.Visible;
@@ -86,7 +106,7 @@ namespace Chronokeep.UI.Announcer
                 // Get our list of people to display. Remove anything older than 45 seconds.
                 List<AnnouncerParticipant> participants = AnnouncerWorker.GetList();
                 participants.Sort((x1, x2) => x1.CompareTo(x2));
-                DateTime cutoff = DateTime.Now.AddSeconds(-1 * Globals.AnnouncerWindow);
+                DateTime cutoff = DateTime.Now.AddSeconds(-1 * Helpers.Globals.AnnouncerWindow);
                 // Remove all participant values where x.When is less than 0 (i.e. cutoff occurred after x.When)
                 participants.RemoveAll((x) => (DateTime.Compare(cutoff, x.When) > 0));
                 // Reverse all entries so the last person to cross the line is at the top.

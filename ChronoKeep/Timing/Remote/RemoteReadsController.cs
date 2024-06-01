@@ -3,6 +3,8 @@ using Chronokeep.Interfaces;
 using Chronokeep.Interfaces.Timing;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
+using Chronokeep.Timing.Announcer;
+using Chronokeep.UI.Announcer;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -110,8 +112,13 @@ namespace Chronokeep.Timing.Remote
                 // It will be changed based upon the last time value a reader sent us
                 DateTime start, end = new DateTime(now.Year, now.Month, now.Day, 23, 59, 59);
                 bool api_error = false;
+                bool announcer_notify = false;
                 foreach (RemoteReader reader in readers)
                 {
+                    if (reader.LocationID == Constants.Timing.LOCATION_ANNOUNCER)
+                    {
+                        announcer_notify = true;
+                    }
                     // make sure we know how to check the api
                     if (apiDictionary.ContainsKey(reader.APIIDentifier))
                     {
@@ -153,6 +160,10 @@ namespace Chronokeep.Timing.Remote
                         }
                         database.AddChipReads(reads);
                     }
+                }
+                if (announcer_notify)
+                {
+                    AnnouncerWorker.Notify();
                 }
                 if (api_error)
                 {
