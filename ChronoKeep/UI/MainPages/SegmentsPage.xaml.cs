@@ -26,8 +26,6 @@ namespace Chronokeep.UI.MainPages
         private bool UpdateTimingWorker = false;
 
         private Dictionary<int, List<Segment>> allSegments = new Dictionary<int, List<Segment>>();
-        private List<Segment> SegmentsToRemove = new List<Segment>();
-        private List<Segment> SegmentsToAdd = new List<Segment>();
         private Dictionary<int, TimingLocation> LocationDict = new Dictionary<int, TimingLocation>();
 
         public SegmentsPage(IMainWindow mWindow, IDBInterface database)
@@ -151,35 +149,41 @@ namespace Chronokeep.UI.MainPages
         private void RemoveSegment(Segment mySegment)
         {
             Log.D("UI.MainPages.SegmentsPage", "Removing segment.");
-            SegmentsToRemove.Add(mySegment);
+            UpdateDatabase();
             allSegments[mySegment.DistanceId].Remove(mySegment);
+            database.RemoveSegment(mySegment);
             UpdateView();
         }
 
         public void UpdateDatabase()
         {
-            List<Segment> segments = new List<Segment>();
+            List<Segment> upSegs = new List<Segment>();
+            List<Segment> newSegs = new List<Segment>();
+            HashSet<int> segSet = new HashSet<int>();
+            foreach (Segment s in database.GetSegments(theEvent.Identifier))
+            {
+                segSet.Add(s.Identifier);
+            }
             foreach (Object seg in SegmentsBox.Items)
             {
                 if (seg is ASegment)
                 {
                     ((ASegment)seg).UpdateSegment();
                     Segment thisSegment = ((ASegment)seg).mySegment;
-                    segments.Add(thisSegment);
-                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + thisSegment.DistanceId + " Segment Name " + thisSegment.Name + " segment ID " + thisSegment.Identifier);
+                    if (thisSegment.Identifier < 0)
+                    {
+                        newSegs.Add(thisSegment);
+                    }
+                    else
+                    {
+                        upSegs.Add(thisSegment);
+                    }
                 }
             }
-            SegmentsToAdd.RemoveAll(x => !LocationDict.ContainsKey(x.LocationId) || x.Occurrence > LocationDict[x.LocationId].MaxOccurrences || x.Occurrence < 1);
-            database.AddSegments(SegmentsToAdd);
-            database.RemoveSegments(SegmentsToRemove);
-            Log.D("UI.MainPages.SegmentsPage", "Segments to remove count is " + SegmentsToRemove.Count);
+            newSegs.RemoveAll(x => !LocationDict.ContainsKey(x.LocationId) || x.Occurrence > LocationDict[x.LocationId].MaxOccurrences || x.Occurrence < 1);
+            database.AddSegments(newSegs);
             UpdateTimingWorker = true;
-            segments.RemoveAll(x => (SegmentsToAdd.Contains(x) || SegmentsToRemove.Contains(x)));
-            segments.RemoveAll(x => !LocationDict.ContainsKey(x.LocationId) || x.Occurrence > LocationDict[x.LocationId].MaxOccurrences || x.Occurrence < 1);
-            database.UpdateSegments(segments);
-            Log.D("UI.MainPages.SegmentsPage", "Segments to update count is " + segments.Count);
-            SegmentsToAdd.Clear();
-            SegmentsToRemove.Clear();
+            database.UpdateSegments(upSegs);
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -234,7 +238,6 @@ namespace Chronokeep.UI.MainPages
                 UpdateDatabase();
             }
             Segment newSeg = new Segment(theEvent.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, 0, 0.0, 0.0, Constants.Distances.MILES, "");
-            SegmentsToAdd.Add(newSeg);
             allSegments[distanceId].Add(newSeg);
             UpdateView();
         }
@@ -246,7 +249,7 @@ namespace Chronokeep.UI.MainPages
             {
                 UpdateDatabase();
             }
-            SegmentsToRemove.AddRange(allSegments[intoDistance]);
+            database.RemoveSegments(allSegments[intoDistance]);
             allSegments[intoDistance].Clear();
             foreach (Segment seg in allSegments[fromDistance])
             {
@@ -254,7 +257,6 @@ namespace Chronokeep.UI.MainPages
                 newSeg.DistanceId = intoDistance;
                 allSegments[intoDistance].Add(newSeg);
             }
-            SegmentsToAdd.AddRange(allSegments[intoDistance]);
             UpdateView();
         }
 
