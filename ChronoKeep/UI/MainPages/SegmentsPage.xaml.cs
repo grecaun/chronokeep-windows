@@ -473,14 +473,6 @@ namespace Chronokeep.UI.MainPages
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock TotalDistance = new TextBlock()
-            {
-                Text = "Total",
-                FontSize = 14,
-                Width = 70,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(5, 0, 5, 0)
-            };
             public TextBlock Unit = new TextBlock()
             {
                 Text = "Unit",
@@ -512,7 +504,6 @@ namespace Chronokeep.UI.MainPages
                     dockPanel.Children.Add(Occurrence);
                 }
                 dockPanel.Children.Add(SegDistance);
-                dockPanel.Children.Add(TotalDistance);
                 dockPanel.Children.Add(Unit);
                 dockPanel.Children.Add(Remove);
             }
@@ -522,7 +513,6 @@ namespace Chronokeep.UI.MainPages
             public TextBox SegName { get; private set; }
             public ComboBox Location { get; private set; }
             public ComboBox Occurrence { get; private set; } = null;
-            public TextBox SegDistance { get; private set; }
             public TextBox CumDistance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
             public Button Remove { get; private set; }
@@ -624,17 +614,6 @@ namespace Chronokeep.UI.MainPages
                 }
 
                 // Distance information
-                SegDistance = new TextBox()
-                {
-                    Text = mySegment.SegmentDistance.ToString(),
-                    Width = 70,
-                    FontSize = 14,
-                    Margin = new Thickness(5, 5, 5, 0),
-                    VerticalContentAlignment = VerticalAlignment.Center
-                };
-                SegDistance.GotFocus += new RoutedEventHandler(this.SelectAll);
-                SegDistance.PreviewTextInput += new TextCompositionEventHandler(this.DoubleValidation);
-                thePanel.Children.Add(SegDistance);
                 CumDistance = new TextBox()
                 {
                     Text = mySegment.CumulativeDistance.ToString(),
@@ -748,7 +727,6 @@ namespace Chronokeep.UI.MainPages
                     {
                         mySegment.LocationId = Constants.Timing.LOCATION_DUMMY;
                     }
-                    mySegment.SegmentDistance = Convert.ToDouble(SegDistance.Text);
                     mySegment.CumulativeDistance = Convert.ToDouble(CumDistance.Text);
                     mySegment.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
                     if (Occurrence != null && Occurrence.SelectedItem != null) mySegment.Occurrence = Convert.ToInt32(((ComboBoxItem)Occurrence.SelectedItem).Uid);
