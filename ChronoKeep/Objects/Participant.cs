@@ -478,7 +478,7 @@ namespace Chronokeep.Objects
             }
             else
             {
-                gender = "NS";
+                gender = "Not Specified";
             }
             try
             {
