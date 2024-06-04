@@ -679,7 +679,7 @@ namespace Chronokeep
             {
                 return REGISTRATIONDATE;
             }
-            else if (string.Equals(s, "Anonymous", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Private", StringComparison.OrdinalIgnoreCase))
+            else if (s.IndexOf("Anonymous", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("Private", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return ANONYMOUS;
             }

@@ -37,17 +37,10 @@ namespace Chronokeep
                     last = true;
                 }
             }
-            if (!first || !last)
+            if (!first && !last)
             {
                 output = new List<string>();
-                if (!first)
-                {
-                    output.Add("First Name");
-                }
-                if (!last)
-                {
-                    output.Add("Last Name");
-                }
+                output.Add("First and/or Last Name");
             }
             return output;
         }
