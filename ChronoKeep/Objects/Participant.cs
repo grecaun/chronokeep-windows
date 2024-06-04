@@ -24,8 +24,8 @@ namespace Chronokeep.Objects
             )
         {
             birthdate = birthday.Trim();
-            firstName = first ?? "Unknown";
-            lastName = last ?? "Unknown";
+            firstName = first ?? "";
+            lastName = last ?? "";
             this.street = street ?? "";
             this.city = city ?? "";
             this.state = state ?? "";
@@ -53,8 +53,8 @@ namespace Chronokeep.Objects
         {
             identifier = id;
             birthdate = birthday ?? "";
-            firstName = first ?? "Unknown";
-            lastName = last ?? "Unknown";
+            firstName = first ?? "";
+            lastName = last ?? "";
             this.street = street ?? "";
             this.city = city ?? "";
             this.state = state ?? "";
