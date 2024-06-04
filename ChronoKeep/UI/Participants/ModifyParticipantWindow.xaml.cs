@@ -231,14 +231,9 @@ namespace Chronokeep.UI.Participants
                         database.UpdateParticipant(offendingBib);
                         if (newPart != null)
                         {
-                            if (newPart.FirstName.Trim().Length < 1 || newPart.LastName.Trim().Length < 1)
+                            if (newPart.FirstName.Trim().Length < 1 && newPart.LastName.Trim().Length < 1)
                             {
                                 DialogBox.Show("Invalid name given.");
-                                return;
-                            }
-                            if (newPart.Birthdate.Length < 1)
-                            {
-                                DialogBox.Show("Birthdate or Age not specified.");
                                 return;
                             }
                             database.AddParticipant(newPart);
@@ -255,14 +250,9 @@ namespace Chronokeep.UI.Participants
             {
                 if (newPart != null)
                 {
-                    if (newPart.FirstName.Trim().Length < 1 || newPart.LastName.Trim().Length < 1)
+                    if (newPart.FirstName.Trim().Length < 1 && newPart.LastName.Trim().Length < 1)
                     {
                         DialogBox.Show("Invalid name given.");
-                        return;
-                    }
-                    if (newPart.Birthdate.Length < 1)
-                    {
-                        DialogBox.Show("Birthdate or Age not specified.");
                         return;
                     }
                     database.AddParticipant(newPart);
