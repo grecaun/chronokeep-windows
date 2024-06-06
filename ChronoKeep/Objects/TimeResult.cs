@@ -24,6 +24,7 @@ namespace Chronokeep.Objects
 
         public static Dictionary<int, TimingLocation> locations = null;
         public static Dictionary<int, Segment> segments = null;
+        public static Dictionary<string, Distance> distances = null;
         public static Dictionary<(string, int), TimeResult> RaceResults = null;
         public static Event theEvent = null;
 
@@ -71,15 +72,15 @@ namespace Chronokeep.Objects
                 locations[this.locationId].Name : "Unknown" : "Unknown";
             if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
             {
-                segmentName = "Finish";
+                segmentName = "Finish ";
             }
             else if (Constants.Timing.SEGMENT_START == this.segmentId)
             {
-                segmentName = "Start";
+                segmentName = "Start ";
             }
             else if (segments != null && segments.ContainsKey(this.segmentId))
             {
-                segmentName = segments[this.segmentId].Name;
+                segmentName = segments[this.segmentId].Name + " ";
             }
             else
             {
@@ -89,11 +90,48 @@ namespace Chronokeep.Objects
             {
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
-                    segmentName = string.Format("Lap {0}", occurrence);
+                    if (linked_distance_name.Length > 0
+                        && distances.ContainsKey(linked_distance_name)
+                        && distances[linked_distance_name].DistanceValue > 0)
+                    {
+                        segmentName = string.Format("{1:0.##} {2} - Lap {0}",
+                            occurrence,
+                            distances[linked_distance_name].DistanceValue * occurrence,
+                            Constants.Distances.DistanceString(distances[linked_distance_name].DistanceUnit)
+                            );
+                    }
+                    else if (distance.Length > 0
+                        && distances.ContainsKey(distance)
+                        && distances[distance].DistanceValue > 0)
+                    {
+                        segmentName = string.Format("{1:0.##} {2} - Lap {0}",
+                            occurrence,
+                            distances[distance].DistanceValue * occurrence,
+                            Constants.Distances.DistanceString(distances[distance].DistanceUnit)
+                            );
+                    }
+                    else
+                    {
+                        segmentName = string.Format("Lap {0}", occurrence);
+                    }
                 }
                 else if (Constants.Timing.SEGMENT_START != this.segmentId)
                 {
-                    segmentName = string.Format("{0} {1}", segmentName, occurrence);
+                    if (linked_distance_name.Length > 0
+                        && segments.ContainsKey(this.segmentId)
+                        && segments[this.segmentId].CumulativeDistance > 0)
+                    {
+                        segmentName = string.Format("{2:0.##} {3} - {0}{1}",
+                            segmentName,
+                            occurrence,
+                            segments[this.segmentId].CumulativeDistance * occurrence,
+                            Constants.Distances.DistanceString(segments[this.segmentId].DistanceUnit)
+                            );
+                    }
+                    else
+                    {
+                        segmentName = string.Format("{0} {1}", segmentName, occurrence).Trim();
+                    }
                 }
             }
             firstName = first ?? "";
@@ -179,6 +217,7 @@ namespace Chronokeep.Objects
         {
             locations = new Dictionary<int, TimingLocation>();
             segments = new Dictionary<int, Segment>();
+            distances = new Dictionary<string, Distance>();
             Event theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
@@ -200,6 +239,10 @@ namespace Chronokeep.Objects
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
                 segments[seg.Identifier] = seg;
+            }
+            foreach (Distance dist in database.GetDistances(theEvent.Identifier))
+            {
+                distances[dist.Name] = dist;
             }
             raceType = theEvent.EventType;
         }
