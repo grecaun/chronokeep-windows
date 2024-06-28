@@ -596,7 +596,7 @@ namespace Chronokeep.Objects
 
         public string Age(string eventDate)
         {
-            if (birthdate == null || birthdate.Length > 1)
+            if (birthdate == null || birthdate.Length < 1)
             {
                 return "";
             }
