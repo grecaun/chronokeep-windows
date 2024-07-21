@@ -1544,6 +1544,24 @@ namespace Chronokeep.Database.SQLite
                             "INTEGER NOT NULL DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE + ";" +
                             "UPDATE settings SET value='64' WHERE setting='"+Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
+                        goto case 64;
+                    case 64:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 64.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events ADD COLUMN event_days_allowed INTEGER NOT NULL DEFAULT 1;" +
+                            "ALTER TABLE segments ADD COLUMN gps VARCHAR NOT NULL DEFAULT '';" +
+                            "ALTER TABLE segments ADD COLUMN map_link VARCHAR NOT NULL DEFAULT '';" +
+                            "ALTER TABLE sms_alert ADD COLUMN segment_id INTEGER NOT NULL DEFAULT " + Constants.Timing.SEGMENT_FINISH + ";" +
+                            "CREATE TABLE IF NOT EXISTS sms_subscriptions(" +
+                                "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                                "bib VARCHAR(100) NOT NULL DEFAULT '', " +
+                                "first VARCHAR(100) NOT NULL DEFAULT '', " +
+                                "last VARCHAR(100) NOT NULL DEFAULT '', " +
+                                "phone VARCHAR(100) NOT NULL DEFAULT '', " +
+                                "UNIQUE(event_id, bib, first, last, phone)" +
+                                ");" +
+                            "UPDATE settings SET VALUE='65' WHERE setting='"+Constants.Settings.DATABASE_VERSION+"';";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

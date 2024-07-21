@@ -11,8 +11,8 @@ namespace Chronokeep.Database.SQLite
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO segments (event_id, distance_id, location_id, location_occurance, name, distance_segment, " +
-                "distance_cumulative, distance_unit) " +
-                "VALUES (@event,@distance,@location,@occurance,@name,@dseg,@dcum,@dunit)";
+                "distance_cumulative, distance_unit, gps, map_link) " +
+                "VALUES (@event,@distance,@location,@occurance,@name,@dseg,@dcum,@dunit,@gps,@map)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event",seg.EventId),
                 new SQLiteParameter("@distance",seg.DistanceId),
@@ -21,7 +21,10 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@name",seg.Name),
                 new SQLiteParameter("@dseg",seg.SegmentDistance),
                 new SQLiteParameter("@dcum",seg.CumulativeDistance),
-                new SQLiteParameter("@dunit",seg.DistanceUnit) });
+                new SQLiteParameter("@dunit",seg.DistanceUnit),
+                new SQLiteParameter("@gps",seg.GPS),
+                new SQLiteParameter("@map",seg.MapLink) 
+            });
             command.ExecuteNonQuery();
         }
         internal static void RemoveSegment(int identifier, SQLiteConnection connection)
@@ -39,7 +42,7 @@ namespace Chronokeep.Database.SQLite
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "UPDATE segments SET event_id=@event, distance_id=@distance, location_id=@location, " +
-                "location_occurance=@occurance, name=@name, distance_segment=@dseg, distance_cumulative=@dcum, distance_unit=@dunit " +
+                "location_occurance=@occurance, name=@name, distance_segment=@dseg, distance_cumulative=@dcum, distance_unit=@dunit, gps=@gps, map_link=@map " +
                 "WHERE segment_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event",seg.EventId),
@@ -50,7 +53,10 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@dseg",seg.SegmentDistance),
                 new SQLiteParameter("@dcum",seg.CumulativeDistance),
                 new SQLiteParameter("@dunit",seg.DistanceUnit),
-                new SQLiteParameter("@id",seg.Identifier) });
+                new SQLiteParameter("@id",seg.Identifier),
+                new SQLiteParameter("@gps",seg.GPS),
+                new SQLiteParameter("@map",seg.MapLink)
+            });
             command.ExecuteNonQuery();
         }
 
@@ -78,9 +84,19 @@ namespace Chronokeep.Database.SQLite
             SQLiteDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                output.Add(new Segment(Convert.ToInt32(reader["segment_id"]), Convert.ToInt32(reader["event_id"]), Convert.ToInt32(reader["distance_id"]),
-                    Convert.ToInt32(reader["location_id"]), Convert.ToInt32(reader["location_occurance"]), Convert.ToDouble(reader["distance_segment"]),
-                    Convert.ToDouble(reader["distance_cumulative"]), Convert.ToInt32(reader["distance_unit"]), reader["name"].ToString()));
+                output.Add(new Segment(
+                    Convert.ToInt32(reader["segment_id"]),
+                    Convert.ToInt32(reader["event_id"]),
+                    Convert.ToInt32(reader["distance_id"]),
+                    Convert.ToInt32(reader["location_id"]),
+                    Convert.ToInt32(reader["location_occurance"]),
+                    Convert.ToDouble(reader["distance_segment"]),
+                    Convert.ToDouble(reader["distance_cumulative"]),
+                    Convert.ToInt32(reader["distance_unit"]),
+                    reader["name"].ToString(),
+                    reader["gps"].ToString(),
+                    reader["map_link"].ToString()
+                    ));
             }
             reader.Close();
             return output;

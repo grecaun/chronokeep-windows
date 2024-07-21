@@ -90,6 +90,7 @@ namespace Chronokeep.Database.SQLite
                     "event_start_window INTEGER NOT NULL DEFAULT -1," +
                     "event_age_groups_as_divisions INTEGER NOT NULL DEFAULT "+ Constants.Timing.AGEGROUPS_LASTGROUP_FALSE +"," +
                     "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
+                    "event_days_allowed INTEGER NOT NULL DEFAULT 1," +
                     "api_id INTEGER REFERENCES results_api(api_id) NOT NULL DEFAULT -1," +
                     "api_event_id VARCHAR(200) NOT NULL DEFAULT ''," +
                     "event_display_placements INTEGER NOT NULL DEFAULT 1," +
@@ -172,6 +173,8 @@ namespace Chronokeep.Database.SQLite
                     "distance_segment DECIMAL (10,2) DEFAULT 0.0," +
                     "distance_cumulative DECIMAL (10,2) DEFAULT 0.0," +
                     "distance_unit INTEGER DEFAULT 0," +
+                    "gps VARCHAR NOT NULL DEFAULT ''," +
+                    "map_link VARCHAR NOT NULL DEFAULT ''," +
                     "UNIQUE (event_id, distance_id, location_id, location_occurance) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS chipreads (" +
@@ -258,7 +261,9 @@ namespace Chronokeep.Database.SQLite
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS sms_alert(" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
-                    "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)" +
+                    "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
+                    "segment_id INTEGER NOT NULL DEFAULT '"+Constants.Timing.SEGMENT_FINISH+"'," +
+                    "UNIQUE(event_id, eventspecific_id, segment)" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS sms_ban_list(" +
                     "banned_phone VARCHAR(100), " +
@@ -271,6 +276,14 @@ namespace Chronokeep.Database.SQLite
                 queries.Add("CREATE TABLE IF NOT EXISTS email_alert(" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
                     "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)" +
+                    ");");
+                queries.Add("CREATE TABLE IF NOT EXISTS sms_subscriptions(" +
+                    "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
+                    "bib VARCHAR(100) NOT NULL DEFAULT '', " +
+                    "first VARCHAR(100) NOT NULL DEFAULT '', " +
+                    "last VARCHAR(100) NOT NULL DEFAULT '', " +
+                    "phone VARCHAR(100) NOT NULL DEFAULT '', " +
+                    "UNIQUE(event_id, bib, first, last, phone)" +
                     ");");
                 queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
 

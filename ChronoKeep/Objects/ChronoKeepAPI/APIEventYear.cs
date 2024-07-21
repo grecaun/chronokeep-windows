@@ -10,5 +10,7 @@ namespace Chronokeep.Objects.API
         public string DateTime { get; set; }
         [JsonPropertyName("live")]
         public bool Live { get; set; }
+        [JsonPropertyName("days_allowed")]
+        public int DaysAllowed { get; set; } = 1;
     }
 }

@@ -119,4 +119,66 @@ namespace Chronokeep.Objects.API
         [JsonPropertyName("email")]
         public string Email { get; set; }
     }
+
+    // SMS Subscription requests
+    public class GetSmsSubscriptionsRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+    }
+
+    public class AddSmsSubscriptionRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+        [JsonPropertyName("bib")]
+        public string Bib { get; set; }
+        [JsonPropertyName("first")]
+        public string First { get; set; }
+        [JsonPropertyName("last")]
+        public string Last { get; set; }
+        [JsonPropertyName("Phone")]
+        public string Phone { get; set; }
+    }
+
+    public class RemoveSmsSubscriptionRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+        [JsonPropertyName("Phone")]
+        public string Phone { get; set; }
+    }
+
+    // Segment requests
+    public class GetSegmentsRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+    }
+
+    public class AddSegmentsRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+        [JsonPropertyName("segments")]
+        public List<Segment> Segments { get; set; }
+    }
+
+    public class DeleteSegmentsRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+    }
 }

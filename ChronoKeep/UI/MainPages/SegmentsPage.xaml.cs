@@ -237,7 +237,7 @@ namespace Chronokeep.UI.MainPages
             {
                 UpdateDatabase();
             }
-            Segment newSeg = new Segment(theEvent.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, 0, 0.0, 0.0, Constants.Distances.MILES, "");
+            Segment newSeg = new Segment(theEvent.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, 0, 0.0, 0.0, Constants.Distances.MILES, "", "", "");
             allSegments[distanceId].Add(newSeg);
             UpdateView();
         }

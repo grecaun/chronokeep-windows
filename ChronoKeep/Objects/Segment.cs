@@ -7,7 +7,7 @@ namespace Chronokeep
         private int id, event_id, distance_id, location_id, occurrence;
         private double distance_segment, distance_cumulative;
         private int distance_unit;
-        private string name;
+        private string name, gps, map_link;
 
         public Segment(Segment seg)
         {
@@ -20,9 +20,11 @@ namespace Chronokeep
             this.distance_cumulative = seg.distance_cumulative;
             this.distance_unit = seg.distance_unit;
             this.name = seg.name ?? "";
+            this.gps = seg.gps;
+            this.map_link = seg.map_link;
         }
 
-        public Segment(int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n)
+        public Segment(int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n, string gps, string ml)
         {
             this.id = -1;
             this.event_id = e;
@@ -33,9 +35,11 @@ namespace Chronokeep
             this.distance_cumulative = dcum;
             this.distance_unit = dunit;
             this.name = n ?? "";
+            this.gps = gps;
+            this.map_link = ml;
         }
 
-        public Segment(int id, int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n)
+        public Segment(int id, int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n, string gps, string ml)
         {
             this.id = id;
             this.event_id = e;
@@ -46,6 +50,8 @@ namespace Chronokeep
             this.distance_cumulative = dcum;
             this.distance_unit = dunit;
             this.name = n ?? "";
+            this.gps = gps;
+            this.map_link = ml;
         }
 
         public string Name { get => name; set => name = value ?? ""; }
@@ -57,6 +63,8 @@ namespace Chronokeep
         public int LocationId { get => location_id; set => location_id = value; }
         public int Occurrence { get => occurrence; set => occurrence = value; }
         public int Identifier { get => id; set => id = value; }
+        public string GPS { get => gps; set => gps = value; }
+        public string MapLink { get => map_link; set => map_link = value; }
 
         public int CompareTo(Segment other)
         {
@@ -78,7 +86,10 @@ namespace Chronokeep
 
         public bool Equals(Segment other)
         {
-            return this.event_id == other.event_id && this.distance_id == other.distance_id && this.location_id == other.location_id && this.occurrence == other.occurrence; 
+            return this.event_id == other.event_id &&
+                this.distance_id == other.distance_id &&
+                this.location_id == other.location_id &&
+                this.occurrence == other.occurrence;
         }
     }
 }

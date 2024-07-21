@@ -1,4 +1,5 @@
-﻿using Chronokeep.Objects.ChronokeepPortal;
+﻿using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.Objects.ChronokeepPortal;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -81,5 +82,29 @@ namespace Chronokeep.Objects.API
     {
         [JsonPropertyName("bib_chips")]
         public List<BibChip> BibChips { get; set; }
+    }
+
+    // SMS Subscription responses
+    public class GetSmsSubscriptionsResponse
+    {
+        [JsonPropertyName("subscriptions")]
+        public List<APISmsSubscription> Subscriptions { get; set; }
+    }
+
+    // Segment responses
+    public class GetSegmentsResponse
+    {
+        [JsonPropertyName("subscriptions")]
+        public List<APISegment> Segments { get; set; }
+    }
+    public class AddSegmentsResponse
+    {
+        [JsonPropertyName("subscriptions")]
+        public List<APISegment> Segments { get; set; }
+    }
+    public class DeleteSegmentsResponse
+    {
+        [JsonPropertyName("count")]
+        public long Count { get; set; }
     }
 }

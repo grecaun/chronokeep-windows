@@ -13,9 +13,9 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "INSERT INTO events(event_name, event_date, event_yearcode, event_rank_by_gun, " +
                 "event_common_age_groups, event_common_start_finish, event_distance_specific_segments, " +
                 "event_start_time_seconds, event_start_time_milliseconds, event_finish_max_occurances, event_finish_ignore_within, " +
-                "event_start_window, event_type, event_display_placements, event_age_groups_as_divisions)" +
+                "event_start_window, event_type, event_display_placements, event_age_groups_as_divisions, event_days_allowed)" +
                 " VALUES(@name,@date,@yearcode,@gun,@age,@start,@sepseg,@startsec,@startmill,@occ,@ign,@window," +
-                "@type,@display,@agDiv)";
+                "@type,@display,@agDiv,@daysAllowed)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", anEvent.Name),
                 new SQLiteParameter("@date", anEvent.Date),
@@ -32,6 +32,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@type", anEvent.EventType),
                 new SQLiteParameter("@display", anEvent.DisplayPlacements),
                 new SQLiteParameter("@agDiv", anEvent.AgeGroupDivision),
+                new SQLiteParameter("@daysAllowed", anEvent.DaysAllowed),
             });
             command.ExecuteNonQuery();
         }
@@ -42,12 +43,20 @@ namespace Chronokeep.Database.SQLite
             {
                 SQLiteCommand command = connection.CreateCommand();
                 command.CommandType = System.Data.CommandType.Text;
-                command.CommandText = "DELETE FROM time_results WHERE event_id=@event;" +
+                command.CommandText = "DELETE FROM sms_subscriptions WHERE event_id=@event;" +
+                    "DELETE FROM email_alert WHERE event_id=@event;" +
+                    "DELETE FROM sms_alert WHERE event_id=@event;" +
+                    "DELETE FROM remote_readers WHERE event_id=@event;" +
+                    "DELETE FROM alarms WHERE event_id=@event;" +
+                    "DELETE FROM time_results WHERE event_id=@event;" +
                     "DELETE FROM bib_chip_assoc WHERE event_id=@event;" +
-                    "DELETE FROM segments WHERE event_id=@event; DELETE FROM chipreads WHERE event_id=@event;" +
+                    "DELETE FROM segments WHERE event_id=@event;" +
+                    "DELETE FROM chipreads WHERE event_id=@event;" +
                     "DELETE FROM age_groups WHERE event_id=@event;" +
-                    "DELETE FROM distances WHERE event_id=@event; DELETE FROM timing_locations WHERE event_id=@event;" +
-                    "DELETE FROM eventspecific WHERE event_id=@event; DELETE FROM events WHERE event_id=@event;";
+                    "DELETE FROM distances WHERE event_id=@event;" +
+                    "DELETE FROM timing_locations WHERE event_id=@event;" +
+                    "DELETE FROM eventspecific WHERE event_id=@event;" +
+                    "DELETE FROM events WHERE event_id=@event;";
                 command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@event", identifier) });
                 command.ExecuteNonQuery();
@@ -76,7 +85,8 @@ namespace Chronokeep.Database.SQLite
                 "api_id=@apiid," +
                 "api_event_id=@apieventid," +
                 "event_display_placements=@display," +
-                "event_age_groups_as_divisions=@agDiv" +
+                "event_age_groups_as_divisions=@agDiv," +
+                "event_days_allowed=@daysAllowed" +
                 " WHERE event_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@id", anEvent.Identifier),
@@ -97,6 +107,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@apieventid", anEvent.API_Event_ID),
                 new SQLiteParameter("@display", anEvent.DisplayPlacements),
                 new SQLiteParameter("@agDiv", anEvent.AgeGroupDivision),
+                new SQLiteParameter("@daysAllowed", anEvent.DaysAllowed),
             });
             command.ExecuteNonQuery();
         }
@@ -127,7 +138,8 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["api_id"]),
                     reader["api_event_id"].ToString(),
                     Convert.ToInt32(reader["event_display_placements"]),
-                    Convert.ToInt32(reader["event_age_groups_as_divisions"])
+                    Convert.ToInt32(reader["event_age_groups_as_divisions"]),
+                    Convert.ToInt32(reader["event_days_allowed"])
                     ));
             }
             reader.Close();
@@ -183,7 +195,8 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["api_id"]),
                     reader["api_event_id"].ToString(),
                     Convert.ToInt32(reader["event_display_placements"]),
-                    Convert.ToInt32(reader["event_age_groups_as_divisions"])
+                    Convert.ToInt32(reader["event_age_groups_as_divisions"]),
+                    Convert.ToInt32(reader["event_days_allowed"])
                     );
             }
             reader.Close();

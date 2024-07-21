@@ -112,5 +112,7 @@ namespace Chronokeep.Objects.API
         public string Chip { get; set; }
         [JsonPropertyName("anonymous")]
         public bool Anonymous { get; set; }
+        [JsonPropertyName("local_time")]
+        public string LocalTime { get; set; }
     }
 }

@@ -136,7 +136,9 @@ namespace Chronokeep.Timing
                             0.0,
                             d.DistanceValue,
                             d.DistanceUnit,
-                            "Finish")
+                            "Finish",
+                            "",
+                            "")
                         );
                 }
             }
@@ -386,11 +388,11 @@ namespace Chronokeep.Timing
                     }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType) // && SMS set up && SMS enabled on event)
                     {
-                        List<int> alerts = database.GetSMSAlerts(theEvent.Identifier);
+                        List<(int, int)> alerts = database.GetSMSAlerts(theEvent.Identifier);
                         if (alerts != null)
                         {
                             // Changing alerts hashset to locally based and pulled from the database each time we try to send alerts
-                            HashSet<int> AlertsSent = new HashSet<int>(alerts);
+                            HashSet<(int, int)> AlertsSent = new HashSet<(int, int)>(alerts);
                             List<TimeResult> toSendTo = new List<TimeResult>();
                             // Check the finish results for results we can send SMS messages for.
                             foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
@@ -399,7 +401,7 @@ namespace Chronokeep.Timing
                                 if (dictionary.distanceNameDictionary.ContainsKey(result.RealDistanceName)
                                     && true == dictionary.distanceNameDictionary[result.RealDistanceName].SMSEnabled
                                     && Constants.Timing.EVENTSPECIFIC_UNKNOWN != result.EventSpecificId
-                                    && false == AlertsSent.Contains(result.EventSpecificId))
+                                    && false == AlertsSent.Contains((result.EventSpecificId, result.SegmentId)))
                                 {
                                     // If we can send a message to them (valid phones, credentials valid, sms opted in)
                                     // add them to the list to send sms messages
@@ -423,7 +425,7 @@ namespace Chronokeep.Timing
                                     // Only add to the database/dictionary if successful.
                                     if (result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN && result.SendSMSAlert(theEvent, dictionary))
                                     {
-                                        database.AddSMSAlert(theEvent.Identifier, result.EventSpecificId);
+                                        database.AddSMSAlert(theEvent.Identifier, result.EventSpecificId, result.SegmentId);
                                     }
                                 }
                             }

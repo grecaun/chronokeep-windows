@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Objects;
+using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects.ChronokeepRemote;
 using System.Collections.Generic;
 
@@ -167,8 +168,8 @@ namespace Chronokeep
         List<RemoteReader> GetRemoteReaders(int eventId);
 
         // SMS Alerts
-        void AddSMSAlert(int eventId, int eventspecific_id);
-        List<int> GetSMSAlerts(int eventId);
+        void AddSMSAlert(int eventId, int eventspecific_id, int segment_id);
+        List<(int, int)> GetSMSAlerts(int eventId);
 
         // Email Alerts
         void AddEmailAlert(int eventId, int eventspecific_id);
@@ -181,5 +182,10 @@ namespace Chronokeep
         List<string> GetBannedEmails();
         void AddBannedEmail(string email);
         void AddBannedEmails(List<string> emails);
+        
+        // SMS Subscription functions
+        List<APISmsSubscription> GetSmsSubscriptions(int eventId);
+        void AddSmsSubscriptions(int eventId, List<APISmsSubscription> subscriptions);
+        void DeleteSmsSubscriptions(int eventId);
     }
 }
