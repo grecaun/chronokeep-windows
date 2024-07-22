@@ -5,7 +5,7 @@ namespace Chronokeep.Objects.API
 {
     public class APIResult
     {
-        public APIResult(Event theEvent, TimeResult result)
+        public APIResult(Event theEvent, TimeResult result, DateTime start)
         {
             this.PersonId = result.ParticipantId;
             this.Bib = result.Bib.ToString();
@@ -27,6 +27,7 @@ namespace Chronokeep.Objects.API
             this.Type = result.Type;
             this.Chip = result.Chip;
             this.Anonymous = result.Anonymous;
+            this.LocalTime = start.AddSeconds(result.Seconds).AddMilliseconds(result.Milliseconds).ToLocalTime().ToString("o");
             Log.D("Objects.API.APIResult", string.Format("Chip is {0}, Anonymous is {1}.", this.Chip, this.Anonymous));
             if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
             {

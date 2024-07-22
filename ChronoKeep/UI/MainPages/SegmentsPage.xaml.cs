@@ -3,7 +3,6 @@ using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
 using Chronokeep.Objects.ChronoKeepAPI;
-using Chronokeep.Objects.ChronokeepPortal.Responses;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;

@@ -10,7 +10,6 @@ using System.Text.Json;
 using static Chronokeep.Network.Util.Helpers;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronoKeepAPI;
-using Chronokeep.Database.SQLite;
 
 namespace Chronokeep.Network.API
 {

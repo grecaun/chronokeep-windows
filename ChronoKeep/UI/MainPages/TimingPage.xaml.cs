@@ -1087,10 +1087,17 @@ namespace Chronokeep.UI.MainPages
             // Change TimeResults to APIResults
             List<APIResult> upRes = new List<APIResult>();
             Log.D("UI.MainPages.TimingPage", "Results count: " + results.Count.ToString());
+            DateTime start = DateTime.SpecifyKind(DateTime.Parse(theEvent.Date), DateTimeKind.Local).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
+            Dictionary<string, DateTime> waveStartTimes = new Dictionary<string, DateTime>();
+            foreach (Distance d in database.GetDistances(theEvent.Identifier))
+            {
+                waveStartTimes[d.Name] = start.AddSeconds(d.StartOffsetSeconds).AddMilliseconds(d.StartOffsetMilliseconds);
+            }
             foreach (TimeResult tr in results)
             {
                 tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
-                upRes.Add(new APIResult(theEvent, tr));
+                DateTime trStart = waveStartTimes.ContainsKey(tr.RealDistanceName) ? waveStartTimes[tr.RealDistanceName] : start;
+                upRes.Add(new APIResult(theEvent, tr, trStart));
             }
             Log.D("UI.MainPages.TimingPage", "Attempting to upload " + upRes.Count.ToString() + " results.");
             int total = 0;
