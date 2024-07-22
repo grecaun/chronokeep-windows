@@ -830,7 +830,7 @@ namespace Chronokeep.Network.API
                     var request = new HttpRequestMessage
                     {
                         Method = HttpMethod.Post,
-                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "segments/add"),
+                        RequestUri = new Uri(api.URL + "segments/add"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new AddSegmentsRequest
                             {
@@ -842,6 +842,7 @@ namespace Chronokeep.Network.API
                             "application/json"
                             )
                     };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
                     HttpResponseMessage response = await client.SendAsync(request);
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
@@ -859,7 +860,7 @@ namespace Chronokeep.Network.API
             catch (Exception ex)
             {
                 Log.D("Network.API.APIHandlers", "Exception thrown.");
-                throw new APIException("Exception thrown unblocking email: " + ex.Message);
+                throw new APIException("Exception thrown adding segments: " + ex.Message);
             }
         }
 
@@ -872,8 +873,8 @@ namespace Chronokeep.Network.API
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Post,
-                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "segments/delete"),
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri(api.URL + "segments/delete"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new DeleteSegmentsRequest
                             {
@@ -884,6 +885,7 @@ namespace Chronokeep.Network.API
                             "application/json"
                             )
                     };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
                     HttpResponseMessage response = await client.SendAsync(request);
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
@@ -901,7 +903,7 @@ namespace Chronokeep.Network.API
             catch (Exception ex)
             {
                 Log.D("Network.API.APIHandlers", "Exception thrown.");
-                throw new APIException("Exception thrown unblocking email: " + ex.Message);
+                throw new APIException("Exception thrown deleting segments: " + ex.Message);
             }
         }
 
@@ -915,7 +917,7 @@ namespace Chronokeep.Network.API
                     var request = new HttpRequestMessage
                     {
                         Method = HttpMethod.Post,
-                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "sms"),
+                        RequestUri = new Uri(api.URL + "sms"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new GetSmsSubscriptionsRequest
                             {
@@ -926,6 +928,7 @@ namespace Chronokeep.Network.API
                             "application/json"
                             )
                     };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
                     HttpResponseMessage response = await client.SendAsync(request);
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
@@ -943,7 +946,7 @@ namespace Chronokeep.Network.API
             catch (Exception ex)
             {
                 Log.D("Network.API.APIHandlers", "Exception thrown.");
-                throw new APIException("Exception thrown unblocking email: " + ex.Message);
+                throw new APIException("Exception thrown getting sms subscriptions: " + ex.Message);
             }
         }
     }

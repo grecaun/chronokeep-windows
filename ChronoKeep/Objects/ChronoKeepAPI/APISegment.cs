@@ -4,7 +4,7 @@ namespace Chronokeep.Objects.ChronoKeepAPI
 {
     public class APISegment
     {
-        [JsonPropertyName("locaton")]
+        [JsonPropertyName("location")]
         public string Location { get; set; }
         [JsonPropertyName("distance_name")]
         public string DistanceName { get; set; }

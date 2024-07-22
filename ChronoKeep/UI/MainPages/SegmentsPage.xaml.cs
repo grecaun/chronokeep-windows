@@ -891,7 +891,7 @@ namespace Chronokeep.UI.MainPages
                         segments.Add(new APISegment
                         {
                             Location = locations[seg.LocationId].Name,
-                            DistanceName = locations[seg.DistanceId].Name,
+                            DistanceName = distances[seg.DistanceId].Name,
                             Name = seg.Name,
                             DistanceValue = seg.CumulativeDistance,
                             DistanceUnit = distanceUnits[seg.DistanceUnit],
@@ -902,6 +902,7 @@ namespace Chronokeep.UI.MainPages
                     }
                 }
                 // Delete old information from the API
+                Log.D("UI.MainPages.SegmentsPage", "Deleting old segments.");
                 try
                 {
                     await APIHandlers.DeleteSegments(api, event_ids[0], event_ids[1]);
@@ -917,9 +918,13 @@ namespace Chronokeep.UI.MainPages
                 try
                 {
                     AddSegmentsResponse response = await APIHandlers.AddSegments(api, event_ids[0], event_ids[1], segments);
-                    if (response.Segments.Count != segments.Count)
+                    if (response == null || response.Segments == null)
                     {
-                        DialogBox.Show("Error uploading segments. Count uploaded not equal to count meant to be uploaded.");
+                        DialogBox.Show("Error uploading segments.");
+                    }
+                    else if (response.Segments.Count != segments.Count)
+                    {
+                        DialogBox.Show("Error uploading segments. Uploaded count doesn't match.");
                     }
                 }
                 catch (APIException ex)

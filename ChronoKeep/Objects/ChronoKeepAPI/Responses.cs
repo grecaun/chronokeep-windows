@@ -94,12 +94,12 @@ namespace Chronokeep.Objects.API
     // Segment responses
     public class GetSegmentsResponse
     {
-        [JsonPropertyName("subscriptions")]
+        [JsonPropertyName("segments")]
         public List<APISegment> Segments { get; set; }
     }
     public class AddSegmentsResponse
     {
-        [JsonPropertyName("subscriptions")]
+        [JsonPropertyName("segments")]
         public List<APISegment> Segments { get; set; }
     }
     public class DeleteSegmentsResponse
