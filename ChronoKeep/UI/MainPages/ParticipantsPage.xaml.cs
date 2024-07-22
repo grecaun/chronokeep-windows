@@ -595,7 +595,7 @@ namespace Chronokeep.UI.MainPages
         private async void UploadParticipants()
         {
             // Get API to upload.
-            if (theEvent.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
+            if (theEvent.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
             {
                 Upload.Content = "Upload";
                 return;

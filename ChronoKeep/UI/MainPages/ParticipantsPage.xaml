@@ -23,7 +23,7 @@
                 Content="Import"
                 FontSize="14"
                 Height="35"
-                Margin="10,5,10,5"
+                Margin="10,10,10,5"
                 Click="Import_Click"
                 HorizontalAlignment="Stretch"
                 />

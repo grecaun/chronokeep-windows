@@ -1,4 +1,5 @@
-﻿using Chronokeep.Objects.ChronokeepPortal;
+﻿using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.Objects.ChronokeepPortal;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -171,7 +172,7 @@ namespace Chronokeep.Objects.API
         [JsonPropertyName("year")]
         public string Year { get; set; }
         [JsonPropertyName("segments")]
-        public List<Segment> Segments { get; set; }
+        public List<APISegment> Segments { get; set; }
     }
 
     public class DeleteSegmentsRequest

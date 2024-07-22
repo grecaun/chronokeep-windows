@@ -1,4 +1,9 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.Network.API;
+using Chronokeep.Objects;
+using Chronokeep.Objects.API;
+using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.Objects.ChronokeepPortal.Responses;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -52,6 +57,14 @@ namespace Chronokeep.UI.MainPages
                 distances = database.GetDistances(theEvent.Identifier);
                 distances.Sort((x1, x2) => x1.Name.CompareTo(x2.Name));
                 distances.RemoveAll(x => x.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID);
+                if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
+                {
+                    apiPanel.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    apiPanel.Visibility = Visibility.Collapsed;
+                }
             }
             UpdateSegments();
         }
@@ -449,7 +462,7 @@ namespace Chronokeep.UI.MainPages
                 FontSize = 14,
                 Width = 140,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(5, 0, 5, 0)
+                Margin = new Thickness(10, 0, 5, 0)
             };
             public TextBlock NameLabel = new TextBlock()
             {
@@ -483,11 +496,27 @@ namespace Chronokeep.UI.MainPages
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
+            public TextBlock GPSLabel = new TextBlock()
+            {
+                Text = "GPS",
+                FontSize = 14,
+                Width = 190,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+            public TextBlock MapLinkLabel = new TextBlock()
+            {
+                Text = "Map Link",
+                FontSize = 14,
+                Width = 190,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(5, 0, 5, 0)
+            };
             public TextBlock Remove = new TextBlock()
             {
                 Text = "",
                 FontSize = 14,
-                Width = 50,
+                Width = 45,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
@@ -496,7 +525,7 @@ namespace Chronokeep.UI.MainPages
                 this.IsTabStop = false;
                 DockPanel dockPanel = new DockPanel()
                 {
-                    MaxWidth = 750
+                    MaxWidth = 1150
                 };
                 this.Content = dockPanel;
                 dockPanel.Children.Add(Where);
@@ -507,6 +536,8 @@ namespace Chronokeep.UI.MainPages
                 }
                 dockPanel.Children.Add(SegDistance);
                 dockPanel.Children.Add(Unit);
+                dockPanel.Children.Add(GPSLabel);
+                dockPanel.Children.Add(MapLinkLabel);
                 dockPanel.Children.Add(Remove);
             }
         }
@@ -517,6 +548,8 @@ namespace Chronokeep.UI.MainPages
             public ComboBox Occurrence { get; private set; } = null;
             public TextBox CumDistance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
+            public TextBox GPS { get; private set; }
+            public TextBox MapLink { get; private set; }
             public Button Remove { get; private set; }
 
             readonly SegmentsPage page;
@@ -533,7 +566,7 @@ namespace Chronokeep.UI.MainPages
                 this.locationDictionary = new Dictionary<string, int>();
                 DockPanel thePanel = new DockPanel()
                 {
-                    MaxWidth = 750
+                    MaxWidth = 1150
                 };
                 this.Content = thePanel;
 
@@ -614,7 +647,6 @@ namespace Chronokeep.UI.MainPages
                     }
                     thePanel.Children.Add(Occurrence);
                 }
-
                 // Distance information
                 CumDistance = new TextBox()
                 {
@@ -677,7 +709,28 @@ namespace Chronokeep.UI.MainPages
                     DistanceUnit.SelectedIndex = 4;
                 }
                 thePanel.Children.Add(DistanceUnit);
-
+                // GPS
+                GPS = new TextBox()
+                {
+                    Text = mySegment.GPS,
+                    FontSize = 14,
+                    Width = 190,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5, 5, 5, 0)
+                };
+                GPS.GotFocus += new RoutedEventHandler(this.SelectAll);
+                thePanel.Children.Add(GPS);
+                // MapLink
+                MapLink = new TextBox()
+                {
+                    Text = mySegment.MapLink,
+                    FontSize = 14,
+                    Width = 190,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5, 5, 5, 0)
+                };
+                MapLink.GotFocus += new RoutedEventHandler(this.SelectAll);
+                thePanel.Children.Add(MapLink);
                 Remove = new Button()
                 {
                     Content = "X",
@@ -733,6 +786,8 @@ namespace Chronokeep.UI.MainPages
                     mySegment.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
                     if (Occurrence != null && Occurrence.SelectedItem != null) mySegment.Occurrence = Convert.ToInt32(((ComboBoxItem)Occurrence.SelectedItem).Uid);
                     else mySegment.Occurrence = 0;
+                    mySegment.GPS = GPS.Text;
+                    mySegment.MapLink = MapLink.Text;
                 }
                 catch
                 {
@@ -780,6 +835,133 @@ namespace Chronokeep.UI.MainPages
                 else if (e.Delta > 0)
                 {
                     scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 35);
+                }
+            }
+        }
+
+        private async void UploadButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.SegmentsPage", "Uploading segments.");
+            if (UploadButton.Content.ToString() == "Upload")
+            {
+                UploadButton.IsEnabled = false;
+                UploadButton.Content = "Working...";
+                if (theEvent.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
+                {
+                    UploadButton.Content = "Error";
+                    return;
+                }
+                APIObject api = database.GetAPI(theEvent.API_ID);
+                string[] event_ids = theEvent.API_Event_ID.Split(',');
+                if (event_ids.Length != 2)
+                {
+                    UploadButton.Content = "Error";
+                    return;
+                }
+                // Save segments displayed
+                UpdateDatabase();
+                UpdateSegments();
+                // Get Distances and Locations to get their names
+                Dictionary<int, Distance> distances = new Dictionary<int, Distance>();
+                foreach (Distance d in database.GetDistances(theEvent.Identifier))
+                {
+                    distances.Add(d.Identifier, d);
+                }
+                Dictionary<int, TimingLocation> locations = new Dictionary<int, TimingLocation>();
+                foreach (TimingLocation l in database.GetTimingLocations(theEvent.Identifier))
+                {
+                    locations.Add(l.Identifier, l);
+                }
+                locations.Add(Constants.Timing.LOCATION_ANNOUNCER, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Add(Constants.Timing.LOCATION_FINISH, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", 0, 0));
+                locations.Add(Constants.Timing.LOCATION_START, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, 0));
+                Dictionary<int, string> distanceUnits = new Dictionary<int, string>
+                {
+                    { Constants.Distances.FEET, "ft" },
+                    { Constants.Distances.KILOMETERS, "km" },
+                    { Constants.Distances.METERS, "m" },
+                    { Constants.Distances.YARDS, "yd" },
+                    { Constants.Distances.MILES, "mi" }
+                };
+                // Convert Segments to APISegments
+                List<APISegment> segments = new List<APISegment>();
+                foreach (Segment seg in database.GetSegments(theEvent.Identifier))
+                {
+                    if (locations.ContainsKey(seg.LocationId) && distances.ContainsKey(seg.DistanceId) && distanceUnits.ContainsKey(seg.DistanceUnit))
+                    {
+                        segments.Add(new APISegment
+                        {
+                            Location = locations[seg.LocationId].Name,
+                            DistanceName = locations[seg.DistanceId].Name,
+                            Name = seg.Name,
+                            DistanceValue = seg.CumulativeDistance,
+                            DistanceUnit = distanceUnits[seg.DistanceUnit],
+                            GPS = seg.GPS,
+                            MapLink = seg.MapLink,
+
+                        });
+                    }
+                }
+                // Delete old information from the API
+                try
+                {
+                    await APIHandlers.DeleteSegments(api, event_ids[0], event_ids[1]);
+                }
+                catch (APIException ex)
+                {
+                    DialogBox.Show(ex.Message);
+                    UploadButton.IsEnabled = true;
+                    UploadButton.Content = "Upload";
+                    return;
+                }
+                Log.D("UI.MainPages.SegmentsPage", "Attempting to upload " + segments.Count.ToString() + " segments.");
+                try
+                {
+                    AddSegmentsResponse response = await APIHandlers.AddSegments(api, event_ids[0], event_ids[1], segments);
+                    if (response.Segments.Count != segments.Count)
+                    {
+                        DialogBox.Show("Error uploading segments. Count uploaded not equal to count meant to be uploaded.");
+                    }
+                }
+                catch (APIException ex)
+                {
+                    DialogBox.Show(ex.Message);
+                }
+                UploadButton.IsEnabled = true;
+                UploadButton.Content = "Upload";
+            }
+        }
+
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.SegmentsPage", "Deleting uploaded segments.");
+            if (DeleteButton.Content.ToString() == "Delete Uploaded")
+            {
+                DeleteButton.IsEnabled = false;
+                DeleteButton.Content = "Working...";
+                if (theEvent.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
+                {
+                    DeleteButton.Content = "Error";
+                    return;
+                }
+                APIObject api = database.GetAPI(theEvent.API_ID);
+                string[] event_ids = theEvent.API_Event_ID.Split(',');
+                if (event_ids.Length != 2)
+                {
+                    DeleteButton.Content = "Error";
+                    return;
+                }
+                // Delete old information from the API
+                try
+                {
+                    await APIHandlers.DeleteSegments(api, event_ids[0], event_ids[1]);
+                }
+                catch (APIException ex)
+                {
+                    DialogBox.Show(ex.Message);
+                    DeleteButton.IsEnabled = true;
+                    DeleteButton.Content = "Delete Uploaded";
+                    return;
                 }
             }
         }

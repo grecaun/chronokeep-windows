@@ -9,6 +9,8 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using static Chronokeep.Network.Util.Helpers;
 using Chronokeep.Objects.ChronokeepPortal;
+using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.Database.SQLite;
 
 namespace Chronokeep.Network.API
 {
@@ -817,6 +819,133 @@ namespace Chronokeep.Network.API
                 throw new APIException("Exception thrown unblocking email: " + ex.Message);
             }
             throw new APIException(content);
+        }
+
+        public static async Task<AddSegmentsResponse> AddSegments(APIObject api, string slug, string year, List<APISegment> segments)
+        {
+            Log.D("Network.API.APIHandlers", "Adding Segments.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Post,
+                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "segments/add"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new AddSegmentsRequest
+                            {
+                                Slug = slug,
+                                Year = year,
+                                Segments = segments,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<AddSegmentsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    throw new APIException(errresult.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown unblocking email: " + ex.Message);
+            }
+        }
+
+        public static async Task<DeleteSegmentsResponse> DeleteSegments(APIObject api, string slug, string year)
+        {
+            Log.D("Network.API.APIHandlers", "Deleting Segments.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Post,
+                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "segments/delete"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new DeleteSegmentsRequest
+                            {
+                                Slug = slug,
+                                Year = year,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<DeleteSegmentsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    throw new APIException(errresult.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown unblocking email: " + ex.Message);
+            }
+        }
+
+        public static async Task<GetSmsSubscriptionsResponse> GetSmsSubscriptions(APIObject api, string slug, string year)
+        {
+            Log.D("Network.API.APIHandlers", "Adding Segments.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Post,
+                        RequestUri = new Uri(Constants.APIConstants.API_URL[Constants.APIConstants.CHRONOKEEP_RESULTS] + "sms"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new GetSmsSubscriptionsRequest
+                            {
+                                Slug = slug,
+                                Year = year,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<GetSmsSubscriptionsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    throw new APIException(errresult.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown unblocking email: " + ex.Message);
+            }
         }
     }
 }
