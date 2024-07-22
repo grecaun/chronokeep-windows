@@ -105,7 +105,9 @@ namespace Chronokeep.UI.API
                     EventYearResponse addResponse = await APIHandlers.AddEventYear(api, slug, new APIEventYear
                     {
                         Year = yearBox.Text,
-                        DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss")
+                        DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss zzz"),
+                        Live = LiveBox.IsChecked == true,
+                        DaysAllowed = Convert.ToInt32(DaysAllowedSlider.Value),
                     });
                     year = addResponse.EventYear.Year;
                 }
@@ -121,6 +123,14 @@ namespace Chronokeep.UI.API
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             window.Close();
+        }
+
+        private void DaysAllowed_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (DaysAllowedSlider != null && DaysAllowedText != null)
+            {
+                DaysAllowedText.Text = DaysAllowedSlider.Value.ToString();
+            }
         }
     }
 }

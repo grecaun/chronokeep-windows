@@ -40,9 +40,46 @@
                 Name="YearBox"
                 Width="200"
                 VerticalAlignment="Center"
-                Margin="0,0,0,10"
+                Margin="0,0,0,5"
                 SelectionChanged="YearBox_SelectionChanged"
                 />
+            <CheckBox
+                x:Name="LiveBox"
+                Width="auto"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Margin="0,0,0,5"
+                Content="Live?"
+                IsChecked="False"
+                />
+            <TextBlock
+                HorizontalAlignment="Center"
+                Margin="0,0,0,5"
+                Text="Days Allowed"
+                />
+            <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="0,0,0,5"
+                >
+                <Slider
+                    Name="DaysAllowedSlider"
+                    Width="150"
+                    Margin="0,0,0,0"
+                    IsSnapToTickEnabled="True"
+                    TickFrequency="1"
+                    Minimum="1"
+                    Maximum="9"
+                    ValueChanged="DaysAllowed_ValueChanged"
+                    />
+                <TextBlock
+                    Name="DaysAllowedText"
+                    Text="1"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    />
+            </StackPanel>
             <StackPanel
                 x:Name="newPanel" Visibility="Collapsed">
                 <TextBlock 
