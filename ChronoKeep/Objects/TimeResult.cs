@@ -623,65 +623,32 @@ namespace Chronokeep.Objects
             return true;
         }
 
-        public bool SendSMSAlert(Event theEvent, TimingDictionary dictionary)
+        public bool SendSMSAlert(Event theEvent, string phone, string sms)
         {
             if (Constants.Globals.TwilioCredentials.AccountSID.Length < 1 || Constants.Globals.TwilioCredentials.AuthToken.Length < 1)
             {
                 return false;
             }
-            Participant part = dictionary.participantBibDictionary.ContainsKey(bib) ? dictionary.participantBibDictionary[bib] : null;
-            if (part == null || part.EventSpecific.SMSEnabled == false)
-            {
-                return false;
-            }
-            string validPhone = Constants.Globals.GetValidPhone(part.Mobile);
-            if (validPhone.Length == 0)
-            {
-                validPhone = Constants.Globals.GetValidPhone(part.Phone);
-            }
             // Invalid length. +15555551234 is a valid phone
-            if (validPhone.Length != 12 || Constants.Globals.TwilioCredentials.PhoneNumber.Length != 12)
+            if (phone.Length != 12 || Constants.Globals.TwilioCredentials.PhoneNumber.Length != 12)
             {
                 return false;
             }
             // Verify phone number isn't in our list of banned phone numbers (i.e. they've told us to not send texts)
             // return true if it is in the banned list, otherwise try to send it, and return true if we were able to send it
-            if (Constants.Globals.BannedPhones.Contains(validPhone))
+            if (Constants.Globals.BannedPhones.Contains(phone))
             {
                 Log.D("Objects.TimeResult", "Phone number is banned.");
                 return false;
             }
-            //"{FIRST} {LAST} has finished the {YEAR} {RACE} {DISTANCE?} in {CHIP TIME}. {RESULTS LINK}"
-            string SMS;
-            string resultsURL = "";
-            if (dictionary.apis.ContainsKey(theEvent.API_ID) && dictionary.apis[theEvent.API_ID].WebURL.Length > 0)
-            {
-                string[] event_ids = theEvent.API_Event_ID.Split(',');
-                if (event_ids.Length == 2)
-                {
-                    resultsURL = string.Format(" More results @ {0}results/{1}/{2}.", dictionary.apis[theEvent.API_ID].WebURL, event_ids[0], event_ids[1]);
-                }
-                else
-                {
-                    resultsURL = string.Format(" More results @ {0}.", dictionary.apis[theEvent.API_ID].WebURL);
-                }
-            }
-            if (dictionary.mainDistances.Count > 1)
-            {
-                SMS = string.Format("{0} {1} has finished the {2} {3} {4} in {5}.{6} Reply STOP to opt-out.", First, Last, theEvent.Year, theEvent.Name, DistanceName, ChipTimeNoMilliseconds, resultsURL);
-            }
-            else
-            {
-                SMS = string.Format("{0} {1} has finished the {2} {3} in {4}.{5} Reply STOP to opt-out.", First, Last, theEvent.Year, theEvent.Name, ChipTimeNoMilliseconds, resultsURL);
-            }
             try
             {
-                Log.D("Objects.TimeResult", SMS);
+                Log.D("Objects.TimeResult", sms);
                 var messageOptions = new CreateMessageOptions(
-                    new Twilio.Types.PhoneNumber(validPhone)
+                    new Twilio.Types.PhoneNumber(phone)
                     );
                 messageOptions.From = new Twilio.Types.PhoneNumber(Constants.Globals.TwilioCredentials.PhoneNumber);
-                messageOptions.Body = SMS;
+                messageOptions.Body = sms;
                 var message = MessageResource.Create(messageOptions);
                 if (message.ErrorMessage != null)
                 {

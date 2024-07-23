@@ -2348,7 +2348,14 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            SmsSubscriptions.AddSmsSubscriptions(eventId, subscriptions, connection);
+            using (var transaction = connection.BeginTransaction())
+            {
+                foreach (APISmsSubscription sub in subscriptions)
+                {
+                    SmsSubscriptions.AddSmsSubscription(eventId, sub, connection);
+                }
+                transaction.Commit();
+            }
             connection.Close();
             mutex.ReleaseMutex();
         }
