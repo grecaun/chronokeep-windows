@@ -593,15 +593,21 @@ namespace Chronokeep
             {
                 return GENDER;
             }
-            else if (string.Equals(s, "Birthday", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Birthdate", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "DOB", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Birthday", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(s, "Birthdate", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(s, "DOB", StringComparison.OrdinalIgnoreCase)
+                || (s.IndexOf("Date", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("Birth", StringComparison.OrdinalIgnoreCase) >= 0))
             {
                 return BIRTHDAY;
             }
-            else if (string.Equals(s, "Street", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Address", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Street", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(s, "Address", StringComparison.OrdinalIgnoreCase))
             {
                 return STREET;
             }
-            else if (string.Equals(s, "Street 2", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Address 2", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Apartment", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Street 2", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(s, "Address 2", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(s, "Apartment", StringComparison.OrdinalIgnoreCase))
             {
                 return STREET2;
             }
@@ -609,7 +615,9 @@ namespace Chronokeep
             {
                 return CITY;
             }
-            else if ((s.IndexOf("State", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("Province", StringComparison.OrdinalIgnoreCase) >= 0) && s.IndexOf("statement", StringComparison.OrdinalIgnoreCase) == -1)
+            else if ((s.IndexOf("State", StringComparison.OrdinalIgnoreCase) >= 0
+                || s.IndexOf("Province", StringComparison.OrdinalIgnoreCase) >= 0)
+                && s.IndexOf("statement", StringComparison.OrdinalIgnoreCase) == -1)
             {
                 return STATE;
             }
@@ -621,7 +629,8 @@ namespace Chronokeep
             {
                 return COUNTRY;
             }
-            else if (string.Equals(s, "Phone", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Phone Number", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Phone", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(s, "Phone Number", StringComparison.OrdinalIgnoreCase))
             {
                 return PHONE;
             }
@@ -637,7 +646,8 @@ namespace Chronokeep
             {
                 return PARENT;
             }
-            else if (s.IndexOf("Bib", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("pinney", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (s.IndexOf("Bib", StringComparison.OrdinalIgnoreCase) >= 0
+                || s.IndexOf("pinney", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return BIB;
             }
@@ -651,7 +661,8 @@ namespace Chronokeep
             {
                 return OWES;
             }
-            else if (string.Equals(s, "Comments", StringComparison.OrdinalIgnoreCase) || string.Equals(s, "Notes", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(s, "Comments", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(s, "Notes", StringComparison.OrdinalIgnoreCase))
             {
                 return COMMENTS;
             }
@@ -659,15 +670,19 @@ namespace Chronokeep
             {
                 return OTHER;
             }
-            else if (s.IndexOf("Division", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("Distance", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (s.IndexOf("Division", StringComparison.OrdinalIgnoreCase) >= 0
+                || s.IndexOf("Distance", StringComparison.OrdinalIgnoreCase) >= 0
+                || s.Equals("Event", StringComparison.OrdinalIgnoreCase))
             {
                 return DISTANCE;
             }
-            else if ((s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("name", StringComparison.OrdinalIgnoreCase) >= 0) || string.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
+            else if ((s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("name", StringComparison.OrdinalIgnoreCase) >= 0)
+                || string.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
             {
                 return EMERGENCYNAME;
             }
-            else if (s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && (s.IndexOf("phone", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("cell", StringComparison.OrdinalIgnoreCase) >= 0))
+            else if (s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0
+                && (s.IndexOf("phone", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("cell", StringComparison.OrdinalIgnoreCase) >= 0))
             {
                 return EMERGENCYPHONE;
             }
@@ -679,7 +694,8 @@ namespace Chronokeep
             {
                 return REGISTRATIONDATE;
             }
-            else if (s.IndexOf("Anonymous", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("Private", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (s.IndexOf("Anonymous", StringComparison.OrdinalIgnoreCase) >= 0
+                || s.IndexOf("Private", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 return ANONYMOUS;
             }

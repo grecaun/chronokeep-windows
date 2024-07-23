@@ -471,7 +471,8 @@ namespace Chronokeep.Objects
                 else if (gender.Equals("NB", StringComparison.OrdinalIgnoreCase) ||
                     gender.Equals("Non-Binary", StringComparison.OrdinalIgnoreCase) ||
                     gender.Equals("non binary", StringComparison.OrdinalIgnoreCase) ||
-                    gender.Equals("nonbinary", StringComparison.OrdinalIgnoreCase))
+                    gender.Equals("nonbinary", StringComparison.OrdinalIgnoreCase) ||
+                    gender.Equals("X", StringComparison.OrdinalIgnoreCase))
                 {
                     gender = "Non-Binary";
                 }
