@@ -10,7 +10,7 @@ namespace Chronokeep.Objects.ChronoKeepAPI
         public string First { get; set; }
         [JsonPropertyName("last")]
         public string Last { get; set; }
-        [JsonPropertyName("Phone")]
+        [JsonPropertyName("phone")]
         public string Phone { get; set; }
     }
 }
