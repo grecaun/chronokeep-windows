@@ -73,9 +73,9 @@ namespace Chronokeep.Database.SQLite
                     bib = part.Bib;
                     distanceId = part.EventSpecific.DistanceIdentifier;
                 }
-                else if (reader["eventspecific_bib"] != DBNull.Value)
+                else if (chipRead != null)
                 {
-                    bib = reader["eventspecific_bib"].ToString();
+                    bib = chipRead.Bib;
                 }
                 output.Add(new TimeResult(
                     reader["event_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["event_id"]),
