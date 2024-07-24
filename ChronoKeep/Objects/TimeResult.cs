@@ -623,7 +623,7 @@ namespace Chronokeep.Objects
             return true;
         }
 
-        public bool SendSMSAlert(Event theEvent, string phone, string sms)
+        public bool SendSMSAlert(string phone, string sms)
         {
             if (Constants.Globals.TwilioCredentials.AccountSID.Length < 1 || Constants.Globals.TwilioCredentials.AuthToken.Length < 1)
             {
@@ -643,7 +643,7 @@ namespace Chronokeep.Objects
             }
             try
             {
-                Log.D("Objects.TimeResult", sms);
+                Log.D("Objects.TimeResult", "sms: '" + sms + "' phone: " + phone);
                 //var messageOptions = new CreateMessageOptions(
                 //    new Twilio.Types.PhoneNumber(phone)
                 //    );

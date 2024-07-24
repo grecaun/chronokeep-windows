@@ -425,8 +425,8 @@ namespace Chronokeep.Timing
                         if (alerts != null)
                         {
                             // Changing alerts hashset to locally based and pulled from the database each time we try to send alerts
-                            HashSet<(int, int)> AlertsSent = new HashSet<(int, int)>(alerts);
-                            Dictionary<TimeResult, HashSet<string>> toSendTo = new Dictionary<TimeResult, HashSet<string>>();
+                            HashSet<(int, int)> AlertsSent = new HashSet<(int, int)>();//(alerts);
+                            Dictionary<TimeResult, HashSet<string>> toSendTo = new();
                             Dictionary<string, string> nameToBibDict = new();
                             foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                             {
@@ -443,26 +443,26 @@ namespace Chronokeep.Timing
                                 {
                                     string name = sub.First.ToLower() + sub.Last.ToLower();
                                     name = alphaOnly.Replace(name, string.Empty);
-                                    if (nameToBibDict.ContainsKey(name))
+                                    if (nameToBibDict.TryGetValue(name, out string bibFromName))
                                     {
-                                        bib = nameToBibDict[name];
+                                        bib = bibFromName;
                                     }
                                 }
                                 if (bib.Length > 0 && phone.Length > 0)
                                 {
-                                    if (!bibToPhonesDict.ContainsKey(bib))
+                                    if (!bibToPhonesDict.TryGetValue(bib, out HashSet<string> phoneSet))
                                     {
-                                        bibToPhonesDict[bib] = new HashSet<string>();
+                                        phoneSet = new HashSet<string>();
+                                        bibToPhonesDict[bib] = phoneSet;
                                     }
-                                    bibToPhonesDict[bib].Add(phone);
+                                    phoneSet.Add(phone);
                                 }
                             }
                             // Check the finish results for results we can send SMS messages for.
                             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
                             {
                                 // verify the distance is set to allow sms alerts and the runner hasn't been notified already
-                                if (dictionary.distanceNameDictionary.ContainsKey(result.RealDistanceName)
-                                    && true == dictionary.distanceNameDictionary[result.RealDistanceName].SMSEnabled
+                                if (dictionary.distanceNameDictionary.TryGetValue(result.RealDistanceName, out Distance dist) && true == dist.SMSEnabled
                                     && Constants.Timing.EVENTSPECIFIC_UNKNOWN != result.EventSpecificId
                                     && false == AlertsSent.Contains((result.EventSpecificId, result.SegmentId)))
                                 {
@@ -478,21 +478,27 @@ namespace Chronokeep.Timing
                                             {
                                                 phone = Constants.Globals.GetValidPhone(dictionary.participantBibDictionary[result.Bib].Phone);
                                             }
+                                            if (!toSendTo.TryGetValue(result, out HashSet<string> phones))
+                                            {
+                                                phones = new HashSet<string>();
+                                                toSendTo[result] = phones;
+                                            }
+                                            phones.Add(phone);
                                         }
                                     }
                                     // Now deal with sms subcriptions
                                     if (Constants.Timing.SEGMENT_START != result.SegmentId && Constants.Timing.SEGMENT_NONE != result.SegmentId)
                                     {
-                                        if (bibToPhonesDict.ContainsKey(result.Bib))
+                                        if (bibToPhonesDict.TryGetValue(result.Bib, out HashSet<string> phonesFromDict))
                                         {
-                                            foreach (string phone in bibToPhonesDict[result.Bib])
+                                            foreach (string phone in phonesFromDict)
                                             {
-                                                if (!toSendTo.TryGetValue(result, out HashSet<string> value))
+                                                if (!toSendTo.TryGetValue(result, out HashSet<string> phones))
                                                 {
-                                                    value = new HashSet<string>();
-                                                    toSendTo[result] = value;
+                                                    phones = new HashSet<string>();
+                                                    toSendTo[result] = phones;
                                                 }
-                                                value.Add(phone);
+                                                phones.Add(phone);
                                             }
                                         }
                                     }
@@ -500,16 +506,16 @@ namespace Chronokeep.Timing
                             }
                             // Only check banned phones or try to send texts if there is something to send.
                             string resultsURL = "";
-                            if (dictionary.apis.ContainsKey(theEvent.API_ID) && dictionary.apis[theEvent.API_ID].WebURL.Length > 0)
+                            if (dictionary.apis.TryGetValue(theEvent.API_ID, out APIObject api) && api.WebURL.Length > 0)
                             {
                                 string[] event_ids = theEvent.API_Event_ID.Split(',');
                                 if (event_ids.Length == 2)
                                 {
-                                    resultsURL = string.Format(" More results @ {0}results/{1}/{2}.", dictionary.apis[theEvent.API_ID].WebURL, event_ids[0], event_ids[1]);
+                                    resultsURL = string.Format(" More results @ {0}results/{1}/{2}.", api.WebURL, event_ids[0], event_ids[1]);
                                 }
                                 else
                                 {
-                                    resultsURL = string.Format(" More results @ {0}.", dictionary.apis[theEvent.API_ID].WebURL);
+                                    resultsURL = string.Format(" More results @ {0}.", api.WebURL);
                                 }
                             }
                             if (toSendTo.Count > 0)
@@ -524,7 +530,7 @@ namespace Chronokeep.Timing
                                     // we still want to be able to send a SMS to them
                                     // Only add to the database/dictionary if successful.
                                     string sms;
-                                    if (Constants.Timing.SEGMENT_FINISH != result.SegmentId)
+                                    if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
                                     {
                                         if (dictionary.mainDistances.Count > 1)
                                         {
@@ -544,7 +550,7 @@ namespace Chronokeep.Timing
                                         bool sent = false;
                                         foreach (string phone in toSendTo[result])
                                         {
-                                            sent = sent || result.SendSMSAlert(theEvent, phone, sms);
+                                            sent = result.SendSMSAlert(phone, sms) || sent;
                                         }
                                         if (sent)
                                         {
