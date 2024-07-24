@@ -51,15 +51,28 @@ namespace Chronokeep.Database.SQLite
             command.ExecuteNonQuery();
         }
 
-        private static List<TimeResult> GetResultsInternal(SQLiteDataReader reader)
+        private static List<TimeResult> GetResultsInternal(
+            SQLiteDataReader reader,
+            Dictionary<int, ChipRead> chipReadDict,
+            Dictionary<int, Participant> partDict,
+            Dictionary<int, Distance> distanceDict
+            )
         {
             List<TimeResult> output = new List<TimeResult>();
             while (reader.Read())
             {
+                int eventSpecificId = reader["eventspecific_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_id"]);
+                int readId = Convert.ToInt32(reader["read_id"]);
+                int distanceId = -1;
                 string bib = "";
-                if (reader["bib"] != DBNull.Value)
+                Participant part = null;
+                ChipRead chipRead = null;
+                if (chipReadDict.ContainsKey(readId))
+                if (eventSpecificId > -1 && partDict.ContainsKey(eventSpecificId))
                 {
-                    bib = reader["bib"].ToString();
+                    part = partDict[eventSpecificId];
+                    bib = part.Bib;
+                    distanceId = part.EventSpecific.DistanceIdentifier;
                 }
                 else if (reader["eventspecific_bib"] != DBNull.Value)
                 {
@@ -72,30 +85,30 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["segment_id"]),
                     reader["timeresult_time"].ToString(),
                     Convert.ToInt32(reader["timeresult_occurance"]),
-                    reader["participant_first"] == DBNull.Value ? "" : reader["participant_first"].ToString(),
-                    reader["participant_last"] == DBNull.Value ? "" : reader["participant_last"].ToString(),
-                    reader["distance_name"] == DBNull.Value ? "" : reader["distance_name"].ToString(),
+                    part != null ? part.FirstName : "",
+                    part != null ? part.LastName : "",
+                    distanceDict.ContainsKey(distanceId) ? distanceDict[distanceId].Name : "",
                     bib,
-                    Convert.ToInt32(reader["read_id"]),
+                    readId,
                     reader["timeresult_unknown_id"].ToString(),
-                    Convert.ToInt64(reader["read_time_seconds"]),
-                    Convert.ToInt32(reader["read_time_milliseconds"]),
+                    chipRead != null ? chipRead.TimeSeconds : 0,
+                    chipRead != null ? chipRead.TimeMilliseconds : 0,
                     reader["timeresult_chiptime"].ToString(),
                     Convert.ToInt32(reader["timeresult_place"]),
                     Convert.ToInt32(reader["timeresult_age_place"]),
                     Convert.ToInt32(reader["timeresult_gender_place"]),
-                    reader["participant_gender"] == DBNull.Value ? "" : reader["participant_gender"].ToString(),
+                    part != null ? part.Gender : "",
                     Convert.ToInt32(reader["timeresult_status"]),
                     reader["timeresult_splittime"].ToString(),
-                    reader["eventspecific_age_group_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_age_group_id"]),
-                    reader["eventspecific_age_group_name"] == DBNull.Value ? "" : reader["eventspecific_age_group_name"].ToString(),
+                    part != null ? part.EventSpecific.AgeGroupId : -1,
+                    part != null ? part.EventSpecific.AgeGroupName : "",
                     Convert.ToInt32(reader["timeresult_uploaded"]),
-                    reader["participant_birthday"] == DBNull.Value ? "" : reader["participant_birthday"].ToString(),
-                    reader["distance_type"] == DBNull.Value ? Constants.Timing.DISTANCE_TYPE_NORMAL : Convert.ToInt32(reader["distance_type"]),
-                    reader["linked_distance_name"] == DBNull.Value ? "" : reader["linked_distance_name"].ToString(),
-                    reader["chip"] == DBNull.Value ? "" : reader["chip"].ToString(),
-                    reader["eventspecific_anonymous"] != DBNull.Value && Convert.ToInt16(reader["eventspecific_anonymous"]) != 0,
-                    reader["part_id"] != DBNull.Value ? reader["part_id"].ToString() : ""
+                    part != null ? part.Birthdate : "",
+                    distanceDict.ContainsKey(distanceId) ? distanceDict[distanceId].Type : Constants.Timing.DISTANCE_TYPE_NORMAL,
+                    distanceDict.ContainsKey(distanceId) && distanceDict.ContainsKey(distanceDict[distanceId].LinkedDistance) ? distanceDict[distanceDict[distanceId].LinkedDistance].Name : "",
+                    chipRead != null ? chipRead.ChipNumber : "",
+                    part != null ? part.EventSpecific.Anonymous : false,
+                    part != null ? part.Identifier.ToString() : ""
                     ));
             }
             reader.Close();
@@ -104,93 +117,51 @@ namespace Chronokeep.Database.SQLite
 
         internal static List<TimeResult> GetTimingResults(int eventId, SQLiteConnection connection)
         {
+            Event theEvent = Events.GetEvent(eventId, connection);
+            Dictionary<int, ChipRead> chipReadDict = new();
+            foreach (ChipRead cr in ChipReads.GetChipReads(eventId, theEvent, connection))
+            {
+                chipReadDict.Add(cr.ReadId, cr);
+            }
+            Dictionary<int, Participant> partDict = new();
+            foreach (Participant p in Participants.GetParticipants(eventId, connection)) {
+                partDict.Add(p.EventSpecific.Identifier, p);
+            }
+            Dictionary<int, Distance> distanceDict = new();
+            foreach (Distance d in Distances.GetDistances(eventId, connection)) {
+                distanceDict.Add(d.Identifier, d);
+            }
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT " +
-                    "e.event_id," +
-                    "e.eventspecific_id," +
-                    "r.location_id," +
-                    "r.segment_id," +
-                    "timeresult_time," +
-                    "timeresult_occurance," +
-                    "participant_first," +
-                    "participant_last," +
-                    "d.distance_name," +
-                    "eventspecific_bib," +
-                    "r.read_id," +
-                    "timeresult_unknown_id," +
-                    "read_time_seconds," +
-                    "read_time_milliseconds," +
-                    "timeresult_chiptime," +
-                    "timeresult_place," +
-                    "timeresult_age_place," +
-                    "timeresult_gender_place," +
-                    "participant_gender," +
-                    "timeresult_status," +
-                    "timeresult_splittime," +
-                    "eventspecific_age_group_id," +
-                    "eventspecific_age_group_name," +
-                    "timeresult_uploaded," +
-                    "participant_birthday," +
-                    "d.distance_type," +
-                    "y.distance_name AS linked_distance_name, " +
-                    "b.bib," +
-                    "b.chip," +
-                    "eventspecific_anonymous," +
-                    "p.participant_id AS part_id " +
+            command.CommandText = "SELECT * " +
                 "FROM time_results r " +
-                "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
-                "LEFT JOIN (eventspecific e " +
-                "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid";
             command.Parameters.Add(new SQLiteParameter("@eventid", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            List<TimeResult> output = GetResultsInternal(reader);
+            List<TimeResult> output = GetResultsInternal(reader, chipReadDict, partDict, distanceDict);
             return output;
         }
 
         internal static List<TimeResult> GetLastSeenResults(int eventId, SQLiteConnection connection)
         {
+            Event theEvent = Events.GetEvent(eventId, connection);
+            Dictionary<int, ChipRead> chipReadDict = new();
+            foreach (ChipRead cr in ChipReads.GetChipReads(eventId, theEvent, connection))
+            {
+                chipReadDict.Add(cr.ReadId, cr);
+            }
+            Dictionary<int, Participant> partDict = new();
+            foreach (Participant p in Participants.GetParticipants(eventId, connection))
+            {
+                partDict.Add(p.EventSpecific.Identifier, p);
+            }
+            Dictionary<int, Distance> distanceDict = new();
+            foreach (Distance d in Distances.GetDistances(eventId, connection))
+            {
+                distanceDict.Add(d.Identifier, d);
+            }
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT " +
-                    "e.event_id," +
-                    "e.eventspecific_id," +
-                    "r.location_id," +
-                    "r.segment_id," +
-                    "timeresult_time," +
-                    "timeresult_occurance," +
-                    "participant_first," +
-                    "participant_last," +
-                    "d.distance_name," +
-                    "eventspecific_bib," +
-                    "r.read_id," +
-                    "timeresult_unknown_id," +
-                    "MAX(read_time_seconds) AS read_time_seconds," +
-                    "read_time_milliseconds," +
-                    "timeresult_chiptime," +
-                    "timeresult_place," +
-                    "timeresult_age_place," +
-                    "timeresult_gender_place," +
-                    "participant_gender," +
-                    "timeresult_status," +
-                    "timeresult_splittime," +
-                    "eventspecific_age_group_id," +
-                    "eventspecific_age_group_name," +
-                    "timeresult_uploaded," +
-                    "participant_birthday," +
-                    "d.distance_type," +
-                    "y.distance_name AS linked_distance_name, " +
-                    "b.bib," +
-                    "b.chip," +
-                    "eventspecific_anonymous," +
-                    "p.participant_id AS part_id " +
+            command.CommandText = "SELECT * " +
                 "FROM time_results r " +
-                "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
-                "LEFT JOIN (eventspecific e " +
-                "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid " +
                 "GROUP BY e.eventspecific_id;";
             command.Parameters.AddRange(new SQLiteParameter[]
@@ -198,155 +169,41 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@eventid", eventId),
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            List<TimeResult> output = GetResultsInternal(reader);
+            List<TimeResult> output = GetResultsInternal(reader, chipReadDict, partDict, distanceDict);
             return output;
         }
 
         internal static List<TimeResult> GetFinishTimes(int eventId, SQLiteConnection connection)
         {
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT " +
-                    "e.event_id," +
-                    "e.eventspecific_id," +
-                    "r.location_id," +
-                    "r.segment_id," +
-                    "timeresult_time," +
-                    "timeresult_occurance," +
-                    "participant_first," +
-                    "participant_last," +
-                    "d.distance_name," +
-                    "eventspecific_bib," +
-                    "r.read_id," +
-                    "timeresult_unknown_id," +
-                    "read_time_seconds," +
-                    "read_time_milliseconds," +
-                    "timeresult_chiptime," +
-                    "timeresult_place," +
-                    "timeresult_age_place," +
-                    "timeresult_gender_place," +
-                    "participant_gender," +
-                    "timeresult_status," +
-                    "timeresult_splittime," +
-                    "eventspecific_age_group_id," +
-                    "eventspecific_age_group_name," +
-                    "timeresult_uploaded," +
-                    "participant_birthday," +
-                    "d.distance_type," +
-                    "y.distance_name AS linked_distance_name, " +
-                    "b.bib," +
-                    "b.chip," +
-                    "eventspecific_anonymous," +
-                    "p.participant_id AS part_id " +
-                "FROM time_results r " +
-                "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
-                "LEFT JOIN (eventspecific e " +
-                "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
-                "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                new SQLiteParameter("@eventid", eventId),
-                new SQLiteParameter("@segment", Constants.Timing.SEGMENT_FINISH)
-            });
-            SQLiteDataReader reader = command.ExecuteReader();
-            List<TimeResult> output = GetResultsInternal(reader);
-            return output;
+            return GetSegmentTimes(eventId, Constants.Timing.SEGMENT_FINISH, connection);
         }
 
         internal static List<TimeResult> GetStartTimes(int eventId, SQLiteConnection connection)
         {
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT " +
-                    "e.event_id," +
-                    "e.eventspecific_id," +
-                    "r.location_id," +
-                    "r.segment_id," +
-                    "timeresult_time," +
-                    "timeresult_occurance," +
-                    "participant_first," +
-                    "participant_last," +
-                    "d.distance_name," +
-                    "eventspecific_bib," +
-                    "r.read_id," +
-                    "timeresult_unknown_id," +
-                    "read_time_seconds," +
-                    "read_time_milliseconds," +
-                    "timeresult_chiptime," +
-                    "timeresult_place," +
-                    "timeresult_age_place," +
-                    "timeresult_gender_place," +
-                    "participant_gender," +
-                    "timeresult_status," +
-                    "timeresult_splittime," +
-                    "eventspecific_age_group_id," +
-                    "eventspecific_age_group_name," +
-                    "timeresult_uploaded," +
-                    "participant_birthday," +
-                    "d.distance_type," +
-                    "y.distance_name AS linked_distance_name, " +
-                    "b.bib," +
-                    "b.chip," +
-                    "eventspecific_anonymous," +
-                    "p.participant_id AS part_id " +
-                "FROM time_results r " +
-                "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
-                "LEFT JOIN (eventspecific e " +
-                "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
-                "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                new SQLiteParameter("@eventid", eventId),
-                new SQLiteParameter("@segment", Constants.Timing.SEGMENT_START)
-            });
-            SQLiteDataReader reader = command.ExecuteReader();
-            List<TimeResult> output = GetResultsInternal(reader);
-            return output;
+            return GetSegmentTimes(eventId, Constants.Timing.SEGMENT_START, connection);
         }
 
         internal static List<TimeResult> GetSegmentTimes(int eventId, int segmentId, SQLiteConnection connection)
         {
+            Event theEvent = Events.GetEvent(eventId, connection);
+            Dictionary<int, ChipRead> chipReadDict = new();
+            foreach (ChipRead cr in ChipReads.GetChipReads(eventId, theEvent, connection))
+            {
+                chipReadDict.Add(cr.ReadId, cr);
+            }
+            Dictionary<int, Participant> partDict = new();
+            foreach (Participant p in Participants.GetParticipants(eventId, connection))
+            {
+                partDict.Add(p.EventSpecific.Identifier, p);
+            }
+            Dictionary<int, Distance> distanceDict = new();
+            foreach (Distance d in Distances.GetDistances(eventId, connection))
+            {
+                distanceDict.Add(d.Identifier, d);
+            }
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT " +
-                    "e.event_id," +
-                    "e.eventspecific_id," +
-                    "r.location_id," +
-                    "r.segment_id," +
-                    "timeresult_time," +
-                    "timeresult_occurance," +
-                    "participant_first," +
-                    "participant_last," +
-                    "d.distance_name," +
-                    "eventspecific_bib," +
-                    "r.read_id," +
-                    "timeresult_unknown_id," +
-                    "read_time_seconds," +
-                    "read_time_milliseconds," +
-                    "timeresult_chiptime," +
-                    "timeresult_place," +
-                    "timeresult_age_place," +
-                    "timeresult_gender_place," +
-                    "participant_gender," +
-                    "timeresult_status," +
-                    "timeresult_splittime," +
-                    "eventspecific_age_group_id," +
-                    "eventspecific_age_group_name," +
-                    "timeresult_uploaded," +
-                    "participant_birthday," +
-                    "d.distance_type," +
-                    "y.distance_name AS linked_distance_name, " +
-                    "b.bib," +
-                    "b.chip," +
-                    "eventspecific_anonymous," +
-                    "p.participant_id AS part_id " +
+            command.CommandText = "SELECT * " +
                 "FROM time_results r " +
-                "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
-                "LEFT JOIN (eventspecific e " +
-                "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid AND r.segment_id=@segment;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
@@ -354,7 +211,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@segment", segmentId)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            List<TimeResult> output = GetResultsInternal(reader);
+            List<TimeResult> output = GetResultsInternal(reader, chipReadDict, partDict, distanceDict);
             return output;
         }
 
@@ -396,45 +253,25 @@ namespace Chronokeep.Database.SQLite
 
         internal static List<TimeResult> GetNonUploadedResults(int eventId, SQLiteConnection connection)
         {
+            Event theEvent = Events.GetEvent(eventId, connection);
+            Dictionary<int, ChipRead> chipReadDict = new();
+            foreach (ChipRead cr in ChipReads.GetChipReads(eventId, theEvent, connection))
+            {
+                chipReadDict.Add(cr.ReadId, cr);
+            }
+            Dictionary<int, Participant> partDict = new();
+            foreach (Participant p in Participants.GetParticipants(eventId, connection))
+            {
+                partDict.Add(p.EventSpecific.Identifier, p);
+            }
+            Dictionary<int, Distance> distanceDict = new();
+            foreach (Distance d in Distances.GetDistances(eventId, connection))
+            {
+                distanceDict.Add(d.Identifier, d);
+            }
             SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT " +
-                    "e.event_id," +
-                    "e.eventspecific_id," +
-                    "r.location_id," +
-                    "r.segment_id," +
-                    "timeresult_time," +
-                    "timeresult_occurance," +
-                    "participant_first," +
-                    "participant_last," +
-                    "d.distance_name," +
-                    "eventspecific_bib," +
-                    "r.read_id," +
-                    "timeresult_unknown_id," +
-                    "read_time_seconds," +
-                    "read_time_milliseconds," +
-                    "timeresult_chiptime," +
-                    "timeresult_place," +
-                    "timeresult_age_place," +
-                    "timeresult_gender_place," +
-                    "participant_gender," +
-                    "timeresult_status," +
-                    "timeresult_splittime," +
-                    "eventspecific_age_group_id," +
-                    "eventspecific_age_group_name," +
-                    "timeresult_uploaded," +
-                    "participant_birthday," +
-                    "d.distance_type," +
-                    "y.distance_name AS linked_distance_name, " +
-                    "b.bib," +
-                    "b.chip," +
-                    "eventspecific_anonymous," +
-                    "p.participant_id AS part_id " +
+            command.CommandText = "SELECT * " +
                 "FROM time_results r " +
-                "JOIN chipreads c ON c.read_id=r.read_id " +
-                "LEFT JOIN bib_chip_assoc b ON ( b.chip=c.read_chipnumber AND r.event_id=b.event_id )" +
-                "JOIN (eventspecific e " +
-                "JOIN participants p ON p.participant_id=e.participant_id " +
-                "JOIN (distances d LEFT JOIN distances y ON d.distance_linked_id=y.distance_id) ON d.distance_id=e.distance_id) ON e.eventspecific_id=r.eventspecific_id " +
                 "WHERE r.event_id=@eventid AND r.timeresult_uploaded=@uploaded;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
@@ -442,7 +279,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@uploaded", Constants.Timing.TIMERESULT_UPLOADED_FALSE)
             });
             SQLiteDataReader reader = command.ExecuteReader();
-            List<TimeResult> output = GetResultsInternal(reader);
+            List<TimeResult> output = GetResultsInternal(reader, chipReadDict, partDict, distanceDict);
             return output;
         }
 

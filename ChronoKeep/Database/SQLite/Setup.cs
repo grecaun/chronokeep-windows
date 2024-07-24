@@ -286,6 +286,12 @@ namespace Chronokeep.Database.SQLite
                     "UNIQUE(event_id, bib, first, last, phone)" +
                     ");");
                 queries.Add("CREATE INDEX idx_eventspecific_bibs ON eventspecific(eventspecific_bib);");
+                queries.Add("CREATE INDEX idx_event_id ON events(event_id);");
+                queries.Add("CREATE INDEX idx_segment_id ON segments(segment_id);");
+                queries.Add("CREATE INDEX idx_location_id ON timing_locations(location_id);");
+                queries.Add("CREATE INDEX idx_chipread_id ON chipreads(read_id);");
+                queries.Add("CREATE INDEX idx_participant_id ON participants(participant_id);");
+                queries.Add("CREATE INDEX idx_distance_id ON distances(distance_id);");
 
                 using (var transaction = connection.BeginTransaction())
                 {

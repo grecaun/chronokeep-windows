@@ -1562,6 +1562,18 @@ namespace Chronokeep.Database.SQLite
                                 ");" +
                             "UPDATE settings SET VALUE='65' WHERE setting='"+Constants.Settings.DATABASE_VERSION+"';";
                         command.ExecuteNonQuery();
+                        goto case 65;
+                    case 65:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 65.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "CREATE INDEX idx_event_id ON events(event_id);" +
+                            "CREATE INDEX idx_segment_id ON segments(segment_id);" +
+                            "CREATE INDEX idx_location_id ON timing_locations(location_id);" +
+                            "CREATE INDEX idx_chipread_id ON chipreads(read_id);" +
+                            "CREATE INDEX idx_participant_id ON participants(participant_id);" +
+                            "CREATE INDEX idx_distance_id ON distances(distance_id);" +
+                            "UPDATE settings SET VALUE='66' WHERE setting='"+Constants.Settings.DATABASE_VERSION+"'";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

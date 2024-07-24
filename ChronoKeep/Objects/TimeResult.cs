@@ -644,16 +644,16 @@ namespace Chronokeep.Objects
             try
             {
                 Log.D("Objects.TimeResult", sms);
-                var messageOptions = new CreateMessageOptions(
-                    new Twilio.Types.PhoneNumber(phone)
-                    );
-                messageOptions.From = new Twilio.Types.PhoneNumber(Constants.Globals.TwilioCredentials.PhoneNumber);
-                messageOptions.Body = sms;
-                var message = MessageResource.Create(messageOptions);
-                if (message.ErrorMessage != null)
-                {
-                    return false;
-                }
+                //var messageOptions = new CreateMessageOptions(
+                //    new Twilio.Types.PhoneNumber(phone)
+                //    );
+                //messageOptions.From = new Twilio.Types.PhoneNumber(Constants.Globals.TwilioCredentials.PhoneNumber);
+                //messageOptions.Body = sms;
+                //var message = MessageResource.Create(messageOptions);
+                //if (message.ErrorMessage != null)
+                //{
+                //    return false;
+                //}
             }
             catch
             {
