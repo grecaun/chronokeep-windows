@@ -426,7 +426,7 @@ namespace Chronokeep.Timing
                         {
                             // Changing alerts hashset to locally based and pulled from the database each time we try to send alerts
                             HashSet<(int, int)> AlertsSent = new HashSet<(int, int)>(alerts);
-                            HashSet<(TimeResult, string)> toSendTo = new HashSet<(TimeResult, string)>();
+                            Dictionary<TimeResult, HashSet<string>> toSendTo = new Dictionary<TimeResult, HashSet<string>>();
                             Dictionary<string, string> nameToBibDict = new();
                             foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                             {
@@ -437,66 +437,63 @@ namespace Chronokeep.Timing
                             Dictionary<string, HashSet<string>> bibToPhonesDict = new();
                             foreach (APISmsSubscription sub in database.GetSmsSubscriptions(theEvent.Identifier))
                             {
-                                if (sub.Bib.Length > 0 && sub.Phone.Length > 0)
-                                {
-                                    if (!bibToPhonesDict.ContainsKey(sub.Bib))
-                                    {
-                                        bibToPhonesDict[sub.Bib] = new HashSet<string>();
-                                    }
-                                    bibToPhonesDict[sub.Bib].Add(Constants.Globals.GetValidPhone(sub.Phone));
-                                }
-                                else if (sub.First.Length + sub.Last.Length > 0 && sub.Phone.Length > 0)
+                                string bib = sub.Bib;
+                                string phone = Constants.Globals.GetValidPhone(sub.Phone);
+                                if (bib.Length < 1 && sub.First.Length + sub.Last.Length > 0)
                                 {
                                     string name = sub.First.ToLower() + sub.Last.ToLower();
                                     name = alphaOnly.Replace(name, string.Empty);
                                     if (nameToBibDict.ContainsKey(name))
                                     {
-                                        if (!bibToPhonesDict.ContainsKey(nameToBibDict[name]))
-                                        {
-                                            bibToPhonesDict[nameToBibDict[name]] = new HashSet<string>();
-                                        }
-                                        bibToPhonesDict[nameToBibDict[name]].Add(Constants.Globals.GetValidPhone(sub.Phone));
+                                        bib = nameToBibDict[name];
                                     }
+                                }
+                                if (bib.Length > 0 && phone.Length > 0)
+                                {
+                                    if (!bibToPhonesDict.ContainsKey(bib))
+                                    {
+                                        bibToPhonesDict[bib] = new HashSet<string>();
+                                    }
+                                    bibToPhonesDict[bib].Add(phone);
                                 }
                             }
                             // Check the finish results for results we can send SMS messages for.
                             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
                             {
-                                // Deal with finish results for runners who want to be notified of their finish time.
                                 // verify the distance is set to allow sms alerts and the runner hasn't been notified already
-                                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId
-                                    && dictionary.distanceNameDictionary.ContainsKey(result.RealDistanceName)
+                                if (dictionary.distanceNameDictionary.ContainsKey(result.RealDistanceName)
                                     && true == dictionary.distanceNameDictionary[result.RealDistanceName].SMSEnabled
                                     && Constants.Timing.EVENTSPECIFIC_UNKNOWN != result.EventSpecificId
                                     && false == AlertsSent.Contains((result.EventSpecificId, result.SegmentId)))
                                 {
-                                    // If we can send a message to them (valid phones, credentials valid, sms opted in)
-                                    // add them to the list to send sms messages
-                                    if (result.SMSCanBeSent(dictionary) && dictionary.participantBibDictionary.ContainsKey(result.Bib))
+                                    // Deal with finish results for runners who want to be notified of their finish time.
+                                    if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
                                     {
-                                        string phone = Constants.Globals.GetValidPhone(dictionary.participantBibDictionary[result.Bib].Mobile);
-                                        if (phone.Length == 0)
+                                        // If we can send a message to them (valid phones, credentials valid, sms opted in)
+                                        // add them to the list to send sms messages
+                                        if (result.SMSCanBeSent(dictionary) && dictionary.participantBibDictionary.ContainsKey(result.Bib))
                                         {
-                                            phone = Constants.Globals.GetValidPhone(dictionary.participantBibDictionary[result.Bib].Phone);
+                                            string phone = Constants.Globals.GetValidPhone(dictionary.participantBibDictionary[result.Bib].Mobile);
+                                            if (phone.Length == 0)
+                                            {
+                                                phone = Constants.Globals.GetValidPhone(dictionary.participantBibDictionary[result.Bib].Phone);
+                                            }
                                         }
-                                        toSendTo.Add((result, phone));
                                     }
-                                }
-                                // Now deal with sms subcriptions
-                                // verify the distance is set to allow sms alerts and we haven't sent notifications for that segment yet
-                                if (Constants.Timing.SEGMENT_START != result.SegmentId
-                                    && Constants.Timing.SEGMENT_NONE != result.SegmentId
-                                    && dictionary.distanceNameDictionary.ContainsKey(result.RealDistanceName)
-                                    && true == dictionary.distanceNameDictionary[result.RealDistanceName].SMSEnabled
-                                    && Constants.Timing.EVENTSPECIFIC_UNKNOWN != result.EventSpecificId
-                                    && false == AlertsSent.Contains((result.EventSpecificId, result.SegmentId))
-                                    )
-                                {
-                                    if (bibToPhonesDict.ContainsKey(result.Bib))
+                                    // Now deal with sms subcriptions
+                                    if (Constants.Timing.SEGMENT_START != result.SegmentId && Constants.Timing.SEGMENT_NONE != result.SegmentId)
                                     {
-                                        foreach (string phone in bibToPhonesDict[result.Bib])
+                                        if (bibToPhonesDict.ContainsKey(result.Bib))
                                         {
-                                            toSendTo.Add((result, phone));
+                                            foreach (string phone in bibToPhonesDict[result.Bib])
+                                            {
+                                                if (!toSendTo.TryGetValue(result, out HashSet<string> value))
+                                                {
+                                                    value = new HashSet<string>();
+                                                    toSendTo[result] = value;
+                                                }
+                                                value.Add(phone);
+                                            }
                                         }
                                     }
                                 }
@@ -519,7 +516,7 @@ namespace Chronokeep.Timing
                             {
                                 // Update banned phones list.
                                 Constants.Globals.UpdateBannedPhones();
-                                foreach ((TimeResult result, string phone) in toSendTo)
+                                foreach (TimeResult result in toSendTo.Keys)
                                 {
                                     // Only send alert if participant wants it sent
                                     // Do not add to the AlertsSent database because they
@@ -542,9 +539,17 @@ namespace Chronokeep.Timing
                                     {
                                         sms = string.Format("{0} {1} has has reached {2} in {3}.{4} Reply STOP to opt-out.", result.First, result.Last, result.SegmentName, result.ChipTimeNoMilliseconds, resultsURL);
                                     }
-                                    if (result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN && result.SendSMSAlert(theEvent, phone, sms))
+                                    if (result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN)
                                     {
-                                        database.AddSMSAlert(theEvent.Identifier, result.EventSpecificId, result.SegmentId);
+                                        bool sent = false;
+                                        foreach (string phone in toSendTo[result])
+                                        {
+                                            sent = sent || result.SendSMSAlert(theEvent, phone, sms);
+                                        }
+                                        if (sent)
+                                        {
+                                            database.AddSMSAlert(theEvent.Identifier, result.EventSpecificId, result.SegmentId);
+                                        }
                                     }
                                 }
                             }
