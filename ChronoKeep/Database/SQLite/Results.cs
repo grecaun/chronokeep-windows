@@ -67,10 +67,9 @@ namespace Chronokeep.Database.SQLite
                 string bib = "";
                 Participant part = null;
                 ChipRead chipRead = null;
-                if (chipReadDict.ContainsKey(readId))
-                if (eventSpecificId > -1 && partDict.ContainsKey(eventSpecificId))
+                chipReadDict.TryGetValue(readId, out chipRead);
+                if (eventSpecificId > -1 && partDict.TryGetValue(eventSpecificId, out part))
                 {
-                    part = partDict[eventSpecificId];
                     bib = part.Bib;
                     distanceId = part.EventSpecific.DistanceIdentifier;
                 }

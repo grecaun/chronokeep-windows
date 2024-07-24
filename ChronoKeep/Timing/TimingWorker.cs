@@ -425,14 +425,27 @@ namespace Chronokeep.Timing
                         if (alerts != null)
                         {
                             // Changing alerts hashset to locally based and pulled from the database each time we try to send alerts
-                            HashSet<(int, int)> AlertsSent = new HashSet<(int, int)>();//(alerts);
+                            HashSet<(int, int)> AlertsSent = new HashSet<(int, int)>(alerts);
                             Dictionary<TimeResult, HashSet<string>> toSendTo = new();
                             Dictionary<string, string> nameToBibDict = new();
+                            HashSet<string> duplicateNames = new();
                             foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                             {
                                 string name = p.FirstName.ToLower() + p.LastName.ToLower();
                                 name = alphaOnly.Replace(name, string.Empty);
+                                // keep track of duplicate names
+                                // because we can't differentiate between those people
+                                // so we won't send those out at all
+                                if (nameToBibDict.ContainsKey(name))
+                                {
+                                    duplicateNames.Add(name);
+                                }
                                 nameToBibDict[name] = p.Bib;
+                            }
+                            // remove duplicates
+                            foreach (string dup in duplicateNames)
+                            {
+                                nameToBibDict.Remove(dup);
                             }
                             Dictionary<string, HashSet<string>> bibToPhonesDict = new();
                             foreach (APISmsSubscription sub in database.GetSmsSubscriptions(theEvent.Identifier))
@@ -543,7 +556,7 @@ namespace Chronokeep.Timing
                                     }
                                     else
                                     {
-                                        sms = string.Format("{0} {1} has has reached {2} in {3}.{4} Reply STOP to opt-out.", result.First, result.Last, result.SegmentName, result.ChipTimeNoMilliseconds, resultsURL);
+                                        sms = string.Format("{0} {1} has has reached {2} in {3}.{4} Reply STOP to opt-out.", result.First, result.Last, result.SegmentName.Trim(), result.ChipTimeNoMilliseconds, resultsURL);
                                     }
                                     if (result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN)
                                     {
