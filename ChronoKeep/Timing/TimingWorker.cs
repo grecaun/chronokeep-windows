@@ -425,6 +425,7 @@ namespace Chronokeep.Timing
                         if (alerts != null)
                         {
                             // Changing alerts hashset to locally based and pulled from the database each time we try to send alerts
+                            HashSet<(int, int)> AlertsSent = new HashSet<(int, int)>(alerts);
                             HashSet<(TimeResult, string)> toSendTo = new HashSet<(TimeResult, string)>();
                             Dictionary<string, string> nameToBibDict = new();
                             foreach (Participant p in database.GetParticipants(theEvent.Identifier))
@@ -467,7 +468,7 @@ namespace Chronokeep.Timing
                                     && dictionary.distanceNameDictionary.ContainsKey(result.RealDistanceName)
                                     && true == dictionary.distanceNameDictionary[result.RealDistanceName].SMSEnabled
                                     && Constants.Timing.EVENTSPECIFIC_UNKNOWN != result.EventSpecificId
-                                    && false == alerts.Contains((result.EventSpecificId, result.SegmentId)))
+                                    && false == AlertsSent.Contains((result.EventSpecificId, result.SegmentId)))
                                 {
                                     // If we can send a message to them (valid phones, credentials valid, sms opted in)
                                     // add them to the list to send sms messages
@@ -488,7 +489,7 @@ namespace Chronokeep.Timing
                                     && dictionary.distanceNameDictionary.ContainsKey(result.RealDistanceName)
                                     && true == dictionary.distanceNameDictionary[result.RealDistanceName].SMSEnabled
                                     && Constants.Timing.EVENTSPECIFIC_UNKNOWN != result.EventSpecificId
-                                    && false == alerts.Contains((result.EventSpecificId, result.SegmentId))
+                                    && false == AlertsSent.Contains((result.EventSpecificId, result.SegmentId))
                                     )
                                 {
                                     if (bibToPhonesDict.ContainsKey(result.Bib))
