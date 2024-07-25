@@ -901,6 +901,23 @@ namespace Chronokeep.UI.MainPages
                         });
                     }
                 }
+                // add finish segments
+                foreach (Distance d in distances.Values)
+                {
+                    if (Constants.Timing.DISTANCE_NO_LINKED_ID == d.LinkedDistance && distanceUnits.ContainsKey(d.DistanceUnit))
+                    {
+                        segments.Add(new APISegment
+                        {
+                            Location = "Finish",
+                            DistanceName = d.Name,
+                            Name = "Finish",
+                            DistanceValue = d.DistanceValue,
+                            DistanceUnit = distanceUnits[d.DistanceUnit],
+                            GPS = "",
+                            MapLink = "",
+                        });
+                    }
+                }
                 // Delete old information from the API
                 Log.D("UI.MainPages.SegmentsPage", "Deleting old segments.");
                 try
