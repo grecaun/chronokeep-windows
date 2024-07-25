@@ -183,6 +183,7 @@
                         >
                         <ComboBoxItem Content="Hide Unknown" IsSelected="True"/>
                         <ComboBoxItem Content="Show All" />
+                        <ComboBoxItem Content="Show Only Unknown" />
                         <ComboBoxItem Content="Show Only Starts" />
                         <ComboBoxItem Content="Show Only Finishes" />
                     </ComboBox>

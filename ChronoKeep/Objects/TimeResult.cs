@@ -578,6 +578,11 @@ namespace Chronokeep.Objects
             return one.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON;
         }
 
+        public static bool IsKnown(TimeResult one)
+        {
+            return one.EventSpecificId != Constants.Timing.TIMERESULT_DUMMYPERSON;
+        }
+
         public static bool StartTimes(TimeResult one)
         {
             return one.EventSpecificId == Constants.Timing.TIMERESULT_DUMMYPERSON || one.SegmentId == Constants.Timing.SEGMENT_START;

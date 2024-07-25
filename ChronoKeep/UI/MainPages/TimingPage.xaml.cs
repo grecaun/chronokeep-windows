@@ -824,6 +824,9 @@ namespace Chronokeep.UI.MainPages
             }
             switch (((ComboBoxItem)viewOnlyBox.SelectedItem).Content)
             {
+                case "Show Only Unknown":
+                    subPage.Show(PeopleType.ONLYUNKNOWN);
+                    break;
                 case "Show All":
                     subPage.Show(PeopleType.ALL);
                     break;

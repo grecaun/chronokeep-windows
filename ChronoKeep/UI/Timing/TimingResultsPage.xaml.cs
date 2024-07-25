@@ -54,6 +54,10 @@ namespace Chronokeep.UI.Timing
             {
                 newResults.RemoveAll(TimeResult.IsNotKnown);
             }
+            else if (peopleType == PeopleType.ONLYUNKNOWN)
+            {
+                newResults.RemoveAll(TimeResult.IsKnown);
+            }
             else if (peopleType == PeopleType.ONLYFINISH)
             {
                 if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
