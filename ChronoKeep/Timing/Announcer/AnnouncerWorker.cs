@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -16,7 +17,9 @@ namespace Chronokeep.Timing.Announcer
 
         private static bool QuittingTime = false;
         private static List<AnnouncerParticipant> participants = new List<AnnouncerParticipant>();
-        private static HashSet<string> bibSeen = new HashSet<string>();
+        private static Dictionary<string, DateTime> bibLastSeen = new Dictionary<string, DateTime>();
+
+        private static int lastSeenGapMinutes = 30;
 
         private AnnouncerWorker(IMainWindow window, IDBInterface database)
         {
@@ -81,7 +84,18 @@ namespace Chronokeep.Timing.Announcer
         private bool ProcessReads(List<ChipRead> announcerReads, Dictionary<string, Participant> participantBibDictionary)
         {
             Log.D("Timing.Announcer.AnnouncerWorker", "Processing chip reads.");
+            AppSetting gapSetting = database.GetAppSetting(Constants.Settings.ANNOUNCER_GAP);
+            int gap = lastSeenGapMinutes;
+            if (gapSetting != null)
+            {
+                if (!int.TryParse(gapSetting.Value, out gap))
+                {
+                    gap = lastSeenGapMinutes;
+                }
+            }
             bool newParticipants = false;
+            DateTime now = DateTime.Now;
+            DateTime threshold = now.AddMinutes(-1 * gap);
             foreach (ChipRead read in announcerReads)
             {
                 // Check to ensure we know the bib of this person
@@ -89,10 +103,10 @@ namespace Chronokeep.Timing.Announcer
                 {
                     // Check if we've already seen the bib.
                     // Only work if we've not seen it before.
-                    if (!bibSeen.Contains(read.Bib) && participantBibDictionary.ContainsKey(read.Bib))
+                    if ((!bibLastSeen.ContainsKey(read.Bib) || bibLastSeen[read.Bib].CompareTo(threshold) < 0) && participantBibDictionary.ContainsKey(read.Bib))
                     {
                         newParticipants = true;
-                        bibSeen.Add(read.Bib);
+                        bibLastSeen.Add(read.Bib, now);
                         participants.Add(new AnnouncerParticipant(participantBibDictionary[read.Bib], read.Seconds));
                         // Mark this chipread as USED
                         read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED;

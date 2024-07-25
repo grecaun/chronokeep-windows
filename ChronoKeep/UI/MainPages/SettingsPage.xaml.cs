@@ -119,10 +119,15 @@ namespace Chronokeep.UI.MainPages
                 downloadSlider.Value = downloadInt;
                 downloadBlock.Text = downloadInt.ToString();
             }
-            if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).Value, out int announcerWindow) && announcerWindow >= 15 && announcerWindow <= 180)
+            if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).Value, out int announcerWindow) && announcerWindow >= 15 && announcerWindow <= 240)
             {
                 announcerSlider.Value = announcerWindow;
                 announcerBlock.Text = announcerWindow.ToString();
+            }
+            if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_GAP).Value, out int announcerGap) && announcerGap >= 1 && announcerGap <= 120)
+            {
+                announcerGapSlider.Value = announcerGap;
+                announcerGapBlock.Text = announcerGap.ToString();
             }
             int alarm = 1;
             if (int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND).Value, out alarm))
@@ -214,6 +219,7 @@ namespace Chronokeep.UI.MainPages
             database.SetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL, Convert.ToInt32(downloadSlider.Value).ToString());
             Globals.DownloadInterval = Convert.ToInt32(downloadSlider.Value);
             database.SetAppSetting(Constants.Settings.ANNOUNCER_WINDOW, Convert.ToInt32(announcerSlider.Value).ToString());
+            database.SetAppSetting(Constants.Settings.ANNOUNCER_GAP, Convert.ToInt32(announcerGapSlider.Value).ToString());
             Globals.AnnouncerWindow = Convert.ToInt32(announcerSlider.Value);
             database.SetAppSetting(Constants.Settings.ALARM_SOUND, ((ComboBoxItem)AlarmSoundBox.SelectedItem).Uid);
             database.SetAppSetting(Constants.Settings.SERVER_NAME, RegistrationServerNameBox.Text.Trim());
@@ -371,6 +377,14 @@ namespace Chronokeep.UI.MainPages
             if (announcerSlider != null && announcerBlock != null)
             {
                 announcerBlock.Text = announcerSlider.Value.ToString();
+            }
+        }
+
+        private void announcerGapSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (announcerGapSlider != null && announcerGapBlock != null)
+            {
+                announcerGapBlock.Text = announcerGapSlider.Value.ToString();
             }
         }
     }

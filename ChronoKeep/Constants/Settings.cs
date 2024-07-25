@@ -24,6 +24,7 @@ namespace Chronokeep.Constants
         public const string UPLOAD_INTERVAL             = "SETTING_UPLOAD_INTERVAL";
         public const string DOWNLOAD_INTERVAL           = "SETTINGS_DOWNLOAD_INTERVAL";
         public const string ANNOUNCER_WINDOW            = "SETTING_ANNOUNCER_WINDOW";
+        public const string ANNOUNCER_GAP               = "SETTING_ANNOUNCER_GAP";
         public const string ALARM_SOUND                 = "SETTING_ALARM_SOUND";
         public const string MINIMUM_COMPATIBLE_DATABASE = "SETTING_MINIMUM_COMPATIBLE_DATABASE";
 
@@ -54,6 +55,7 @@ namespace Chronokeep.Constants
 
         public const string DEFAULT_INTERVAL  = "30";
         public const string DEFAULT_ANNOUNCER = "45";
+        public const string DEFAULT_GAP       = "30";
         public const string DEFAULT_ALARM     = "1";
 
         public static void SetupSettings(IDBInterface database)
@@ -110,6 +112,10 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(ANNOUNCER_WINDOW) == null)
             {
                 database.SetAppSetting(ANNOUNCER_WINDOW, DEFAULT_ANNOUNCER);
+            }
+            if (database.GetAppSetting(ANNOUNCER_GAP) == null)
+            {
+                database.SetAppSetting(ANNOUNCER_GAP, DEFAULT_GAP);
             }
             if (database.GetAppSetting(ALARM_SOUND) == null)
             {
