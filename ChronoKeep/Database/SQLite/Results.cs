@@ -162,7 +162,7 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "SELECT * " +
                 "FROM time_results r " +
                 "WHERE r.event_id=@eventid " +
-                "GROUP BY e.eventspecific_id;";
+                "GROUP BY eventspecific_id;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@eventid", eventId),
