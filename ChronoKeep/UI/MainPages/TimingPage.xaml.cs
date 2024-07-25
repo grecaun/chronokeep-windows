@@ -906,6 +906,17 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
+        private void Export_Abbott_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.TimingPage", "Export Abbott Clicked.");
+            ExportDistanceResults exportAbbott = new ExportDistanceResults(mWindow, database, OutputType.Abbott);
+            if (!exportAbbott.SetupError())
+            {
+                mWindow.AddWindow(exportAbbott);
+                exportAbbott.ShowDialog();
+            }
+        }
+
         private void Export_BAA_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Export BAA Clicked.");

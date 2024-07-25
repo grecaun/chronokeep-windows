@@ -142,7 +142,7 @@ namespace Chronokeep.Objects
                 }
                 else if (country.Equals("Canad", StringComparison.OrdinalIgnoreCase) || country.Equals("Canada", StringComparison.OrdinalIgnoreCase))
                 {
-                    country = "CA";
+                    country = "CAN";
                 }
             }
             if (state != null && state.Length > 0)

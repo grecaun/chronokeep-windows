@@ -15,7 +15,8 @@ namespace Chronokeep.UI.Export
     public enum OutputType
     {
         Boston,
-        UltraSignup
+        UltraSignup,
+        Abbott
     }
 
     /// <summary>
@@ -104,6 +105,10 @@ namespace Chronokeep.UI.Export
                 {
                     SaveUltraSignup(selected.Name);
                 }
+                else if (OutputType.Abbott == type)
+                {
+                    SaveAbbot(selected.Name);
+                }
                 else
                 {
                     DialogBox.Show("Something went wrong. No known output type specified.");
@@ -138,6 +143,10 @@ namespace Chronokeep.UI.Export
                 {
                     SaveUltraSignup(selected.Name);
                 }
+                else if (OutputType.Abbott == type)
+                {
+                    SaveAbbot(selected.Name);
+                }
                 else
                 {
                     DialogBox.Show("Something went wrong. No known output type specified.");
@@ -152,6 +161,11 @@ namespace Chronokeep.UI.Export
                 else if (OutputType.UltraSignup == type)
                 {
                     SaveAllUltraSignup();
+                }
+                else if (OutputType.Abbott == type)
+                {
+                    DialogBox.Show("Exporting all for Abbott is not supported.");
+                    return;
                 }
                 else
                 {
@@ -212,6 +226,189 @@ namespace Chronokeep.UI.Export
                 }
                 DialogBox.Show("Files saved.");
             }
+        }
+
+        private void SaveAbbot(string distance)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Excel File (*.xlsx,*xls)|*.xlsx;*xls|CSV (*.csv)|*.csv",
+                FileName = string.Format("{0} {1} {2} Boston.{3}", theEvent.YearCode, theEvent.Name, distance, "xlsx"),
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                SaveAbbotInternal(distance, saveFileDialog.FileName, Path.GetExtension(saveFileDialog.FileName));
+                DialogBox.Show("File saved.");
+            }
+        }
+        private void SaveAbbotInternal(string distance, string fileName, string extension)
+        {
+            string[] headers = new string[]
+            {
+                "name_prefix",  // leave empty
+                "name_suffix",  // leave empty
+                "first_name",
+                "last_name",
+                "email",        // leave empty
+                "start_num",    // bib
+                "date_of_birth",// DD/MM/YYYY or MM/DD/YYYY
+                "nationality",  // IOC Code, ISO-3 CODE or IAAF Code
+                "gender",       // M or F
+                "finish_time",  // Chip time
+                "place",        // overall
+                "place_no_sex"  // gender place
+            };
+            List<object[]> data = new List<object[]>();
+            List<Participant> participants = database.GetParticipants(theEvent.Identifier);
+            Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
+            foreach (Participant person in participants)
+            {
+                participantDictionary[person.Bib] = person;
+            }
+            List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
+            foreach (TimeResult result in results)
+            {
+                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib) && (result.DistanceName == distance) && result.Time.Length > 4)
+                {
+                    string country = participantDictionary[result.Bib].Country;
+                    if (country.Length != 3)
+                    {
+                        if (country.Equals("ca", System.StringComparison.OrdinalIgnoreCase) || country.Equals("canada", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "CAN";
+                        }
+                        else if (country.Equals("ae", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "ARE";
+                        }
+                        else if (country.Equals("au", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "AUS";
+                        }
+                        else if (country.Equals("br", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "BRA";
+                        }
+                        else if (country.Equals("United States of America", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "USA";
+                        }
+                        else if (country.Equals("cr", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "CRI";
+                        }
+                        else if (country.Equals("cw", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "CUW";
+                        }
+                        else if (country.Equals("ch", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "CHE";
+                        }
+                        else if (country.Equals("de", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "DEU";
+                        }
+                        else if (country.Equals("do", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "DOM";
+                        }
+                        else if (country.Equals("es", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "ESP";
+                        }
+                        else if (country.Equals("gb", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "GBR";
+                        }
+                        else if (country.Equals("hn", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "HND";
+                        }
+                        else if (country.Equals("ie", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "IRL";
+                        }
+                        else if (country.Equals("jp", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "JPN";
+                        }
+                        else if (country.Equals("lv", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "LVA";
+                        }
+                        else if (country.Equals("mx", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "MEX";
+                        }
+                        else if (country.Equals("nl", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "NLD";
+                        }
+                        else if (country.Equals("nz", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "NZL";
+                        }
+                        else if (country.Equals("ru", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "RUS";
+                        }
+                        else if (country.Equals("tw", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "TWN";
+                        }
+                        else if (country.Equals("um", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "UMI";
+                        }
+                        else if (country.Equals("za", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            country = "ZAF";
+                        }
+                        else
+                        {
+                            country = "";
+                        }
+                    }
+                    data.Add(new object[]
+                    {
+                        "",
+                        "",
+                        result.Last,
+                        result.First,
+                        "",
+                        result.Bib,
+                        participantDictionary[result.Bib].Birthdate,
+                        country,
+                        result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : "",
+                        result.ChipTime.Substring(0, result.ChipTime.Length > 4 ? result.ChipTime.Length -4 : 0),
+                        result.PlaceStr,
+                        result.GenderPlaceStr
+                    });
+                }
+            }
+            IDataExporter exporter;
+            Log.D("UI.Export.ExportDistanceResults", string.Format("Extension is '{0}'", extension));
+            if (extension.IndexOf("xls") != -1)
+            {
+                exporter = new ExcelExporter();
+            }
+            else
+            {
+                StringBuilder format = new StringBuilder();
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    format.Append("\"{");
+                    format.Append(i);
+                    format.Append("}\",");
+                }
+                format.Remove(format.Length - 1, 1);
+                Log.D("UI.Export.ExportDistanceResults", string.Format("The format is '{0}'", format.ToString()));
+                exporter = new CSVExporter(format.ToString());
+            }
+            exporter.SetData(headers, data);
+            exporter.ExportData(fileName);
         }
 
         private void SaveBoston(string distance)

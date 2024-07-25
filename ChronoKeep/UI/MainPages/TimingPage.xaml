@@ -409,6 +409,13 @@
                                         Click="Export_US_Click"
                                         />
                                     <Button
+                                        Content="Export Abbott" 
+                                        Height="35" 
+                                        HorizontalAlignment="Stretch"
+                                        Margin="0,5,5,0"
+                                        Click="Export_Abbott_Click"
+                                        />
+                                    <Button
                                         Content="Create HTML"
                                         Height="35"
                                         HorizontalAlignment="Stretch"
