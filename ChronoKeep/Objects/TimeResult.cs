@@ -130,10 +130,11 @@ namespace Chronokeep.Objects
                     }
                     else
                     {
-                        segmentName = string.Format("{0} {1}", segmentName, occurrence).Trim();
+                        segmentName = string.Format("{0} {1}", segmentName, occurrence);
                     }
                 }
             }
+            segmentName = segmentName.Trim();
             firstName = first ?? "";
             lastName = last ?? "";
             distanceName = distance ?? "";
