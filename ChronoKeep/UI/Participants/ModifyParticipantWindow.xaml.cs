@@ -165,11 +165,9 @@ namespace Chronokeep.UI.Participants
             MobileBox.Text = person.Mobile;
             ParentBox.Text = person.Parent;
             CommentsBox.Text = person.Comments;
-            OtherBox.Text = person.Other;
             ECNameBox.Text = person.ECName;
             ECPhoneBox.Text = person.ECPhone;
             AnonymousBox.IsChecked = person.Anonymous;
-            SMSBox.IsChecked = person.EventSpecific.SMSEnabled;
             ApparelBox.Text = person.EventSpecific.Apparel;
             Add.Content = "Update";
             Done.Content = "Cancel";
@@ -196,11 +194,9 @@ namespace Chronokeep.UI.Participants
             MobileBox.Text = "";
             ParentBox.Text = "";
             CommentsBox.Text = "";
-            OtherBox.Text = "";
             ECNameBox.Text = "";
             ECPhoneBox.Text = "";
             AnonymousBox.IsChecked = false;
-            SMSBox.IsChecked = false;
             ApparelBox.Text = "";
         }
 
@@ -384,12 +380,12 @@ namespace Chronokeep.UI.Participants
                     checkedin,
                     CommentsBox.Text,
                     "",
-                    OtherBox.Text,
+                    "",
                     Constants.Timing.EVENTSPECIFIC_UNKNOWN,
                     "",
                     Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
                     AnonymousBox.IsChecked == true,
-                    SMSBox.IsChecked == true,
+                    false,
                     ApparelBox.Text
                     ),
                 EmailBox.Text,

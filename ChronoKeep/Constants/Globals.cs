@@ -14,9 +14,11 @@ namespace Chronokeep.Constants
         // keep track of TWILIO credentials
         public static TwilioCredentials TwilioCredentials = new();
         // keep track of banned phones
-        public static List<string> BannedPhones = new List<string>();
+        public static HashSet<string> BannedPhones = new();
+        // keep track of local list of banned phone numbers that we need to add to the api's list
+        public static HashSet<string> NewBannedPhones = new();
         // keep track of banned emails
-        public static List<string> BannedEmails = new List<string>();
+        public static HashSet<string> BannedEmails = new();
 
         private static Regex phoneRegex = new Regex("^(?:\\+?1)?\\s*\\-?\\s*(?:\\d{3}|\\(\\d{3}\\))\\s*\\-?\\s*\\d{3}\\s*\\-?\\s*\\d{4}$");
         private static Regex whitespace = new Regex("\\s+");
@@ -37,11 +39,54 @@ namespace Chronokeep.Constants
                             BannedPhones.Add(p);
                         }
                     }
+                    // make sure we've got all our new banned phone numbers in there too
+                    foreach (string phone in NewBannedPhones)
+                    {
+                        string p = GetValidPhone(phone);
+                        if (p.Length > 0)
+                        {
+                            BannedPhones.Add(p);
+                        }
+                    }
                 }
+                
             }
             catch
             {
                 Log.E("Constants.Globals", "Exception getting banned phones.");
+            }
+            // attempt to upload all the new phone numbers
+            foreach (string phone in NewBannedPhones)
+            {
+                string p = GetValidPhone(phone);
+                if (p.Length > 0)
+                {
+                    try
+                    {
+                        await APIHandlers.AddBannedPhone(p);
+                        NewBannedPhones.Remove(phone);
+                    }
+                    catch
+                    {
+                        Log.E("Constants.Globals", "Exception uploading banned phone number.");
+                    }
+                }
+            }
+        }
+
+        public static async void AddBannedPhone(string phone)
+        {
+            string p = GetValidPhone(phone);
+            BannedPhones.Add(p);
+            NewBannedPhones.Add(phone);
+            try
+            {
+                await APIHandlers.AddBannedPhone(p);
+                NewBannedPhones.Remove(phone);
+            }
+            catch
+            {
+                Log.E("Constants.Globals", "Exception uploading banned phone number.");
             }
         }
 
@@ -53,7 +98,10 @@ namespace Chronokeep.Constants
                 BannedEmails.Clear();
                 if (emailsResponse.Emails != null)
                 {
-                    BannedEmails.AddRange(emailsResponse.Emails);
+                    foreach (string email in emailsResponse.Emails)
+                    {
+                        BannedEmails.Add(email);
+                    }
                 }
             }
             catch

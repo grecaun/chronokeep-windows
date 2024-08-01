@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Constants;
+using Chronokeep.Interfaces;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
+using static Chronokeep.Objects.TimeResult;
 
 namespace Chronokeep.Timing
 {
@@ -397,6 +399,7 @@ namespace Chronokeep.Timing
                     {
                         List<(int, int)> alerts = database.GetSMSAlerts(theEvent.Identifier);
                         DateTime now = DateTime.Now;
+                        DateTime fifteenPrior = now.AddMinutes(-15);
                         if (lastSubscriptionFetch.AddSeconds(30).CompareTo(now) < 0)
                         {
                             APIObject api = database.GetAPI(theEvent.API_ID);
@@ -473,31 +476,14 @@ namespace Chronokeep.Timing
                             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
                             {
                                 // verify the distance is set to allow sms alerts and the runner hasn't been notified already
+                                // and we're within 15 minutes of it happening
                                 if (dictionary.distanceNameDictionary.TryGetValue(result.RealDistanceName, out Distance dist) && true == dist.SMSEnabled
                                     && Constants.Timing.EVENTSPECIFIC_UNKNOWN != result.EventSpecificId
-                                    && false == AlertsSent.Contains((result.EventSpecificId, result.SegmentId)))
+                                    && false == AlertsSent.Contains((result.EventSpecificId, result.SegmentId))
+                                    && result.SystemTime.CompareTo(fifteenPrior) > 0
+                                    )
                                 {
-                                    // Deal with finish results for runners who want to be notified of their finish time.
-                                    if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
-                                    {
-                                        // If we can send a message to them (valid phones, credentials valid, sms opted in)
-                                        // add them to the list to send sms messages
-                                        if (result.SMSCanBeSent(dictionary) && dictionary.participantBibDictionary.ContainsKey(result.Bib))
-                                        {
-                                            string phone = Constants.Globals.GetValidPhone(dictionary.participantBibDictionary[result.Bib].Mobile);
-                                            if (phone.Length == 0)
-                                            {
-                                                phone = Constants.Globals.GetValidPhone(dictionary.participantBibDictionary[result.Bib].Phone);
-                                            }
-                                            if (!toSendTo.TryGetValue(result, out HashSet<string> phones))
-                                            {
-                                                phones = new HashSet<string>();
-                                                toSendTo[result] = phones;
-                                            }
-                                            phones.Add(phone);
-                                        }
-                                    }
-                                    // Now deal with sms subcriptions
+                                    //deal with sms subcriptions
                                     if (Constants.Timing.SEGMENT_START != result.SegmentId && Constants.Timing.SEGMENT_NONE != result.SegmentId)
                                     {
                                         if (bibToPhonesDict.TryGetValue(result.Bib, out HashSet<string> phonesFromDict))
@@ -515,7 +501,6 @@ namespace Chronokeep.Timing
                                     }
                                 }
                             }
-                            // Only check banned phones or try to send texts if there is something to send.
                             string resultsURL = "";
                             if (dictionary.apis.TryGetValue(theEvent.API_ID, out APIObject api) && api.WebURL.Length > 0)
                             {
@@ -529,6 +514,7 @@ namespace Chronokeep.Timing
                                     resultsURL = string.Format(" More results @ {0}.", api.WebURL);
                                 }
                             }
+                            // Only check banned phones or try to send texts if there is something to send.
                             if (toSendTo.Count > 0)
                             {
                                 // Update banned phones list.
@@ -559,11 +545,26 @@ namespace Chronokeep.Timing
                                     if (result.EventSpecificId != Constants.Timing.EVENTSPECIFIC_UNKNOWN)
                                     {
                                         bool sent = false;
+                                        bool networkError = false;
                                         foreach (string phone in toSendTo[result])
                                         {
-                                            sent = result.SendSMSAlert(phone, sms) || sent;
+                                            var status = TimeResult.SendSMSAlert(phone, sms);
+                                            // add to banned phones list
+                                            if (status == SMSState.AddToBanned)
+                                            {
+                                                Globals.AddBannedPhone(phone);
+                                            }
+                                            else if (status == SMSState.Success)
+                                            {
+                                                sent = true;
+                                            }
+                                            else if (status == SMSState.NetworkError)
+                                            {
+                                                networkError = true;
+                                            }
                                         }
-                                        if (sent)
+                                        // update status if there's no network error or we send a message out
+                                        if (sent || !networkError)
                                         {
                                             database.AddSMSAlert(theEvent.Identifier, result.EventSpecificId, result.SegmentId);
                                         }

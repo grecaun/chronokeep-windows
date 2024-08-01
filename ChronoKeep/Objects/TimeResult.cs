@@ -629,23 +629,23 @@ namespace Chronokeep.Objects
             return true;
         }
 
-        public bool SendSMSAlert(string phone, string sms)
+        public static SMSState SendSMSAlert(string phone, string sms)
         {
             if (Constants.Globals.TwilioCredentials.AccountSID.Length < 1 || Constants.Globals.TwilioCredentials.AuthToken.Length < 1)
             {
-                return false;
+                return SMSState.Invalid;
             }
             // Invalid length. +15555551234 is a valid phone
             if (phone.Length != 12 || Constants.Globals.TwilioCredentials.PhoneNumber.Length != 12)
             {
-                return false;
+                return SMSState.Invalid;
             }
             // Verify phone number isn't in our list of banned phone numbers (i.e. they've told us to not send texts)
             // return true if it is in the banned list, otherwise try to send it, and return true if we were able to send it
             if (Constants.Globals.BannedPhones.Contains(phone))
             {
                 Log.D("Objects.TimeResult", "Phone number is banned.");
-                return false;
+                return SMSState.Invalid;
             }
             try
             {
@@ -658,14 +658,23 @@ namespace Chronokeep.Objects
                 var message = MessageResource.Create(messageOptions);
                 if (message.ErrorMessage != null)
                 {
-                    return false;
+                    return SMSState.AddToBanned;
                 }
             }
             catch
             {
-                return false;
+                return SMSState.NetworkError;
             }
-            return true;
+            return SMSState.Success;
+        }
+
+        public enum SMSState
+        {
+            None = 0,
+            Success,
+            AddToBanned,
+            Invalid,
+            NetworkError
         }
     }
 }

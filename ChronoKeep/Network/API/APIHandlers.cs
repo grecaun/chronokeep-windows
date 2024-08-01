@@ -611,7 +611,7 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
-        public static async void AddBannedPhone(string phone)
+        public static async Task<int> AddBannedPhone(string phone)
         {
             string validPhone = Constants.Globals.GetValidPhone(phone);
             if (validPhone == null || validPhone.Length == 0)
@@ -641,7 +641,7 @@ namespace Chronokeep.Network.API
                     if (response.StatusCode == System.Net.HttpStatusCode.OK)
                     {
                         Log.D("Network.API.APIHandlers", "Status code ok.");
-                        return;
+                        return 200;
                     }
                     Log.D("Network.API.APIHandlers", "Status code not ok.");
                     var errjson = await response.Content.ReadAsStringAsync();
