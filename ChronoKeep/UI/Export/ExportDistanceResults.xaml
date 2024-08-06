@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Chronokeep.UI.Export"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Export Ultrasignup Results" Height="250" Width="300" MinWidth="300" MaxWidth="300" Closing="Window_Closing"
+        Title="Export Ultrasignup Results" Height="220" Width="300" MinWidth="300" MaxWidth="300" Closing="Window_Closing"
         d:DataContext="{d:DesignInstance local:ExportDistanceResults, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"

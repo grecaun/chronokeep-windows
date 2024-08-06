@@ -292,7 +292,6 @@ namespace Chronokeep.Timing
 
         public async void Run()
         {
-            int counter = 1;
             do
             {
                 Log.D("Timing.TimingWorker", "Mutex Wait 05");
@@ -310,7 +309,6 @@ namespace Chronokeep.Timing
                 {
                     break;
                 }
-                Log.D("Timing.TimingWorker", "Entering loop " + counter++);
                 Event theEvent = database.GetCurrentEvent();
                 // ensure the event exists and we've got unprocessed reads
                 if (theEvent != null && theEvent.Identifier != -1)
