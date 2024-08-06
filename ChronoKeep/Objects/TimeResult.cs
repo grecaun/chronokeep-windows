@@ -599,6 +599,19 @@ namespace Chronokeep.Objects
             return one.SegmentId != Constants.Timing.SEGMENT_FINISH;
         }
 
+        public static bool IsNotFinishOrKnown(TimeResult one)
+        {
+            return one.SegmentId == Constants.Timing.SEGMENT_START
+                || one.EventSpecificId != Constants.Timing.TIMERESULT_DUMMYPERSON
+                || one.locationId != Constants.Timing.LOCATION_FINISH;
+        }
+
+        public static bool IsNotStartOrKnown(TimeResult one)
+        {
+            return one.SegmentId != Constants.Timing.SEGMENT_START
+                || one.EventSpecificId != Constants.Timing.TIMERESULT_DUMMYPERSON;
+        }
+
         public bool IsNotMatch(string value)
         {
             return !Bib.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase) &&

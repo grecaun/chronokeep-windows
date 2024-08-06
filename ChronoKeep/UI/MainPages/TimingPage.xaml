@@ -186,6 +186,9 @@
                         <ComboBoxItem Content="Show Only Unknown" />
                         <ComboBoxItem Content="Show Only Starts" />
                         <ComboBoxItem Content="Show Only Finishes" />
+                        <ComboBoxItem Content="Show Only Unknown" />
+                        <ComboBoxItem Content="Show Only Unknown Starts" />
+                        <ComboBoxItem Content="Show Only Unknown Finishes" />
                     </ComboBox>
                     <ComboBox
                         Name="SortBy"

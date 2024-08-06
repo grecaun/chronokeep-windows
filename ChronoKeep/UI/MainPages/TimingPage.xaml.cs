@@ -825,16 +825,22 @@ namespace Chronokeep.UI.MainPages
             switch (((ComboBoxItem)viewOnlyBox.SelectedItem).Content)
             {
                 case "Show Only Unknown":
-                    subPage.Show(PeopleType.ONLYUNKNOWN);
+                    subPage.Show(PeopleType.UNKNOWN);
                     break;
                 case "Show All":
                     subPage.Show(PeopleType.ALL);
                     break;
                 case "Show Only Starts":
-                    subPage.Show(PeopleType.ONLYSTART);
+                    subPage.Show(PeopleType.STARTS);
                     break;
                 case "Show Only Finishes":
-                    subPage.Show(PeopleType.ONLYFINISH);
+                    subPage.Show(PeopleType.FINISHES);
+                    break;
+                case "Show Only Unknown Finishes":
+                    subPage.Show(PeopleType.UNKNOWN_FINISHES);
+                    break;
+                case "Show Only Unknown Starts":
+                    subPage.Show(PeopleType.UNKNOWN_STARTS);
                     break;
                 default:
                     subPage.Show(PeopleType.KNOWN);
@@ -849,9 +855,15 @@ namespace Chronokeep.UI.MainPages
                 case "Show All":
                     return PeopleType.ALL;
                 case "Show Only Starts":
-                    return PeopleType.ONLYSTART;
+                    return PeopleType.STARTS;
                 case "Show Only Finishes":
-                    return PeopleType.ONLYFINISH;
+                    return PeopleType.FINISHES;
+                case "Show Only Unknown":
+                    return PeopleType.UNKNOWN;
+                case "Show Only Unknown Finishes":
+                    return PeopleType.UNKNOWN_FINISHES;
+                case "Show Only Unknown Starts":
+                    return PeopleType.UNKNOWN_STARTS;
             }
             return PeopleType.KNOWN;
         }

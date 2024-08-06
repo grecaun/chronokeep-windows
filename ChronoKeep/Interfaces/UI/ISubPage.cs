@@ -10,6 +10,6 @@ namespace Chronokeep.Interfaces
         void EditSelected();
     }
 
-    public enum PeopleType { KNOWN, ALL, ONLYSTART, ONLYFINISH, DEFAULT, ONLYUNKNOWN }
+    public enum PeopleType { KNOWN, ALL, STARTS, FINISHES, DEFAULT, UNKNOWN, UNKNOWN_FINISHES, UNKNOWN_STARTS }
     public enum SortType { SYSTIME, GUNTIME, BIB, DISTANCE, AGEGROUP, GENDER, PLACE }
 }

@@ -32,7 +32,7 @@ namespace Chronokeep.UI.Export
             "Age", "Gender", "Start", "Street", "Apartment",
             "City", "State", "Zip", "Country", "Mobile", "Email", "Parent", "Comments",
             "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone",
-            "Anonymous"
+            "Anonymous", "Apparel"
         };
         List<string> distanceHeaders = new List<string>
         {
@@ -139,11 +139,12 @@ namespace Chronokeep.UI.Export
                 int maxLaps = 0;
                 foreach (TimeResult result in results)
                 {
-                    if (!resultDictionary.ContainsKey(result.Bib))
+                    if (!resultDictionary.TryGetValue(result.Bib, out List<TimeResult> value))
                     {
-                        resultDictionary[result.Bib] = new List<TimeResult>();
+                        value = new List<TimeResult>();
+                        resultDictionary[result.Bib] = value;
                     }
-                    resultDictionary[result.Bib].Add(result);
+                    value.Add(result);
                     if (result.SegmentId == Constants.Timing.SEGMENT_FINISH)
                     {
                         occurrenceResultDictionary[(result.Bib, result.Occurrence)] = result;
@@ -157,7 +158,30 @@ namespace Chronokeep.UI.Export
                     headerIndex[header] = headersToOutput.IndexOf(header);
                     headers[headerIndex[header]] = header;
                 }
-                List<object[]> data = new List<object[]>();
+                List<object[]> data = new();
+                Dictionary<int, List<Segment>> distanceSegmentDict = new();
+                foreach (Segment seg in database.GetSegments(theEvent.Identifier))
+                {
+                    if (!distanceSegmentDict.TryGetValue(seg.DistanceId, out List<Segment> value))
+                    {
+                        value = new List<Segment>();
+                        distanceSegmentDict[seg.DistanceId] = value;
+                    }
+                    value.Add(seg);
+                }
+                Dictionary<int, int> segmentNumberDict = new();
+                foreach (List<Segment> segments in distanceSegmentDict.Values)
+                {
+                    segments.Sort((a, b) =>
+                        a.CumulativeDistance == b.CumulativeDistance ? a.Occurrence.CompareTo(b.Occurrence) : a.CumulativeDistance.CompareTo(b.CumulativeDistance)
+                    );
+                    int count = 1;
+                    foreach (Segment segment in segments)
+                    {
+                        segmentNumberDict[segment.Identifier] = count;
+                        count += 1;
+                    }
+                }
                 // Output all known participants
                 foreach (Participant participant in participants)
                 {
@@ -255,6 +279,10 @@ namespace Chronokeep.UI.Export
                     {
                         line[headerIndex["Anonymous"]] = participant.PrettyAnonymous;
                     }
+                    if (headerIndex.ContainsKey("Apparel"))
+                    {
+                        line[headerIndex["Apparel"]] = participant.EventSpecific.Apparel;
+                    }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                     {
                         if (resultDictionary.ContainsKey(participant.EventSpecific.Bib))
@@ -294,6 +322,10 @@ namespace Chronokeep.UI.Export
                                 }
                                 else if (Constants.Timing.SEGMENT_NONE != result.SegmentId)
                                 {
+                                    if (segmentNumberDict.ContainsKey(result.SegmentId))
+                                    {
+                                        segmentNum = segmentNumberDict[result.SegmentId];
+                                    }
                                     string key = string.Format("Segment {0} Chip Time", segmentNum);
                                     if (headerIndex.ContainsKey(key))
                                     {

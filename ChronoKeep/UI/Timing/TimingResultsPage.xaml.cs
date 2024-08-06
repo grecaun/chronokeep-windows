@@ -54,11 +54,35 @@ namespace Chronokeep.UI.Timing
             {
                 newResults.RemoveAll(TimeResult.IsNotKnown);
             }
-            else if (peopleType == PeopleType.ONLYUNKNOWN)
+            else if (peopleType == PeopleType.UNKNOWN)
             {
                 newResults.RemoveAll(TimeResult.IsKnown);
             }
-            else if (peopleType == PeopleType.ONLYFINISH)
+            else if (peopleType == PeopleType.UNKNOWN_FINISHES)
+            {
+                if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+                {
+                    Log.D("UI.Timing.TimingResultsPage", "Time based event.");
+                    Dictionary<int, TimeResult> validResults = new Dictionary<int, TimeResult>();
+                    foreach (TimeResult result in newResults)
+                    {
+                        if (Constants.Timing.TIMERESULT_DUMMYPERSON != result.EventSpecificId)
+                        {
+                            validResults[result.EventSpecificId] = result;
+                        }
+                    }
+                    newResults.RemoveAll(x => !validResults.ContainsValue(x) && TimeResult.IsKnown(x));
+                }
+                else
+                {
+                    newResults.RemoveAll(TimeResult.IsNotFinishOrKnown);
+                }
+            }
+            else if (peopleType == PeopleType.UNKNOWN_STARTS)
+            {
+                newResults.RemoveAll(TimeResult.IsNotStartOrKnown);
+            }
+            else if (peopleType == PeopleType.FINISHES)
             {
                 if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
                 {
@@ -78,7 +102,7 @@ namespace Chronokeep.UI.Timing
                     newResults.RemoveAll(TimeResult.IsNotFinish);
                 }
             }
-            else if (peopleType == PeopleType.ONLYSTART)
+            else if (peopleType == PeopleType.STARTS)
             {
                 newResults.RemoveAll(TimeResult.IsNotStart);
             }
