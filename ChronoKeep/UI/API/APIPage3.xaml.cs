@@ -32,7 +32,7 @@ namespace Chronokeep.UI.API
                 window.Close();
                 return;
             }
-            YearBox.Items.Add(new ComboBoxItem
+            yearCopyBox.Items.Add(new ComboBoxItem
             {
                 Content = "New Year",
                 Uid = "NEW"
@@ -43,7 +43,7 @@ namespace Chronokeep.UI.API
             {
                 foreach (APIEventYear y in years.EventYears)
                 {
-                    YearBox.Items.Add(new ComboBoxItem
+                    yearCopyBox.Items.Add(new ComboBoxItem
                     {
                         Content = y.Year,
                         Uid = y.Year
@@ -55,7 +55,7 @@ namespace Chronokeep.UI.API
                     count++;
                 }
             }
-            YearBox.SelectedIndex = ix;
+            yearCopyBox.SelectedIndex = ix;
             if (ix == 0)
             {
                 newPanel.Visibility = Visibility.Visible;
@@ -83,7 +83,7 @@ namespace Chronokeep.UI.API
 
         private void YearBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (((ComboBoxItem)YearBox.SelectedItem).Uid == "NEW")
+            if (((ComboBoxItem)yearCopyBox.SelectedItem).Uid == "NEW")
             {
                 newPanel.Visibility = Visibility.Visible;
             }
@@ -97,7 +97,7 @@ namespace Chronokeep.UI.API
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.API.APIPage3", "DateTime: " + Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss"));
-            string year = ((ComboBoxItem)YearBox.SelectedItem).Uid;
+            string year = ((ComboBoxItem)yearCopyBox.SelectedItem).Uid;
             if (year == "NEW")
             {
                 try

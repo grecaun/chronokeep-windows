@@ -37,7 +37,7 @@
                 Margin="0,0,0,10"
                 />
             <ComboBox
-                Name="YearBox"
+                Name="yearCopyBox"
                 Width="200"
                 VerticalAlignment="Center"
                 Margin="0,0,0,5"

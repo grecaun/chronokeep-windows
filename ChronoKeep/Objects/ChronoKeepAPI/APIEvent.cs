@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Chronokeep.Objects.API
 {
@@ -18,5 +19,7 @@ namespace Chronokeep.Objects.API
         public bool AccessRestricted { get; set; }
         [JsonPropertyName("type")]
         public string Type { get; set; }
+        [JsonPropertyName("recent_time")]
+        public DateTime RecentTime { get; set; }
     }
 }
