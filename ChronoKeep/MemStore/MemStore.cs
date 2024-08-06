@@ -35,6 +35,20 @@ namespace Chronokeep.MemStore
         private static Dictionary<string, BibChipAssociation> chipToBibAssociations = new();
         // key == bib
         private static Dictionary<string, BibChipAssociation> bibToChipAssociations = new();
+
+        // key == distanceId
+        private static Dictionary<int, List<AgeGroup>> ageGroups = new();
+        // key == bib
+        private static Dictionary<string, Alarm> bibAlarms = new();
+        // key == chip
+        private static Dictionary<string, Alarm> chipAlarms = new();
+        private static List<RemoteReader> remoteReaders = new();
+
+        private static HashSet<(int, int)> smsAlerts = new();
+        private static HashSet<int> emailAlerts = new();
+        private static List<APISmsSubscription> smsSubscriptions = new();
+
+        // Timing results
         private static List<TimeResult> unprocessedTimingResults = new();
         private static List<TimeResult> notUploadedTimingResults = new();
         private static List<TimeResult> uploadedTimingResults = new();
@@ -46,13 +60,7 @@ namespace Chronokeep.MemStore
         private static Dictionary<string, TimeResult> finishTimes = new();
         // key == segmentId
         private static Dictionary<int, List<TimeResult>> segmentTimes = new();
-        // key == distanceId
-        private static Dictionary<int, List<AgeGroup>> ageGroups = new();
-        // key == bib
-        private static Dictionary<string, Alarm> bibAlarms = new();
-        // key == chip
-        private static Dictionary<string, Alarm> chipAlarms = new();
-        private static List<RemoteReader> remoteReaders = new();
+
         // Chip Read data
         // Unprocessed == all reads that haven't been looked at but aren't announcer reads
         private static List<ChipRead> unprocessedChipReads = new();
@@ -66,9 +74,6 @@ namespace Chronokeep.MemStore
         private static List<ChipRead> announerUsedChipReads = new();
         // dns == DidNotStart chipreads
         private static List<ChipRead> dnsChipReads = new();
-        private static HashSet<(int, int)> smsAlerts = new();
-        private static HashSet<int> emailAlerts = new();
-        private static List<APISmsSubscription> smsSubscriptions = new();
 
         private MemStore(IDBInterface database)
         {
@@ -185,6 +190,8 @@ namespace Chronokeep.MemStore
             // load timingresults
             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
             {
+                // split results into not-processed
+                // then processed and uploaded and processed but not uploaded
                 if (result.Status == Constants.Timing.TIMERESULT_STATUS_NONE)
                 {
                     unprocessedTimingResults.Add(result);
@@ -197,11 +204,111 @@ namespace Chronokeep.MemStore
                 {
                     notUploadedTimingResults.Add(result);
                 }
+                // last seen    // key == bib or chip
+                if (result.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                {
+                    if (lastSeenResults.TryGetValue(result.Bib, out TimeResult old))
+                    {
+                        if (result.Seconds > old.Seconds)
+                        {
+                            lastSeenResults[result.Bib] = result;
+                        }
+                    }
+                    else
+                    {
+                        lastSeenResults[result.Bib] = result;
+                    }
+                }
+                else if (result.Chip != Constants.Timing.CHIPREAD_DUMMYCHIP)
+                {
+                    if (lastSeenResults.TryGetValue(result.Chip, out TimeResult old))
+                    {
+                        if (result.Seconds > old.Seconds)
+                        {
+                            lastSeenResults[result.Chip] = result;
+                        }
+                    }
+                    else
+                    {
+                        lastSeenResults[result.Chip] = result;
+                    }
+                }
+                // start        // key == bib or chip
+                if (result.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                {
+                    if (result.SegmentId == Constants.Timing.SEGMENT_START)
+                    {
+                        startTimes[result.Bib] = result;
+                    }
+                }
+                else if (result.Chip != Constants.Timing.CHIPREAD_DUMMYCHIP)
+                {
+                    if (result.SegmentId == Constants.Timing.SEGMENT_START)
+                    {
+                        startTimes[result.Chip] = result;
+                    }
+                }
+                // finish       // key == bib or chip
+                if (result.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                {
+                    if (result.SegmentId == Constants.Timing.SEGMENT_FINISH)
+                    {
+                        startTimes[result.Bib] = result;
+                    }
+                }
+                else if (result.Chip != Constants.Timing.CHIPREAD_DUMMYCHIP)
+                {
+                    if (result.SegmentId == Constants.Timing.SEGMENT_FINISH)
+                    {
+                        startTimes[result.Chip] = result;
+                    }
+                }
+                // segment      // key == segmentID
+                if (!segmentTimes.TryGetValue(result.SegmentId, out List<TimeResult> segTimeList))
+                {
+                    segTimeList = new();
+                    segmentTimes[result.SegmentId] = segTimeList;
+                }
+                segTimeList.Add(result);
             }
             // load chipreads
             foreach (ChipRead read in database.GetChipReads(theEvent.Identifier))
             {
-
+                // Unprocessed == all reads that haven't been looked at but aren't announcer reads
+                if (read.Type == Constants.Timing.CHIPREAD_STATUS_NONE)
+                {
+                    unprocessedChipReads.Add(read);
+                }
+                // Useful == all chip reads that are used for TimingResults
+                if (read.Type == Constants.Timing.CHIPREAD_STATUS_USED
+                    || read.Type == Constants.Timing.CHIPREAD_STATUS_NONE
+                    || read.Type == Constants.Timing.CHIPREAD_STATUS_STARTTIME
+                    || read.Type == Constants.Timing.CHIPREAD_STATUS_DNF
+                    || read.Type == Constants.Timing.CHIPREAD_STATUS_DNS
+                    )
+                {
+                    usefulChipReads.Add(read);
+                }
+                // notUseful == all chip reads that were processed but not used for TimingResults
+                else
+                {
+                    notUsefulChipReads.Add(read);
+                }
+                // announcerChipReads == unprocessed announcer chipreads
+                if (read.LocationID == Constants.Timing.LOCATION_ANNOUNCER)
+                {
+                    announcerChipReads.Add(read);
+                }
+                // announcerUsedChipReads == processed chipreads
+                if (read.Type == Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
+                {
+                    announcerChipReads.Add(read);
+                }
+                // dns == DidNotStart chipreads
+                if (read.Type == Constants.Timing.CHIPREAD_STATUS_DNS)
+                {
+                    dnsChipReads.Add(read);
+                }
             }
         }
 

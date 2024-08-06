@@ -206,8 +206,6 @@ namespace Chronokeep.Database.SQLite
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
-                new SQLiteParameter("@dummybib", Constants.Timing.CHIPREAD_DUMMYBIB),
-                new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER),
                 new SQLiteParameter("@dns", Constants.Timing.CHIPREAD_STATUS_DNS)
             });
             SQLiteDataReader reader = command.ExecuteReader();
