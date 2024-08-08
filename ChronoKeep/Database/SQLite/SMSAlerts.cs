@@ -3,9 +3,9 @@ using System.Data.SQLite;
 
 namespace Chronokeep.Database.SQLite
 {
-    internal class SMSAlerts
+    internal class SmsAlerts
     {
-        public static List<(int, int)> GetSMSAlerts(int eventId, SQLiteConnection connection)
+        public static List<(int, int)> GetSmsAlerts(int eventId, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM sms_alert WHERE event_id=@event;";
@@ -25,7 +25,7 @@ namespace Chronokeep.Database.SQLite
             return output;
         }
 
-        public static void AddSMSAlert(int eventId, int eventspecific_id, int segment_id, SQLiteConnection connection)
+        public static void AddSmsAlert(int eventId, int eventspecific_id, int segment_id, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO sms_alert (event_id, eventspecific_id, segment_id) VALUES (@event, @eventspec, @segment);";

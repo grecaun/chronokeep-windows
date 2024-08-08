@@ -35,5 +35,10 @@ namespace Chronokeep.Database.SQLite
             });
             command.ExecuteNonQuery();
         }
+
+        public static void RemoveEmailAlert(int eventId, int eventspecific_id, SQLiteConnection connection)
+        {
+            // TODO
+        }
     }
 }

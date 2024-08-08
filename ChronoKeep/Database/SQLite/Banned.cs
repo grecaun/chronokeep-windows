@@ -42,6 +42,11 @@ namespace Chronokeep.Database.SQLite
             }
         }
 
+        public static void RemoveBannedPhones(List<string> phones, SQLiteConnection connection)
+        {
+            // TODO
+        }
+
         public static List<string> GetBannedEmails(SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
@@ -77,6 +82,11 @@ namespace Chronokeep.Database.SQLite
                 }
                 transaction.Commit();
             }
+        }
+
+        public static void RemoveBannedEmails(List<string> emails, SQLiteConnection connection)
+        {
+            // TODO
         }
     }
 }

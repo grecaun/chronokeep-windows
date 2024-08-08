@@ -12,8 +12,8 @@ namespace Chronokeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 161
-         * NEXT AVAILABLE   = 162
+         * HIGHEST MUTEX ID = 164
+         * NEXT AVAILABLE   = 165
          */
         private readonly int version = 66;
         public const int minimum_compatible_version = 63;
@@ -1164,7 +1164,7 @@ namespace Chronokeep
             Log.D("SQLiteInterface", "Checking for unprocessed reads.");
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            long output = Results.UnprocessedReadsExist(eventId, connection);
+            long output = ChipReads.UnprocessedReadsExist(eventId, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output != 0;
@@ -2179,7 +2179,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            SMSAlerts.AddSMSAlert(eventId, eventspecific_id, segment_id, connection);
+            SmsAlerts.AddSmsAlert(eventId, eventspecific_id, segment_id, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
@@ -2194,7 +2194,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            List<(int, int)> output = SMSAlerts.GetSMSAlerts(eventId, connection);
+            List<(int, int)> output = SmsAlerts.GetSmsAlerts(eventId, connection);
             connection.Close();
             mutex.ReleaseMutex();
             return output;
@@ -2229,6 +2229,21 @@ namespace Chronokeep
             connection.Close();
             mutex.ReleaseMutex();
             return output;
+        }
+
+        public void RemoveEmailAlert(int eventId, int eventspecific_id)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 164");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 164");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            EmailAlerts.RemoveEmailAlert(eventId, eventspecific_id, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
         }
 
         public List<string> GetBannedPhones()
@@ -2273,6 +2288,21 @@ namespace Chronokeep
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Banned.AddBannedPhones(phones, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public void RemoveBannedPhones(List<string> phones)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 162");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 162");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Banned.RemoveBannedPhones(phones, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
@@ -2322,6 +2352,22 @@ namespace Chronokeep
             connection.Close();
             mutex.ReleaseMutex();
         }
+
+        public void RemoveBannedEmails(List<string> emails)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 163");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 163");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Banned.RemoveBannedEmails(emails, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
         public List<APISmsSubscription> GetSmsSubscriptions(int eventId)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 159");

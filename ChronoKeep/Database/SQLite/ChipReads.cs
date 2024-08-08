@@ -305,5 +305,21 @@ namespace Chronokeep.Database.SQLite
             reader.Close();
             return output;
         }
+
+        internal static long UnprocessedReadsExist(int eventId, SQLiteConnection connection)
+        {
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT COUNT(1) FROM chipreads WHERE event_id=@event AND read_status=@status;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", eventId),
+                new SQLiteParameter("@status", Constants.Timing.CHIPREAD_STATUS_NONE)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            reader.Read();
+            long output = reader.GetInt64(0);
+            reader.Close();
+            return output;
+        }
     }
 }
