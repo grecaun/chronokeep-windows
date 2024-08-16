@@ -49,8 +49,7 @@ namespace Chronokeep
             "Age",
             "Apparel",
             "Registration Date",
-            "Anonymous",
-            "SMS Enabled"
+            "Anonymous"
         };
         internal static readonly int FIRST = 1;
         internal static readonly int LAST = 2;
@@ -77,7 +76,6 @@ namespace Chronokeep
         internal static readonly int APPARELITEM = 23;
         internal static readonly int REGISTRATIONDATE = 24;
         internal static readonly int ANONYMOUS = 25;
-        internal static readonly int SMS_ENABLED = 26;
         Page page1 = null;
         Page page2 = null;
         Page multiplesPage = null;
@@ -380,8 +378,8 @@ namespace Chronokeep
                             data.Data[counter][keys[COMMENTS]], // comments
                             data.Data[counter][keys[OWES]], // owes
                             data.Data[counter][keys[OTHER]], // other
-                            data.Data[counter][keys[ANONYMOUS]] != null ? data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0 : false, // Set Anonymous if anything is in the field
-                            data.Data[counter][keys[SMS_ENABLED]] != null ? data.Data[counter][keys[SMS_ENABLED]].Trim().Equals("yes", StringComparison.OrdinalIgnoreCase) : false, // set SMS_Enabled only if the value is yes
+                            data.Data[counter][keys[ANONYMOUS]] != null && data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0, // Set Anonymous if anything is in the field
+                            false, // always false, this field is no longer used
                             data.Data[counter][keys[APPARELITEM]]
                             ),
                         data.Data[counter][keys[EMAIL]], // email
@@ -581,27 +579,29 @@ namespace Chronokeep
         internal static int GetHeaderBoxIndex(string s)
         {
             Log.D("ImportFileWindow", "Looking for a value for: " + s);
-            if (s.IndexOf("First", StringComparison.OrdinalIgnoreCase) >= 0)
+            if (s.Contains("First", StringComparison.OrdinalIgnoreCase))
             {
                 return FIRST;
             }
-            else if (s.IndexOf("Last", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (s.Contains("Last", StringComparison.OrdinalIgnoreCase))
             {
                 return LAST;
             }
-            else if (s.IndexOf("Gender", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (s.Contains("Gender", StringComparison.OrdinalIgnoreCase)
+                && !s.Contains("Race Group", StringComparison.OrdinalIgnoreCase))
             {
                 return GENDER;
             }
             else if (string.Equals(s, "Birthday", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(s, "Birthdate", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(s, "DOB", StringComparison.OrdinalIgnoreCase)
-                || (s.IndexOf("Date", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("Birth", StringComparison.OrdinalIgnoreCase) >= 0))
+                || (s.Contains("Date", StringComparison.OrdinalIgnoreCase) && s.Contains("Birth", StringComparison.OrdinalIgnoreCase)))
             {
                 return BIRTHDAY;
             }
             else if (string.Equals(s, "Street", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(s, "Address", StringComparison.OrdinalIgnoreCase))
+                || string.Equals(s, "Address", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(s, "Street Address", StringComparison.OrdinalIgnoreCase))
             {
                 return STREET;
             }
@@ -615,13 +615,14 @@ namespace Chronokeep
             {
                 return CITY;
             }
-            else if ((s.IndexOf("State", StringComparison.OrdinalIgnoreCase) >= 0
-                || s.IndexOf("Province", StringComparison.OrdinalIgnoreCase) >= 0)
-                && s.IndexOf("statement", StringComparison.OrdinalIgnoreCase) == -1)
+            else if ((s.Contains("State", StringComparison.OrdinalIgnoreCase)
+                || s.Contains("Province", StringComparison.OrdinalIgnoreCase))
+                && !s.Contains("Statement", StringComparison.OrdinalIgnoreCase))
             {
                 return STATE;
             }
-            else if (s.IndexOf("Zip", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (s.Contains("Zip", StringComparison.OrdinalIgnoreCase)
+                || s.Contains("Postal Code", StringComparison.OrdinalIgnoreCase))
             {
                 return ZIP;
             }
@@ -634,11 +635,11 @@ namespace Chronokeep
             {
                 return PHONE;
             }
-            else if (s.IndexOf("Mobile", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (s.Contains("Mobile", StringComparison.OrdinalIgnoreCase))
             {
                 return MOBILE;
             }
-            else if (s.IndexOf("Email", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (s.Contains("Email", StringComparison.OrdinalIgnoreCase))
             {
                 return EMAIL;
             }
@@ -646,14 +647,18 @@ namespace Chronokeep
             {
                 return PARENT;
             }
-            else if (s.IndexOf("Bib", StringComparison.OrdinalIgnoreCase) >= 0
-                || s.IndexOf("pinney", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if ((s.Contains("Bib", StringComparison.OrdinalIgnoreCase)
+                || s.Contains("pinney", StringComparison.OrdinalIgnoreCase))
+                && !s.Contains("Race Group", StringComparison.OrdinalIgnoreCase))
             {
                 return BIB;
             }
-            else if (s.IndexOf("Shirt", StringComparison.OrdinalIgnoreCase) >= 0
-                || s.IndexOf("Hat", StringComparison.OrdinalIgnoreCase) >= 0
-                || s.IndexOf("Fleece", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if ((s.Contains("Shirt", StringComparison.OrdinalIgnoreCase)
+                || s.Contains("Hat", StringComparison.OrdinalIgnoreCase)
+                || s.Contains("Fleece", StringComparison.OrdinalIgnoreCase)
+                || s.Contains("Apparel", StringComparison.OrdinalIgnoreCase)
+                || s.Contains("Hoodie", StringComparison.OrdinalIgnoreCase))
+                && !s.Contains("Quantity", StringComparison.OrdinalIgnoreCase))
             {
                 return APPARELITEM;
             }
@@ -670,19 +675,19 @@ namespace Chronokeep
             {
                 return OTHER;
             }
-            else if (s.IndexOf("Division", StringComparison.OrdinalIgnoreCase) >= 0
-                || s.IndexOf("Distance", StringComparison.OrdinalIgnoreCase) >= 0
+            else if (s.Contains("Division", StringComparison.OrdinalIgnoreCase) 
+                || s.Contains("Distance", StringComparison.OrdinalIgnoreCase)
                 || s.Equals("Event", StringComparison.OrdinalIgnoreCase))
             {
                 return DISTANCE;
             }
-            else if ((s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0 && s.IndexOf("name", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if ((s.Contains("emergency", StringComparison.OrdinalIgnoreCase) && s.Contains("name", StringComparison.OrdinalIgnoreCase))
                 || string.Equals(s, "Emergency", StringComparison.OrdinalIgnoreCase))
             {
                 return EMERGENCYNAME;
             }
-            else if (s.IndexOf("emergency", StringComparison.OrdinalIgnoreCase) >= 0
-                && (s.IndexOf("phone", StringComparison.OrdinalIgnoreCase) >= 0 || s.IndexOf("cell", StringComparison.OrdinalIgnoreCase) >= 0))
+            else if (s.Contains("emergency", StringComparison.OrdinalIgnoreCase)
+                && (s.Contains("phone", StringComparison.OrdinalIgnoreCase) || s.Contains("cell", StringComparison.OrdinalIgnoreCase)))
             {
                 return EMERGENCYPHONE;
             }
@@ -694,14 +699,10 @@ namespace Chronokeep
             {
                 return REGISTRATIONDATE;
             }
-            else if (s.IndexOf("Anonymous", StringComparison.OrdinalIgnoreCase) >= 0
-                || s.IndexOf("Private", StringComparison.OrdinalIgnoreCase) >= 0)
+            else if (s.Contains("Anonymous", StringComparison.OrdinalIgnoreCase)
+                || s.Contains("Private", StringComparison.OrdinalIgnoreCase))
             {
                 return ANONYMOUS;
-            }
-            else if (s.IndexOf("sms", StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                return SMS_ENABLED;
             }
             return 0;
         }
