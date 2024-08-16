@@ -544,44 +544,44 @@ namespace Chronokeep.UI.MainPages
                                 );
                             database.UpdateParticipant(updated);
                         }
-                        else if (partDictionary.TryGetValue((person.First, person.Last, person.Birthdate, person.Distance), out Participant old))
+                        else if (partDictionary.TryGetValue((person.First, person.Last, person.Birthdate, person.Distance), out Participant oldTwo))
                         {
                             Participant updated = new(
-                                old.Identifier,
-                                person.First.Length > 0 ? person.First : old.FirstName,
-                                person.Last.Length > 0 ? person.Last : old.LastName,
-                                old.Street,
-                                old.City,
-                                old.State,
-                                old.Zip,
+                                oldTwo.Identifier,
+                                person.First.Length > 0 ? person.First : oldTwo.FirstName,
+                                person.Last.Length > 0 ? person.Last : oldTwo.LastName,
+                                oldTwo.Street,
+                                oldTwo.City,
+                                oldTwo.State,
+                                oldTwo.Zip,
                                 person.Birthdate,
                                 new EventSpecific(
-                                    old.EventSpecific.Identifier,
+                                    oldTwo.EventSpecific.Identifier,
                                     theEvent.Identifier,
                                     distDictionary[person.Distance.ToLower()].Identifier,
                                     distDictionary[person.Distance.ToLower()].Name,
                                     person.Bib,
-                                    old.EventSpecific.CheckedIn,
-                                    old.EventSpecific.Comments,
-                                    old.EventSpecific.Owes,
-                                    old.EventSpecific.Other,
-                                    old.EventSpecific.Status,
-                                    old.EventSpecific.AgeGroupName,
-                                    old.EventSpecific.AgeGroupId,
+                                    oldTwo.EventSpecific.CheckedIn,
+                                    oldTwo.EventSpecific.Comments,
+                                    oldTwo.EventSpecific.Owes,
+                                    oldTwo.EventSpecific.Other,
+                                    oldTwo.EventSpecific.Status,
+                                    oldTwo.EventSpecific.AgeGroupName,
+                                    oldTwo.EventSpecific.AgeGroupId,
                                     person.Anonymous,
                                     person.SMSEnabled,
                                     person.Apparel
                                     ),
-                                old.Email,
-                                old.Phone,
-                                person.Mobile.Length > 0 ? person.Mobile : old.Mobile,
-                                old.Parent,
-                                old.Country,
-                                old.Street2,
+                                oldTwo.Email,
+                                oldTwo.Phone,
+                                person.Mobile.Length > 0 ? person.Mobile : oldTwo.Mobile,
+                                oldTwo.Parent,
+                                oldTwo.Country,
+                                oldTwo.Street2,
                                 person.Gender,
-                                old.ECName,
-                                old.ECPhone,
-                                old.Chip
+                                oldTwo.ECName,
+                                oldTwo.ECPhone,
+                                oldTwo.Chip
                                 );
                             database.UpdateParticipant(updated);
                         }
