@@ -653,12 +653,18 @@ namespace Chronokeep
             {
                 return BIB;
             }
-            else if ((s.Contains("Shirt", StringComparison.OrdinalIgnoreCase)
-                || s.Contains("Hat", StringComparison.OrdinalIgnoreCase)
-                || s.Contains("Fleece", StringComparison.OrdinalIgnoreCase)
-                || s.Contains("Apparel", StringComparison.OrdinalIgnoreCase)
-                || s.Contains("Hoodie", StringComparison.OrdinalIgnoreCase))
-                && !s.Contains("Quantity", StringComparison.OrdinalIgnoreCase))
+            else if (
+                (s.Contains("Shirt", StringComparison.OrdinalIgnoreCase)
+                    || s.Contains("Hat", StringComparison.OrdinalIgnoreCase)
+                    || s.Contains("Fleece", StringComparison.OrdinalIgnoreCase)
+                    || s.Contains("Apparel", StringComparison.OrdinalIgnoreCase)
+                    || s.Contains("Hoodie", StringComparison.OrdinalIgnoreCase)
+                )
+                && !(s.Contains("Quantity", StringComparison.OrdinalIgnoreCase)
+                    || s.Contains("Options", StringComparison.OrdinalIgnoreCase)
+                    || s.Contains("Details", StringComparison.OrdinalIgnoreCase)
+                )
+            )
             {
                 return APPARELITEM;
             }
