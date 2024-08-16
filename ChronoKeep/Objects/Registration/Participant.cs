@@ -10,7 +10,7 @@ namespace Chronokeep.Objects.Registration
     public class Participant
     {
         [JsonPropertyName("id")]
-        public int Id { get; set; }
+        public string Id { get; set; }
         [JsonPropertyName("bib")]
         public string Bib { get; set; }
         [JsonPropertyName("first")]

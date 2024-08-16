@@ -90,10 +90,8 @@ namespace Chronokeep.Network.Registration
             server.Bind(new IPEndPoint(IPAddress.Any, NetCore.TCPPort()));
             server.Listen(10);
             clients.Add(server);
-            int counter = 0;
             while (running)
             {
-                Log.D("Network.Registration.RegistrationWorker", string.Format("Registration loop number {0}.", ++counter));
                 readList.Clear();
                 readList.AddRange(clients);
                 try
@@ -243,7 +241,11 @@ namespace Chronokeep.Network.Registration
                                                 try
                                                 {
                                                     ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message);
-                                                    Objects.Participant updatedPart = database.GetParticipant(theEvent.Identifier, addReq.Participant.Id);
+                                                    if (!int.TryParse(addReq.Participant.Id, out int eventSpecId))
+                                                    {
+                                                        eventSpecId = -1;
+                                                    }
+                                                    Objects.Participant updatedPart = database.GetParticipantEventSpecific(theEvent.Identifier, eventSpecId);
                                                     if (updatedPart == null)
                                                     {
                                                         SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
@@ -274,6 +276,91 @@ namespace Chronokeep.Network.Registration
                                                         SendParticipants(theEvent);
                                                         mWindow.UpdateParticipantsFromRegistration();
                                                     }
+                                                }
+                                                catch (Exception e)
+                                                {
+                                                    Log.E("Network.Registration.RegistrationWorker", string.Format("Error deserializing json for add participant. {0}", e.Message));
+                                                    SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
+                                                    {
+                                                        Error = RegistrationError.PARTICIPANT_NOT_FOUND
+                                                    }));
+                                                }
+                                                break;
+                                            case Request.ADD_UPDATE_PARTICIPANT:
+                                                Log.D("Network.Registration.RegistrationWorker", "Received add/update participant message.");
+                                                try
+                                                {
+                                                    ModifyMultipleParticipants addReq = JsonSerializer.Deserialize<ModifyMultipleParticipants>(message);
+                                                    List<Objects.Participant> newParts = new();
+                                                    List<Objects.Participant> updParts = new();
+                                                    Dictionary<string, Objects.Participant> partDict = new();
+                                                    foreach (Objects.Participant p in database.GetParticipants(theEvent.Identifier))
+                                                    {
+                                                        partDict[p.EventIdentifier.ToString()] = p;
+                                                    }
+                                                    foreach (Participant part in addReq.Participants)
+                                                    {
+                                                        Log.D("Network.Registration.RegistrationWorker", "Participant ID: " + part.Id);
+                                                        if (distanceDictionary.TryGetValue(part.Distance, out Distance distance))
+                                                        {
+                                                            if (part.Id.Length < 1)
+                                                            {
+                                                                Log.D("Network.Registration.RegistrationWorker", "New Part - Bib: " + part.Bib);
+                                                                Objects.Participant newPart = new(
+                                                                    part.FirstName,
+                                                                    part.LastName,
+                                                                    "", // street
+                                                                    "", // city
+                                                                    "", // state
+                                                                    "", // zip
+                                                                    part.Birthdate,
+                                                                    new EventSpecific(
+                                                                        theEvent.Identifier,
+                                                                        distance.Identifier,
+                                                                        part.Distance,
+                                                                        part.Bib,
+                                                                        0,  // checked-in
+                                                                        "", // comments
+                                                                        "", // owes
+                                                                        "", // other
+                                                                        false,
+                                                                        part.SMSEnabled,
+                                                                        ""
+                                                                        ),
+                                                                    "", // email
+                                                                    "", // phone
+                                                                    part.Mobile,
+                                                                    "", // parent
+                                                                    "", // country
+                                                                    "", // street2
+                                                                    part.Gender,
+                                                                    "", // emergency name
+                                                                    ""  // emergency phone
+                                                                    );
+                                                                newPart.Trim();
+                                                                newPart.FormatData();
+                                                                newParts.Add(newPart);
+                                                            }
+                                                            else if (partDict.TryGetValue(part.Id, out Objects.Participant updatedPart))
+                                                            {
+                                                                Log.D("Network.Registration.RegistrationWorker", "Updated Part - Bib: " + part.Bib);
+                                                                updatedPart.Update(
+                                                                    part.FirstName,
+                                                                    part.LastName,
+                                                                    part.Gender,
+                                                                    part.Birthdate,
+                                                                    distance,
+                                                                    part.Bib,
+                                                                    part.SMSEnabled,
+                                                                    part.Mobile
+                                                                    );
+                                                                updParts.Add(updatedPart);
+                                                            }
+                                                        }
+                                                    }
+                                                    database.AddParticipants(newParts);
+                                                    database.UpdateParticipants(updParts);
+                                                    mWindow.UpdateParticipantsFromRegistration();
                                                 }
                                                 catch (Exception e)
                                                 {
@@ -361,13 +448,13 @@ namespace Chronokeep.Network.Registration
 
         public List<Participant> GetParticipants(Event theEvent)
         {
-            List<Participant> output = new List<Participant>();
+            List<Participant> output = new();
             List<Objects.Participant> participants = database.GetParticipants(theEvent.Identifier);
             foreach (Objects.Participant participant in participants)
             {
                 output.Add(new Participant
                 {
-                    Id = participant.Identifier,
+                    Id = participant.EventIdentifier.ToString(),
                     Bib = participant.Bib,
                     FirstName = participant.FirstName,
                     LastName = participant.LastName,
