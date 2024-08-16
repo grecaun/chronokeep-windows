@@ -8,7 +8,7 @@ namespace Chronokeep.Objects.API
 
         public APIPerson(Participant person)
         {
-            this.Identifier = person.Identifier.ToString();
+            this.Identifier = person.EventIdentifier.ToString();
             this.Bib = person.Bib.ToString();
             this.First = person.Anonymous ? "" : person.FirstName;
             this.Last = person.Anonymous ? "" : person.LastName;

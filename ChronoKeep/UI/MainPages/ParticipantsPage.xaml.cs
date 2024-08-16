@@ -487,11 +487,13 @@ namespace Chronokeep.UI.MainPages
             {
                 GetParticipantsResponse response = await APIHandlers.GetParticipants(api, event_ids[0], event_ids[1]);
                 // Key is (First, Last, Birthdate, Distance)
-                Dictionary<(string, string, string, string), Participant> partDictionary = new Dictionary<(string, string, string, string), Participant>();
-                Dictionary<string, Distance> distDictionary = new Dictionary<string, Distance>();
+                Dictionary<(string, string, string, string), Participant> partDictionary = new();
+                Dictionary<string, Participant> partESDictionary = new();
+                Dictionary<string, Distance> distDictionary = new();
                 foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                 {
                     partDictionary[(p.FirstName, p.LastName, p.Birthdate, p.Distance)] = p;
+                    partESDictionary[p.EventIdentifier.ToString()] = p;
                 }
                 foreach (Distance d in database.GetDistances(theEvent.Identifier))
                 {
@@ -499,55 +501,94 @@ namespace Chronokeep.UI.MainPages
                 }
                 foreach (APIPerson person in response.Participants)
                 {
-                    if (partDictionary.ContainsKey((person.First, person.Last, person.Birthdate, person.Distance)))
+                    if (distDictionary.TryGetValue(person.Distance.ToLower(), out Distance distance))
                     {
-                        if (distDictionary.ContainsKey(person.Distance.ToLower()))
+                        if (partESDictionary.TryGetValue(person.Identifier, out Participant old))
                         {
-                            Participant updated = new Participant(
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].Identifier,
-                                person.First.Length > 0 ? person.First : partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].FirstName,
-                                person.Last.Length > 0 ? person.Last : partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].LastName,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].Street,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].City,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].State,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].Zip,
+                            Participant updated = new(
+                                old.Identifier,
+                                person.First.Length > 0 ? person.First : old.FirstName,
+                                person.Last.Length > 0 ? person.Last : old.LastName,
+                                old.Street,
+                                old.City,
+                                old.State,
+                                old.Zip,
                                 person.Birthdate,
                                 new EventSpecific(
-                                    partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].EventSpecific.Identifier,
+                                    old.EventSpecific.Identifier,
                                     theEvent.Identifier,
                                     distDictionary[person.Distance.ToLower()].Identifier,
                                     distDictionary[person.Distance.ToLower()].Name,
                                     person.Bib,
-                                    partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].EventSpecific.CheckedIn,
-                                    partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].EventSpecific.Comments,
-                                    partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].EventSpecific.Owes,
-                                    partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].EventSpecific.Other,
-                                    partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].EventSpecific.Status,
-                                    partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].EventSpecific.AgeGroupName,
-                                    partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].EventSpecific.AgeGroupId,
+                                    old.EventSpecific.CheckedIn,
+                                    old.EventSpecific.Comments,
+                                    old.EventSpecific.Owes,
+                                    old.EventSpecific.Other,
+                                    old.EventSpecific.Status,
+                                    old.EventSpecific.AgeGroupName,
+                                    old.EventSpecific.AgeGroupId,
                                     person.Anonymous,
                                     person.SMSEnabled,
                                     person.Apparel
                                     ),
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].Email,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].Phone,
-                                person.Mobile.Length > 0 ? person.Mobile : partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].Mobile,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].Parent,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].Country,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].Street2,
+                                old.Email,
+                                old.Phone,
+                                person.Mobile.Length > 0 ? person.Mobile : old.Mobile,
+                                old.Parent,
+                                old.Country,
+                                old.Street2,
                                 person.Gender,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].ECName,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].ECPhone,
-                                partDictionary[(person.First, person.Last, person.Birthdate, person.Distance)].Chip
+                                old.ECName,
+                                old.ECPhone,
+                                old.Chip
                                 );
                             database.UpdateParticipant(updated);
                         }
-                    }
-                    else
-                    {
-                        if (distDictionary.ContainsKey(person.Distance.ToLower()))
+                        else if (partDictionary.TryGetValue((person.First, person.Last, person.Birthdate, person.Distance), out Participant old))
                         {
-                            database.AddParticipant(new Participant(
+                            Participant updated = new(
+                                old.Identifier,
+                                person.First.Length > 0 ? person.First : old.FirstName,
+                                person.Last.Length > 0 ? person.Last : old.LastName,
+                                old.Street,
+                                old.City,
+                                old.State,
+                                old.Zip,
+                                person.Birthdate,
+                                new EventSpecific(
+                                    old.EventSpecific.Identifier,
+                                    theEvent.Identifier,
+                                    distDictionary[person.Distance.ToLower()].Identifier,
+                                    distDictionary[person.Distance.ToLower()].Name,
+                                    person.Bib,
+                                    old.EventSpecific.CheckedIn,
+                                    old.EventSpecific.Comments,
+                                    old.EventSpecific.Owes,
+                                    old.EventSpecific.Other,
+                                    old.EventSpecific.Status,
+                                    old.EventSpecific.AgeGroupName,
+                                    old.EventSpecific.AgeGroupId,
+                                    person.Anonymous,
+                                    person.SMSEnabled,
+                                    person.Apparel
+                                    ),
+                                old.Email,
+                                old.Phone,
+                                person.Mobile.Length > 0 ? person.Mobile : old.Mobile,
+                                old.Parent,
+                                old.Country,
+                                old.Street2,
+                                person.Gender,
+                                old.ECName,
+                                old.ECPhone,
+                                old.Chip
+                                );
+                            database.UpdateParticipant(updated);
+                        }
+                        else
+                        {
+                            database.AddParticipant(
+                                new Participant(
                                     person.First,
                                     person.Last,
                                     "",
@@ -567,7 +608,7 @@ namespace Chronokeep.UI.MainPages
                                         person.Anonymous,
                                         person.SMSEnabled,
                                         person.Apparel
-                                        ),
+                                    ),
                                     "",
                                     "",
                                     person.Mobile,
@@ -577,7 +618,8 @@ namespace Chronokeep.UI.MainPages
                                     person.Gender,
                                     "",
                                     ""
-                                    ));
+                                )
+                            );
                         }
                     }
                 }
@@ -617,8 +659,8 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             // Change Participant to APIPerson
-            List<APIPerson> upParticipants = new List<APIPerson>();
-            List<BibChip> upBibChips = new List<BibChip>();
+            List<APIPerson> upParticipants = new();
+            List<BibChip> upBibChips = new();
             Log.D("UI.MainPages.ParticipantsPage", "Participants count: " + participants.Count.ToString());
             foreach (Participant part in participants)
             {
@@ -636,7 +678,6 @@ namespace Chronokeep.UI.MainPages
             // Get rid of old information.
             try
             {
-                await APIHandlers.DeleteParticipants(api, event_ids[0], event_ids[1]);
                 await APIHandlers.DeleteBibChips(api, event_ids[0], event_ids[1]);
             }
             catch (APIException ex)
