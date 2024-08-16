@@ -296,7 +296,7 @@ namespace Chronokeep.Network.Registration
                                                     Dictionary<string, Objects.Participant> partDict = new();
                                                     foreach (Objects.Participant p in database.GetParticipants(theEvent.Identifier))
                                                     {
-                                                        partDict[p.EventIdentifier.ToString()] = p;
+                                                        partDict[p.EventSpecific.Identifier.ToString()] = p;
                                                     }
                                                     foreach (Participant part in addReq.Participants)
                                                     {
@@ -454,7 +454,7 @@ namespace Chronokeep.Network.Registration
             {
                 output.Add(new Participant
                 {
-                    Id = participant.EventIdentifier.ToString(),
+                    Id = participant.EventSpecific.Identifier.ToString(),
                     Bib = participant.Bib,
                     FirstName = participant.FirstName,
                     LastName = participant.LastName,

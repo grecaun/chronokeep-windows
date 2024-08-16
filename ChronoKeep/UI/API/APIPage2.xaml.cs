@@ -39,7 +39,7 @@ namespace Chronokeep.UI.API
             int ix = 0;
             int count = 1;
             Log.D("UI.API.APIPage2", "Adding events to combo box.");
-            events.Events.Sort((a, b) => b.RecentTime.CompareTo(a.RecentTime));
+            events.Events.Sort((a, b) => b.CompareTo(a));
             if (events.Events != null)
             {
                 foreach (APIEvent ev in events.Events)

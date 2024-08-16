@@ -493,7 +493,7 @@ namespace Chronokeep.UI.MainPages
                 foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                 {
                     partDictionary[(p.FirstName, p.LastName, p.Birthdate, p.Distance)] = p;
-                    partESDictionary[p.EventIdentifier.ToString()] = p;
+                    partESDictionary[p.EventSpecific.Identifier.ToString()] = p;
                 }
                 foreach (Distance d in database.GetDistances(theEvent.Identifier))
                 {

@@ -577,7 +577,7 @@ namespace Chronokeep.Objects
             if (other == null) return false;
             return Identifier == other.Identifier
                 && Bib == other.Bib
-                && EventIdentifier == other.EventIdentifier
+                && EventSpecific.Identifier == other.EventSpecific.Identifier
                 && FirstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
                 && LastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
                 && Street.Equals(other.Street, StringComparison.OrdinalIgnoreCase)

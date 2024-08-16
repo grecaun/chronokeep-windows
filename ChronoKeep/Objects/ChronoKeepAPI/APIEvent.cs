@@ -20,6 +20,28 @@ namespace Chronokeep.Objects.API
         [JsonPropertyName("type")]
         public string Type { get; set; }
         [JsonPropertyName("recent_time")]
-        public DateTime RecentTime { get; set; }
+        public string RecentTime { get; set; }
+
+        public int CompareTo(APIEvent other)
+        {
+            DateTime oneDate, twoDate;
+            try
+            {
+                oneDate = DateTime.Parse(RecentTime);
+            }
+            catch
+            {
+                oneDate = DateTime.Now;
+            }
+            try
+            {
+                twoDate = DateTime.Parse(other.RecentTime);
+            }
+            catch
+            {
+                twoDate = DateTime.Now;
+            }
+            return oneDate.CompareTo(twoDate);
+        }
     }
 }
