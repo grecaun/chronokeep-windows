@@ -285,6 +285,15 @@ namespace Chronokeep
             return GetEvent(Convert.ToInt32(CurEvent.Value));
         }
 
+        public void SetCurrentEvent(int eventID)
+        {
+            SetAppSetting(new()
+            {
+                Name = Constants.Settings.CURRENT_EVENT,
+                Value = eventID.ToString(),
+            });
+        }
+
         public Event GetEvent(int id)
         {
             if (id < 0)

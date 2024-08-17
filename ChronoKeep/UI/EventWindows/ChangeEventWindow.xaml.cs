@@ -56,7 +56,7 @@ namespace Chronokeep.UI
             if (one != null)
             {
                 Log.D("UI.ChangeEventWindow", "Selected event has ID of " + one.Identifier);
-                database.SetAppSetting(Constants.Settings.CURRENT_EVENT, one.Identifier.ToString());
+                database.SetCurrentEvent(one.Identifier);
             }
             else
             {
@@ -102,7 +102,7 @@ namespace Chronokeep.UI
             if (one != null)
             {
                 Log.D("UI.ChangeEventWindow", "Selected event has ID of " + one.Identifier);
-                database.SetAppSetting(Constants.Settings.CURRENT_EVENT, one.Identifier.ToString());
+                database.SetCurrentEvent(one.Identifier);
             }
             else
             {

@@ -33,6 +33,7 @@ namespace Chronokeep
         void SetStartWindow(Event anEvent);
         void SetFinishOptions(Event anEvent);
         Event GetCurrentEvent();
+        void SetCurrentEvent(int eventID);
         Event GetEvent(int id);
         List<Event> GetEvents();
 

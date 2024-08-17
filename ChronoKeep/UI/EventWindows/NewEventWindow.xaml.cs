@@ -201,7 +201,7 @@ namespace Chronokeep
                 {
                     database.AddDistance(new Distance("Default Distance", newEvent.Identifier));
                 }
-                database.SetAppSetting(Constants.Settings.CURRENT_EVENT, newEvent.Identifier.ToString());
+                database.SetCurrentEvent(newEvent.Identifier);
                 window.WindowFinalize(this);
             }
             this.Close();

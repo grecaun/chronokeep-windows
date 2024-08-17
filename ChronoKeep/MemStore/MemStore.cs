@@ -2,6 +2,7 @@
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects.ChronokeepRemote;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -14,177 +15,197 @@ namespace Chronokeep.MemStore
             public MutexLockException(string message) : base(message) { }
         }
 
+        private readonly int lockTimeout = 3000;
+
         // Singleton
         private static MemStore instance;
 
         // Items that don't rely on a specific Event
-        private static Mutex settingsMtx = new();
+        private static ReaderWriterLock settingsLock = new();
         // key == setting name
         private static Dictionary<string, AppSetting> settings = new();
 
-        private static Mutex apiMtx = new();
+        private static ReaderWriterLock apiLock = new();
         // key == api id
         private static Dictionary<int, APIObject> apis = new();
 
-        private static Mutex timingSystemsMtx = new();
+        private static ReaderWriterLock timingSystemsLock = new();
         // key == system id
         private static Dictionary<int, TimingSystem> timingSystems = new();
 
-        private static Mutex bannedMtx = new();
+        private static ReaderWriterLock bannedLock = new();
         private static HashSet<string> bannedPhones = new();
         private static HashSet<string> bannedEmails = new();
 
         // Event and the related fields
-        private static Mutex eventMtx = new();
+        private static ReaderWriterLock eventLock = new();
         private static Event theEvent;
 
-        private static Mutex distanceMtx = new();
+        private static ReaderWriterLock distanceLock = new();
         // key == distance id
         private static Dictionary<int, Distance> distances = new();
 
-        private static Mutex locationsMtx = new();
+        private static ReaderWriterLock locationsLock = new();
         // key == location id
         private static Dictionary<int, TimingLocation> locations = new();
 
-        private static Mutex segmentMtx = new();
+        private static ReaderWriterLock segmentLock = new();
         // key == segment id
         private static Dictionary<int, Segment> segments = new();
 
-        private static Mutex participantsMtx = new();
+        private static ReaderWriterLock participantsLock = new();
         // key == event specific id
         private static Dictionary<int, Participant> participants = new();
 
-        private static Mutex bibChipMtx = new();
+        private static ReaderWriterLock bibChipLock = new();
         // key == chip
         private static Dictionary<string, BibChipAssociation> chipToBibAssociations = new();
         // key == bib
         private static Dictionary<string, BibChipAssociation> bibToChipAssociations = new();
 
-        private static Mutex ageGroupMtx = new();
+        private static ReaderWriterLock ageGroupLock = new();
         // key == distanceId
         private static Dictionary<int, List<AgeGroup>> ageGroups = new();
 
-        private static Mutex alarmMtx = new();
+        private static ReaderWriterLock alarmLock = new();
         // key == bib
         private static Dictionary<string, Alarm> bibAlarms = new();
         // key == chip
         private static Dictionary<string, Alarm> chipAlarms = new();
 
-        private static Mutex remoteReadersMtx = new();
+        private static ReaderWriterLock remoteReadersLock = new();
         private static List<RemoteReader> remoteReaders = new();
 
-        private static Mutex alertsMtx = new();
+        private static ReaderWriterLock alertsLock = new();
         private static HashSet<(int, int)> smsAlerts = new();
         private static HashSet<int> emailAlerts = new();
         private static List<APISmsSubscription> smsSubscriptions = new();
 
         // Timing results
-        private static Mutex resultsMtx = new();
-        private static List<TimeResult> unprocessedTimingResults = new();
-        private static List<TimeResult> notUploadedTimingResults = new();
-        private static List<TimeResult> uploadedTimingResults = new();
-        // key == bib or chip
-        private static Dictionary<string, TimeResult> lastSeenResults = new();
-        // key == bib or chip
-        private static Dictionary<string, TimeResult> startTimes = new();
-        // key == bib or chip
-        private static Dictionary<string, TimeResult> finishTimes = new();
-        // key == segmentId
-        private static Dictionary<int, List<TimeResult>> segmentTimes = new();
+        private static ReaderWriterLock resultsLock = new();
+        private static List<TimeResult> timingResults = new();
 
         // Chip Read data
-        private static Mutex chipReadsMtx = new();
-        // Unprocessed == all reads that haven't been looked at but aren't announcer reads
-        private static List<ChipRead> unprocessedChipReads = new();
-        // Useful == all chip reads that are used for TimingResults
-        private static List<ChipRead> usefulChipReads = new();
-        // notUseful == all chip reads that were processed but not used for TimingResults
-        private static List<ChipRead> notUsefulChipReads = new();
-        // announcerChipReads == unprocessed announcer chipreads
-        private static List<ChipRead> announcerChipReads = new();
-        // announcerUsedChipReads == processed chipreads
-        private static List<ChipRead> announerUsedChipReads = new();
-        // dns == DidNotStart chipreads
-        private static List<ChipRead> dnsChipReads = new();
+        private static ReaderWriterLock chipReadsLock = new();
+        private static List<ChipRead> chipReads = new();
 
         // Local variables
         private IDBInterface database;
-        private DatabaseSaver databaseSaver;
 
         private MemStore(IMainWindow window, IDBInterface database)
         {
             this.database = database;
-            databaseSaver = DatabaseSaver.NewSaver(window, database);
-            // Load settings
-            if (!settingsMtx.WaitOne(3000))
+            // Use eventLock to ensure nothing reads from the database.
+            try
             {
-                throw new MutexLockException("Settings Mutex");
+                eventLock.AcquireWriterLock(lockTimeout);
+                try
+                {
+                    settingsLock.AcquireReaderLock(lockTimeout);
+                    // Load settings
+                    settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
+                    settings[Constants.Settings.COMPANY_NAME] = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
+                    settings[Constants.Settings.CONTACT_EMAIL] = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL);
+                    settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
+                    settings[Constants.Settings.UPDATE_ON_PAGE_CHANGE] = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
+                    settings[Constants.Settings.EXIT_NO_PROMPT] = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT);
+                    settings[Constants.Settings.CHECK_UPDATES] = database.GetAppSetting(Constants.Settings.CHECK_UPDATES);
+                    settings[Constants.Settings.CURRENT_THEME] = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
+                    settings[Constants.Settings.UPLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL);
+                    settings[Constants.Settings.DOWNLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL);
+                    settings[Constants.Settings.ANNOUNCER_WINDOW] = database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW);
+                    settings[Constants.Settings.ALARM_SOUND] = database.GetAppSetting(Constants.Settings.ALARM_SOUND);
+                    settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME);
+                    settings[Constants.Settings.TWILIO_ACCOUNT_SID] = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID);
+                    settings[Constants.Settings.TWILIO_AUTH_TOKEN] = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN);
+                    settings[Constants.Settings.TWILIO_PHONE_NUMBER] = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER);
+                    settings[Constants.Settings.MAILGUN_FROM_NAME] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME);
+                    settings[Constants.Settings.MAILGUN_FROM_EMAIL] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL);
+                    settings[Constants.Settings.MAILGUN_API_KEY] = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY);
+                    settings[Constants.Settings.MAILGUN_API_URL] = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL);
+                }
+                catch (ApplicationException e)
+                {
+                    Log.D("MemStore", "Exception aquiring settingsLock. " + e.Message);
+                    throw new MutexLockException("settingsLock");
+                }
+                finally
+                {
+                    settingsLock.ReleaseWriterLock();
+                }
+                try
+                {
+                    apiLock.AcquireWriterLock(lockTimeout);
+                    // Load apis
+                    foreach (APIObject api in database.GetAllAPI())
+                    {
+                        apis[api.Identifier] = api;
+                    }
+                }
+                catch (ApplicationException e)
+                {
+                    Log.D("MemStore", "Exception aquiring apiLock. " + e.Message);
+                    throw new MutexLockException("apiLock");
+                }
+                finally
+                {
+                    apiLock.ReleaseWriterLock();
+                }
+                try
+                {
+                    timingSystemsLock.AcquireWriterLock(lockTimeout);
+                    // load timingsystems
+                    foreach (TimingSystem system in database.GetTimingSystems())
+                    {
+                        timingSystems[system.SystemIdentifier] = system;
+                    }
+                }
+                catch (ApplicationException e)
+                {
+                    Log.D("MemStore", "Exception aquiring timingSystemsLock. " + e.Message);
+                    throw new MutexLockException("timingSystemsLock");
+                }
+                finally
+                {
+                    timingSystemsLock.ReleaseWriterLock();
+                }
+                try
+                {
+                    bannedLock.AcquireWriterLock(lockTimeout);
+                    // load banned phones
+                    foreach (string phone in database.GetBannedPhones())
+                    {
+                        bannedPhones.Add(phone);
+                    }
+                    // load banned emails
+                    foreach (string email in database.GetBannedEmails())
+                    {
+                        bannedEmails.Add(email);
+                    }
+                }
+                catch (ApplicationException e)
+                {
+                    Log.D("MemStore", "Exception aquiring bannedLock. " + e.Message);
+                    throw new MutexLockException("bannedLock");
+                }
+                finally
+                {
+                    bannedLock.ReleaseWriterLock();
+                }
+                // Load event
+                theEvent = database.GetCurrentEvent();
+                // Load all data
+                LoadEvent();
             }
-            settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
-            settings[Constants.Settings.COMPANY_NAME] = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
-            settings[Constants.Settings.CONTACT_EMAIL] = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL);
-            settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
-            settings[Constants.Settings.UPDATE_ON_PAGE_CHANGE] = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
-            settings[Constants.Settings.EXIT_NO_PROMPT] = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT);
-            settings[Constants.Settings.CHECK_UPDATES] = database.GetAppSetting(Constants.Settings.CHECK_UPDATES);
-            settings[Constants.Settings.CURRENT_THEME] = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
-            settings[Constants.Settings.UPLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL);
-            settings[Constants.Settings.DOWNLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL);
-            settings[Constants.Settings.ANNOUNCER_WINDOW] = database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW);
-            settings[Constants.Settings.ALARM_SOUND] = database.GetAppSetting(Constants.Settings.ALARM_SOUND);
-            settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME);
-            settings[Constants.Settings.TWILIO_ACCOUNT_SID] = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID);
-            settings[Constants.Settings.TWILIO_AUTH_TOKEN] = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN);
-            settings[Constants.Settings.TWILIO_PHONE_NUMBER] = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER);
-            settings[Constants.Settings.MAILGUN_FROM_NAME] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME);
-            settings[Constants.Settings.MAILGUN_FROM_EMAIL] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL);
-            settings[Constants.Settings.MAILGUN_API_KEY] = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY);
-            settings[Constants.Settings.MAILGUN_API_URL] = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL);
-            settingsMtx.ReleaseMutex();
-            if (!apiMtx.WaitOne(3000))
+            catch (Exception e)
             {
-                throw new MutexLockException("API Mutex");
+                Log.D("MemStore", "Exception aquiring eventLock. " + e.Message);
+                throw new MutexLockException("eventLock");
             }
-            // Load apis
-            foreach (APIObject api in database.GetAllAPI())
+            finally
             {
-                apis[api.Identifier] = api;
+                eventLock.ReleaseWriterLock();
             }
-            apiMtx.ReleaseMutex();
-            if (!timingSystemsMtx.WaitOne(3000))
-            {
-                throw new MutexLockException("Timing Systems Mutex");
-            }
-            // load timingsystems
-            foreach (TimingSystem system in database.GetTimingSystems())
-            {
-                timingSystems[system.SystemIdentifier] = system;
-            }
-            timingSystemsMtx.ReleaseMutex();
-            if (!bannedMtx.WaitOne(3000))
-            {
-                throw new MutexLockException("Banned Mutex");
-            }
-            // load banned phones
-            foreach (string phone in database.GetBannedPhones())
-            {
-                bannedPhones.Add(phone);
-            }
-            // load banned emails
-            foreach (string email in database.GetBannedEmails())
-            {
-                bannedEmails.Add(email);
-            }
-            bannedMtx.ReleaseMutex();
-            if (!eventMtx.WaitOne(3000))
-            {
-                throw new MutexLockException("Event Mutex");
-            }
-            // Load event
-            theEvent = database.GetCurrentEvent();
-            // Load all data
-            LoadEvent();
-            eventMtx.ReleaseMutex();
         }
 
         public static MemStore GetMemStore(IMainWindow window, IDBInterface database)
@@ -202,246 +223,221 @@ namespace Chronokeep.MemStore
             {
                 return;
             }
-            if (!distanceMtx.WaitOne(3000))
+            try
             {
-                throw new MutexLockException("Distance Mutex");
-            }
-            // load distances
-            foreach (Distance dist in database.GetDistances(theEvent.Identifier))
-            {
-                distances[dist.Identifier] = dist;
-            }
-            distanceMtx.ReleaseMutex();
-            if (!locationsMtx.WaitOne(3000))
-            {
-                throw new MutexLockException("Locations Mutex");
-            }
-            // load locations
-            foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
-            {
-                locations[loc.Identifier] = loc;
-            }
-            locationsMtx.ReleaseMutex();
-            if (!segmentMtx.WaitOne(3000))
-            {
-                throw new MutexLockException("Segment Mutex");
-            }
-            // load segments
-            foreach (Segment seg in database.GetSegments(theEvent.Identifier))
-            {
-                segments[seg.Identifier] = seg;
-            }
-            segmentMtx.ReleaseMutex();
-            if (!participantsMtx.WaitOne(3000))
-            {
-                throw new MutexLockException("Participants Mutex");
-            }
-            // load participants
-            foreach (Participant part in database.GetParticipants(theEvent.Identifier))
-            {
-                participants[part.EventSpecific.Identifier] = part;
-            }
-            participantsMtx.ReleaseMutex();
-            if (!bibChipMtx.WaitOne(3000))
-            {
-                throw new MutexLockException("Bib Chip Mutex");
-            }
-            // load bibchipassociations
-            foreach (BibChipAssociation assoc in database.GetBibChips(theEvent.Identifier))
-            {
-                chipToBibAssociations[assoc.Chip] = assoc;
-                bibToChipAssociations[assoc.Bib] = assoc;
-            }
-            bibChipMtx.ReleaseMutex();
-            if (!ageGroupMtx.WaitOne(3000))
-            {
-                throw new MutexLockException("Age Group Mutex");
-            }
-            // load age groups
-            foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
-            {
-                if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
+                distanceLock.AcquireWriterLock(lockTimeout);
+                // load distances
+                foreach (Distance dist in database.GetDistances(theEvent.Identifier))
                 {
-                    value = new List<AgeGroup>();
-                    ageGroups[group.DistanceId] = value;
+                    distances[dist.Identifier] = dist;
                 }
-                value.Add(group);
             }
-            ageGroupMtx.ReleaseMutex();
-            if (!alarmMtx.WaitOne(3000))
+            catch (ApplicationException e)
             {
-                throw new MutexLockException("Alarms Mutex");
+                Log.D("MemStore", "Exception aquiring distanceLock. " + e.Message);
+                throw new MutexLockException("distanceLock");
             }
-            // load alarms
-            foreach (Alarm alarm in database.GetAlarms(theEvent.Identifier))
+            finally
             {
-                bibAlarms[alarm.Bib] = alarm;
-                chipAlarms[alarm.Chip] = alarm;
+                distanceLock.ReleaseWriterLock();
             }
-            alarmMtx.ReleaseMutex();
-            if (!remoteReadersMtx.WaitOne(3000))
+            try
             {
-                throw new MutexLockException("Remote Readers Mutex");
-            }
-            // load remote readers
-            foreach (RemoteReader reader in database.GetRemoteReaders(theEvent.Identifier))
-            {
-                remoteReaders.Add(reader);
-            }
-            remoteReadersMtx.ReleaseMutex();
-            if (!alertsMtx.WaitOne(3000))
-            {
-                throw new MutexLockException("Alerts Mutex");
-            }
-            // load sms alerts sent
-            foreach ((int, int) alert in database.GetSMSAlerts(theEvent.Identifier))
-            {
-                smsAlerts.Add(alert);
-            }
-            // load email alerts sent
-            foreach (int alert in database.GetEmailAlerts(theEvent.Identifier))
-            {
-                emailAlerts.Add(alert);
-            }
-            // load sms subscriptions
-            foreach (APISmsSubscription sub in database.GetSmsSubscriptions(theEvent.Identifier))
-            {
-                smsSubscriptions.Add(sub);
-            }
-            alertsMtx.ReleaseMutex();
-            if (!resultsMtx.WaitOne(3000))
-            {
-                throw new MutexLockException("Timing Results Mutex");
-            }
-            // load timingresults
-            foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
-            {
-                // split results into not-processed
-                // then processed and uploaded and processed but not uploaded
-                if (result.Status == Constants.Timing.TIMERESULT_STATUS_NONE)
+                locationsLock.AcquireWriterLock(lockTimeout);
+                // load locations
+                foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
                 {
-                    unprocessedTimingResults.Add(result);
+                    locations[loc.Identifier] = loc;
                 }
-                else if (result.Uploaded == Constants.Timing.TIMERESULT_UPLOADED_TRUE)
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception aquiring locationsLock. " + e.Message);
+                throw new MutexLockException("locationsLock");
+            }
+            finally
+            {
+                locationsLock.ReleaseWriterLock();
+            }
+            try
+            {
+                segmentLock.AcquireWriterLock(lockTimeout);
+                // load segments
+                foreach (Segment seg in database.GetSegments(theEvent.Identifier))
                 {
-                    uploadedTimingResults.Add(result);
+                    segments[seg.Identifier] = seg;
                 }
-                else
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception aquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
+            finally
+            {
+                segmentLock.ReleaseWriterLock();
+            }
+            try
+            {
+                participantsLock.AcquireWriterLock(lockTimeout);
+                // load participants
+                foreach (Participant part in database.GetParticipants(theEvent.Identifier))
                 {
-                    notUploadedTimingResults.Add(result);
+                    participants[part.EventSpecific.Identifier] = part;
                 }
-                // last seen    // key == bib or chip
-                if (result.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception aquiring participantsLock. " + e.Message);
+                throw new MutexLockException("participantsLock");
+            }
+            finally
+            {
+                participantsLock.ReleaseWriterLock();
+            }
+            try
+            {
+                bibChipLock.AcquireWriterLock(lockTimeout);
+                // load bibchipassociations
+                foreach (BibChipAssociation assoc in database.GetBibChips(theEvent.Identifier))
                 {
-                    if (lastSeenResults.TryGetValue(result.Bib, out TimeResult old))
+                    chipToBibAssociations[assoc.Chip] = assoc;
+                    bibToChipAssociations[assoc.Bib] = assoc;
+                }
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception aquiring bibChipLock. " + e.Message);
+                throw new MutexLockException("bibChipLock");
+            }
+            finally
+            {
+                bibChipLock.ReleaseWriterLock();
+            }
+            try
+            {
+                ageGroupLock.AcquireWriterLock(lockTimeout);
+                // load age groups
+                foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
+                {
+                    if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
                     {
-                        if (result.Seconds > old.Seconds)
-                        {
-                            lastSeenResults[result.Bib] = result;
-                        }
+                        value = new List<AgeGroup>();
+                        ageGroups[group.DistanceId] = value;
                     }
-                    else
-                    {
-                        lastSeenResults[result.Bib] = result;
-                    }
+                    value.Add(group);
                 }
-                else if (result.Chip != Constants.Timing.CHIPREAD_DUMMYCHIP)
-                {
-                    if (lastSeenResults.TryGetValue(result.Chip, out TimeResult old))
-                    {
-                        if (result.Seconds > old.Seconds)
-                        {
-                            lastSeenResults[result.Chip] = result;
-                        }
-                    }
-                    else
-                    {
-                        lastSeenResults[result.Chip] = result;
-                    }
-                }
-                // start        // key == bib or chip
-                if (result.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                {
-                    if (result.SegmentId == Constants.Timing.SEGMENT_START)
-                    {
-                        startTimes[result.Bib] = result;
-                    }
-                }
-                else if (result.Chip != Constants.Timing.CHIPREAD_DUMMYCHIP)
-                {
-                    if (result.SegmentId == Constants.Timing.SEGMENT_START)
-                    {
-                        startTimes[result.Chip] = result;
-                    }
-                }
-                // finish       // key == bib or chip
-                if (result.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
-                {
-                    if (result.SegmentId == Constants.Timing.SEGMENT_FINISH)
-                    {
-                        startTimes[result.Bib] = result;
-                    }
-                }
-                else if (result.Chip != Constants.Timing.CHIPREAD_DUMMYCHIP)
-                {
-                    if (result.SegmentId == Constants.Timing.SEGMENT_FINISH)
-                    {
-                        startTimes[result.Chip] = result;
-                    }
-                }
-                // segment      // key == segmentID
-                if (!segmentTimes.TryGetValue(result.SegmentId, out List<TimeResult> segTimeList))
-                {
-                    segTimeList = new();
-                    segmentTimes[result.SegmentId] = segTimeList;
-                }
-                segTimeList.Add(result);
             }
-            resultsMtx.ReleaseMutex();
-            if (!chipReadsMtx.WaitOne(3000))
+            catch (ApplicationException e)
             {
-                throw new MutexLockException("Chip Reads Mutex");
+                Log.D("MemStore", "Exception aquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
             }
-            // load chipreads
-            foreach (ChipRead read in database.GetChipReads(theEvent.Identifier))
+            finally
             {
-                // Unprocessed == all reads that haven't been looked at but aren't announcer reads
-                if (read.Type == Constants.Timing.CHIPREAD_STATUS_NONE)
+                ageGroupLock.ReleaseWriterLock();
+            }
+            try
+            {
+                alarmLock.AcquireWriterLock(lockTimeout);
+                // load alarms
+                foreach (Alarm alarm in database.GetAlarms(theEvent.Identifier))
                 {
-                    unprocessedChipReads.Add(read);
-                }
-                // Useful == all chip reads that are used for TimingResults
-                if (read.Type == Constants.Timing.CHIPREAD_STATUS_USED
-                    || read.Type == Constants.Timing.CHIPREAD_STATUS_NONE
-                    || read.Type == Constants.Timing.CHIPREAD_STATUS_STARTTIME
-                    || read.Type == Constants.Timing.CHIPREAD_STATUS_DNF
-                    || read.Type == Constants.Timing.CHIPREAD_STATUS_DNS
-                    )
-                {
-                    usefulChipReads.Add(read);
-                }
-                // notUseful == all chip reads that were processed but not used for TimingResults
-                else
-                {
-                    notUsefulChipReads.Add(read);
-                }
-                // announcerChipReads == unprocessed announcer chipreads
-                if (read.LocationID == Constants.Timing.LOCATION_ANNOUNCER)
-                {
-                    announcerChipReads.Add(read);
-                }
-                // announcerUsedChipReads == processed chipreads
-                if (read.Type == Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED)
-                {
-                    announcerChipReads.Add(read);
-                }
-                // dns == DidNotStart chipreads
-                if (read.Type == Constants.Timing.CHIPREAD_STATUS_DNS)
-                {
-                    dnsChipReads.Add(read);
+                    bibAlarms[alarm.Bib] = alarm;
+                    chipAlarms[alarm.Chip] = alarm;
                 }
             }
-            chipReadsMtx.ReleaseMutex();
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception aquiring alarmLock. " + e.Message);
+                throw new MutexLockException("alarmLock");
+            }
+            finally
+            {
+                alarmLock.ReleaseWriterLock();
+            }
+            try
+            {
+                remoteReadersLock.AcquireWriterLock(lockTimeout);
+                // load remote readers
+                foreach (RemoteReader reader in database.GetRemoteReaders(theEvent.Identifier))
+                {
+                    remoteReaders.Add(reader);
+                }
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception aquiring remoteReadersLock. " + e.Message);
+                throw new MutexLockException("remoteReadersLock");
+            }
+            finally
+            {
+                remoteReadersLock.ReleaseWriterLock();
+            }
+            try
+            {
+                alertsLock.AcquireWriterLock(lockTimeout);
+                // load sms alerts sent
+                foreach ((int, int) alert in database.GetSMSAlerts(theEvent.Identifier))
+                {
+                    smsAlerts.Add(alert);
+                }
+                // load email alerts sent
+                foreach (int alert in database.GetEmailAlerts(theEvent.Identifier))
+                {
+                    emailAlerts.Add(alert);
+                }
+                // load sms subscriptions
+                foreach (APISmsSubscription sub in database.GetSmsSubscriptions(theEvent.Identifier))
+                {
+                    smsSubscriptions.Add(sub);
+                }
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception aquiring alertsLock. " + e.Message);
+                throw new MutexLockException("alertsLock");
+            }
+            finally
+            {
+                alertsLock.ReleaseWriterLock();
+            }
+            try
+            {
+                resultsLock.AcquireWriterLock(lockTimeout);
+                // load timingresults
+                foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
+                {
+                    timingResults.Add(result);
+                }
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception aquiring resultsLock. " + e.Message);
+                throw new MutexLockException("resultsLock");
+            }
+            finally
+            {
+                resultsLock.ReleaseWriterLock();
+            }
+            try
+            {
+                chipReadsLock.AcquireWriterLock(lockTimeout);
+                // load chipreads
+                foreach (ChipRead read in database.GetChipReads(theEvent.Identifier))
+                {
+                    chipReads.Add(read);
+                }
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception aquiring chipReadsLock. " + e.Message);
+                throw new MutexLockException("chipReadsLock");
+            }
+            finally
+            {
+                chipReadsLock.ReleaseWriterLock();
+            }
         }
 
         public void AddAgeGroup(AgeGroup group)
@@ -680,6 +676,11 @@ namespace Chronokeep.MemStore
         }
 
         public Event GetCurrentEvent()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetCurrentEvent(int eventID)
         {
             throw new System.NotImplementedException();
         }

@@ -30,9 +30,14 @@ namespace Chronokeep
             InstantiateSerialPortList();
             reader = new NewReader(600, this);
             this.database = database;
-            eventId = Convert.ToInt32(database.GetAppSetting(Constants.Settings.CURRENT_EVENT).Value);
+            Event theEvent = database.GetCurrentEvent();
+            if (theEvent == null)
+            {
+                throw new Exception("no event set");
+            }
+            eventId = theEvent.Identifier;
             EventNameHolder.Visibility = Visibility.Visible;
-            eventName.Text = database.GetEvent(eventId).Name;
+            eventName.Text = theEvent.Name;
         }
 
         public static ChipReaderWindow NewWindow(IWindowCallback window, IDBInterface database)

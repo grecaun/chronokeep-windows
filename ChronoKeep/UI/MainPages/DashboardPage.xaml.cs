@@ -220,7 +220,7 @@ namespace Chronokeep.UI.MainPages
                                             lastID = tmp;
                                         }
                                     }
-                                    database.SetAppSetting(Constants.Settings.CURRENT_EVENT, lastID.ToString());
+                                    database.SetCurrentEvent(lastID);
                                     UpdateView();
                                     mWindow.UpdateStatus();
                                 }
@@ -244,7 +244,7 @@ namespace Chronokeep.UI.MainPages
                                         () =>
                                         {
                                             database.RemoveEvent(theEvent.Identifier);
-                                            database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
+                                            database.SetCurrentEvent(-1);
                                         }
                                         );
                                 }
@@ -309,7 +309,7 @@ namespace Chronokeep.UI.MainPages
                         lastID = tmp;
                     }
                 }
-                database.SetAppSetting(Constants.Settings.CURRENT_EVENT, lastID.ToString());
+                database.SetCurrentEvent(lastID);
                 UpdateView();
                 mWindow.UpdateStatus();
             }
@@ -592,7 +592,7 @@ namespace Chronokeep.UI.MainPages
                     () =>
                     {
                         database.RemoveEvent(theEvent.Identifier);
-                        database.SetAppSetting(Constants.Settings.CURRENT_EVENT, "-1");
+                        database.SetCurrentEvent(-1);
                     }
                     );
             }
