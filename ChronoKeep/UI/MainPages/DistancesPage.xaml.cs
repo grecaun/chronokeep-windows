@@ -124,14 +124,57 @@ namespace Chronokeep.UI.MainPages
             }
             // Check for and delete linked distances
             List<Distance> allDistances = database.GetDistances(theEvent.Identifier);
+            bool keepDeleting = true, ignoreParticipantCheck = false;
             foreach (Distance d in allDistances)
             {
+                if (!keepDeleting)
+                {
+                    return;
+                }
                 if (d.LinkedDistance >= 0 && d.LinkedDistance == distance.Identifier)
                 {
-                    database.RemoveDistance(d);
+                    if (!ignoreParticipantCheck && database.GetParticipants(theEvent.Identifier, d.Identifier).Count > 0)
+                    {
+                        keepDeleting = false;
+                        DialogBox.Show(
+                            "Distance has participants, continue?",
+                            "Yes", 
+                            "No",
+                            () => {
+                                keepDeleting = true;
+                                ignoreParticipantCheck = true;
+                                database.RemoveDistance(d);
+                            }
+                        );
+                    }
+                    else
+                    {
+                        database.RemoveDistance(d);
+                    }
                 }
             }
-            database.RemoveDistance(distance);
+            if (!keepDeleting)
+            {
+                return;
+            }
+            if (!ignoreParticipantCheck && database.GetParticipants(theEvent.Identifier, distance.Identifier).Count > 0)
+            {
+                keepDeleting = false;
+                DialogBox.Show(
+                    "Distance has participants, continue?",
+                    "Yes",
+                    "No",
+                    () => {
+                        keepDeleting = true;
+                        ignoreParticipantCheck = true;
+                        database.RemoveDistance(distance);
+                    }
+                );
+            }
+            else
+            {
+                database.RemoveDistance(distance);
+            }
             UpdateTimingWorker = true;
             UpdateView();
         }
