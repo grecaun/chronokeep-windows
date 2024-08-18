@@ -293,10 +293,12 @@ namespace Chronokeep.Network.Registration
                                                     ModifyMultipleParticipants addReq = JsonSerializer.Deserialize<ModifyMultipleParticipants>(message);
                                                     List<Objects.Participant> newParts = new();
                                                     List<Objects.Participant> updParts = new();
-                                                    Dictionary<string, Objects.Participant> partDict = new();
+                                                    Dictionary<(string, string, string, string), Objects.Participant> partDictionary = new();
+                                                    Dictionary<string, Objects.Participant> partESDict = new();
                                                     foreach (Objects.Participant p in database.GetParticipants(theEvent.Identifier))
                                                     {
-                                                        partDict[p.EventSpecific.Identifier.ToString()] = p;
+                                                        partESDict[p.EventSpecific.Identifier.ToString()] = p;
+                                                        partDictionary[(p.FirstName, p.LastName, p.Birthdate, p.Distance)] = p;
                                                     }
                                                     foreach (Participant part in addReq.Participants)
                                                     {
@@ -341,20 +343,38 @@ namespace Chronokeep.Network.Registration
                                                                 newPart.FormatData();
                                                                 newParts.Add(newPart);
                                                             }
-                                                            else if (partDict.TryGetValue(part.Id, out Objects.Participant updatedPart))
+                                                            else if (part.Bib.Length > 0)
                                                             {
-                                                                Log.D("Network.Registration.RegistrationWorker", "Updated Part - Bib: " + part.Bib);
-                                                                updatedPart.Update(
-                                                                    part.FirstName,
-                                                                    part.LastName,
-                                                                    part.Gender,
-                                                                    part.Birthdate,
-                                                                    distance,
-                                                                    part.Bib,
-                                                                    part.SMSEnabled,
-                                                                    part.Mobile
-                                                                    );
-                                                                updParts.Add(updatedPart);
+                                                                if (partESDict.TryGetValue(part.Id, out Objects.Participant updatedPart))
+                                                                {
+                                                                    Log.D("Network.Registration.RegistrationWorker", "Updated Part - Bib: " + part.Bib);
+                                                                    updatedPart.Update(
+                                                                        part.FirstName,
+                                                                        part.LastName,
+                                                                        part.Gender,
+                                                                        part.Birthdate,
+                                                                        distance,
+                                                                        part.Bib,
+                                                                        part.SMSEnabled,
+                                                                        part.Mobile
+                                                                        );
+                                                                    updParts.Add(updatedPart);
+                                                                }
+                                                                else if (partDictionary.TryGetValue((part.FirstName, part.LastName, part.Birthdate, part.Distance), out Objects.Participant oldTwo))
+                                                                {
+                                                                    Log.D("Network.Registration.RegistrationWorker", "Updated Part2 - Bib: " + part.Bib);
+                                                                    oldTwo.Update(
+                                                                        part.FirstName,
+                                                                        part.LastName,
+                                                                        part.Gender,
+                                                                        part.Birthdate,
+                                                                        distance,
+                                                                        part.Bib,
+                                                                        part.SMSEnabled,
+                                                                        part.Mobile
+                                                                        );
+                                                                    updParts.Add(oldTwo);
+                                                                }
                                                             }
                                                         }
                                                     }

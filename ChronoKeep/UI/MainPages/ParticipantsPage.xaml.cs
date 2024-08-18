@@ -501,7 +501,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 foreach (APIPerson person in response.Participants)
                 {
-                    if (distDictionary.TryGetValue(person.Distance.ToLower(), out Distance distance))
+                    if (person.Bib.Length > 0 && distDictionary.TryGetValue(person.Distance.ToLower(), out Distance distance))
                     {
                         if (partESDictionary.TryGetValue(person.Identifier, out Participant old))
                         {
