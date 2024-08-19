@@ -73,9 +73,6 @@ namespace Chronokeep
         // Participant Functions
         void AddParticipant(Participant person);
         void AddParticipants(List<Participant> people);
-        void RemoveEntry(int eventSpecificId);
-        void RemoveEntry(Participant person);
-        void RemoveEntries(List<Participant> people);
         void RemoveParticipant(int identifier);
         void RemoveParticipantEntry(Participant person);
         void RemoveParticipantEntries(List<Participant> participants);

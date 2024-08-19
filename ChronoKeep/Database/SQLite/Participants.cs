@@ -72,20 +72,12 @@ namespace Chronokeep.Database.SQLite
             command.ExecuteNonQuery();
         }
 
-        internal static void RemoveParticipantEntry(int identifier, SQLiteConnection connection)
+        internal static void RemoveEventSpecific(int identifier, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@0;";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@0", identifier) });
-            command.ExecuteNonQuery();
-        }
-
-        internal static void RemoveEntry(int eventSpecificId, SQLiteConnection connection)
-        {
-            SQLiteCommand command = connection.CreateCommand();
-            command.CommandText = "DELETE FROM eventspecific WHERE eventspecific_id=@eventSpecId;";
-            command.Parameters.Add(new SQLiteParameter("@eventSpecId", eventSpecificId));
             command.ExecuteNonQuery();
         }
 

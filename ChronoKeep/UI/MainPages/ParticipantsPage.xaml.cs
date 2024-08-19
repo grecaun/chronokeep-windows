@@ -253,7 +253,7 @@ namespace Chronokeep.UI.MainPages
             {
                 parts.Add(p);
             }
-            database.RemoveEntries(parts);
+            database.RemoveParticipantEntries(parts);
             UpdateView();
         }
 

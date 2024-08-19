@@ -416,7 +416,7 @@ namespace Chronokeep
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                Participants.RemoveParticipantEntry(person.Identifier, connection);
+                Participants.RemoveEventSpecific(person.Identifier, connection);
                 transaction.Commit();
             }
             connection.Close();
@@ -437,49 +437,7 @@ namespace Chronokeep
             {
                 foreach (Participant p in participants)
                 {
-                    Participants.RemoveParticipantEntry(p.Identifier, connection);
-                }
-                transaction.Commit();
-            }
-            connection.Close();
-            mutex.ReleaseMutex();
-        }
-
-        public void RemoveEntry(int eventSpecificId)
-        {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 23");
-            if (!mutex.WaitOne(3000))
-            {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 23");
-                return;
-            }
-            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
-            connection.Open();
-            Participants.RemoveEntry(eventSpecificId, connection);
-            connection.Close();
-            mutex.ReleaseMutex();
-        }
-
-        public void RemoveEntry(Participant person)
-        {
-            RemoveEntry(person.EventSpecific.Identifier);
-        }
-
-        public void RemoveEntries(List<Participant> people)
-        {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 24");
-            if (!mutex.WaitOne(3000))
-            {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 24");
-                return;
-            }
-            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
-            connection.Open();
-            using (var transaction = connection.BeginTransaction())
-            {
-                foreach (Participant p in people)
-                {
-                    Participants.RemoveEntry(p.EventSpecific.Identifier, connection);
+                    Participants.RemoveEventSpecific(p.Identifier, connection);
                 }
                 transaction.Commit();
             }

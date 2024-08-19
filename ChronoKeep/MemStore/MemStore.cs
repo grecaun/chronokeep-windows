@@ -10,9 +10,14 @@ namespace Chronokeep.MemStore
 {
     internal class MemStore : IDBInterface
     {
-        internal class MutexLockException : System.Exception
+        internal class MutexLockException : Exception
         {
             public MutexLockException(string message) : base(message) { }
+        }
+
+        internal class InvalidEventID : Exception
+        {
+            public InvalidEventID(string message) : base(message) { }
         }
 
         private readonly int lockTimeout = 3000;
@@ -60,8 +65,6 @@ namespace Chronokeep.MemStore
         private static ReaderWriterLock bibChipLock = new();
         // key == chip
         private static Dictionary<string, BibChipAssociation> chipToBibAssociations = new();
-        // key == bib
-        private static Dictionary<string, BibChipAssociation> bibToChipAssociations = new();
 
         private static ReaderWriterLock ageGroupLock = new();
         // key == distanceId
@@ -95,117 +98,6 @@ namespace Chronokeep.MemStore
         private MemStore(IMainWindow window, IDBInterface database)
         {
             this.database = database;
-            // Use eventLock to ensure nothing reads from the database.
-            try
-            {
-                eventLock.AcquireWriterLock(lockTimeout);
-                try
-                {
-                    settingsLock.AcquireReaderLock(lockTimeout);
-                    // Load settings
-                    settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
-                    settings[Constants.Settings.COMPANY_NAME] = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
-                    settings[Constants.Settings.CONTACT_EMAIL] = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL);
-                    settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
-                    settings[Constants.Settings.UPDATE_ON_PAGE_CHANGE] = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
-                    settings[Constants.Settings.EXIT_NO_PROMPT] = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT);
-                    settings[Constants.Settings.CHECK_UPDATES] = database.GetAppSetting(Constants.Settings.CHECK_UPDATES);
-                    settings[Constants.Settings.CURRENT_THEME] = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
-                    settings[Constants.Settings.UPLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL);
-                    settings[Constants.Settings.DOWNLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL);
-                    settings[Constants.Settings.ANNOUNCER_WINDOW] = database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW);
-                    settings[Constants.Settings.ALARM_SOUND] = database.GetAppSetting(Constants.Settings.ALARM_SOUND);
-                    settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME);
-                    settings[Constants.Settings.TWILIO_ACCOUNT_SID] = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID);
-                    settings[Constants.Settings.TWILIO_AUTH_TOKEN] = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN);
-                    settings[Constants.Settings.TWILIO_PHONE_NUMBER] = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER);
-                    settings[Constants.Settings.MAILGUN_FROM_NAME] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME);
-                    settings[Constants.Settings.MAILGUN_FROM_EMAIL] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL);
-                    settings[Constants.Settings.MAILGUN_API_KEY] = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY);
-                    settings[Constants.Settings.MAILGUN_API_URL] = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL);
-                }
-                catch (ApplicationException e)
-                {
-                    Log.D("MemStore", "Exception aquiring settingsLock. " + e.Message);
-                    throw new MutexLockException("settingsLock");
-                }
-                finally
-                {
-                    settingsLock.ReleaseWriterLock();
-                }
-                try
-                {
-                    apiLock.AcquireWriterLock(lockTimeout);
-                    // Load apis
-                    foreach (APIObject api in database.GetAllAPI())
-                    {
-                        apis[api.Identifier] = api;
-                    }
-                }
-                catch (ApplicationException e)
-                {
-                    Log.D("MemStore", "Exception aquiring apiLock. " + e.Message);
-                    throw new MutexLockException("apiLock");
-                }
-                finally
-                {
-                    apiLock.ReleaseWriterLock();
-                }
-                try
-                {
-                    timingSystemsLock.AcquireWriterLock(lockTimeout);
-                    // load timingsystems
-                    foreach (TimingSystem system in database.GetTimingSystems())
-                    {
-                        timingSystems[system.SystemIdentifier] = system;
-                    }
-                }
-                catch (ApplicationException e)
-                {
-                    Log.D("MemStore", "Exception aquiring timingSystemsLock. " + e.Message);
-                    throw new MutexLockException("timingSystemsLock");
-                }
-                finally
-                {
-                    timingSystemsLock.ReleaseWriterLock();
-                }
-                try
-                {
-                    bannedLock.AcquireWriterLock(lockTimeout);
-                    // load banned phones
-                    foreach (string phone in database.GetBannedPhones())
-                    {
-                        bannedPhones.Add(phone);
-                    }
-                    // load banned emails
-                    foreach (string email in database.GetBannedEmails())
-                    {
-                        bannedEmails.Add(email);
-                    }
-                }
-                catch (ApplicationException e)
-                {
-                    Log.D("MemStore", "Exception aquiring bannedLock. " + e.Message);
-                    throw new MutexLockException("bannedLock");
-                }
-                finally
-                {
-                    bannedLock.ReleaseWriterLock();
-                }
-                // Load event
-                theEvent = database.GetCurrentEvent();
-                // Load all data
-                LoadEvent();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception aquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            finally
-            {
-                eventLock.ReleaseWriterLock();
-            }
         }
 
         public static MemStore GetMemStore(IMainWindow window, IDBInterface database)
@@ -231,15 +123,12 @@ namespace Chronokeep.MemStore
                 {
                     distances[dist.Identifier] = dist;
                 }
+                distanceLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring distanceLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring distanceLock. " + e.Message);
                 throw new MutexLockException("distanceLock");
-            }
-            finally
-            {
-                distanceLock.ReleaseWriterLock();
             }
             try
             {
@@ -249,15 +138,12 @@ namespace Chronokeep.MemStore
                 {
                     locations[loc.Identifier] = loc;
                 }
+                locationsLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring locationsLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring locationsLock. " + e.Message);
                 throw new MutexLockException("locationsLock");
-            }
-            finally
-            {
-                locationsLock.ReleaseWriterLock();
             }
             try
             {
@@ -267,15 +153,12 @@ namespace Chronokeep.MemStore
                 {
                     segments[seg.Identifier] = seg;
                 }
+                segmentLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring segmentLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
                 throw new MutexLockException("segmentLock");
-            }
-            finally
-            {
-                segmentLock.ReleaseWriterLock();
             }
             try
             {
@@ -285,15 +168,12 @@ namespace Chronokeep.MemStore
                 {
                     participants[part.EventSpecific.Identifier] = part;
                 }
+                participantsLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring participantsLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
                 throw new MutexLockException("participantsLock");
-            }
-            finally
-            {
-                participantsLock.ReleaseWriterLock();
             }
             try
             {
@@ -302,40 +182,25 @@ namespace Chronokeep.MemStore
                 foreach (BibChipAssociation assoc in database.GetBibChips(theEvent.Identifier))
                 {
                     chipToBibAssociations[assoc.Chip] = assoc;
-                    bibToChipAssociations[assoc.Bib] = assoc;
                 }
+                bibChipLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring bibChipLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
                 throw new MutexLockException("bibChipLock");
-            }
-            finally
-            {
-                bibChipLock.ReleaseWriterLock();
             }
             try
             {
                 ageGroupLock.AcquireWriterLock(lockTimeout);
                 // load age groups
-                foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
-                {
-                    if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
-                    {
-                        value = new List<AgeGroup>();
-                        ageGroups[group.DistanceId] = value;
-                    }
-                    value.Add(group);
-                }
+                getAgeGroupDictionary();
+                ageGroupLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring ageGroupLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
                 throw new MutexLockException("ageGroupLock");
-            }
-            finally
-            {
-                ageGroupLock.ReleaseWriterLock();
             }
             try
             {
@@ -346,15 +211,12 @@ namespace Chronokeep.MemStore
                     bibAlarms[alarm.Bib] = alarm;
                     chipAlarms[alarm.Chip] = alarm;
                 }
+                alarmLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring alarmLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring alarmLock. " + e.Message);
                 throw new MutexLockException("alarmLock");
-            }
-            finally
-            {
-                alarmLock.ReleaseWriterLock();
             }
             try
             {
@@ -364,15 +226,12 @@ namespace Chronokeep.MemStore
                 {
                     remoteReaders.Add(reader);
                 }
+                remoteReadersLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring remoteReadersLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring remoteReadersLock. " + e.Message);
                 throw new MutexLockException("remoteReadersLock");
-            }
-            finally
-            {
-                remoteReadersLock.ReleaseWriterLock();
             }
             try
             {
@@ -392,15 +251,12 @@ namespace Chronokeep.MemStore
                 {
                     smsSubscriptions.Add(sub);
                 }
+                alertsLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring alertsLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring alertsLock. " + e.Message);
                 throw new MutexLockException("alertsLock");
-            }
-            finally
-            {
-                alertsLock.ReleaseWriterLock();
             }
             try
             {
@@ -410,15 +266,12 @@ namespace Chronokeep.MemStore
                 {
                     timingResults.Add(result);
                 }
+                resultsLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring resultsLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
                 throw new MutexLockException("resultsLock");
-            }
-            finally
-            {
-                resultsLock.ReleaseWriterLock();
             }
             try
             {
@@ -428,32 +281,390 @@ namespace Chronokeep.MemStore
                 {
                     chipReads.Add(read);
                 }
+                chipReadsLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception aquiring chipReadsLock. " + e.Message);
+                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
                 throw new MutexLockException("chipReadsLock");
             }
-            finally
+        }
+        internal void getAgeGroupDictionary()
+        {
+            ageGroups.Clear();
+            foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
             {
-                chipReadsLock.ReleaseWriterLock();
+                if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
+                {
+                    value = new List<AgeGroup>();
+                    ageGroups[group.DistanceId] = value;
+                }
+                value.Add(group);
             }
         }
 
+        /**
+         * Age Group Functions
+         */
+
         public void AddAgeGroup(AgeGroup group)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "AddAgeGroup");
+            try
+            {
+                ageGroupLock.AcquireWriterLock(lockTimeout);
+                database.AddAgeGroup(group);
+                getAgeGroupDictionary();
+                ageGroupLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
         }
 
         public void AddAgeGroups(List<AgeGroup> groups)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "AddAgeGroups");
+            try
+            {
+                ageGroupLock.AcquireWriterLock(lockTimeout);
+                database.AddAgeGroups(groups);
+                getAgeGroupDictionary();
+                ageGroupLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
         }
+
+        public List<AgeGroup> GetAgeGroups(int eventId)
+        {
+            Log.D("MemStore", "GetAgeGroups");
+            bool invalidEvent = false;
+            try
+            {
+                eventLock.AcquireReaderLock(lockTimeout);
+                if (theEvent.Identifier != eventId)
+                {
+                    invalidEvent = true;
+                }
+                eventLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+            if (invalidEvent)
+            {
+                throw new InvalidEventID("Expected different event id.");
+            }
+            List<AgeGroup> output = new();
+            try
+            {
+                ageGroupLock.AcquireReaderLock(lockTimeout);
+                foreach (List<AgeGroup> groups in ageGroups.Values)
+                {
+                    output.AddRange(groups);
+                }
+                getAgeGroupDictionary();
+                ageGroupLock.ReleaseReaderLock();
+                return output;
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+        }
+
+        public List<AgeGroup> GetAgeGroups(int eventId, int distanceId)
+        {
+            Log.D("MemStore", "GetAgeGroups");
+            bool invalidEvent = false;
+            try
+            {
+                eventLock.AcquireReaderLock(lockTimeout);
+                if (theEvent.Identifier != eventId)
+                {
+                    invalidEvent = true;
+                }
+                eventLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+            if (invalidEvent)
+            {
+                throw new InvalidEventID("Expected different event id.");
+            }
+            List<AgeGroup> output = new();
+            try
+            {
+                ageGroupLock.AcquireReaderLock(lockTimeout);
+                if (ageGroups.TryGetValue(distanceId, out List<AgeGroup> groups))
+                {
+                    output.AddRange(groups);
+                }
+                getAgeGroupDictionary();
+                ageGroupLock.ReleaseReaderLock();
+                return output;
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+        }
+
+        public void RemoveAgeGroup(AgeGroup group)
+        {
+            Log.D("MemStore", "RemoveAgeGroup");
+            try
+            {
+                ageGroupLock.AcquireWriterLock(lockTimeout);
+                database.RemoveAgeGroup(group);
+                if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                {
+                    list.Remove(group);
+                }
+                ageGroupLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+        }
+
+        public void RemoveAgeGroups(int eventId, int distanceId)
+        {
+            Log.D("MemStore", "RemoveAgeGroup");
+            bool invalidEvent = false;
+            try
+            {
+                eventLock.AcquireReaderLock(lockTimeout);
+                if (theEvent.Identifier != eventId)
+                {
+                    invalidEvent = true;
+                }
+                eventLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+            if (invalidEvent)
+            {
+                throw new InvalidEventID("Expected different event id.");
+            }
+            try
+            {
+                ageGroupLock.AcquireWriterLock(lockTimeout);
+                database.RemoveAgeGroups(eventId, distanceId);
+                if (ageGroups.TryGetValue(distanceId, out List<AgeGroup> list))
+                {
+                    list.Clear();
+                }
+                ageGroupLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+        }
+
+        public void RemoveAgeGroups(List<AgeGroup> groups)
+        {
+            Log.D("MemStore", "RemoveAgeGroups");
+            try
+            {
+                ageGroupLock.AcquireWriterLock(lockTimeout);
+                database.RemoveAgeGroups(groups);
+                foreach (AgeGroup group in groups)
+                {
+                    if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                    {
+                        list.Remove(group);
+                    }
+                }
+                ageGroupLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+        }
+
+        public void ResetAgeGroups(int eventId)
+        {
+            Log.D("MemStore", "ResetAgeGroups");
+            bool invalidEvent = false;
+            try
+            {
+                eventLock.AcquireReaderLock(lockTimeout);
+                if (theEvent.Identifier != eventId)
+                {
+                    invalidEvent = true;
+                }
+                eventLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+            if (invalidEvent)
+            {
+                throw new InvalidEventID("Expected different event id.");
+            }
+            try
+            {
+                ageGroupLock.AcquireWriterLock(lockTimeout);
+                database.ResetAgeGroups(eventId);
+                ageGroups.Clear();
+                ageGroupLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+        }
+
+        public void UpdateAgeGroup(AgeGroup group)
+        {
+            Log.D("MemStore", "UpdateAgeGroup");
+            try
+            {
+                ageGroupLock.AcquireWriterLock(lockTimeout);
+                database.UpdateAgeGroup(group);
+                if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                {
+                    foreach (AgeGroup ageGroup in list)
+                    {
+                        if (ageGroup.GroupId == group.GroupId)
+                        {
+                            ageGroup.StartAge = group.StartAge;
+                            ageGroup.EndAge = group.EndAge;
+                            ageGroup.LastGroup = group.LastGroup;
+                            ageGroup.CustomName = group.CustomName;
+                        }
+                    }
+                }
+                ageGroupLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+        }
+
+        /**
+         * API functions
+         */
 
         public int AddAPI(APIObject anAPI)
         {
+            Log.D("MemStore", "UpdateAgeGroup");
+            try
+            {
+                apiLock.AcquireWriterLock(lockTimeout);
+                anAPI.Identifier = database.AddAPI(anAPI);
+                apis[anAPI.Identifier] = anAPI;
+                apiLock.ReleaseWriterLock();
+                return anAPI.Identifier;
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
+                throw new MutexLockException("apiLock");
+            }
+        }
+
+        public List<APIObject> GetAllAPI()
+        {
+            Log.D("MemStore", "GetAllAPI");
+            List<APIObject > output = new();
+            try
+            {
+                apiLock.AcquireReaderLock(lockTimeout);
+                output.AddRange(apis.Values);
+                apiLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
+                throw new MutexLockException("apiLock");
+            }
+            return output;
+        }
+
+        public APIObject GetAPI(int identifier)
+        {
             throw new System.NotImplementedException();
         }
+
+        public void RemoveAPI(int identifier)
+        {
+            Log.D("MemStore", "RemoveAPI");
+            try
+            {
+                apiLock.AcquireWriterLock(lockTimeout);
+                database.RemoveAPI(identifier);
+                apis.Remove(identifier);
+                apiLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
+                throw new MutexLockException("apiLock");
+            }
+        }
+
+        public void UpdateAPI(APIObject anAPI)
+        {
+            Log.D("MemStore", "UpdateAPI");
+            try
+            {
+                apiLock.AcquireWriterLock(lockTimeout);
+                database.UpdateAPI(anAPI);
+                if (apis.TryGetValue(anAPI.Identifier, out APIObject api))
+                {
+                    api.Type = anAPI.Type;
+                    api.URL = anAPI.URL;
+                    api.AuthToken = anAPI.AuthToken;
+                    api.Nickname = anAPI.Nickname;
+                    api.WebURL = anAPI.WebURL;
+                }
+                else
+                {
+                    apis[anAPI.Identifier] = anAPI;
+                }
+                apiLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
+                throw new MutexLockException("apiLock");
+            }
+        }
+
+        /**
+         * Banned Email/Phone Functions
+         */
+
+        // TODO
 
         public void AddBannedEmail(string email)
         {
@@ -475,177 +686,41 @@ namespace Chronokeep.MemStore
             throw new System.NotImplementedException();
         }
 
-        public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddChipRead(ChipRead read)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddChipReads(List<ChipRead> reads)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddDistance(Distance div)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddDistances(List<Distance> distances)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddEmailAlert(int eventId, int eventspecific_id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddEvent(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddParticipant(Participant person)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddParticipants(List<Participant> people)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddRemoteReaders(int eventId, List<RemoteReader> readers)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddSegment(Segment seg)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddSegments(List<Segment> segments)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddSMSAlert(int eventId, int eventspecific_id, int segment_id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddSmsSubscriptions(int eventId, List<APISmsSubscription> subscriptions)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddTimingLocation(TimingLocation tp)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddTimingLocations(List<TimingLocation> locations)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddTimingResult(TimeResult tr)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddTimingResults(List<TimeResult> results)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddTimingSystem(TimingSystem system)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteAlarm(Alarm alarm)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteAlarms(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteChipReads(List<ChipRead> reads)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteRemoteReader(int eventId, RemoteReader reader)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteRemoteReaders(int eventId, List<RemoteReader> readers)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteSmsSubscriptions(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<AgeGroup> GetAgeGroups(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<AgeGroup> GetAgeGroups(int eventId, int distanceId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<Alarm> GetAlarms(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<APIObject> GetAllAPI()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<ChipRead> GetAnnouncerChipReads(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<ChipRead> GetAnnouncerUsedChipReads(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public APIObject GetAPI(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public AppSetting GetAppSetting(string name)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public List<string> GetBannedEmails()
         {
             throw new System.NotImplementedException();
         }
 
         public List<string> GetBannedPhones()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveBannedEmail(string email)
+        {
+
+        }
+
+        public void RemoveBannedPhone(string phone)
+        {
+
+        }
+
+        public void ClearBannedEmail()
+        {
+
+        }
+
+        public void ClearBannedPhone()
+        {
+
+        }
+
+        /**
+         * BibChipAssociation Functions
+         */
+
+        public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
         {
             throw new System.NotImplementedException();
         }
@@ -660,7 +735,51 @@ namespace Chronokeep.MemStore
             throw new System.NotImplementedException();
         }
 
+        public void RemoveBibChipAssociation(int eventId, string chip)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveBibChipAssociation(BibChipAssociation assoc)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveBibChipAssociations(List<BibChipAssociation> assocs)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * ChipRead Functions
+         */
+
+        public void AddChipRead(ChipRead read)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddChipReads(List<ChipRead> reads)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DeleteChipReads(List<ChipRead> reads)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public List<ChipRead> GetChipReads()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ChipRead> GetAnnouncerChipReads(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<ChipRead> GetAnnouncerUsedChipReads(int eventId)
         {
             throw new System.NotImplementedException();
         }
@@ -675,12 +794,51 @@ namespace Chronokeep.MemStore
             throw new System.NotImplementedException();
         }
 
-        public Event GetCurrentEvent()
+        public List<ChipRead> GetDNSChipReads(int eventId)
         {
             throw new System.NotImplementedException();
         }
 
-        public void SetCurrentEvent(int eventID)
+        public List<ChipRead> GetUsefulChipReads(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetChipReadStatus(ChipRead read)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetChipReadStatuses(List<ChipRead> reads)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void UpdateChipRead(ChipRead read)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void UpdateChipReads(List<ChipRead> reads)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool UnprocessedReadsExist(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * Distance Functions
+         */
+
+        public void AddDistance(Distance div)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddDistances(List<Distance> distances)
         {
             throw new System.NotImplementedException();
         }
@@ -695,27 +853,60 @@ namespace Chronokeep.MemStore
             throw new System.NotImplementedException();
         }
 
-        public Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int distanceId)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public List<Distance> GetDistances(int eventId)
         {
             throw new System.NotImplementedException();
         }
 
-        public List<DistanceStat> GetDistanceStats(int eventId)
+        public void RemoveDistance(int identifier)
         {
             throw new System.NotImplementedException();
         }
 
-        public List<ChipRead> GetDNSChipReads(int eventId)
+        public void RemoveDistance(Distance div)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void UpdateDistance(Distance div)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * EmailAlert Functions
+         */
+
+        public void AddEmailAlert(int eventId, int eventspecific_id)
         {
             throw new System.NotImplementedException();
         }
 
         public List<int> GetEmailAlerts(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * Event Functions
+         */
+
+        public void AddEvent(Event anEvent)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Event GetCurrentEvent()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetCurrentEvent(int eventID)
         {
             throw new System.NotImplementedException();
         }
@@ -735,22 +926,46 @@ namespace Chronokeep.MemStore
             throw new System.NotImplementedException();
         }
 
-        public List<TimeResult> GetFinishTimes(int eventId)
+        public void RemoveEvent(int identifier)
         {
             throw new System.NotImplementedException();
         }
 
-        public List<TimeResult> GetLastSeenResults(int eventId)
+        public void RemoveEvent(Event anEvent)
         {
             throw new System.NotImplementedException();
         }
 
-        public int GetMaxSegments(int eventId)
+        public void UpdateEvent(Event anEvent)
         {
             throw new System.NotImplementedException();
         }
 
-        public List<TimeResult> GetNonUploadedResults(int eventId)
+        public void SetFinishOptions(Event anEvent)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetStartWindow(Event anEvent)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * Participant Functions
+         */
+
+        public void AddParticipant(Participant person)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddParticipants(List<Participant> people)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int distanceId)
         {
             throw new System.NotImplementedException();
         }
@@ -795,7 +1010,66 @@ namespace Chronokeep.MemStore
             throw new System.NotImplementedException();
         }
 
+        public void RemoveParticipant(int identifier)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveParticipantEntries(List<Participant> participants)
+        {
+            // removes only the eventspecific part from the db
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveParticipantEntry(Participant person)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void UpdateParticipant(Participant person)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void UpdateParticipants(List<Participant> participants)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * RemoteReader Functions
+         */
+
+        public void AddRemoteReaders(int eventId, List<RemoteReader> readers)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DeleteRemoteReader(int eventId, RemoteReader reader)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DeleteRemoteReaders(int eventId, List<RemoteReader> readers)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public List<RemoteReader> GetRemoteReaders(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * Segment Functions
+         */
+
+        public void AddSegment(Segment seg)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddSegments(List<Segment> segments)
         {
             throw new System.NotImplementedException();
         }
@@ -810,142 +1084,7 @@ namespace Chronokeep.MemStore
             throw new System.NotImplementedException();
         }
 
-        public List<TimeResult> GetSegmentTimes(int eventId, int segmentId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<(int, int)> GetSMSAlerts(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<APISmsSubscription> GetSmsSubscriptions(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimeResult> GetStartTimes(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int GetTimingLocationID(TimingLocation tp)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimingLocation> GetTimingLocations(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimeResult> GetTimingResults(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimingSystem> GetTimingSystems()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<ChipRead> GetUsefulChipReads(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void HardResetDatabase()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void Initialize()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveAgeGroup(AgeGroup group)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveAgeGroups(int eventId, int distanceId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveAgeGroups(List<AgeGroup> groups)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveAPI(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveBibChipAssociation(int eventId, string chip)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveBibChipAssociation(BibChipAssociation assoc)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveBibChipAssociations(List<BibChipAssociation> assocs)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveDistance(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveDistance(Distance div)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveEntries(List<Participant> people)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveEntry(int eventSpecificId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveEntry(Participant person)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveEvent(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveEvent(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveParticipant(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveParticipantEntries(List<Participant> participants)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveParticipantEntry(Participant person)
+        public int GetMaxSegments(int eventId)
         {
             throw new System.NotImplementedException();
         }
@@ -965,157 +1104,7 @@ namespace Chronokeep.MemStore
             throw new System.NotImplementedException();
         }
 
-        public void RemoveTimingLocation(TimingLocation tp)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveTimingLocation(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveTimingResult(TimeResult tr)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveTimingSystem(TimingSystem system)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveTimingSystem(int systemId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ResetAgeGroups(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ResetDatabase()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public void ResetSegments(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ResetTimingResultsEvent(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ResetTimingResultsPlacements(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SaveAlarm(int eventId, Alarm alarm)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SaveAlarms(int eventId, List<Alarm> alarms)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetAppSetting(string name, string value)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetAppSetting(AppSetting setting)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetChipReadStatus(ChipRead read)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetChipReadStatuses(List<ChipRead> reads)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetFinishOptions(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetStartWindow(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetTimingSystems(List<TimingSystem> systems)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetUploadedTimingResults(List<TimeResult> results)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool UnprocessedReadsExist(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool UnprocessedResultsExist(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateAgeGroup(AgeGroup group)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateAPI(APIObject anAPI)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateChipRead(ChipRead read)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateChipReads(List<ChipRead> reads)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateDistance(Distance div)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateEvent(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateParticipant(Participant person)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateParticipants(List<Participant> participants)
         {
             throw new System.NotImplementedException();
         }
@@ -1130,12 +1119,344 @@ namespace Chronokeep.MemStore
             throw new System.NotImplementedException();
         }
 
+        /**
+         * SMS Functions
+         */
+
+        public void AddSMSAlert(int eventId, int eventspecific_id, int segment_id)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddSmsSubscriptions(int eventId, List<APISmsSubscription> subscriptions)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DeleteSmsSubscriptions(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<(int, int)> GetSMSAlerts(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<APISmsSubscription> GetSmsSubscriptions(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * TimingLocation Functions
+         */
+
+        public void AddTimingLocation(TimingLocation tp)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddTimingLocations(List<TimingLocation> locations)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public int GetTimingLocationID(TimingLocation tp)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<TimingLocation> GetTimingLocations(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveTimingLocation(TimingLocation tp)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveTimingLocation(int identifier)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void UpdateTimingLocation(TimingLocation tp)
         {
             throw new System.NotImplementedException();
         }
 
+        /**
+         * TimingResult Functions
+         */
+
+        public void AddTimingResult(TimeResult tr)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void AddTimingResults(List<TimeResult> results)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<TimeResult> GetSegmentTimes(int eventId, int segmentId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<TimeResult> GetFinishTimes(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<TimeResult> GetLastSeenResults(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<TimeResult> GetNonUploadedResults(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<TimeResult> GetStartTimes(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<TimeResult> GetTimingResults(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveTimingResult(TimeResult tr)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetUploadedTimingResults(List<TimeResult> results)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool UnprocessedResultsExist(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ResetTimingResultsEvent(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ResetTimingResultsPlacements(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * TimingSystem Functions
+         */
+
+        public void AddTimingSystem(TimingSystem system)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<TimingSystem> GetTimingSystems()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveTimingSystem(TimingSystem system)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveTimingSystem(int systemId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetTimingSystems(List<TimingSystem> systems)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void UpdateTimingSystem(TimingSystem system)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * Alarm Functions
+         */
+
+        public void DeleteAlarm(Alarm alarm)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void DeleteAlarms(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<Alarm> GetAlarms(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SaveAlarm(int eventId, Alarm alarm)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SaveAlarms(int eventId, List<Alarm> alarms)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * AppSetting Functions
+         */
+
+        public AppSetting GetAppSetting(string name)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetAppSetting(string name, string value)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetAppSetting(AppSetting setting)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * DistanceStat Functions
+         */
+
+        public List<DistanceStat> GetDistanceStats(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        /**
+         * Base Database Functions
+         */
+
+        public void HardResetDatabase()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void Initialize()
+        {
+            // Use eventLock to ensure nothing reads from the database.
+            try
+            {
+                eventLock.AcquireWriterLock(lockTimeout);
+                try
+                {
+                    settingsLock.AcquireReaderLock(lockTimeout);
+                    // Load settings
+                    settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
+                    settings[Constants.Settings.COMPANY_NAME] = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
+                    settings[Constants.Settings.CONTACT_EMAIL] = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL);
+                    settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
+                    settings[Constants.Settings.UPDATE_ON_PAGE_CHANGE] = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
+                    settings[Constants.Settings.EXIT_NO_PROMPT] = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT);
+                    settings[Constants.Settings.CHECK_UPDATES] = database.GetAppSetting(Constants.Settings.CHECK_UPDATES);
+                    settings[Constants.Settings.CURRENT_THEME] = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
+                    settings[Constants.Settings.UPLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL);
+                    settings[Constants.Settings.DOWNLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL);
+                    settings[Constants.Settings.ANNOUNCER_WINDOW] = database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW);
+                    settings[Constants.Settings.ALARM_SOUND] = database.GetAppSetting(Constants.Settings.ALARM_SOUND);
+                    settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME);
+                    settings[Constants.Settings.TWILIO_ACCOUNT_SID] = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID);
+                    settings[Constants.Settings.TWILIO_AUTH_TOKEN] = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN);
+                    settings[Constants.Settings.TWILIO_PHONE_NUMBER] = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER);
+                    settings[Constants.Settings.MAILGUN_FROM_NAME] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME);
+                    settings[Constants.Settings.MAILGUN_FROM_EMAIL] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL);
+                    settings[Constants.Settings.MAILGUN_API_KEY] = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY);
+                    settings[Constants.Settings.MAILGUN_API_URL] = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL);
+                    settingsLock.ReleaseWriterLock();
+                }
+                catch (ApplicationException e)
+                {
+                    Log.D("MemStore", "Exception acquiring settingsLock. " + e.Message);
+                    throw new MutexLockException("settingsLock");
+                }
+                try
+                {
+                    apiLock.AcquireWriterLock(lockTimeout);
+                    // Load apis
+                    foreach (APIObject api in database.GetAllAPI())
+                    {
+                        apis[api.Identifier] = api;
+                    }
+                    apiLock.ReleaseWriterLock();
+                }
+                catch (ApplicationException e)
+                {
+                    Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
+                    throw new MutexLockException("apiLock");
+                }
+                try
+                {
+                    timingSystemsLock.AcquireWriterLock(lockTimeout);
+                    // load timingsystems
+                    foreach (TimingSystem system in database.GetTimingSystems())
+                    {
+                        timingSystems[system.SystemIdentifier] = system;
+                    }
+                    timingSystemsLock.ReleaseWriterLock();
+                }
+                catch (ApplicationException e)
+                {
+                    Log.D("MemStore", "Exception acquiring timingSystemsLock. " + e.Message);
+                    throw new MutexLockException("timingSystemsLock");
+                }
+                try
+                {
+                    bannedLock.AcquireWriterLock(lockTimeout);
+                    // load banned phones
+                    foreach (string phone in database.GetBannedPhones())
+                    {
+                        bannedPhones.Add(phone);
+                    }
+                    // load banned emails
+                    foreach (string email in database.GetBannedEmails())
+                    {
+                        bannedEmails.Add(email);
+                    }
+                    bannedLock.ReleaseWriterLock();
+                }
+                catch (ApplicationException e)
+                {
+                    Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                    throw new MutexLockException("bannedLock");
+                }
+                // Load event
+                theEvent = database.GetCurrentEvent();
+                // Load all data
+                LoadEvent();
+                eventLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
+                throw new MutexLockException("eventLock");
+            }
+        }
+
+        public void ResetDatabase()
         {
             throw new System.NotImplementedException();
         }
