@@ -180,7 +180,13 @@ namespace Chronokeep
         List<string> GetBannedEmails();
         void AddBannedEmail(string email);
         void AddBannedEmails(List<string> emails);
-        
+        void RemoveBannedEmail(string email);
+        void RemoveBannedEmails(List<string> emails);
+        void RemoveBannedPhone(string phone);
+        void RemoveBannedPhones(List<string> phones);
+        void ClearBannedEmails();
+        void ClearBannedPhones();
+
         // SMS Subscription functions
         List<APISmsSubscription> GetSmsSubscriptions(int eventId);
         void AddSmsSubscriptions(int eventId, List<APISmsSubscription> subscriptions);

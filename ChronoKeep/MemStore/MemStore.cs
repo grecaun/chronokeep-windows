@@ -1,7 +1,10 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects.ChronokeepRemote;
+using Chronokeep.Updates;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -612,7 +615,23 @@ namespace Chronokeep.MemStore
 
         public APIObject GetAPI(int identifier)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "GetAPI");
+            APIObject output;
+            try
+            {
+                apiLock.AcquireReaderLock(lockTimeout);
+                if (!apis.TryGetValue(identifier, out output))
+                {
+                    output = null;
+                }
+                apiLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
+                throw new MutexLockException("apiLock");
+            }
+            return output;
         }
 
         public void RemoveAPI(int identifier)
@@ -664,56 +683,222 @@ namespace Chronokeep.MemStore
          * Banned Email/Phone Functions
          */
 
-        // TODO
-
         public void AddBannedEmail(string email)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "AddBannedEmail");
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                database.AddBannedEmail(email);
+                bannedEmails.Add(email);
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
         }
 
         public void AddBannedEmails(List<string> emails)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "AddBannedEmails");
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                database.AddBannedEmails(emails);
+                foreach (string email in emails)
+                {
+                    bannedEmails.Add(email);
+                }
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
         }
 
         public void AddBannedPhone(string phone)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "AddBannedPhone");
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                database.AddBannedPhone(phone);
+                bannedPhones.Add(phone);
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
         }
 
         public void AddBannedPhones(List<string> phones)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "AddBannedPhones");
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                database.AddBannedPhones(phones);
+                foreach (string phone in phones)
+                {
+                    bannedPhones.Add(phone);
+                }
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
         }
 
         public List<string> GetBannedEmails()
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "GetBannedEmails");
+            List<string> output = new();
+            try
+            {
+                bannedLock.AcquireReaderLock(lockTimeout);
+                output.AddRange(bannedEmails);
+                bannedLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
+            return output;
         }
 
         public List<string> GetBannedPhones()
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "GetBannedPhones");
+            List<string> output = new();
+            try
+            {
+                bannedLock.AcquireReaderLock(lockTimeout);
+                output.AddRange(bannedPhones);
+                bannedLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
+            return output;
         }
 
         public void RemoveBannedEmail(string email)
         {
+            Log.D("MemStore", "RemoveBannedEmail");
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                database.RemoveBannedEmail(email);
+                bannedEmails.Remove(email);
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
+        }
 
+        public void RemoveBannedEmails(List<string> emails)
+        {
+            Log.D("MemStore", "RemoveBannedEmails");
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                database.RemoveBannedEmails(emails);
+                foreach (string email in emails)
+                {
+                    bannedEmails.Remove(email);
+                }
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
         }
 
         public void RemoveBannedPhone(string phone)
         {
-
+            Log.D("MemStore", "RemoveBannedPhone");
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                database.RemoveBannedPhone(phone);
+                bannedPhones.Remove(phone);
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
         }
 
-        public void ClearBannedEmail()
+        public void RemoveBannedPhones(List<string> phones)
         {
-
+            Log.D("MemStore", "RemoveBannedPhones");
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                database.RemoveBannedPhones(phones);
+                foreach (string phone in phones)
+                {
+                    bannedPhones.Remove(phone);
+                }
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
         }
 
-        public void ClearBannedPhone()
+        public void ClearBannedEmails()
         {
+            Log.D("MemStore", "ClearBannedEmails");
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                database.ClearBannedEmails();
+                bannedEmails.Clear();
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
+        }
 
+        public void ClearBannedPhones()
+        {
+            Log.D("MemStore", "ClearBannedPhones");
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                database.ClearBannedPhones();
+                bannedPhones.Clear();
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
         }
 
         /**
@@ -722,32 +907,169 @@ namespace Chronokeep.MemStore
 
         public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "AddBibChipAssociation");
+            bool invalidEvent = false;
+            try
+            {
+                eventLock.AcquireReaderLock(lockTimeout);
+                if (theEvent.Identifier != eventId)
+                {
+                    invalidEvent = true;
+                }
+                eventLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
+                throw new MutexLockException("eventLock");
+            }
+            if (invalidEvent)
+            {
+                throw new InvalidEventID("Expected different event id.");
+            }
+            try
+            {
+                bibChipLock.AcquireWriterLock(lockTimeout);
+                database.AddBibChipAssociation(eventId, assoc);
+                foreach (BibChipAssociation bc in assoc)
+                {
+                    chipToBibAssociations[bc.Chip] = bc;
+                }
+                bibChipLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
+                throw new MutexLockException("bibChipLock");
+            }
         }
 
         public List<BibChipAssociation> GetBibChips()
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "GetBibChips");
+            List<BibChipAssociation> output = new();
+            try
+            {
+                bibChipLock.AcquireReaderLock(lockTimeout);
+                output.AddRange(chipToBibAssociations.Values);
+                bibChipLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
+                throw new MutexLockException("bibChipLock");
+            }
+            return output;
         }
 
         public List<BibChipAssociation> GetBibChips(int eventId)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "GetBibChips");
+            bool invalidEvent = false;
+            try
+            {
+                eventLock.AcquireReaderLock(lockTimeout);
+                if (theEvent.Identifier != eventId)
+                {
+                    invalidEvent = true;
+                }
+                eventLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
+                throw new MutexLockException("eventLock");
+            }
+            if (invalidEvent)
+            {
+                throw new InvalidEventID("Expected different event id.");
+            }
+            List<BibChipAssociation> output = new();
+            try
+            {
+                bibChipLock.AcquireReaderLock(lockTimeout);
+                output.AddRange(chipToBibAssociations.Values);
+                bibChipLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
+                throw new MutexLockException("bibChipLock");
+            }
+            return output;
         }
 
         public void RemoveBibChipAssociation(int eventId, string chip)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "RemoveBibChipAssociation");
+            bool invalidEvent = false;
+            try
+            {
+                eventLock.AcquireReaderLock(lockTimeout);
+                if (theEvent.Identifier != eventId)
+                {
+                    invalidEvent = true;
+                }
+                eventLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
+                throw new MutexLockException("eventLock");
+            }
+            if (invalidEvent)
+            {
+                throw new InvalidEventID("Expected different event id.");
+            }
+            try
+            {
+                bibChipLock.AcquireWriterLock(lockTimeout);
+                database.RemoveBibChipAssociation(eventId, chip);
+                chipToBibAssociations.Remove(chip);
+                bibChipLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
+                throw new MutexLockException("bibChipLock");
+            }
         }
 
         public void RemoveBibChipAssociation(BibChipAssociation assoc)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "RemoveBibChipAssociation");
+            try
+            {
+                bibChipLock.AcquireWriterLock(lockTimeout);
+                database.RemoveBibChipAssociation(assoc);
+                chipToBibAssociations.Remove(assoc.Chip);
+                bibChipLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
+                throw new MutexLockException("bibChipLock");
+            }
         }
 
         public void RemoveBibChipAssociations(List<BibChipAssociation> assocs)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "RemoveBibChipAssociation");
+            try
+            {
+                bibChipLock.AcquireWriterLock(lockTimeout);
+                database.RemoveBibChipAssociations(assocs);
+                foreach (BibChipAssociation assoc in assocs)
+                {
+                    chipToBibAssociations.Remove(assoc.Chip);
+                }
+                bibChipLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
+                throw new MutexLockException("bibChipLock");
+            }
         }
 
         /**
@@ -756,7 +1078,19 @@ namespace Chronokeep.MemStore
 
         public void AddChipRead(ChipRead read)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "AddChipRead");
+            try
+            {
+                chipReadsLock.AcquireWriterLock(lockTimeout);
+                database.AddChipRead(read);
+                chipReads.Add(read);
+                chipReadsLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
+                throw new MutexLockException("chipReadsLock");
+            }
         }
 
         public void AddChipReads(List<ChipRead> reads)
@@ -961,11 +1295,6 @@ namespace Chronokeep.MemStore
         }
 
         public void AddParticipants(List<Participant> people)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int distanceId)
         {
             throw new System.NotImplementedException();
         }
@@ -1343,6 +1672,11 @@ namespace Chronokeep.MemStore
          */
 
         public List<DistanceStat> GetDistanceStats(int eventId)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int distanceId)
         {
             throw new System.NotImplementedException();
         }
