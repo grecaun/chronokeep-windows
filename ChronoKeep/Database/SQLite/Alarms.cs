@@ -7,8 +7,9 @@ namespace Chronokeep.Database.SQLite
 {
     internal class Alarms
     {
-        internal static void SaveAlarms(int eventId, List<Alarm> alarms, SQLiteConnection connection)
+        internal static List<Alarm> SaveAlarms(int eventId, List<Alarm> alarms, SQLiteConnection connection)
         {
+            List<Alarm> output = new();
             using (var transaction = connection.BeginTransaction())
             {
                 SQLiteCommand command = connection.CreateCommand();
@@ -24,12 +25,15 @@ namespace Chronokeep.Database.SQLite
                         new SQLiteParameter("@sound", item.AlarmSound),
                     });
                     command.ExecuteNonQuery();
+                    item.Identifier = (int)connection.LastInsertRowId;
+                    output.Add(item);
                 }
                 transaction.Commit();
             }
+            return output;
         }
 
-        internal static void SaveAlarm(int eventId, Alarm alarm, SQLiteConnection connection)
+        internal static int SaveAlarm(int eventId, Alarm alarm, SQLiteConnection connection)
         {
             using (var transaction = connection.BeginTransaction())
             {
@@ -46,6 +50,8 @@ namespace Chronokeep.Database.SQLite
                 command.ExecuteNonQuery();
                 transaction.Commit();
             }
+            long outVal = connection.LastInsertRowId;
+            return (int)outVal;
         }
 
         internal static List<Alarm> GetAlarms(int eventId,  SQLiteConnection connection)

@@ -91,5 +91,32 @@ namespace Chronokeep
             if (other == null) return false;
             return this.EventIdentifier == other.EventIdentifier && this.Identifier == other.Identifier;
         }
+
+        public void Update(Distance other)
+        {
+            this.Name = other.Name;
+            this.EventIdentifier = other.EventIdentifier;
+            this.DistanceValue = other.DistanceValue;
+            this.DistanceUnit = other.DistanceUnit;
+            this.StartLocation = other.StartLocation;
+            this.StartWithin = other.StartWithin;
+            this.FinishLocation = other.FinishLocation;
+            this.FinishOccurrence = other.FinishOccurrence;
+            this.Wave = other.Wave;
+            this.StartOffsetSeconds = other.StartOffsetSeconds;
+            this.StartOffsetMilliseconds = other.StartOffsetMilliseconds;
+            this.EndSeconds = other.EndSeconds;
+            this.LinkedDistance = other.LinkedDistance;
+            this.Type = other.Type;
+            this.Ranking = other.Ranking;
+            this.SMSEnabled = other.SMSEnabled;
+        }
+
+        public void SetWaveTime(int wave, long seconds, int milliseconds)
+        {
+            this.Wave = wave;
+            this.StartOffsetSeconds = (int)seconds;
+            this.StartOffsetMilliseconds = milliseconds;
+        }
     }
 }

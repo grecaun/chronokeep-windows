@@ -38,8 +38,8 @@ namespace Chronokeep
         List<Event> GetEvents();
 
         // Distance Functions
-        void AddDistance(Distance div);
-        void AddDistances(List<Distance> distances);
+        int AddDistance(Distance div);
+        List<Distance> AddDistances(List<Distance> distances);
         void RemoveDistance(int identifier);
         void RemoveDistance(Distance div);
         void UpdateDistance(Distance div);
@@ -118,8 +118,8 @@ namespace Chronokeep
         void ResetTimingResultsPlacements(int eventId);
 
         // Chip Read Functions
-        void AddChipRead(ChipRead read);
-        void AddChipReads(List<ChipRead> reads);
+        int AddChipRead(ChipRead read);
+        List<ChipRead> AddChipReads(List<ChipRead> reads);
         void UpdateChipRead(ChipRead read);
         void UpdateChipReads(List<ChipRead> reads);
         void SetChipReadStatus(ChipRead read);
@@ -134,8 +134,8 @@ namespace Chronokeep
         List<ChipRead> GetDNSChipReads(int eventId);
 
         // Age Group Functions
-        void AddAgeGroup(AgeGroup group);
-        void AddAgeGroups(List<AgeGroup> groups);
+        int AddAgeGroup(AgeGroup group);
+        List<AgeGroup> AddAgeGroups(List<AgeGroup> groups);
         void UpdateAgeGroup(AgeGroup group);
         void RemoveAgeGroup(AgeGroup group);
         void RemoveAgeGroups(int eventId, int distanceId);
@@ -153,8 +153,8 @@ namespace Chronokeep
         List<TimingSystem> GetTimingSystems();
         
         // Alarms
-        void SaveAlarms(int eventId, List<Alarm> alarms);
-        void SaveAlarm(int eventId, Alarm alarm);
+        List<Alarm> SaveAlarms(int eventId, List<Alarm> alarms);
+        int SaveAlarm(int eventId, Alarm alarm);
         List<Alarm> GetAlarms(int eventId);
         void DeleteAlarms(int eventId);
         void DeleteAlarm(Alarm alarm);

@@ -7,7 +7,7 @@ namespace Chronokeep.Database.SQLite
 {
     class AgeGroups
     {
-        internal static void AddAgeGroup(AgeGroup group, SQLiteConnection connection)
+        internal static int AddAgeGroup(AgeGroup group, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO age_groups (event_id, distance_id, start_age, end_age, custom_name)" +
@@ -21,6 +21,8 @@ namespace Chronokeep.Database.SQLite
                     new SQLiteParameter("@custom", group.CustomName)
             });
             command.ExecuteNonQuery();
+            long outVal = connection.LastInsertRowId;
+            return (int)outVal;
         }
 
         internal static void UpdateAgeGroup(AgeGroup group, SQLiteConnection connection)

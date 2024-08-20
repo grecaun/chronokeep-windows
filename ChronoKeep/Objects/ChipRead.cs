@@ -2,7 +2,7 @@
 
 namespace Chronokeep
 {
-    public class ChipRead : IComparable<ChipRead>
+    public class ChipRead : IComparable<ChipRead>, IEquatable<ChipRead>
     {
         public int ReadId { get; set; }
         public int EventId { get; set; }
@@ -505,6 +505,42 @@ namespace Chronokeep
         public bool IsIgnored()
         {
             return Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE == Status || Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE == Status || Constants.Timing.CHIPREAD_STATUS_IGNORE == Status;
+        }
+
+        public bool IsUseful()
+        {
+            return Constants.Timing.CHIPREAD_STATUS_NONE == Status
+                || Constants.Timing.CHIPREAD_STATUS_USED == Status
+                || Constants.Timing.CHIPREAD_STATUS_STARTTIME == Status
+                || Constants.Timing.CHIPREAD_STATUS_DNF == Status
+                || Constants.Timing.CHIPREAD_STATUS_DNS == Status;
+        }
+
+        public bool Equals(ChipRead other)
+        {
+            if (other == null) return false;
+            return this.ReadId == other.ReadId
+                || (this.EventId == other.EventId
+                && this.LocationID == other.LocationID
+                && this.ChipNumber == other.ChipNumber
+                && this.Seconds == other.Seconds
+                && this.Milliseconds == other.Milliseconds
+                && this.Antenna == other.Antenna
+                && this.RSSI == other.RSSI
+                && this.IsRewind == other.IsRewind
+                && this.Reader == other.Reader
+                && this.Box == other.Box
+                && this.ReaderTime == other.ReaderTime
+                && this.StartTime == other.StartTime
+                && this.LogId == other.LogId
+                && this.TimeSeconds == other.TimeSeconds
+                && this.TimeMilliseconds == other.TimeMilliseconds
+                && this.ReadBib == other.ReadBib
+                && this.Type == other.Type
+                && this.ChipBib == other.ChipBib
+                && this.Name == other.Name
+                && this.Start == other.Start
+                && this.LocationName == other.LocationName);
         }
     }
 }

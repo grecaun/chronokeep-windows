@@ -7,7 +7,7 @@ namespace Chronokeep.Database.SQLite
     class Distances
     {
 
-        internal static void AddDistance(Distance d, SQLiteConnection connection)
+        internal static int AddDistance(Distance d, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -36,6 +36,8 @@ namespace Chronokeep.Database.SQLite
             });
             Log.D("Database.SQLite.Distances", "SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
+            long outVal = connection.LastInsertRowId;
+            return (int)outVal;
         }
 
         internal static void RemoveDistance(int identifier, SQLiteConnection connection)

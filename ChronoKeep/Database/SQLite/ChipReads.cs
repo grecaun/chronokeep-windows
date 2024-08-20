@@ -7,7 +7,7 @@ namespace Chronokeep.Database.SQLite
 {
     class ChipReads
     {
-        internal static void AddChipRead(ChipRead read, SQLiteConnection connection)
+        internal static int AddChipRead(ChipRead read, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO chipreads (event_id, read_status, location_id, read_chipnumber, read_seconds, " +
@@ -37,6 +37,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@type", read.Type)
             });
             command.ExecuteNonQuery();
+            long outVal = connection.LastInsertRowId;
+            return (int)outVal;
         }
 
         internal static void UpdateChipRead(ChipRead read, SQLiteConnection connection)

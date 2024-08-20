@@ -1,17 +1,14 @@
-﻿using Chronokeep.Database.SQLite;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects.ChronokeepRemote;
-using Chronokeep.Updates;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
 namespace Chronokeep.MemStore
 {
-    internal class MemStore : IDBInterface
+    internal partial class MemStore : IDBInterface
     {
         internal class MutexLockException : Exception
         {
@@ -74,10 +71,8 @@ namespace Chronokeep.MemStore
         private static Dictionary<int, List<AgeGroup>> ageGroups = new();
 
         private static ReaderWriterLock alarmLock = new();
-        // key == bib
-        private static Dictionary<string, Alarm> bibAlarms = new();
-        // key == chip
-        private static Dictionary<string, Alarm> chipAlarms = new();
+        // key == (bib, chip)
+        private static Dictionary<(string, string), Alarm> alarms = new();
 
         private static ReaderWriterLock remoteReadersLock = new();
         private static List<RemoteReader> remoteReaders = new();
@@ -197,7 +192,15 @@ namespace Chronokeep.MemStore
             {
                 ageGroupLock.AcquireWriterLock(lockTimeout);
                 // load age groups
-                getAgeGroupDictionary();
+                foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
+                {
+                    if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
+                    {
+                        value = new List<AgeGroup>();
+                        ageGroups[group.DistanceId] = value;
+                    }
+                    value.Add(group);
+                }
                 ageGroupLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
@@ -211,8 +214,7 @@ namespace Chronokeep.MemStore
                 // load alarms
                 foreach (Alarm alarm in database.GetAlarms(theEvent.Identifier))
                 {
-                    bibAlarms[alarm.Bib] = alarm;
-                    chipAlarms[alarm.Chip] = alarm;
+                    alarms[(alarm.Bib, alarm.Chip)] = alarm;
                 }
                 alarmLock.ReleaseWriterLock();
             }
@@ -292,1402 +294,214 @@ namespace Chronokeep.MemStore
                 throw new MutexLockException("chipReadsLock");
             }
         }
-        internal void getAgeGroupDictionary()
-        {
-            ageGroups.Clear();
-            foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
-            {
-                if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
-                {
-                    value = new List<AgeGroup>();
-                    ageGroups[group.DistanceId] = value;
-                }
-                value.Add(group);
-            }
-        }
-
-        /**
-         * Age Group Functions
-         */
-
-        public void AddAgeGroup(AgeGroup group)
-        {
-            Log.D("MemStore", "AddAgeGroup");
-            try
-            {
-                ageGroupLock.AcquireWriterLock(lockTimeout);
-                database.AddAgeGroup(group);
-                getAgeGroupDictionary();
-                ageGroupLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-        }
-
-        public void AddAgeGroups(List<AgeGroup> groups)
-        {
-            Log.D("MemStore", "AddAgeGroups");
-            try
-            {
-                ageGroupLock.AcquireWriterLock(lockTimeout);
-                database.AddAgeGroups(groups);
-                getAgeGroupDictionary();
-                ageGroupLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-        }
-
-        public List<AgeGroup> GetAgeGroups(int eventId)
-        {
-            Log.D("MemStore", "GetAgeGroups");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            List<AgeGroup> output = new();
-            try
-            {
-                ageGroupLock.AcquireReaderLock(lockTimeout);
-                foreach (List<AgeGroup> groups in ageGroups.Values)
-                {
-                    output.AddRange(groups);
-                }
-                getAgeGroupDictionary();
-                ageGroupLock.ReleaseReaderLock();
-                return output;
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-        }
-
-        public List<AgeGroup> GetAgeGroups(int eventId, int distanceId)
-        {
-            Log.D("MemStore", "GetAgeGroups");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            List<AgeGroup> output = new();
-            try
-            {
-                ageGroupLock.AcquireReaderLock(lockTimeout);
-                if (ageGroups.TryGetValue(distanceId, out List<AgeGroup> groups))
-                {
-                    output.AddRange(groups);
-                }
-                getAgeGroupDictionary();
-                ageGroupLock.ReleaseReaderLock();
-                return output;
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-        }
-
-        public void RemoveAgeGroup(AgeGroup group)
-        {
-            Log.D("MemStore", "RemoveAgeGroup");
-            try
-            {
-                ageGroupLock.AcquireWriterLock(lockTimeout);
-                database.RemoveAgeGroup(group);
-                if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
-                {
-                    list.Remove(group);
-                }
-                ageGroupLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-        }
-
-        public void RemoveAgeGroups(int eventId, int distanceId)
-        {
-            Log.D("MemStore", "RemoveAgeGroup");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                ageGroupLock.AcquireWriterLock(lockTimeout);
-                database.RemoveAgeGroups(eventId, distanceId);
-                if (ageGroups.TryGetValue(distanceId, out List<AgeGroup> list))
-                {
-                    list.Clear();
-                }
-                ageGroupLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-        }
-
-        public void RemoveAgeGroups(List<AgeGroup> groups)
-        {
-            Log.D("MemStore", "RemoveAgeGroups");
-            try
-            {
-                ageGroupLock.AcquireWriterLock(lockTimeout);
-                database.RemoveAgeGroups(groups);
-                foreach (AgeGroup group in groups)
-                {
-                    if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
-                    {
-                        list.Remove(group);
-                    }
-                }
-                ageGroupLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-        }
-
-        public void ResetAgeGroups(int eventId)
-        {
-            Log.D("MemStore", "ResetAgeGroups");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                ageGroupLock.AcquireWriterLock(lockTimeout);
-                database.ResetAgeGroups(eventId);
-                ageGroups.Clear();
-                ageGroupLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-        }
-
-        public void UpdateAgeGroup(AgeGroup group)
-        {
-            Log.D("MemStore", "UpdateAgeGroup");
-            try
-            {
-                ageGroupLock.AcquireWriterLock(lockTimeout);
-                database.UpdateAgeGroup(group);
-                if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
-                {
-                    foreach (AgeGroup ageGroup in list)
-                    {
-                        if (ageGroup.GroupId == group.GroupId)
-                        {
-                            ageGroup.StartAge = group.StartAge;
-                            ageGroup.EndAge = group.EndAge;
-                            ageGroup.LastGroup = group.LastGroup;
-                            ageGroup.CustomName = group.CustomName;
-                        }
-                    }
-                }
-                ageGroupLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-        }
-
-        /**
-         * API functions
-         */
-
-        public int AddAPI(APIObject anAPI)
-        {
-            Log.D("MemStore", "UpdateAgeGroup");
-            try
-            {
-                apiLock.AcquireWriterLock(lockTimeout);
-                anAPI.Identifier = database.AddAPI(anAPI);
-                apis[anAPI.Identifier] = anAPI;
-                apiLock.ReleaseWriterLock();
-                return anAPI.Identifier;
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
-                throw new MutexLockException("apiLock");
-            }
-        }
-
-        public List<APIObject> GetAllAPI()
-        {
-            Log.D("MemStore", "GetAllAPI");
-            List<APIObject > output = new();
-            try
-            {
-                apiLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(apis.Values);
-                apiLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
-                throw new MutexLockException("apiLock");
-            }
-            return output;
-        }
-
-        public APIObject GetAPI(int identifier)
-        {
-            Log.D("MemStore", "GetAPI");
-            APIObject output;
-            try
-            {
-                apiLock.AcquireReaderLock(lockTimeout);
-                if (!apis.TryGetValue(identifier, out output))
-                {
-                    output = null;
-                }
-                apiLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
-                throw new MutexLockException("apiLock");
-            }
-            return output;
-        }
-
-        public void RemoveAPI(int identifier)
-        {
-            Log.D("MemStore", "RemoveAPI");
-            try
-            {
-                apiLock.AcquireWriterLock(lockTimeout);
-                database.RemoveAPI(identifier);
-                apis.Remove(identifier);
-                apiLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
-                throw new MutexLockException("apiLock");
-            }
-        }
-
-        public void UpdateAPI(APIObject anAPI)
-        {
-            Log.D("MemStore", "UpdateAPI");
-            try
-            {
-                apiLock.AcquireWriterLock(lockTimeout);
-                database.UpdateAPI(anAPI);
-                if (apis.TryGetValue(anAPI.Identifier, out APIObject api))
-                {
-                    api.Type = anAPI.Type;
-                    api.URL = anAPI.URL;
-                    api.AuthToken = anAPI.AuthToken;
-                    api.Nickname = anAPI.Nickname;
-                    api.WebURL = anAPI.WebURL;
-                }
-                else
-                {
-                    apis[anAPI.Identifier] = anAPI;
-                }
-                apiLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
-                throw new MutexLockException("apiLock");
-            }
-        }
-
-        /**
-         * Banned Email/Phone Functions
-         */
-
-        public void AddBannedEmail(string email)
-        {
-            Log.D("MemStore", "AddBannedEmail");
-            try
-            {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.AddBannedEmail(email);
-                bannedEmails.Add(email);
-                bannedLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-        }
-
-        public void AddBannedEmails(List<string> emails)
-        {
-            Log.D("MemStore", "AddBannedEmails");
-            try
-            {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.AddBannedEmails(emails);
-                foreach (string email in emails)
-                {
-                    bannedEmails.Add(email);
-                }
-                bannedLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-        }
-
-        public void AddBannedPhone(string phone)
-        {
-            Log.D("MemStore", "AddBannedPhone");
-            try
-            {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.AddBannedPhone(phone);
-                bannedPhones.Add(phone);
-                bannedLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-        }
-
-        public void AddBannedPhones(List<string> phones)
-        {
-            Log.D("MemStore", "AddBannedPhones");
-            try
-            {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.AddBannedPhones(phones);
-                foreach (string phone in phones)
-                {
-                    bannedPhones.Add(phone);
-                }
-                bannedLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-        }
-
-        public List<string> GetBannedEmails()
-        {
-            Log.D("MemStore", "GetBannedEmails");
-            List<string> output = new();
-            try
-            {
-                bannedLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(bannedEmails);
-                bannedLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-            return output;
-        }
-
-        public List<string> GetBannedPhones()
-        {
-            Log.D("MemStore", "GetBannedPhones");
-            List<string> output = new();
-            try
-            {
-                bannedLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(bannedPhones);
-                bannedLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-            return output;
-        }
-
-        public void RemoveBannedEmail(string email)
-        {
-            Log.D("MemStore", "RemoveBannedEmail");
-            try
-            {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBannedEmail(email);
-                bannedEmails.Remove(email);
-                bannedLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-        }
-
-        public void RemoveBannedEmails(List<string> emails)
-        {
-            Log.D("MemStore", "RemoveBannedEmails");
-            try
-            {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBannedEmails(emails);
-                foreach (string email in emails)
-                {
-                    bannedEmails.Remove(email);
-                }
-                bannedLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-        }
-
-        public void RemoveBannedPhone(string phone)
-        {
-            Log.D("MemStore", "RemoveBannedPhone");
-            try
-            {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBannedPhone(phone);
-                bannedPhones.Remove(phone);
-                bannedLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-        }
-
-        public void RemoveBannedPhones(List<string> phones)
-        {
-            Log.D("MemStore", "RemoveBannedPhones");
-            try
-            {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBannedPhones(phones);
-                foreach (string phone in phones)
-                {
-                    bannedPhones.Remove(phone);
-                }
-                bannedLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-        }
-
-        public void ClearBannedEmails()
-        {
-            Log.D("MemStore", "ClearBannedEmails");
-            try
-            {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.ClearBannedEmails();
-                bannedEmails.Clear();
-                bannedLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-        }
-
-        public void ClearBannedPhones()
-        {
-            Log.D("MemStore", "ClearBannedPhones");
-            try
-            {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.ClearBannedPhones();
-                bannedPhones.Clear();
-                bannedLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
-            }
-        }
-
-        /**
-         * BibChipAssociation Functions
-         */
-
-        public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
-        {
-            Log.D("MemStore", "AddBibChipAssociation");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                bibChipLock.AcquireWriterLock(lockTimeout);
-                database.AddBibChipAssociation(eventId, assoc);
-                foreach (BibChipAssociation bc in assoc)
-                {
-                    chipToBibAssociations[bc.Chip] = bc;
-                }
-                bibChipLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
-            }
-        }
-
-        public List<BibChipAssociation> GetBibChips()
-        {
-            Log.D("MemStore", "GetBibChips");
-            List<BibChipAssociation> output = new();
-            try
-            {
-                bibChipLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(chipToBibAssociations.Values);
-                bibChipLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
-            }
-            return output;
-        }
-
-        public List<BibChipAssociation> GetBibChips(int eventId)
-        {
-            Log.D("MemStore", "GetBibChips");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            List<BibChipAssociation> output = new();
-            try
-            {
-                bibChipLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(chipToBibAssociations.Values);
-                bibChipLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
-            }
-            return output;
-        }
-
-        public void RemoveBibChipAssociation(int eventId, string chip)
-        {
-            Log.D("MemStore", "RemoveBibChipAssociation");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                bibChipLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBibChipAssociation(eventId, chip);
-                chipToBibAssociations.Remove(chip);
-                bibChipLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
-            }
-        }
-
-        public void RemoveBibChipAssociation(BibChipAssociation assoc)
-        {
-            Log.D("MemStore", "RemoveBibChipAssociation");
-            try
-            {
-                bibChipLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBibChipAssociation(assoc);
-                chipToBibAssociations.Remove(assoc.Chip);
-                bibChipLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
-            }
-        }
-
-        public void RemoveBibChipAssociations(List<BibChipAssociation> assocs)
-        {
-            Log.D("MemStore", "RemoveBibChipAssociation");
-            try
-            {
-                bibChipLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBibChipAssociations(assocs);
-                foreach (BibChipAssociation assoc in assocs)
-                {
-                    chipToBibAssociations.Remove(assoc.Chip);
-                }
-                bibChipLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
-            }
-        }
-
-        /**
-         * ChipRead Functions
-         */
-
-        public void AddChipRead(ChipRead read)
-        {
-            Log.D("MemStore", "AddChipRead");
-            try
-            {
-                chipReadsLock.AcquireWriterLock(lockTimeout);
-                database.AddChipRead(read);
-                chipReads.Add(read);
-                chipReadsLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
-            }
-        }
-
-        public void AddChipReads(List<ChipRead> reads)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteChipReads(List<ChipRead> reads)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<ChipRead> GetChipReads()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<ChipRead> GetAnnouncerChipReads(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<ChipRead> GetAnnouncerUsedChipReads(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<ChipRead> GetChipReads(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<ChipRead> GetChipReadsSafemode(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<ChipRead> GetDNSChipReads(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<ChipRead> GetUsefulChipReads(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetChipReadStatus(ChipRead read)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetChipReadStatuses(List<ChipRead> reads)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateChipRead(ChipRead read)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateChipReads(List<ChipRead> reads)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool UnprocessedReadsExist(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * Distance Functions
-         */
-
-        public void AddDistance(Distance div)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddDistances(List<Distance> distances)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Distance GetDistance(int divId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int GetDistanceID(Distance div)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<Distance> GetDistances(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveDistance(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveDistance(Distance div)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateDistance(Distance div)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * EmailAlert Functions
-         */
-
-        public void AddEmailAlert(int eventId, int eventspecific_id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<int> GetEmailAlerts(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * Event Functions
-         */
-
-        public void AddEvent(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Event GetCurrentEvent()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetCurrentEvent(int eventID)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Event GetEvent(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int GetEventID(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<Event> GetEvents()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveEvent(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveEvent(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateEvent(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetFinishOptions(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetStartWindow(Event anEvent)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * Participant Functions
-         */
-
-        public void AddParticipant(Participant person)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddParticipants(List<Participant> people)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Participant GetParticipant(int eventIdentifier, int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Participant GetParticipant(int eventIdentifier, Participant unknown)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Participant GetParticipantBib(int eventIdentifier, string bib)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int GetParticipantID(Participant person)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<Participant> GetParticipants()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<Participant> GetParticipants(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<Participant> GetParticipants(int eventId, int distanceId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveParticipant(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveParticipantEntries(List<Participant> participants)
-        {
-            // removes only the eventspecific part from the db
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveParticipantEntry(Participant person)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateParticipant(Participant person)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateParticipants(List<Participant> participants)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * RemoteReader Functions
-         */
-
-        public void AddRemoteReaders(int eventId, List<RemoteReader> readers)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteRemoteReader(int eventId, RemoteReader reader)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteRemoteReaders(int eventId, List<RemoteReader> readers)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<RemoteReader> GetRemoteReaders(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * Segment Functions
-         */
-
-        public void AddSegment(Segment seg)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddSegments(List<Segment> segments)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int GetSegmentId(Segment seg)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<Segment> GetSegments(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int GetMaxSegments(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveSegment(Segment seg)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveSegment(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveSegments(List<Segment> segments)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ResetSegments(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateSegment(Segment seg)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateSegments(List<Segment> segments)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * SMS Functions
-         */
-
-        public void AddSMSAlert(int eventId, int eventspecific_id, int segment_id)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddSmsSubscriptions(int eventId, List<APISmsSubscription> subscriptions)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteSmsSubscriptions(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<(int, int)> GetSMSAlerts(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<APISmsSubscription> GetSmsSubscriptions(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * TimingLocation Functions
-         */
-
-        public void AddTimingLocation(TimingLocation tp)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddTimingLocations(List<TimingLocation> locations)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int GetTimingLocationID(TimingLocation tp)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimingLocation> GetTimingLocations(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveTimingLocation(TimingLocation tp)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveTimingLocation(int identifier)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateTimingLocation(TimingLocation tp)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * TimingResult Functions
-         */
-
-        public void AddTimingResult(TimeResult tr)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void AddTimingResults(List<TimeResult> results)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimeResult> GetSegmentTimes(int eventId, int segmentId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimeResult> GetFinishTimes(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimeResult> GetLastSeenResults(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimeResult> GetNonUploadedResults(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimeResult> GetStartTimes(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimeResult> GetTimingResults(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveTimingResult(TimeResult tr)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetUploadedTimingResults(List<TimeResult> results)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool UnprocessedResultsExist(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ResetTimingResultsEvent(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ResetTimingResultsPlacements(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * TimingSystem Functions
-         */
-
-        public void AddTimingSystem(TimingSystem system)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<TimingSystem> GetTimingSystems()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveTimingSystem(TimingSystem system)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveTimingSystem(int systemId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetTimingSystems(List<TimingSystem> systems)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UpdateTimingSystem(TimingSystem system)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * Alarm Functions
-         */
-
-        public void DeleteAlarm(Alarm alarm)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void DeleteAlarms(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public List<Alarm> GetAlarms(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SaveAlarm(int eventId, Alarm alarm)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SaveAlarms(int eventId, List<Alarm> alarms)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * AppSetting Functions
-         */
-
-        public AppSetting GetAppSetting(string name)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetAppSetting(string name, string value)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetAppSetting(AppSetting setting)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /**
-         * DistanceStat Functions
-         */
-
-        public List<DistanceStat> GetDistanceStats(int eventId)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Dictionary<int, List<Participant>> GetDistanceParticipantsStatus(int eventId, int distanceId)
-        {
-            throw new System.NotImplementedException();
-        }
 
         /**
          * Base Database Functions
          */
 
+        internal void ResetVariables()
+        {
+            // app setting
+            try
+            {
+                settingsLock.AcquireWriterLock(lockTimeout);
+                settings.Clear();
+                settingsLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring settingsLock. " + e.Message);
+                throw new MutexLockException("settingsLock");
+            }
+            // api
+            try
+            {
+                apiLock.AcquireWriterLock(lockTimeout);
+                apis.Clear();
+                apiLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
+                throw new MutexLockException("apiLock");
+            }
+            // timing system
+            try
+            {
+                timingSystemsLock.AcquireWriterLock(lockTimeout);
+                timingSystems.Clear();
+                timingSystemsLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring timingSystemsLock. " + e.Message);
+                throw new MutexLockException("timingSystemsLock");
+            }
+            // banned
+            try
+            {
+                bannedLock.AcquireWriterLock(lockTimeout);
+                bannedEmails.Clear();
+                bannedPhones.Clear();
+                bannedLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
+                throw new MutexLockException("bannedLock");
+            }
+            // distances
+            try
+            {
+                distanceLock.AcquireWriterLock(lockTimeout);
+                distances.Clear();
+                distanceLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring distanceLock. " + e.Message);
+                throw new MutexLockException("distanceLock");
+            }
+            // locations
+            try
+            {
+                locationsLock.AcquireWriterLock(lockTimeout);
+                locations.Clear();
+                locationsLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring locationsLock. " + e.Message);
+                throw new MutexLockException("locationsLock");
+            }
+            // segments
+            try
+            {
+                segmentLock.AcquireWriterLock(lockTimeout);
+                segments.Clear();
+                segmentLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
+            // participants
+            try
+            {
+                participantsLock.AcquireWriterLock(lockTimeout);
+                participants.Clear();
+                participantsLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
+                throw new MutexLockException("participantsLock");
+            }
+            // age groups
+            try
+            {
+                ageGroupLock.AcquireWriterLock(lockTimeout);
+                ageGroups.Clear();
+                ageGroupLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
+                throw new MutexLockException("ageGroupLock");
+            }
+            // alarms
+            try
+            {
+                alarmLock.AcquireWriterLock(lockTimeout);
+                alarms.Clear();
+                alarmLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring alarmLock. " + e.Message);
+                throw new MutexLockException("alarmLock");
+            }
+            // alerts
+            try
+            {
+                alertsLock.AcquireWriterLock(lockTimeout);
+                emailAlerts.Clear();
+                smsAlerts.Clear();
+                alertsLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring alertsLock. " + e.Message);
+                throw new MutexLockException("alertsLock");
+            }
+            // bib chips
+            try
+            {
+                bibChipLock.AcquireWriterLock(lockTimeout);
+                chipToBibAssociations.Clear();
+                bibChipLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
+                throw new MutexLockException("bibChipLock");
+            }
+            // remote reader
+            try
+            {
+                remoteReadersLock.AcquireWriterLock(lockTimeout);
+                remoteReaders.Clear();
+                remoteReadersLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring remoteReadersLock. " + e.Message);
+                throw new MutexLockException("remoteReadersLock");
+            }
+            // results
+            try
+            {
+                resultsLock.AcquireWriterLock(lockTimeout);
+                timingResults.Clear();
+                resultsLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
+                throw new MutexLockException("resultsLock");
+            }
+            // chipread
+            try
+            {
+                chipReadsLock.AcquireWriterLock(lockTimeout);
+                chipReads.Clear();
+                chipReadsLock.ReleaseWriterLock();
+            }
+            catch (ApplicationException e)
+            {
+                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
+                throw new MutexLockException("chipReadsLock");
+            }
+            // event
+            theEvent = null;
+        }
+
         public void HardResetDatabase()
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "HardResetDatabase");
+            try
+            {
+                eventLock.AcquireWriterLock(lockTimeout);
+                database.HardResetDatabase();
+                ResetVariables();
+                eventLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
+                throw new MutexLockException("eventLock");
+            }
         }
 
         public void Initialize()
@@ -1696,9 +510,10 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireWriterLock(lockTimeout);
+                database.Initialize();
                 try
                 {
-                    settingsLock.AcquireReaderLock(lockTimeout);
+                    settingsLock.AcquireWriterLock(lockTimeout);
                     // Load settings
                     settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
                     settings[Constants.Settings.COMPANY_NAME] = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
@@ -1792,7 +607,19 @@ namespace Chronokeep.MemStore
 
         public void ResetDatabase()
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "ResetDatabase");
+            try
+            {
+                eventLock.AcquireWriterLock(lockTimeout);
+                database.ResetDatabase();
+                ResetVariables();
+                eventLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
+                throw new MutexLockException("eventLock");
+            }
         }
     }
 }
