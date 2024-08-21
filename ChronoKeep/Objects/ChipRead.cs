@@ -2,7 +2,7 @@
 
 namespace Chronokeep
 {
-    public class ChipRead : IComparable<ChipRead>, IEquatable<ChipRead>
+    public class ChipRead : IComparable<ChipRead>
     {
         public int ReadId { get; set; }
         public int EventId { get; set; }
