@@ -108,6 +108,7 @@ namespace Chronokeep.UI.API
                         DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss zzz"),
                         Live = LiveBox.IsChecked == true,
                         DaysAllowed = Convert.ToInt32(DaysAllowedSlider.Value),
+                        RankingType = theEvent.RankByGun ? "gun" : "chip",
                     });
                     year = addResponse.EventYear.Year;
                 }
