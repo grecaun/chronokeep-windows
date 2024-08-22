@@ -13,7 +13,7 @@ namespace Chronokeep.Objects.API
             this.Last = result.Anonymous ? "" : result.Last;
             this.Age = result.Age(theEvent.Date);
             this.Gender = result.Gender;
-            this.AgeGroup = result.AgeGroupName;
+            this.AgeGroup = result.PrettyAgeGroupName();
             this.Distance = result.DistanceName;
             this.ChipSeconds = (int)result.ChipSeconds;
             this.ChipMilliseconds = result.ChipMilliseconds;

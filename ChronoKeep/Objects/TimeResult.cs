@@ -340,8 +340,7 @@ namespace Chronokeep.Objects
             int topAge = -1;
             if (agSplit.Length > 1 && agSplit[0] == "0")
             {
-                int.TryParse(agSplit[1], out topAge);
-                if (topAge > 0)
+                if (int.TryParse(agSplit[1], out topAge) && topAge > 0)
                 {
                     return string.Format("Under {0}", topAge + 1);
                 }
