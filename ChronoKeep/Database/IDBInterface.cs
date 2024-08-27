@@ -25,7 +25,7 @@ namespace Chronokeep
         List<APIObject> GetAllAPI();
 
         // Event Functions
-        void AddEvent(Event anEvent);
+        int AddEvent(Event anEvent);
         void RemoveEvent(int identifier);
         void RemoveEvent(Event anEvent);
         void UpdateEvent(Event anEvent);
@@ -49,8 +49,8 @@ namespace Chronokeep
         void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds);
 
         // Timing Location Functions
-        void AddTimingLocation(TimingLocation tp);
-        void AddTimingLocations(List<TimingLocation> locations);
+        int AddTimingLocation(TimingLocation tp);
+        List<TimingLocation> AddTimingLocations(List<TimingLocation> locations);
         void RemoveTimingLocation(TimingLocation tp);
         void RemoveTimingLocation(int identifier);
         void UpdateTimingLocation(TimingLocation tp);
@@ -58,8 +58,8 @@ namespace Chronokeep
         List<TimingLocation> GetTimingLocations(int eventId);
 
         // Segment Functions
-        void AddSegment(Segment seg);
-        void AddSegments(List<Segment> segments);
+        int AddSegment(Segment seg);
+        List<Segment> AddSegments(List<Segment> segments);
         void RemoveSegment(Segment seg);
         void RemoveSegment(int identifier);
         void RemoveSegments(List<Segment> segments);
@@ -71,8 +71,8 @@ namespace Chronokeep
         int GetMaxSegments(int eventId);
 
         // Participant Functions
-        void AddParticipant(Participant person);
-        void AddParticipants(List<Participant> people);
+        Participant AddParticipant(Participant person);
+        List<Participant> AddParticipants(List<Participant> people);
         void RemoveParticipant(int identifier);
         void RemoveParticipantEntry(Participant person);
         void RemoveParticipantEntries(List<Participant> participants);
@@ -145,7 +145,7 @@ namespace Chronokeep
         List<AgeGroup> GetAgeGroups(int eventId, int distanceId);
 
         // Timing Systems
-        void AddTimingSystem(TimingSystem system);
+        int AddTimingSystem(TimingSystem system);
         void UpdateTimingSystem(TimingSystem system);
         void SetTimingSystems(List<TimingSystem> systems);
         void RemoveTimingSystem(TimingSystem system);

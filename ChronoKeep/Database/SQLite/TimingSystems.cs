@@ -7,7 +7,7 @@ namespace Chronokeep.Database.SQLite
 {
     class TimingSystems
     {
-        internal static void AddTimingSystem(TimingSystem system, SQLiteConnection connection)
+        internal static int AddTimingSystem(TimingSystem system, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "INSERT INTO timing_systems (ts_ip, ts_port, ts_location, ts_type)" +
@@ -20,6 +20,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@type", system.Type)
             });
             command.ExecuteNonQuery();
+            long outVal = connection.LastInsertRowId;
+            return (int)outVal;
         }
 
         internal static void UpdateTimingSystem(TimingSystem system, SQLiteConnection connection)

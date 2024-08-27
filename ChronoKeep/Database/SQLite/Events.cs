@@ -6,7 +6,7 @@ namespace Chronokeep.Database.SQLite
 {
     class Events
     {
-        internal static void AddEvent(Event anEvent, SQLiteConnection connection)
+        internal static int AddEvent(Event anEvent, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -35,6 +35,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@daysAllowed", anEvent.DaysAllowed),
             });
             command.ExecuteNonQuery();
+            long outVal = connection.LastInsertRowId;
+            return (int)outVal;
         }
 
         internal static void RemoveEvent(int identifier, SQLiteConnection connection)

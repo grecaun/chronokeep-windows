@@ -44,6 +44,7 @@ namespace Chronokeep.MemStore
 
         // Event and the related fields
         private static ReaderWriterLock eventLock = new();
+        private static List<Event> allEvents = new();
         private static Event theEvent;
 
         private static ReaderWriterLock distanceLock = new();
@@ -109,6 +110,8 @@ namespace Chronokeep.MemStore
 
         public void LoadEvent()
         {
+            // Load event
+            theEvent = database.GetCurrentEvent();
             if (theEvent == null)
             {
                 return;
@@ -592,9 +595,10 @@ namespace Chronokeep.MemStore
                     Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
                     throw new MutexLockException("bannedLock");
                 }
-                // Load event
-                theEvent = database.GetCurrentEvent();
-                // Load all data
+                // Load events
+                allEvents.Clear();
+                allEvents.AddRange(database.GetEvents());
+                // Load event data
                 LoadEvent();
                 eventLock.ReleaseWriterLock();
             }

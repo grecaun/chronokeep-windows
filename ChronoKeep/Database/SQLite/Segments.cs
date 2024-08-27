@@ -6,7 +6,7 @@ namespace Chronokeep.Database.SQLite
 {
     class Segments
     {
-        internal static void AddSegment(Segment seg, SQLiteConnection connection)
+        internal static int AddSegment(Segment seg, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -26,6 +26,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@map",seg.MapLink) 
             });
             command.ExecuteNonQuery();
+            long outVal = connection.LastInsertRowId;
+            return (int)outVal;
         }
         internal static void RemoveSegment(int identifier, SQLiteConnection connection)
         {
@@ -64,6 +66,13 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM segments WHERE event_id=@event, distance_id=@distance, location_id=@location, occurance=@occurance;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event",seg.EventId),
+                new SQLiteParameter("@distance",seg.DistanceId),
+                new SQLiteParameter("@location",seg.LocationId),
+                new SQLiteParameter("@occurance",seg.Occurrence),
+            });
             SQLiteDataReader reader = command.ExecuteReader();
             int output = -1;
             if (reader.Read())

@@ -104,5 +104,23 @@
         public bool Anonymous { get => anonymous; set => anonymous = value; }
         public bool SMSEnabled { get => sms_enabled; set => sms_enabled = value; }
         public string Apparel { get => apparel; set => apparel = value ?? ""; }
+
+        public void CopyFrom(EventSpecific other)
+        {
+            this.EventIdentifier = other.EventIdentifier;
+            this.DistanceIdentifier = other.DistanceIdentifier;
+            this.Bib = other.Bib;
+            this.CheckedIn = other.CheckedIn;
+            this.Comments = other.Comments;
+            this.DistanceName = other.DistanceName;
+            this.Owes = other.Owes;
+            this.Other = other.Other;
+            this.Status = other.Status;
+            this.AgeGroupName = other.AgeGroupName;
+            this.AgeGroupId = other.AgeGroupId;
+            this.Anonymous = other.Anonymous;
+            this.SMSEnabled = other.SMSEnabled;
+            this.Apparel = other.Apparel;
+        }
     }
 }

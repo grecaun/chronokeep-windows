@@ -91,5 +91,19 @@ namespace Chronokeep
                 this.location_id == other.location_id &&
                 this.occurrence == other.occurrence;
         }
+
+        public void CopyFrom(Segment other)
+        {
+            this.EventId = other.EventId;
+            this.DistanceId = other.DistanceId;
+            this.LocationId = other.LocationId;
+            this.Occurrence = other.Occurrence;
+            this.Name = other.Name;
+            this.SegmentDistance = other.SegmentDistance;
+            this.CumulativeDistance = other.CumulativeDistance;
+            this.DistanceUnit = other.DistanceUnit;
+            this.GPS = other.GPS;
+            this.MapLink = other.MapLink;
+        }
     }
 }

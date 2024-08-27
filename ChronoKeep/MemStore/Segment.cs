@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Chronokeep.MemStore
 {
@@ -8,59 +9,291 @@ namespace Chronokeep.MemStore
          * Segment Functions
          */
 
-        public void AddSegment(Segment seg)
+        public int AddSegment(Segment seg)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "AddSegment");
+            try
+            {
+                segmentLock.AcquireWriterLock(lockTimeout);
+                int output = database.AddSegment(seg);
+                seg.Identifier = output;
+                segments[seg.Identifier] = seg;
+                segmentLock.ReleaseWriterLock();
+                return output;
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
 
-        public void AddSegments(List<Segment> segments)
+        public List<Segment> AddSegments(List<Segment> segs)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "AddSegments");
+            try
+            {
+                segmentLock.AcquireWriterLock(lockTimeout);
+                List<Segment> output = database.AddSegments(segs);
+                foreach (Segment seg in output)
+                {
+                    segments[seg.Identifier] = seg;
+                }
+                segmentLock.ReleaseWriterLock();
+                return output;
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
 
         public int GetSegmentId(Segment seg)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "GetSegmentId");
+            try
+            {
+                segmentLock.AcquireReaderLock(lockTimeout);
+                int output = -1;
+                foreach (Segment s in segments.Values)
+                {
+                    if (s.EventId == seg.EventId
+                        && s.DistanceId == seg.DistanceId
+                        && s.LocationId == seg.LocationId
+                        && s.Occurrence == seg.Occurrence)
+                    {
+                        output = s.Identifier;
+                        break;
+                    }
+                }
+                segmentLock.ReleaseReaderLock();
+                return output;
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
 
         public List<Segment> GetSegments(int eventId)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "GetSegments");
+            bool invalidEvent = false;
+            try
+            {
+                eventLock.AcquireReaderLock(lockTimeout);
+                if (theEvent.Identifier != eventId)
+                {
+                    invalidEvent = true;
+                }
+                eventLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
+                throw new MutexLockException("eventLock");
+            }
+            if (invalidEvent)
+            {
+                throw new InvalidEventID("Expected different event id.");
+            }
+            try
+            {
+                segmentLock.AcquireReaderLock(lockTimeout);
+                List<Segment> output = new();
+                output.AddRange(segments.Values);
+                segmentLock.ReleaseReaderLock();
+                return output;
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
 
         public int GetMaxSegments(int eventId)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "GetMaxSegments");
+            bool invalidEvent = false;
+            try
+            {
+                eventLock.AcquireReaderLock(lockTimeout);
+                if (theEvent.Identifier != eventId)
+                {
+                    invalidEvent = true;
+                }
+                eventLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
+                throw new MutexLockException("eventLock");
+            }
+            if (invalidEvent)
+            {
+                throw new InvalidEventID("Expected different event id.");
+            }
+            try
+            {
+                int output = 0;
+                Dictionary<int, int> maxSegmentsPerDistance = new();
+                segmentLock.AcquireReaderLock(lockTimeout);
+                foreach (Segment s in segments.Values)
+                {
+                    if (!maxSegmentsPerDistance.TryGetValue(s.DistanceId, out int count))
+                    {
+                        maxSegmentsPerDistance[s.DistanceId] = 0;
+                    }
+                    count++;
+                    if (count > output)
+                    {
+                        output = count;
+                    }
+                }
+                segmentLock.ReleaseReaderLock();
+                return output;
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
 
         public void RemoveSegment(Segment seg)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "RemoveSegment");
+            try
+            {
+                segmentLock.AcquireWriterLock(lockTimeout);
+                database.RemoveSegment(seg);
+                segments.Remove(seg.Identifier);
+                segmentLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
 
         public void RemoveSegment(int identifier)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "RemoveSegment");
+            try
+            {
+                segmentLock.AcquireWriterLock(lockTimeout);
+                database.RemoveSegment(identifier);
+                segments.Remove(identifier);
+                segmentLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
 
-        public void RemoveSegments(List<Segment> segments)
+        public void RemoveSegments(List<Segment> segs)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "RemoveSegments");
+            try
+            {
+                segmentLock.AcquireWriterLock(lockTimeout);
+                database.RemoveSegments(segs);
+                foreach (Segment s in segs)
+                {
+                    segments.Remove(s.Identifier);
+                }
+                segmentLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
 
         public void ResetSegments(int eventId)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "RemoveSegments");
+            bool invalidEvent = false;
+            try
+            {
+                eventLock.AcquireReaderLock(lockTimeout);
+                if (theEvent.Identifier != eventId)
+                {
+                    invalidEvent = true;
+                }
+                eventLock.ReleaseReaderLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
+                throw new MutexLockException("eventLock");
+            }
+            if (invalidEvent)
+            {
+                throw new InvalidEventID("Expected different event id.");
+            }
+            try
+            {
+                segmentLock.AcquireWriterLock(lockTimeout);
+                database.ResetSegments(eventId);
+                segments.Clear();
+                segmentLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
 
         public void UpdateSegment(Segment seg)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "UpdateSegment");
+            try
+            {
+                segmentLock.AcquireWriterLock(lockTimeout);
+                database.UpdateSegment(seg);
+                if (segments.TryGetValue(seg.Identifier, out Segment oldSeg))
+                {
+                    oldSeg.CopyFrom(seg);
+                }
+                segmentLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
 
-        public void UpdateSegments(List<Segment> segments)
+        public void UpdateSegments(List<Segment> segs)
         {
-            throw new System.NotImplementedException();
+            Log.D("MemStore", "UpdateSegments");
+            try
+            {
+                segmentLock.AcquireWriterLock(lockTimeout);
+                database.UpdateSegments(segs);
+                foreach (Segment s in segs)
+                {
+                    if (segments.TryGetValue(s.Identifier, out Segment oldSeg))
+                    {
+                        oldSeg.CopyFrom(s);
+                    }
+                }
+                segmentLock.ReleaseWriterLock();
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
+                throw new MutexLockException("segmentLock");
+            }
         }
     }
 }

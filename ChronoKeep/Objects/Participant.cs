@@ -688,5 +688,29 @@ namespace Chronokeep.Objects
             Trim();
             FormatData();
         }
+
+        public void CopyFrom(Participant other)
+        {
+            EventSpecific.CopyFrom(other.EventSpecific);
+            firstName = other.FirstName;
+            lastName = other.LastName;
+            gender = other.Gender;
+            birthdate = other.Birthdate;
+            street = other.Street;
+            city = other.City;
+            state = other.State;
+            zip = other.Zip;
+            email = other.Email;
+            phone = other.Phone;
+            mobile = other.Mobile;
+            parent = other.Parent;
+            country = other.Country;
+            street2 = other.Street2;
+            emergencyPhone = other.ECPhone;
+            emergencyName = other.ECName;
+            chip = other.Chip;
+            Trim();
+            FormatData();
+        }
     }
 }

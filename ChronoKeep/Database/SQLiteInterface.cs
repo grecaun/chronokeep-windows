@@ -199,19 +199,21 @@ namespace Chronokeep
          * Events
          */
 
-        public void AddEvent(Event anEvent)
+        public int AddEvent(Event anEvent)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 9");
+            int output = -1;
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 9");
-                return;
+                return output;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            Events.AddEvent(anEvent, connection);
+            output = Events.AddEvent(anEvent, connection);
             connection.Close();
             mutex.ReleaseMutex();
+            return output;
         }
 
         public void RemoveEvent(Event anEvent)
@@ -353,32 +355,35 @@ namespace Chronokeep
          * Participants
          */
 
-        public void AddParticipant(Participant person)
+        public Participant AddParticipant(Participant person)
         {
+            Participant output = null;
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 19");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 19");
-                return;
+                return output;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                Participants.AddParticipant(person, connection);
+                output = Participants.AddParticipant(person, connection);
                 transaction.Commit();
             }
             connection.Close();
             mutex.ReleaseMutex();
+            return output;
         }
 
-        public void AddParticipants(List<Participant> people)
+        public List<Participant> AddParticipants(List<Participant> people)
         {
+            List<Participant> output = new();
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 20");
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 20");
-                return;
+                return output;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -386,12 +391,13 @@ namespace Chronokeep
             {
                 foreach (Participant person in people)
                 {
-                    Participants.AddParticipant(person, connection);
+                    output.Add(Participants.AddParticipant(person, connection));
                 }
                 transaction.Commit();
             }
             connection.Close();
             mutex.ReleaseMutex();
+            return output;
         }
 
         public void RemoveParticipant(int identifier)
@@ -628,36 +634,41 @@ namespace Chronokeep
          * Timing Locations
          */
 
-        public void AddTimingLocation(TimingLocation tl)
+        public int AddTimingLocation(TimingLocation tl)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 35");
+            int output = -1;
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 35");
-                return;
+                return output;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            TimingLocations.AddTimingLocation(tl, connection);
+            output = TimingLocations.AddTimingLocation(tl, connection);
             connection.Close();
             mutex.ReleaseMutex();
+            return output;
         }
-        public void AddTimingLocations(List<TimingLocation> locations)
+        public List<TimingLocation> AddTimingLocations(List<TimingLocation> locations)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 118");
+            List<TimingLocation> output = new();
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 118");
-                return;
+                return output;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             foreach (TimingLocation tl in locations)
             {
-                TimingLocations.AddTimingLocation(tl, connection);
+                tl.Identifier = TimingLocations.AddTimingLocation(tl, connection);
+                output.Add(tl);
             }
             connection.Close();
             mutex.ReleaseMutex();
+            return output;
         }
 
         public void RemoveTimingLocation(TimingLocation tl)
@@ -731,32 +742,35 @@ namespace Chronokeep
          * Segment
          */
 
-        public void AddSegment(Segment seg)
+        public int AddSegment(Segment seg)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 40");
+            int output = -1;
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 40");
-                return;
+                return output;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             using (var transaction = connection.BeginTransaction())
             {
-                Segments.AddSegment(seg, connection);
+                output = Segments.AddSegment(seg, connection);
                 transaction.Commit();
             }
             connection.Close();
             mutex.ReleaseMutex();
+            return output;
         }
 
-        public void AddSegments(List<Segment> segments)
+        public List<Segment> AddSegments(List<Segment> segments)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 41");
+            List<Segment> output = new();
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 41");
-                return;
+                return output;
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
@@ -764,12 +778,14 @@ namespace Chronokeep
             {
                 foreach (Segment seg in segments)
                 {
-                    Segments.AddSegment(seg, connection);
+                    seg.Identifier = Segments.AddSegment(seg, connection);
+                    output.Add(seg);
                 }
                 transaction.Commit();
             }
             connection.Close();
             mutex.ReleaseMutex();
+            return output;
         }
 
         public void RemoveSegment(Segment seg)
@@ -1815,20 +1831,22 @@ namespace Chronokeep
          * Timing Systems
          */
 
-        public void AddTimingSystem(TimingSystem system)
+        public int AddTimingSystem(TimingSystem system)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 113");
+            int output = Constants.Timing.TIMINGSYSTEM_UNKNOWN;
             if (!mutex.WaitOne(3000))
             {
                 Log.D("SQLiteInterface", "Failed to grab Mutex: ID 113");
-                return;
+                return output;
             }
             Log.D("SQLiteInterface", "Database - Add Timing System");
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            TimingSystems.AddTimingSystem(system, connection);
+            output = TimingSystems.AddTimingSystem(system, connection);
             connection.Close();
             mutex.ReleaseMutex();
+            return output;
         }
 
         public void UpdateTimingSystem(TimingSystem system)

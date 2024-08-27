@@ -7,7 +7,7 @@ namespace Chronokeep.Database.SQLite
 {
     class Participants
     {
-        internal static void AddParticipant(Participant person, SQLiteConnection connection)
+        internal static Participant AddParticipant(Participant person, SQLiteConnection connection)
         {
             person.FormatData();
             SQLiteCommand command = connection.CreateCommand();
@@ -61,6 +61,9 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@apparel", person.EventSpecific.Apparel)
             });
             command.ExecuteNonQuery();
+            long outVal = connection.LastInsertRowId;
+            person.EventSpecific.Identifier = (int)outVal;
+            return person;
         }
 
         internal static void RemoveParticipant(int identifier, SQLiteConnection connection)

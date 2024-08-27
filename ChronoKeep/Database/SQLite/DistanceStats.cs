@@ -63,14 +63,11 @@ namespace Chronokeep.Database.SQLite
                 }
             }
             reader.Close();
-            List<DistanceStat> output = new List<DistanceStat>
+            List<DistanceStat> output = new()
             {
                 allstats
             };
-            foreach (DistanceStat stats in statsDictionary.Values)
-            {
-                output.Add(stats);
-            }
+            output.AddRange(statsDictionary.Values);
             return output;
         }
     }

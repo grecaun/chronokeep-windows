@@ -99,6 +99,15 @@ namespace Chronokeep.Objects
             }
         }
 
+        public void CopyFrom(TimingSystem other)
+        {
+            this.IPAddress = other.IPAddress;
+            this.LocationID = other.LocationID;
+            this.LocationName = other.LocationName;
+            this.Port = other.Port;
+            this.Type = other.Type;
+        }
+
         public void CreateTimingSystemInterface(IDBInterface database, IMainWindow window)
         {
             if (this.Type == Constants.Readers.SYSTEM_RFID)

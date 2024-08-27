@@ -93,14 +93,7 @@ namespace Chronokeep
                 {
                     // Copy old event values.
                     Event oldEvent = database.GetEvent(oldEventId);
-                    newEvent.EventType = oldEvent.EventType;
-                    newEvent.StartWindow = oldEvent.StartWindow;
-                    newEvent.FinishIgnoreWithin = oldEvent.FinishIgnoreWithin;
-                    newEvent.FinishMaxOccurrences = oldEvent.FinishMaxOccurrences;
-                    newEvent.CommonAgeGroups = oldEvent.CommonAgeGroups;
-                    newEvent.CommonStartFinish = oldEvent.CommonStartFinish;
-                    newEvent.DistanceSpecificSegments = oldEvent.DistanceSpecificSegments;
-                    newEvent.RankByGun = oldEvent.RankByGun;
+                    newEvent.CopyFrom(oldEvent);
                     // Update database with current values.
                     database.UpdateEvent(newEvent);
                     // Get distances from old event

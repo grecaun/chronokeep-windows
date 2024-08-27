@@ -52,5 +52,13 @@ namespace Chronokeep
             if (other == null) return false;
             return this.Identifier == other.Identifier && this.EventIdentifier == other.EventIdentifier;
         }
+
+        public void CopyFrom(TimingLocation other)
+        {
+            this.EventIdentifier = other.EventIdentifier;
+            this.Name = other.Name;
+            this.MaxOccurrences = other.MaxOccurrences;
+            this.IgnoreWithin = other.IgnoreWithin;
+        }
     }
 }

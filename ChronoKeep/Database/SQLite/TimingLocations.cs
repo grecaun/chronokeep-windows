@@ -6,7 +6,7 @@ namespace Chronokeep.Database.SQLite
 {
     class TimingLocations
     {
-        internal static void AddTimingLocation(TimingLocation tl, SQLiteConnection connection)
+        internal static int AddTimingLocation(TimingLocation tl, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
@@ -18,6 +18,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@max", tl.MaxOccurrences),
                 new SQLiteParameter("@ignore", tl.IgnoreWithin) });
             command.ExecuteNonQuery();
+            long outVal = connection.LastInsertRowId;
+            return (int)outVal;
         }
 
         internal static void RemoveTimingLocation(int identifier, SQLiteConnection connection)

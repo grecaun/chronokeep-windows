@@ -158,5 +158,20 @@ namespace Chronokeep
             if (other == null) return false;
             return (this.Date == other.Date && this.name == other.name) || this.Identifier == other.Identifier;
         }
+
+        public void CopyFrom(Event other)
+        {
+            this.EventType = other.EventType;
+            this.StartWindow = other.StartWindow;
+            this.FinishIgnoreWithin = other.FinishIgnoreWithin;
+            this.FinishMaxOccurrences = other.FinishMaxOccurrences;
+            this.CommonAgeGroups = other.CommonAgeGroups;
+            this.CommonStartFinish = other.CommonStartFinish;
+            this.DistanceSpecificSegments = other.DistanceSpecificSegments;
+            this.DisplayPlacements = other.DisplayPlacements;
+            this.AgeGroupDivision = other.AgeGroupDivision;
+            this.DaysAllowed = other.DaysAllowed;
+            this.RankByGun = other.RankByGun;
+        }
     }
 }
