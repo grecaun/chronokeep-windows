@@ -6,7 +6,7 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace Chronokeep.Objects
 {
-    public class TimeResult
+    public class TimeResult: IEquatable<TimeResult>
     {
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, readId, place, agePlace, genderPlace,
@@ -678,6 +678,14 @@ namespace Chronokeep.Objects
                 return SMSState.NetworkError;
             }
             return SMSState.Success;
+        }
+
+        public bool Equals(TimeResult other)
+        {
+            return this.EventSpecificId == other.EventSpecificId
+                && this.LocationId == other.LocationId
+                && this.SegmentId == other.SegmentId
+                && this.Occurrence == other.Occurrence;
         }
 
         public enum SMSState

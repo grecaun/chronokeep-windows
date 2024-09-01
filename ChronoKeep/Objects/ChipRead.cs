@@ -516,6 +516,15 @@ namespace Chronokeep
                 || Constants.Timing.CHIPREAD_STATUS_DNS == Status;
         }
 
+        public bool CanBeReset()
+        {
+            return Constants.Timing.CHIPREAD_STATUS_IGNORE != Status
+                && Constants.Timing.CHIPREAD_STATUS_DNS != Status
+                && Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE != Status
+                && Constants.Timing.CHIPREAD_STATUS_DNF != Status
+                && Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE != Status;
+        }
+
         public bool Equals(ChipRead other)
         {
             if (other == null) return false;
