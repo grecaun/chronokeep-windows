@@ -91,6 +91,7 @@ namespace Chronokeep.Database.SQLite
                     "event_age_groups_as_divisions INTEGER NOT NULL DEFAULT "+ Constants.Timing.AGEGROUPS_LASTGROUP_FALSE +"," +
                     "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
                     "event_days_allowed INTEGER NOT NULL DEFAULT 1," +
+                    "event_upload_specific_distance_results INTEGER NOT NULL DEFAULT 0," +
                     "api_id INTEGER REFERENCES results_api(api_id) NOT NULL DEFAULT -1," +
                     "api_event_id VARCHAR(200) NOT NULL DEFAULT ''," +
                     "event_display_placements INTEGER NOT NULL DEFAULT 1," +
@@ -114,6 +115,7 @@ namespace Chronokeep.Database.SQLite
                     "distance_type INTEGER NOT NULL DEFAULT 0," +
                     "distance_ranking_order INTEGER NOT NULL DEFAULT 0, " +
                     "distance_sms_enabled INTEGER NOT NULL DEFAULT 0, " +
+                    "distance_upload_results INTEGER NOT NULL DEFAULT 1," +
                     "UNIQUE (distance_name, event_id) ON CONFLICT IGNORE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS timing_locations (" +

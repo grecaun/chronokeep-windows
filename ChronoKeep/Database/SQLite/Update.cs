@@ -1574,6 +1574,14 @@ namespace Chronokeep.Database.SQLite
                             "CREATE INDEX idx_distance_id ON distances(distance_id);" +
                             "UPDATE settings SET VALUE='66' WHERE setting='"+Constants.Settings.DATABASE_VERSION+"'";
                         command.ExecuteNonQuery();
+                        goto case 66;
+                    case 66:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 66.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events ADD COLUMN event_upload_specific_distance_results INTEGER NOT NULL DEFAULT 0; " +
+                            "ALTER TABLE distances ADD COLUMN distance_upload_results INTEGER NOT NULL DEFAULT 1; " +
+                            "UPDATE settings SET VALUE='67' WHERE setting='"+Constants.Settings.DATABASE_VERSION+"';";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

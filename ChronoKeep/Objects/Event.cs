@@ -13,7 +13,7 @@ namespace Chronokeep
         private int start_milliseconds;
         private int api_id = Constants.APIConstants.NULL_ID;
         private string api_event_id = Constants.APIConstants.NULL_EVENT_ID;
-        private int display_placements = 1, age_groups_as_divisions = 0, days_allowed = 1;
+        private int display_placements = 1, age_groups_as_divisions = 0, days_allowed = 1, upload_specific = 0;
 
         public Event() { }
 
@@ -82,7 +82,7 @@ namespace Chronokeep
             int gun, string yearcode, int maxOcc, int ignWith, int window,
             long startsec, int startmill, int type, int api_id,
             string api_event_id, int display_placements, int age_groups_as_divisions,
-            int days_allowed)
+            int days_allowed, int upload_specific)
         {
             this.identifier = id;
             this.name = n;
@@ -105,6 +105,7 @@ namespace Chronokeep
             this.display_placements = display_placements;
             this.age_groups_as_divisions = age_groups_as_divisions;
             this.days_allowed = days_allowed;
+            this.upload_specific = upload_specific;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -128,6 +129,7 @@ namespace Chronokeep
         public bool DisplayPlacements { get => display_placements != 0; set => display_placements = value ? 1 : 0; }
         public bool AgeGroupDivision { get => age_groups_as_divisions != 0; set => age_groups_as_divisions = value ? 1 : 0; }
         public int DaysAllowed { get => days_allowed; set => days_allowed = value; }
+        public bool UploadSpecific { get => upload_specific != 0; set => upload_specific = value ? 1 : 0; }
 
         public string EventTypeString
         {

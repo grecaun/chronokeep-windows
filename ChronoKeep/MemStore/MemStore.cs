@@ -67,9 +67,10 @@ namespace Chronokeep.MemStore
         // key == chip
         private static Dictionary<string, BibChipAssociation> chipToBibAssociations = new();
 
-        private static ReaderWriterLock ageGroupLock = new();
         // key == distanceId
         private static Dictionary<int, List<AgeGroup>> ageGroups = new();
+        private static Dictionary<(int, int), AgeGroup> currentAgeGroups = new();
+        private static Dictionary<int, AgeGroup> lastAgeGroup = new();
 
         private static ReaderWriterLock alarmLock = new();
         // key == (bib, chip)
@@ -193,7 +194,7 @@ namespace Chronokeep.MemStore
             }
             try
             {
-                ageGroupLock.AcquireWriterLock(lockTimeout);
+                participantsLock.AcquireWriterLock(lockTimeout);
                 // load age groups
                 foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
                 {
@@ -204,12 +205,12 @@ namespace Chronokeep.MemStore
                     }
                     value.Add(group);
                 }
-                ageGroupLock.ReleaseWriterLock();
+                participantsLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
+                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
+                throw new MutexLockException("participantsLock");
             }
             try
             {
@@ -404,14 +405,14 @@ namespace Chronokeep.MemStore
             // age groups
             try
             {
-                ageGroupLock.AcquireWriterLock(lockTimeout);
+                participantsLock.AcquireWriterLock(lockTimeout);
                 ageGroups.Clear();
-                ageGroupLock.ReleaseWriterLock();
+                participantsLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
             {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
+                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
+                throw new MutexLockException("participantsLock");
             }
             // alarms
             try

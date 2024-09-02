@@ -712,5 +712,21 @@ namespace Chronokeep.Objects
             Trim();
             FormatData();
         }
+
+        public bool IsSimilar(API.APIPerson other)
+        {
+            return firstName.Equals(other.First, StringComparison.OrdinalIgnoreCase)
+                || lastName.Equals(other.Last, StringComparison.OrdinalIgnoreCase)
+                || (gender == other.Gender
+                && birthdate == other.Birthdate);
+        }
+
+        public bool IsSimilar(Registration.Participant other)
+        {
+            return firstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
+                || lastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
+                || (gender == other.Gender
+                && birthdate == other.Birthdate);
+        }
     }
 }

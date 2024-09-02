@@ -16,6 +16,26 @@ namespace Chronokeep.MemStore
             try
             {
                 participantsLock.AcquireWriterLock(lockTimeout);
+                if (theEvent.CommonAgeGroups)
+                {
+                    if (currentAgeGroups.TryGetValue(
+                        (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
+                        out AgeGroup ageGroup))
+                    {
+                        person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                        person.EventSpecific.AgeGroupName = ageGroup.Name;
+                    }
+                }
+                else
+                {
+                    if (currentAgeGroups.TryGetValue(
+                        (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
+                        out AgeGroup ageGroup))
+                    {
+                        person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                        person.EventSpecific.AgeGroupName = ageGroup.Name;
+                    }
+                }
                 Participant output = database.AddParticipant(person);
                 participants[output.EventSpecific.Identifier] = output;
                 participantsLock.ReleaseWriterLock();
@@ -34,6 +54,29 @@ namespace Chronokeep.MemStore
             try
             {
                 participantsLock.AcquireWriterLock(lockTimeout);
+                foreach (Participant person in people)
+                {
+                    if (theEvent.CommonAgeGroups)
+                    {
+                        if (currentAgeGroups.TryGetValue(
+                            (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
+                            out AgeGroup ageGroup))
+                        {
+                            person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                            person.EventSpecific.AgeGroupName = ageGroup.Name;
+                        }
+                    }
+                    else
+                    {
+                        if (currentAgeGroups.TryGetValue(
+                            (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
+                            out AgeGroup ageGroup))
+                        {
+                            person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                            person.EventSpecific.AgeGroupName = ageGroup.Name;
+                        }
+                    }
+                }
                 List<Participant> output = database.AddParticipants(people);
                 foreach (Participant person in output)
                 {
@@ -361,6 +404,26 @@ namespace Chronokeep.MemStore
             try
             {
                 participantsLock.AcquireWriterLock(lockTimeout);
+                if (theEvent.CommonAgeGroups)
+                {
+                    if (currentAgeGroups.TryGetValue(
+                        (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
+                        out AgeGroup ageGroup))
+                    {
+                        person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                        person.EventSpecific.AgeGroupName = ageGroup.Name;
+                    }
+                }
+                else
+                {
+                    if (currentAgeGroups.TryGetValue(
+                        (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
+                        out AgeGroup ageGroup))
+                    {
+                        person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                        person.EventSpecific.AgeGroupName = ageGroup.Name;
+                    }
+                }
                 database.UpdateParticipant(person);
                 participants.Remove(person.EventSpecific.Identifier);
                 participantsLock.ReleaseWriterLock();
@@ -378,6 +441,29 @@ namespace Chronokeep.MemStore
             try
             {
                 participantsLock.AcquireWriterLock(lockTimeout);
+                foreach (Participant person in parts)
+                {
+                    if (theEvent.CommonAgeGroups)
+                    {
+                        if (currentAgeGroups.TryGetValue(
+                            (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
+                            out AgeGroup ageGroup))
+                        {
+                            person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                            person.EventSpecific.AgeGroupName = ageGroup.Name;
+                        }
+                    }
+                    else
+                    {
+                        if (currentAgeGroups.TryGetValue(
+                            (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
+                            out AgeGroup ageGroup))
+                        {
+                            person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                            person.EventSpecific.AgeGroupName = ageGroup.Name;
+                        }
+                    }
+                }
                 database.UpdateParticipants(parts);
                 foreach (Participant p in parts)
                 {

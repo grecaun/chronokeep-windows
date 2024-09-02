@@ -246,7 +246,7 @@ namespace Chronokeep.Network.Registration
                                                         eventSpecId = -1;
                                                     }
                                                     Objects.Participant updatedPart = database.GetParticipantEventSpecific(theEvent.Identifier, eventSpecId);
-                                                    if (updatedPart == null)
+                                                    if (updatedPart == null || !updatedPart.IsSimilar(addReq.Participant))
                                                     {
                                                         SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
                                                         {
@@ -345,7 +345,7 @@ namespace Chronokeep.Network.Registration
                                                             }
                                                             else if (part.Bib.Length > 0)
                                                             {
-                                                                if (partESDict.TryGetValue(part.Id, out Objects.Participant updatedPart))
+                                                                if (partESDict.TryGetValue(part.Id, out Objects.Participant updatedPart) && updatedPart != null && updatedPart.IsSimilar(part))
                                                                 {
                                                                     Log.D("Network.Registration.RegistrationWorker", "Updated Part - Bib: " + part.Bib);
                                                                     updatedPart.Update(

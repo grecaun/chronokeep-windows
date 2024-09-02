@@ -503,7 +503,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     if (person.Bib.Length > 0 && distDictionary.TryGetValue(person.Distance.ToLower(), out Distance distance))
                     {
-                        if (partESDictionary.TryGetValue(person.Identifier, out Participant old))
+                        if (partESDictionary.TryGetValue(person.Identifier, out Participant old) && old != null && old.IsSimilar(person))
                         {
                             Participant updated = new(
                                 old.Identifier,

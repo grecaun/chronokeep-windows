@@ -161,16 +161,16 @@ namespace Chronokeep.MemStore
             }
             try
             {
-                ageGroupLock.AcquireWriterLock(lockTimeout);
+                alarmLock.AcquireWriterLock(lockTimeout);
                 List<Alarm> output = new();
                 output.AddRange(database.SaveAlarms(eventId, alarms));
-                ageGroupLock.ReleaseWriterLock();
+                alarmLock.ReleaseWriterLock();
                 return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
+                Log.D("MemStore", "Exception acquiring alarmLock. " + e.Message);
+                throw new MutexLockException("alarmLock");
             }
         }
     }
