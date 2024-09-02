@@ -450,7 +450,7 @@ namespace Chronokeep.MemStore
                             out AgeGroup ageGroup))
                         {
                             person.EventSpecific.AgeGroupId = ageGroup.GroupId;
-                            person.EventSpecific.AgeGroupName = ageGroup.Name;
+                            person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
                         }
                     }
                     else
@@ -460,7 +460,7 @@ namespace Chronokeep.MemStore
                             out AgeGroup ageGroup))
                         {
                             person.EventSpecific.AgeGroupId = ageGroup.GroupId;
-                            person.EventSpecific.AgeGroupName = ageGroup.Name;
+                            person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
                         }
                     }
                 }

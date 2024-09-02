@@ -9,10 +9,6 @@ namespace Chronokeep.Objects
         private int group_id, event_id, distance_id, start_age, end_age, last_group = Constants.Timing.AGEGROUPS_LASTGROUP_FALSE;
         private string custom_name;
 
-        private static Dictionary<(int, int), AgeGroup> CurrentGroups = null;
-        private static Dictionary<int, AgeGroup> LastAgeGroup = null;
-        private static Mutex AGMutex = new Mutex();
-
         public AgeGroup(int eventId, int distanceId, int startAge, int endAge, string custom_name = "")
         {
             this.group_id = -1;
@@ -73,48 +69,6 @@ namespace Chronokeep.Objects
                 return this.distance_id.CompareTo(other.distance_id);
             }
             return this.start_age.CompareTo(other.start_age);
-        }
-
-        public static Dictionary<(int, int), AgeGroup> GetAgeGroups()
-        {
-            Dictionary<(int, int), AgeGroup> output = null;
-            if (!AGMutex.WaitOne(3000))
-            {
-                return output;
-            }
-            output = CurrentGroups;
-            AGMutex.ReleaseMutex();
-            return output;
-        }
-
-        public static Dictionary<int, AgeGroup> GetLastAgeGroup()
-        {
-            Dictionary<int, AgeGroup> output = null;
-            if (!AGMutex.WaitOne(3000))
-            {
-                return output;
-            }
-            output = LastAgeGroup;
-            AGMutex.ReleaseMutex();
-            return output;
-        }
-
-        public static void SetAgeGroups(List<AgeGroup> groups)
-        {
-            CurrentGroups = new Dictionary<(int,int), AgeGroup>();
-            LastAgeGroup = new Dictionary<int, AgeGroup>();
-            groups.Sort();
-            foreach (AgeGroup group in groups)
-            {
-                for (int i = group.StartAge; i <= group.EndAge; i++)
-                {
-                    CurrentGroups[(group.DistanceId, i)] = group;
-                }
-                if (!LastAgeGroup.ContainsKey(group.DistanceId) || LastAgeGroup[group.DistanceId].StartAge < group.StartAge)
-                {
-                    LastAgeGroup[group.DistanceId] = group;
-                }
-            }
         }
 
         public bool Equals(AgeGroup that)

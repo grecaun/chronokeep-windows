@@ -400,8 +400,19 @@ namespace Chronokeep.UI.Participants
                 "" // placeholder chip value
                 );
             age = output.GetAge(theEvent.Date);
-            Dictionary<(int, int), AgeGroup> AgeGroups = AgeGroup.GetAgeGroups();
-            Dictionary<int, AgeGroup> LastAgeGroup = AgeGroup.GetLastAgeGroup();
+            Dictionary<(int, int), AgeGroup> AgeGroups = new();
+            Dictionary<int, AgeGroup> LastAgeGroup = new();
+            foreach (AgeGroup g in database.GetAgeGroups(theEvent.Identifier))
+            {
+                for (int i = g.StartAge; i <= g.EndAge; i++)
+                {
+                    AgeGroups[(g.DistanceId, i)] = g;
+                }
+                if (!!LastAgeGroup.ContainsKey(g.DistanceId) || LastAgeGroup[g.DistanceId].StartAge < g.StartAge)
+                {
+                    LastAgeGroup[g.DistanceId] = g;
+                }
+            }
             int agDivId = theEvent.CommonAgeGroups ? Constants.Timing.COMMON_AGEGROUPS_DISTANCEID : output.EventSpecific.DistanceIdentifier;
             if (AgeGroups == null || age < 0)
             {
@@ -409,17 +420,15 @@ namespace Chronokeep.UI.Participants
                 output.EventSpecific.AgeGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
                 output.EventSpecific.AgeGroupName = "";
             }
-            else if (AgeGroups.ContainsKey((agDivId, age)))
+            else if (AgeGroups.TryGetValue((agDivId, age), out AgeGroup group))
             {
-                AgeGroup group = AgeGroups[(agDivId, age)];
                 output.EventSpecific.AgeGroupId = group.GroupId;
-                output.EventSpecific.AgeGroupName = string.Format("{0}-{1}", group.StartAge, group.EndAge);
+                output.EventSpecific.AgeGroupName = group.PrettyName();
             }
-            else if (LastAgeGroup.ContainsKey(agDivId))
+            else if (LastAgeGroup.TryGetValue(agDivId, out AgeGroup lGroup))
             {
-                AgeGroup group = LastAgeGroup[agDivId];
-                output.EventSpecific.AgeGroupId = group.GroupId;
-                output.EventSpecific.AgeGroupName = string.Format("{0}-{1}", group.StartAge, group.EndAge);
+                output.EventSpecific.AgeGroupId = lGroup.GroupId;
+                output.EventSpecific.AgeGroupName = group.PrettyName();
             }
             else
             {

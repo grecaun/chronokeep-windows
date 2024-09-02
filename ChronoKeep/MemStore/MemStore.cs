@@ -205,6 +205,7 @@ namespace Chronokeep.MemStore
                     }
                     value.Add(group);
                 }
+                SetAgeGroups();
                 participantsLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
