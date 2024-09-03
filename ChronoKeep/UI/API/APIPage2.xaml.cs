@@ -107,22 +107,18 @@ namespace Chronokeep.UI.API
             {
                 try
                 {
-                    string type = "";
-                    switch (theEvent.EventType)
+                    string type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_UNKNOWN;
+                    if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
                     {
-                        case Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA:
-                            type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_BACKYARD_ULTRA;
-                            break;
-                        case Constants.Timing.EVENT_TYPE_TIME:
-                            type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_TIME;
-                            break;
-                        case Constants.Timing.EVENT_TYPE_DISTANCE:
-                            type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_DISTANCE;
-                            break;
-                        default:
-                            type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_UNKNOWN;
-                            break;
-
+                        type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_BACKYARD_ULTRA;
+                    }
+                    else if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+                    {
+                        type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_TIME;
+                    }
+                    else if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
+                    {
+                        type = Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_DISTANCE;
                     }
 
                     ModifyEventResponse addResponse = await APIHandlers.AddEvent(api, new APIEvent

@@ -590,6 +590,7 @@ namespace Chronokeep.UI.MainPages
             public TextBlock WaveType { get; private set; }
             public MaskedTextBox StartOffset { get; private set; }
             public MaskedTextBox TimeLimit { get; private set; } = null;
+            public CheckBox Upload { get; private set; }
             public Button AddSubDistance { get; private set; }
             public Button Remove { get; private set; }
 

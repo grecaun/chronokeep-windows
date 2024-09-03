@@ -26,59 +26,39 @@ namespace Chronokeep.MemStore
                     DNS = 0,
                     Finished = 0
                 };
-                Dictionary<string, int> distanceIdentifierDict = new();
-                foreach (Distance d in distances.Values)
+                foreach (Participant p in participants.Values)
                 {
-                    distanceIdentifierDict[d.Name] = d.Identifier;
-                }
-                foreach (TimeResult result in timingResults)
-                {
-                    if (!distStatDict.TryGetValue(result.RealDistanceName, out DistanceStat distStats))
+                    if (!distStatDict.TryGetValue(p.EventSpecific.DistanceName, out DistanceStat distStats))
                     {
-                        if (distanceIdentifierDict.TryGetValue(result.RealDistanceName, out int distanceID))
+                        distStats = new()
                         {
-                            distStats = new()
-                            {
-                                DistanceName = result.RealDistanceName,
-                                DistanceID = distanceID,
-                                Active = 0,
-                                DNF = 0,
-                                DNS = 0,
-                                Finished = 0
-                            };
-                        }
-                        else
-                        {
-                            distStats = new()
-                            {
-                                DistanceName = result.RealDistanceName,
-                                DistanceID = -5,
-                                Active = 0,
-                                DNF = 0,
-                                DNS = 0,
-                                Finished = 0
-                            };
-                        }
+                            DistanceName = p.EventSpecific.DistanceName,
+                            DistanceID = p.EventSpecific.DistanceIdentifier,
+                            Active = 0,
+                            DNF = 0,
+                            DNS = 0,
+                            Finished = 0
+                        };
                     }
-                    switch (result.Status)
+                    if (Constants.Timing.EVENTSPECIFIC_DNF == p.Status)
                     {
-                        case Constants.Timing.EVENTSPECIFIC_DNS:
-                        case Constants.Timing.EVENTSPECIFIC_UNKNOWN:
-                            distStats.DNS++;
-                            allstats.DNS++;
-                            break;
-                        case Constants.Timing.EVENTSPECIFIC_FINISHED:
-                            distStats.Finished++;
-                            allstats.Finished++;
-                            break;
-                        case Constants.Timing.EVENTSPECIFIC_STARTED:
-                            distStats.Active++;
-                            allstats.Active++;
-                            break;
-                        case Constants.Timing.EVENTSPECIFIC_DNF:
-                            distStats.DNF++;
-                            allstats.DNF++;
-                            break;
+                        distStats.DNF += 1;
+                        allstats.DNF += 1;
+                    }
+                    else if (Constants.Timing.EVENTSPECIFIC_FINISHED == p.Status)
+                    {
+                        distStats.Finished += 1;
+                        allstats.Finished += 1;
+                    }
+                    else if (Constants.Timing.EVENTSPECIFIC_STARTED == p.Status)
+                    {
+                        distStats.Active += 1;
+                        allstats.Active += 1;
+                    }
+                    else if (Constants.Timing.EVENTSPECIFIC_DNS == p.Status || Constants.Timing.EVENTSPECIFIC_UNKNOWN == p.Status)
+                    {
+                        distStats.DNS += 1;
+                        allstats.DNS += 1;
                     }
                 }
                 distanceLock.ReleaseReaderLock();
