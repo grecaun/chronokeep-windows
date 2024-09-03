@@ -89,40 +89,42 @@
                 Height="40"
                 />
         </Grid>
-        <StackPanel Name="LeftPanel" Grid.Column="1" Grid.Row="1" Margin="10,15,10,0">
-            <DockPanel LastChildFill="True" Margin="0,0,0,5">
-                <TextBlock Text="Event Name" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
-                <TextBox Name="eventNameTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
-            </DockPanel>
-            <DockPanel LastChildFill="True" Margin="0,0,0,5">
-                <TextBlock Text="Year Code" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
-                <TextBox Name="eventYearCodeTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
-            </DockPanel>
-            <DockPanel LastChildFill="True">
-                <TextBlock Text="Date" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
-                <DatePicker Name="eventDatePicker" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
-            </DockPanel>
-            <Separator Margin="5,5,5,5" />
-            <CheckBox Name="rankByGunCheckBox" Content="Rank By Gun Time" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-            <CheckBox Name="commonAgeCheckBox" Content="Common Age Groups for Distances" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-            <CheckBox Name="commonStartCheckBox" Content="Common Start/Finish Location" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-            <CheckBox Name="segmentCheckBox" Content="Distance Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-            <CheckBox Name="placementsCheckBox" Content="Display Participant Placements" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-            <CheckBox Name="ageGroupDivisions" Content="Use Age Groups as Divisions?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-            <DockPanel Margin="10,5,10,5">
-                <TextBlock Text="Event Type" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                <ComboBox Name="TypeBox" Margin="10,0,0,0" VerticalContentAlignment="Center" IsEnabled="False" SelectionChanged="TypeBox_SelectionChanged">
-                    <ComboBoxItem Content="Distance Based" Uid="0" IsSelected="True"/>
-                    <ComboBoxItem Content="Time Based" Uid="1" />
-                    <ComboBoxItem Content="Backyard Ultra" Uid="2" />
-                </ComboBox>
-            </DockPanel>
-            <Separator Margin="5,5,5,5" />
-            <StackPanel
+        <ScrollViewer Name="LeftPanel" Grid.Column="1" Grid.Row="1" Margin="10,15,10,0" HorizontalScrollBarVisibility="Auto">
+            <StackPanel>
+                <DockPanel LastChildFill="True" Margin="0,0,0,5">
+                    <TextBlock Text="Event Name" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
+                    <TextBox Name="eventNameTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
+                </DockPanel>
+                <DockPanel LastChildFill="True" Margin="0,0,0,5">
+                    <TextBlock Text="Year Code" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
+                    <TextBox Name="eventYearCodeTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
+                </DockPanel>
+                <DockPanel LastChildFill="True">
+                    <TextBlock Text="Date" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
+                    <DatePicker Name="eventDatePicker" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
+                </DockPanel>
+                <Separator Margin="5,5,5,5" />
+                <CheckBox Name="rankByGunCheckBox" Content="Rank By Gun Time" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <CheckBox Name="commonAgeCheckBox" Content="Common Age Groups for Distances" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <CheckBox Name="commonStartCheckBox" Content="Common Start/Finish Location" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <CheckBox Name="segmentCheckBox" Content="Distance Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <CheckBox Name="placementsCheckBox" Content="Display Participant Placements" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <CheckBox Name="ageGroupDivisions" Content="Use Age Groups as Divisions?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <CheckBox Name="uploadSpecificDistanceResults" Content="Upload Results for Select Distances?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <DockPanel Margin="10,5,10,5">
+                    <TextBlock Text="Event Type" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <ComboBox Name="TypeBox" Margin="10,0,0,0" VerticalContentAlignment="Center" IsEnabled="False" SelectionChanged="TypeBox_SelectionChanged">
+                        <ComboBoxItem Content="Distance Based" Uid="0" IsSelected="True"/>
+                        <ComboBoxItem Content="Time Based" Uid="1" />
+                        <ComboBoxItem Content="Backyard Ultra" Uid="2" />
+                    </ComboBox>
+                </DockPanel>
+                <Separator Margin="5,5,5,5" />
+                <StackPanel
                 Orientation="Horizontal"
                 HorizontalAlignment="Center"
                 >
-                <ui:Button
+                    <ui:Button
                     Name="editButton"
                     Content="Edit"
                     FontSize="16"
@@ -132,7 +134,7 @@
                     Margin="10,5,10,5"
                     Click="EditButton_Click"
                     />
-                <ui:Button
+                    <ui:Button
                     Name="cancelButton"
                     Content="Cancel"
                     FontSize="16"
@@ -143,8 +145,9 @@
                     Click="CancelButton_Click"
                     Visibility="Collapsed"
                     />
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
+        </ScrollViewer>
         <StackPanel
             Name="RightPanel"
             Grid.Column="2"
