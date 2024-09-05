@@ -31,12 +31,19 @@ namespace Chronokeep.Timing.API
             this.Errors = 0;
         }
 
-        public static async Task<AddResultsResponse> DeleteResults(APIObject api, string slug, string year)
+        public static async Task<AddResultsResponse> DeleteResults(APIObject api, string slug, string year, string distance)
         {
             AddResultsResponse response = null;
             try
             {
-                response = await APIHandlers.DeleteResults(api, slug, year);
+                if (distance != null && distance.Length > 0)
+                {
+                    response = await APIHandlers.DeleteDistanceResults(api, slug, year, distance);
+                }
+                else
+                {
+                    response = await APIHandlers.DeleteResults(api, slug, year);
+                }
                 Log.D("API.APIController", "API Controller response: " + response.Count);
             }
             catch { }
@@ -153,15 +160,26 @@ namespace Chronokeep.Timing.API
                     List<APIResult> upRes = new List<APIResult>();
                     DateTime start = DateTime.SpecifyKind(DateTime.Parse(theEvent.Date), DateTimeKind.Local).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
                     Dictionary<string, DateTime> waveStartTimes = new();
+                    HashSet<string> uploadDistances = new();
                     foreach (Distance d in database.GetDistances(theEvent.Identifier))
                     {
                         waveStartTimes[d.Name] = start.AddSeconds(d.StartOffsetSeconds).AddMilliseconds(d.StartOffsetMilliseconds);
+                        if (d.Upload && d.LinkedDistance == Constants.Timing.DISTANCE_NO_LINKED_ID)
+                        {
+                            uploadDistances.Add(d.Name);
+                        }
                     }
                     foreach (TimeResult tr in results)
                     {
                         tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
-                        DateTime trStart = waveStartTimes.ContainsKey(tr.RealDistanceName) ? waveStartTimes[tr.RealDistanceName] : start;
-                        upRes.Add(new APIResult(theEvent, tr, trStart));
+                        DateTime trStart = waveStartTimes.TryGetValue(tr.RealDistanceName, out DateTime value) ? value : start;
+                        // only add to upload list if we want to upload everything (NOT Specific)
+                        // or we only want to upload specific distances and the distance is in the
+                        // list of distances we want to upload
+                        if (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName))
+                        {
+                            upRes.Add(new APIResult(theEvent, tr, trStart));
+                        }
                     }
                     Log.D("API.APIController", "Attempting to upload " + upRes.Count.ToString() + " results.");
                     int total = 0;

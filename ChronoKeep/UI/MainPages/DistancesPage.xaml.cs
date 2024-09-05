@@ -361,6 +361,7 @@ namespace Chronokeep.UI.MainPages
                 Remove.Click += new RoutedEventHandler(this.Remove_Click);
                 nameGrid.Children.Add(Remove);
                 Grid.SetColumn(Remove, 2);
+
                 // Wave # - Start Offset - Type - Ranking Order
                 DockPanel wavePanel = new DockPanel();
                 wavePanel.Children.Add(new TextBlock()
@@ -575,6 +576,7 @@ namespace Chronokeep.UI.MainPages
                     theDistance.StartOffsetSeconds *= -1;
                     theDistance.StartOffsetMilliseconds *= -1;
                 }
+                theDistance.Upload = false;
             }
 
         }
@@ -614,13 +616,13 @@ namespace Chronokeep.UI.MainPages
                 this.theDistance = distance;
                 StackPanel thePanel = new StackPanel()
                 {
-                    MaxWidth = 600
+                    MaxWidth = theEvent.UploadSpecific == true ? 700 : 600
                 };
                 this.Content = thePanel;
                 this.IsTabStop = false;
 
                 // Name Grid (Name NameBox -- Copy From DistancesBox)
-                Grid nameGrid = new Grid();
+                Grid nameGrid = new();
                 nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
                 nameGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
                 // Name information.
@@ -677,6 +679,7 @@ namespace Chronokeep.UI.MainPages
                 copyPanel.Children.Add(CopyFromBox);
                 nameGrid.Children.Add(copyPanel);
                 Grid.SetColumn(copyPanel, 1);
+
                 thePanel.Children.Add(nameGrid);
 
                 // Distance - DistanceUnit - Occurrence
@@ -839,12 +842,18 @@ namespace Chronokeep.UI.MainPages
                     settingsGrid.Children.Add(limitPanel);
                     Grid.SetColumn(limitPanel, 3);
                 }
+
                 thePanel.Children.Add(settingsGrid);
 
-                // Wave #, Start Offset, Bib Group #, Remove Button
+                // Wave #, Start Offset, Bib Group #, Remove Button (Upload Checkbox)
                 Grid numGrid = new Grid();
-                numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                if (theEvent.UploadSpecific == true)
+                {
+                    numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(150) });
+                }
+                numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(4, GridUnitType.Star) });
+                numGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
+                int columnOffset = theEvent.UploadSpecific ? 1 : 0;
                 DockPanel wavePanel = new DockPanel()
                 {
                     VerticalAlignment = VerticalAlignment.Center
@@ -912,7 +921,8 @@ namespace Chronokeep.UI.MainPages
                 StartOffset.GotFocus += new RoutedEventHandler(this.SelectAll);
                 wavePanel.Children.Add(StartOffset);
                 numGrid.Children.Add(wavePanel);
-                Grid.SetColumn(wavePanel, 0);
+                Grid.SetColumn(wavePanel, columnOffset);
+                columnOffset++;
                 Grid secondGrid = new Grid();
                 secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -943,7 +953,21 @@ namespace Chronokeep.UI.MainPages
                 secondGrid.Children.Add(Remove);
                 Grid.SetColumn(Remove, 1);
                 numGrid.Children.Add(secondGrid);
-                Grid.SetColumn(secondGrid, 1);
+                Grid.SetColumn(secondGrid, columnOffset);
+                if (theEvent.UploadSpecific == true)
+                {
+                    Upload = new()
+                    {
+                        Content = "Upload Results",
+                        FontSize = 16,
+                        IsChecked = theDistance.Upload == true,
+                        Margin = new Thickness(10, 5, 0, 5),
+                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                    };
+                    numGrid.Children.Add(Upload);
+                    Grid.SetColumn(Upload, 0);
+                }
                 thePanel.Children.Add(numGrid);
                 if (theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
                 {
@@ -1046,6 +1070,7 @@ namespace Chronokeep.UI.MainPages
                     theDistance.StartOffsetSeconds *= -1;
                     theDistance.StartOffsetMilliseconds *= -1;
                 }
+                theDistance.Upload = Upload.IsChecked == true;
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)
@@ -1071,6 +1096,7 @@ namespace Chronokeep.UI.MainPages
                     theDistance.Wave = newDiv.Wave;
                     theDistance.StartOffsetSeconds = newDiv.StartOffsetSeconds;
                     theDistance.StartOffsetMilliseconds = newDiv.StartOffsetMilliseconds;
+                    theDistance.Upload = newDiv.Upload;
                     page.UpdateDistance(theDistance);
                 }
             }

@@ -304,6 +304,52 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
+        public static async Task<AddResultsResponse> DeleteDistanceResults(APIObject api, string slug, string year, string distance)
+        {
+            string content;
+            Log.D("Network.API.APIHandlers", "Deleting distance results.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri(api.URL + "results/delete"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new GetResultsDistanceRequest
+                            {
+                                Slug = slug,
+                                Year = year,
+                                Distance = distance,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<AddResultsResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    content = errresult.Message;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown deleting results: " + ex.Message);
+            }
+            throw new APIException(content);
+        }
+
         public static async Task<AddResultsResponse> UploadBibChips(APIObject api, string slug, string year, List<BibChip> bibChips)
         {
             string content;

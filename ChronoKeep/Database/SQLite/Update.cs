@@ -1086,7 +1086,8 @@ namespace Chronokeep.Database.SQLite
                                 Convert.ToInt32(reader["distance_linked_id"]),
                                 Convert.ToInt32(reader["distance_type"]),
                                 Convert.ToInt32(reader["distance_ranking_order"]),
-                                false
+                                false,
+                                true
                                 ));
                         }
                         reader.Close();

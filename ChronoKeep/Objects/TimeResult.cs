@@ -177,7 +177,7 @@ namespace Chronokeep.Objects
             this.linked_distance_name = linked_distance_name ?? "";
             this.chip = chip ?? "";
             this.anonymous = anonymous;
-            this.participantId = participantId ?? "";
+            this.participantId = participantId ?? First+Last;
         }
 
         // Used by routines to add new results to the database.
@@ -246,10 +246,6 @@ namespace Chronokeep.Objects
                 distances[dist.Name] = dist;
             }
             raceType = theEvent.EventType;
-        }
-
-        public static void SetupRaceResults(IDBInterface database)
-        {
         }
 
         public int EventSpecificId { get => eventspecificId; set => eventspecificId = value; }

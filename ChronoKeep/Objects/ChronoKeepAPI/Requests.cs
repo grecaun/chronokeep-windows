@@ -50,6 +50,16 @@ namespace Chronokeep.Objects.API
         public string Year { get; set; }
     }
 
+    public class GetResultsDistanceRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+        [JsonPropertyName("distance")]
+        public string Distance { get; set; }
+    }
+
     public class AddResultsRequest
     {
         [JsonPropertyName("slug")]
