@@ -16,9 +16,46 @@ namespace Chronokeep.MemStore
             try
             {
                 resultsLock.AcquireWriterLock(lockTimeout);
+                distanceLock.AcquireReaderLock(lockTimeout);
+                participantsLock.AcquireReaderLock(lockTimeout);
+                chipReadsLock.AcquireReaderLock(lockTimeout);
                 database.AddTimingResult(tr);
-                timingResults.Add(tr);
+                string bib = "";
+                if (participants.TryGetValue(tr.EventSpecificId, out Participant p))
+                {
+                    bib = p.Bib;
+                    tr.SetParticipant(p);
+                    if (distances.TryGetValue(p.EventSpecific.DistanceIdentifier, out Distance distance))
+                    {
+                        tr.SetResultType(distance.Type);
+                        if (distance.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID && distances.TryGetValue(distance.LinkedDistance, out Distance linked))
+                        {
+                            tr.SetLinkedDistanceName(linked.Name);
+                        }
+                    }
+                }
+                else
+                {
+                    tr.SetBlankParticipant();
+                }
+                if (chipReads.TryGetValue(tr.ReadId, out ChipRead chipRead))
+                {
+                    if (bib.Length < 1)
+                    {
+                        bib = chipRead.Bib;
+                    }
+                    tr.SetChipRead(chipRead.ChipNumber, bib, chipRead.TimeSeconds, chipRead.TimeMilliseconds);
+                }
+                else
+                {
+                    tr.SetChipRead("", bib, 0, 0);
+                }
+                tr.FinalizeSetup();
+                timingResults[(tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId)] = tr;
                 resultsLock.ReleaseWriterLock();
+                distanceLock.ReleaseReaderLock();
+                participantsLock.ReleaseReaderLock();
+                chipReadsLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
@@ -34,7 +71,41 @@ namespace Chronokeep.MemStore
             {
                 resultsLock.AcquireWriterLock(lockTimeout);
                 database.AddTimingResults(results);
-                timingResults.AddRange(results);
+                foreach (TimeResult tr in results)
+                {
+                    string bib = "";
+                    if (participants.TryGetValue(tr.EventSpecificId, out Participant p))
+                    {
+                        bib = p.Bib;
+                        tr.SetParticipant(p);
+                        if (distances.TryGetValue(p.EventSpecific.DistanceIdentifier, out Distance distance))
+                        {
+                            tr.SetResultType(distance.Type);
+                            if (distance.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID && distances.TryGetValue(distance.LinkedDistance, out Distance linked))
+                            {
+                                tr.SetLinkedDistanceName(linked.Name);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        tr.SetBlankParticipant();
+                    }
+                    if (chipReads.TryGetValue(tr.ReadId, out ChipRead chipRead))
+                    {
+                        if (bib.Length < 1)
+                        {
+                            bib = chipRead.Bib;
+                        }
+                        tr.SetChipRead(chipRead.ChipNumber, bib, chipRead.TimeSeconds, chipRead.TimeMilliseconds);
+                    }
+                    else
+                    {
+                        tr.SetChipRead("", bib, 0, 0);
+                    }
+                    tr.FinalizeSetup();
+                    timingResults[(tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId)] = tr;
+                }
                 resultsLock.ReleaseWriterLock();
             }
             catch (Exception e)
@@ -70,7 +141,7 @@ namespace Chronokeep.MemStore
             {
                 resultsLock.AcquireReaderLock(lockTimeout);
                 List<TimeResult> output = new();
-                foreach (TimeResult tr in timingResults)
+                foreach (TimeResult tr in timingResults.Values)
                 {
                     if (tr.EventIdentifier == eventId && tr.SegmentId == segmentId)
                     {
@@ -119,7 +190,7 @@ namespace Chronokeep.MemStore
             {
                 resultsLock.AcquireReaderLock(lockTimeout);
                 Dictionary<int, TimeResult> trDict = new();
-                foreach (TimeResult tr in timingResults)
+                foreach (TimeResult tr in timingResults.Values)
                 {
                     if (trDict.TryGetValue(tr.EventSpecificId, out TimeResult result))
                     {
@@ -171,7 +242,7 @@ namespace Chronokeep.MemStore
             {
                 resultsLock.AcquireReaderLock(lockTimeout);
                 List<TimeResult> output = new();
-                foreach (TimeResult tr in timingResults)
+                foreach (TimeResult tr in timingResults.Values)
                 {
                     if (tr.EventIdentifier == eventId && !tr.IsUploaded())
                     {
@@ -220,7 +291,7 @@ namespace Chronokeep.MemStore
             {
                 resultsLock.AcquireReaderLock(lockTimeout);
                 List<TimeResult> output = new();
-                output.AddRange(timingResults);
+                output.AddRange(timingResults.Values);
                 resultsLock.ReleaseReaderLock();
                 return output;
             }
@@ -238,7 +309,7 @@ namespace Chronokeep.MemStore
             {
                 resultsLock.AcquireWriterLock(lockTimeout);
                 database.RemoveTimingResult(tr);
-                timingResults.RemoveAll(x => x.Equals(tr));
+                timingResults.Remove((tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId));
                 resultsLock.ReleaseWriterLock();
             }
             catch (Exception e)
@@ -257,7 +328,7 @@ namespace Chronokeep.MemStore
                 database.SetUploadedTimingResults(results);
                 foreach (TimeResult changed in results)
                 {
-                    foreach (TimeResult toChange in timingResults)
+                    foreach (TimeResult toChange in timingResults.Values)
                     {
                         if (changed.Equals(toChange))
                         {
@@ -301,7 +372,7 @@ namespace Chronokeep.MemStore
             {
                 resultsLock.AcquireReaderLock(lockTimeout);
                 bool output = false;
-                foreach (TimeResult result in timingResults)
+                foreach (TimeResult result in timingResults.Values)
                 {
                     if (result.Status == Constants.Timing.TIMERESULT_STATUS_NONE)
                     {
@@ -352,7 +423,7 @@ namespace Chronokeep.MemStore
                 participantsLock.AcquireWriterLock(lockTimeout);
                 database.ResetTimingResultsEvent(eventId);
                 timingResults.Clear();
-                foreach (ChipRead cr in chipReads)
+                foreach (ChipRead cr in chipReads.Values)
                 {
                     if (cr.CanBeReset())
                     {
@@ -400,7 +471,7 @@ namespace Chronokeep.MemStore
             {
                 resultsLock.AcquireWriterLock(lockTimeout);
                 database.ResetTimingResultsPlacements(eventId);
-                foreach (TimeResult tr in timingResults)
+                foreach (TimeResult tr in timingResults.Values)
                 {
                     tr.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
                     tr.Place = -1;

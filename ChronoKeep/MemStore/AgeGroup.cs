@@ -22,7 +22,7 @@ namespace Chronokeep.MemStore
                     {
                         currentAgeGroups[(g.DistanceId, i)] = g;
                     }
-                    if (!!lastAgeGroup.ContainsKey(g.DistanceId) || lastAgeGroup[g.DistanceId].StartAge < g.StartAge)
+                    if (!lastAgeGroup.ContainsKey(g.DistanceId) || lastAgeGroup[g.DistanceId].StartAge < g.StartAge)
                     {
                         lastAgeGroup[g.DistanceId] = g;
                     }

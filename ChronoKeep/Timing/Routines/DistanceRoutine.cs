@@ -907,7 +907,7 @@ namespace Chronokeep.Timing.Routines
                                 {
                                     return x1.Milliseconds.CompareTo(x2.Milliseconds);
                                 }
-                                Log.D("Timing.Routines.TimeRoutine", "By Gun");
+                                Log.D("Timing.Routines.DistanceRoutine", "By Gun");
                                 return x1.Seconds.CompareTo(x2.Seconds);
                             }
                             else
@@ -916,7 +916,7 @@ namespace Chronokeep.Timing.Routines
                                 {
                                     return x1.ChipMilliseconds.CompareTo(x2.ChipMilliseconds);
                                 }
-                                Log.D("Timing.Routines.TimeRoutine", "By Chip");
+                                Log.D("Timing.Routines.DistanceRoutine", "By Chip");
                                 return x1.ChipSeconds.CompareTo(x2.ChipSeconds);
                             }
                         }

@@ -196,6 +196,7 @@ namespace Chronokeep.UI.MainPages
             database.AddSegments(newSegs);
             UpdateTimingWorker = true;
             database.UpdateSegments(upSegs);
+            TimeResult.SetupStaticVariables(database);
         }
 
         public void Keyboard_Ctrl_A() { }

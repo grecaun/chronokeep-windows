@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -200,6 +201,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 database.UpdateDistance(listDiv.GetDistance());
             }
+            TimeResult.SetupStaticVariables(database);
         }
 
         public void Keyboard_Ctrl_A()

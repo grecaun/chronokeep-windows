@@ -16,7 +16,7 @@ namespace Chronokeep.MemStore
             {
                 chipReadsLock.AcquireWriterLock(lockTimeout);
                 read.ReadId = database.AddChipRead(read);
-                chipReads.Add(read);
+                chipReads[read.ReadId] = read;
                 chipReadsLock.ReleaseWriterLock();
                 return read.ReadId;
             }
@@ -34,7 +34,10 @@ namespace Chronokeep.MemStore
             {
                 chipReadsLock.AcquireWriterLock(lockTimeout);
                 List<ChipRead> newReads = database.AddChipReads(reads);
-                chipReads.AddRange(newReads);
+                foreach (ChipRead read in newReads)
+                {
+                    chipReads[read.ReadId] = read;
+                }
                 chipReadsLock.ReleaseWriterLock();
                 return newReads;
             }
@@ -54,7 +57,7 @@ namespace Chronokeep.MemStore
                 database.DeleteChipReads(reads);
                 foreach (ChipRead read in reads)
                 {
-                    chipReads.Remove(read);
+                    chipReads.Remove(read.ReadId);
                 }
                 chipReadsLock.ReleaseWriterLock();
             }
@@ -72,7 +75,7 @@ namespace Chronokeep.MemStore
             try
             {
                 chipReadsLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(chipReads);
+                output.AddRange(chipReads.Values);
                 chipReadsLock.ReleaseReaderLock();
             }
             catch (Exception e)
@@ -109,7 +112,7 @@ namespace Chronokeep.MemStore
             try
             {
                 chipReadsLock.AcquireReaderLock(lockTimeout);
-                foreach (ChipRead read in chipReads)
+                foreach (ChipRead read in chipReads.Values)
                 {
                     if (Constants.Timing.LOCATION_ANNOUNCER == read.LocationID
                         && Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
@@ -153,7 +156,7 @@ namespace Chronokeep.MemStore
             try
             {
                 chipReadsLock.AcquireReaderLock(lockTimeout);
-                foreach (ChipRead read in chipReads)
+                foreach (ChipRead read in chipReads.Values)
                 {
                     if (Constants.Timing.LOCATION_ANNOUNCER == read.LocationID
                         && Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED == read.Status)
@@ -197,7 +200,7 @@ namespace Chronokeep.MemStore
             try
             {
                 chipReadsLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(chipReads);
+                output.AddRange(chipReads.Values);
                 chipReadsLock.ReleaseReaderLock();
             }
             catch (Exception e)
@@ -234,7 +237,7 @@ namespace Chronokeep.MemStore
             try
             {
                 chipReadsLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(chipReads);
+                output.AddRange(chipReads.Values);
                 chipReadsLock.ReleaseReaderLock();
             }
             catch (Exception e)
@@ -271,7 +274,7 @@ namespace Chronokeep.MemStore
             try
             {
                 chipReadsLock.AcquireReaderLock(lockTimeout);
-                foreach (ChipRead read in chipReads)
+                foreach (ChipRead read in chipReads.Values)
                 {
                     if (Constants.Timing.CHIPREAD_STATUS_DNS == read.Status)
                     {
@@ -314,7 +317,7 @@ namespace Chronokeep.MemStore
             try
             {
                 chipReadsLock.AcquireReaderLock(lockTimeout);
-                foreach (ChipRead read in chipReads)
+                foreach (ChipRead read in chipReads.Values)
                 {
                     if (read.IsUseful() && Constants.Timing.LOCATION_ANNOUNCER != read.LocationID)
                     {
@@ -338,12 +341,9 @@ namespace Chronokeep.MemStore
             {
                 chipReadsLock.AcquireWriterLock(lockTimeout);
                 database.SetChipReadStatus(read);
-                foreach (ChipRead known in chipReads)
+                if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
                 {
-                    if (known.Equals(read))
-                    {
-                        known.Status = read.Status;
-                    }
+                    known.Status = read.Status;
                 }
                 chipReadsLock.ReleaseWriterLock();
             }
@@ -361,14 +361,11 @@ namespace Chronokeep.MemStore
             {
                 chipReadsLock.AcquireWriterLock(lockTimeout);
                 database.SetChipReadStatuses(reads);
-                foreach (ChipRead known in chipReads)
+                foreach (ChipRead read in reads)
                 {
-                    foreach (ChipRead read in reads)
+                    if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
                     {
-                        if (known.Equals(read))
-                        {
-                            known.Status = read.Status;
-                        }
+                        known.Status = read.Status;
                     }
                 }
                 chipReadsLock.ReleaseWriterLock();
@@ -387,14 +384,11 @@ namespace Chronokeep.MemStore
             {
                 chipReadsLock.AcquireWriterLock(lockTimeout);
                 database.UpdateChipRead(read);
-                foreach (ChipRead known in chipReads)
+                if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
                 {
-                    if (known.Equals(read))
-                    {
-                        known.Status = read.Status;
-                        known.TimeSeconds = read.TimeSeconds;
-                        known.TimeMilliseconds = read.TimeMilliseconds;
-                    }
+                    known.Status = read.Status;
+                    known.TimeSeconds = read.TimeSeconds;
+                    known.TimeMilliseconds = read.TimeMilliseconds;
                 }
                 chipReadsLock.ReleaseWriterLock();
             }
@@ -412,16 +406,13 @@ namespace Chronokeep.MemStore
             {
                 chipReadsLock.AcquireWriterLock(lockTimeout);
                 database.UpdateChipReads(reads);
-                foreach (ChipRead known in chipReads)
+                foreach (ChipRead read in reads)
                 {
-                    foreach (ChipRead read in reads)
+                    if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
                     {
-                        if (known.Equals(read))
-                        {
-                            known.Status = read.Status;
-                            known.TimeSeconds = read.TimeSeconds;
-                            known.TimeMilliseconds = read.TimeMilliseconds;
-                        }
+                        known.Status = read.Status;
+                        known.TimeSeconds = read.TimeSeconds;
+                        known.TimeMilliseconds = read.TimeMilliseconds;
                     }
                 }
                 chipReadsLock.ReleaseWriterLock();
@@ -440,7 +431,7 @@ namespace Chronokeep.MemStore
             try
             {
                 chipReadsLock.AcquireReaderLock(lockTimeout);
-                foreach (ChipRead read in chipReads)
+                foreach (ChipRead read in chipReads.Values)
                 {
                     if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
                     {

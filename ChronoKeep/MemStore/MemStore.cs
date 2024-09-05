@@ -66,6 +66,7 @@ namespace Chronokeep.MemStore
         private static ReaderWriterLock bibChipLock = new();
         // key == chip
         private static Dictionary<string, BibChipAssociation> chipToBibAssociations = new();
+        private static Dictionary<string, BibChipAssociation> bibToChipAssociations = new();
 
         // key == distanceId
         private static Dictionary<int, List<AgeGroup>> ageGroups = new();
@@ -86,26 +87,24 @@ namespace Chronokeep.MemStore
 
         // Timing results
         private static ReaderWriterLock resultsLock = new();
-        private static List<TimeResult> timingResults = new();
+        // key = (eventspecific_id, location_id, occurrence, unknown_id)
+        private static Dictionary<(int, int, int, string), TimeResult> timingResults = new();
 
         // Chip Read data
         private static ReaderWriterLock chipReadsLock = new();
-        private static List<ChipRead> chipReads = new();
+        private static Dictionary<int, ChipRead> chipReads = new();
 
         // Local variables
-        private IDBInterface database;
+        private readonly IDBInterface database;
 
-        private MemStore(IMainWindow window, IDBInterface database)
+        private MemStore(IDBInterface database)
         {
             this.database = database;
         }
 
-        public static MemStore GetMemStore(IMainWindow window, IDBInterface database)
+        public static MemStore GetMemStore(IDBInterface database)
         {
-            if (instance == null)
-            {
-                instance = new MemStore(window, database);
-            }
+            instance ??= new MemStore(database);
             return instance;
         }
 
@@ -113,7 +112,7 @@ namespace Chronokeep.MemStore
         {
             // Load event
             theEvent = database.GetCurrentEvent();
-            if (theEvent == null)
+            if (theEvent == null || theEvent.Identifier < 0)
             {
                 return;
             }
@@ -121,6 +120,7 @@ namespace Chronokeep.MemStore
             {
                 distanceLock.AcquireWriterLock(lockTimeout);
                 // load distances
+                distances.Clear();
                 foreach (Distance dist in database.GetDistances(theEvent.Identifier))
                 {
                     distances[dist.Identifier] = dist;
@@ -136,6 +136,7 @@ namespace Chronokeep.MemStore
             {
                 locationsLock.AcquireWriterLock(lockTimeout);
                 // load locations
+                locations.Clear();
                 foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
                 {
                     locations[loc.Identifier] = loc;
@@ -151,6 +152,7 @@ namespace Chronokeep.MemStore
             {
                 segmentLock.AcquireWriterLock(lockTimeout);
                 // load segments
+                segments.Clear();
                 foreach (Segment seg in database.GetSegments(theEvent.Identifier))
                 {
                     segments[seg.Identifier] = seg;
@@ -166,6 +168,7 @@ namespace Chronokeep.MemStore
             {
                 participantsLock.AcquireWriterLock(lockTimeout);
                 // load participants
+                participants.Clear();
                 foreach (Participant part in database.GetParticipants(theEvent.Identifier))
                 {
                     participants[part.EventSpecific.Identifier] = part;
@@ -181,9 +184,12 @@ namespace Chronokeep.MemStore
             {
                 bibChipLock.AcquireWriterLock(lockTimeout);
                 // load bibchipassociations
+                chipToBibAssociations.Clear();
+                bibToChipAssociations.Clear();
                 foreach (BibChipAssociation assoc in database.GetBibChips(theEvent.Identifier))
                 {
                     chipToBibAssociations[assoc.Chip] = assoc;
+                    bibToChipAssociations[assoc.Bib] = assoc;
                 }
                 bibChipLock.ReleaseWriterLock();
             }
@@ -196,6 +202,7 @@ namespace Chronokeep.MemStore
             {
                 participantsLock.AcquireWriterLock(lockTimeout);
                 // load age groups
+                ageGroups.Clear();
                 foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
                 {
                     if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
@@ -217,6 +224,7 @@ namespace Chronokeep.MemStore
             {
                 alarmLock.AcquireWriterLock(lockTimeout);
                 // load alarms
+                alarms.Clear();
                 foreach (Alarm alarm in database.GetAlarms(theEvent.Identifier))
                 {
                     alarms[(alarm.Bib, alarm.Chip)] = alarm;
@@ -232,6 +240,7 @@ namespace Chronokeep.MemStore
             {
                 remoteReadersLock.AcquireWriterLock(lockTimeout);
                 // load remote readers
+                remoteReaders.Clear();
                 foreach (RemoteReader reader in database.GetRemoteReaders(theEvent.Identifier))
                 {
                     remoteReaders.Add(reader);
@@ -247,16 +256,19 @@ namespace Chronokeep.MemStore
             {
                 alertsLock.AcquireWriterLock(lockTimeout);
                 // load sms alerts sent
+                smsAlerts.Clear();
                 foreach ((int, int) alert in database.GetSMSAlerts(theEvent.Identifier))
                 {
                     smsAlerts.Add(alert);
                 }
                 // load email alerts sent
+                emailAlerts.Clear();
                 foreach (int alert in database.GetEmailAlerts(theEvent.Identifier))
                 {
                     emailAlerts.Add(alert);
                 }
                 // load sms subscriptions
+                smsSubscriptions.Clear();
                 foreach (APISmsSubscription sub in database.GetSmsSubscriptions(theEvent.Identifier))
                 {
                     smsSubscriptions.Add(sub);
@@ -272,9 +284,10 @@ namespace Chronokeep.MemStore
             {
                 resultsLock.AcquireWriterLock(lockTimeout);
                 // load timingresults
+                timingResults.Clear();
                 foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
                 {
-                    timingResults.Add(result);
+                    timingResults[(result.EventSpecificId, result.LocationId, result.Occurrence, result.UnknownId)] = result;
                 }
                 resultsLock.ReleaseWriterLock();
             }
@@ -287,9 +300,10 @@ namespace Chronokeep.MemStore
             {
                 chipReadsLock.AcquireWriterLock(lockTimeout);
                 // load chipreads
+                chipReads.Clear();
                 foreach (ChipRead read in database.GetChipReads(theEvent.Identifier))
                 {
-                    chipReads.Add(read);
+                    chipReads[read.ReadId] = read;
                 }
                 chipReadsLock.ReleaseWriterLock();
             }
@@ -445,6 +459,7 @@ namespace Chronokeep.MemStore
             {
                 bibChipLock.AcquireWriterLock(lockTimeout);
                 chipToBibAssociations.Clear();
+                bibToChipAssociations.Clear();
                 bibChipLock.ReleaseWriterLock();
             }
             catch (ApplicationException e)
@@ -520,26 +535,35 @@ namespace Chronokeep.MemStore
                 {
                     settingsLock.AcquireWriterLock(lockTimeout);
                     // Load settings
+                    settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME);
+                    settings[Constants.Settings.DATABASE_VERSION] = database.GetAppSetting(Constants.Settings.DATABASE_VERSION);
+
+                    settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
                     settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
+                    settings[Constants.Settings.CURRENT_EVENT] = database.GetAppSetting(Constants.Settings.CURRENT_EVENT);
                     settings[Constants.Settings.COMPANY_NAME] = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
                     settings[Constants.Settings.CONTACT_EMAIL] = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL);
-                    settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
                     settings[Constants.Settings.UPDATE_ON_PAGE_CHANGE] = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
                     settings[Constants.Settings.EXIT_NO_PROMPT] = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT);
+                    settings[Constants.Settings.DEFAULT_CHIP_TYPE] = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE);
+                    settings[Constants.Settings.LAST_USED_API_ID] = database.GetAppSetting(Constants.Settings.LAST_USED_API_ID);
                     settings[Constants.Settings.CHECK_UPDATES] = database.GetAppSetting(Constants.Settings.CHECK_UPDATES);
                     settings[Constants.Settings.CURRENT_THEME] = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
                     settings[Constants.Settings.UPLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL);
                     settings[Constants.Settings.DOWNLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL);
                     settings[Constants.Settings.ANNOUNCER_WINDOW] = database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW);
                     settings[Constants.Settings.ALARM_SOUND] = database.GetAppSetting(Constants.Settings.ALARM_SOUND);
-                    settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME);
+                    settings[Constants.Settings.MINIMUM_COMPATIBLE_DATABASE] = database.GetAppSetting(Constants.Settings.MINIMUM_COMPATIBLE_DATABASE);
+
                     settings[Constants.Settings.TWILIO_ACCOUNT_SID] = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID);
                     settings[Constants.Settings.TWILIO_AUTH_TOKEN] = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN);
                     settings[Constants.Settings.TWILIO_PHONE_NUMBER] = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER);
+
                     settings[Constants.Settings.MAILGUN_FROM_NAME] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME);
                     settings[Constants.Settings.MAILGUN_FROM_EMAIL] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL);
                     settings[Constants.Settings.MAILGUN_API_KEY] = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY);
                     settings[Constants.Settings.MAILGUN_API_URL] = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL);
+
                     settingsLock.ReleaseWriterLock();
                 }
                 catch (ApplicationException e)

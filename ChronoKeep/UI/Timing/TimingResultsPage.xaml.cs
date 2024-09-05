@@ -30,7 +30,6 @@ namespace Chronokeep.UI.Timing
                 ChipTimeHeader.Text = "Lap Time";
             }
             TimeResult.SetupStaticVariables(database);
-            TimeResult.theEvent = theEvent;
         }
 
         public void Closing() { }

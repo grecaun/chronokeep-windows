@@ -14,22 +14,10 @@ namespace Chronokeep
     /// </summary>
     public partial class NewEventWindow : FluentWindow
     {
-        IDBInterface database = null;
-        IWindowCallback window = null;
+        private IDBInterface database = null;
+        private IWindowCallback window = null;
 
         private Dictionary<string, Event> eventDict = new Dictionary<string, Event>();
-
-        public NewEventWindow(IMainWindow mainWindow)
-        {
-            InitializeComponent();
-            datePicker.SelectedDate = DateTime.Today;
-            //CopyLabel.Visibility = Visibility.Collapsed;
-            oldEvent.Visibility = Visibility.Collapsed;
-            this.MinWidth = 350;
-            this.MinHeight = 200;
-            this.Width = 350;
-            this.Height = 310;
-        }
 
         public NewEventWindow(IWindowCallback window, IDBInterface database)
         {

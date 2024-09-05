@@ -16,7 +16,7 @@ namespace Chronokeep.UI
         private IWindowCallback window;
         private IDBInterface database;
 
-        public ChangeEventWindow(IWindowCallback window, IDBInterface database)
+        private ChangeEventWindow(IWindowCallback window, IDBInterface database)
         {
             InitializeComponent();
             this.window = window;
@@ -57,6 +57,7 @@ namespace Chronokeep.UI
             {
                 Log.D("UI.ChangeEventWindow", "Selected event has ID of " + one.Identifier);
                 database.SetCurrentEvent(one.Identifier);
+                window.WindowFinalize(this);
             }
             else
             {
@@ -103,6 +104,7 @@ namespace Chronokeep.UI
             {
                 Log.D("UI.ChangeEventWindow", "Selected event has ID of " + one.Identifier);
                 database.SetCurrentEvent(one.Identifier);
+                window.WindowFinalize(this);
             }
             else
             {

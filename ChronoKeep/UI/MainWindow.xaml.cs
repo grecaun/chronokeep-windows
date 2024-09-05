@@ -98,7 +98,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Creating database file.");
                 SQLiteConnection.CreateFile(path);
             }
-            database = new SQLiteInterface(path);
+            database = MemStore.MemStore.GetMemStore(new SQLiteInterface(path));
             try
             {
                 database.Initialize();
@@ -116,6 +116,8 @@ namespace Chronokeep.UI
 
             // Setup AgeGroup static variables
             Event theEvent = database.GetCurrentEvent();
+
+            TimeResult.SetupStaticVariables(database);
 
             page = new DashboardPage(this, database);
             TheFrame.Content = page;

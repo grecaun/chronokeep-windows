@@ -13,7 +13,7 @@ namespace Chronokeep.Objects
             ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds;
         private long chipSeconds, seconds;
         private string time, locationName, segmentName, firstName, lastName, bib,
-            distanceName, unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday,
+            distanceName = "", unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday,
             linked_distance_name = "", chip = "", participantId = "";
         private bool anonymous;
         DateTime systemTime;
@@ -25,7 +25,6 @@ namespace Chronokeep.Objects
         public static Dictionary<int, TimingLocation> locations = null;
         public static Dictionary<int, Segment> segments = null;
         public static Dictionary<string, Distance> distances = null;
-        public static Dictionary<(string, int), TimeResult> RaceResults = null;
         public static Event theEvent = null;
 
         // database constructor
@@ -68,7 +67,7 @@ namespace Chronokeep.Objects
             this.segmentId = segmentId;
             this.time = time ?? "";
             this.occurrence = occurrence;
-            locationName = locations != null ? locations.ContainsKey(this.locationId) ?
+            locationName = locations != null ? locations.ContainsKey(locationId) ?
                 locations[this.locationId].Name : "Unknown" : "Unknown";
             if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
             {
@@ -212,6 +211,26 @@ namespace Chronokeep.Objects
             genderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             this.status = status;
             splitTime = "";
+            Match chipTimeMatch = timeRegex.Match(chipTime);
+            chipSeconds = 0;
+            chipMilliseconds = 0;
+            if (chipTimeMatch.Success)
+            {
+                chipSeconds = Convert.ToInt64(chipTimeMatch.Groups[1].Value) * 3600
+                   + Convert.ToInt64(chipTimeMatch.Groups[2].Value) * 60
+                   + Convert.ToInt64(chipTimeMatch.Groups[3].Value);
+                chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
+            }
+            Match timeMatch = timeRegex.Match(time);
+            seconds = 0;
+            milliseconds = 0;
+            if (timeMatch.Success)
+            {
+                seconds = Convert.ToInt64(timeMatch.Groups[1].Value) * 3600
+                   + Convert.ToInt64(timeMatch.Groups[2].Value) * 60
+                   + Convert.ToInt64(timeMatch.Groups[3].Value);
+                milliseconds = Convert.ToInt32(timeMatch.Groups[4].Value);
+            }
         }
 
         public static void SetupStaticVariables(IDBInterface database)
@@ -355,6 +374,126 @@ namespace Chronokeep.Objects
         public static string ChipToIdentifier(string iChip)
         {
             return "Chip:" + iChip;
+        }
+
+        public void SetParticipant(Participant p)
+        {
+            participantId = p.Identifier.ToString();
+            anonymous = p.Anonymous;
+            distanceName = p.EventSpecific.DistanceName;
+            gender = p.Gender;
+            firstName = p.FirstName;
+            lastName = p.LastName;
+            ageGroupId = p.EventSpecific.AgeGroupId;
+            ageGroupName = p.EventSpecific.AgeGroupName;
+            birthday = p.Birthdate;
+        }
+
+        public void SetBlankParticipant()
+        {
+            participantId = "";
+            anonymous = false;
+            distanceName = "";
+            gender = "";
+            firstName = "";
+            lastName = "";
+            ageGroupId = -1;
+            ageGroupName = "";
+            birthday = "";
+            linked_distance_name = "";
+        }
+
+        public void SetLinkedDistanceName(string linkedDistanceName)
+        {
+            linked_distance_name = linkedDistanceName ?? "";
+        }
+
+        public void SetResultType(int type)
+        {
+            this.type = type;
+        }
+
+        public void SetChipRead(
+            string chip,
+            string bib,
+            long systemTimeSec,
+            int systemTimeMill
+            )
+        {
+            this.chip = chip;
+            this.bib = bib;
+            systemTime = Constants.Timing.RFIDEpochToDate(systemTimeSec).AddMilliseconds(systemTimeMill);
+        }
+
+        public void FinalizeSetup()
+        {
+            locationName = locations != null ? locations.ContainsKey(locationId) ?
+                locations[this.locationId].Name : "Unknown" : "Unknown";
+            if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
+            {
+                segmentName = "Finish ";
+            }
+            else if (Constants.Timing.SEGMENT_START == this.segmentId)
+            {
+                segmentName = "Start ";
+            }
+            else if (segments != null && segments.ContainsKey(this.segmentId))
+            {
+                segmentName = segments[this.segmentId].Name + " ";
+            }
+            else
+            {
+                segmentName = "";
+            }
+            if (raceType == Constants.Timing.EVENT_TYPE_TIME && Constants.Timing.SEGMENT_FINISH == SegmentId)
+            {
+                if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
+                {
+                    if (linked_distance_name.Length > 0
+                        && distances.ContainsKey(linked_distance_name)
+                        && distances[linked_distance_name].DistanceValue > 0)
+                    {
+                        segmentName = string.Format("{1:0.##} {2} - Lap {0}",
+                            occurrence,
+                            distances[linked_distance_name].DistanceValue * occurrence,
+                            Constants.Distances.DistanceString(distances[linked_distance_name].DistanceUnit)
+                            );
+                    }
+                    else if (distanceName.Length > 0
+                        && distances.ContainsKey(distanceName)
+                        && distances[distanceName].DistanceValue > 0)
+                    {
+                        segmentName = string.Format("{1:0.##} {2} - Lap {0}",
+                            occurrence,
+                            distances[distanceName].DistanceValue * occurrence,
+                            Constants.Distances.DistanceString(distances[distanceName].DistanceUnit)
+                            );
+                    }
+                    else
+                    {
+                        segmentName = string.Format("Lap {0}", occurrence);
+                    }
+                }
+                else if (Constants.Timing.SEGMENT_START != this.segmentId)
+                {
+                    if (linked_distance_name.Length > 0
+                        && segments.ContainsKey(this.segmentId)
+                        && segments[this.segmentId].CumulativeDistance > 0)
+                    {
+                        segmentName = string.Format("{2:0.##} {3} - {0}{1}",
+                            segmentName,
+                            occurrence,
+                            segments[this.segmentId].CumulativeDistance * occurrence,
+                            Constants.Distances.DistanceString(segments[this.segmentId].DistanceUnit)
+                            );
+                    }
+                    else
+                    {
+                        segmentName = string.Format("{0} {1}", segmentName, occurrence);
+                    }
+                }
+            }
+            segmentName = segmentName.Trim();
         }
 
         public int Age(string eventDate)
