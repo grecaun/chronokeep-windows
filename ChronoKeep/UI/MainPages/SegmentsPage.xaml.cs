@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Interfaces;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
@@ -196,7 +197,10 @@ namespace Chronokeep.UI.MainPages
             database.AddSegments(newSegs);
             UpdateTimingWorker = true;
             database.UpdateSegments(upSegs);
-            TimeResult.SetupStaticVariables(database);
+            if (database is SQLiteInterface)
+            {
+                Results.GetStaticVariables(database);
+            }
         }
 
         public void Keyboard_Ctrl_A() { }

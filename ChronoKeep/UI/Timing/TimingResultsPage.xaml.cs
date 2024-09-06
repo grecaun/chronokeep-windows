@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.Participants;
@@ -29,7 +30,10 @@ namespace Chronokeep.UI.Timing
             {
                 ChipTimeHeader.Text = "Lap Time";
             }
-            TimeResult.SetupStaticVariables(database);
+            if (database is SQLiteInterface)
+            {
+                Results.GetStaticVariables(database);
+            }
         }
 
         public void Closing() { }

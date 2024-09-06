@@ -1,4 +1,5 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -121,7 +122,10 @@ namespace Chronokeep.UI.MainPages
                     }
                 }
             }
-            TimeResult.SetupStaticVariables(database);
+            if (database is SQLiteInterface)
+            {
+                Results.GetStaticVariables(database);
+            }
         }
 
         public void Keyboard_Ctrl_A()

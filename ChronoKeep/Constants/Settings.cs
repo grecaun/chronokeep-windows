@@ -7,30 +7,33 @@ namespace Chronokeep.Constants
         public const string PROGRAM_DIR           = "Chronokeep";
         public const string HELP_DIR              = "help";
 
-        public const string SERVER_NAME           = "SETTING_SERVER_NAME";
-        public const string DATABASE_VERSION      = "DATABASE_VERSION";
-
+        // Settings 1
+        public const string SERVER_NAME                 = "SETTING_SERVER_NAME";
+        public const string DATABASE_VERSION            = "DATABASE_VERSION";           // default is database managed
+        // Settings 2
         public const string DEFAULT_EXPORT_DIR          = "SETTING_DEFAULT_EXPORT_DIR";
         public const string DEFAULT_TIMING_SYSTEM       = "SETTING_DEFAULT_TIMING_SYSTEM";
         public const string CURRENT_EVENT               = "SETTING_CURRENT_EVENT";
         public const string COMPANY_NAME                = "SETTING_COMPANY_NAME";
         public const string CONTACT_EMAIL               = "SETTING_CONTACT_EMAIL";
+        // Settings 3
         public const string UPDATE_ON_PAGE_CHANGE       = "SETTING_UPDATE_PAGE_CHANGE";
         public const string EXIT_NO_PROMPT              = "EXIT_NO_PROMPT";
         public const string DEFAULT_CHIP_TYPE           = "DEFAULT_CHIP_TYPE";
-        public const string LAST_USED_API_ID            = "SETTING_LAST_USED_API_ID";
+        public const string LAST_USED_API_ID            = "SETTING_LAST_USED_API_ID";   // default is not set
         public const string CHECK_UPDATES               = "SETTING_CHECK_UPDATES";
         public const string CURRENT_THEME               = "SETTING_THEME";
+        // Settings 4
         public const string UPLOAD_INTERVAL             = "SETTING_UPLOAD_INTERVAL";
         public const string DOWNLOAD_INTERVAL           = "SETTINGS_DOWNLOAD_INTERVAL";
         public const string ANNOUNCER_WINDOW            = "SETTING_ANNOUNCER_WINDOW";
         public const string ALARM_SOUND                 = "SETTING_ALARM_SOUND";
         public const string MINIMUM_COMPATIBLE_DATABASE = "SETTING_MINIMUM_COMPATIBLE_DATABASE";
-
+        // Twilio
         public const string TWILIO_ACCOUNT_SID    = "TWILIO_ACCOUNT_SID";
         public const string TWILIO_AUTH_TOKEN     = "TWILIO_AUTH_TOKEN";
         public const string TWILIO_PHONE_NUMBER   = "TWILIO_PHONE_NUMBER";
-
+        // Mailgun
         public const string MAILGUN_API_KEY       = "MAILGUN_API_KEY";
         public const string MAILGUN_API_URL       = "MAILGUN_API_URL";
         public const string MAILGUN_FROM_EMAIL    = "MAILGUN_FROM_EMAIL";
@@ -58,6 +61,12 @@ namespace Chronokeep.Constants
 
         public static void SetupSettings(IDBInterface database)
         {
+            // Settings 1
+            if (database.GetAppSetting(SERVER_NAME) == null)
+            {
+                database.SetAppSetting(SERVER_NAME, "Chronokeep Registration");
+            }
+            // Settings 2
             if (database.GetAppSetting(DEFAULT_EXPORT_DIR) == null)
             {
                 string dirPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), PROGRAM_DIR, "Exports");
@@ -75,6 +84,11 @@ namespace Chronokeep.Constants
             {
                 database.SetAppSetting(COMPANY_NAME, "");
             }
+            if (database.GetAppSetting(CONTACT_EMAIL) == null)
+            {
+                database.SetAppSetting(CONTACT_EMAIL, "");
+            }
+            // Settings 3
             if (database.GetAppSetting(UPDATE_ON_PAGE_CHANGE) == null)
             {
                 database.SetAppSetting(UPDATE_ON_PAGE_CHANGE, SETTING_TRUE);
@@ -87,10 +101,6 @@ namespace Chronokeep.Constants
             {
                 database.SetAppSetting(DEFAULT_CHIP_TYPE, CHIP_TYPE_DEC);
             }
-            if (database.GetAppSetting(CONTACT_EMAIL) == null)
-            {
-                database.SetAppSetting(CONTACT_EMAIL, "");
-            }
             if (database.GetAppSetting(CHECK_UPDATES) == null)
             {
                 database.SetAppSetting(CHECK_UPDATES, SETTING_FALSE);
@@ -99,6 +109,7 @@ namespace Chronokeep.Constants
             {
                 database.SetAppSetting(CURRENT_THEME, THEME_LIGHT);
             }
+            // Settings 4
             if (database.GetAppSetting(UPLOAD_INTERVAL) == null)
             {
                 database.SetAppSetting(UPLOAD_INTERVAL, DEFAULT_INTERVAL);
@@ -115,6 +126,11 @@ namespace Chronokeep.Constants
             {
                 database.SetAppSetting(ALARM_SOUND, DEFAULT_ALARM);
             }
+            if (database.GetAppSetting(MINIMUM_COMPATIBLE_DATABASE) == null)
+            {
+                database.SetAppSetting(MINIMUM_COMPATIBLE_DATABASE, SQLiteInterface.minimum_compatible_version.ToString());
+            }
+            // Twilio
             if (database.GetAppSetting(TWILIO_ACCOUNT_SID) == null)
             {
                 database.SetAppSetting(TWILIO_ACCOUNT_SID, "");
@@ -127,6 +143,7 @@ namespace Chronokeep.Constants
             {
                 database.SetAppSetting(TWILIO_PHONE_NUMBER, "");
             }
+            // Mailgun
             if (database.GetAppSetting(MAILGUN_API_KEY) == null)
             {
                 database.SetAppSetting(MAILGUN_API_KEY, "");
@@ -142,14 +159,6 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(MAILGUN_FROM_NAME) == null)
             {
                 database.SetAppSetting(MAILGUN_FROM_NAME, "");
-            }
-            if (database.GetAppSetting(SERVER_NAME) == null)
-            {
-                database.SetAppSetting(SERVER_NAME, "Chronokeep Registration");
-            }
-            if (database.GetAppSetting(MINIMUM_COMPATIBLE_DATABASE) == null)
-            {
-                database.SetAppSetting(MINIMUM_COMPATIBLE_DATABASE, SQLiteInterface.minimum_compatible_version.ToString());
             }
         }
     }

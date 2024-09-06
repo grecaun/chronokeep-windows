@@ -17,15 +17,9 @@ namespace Chronokeep.Objects
             linked_distance_name = "", chip = "", participantId = "";
         private bool anonymous;
         DateTime systemTime;
-
-        private static int raceType = Constants.Timing.EVENT_TYPE_DISTANCE;
+        Event theEvent;
 
         public static readonly Regex timeRegex = new Regex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})");
-
-        public static Dictionary<int, TimingLocation> locations = null;
-        public static Dictionary<int, Segment> segments = null;
-        public static Dictionary<string, Distance> distances = null;
-        public static Event theEvent = null;
 
         // database constructor
         public TimeResult(
@@ -58,7 +52,11 @@ namespace Chronokeep.Objects
             string linked_distance_name,
             string chip,
             bool anonymous,
-            string participantId
+            string participantId,
+            Dictionary<int, TimingLocation> locations,
+            Dictionary<int, Segment> segments,
+            Dictionary<string, Distance> distances,
+            Event theEvent
             )
         {
             this.eventId = eventId;
@@ -85,7 +83,7 @@ namespace Chronokeep.Objects
             {
                 segmentName = "";
             }
-            if (raceType == Constants.Timing.EVENT_TYPE_TIME && Constants.Timing.SEGMENT_FINISH == SegmentId)
+            if (theEvent != null && theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME && Constants.Timing.SEGMENT_FINISH == SegmentId)
             {
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
@@ -177,6 +175,7 @@ namespace Chronokeep.Objects
             this.chip = chip ?? "";
             this.anonymous = anonymous;
             this.participantId = participantId ?? First+Last;
+            this.theEvent = theEvent;
         }
 
         // Used by routines to add new results to the database.
@@ -231,40 +230,6 @@ namespace Chronokeep.Objects
                    + Convert.ToInt64(timeMatch.Groups[3].Value);
                 milliseconds = Convert.ToInt32(timeMatch.Groups[4].Value);
             }
-        }
-
-        public static void SetupStaticVariables(IDBInterface database)
-        {
-            locations = new Dictionary<int, TimingLocation>();
-            segments = new Dictionary<int, Segment>();
-            distances = new Dictionary<string, Distance>();
-            Event theEvent = database.GetCurrentEvent();
-            if (theEvent == null || theEvent.Identifier < 0)
-            {
-                return;
-            }
-            if (!theEvent.CommonStartFinish)
-            {
-                locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
-                locations[Constants.Timing.LOCATION_START] = new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow);
-            }
-            else
-            {
-                locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
-            }
-            foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
-            {
-                locations[loc.Identifier] = loc;
-            }
-            foreach (Segment seg in database.GetSegments(theEvent.Identifier))
-            {
-                segments[seg.Identifier] = seg;
-            }
-            foreach (Distance dist in database.GetDistances(theEvent.Identifier))
-            {
-                distances[dist.Name] = dist;
-            }
-            raceType = theEvent.EventType;
         }
 
         public int EventSpecificId { get => eventspecificId; set => eventspecificId = value; }
@@ -326,7 +291,7 @@ namespace Chronokeep.Objects
 
         public string ChipLapTime
         {
-            get => raceType == Constants.Timing.EVENT_TYPE_TIME ? splitTime : chipTime;
+            get => theEvent != null && theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? splitTime : chipTime;
         }
         public string ChipTime { get => chipTime; set => chipTime = value ?? ""; }
         public string ChipTimeNoMilliseconds { get => chipTime.Split('.').Length > 0 ? chipTime.Split('.')[0] : chipTime; }
@@ -425,7 +390,12 @@ namespace Chronokeep.Objects
             systemTime = Constants.Timing.RFIDEpochToDate(systemTimeSec).AddMilliseconds(systemTimeMill);
         }
 
-        public void FinalizeSetup()
+        public void SetFinalValues(
+            Dictionary<int, TimingLocation> locations,
+            Dictionary<int, Segment> segments,
+            Dictionary<string, Distance> distances,
+            Event theEvent
+            )
         {
             locationName = locations != null ? locations.ContainsKey(locationId) ?
                 locations[this.locationId].Name : "Unknown" : "Unknown";
@@ -445,7 +415,7 @@ namespace Chronokeep.Objects
             {
                 segmentName = "";
             }
-            if (raceType == Constants.Timing.EVENT_TYPE_TIME && Constants.Timing.SEGMENT_FINISH == SegmentId)
+            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME && Constants.Timing.SEGMENT_FINISH == SegmentId)
             {
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
@@ -494,6 +464,7 @@ namespace Chronokeep.Objects
                 }
             }
             segmentName = segmentName.Trim();
+            this.theEvent = theEvent;
         }
 
         public int Age(string eventDate)

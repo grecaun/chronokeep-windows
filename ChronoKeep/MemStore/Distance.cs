@@ -17,6 +17,7 @@ namespace Chronokeep.MemStore
                 distanceLock.AcquireWriterLock(lockTimeout);
                 dist.Identifier = database.AddDistance(dist);
                 distances[dist.Identifier] = dist;
+                distanceNameDict[dist.Name] = dist;
                 distanceLock.ReleaseWriterLock();
                 return dist.Identifier;
             }
@@ -37,6 +38,7 @@ namespace Chronokeep.MemStore
                 foreach (Distance dist in output)
                 {
                     distances[dist.Identifier] = dist;
+                    distanceNameDict[dist.Name] = dist;
                 }
                 distanceLock.ReleaseWriterLock();
                 return output;
@@ -135,6 +137,19 @@ namespace Chronokeep.MemStore
                 distanceLock.AcquireWriterLock(lockTimeout);
                 database.RemoveDistance(identifier);
                 distances.Remove(identifier);
+                string distName = "";
+                foreach (Distance dist in distances.Values)
+                {
+                    if (dist.Identifier == identifier)
+                    {
+                        distName = dist.Name;
+                        break;
+                    }
+                }
+                if (distName.Length > 0)
+                {
+                    distanceNameDict.Remove(distName);
+                }
                 distanceLock.ReleaseWriterLock();
             }
             catch (Exception e)
@@ -152,6 +167,7 @@ namespace Chronokeep.MemStore
                 distanceLock.AcquireWriterLock(lockTimeout);
                 database.RemoveDistance(dist);
                 distances.Remove(dist.Identifier);
+                distanceNameDict.Remove(dist.Name);
                 distanceLock.ReleaseWriterLock();
             }
             catch (Exception e)
@@ -169,6 +185,13 @@ namespace Chronokeep.MemStore
                 distanceLock.AcquireWriterLock(lockTimeout);
                 database.UpdateDistance(dist);
                 foreach (Distance old in distances.Values)
+                {
+                    if (dist.Equals(old))
+                    {
+                        old.Update(dist);
+                    }
+                }
+                foreach (Distance old in distanceNameDict.Values)
                 {
                     if (dist.Equals(old))
                     {
@@ -211,6 +234,13 @@ namespace Chronokeep.MemStore
                 distanceLock.AcquireWriterLock(lockTimeout);
                 database.SetWaveTimes(eventId, wave, seconds, milliseconds);
                 foreach (Distance old in distances.Values)
+                {
+                    if (old.Wave == wave)
+                    {
+                        old.SetWaveTime(wave, seconds, milliseconds);
+                    }
+                }
+                foreach (Distance old in distanceNameDict.Values)
                 {
                     if (old.Wave == wave)
                     {

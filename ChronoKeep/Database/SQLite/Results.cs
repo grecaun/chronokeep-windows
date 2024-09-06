@@ -7,6 +7,44 @@ namespace Chronokeep.Database.SQLite
 {
     class Results
     {
+        public static Dictionary<int, TimingLocation> locations = new();
+        public static Dictionary<int, Segment> segments = new();
+        public static Dictionary<string, Distance> distances = new();
+        public static Event theEvent = null;
+
+        public static void GetStaticVariables(IDBInterface database)
+        {
+            locations.Clear();
+            segments.Clear();
+            distances.Clear();
+            theEvent = database.GetCurrentEvent();
+            if (theEvent == null || theEvent.Identifier < 0)
+            {
+                return;
+            }
+            if (!theEvent.CommonStartFinish)
+            {
+                locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
+                locations[Constants.Timing.LOCATION_START] = new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow);
+            }
+            else
+            {
+                locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
+            }
+            foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
+            {
+                locations[loc.Identifier] = loc;
+            }
+            foreach (Segment seg in database.GetSegments(theEvent.Identifier))
+            {
+                segments[seg.Identifier] = seg;
+            }
+            foreach (Distance dist in database.GetDistances(theEvent.Identifier))
+            {
+                distances[dist.Name] = dist;
+            }
+        }
+
         internal static void AddTimingResult(TimeResult tr, SQLiteConnection connection)
         {
             SQLiteCommand command = connection.CreateCommand();
@@ -107,7 +145,11 @@ namespace Chronokeep.Database.SQLite
                     distanceDict.ContainsKey(distanceId) && distanceDict.ContainsKey(distanceDict[distanceId].LinkedDistance) ? distanceDict[distanceDict[distanceId].LinkedDistance].Name : "",
                     chipRead != null ? chipRead.ChipNumber : "",
                     part != null ? part.EventSpecific.Anonymous : false,
-                    part != null ? part.Identifier.ToString() : ""
+                    part != null ? part.Identifier.ToString() : "",
+                    locations,
+                    segments,
+                    distances,
+                    theEvent
                     ));
             }
             reader.Close();

@@ -105,6 +105,7 @@ namespace Chronokeep.MemStore
                 List<TimingLocation> output = new();
                 output.AddRange(locations.Values);
                 locationsLock.ReleaseReaderLock();
+                output.RemoveAll(x => x.Identifier == Constants.Timing.LOCATION_FINISH || x.Identifier == Constants.Timing.LOCATION_START);
                 return output;
             }
             catch (Exception e)

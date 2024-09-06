@@ -50,6 +50,7 @@ namespace Chronokeep.MemStore
         private static ReaderWriterLock distanceLock = new();
         // key == distance id
         private static Dictionary<int, Distance> distances = new();
+        private static Dictionary<string, Distance> distanceNameDict = new();
 
         private static ReaderWriterLock locationsLock = new();
         // key == location id
@@ -121,9 +122,11 @@ namespace Chronokeep.MemStore
                 distanceLock.AcquireWriterLock(lockTimeout);
                 // load distances
                 distances.Clear();
+                distanceNameDict.Clear();
                 foreach (Distance dist in database.GetDistances(theEvent.Identifier))
                 {
                     distances[dist.Identifier] = dist;
+                    distanceNameDict[dist.Name] = dist;
                 }
                 distanceLock.ReleaseWriterLock();
             }
@@ -137,6 +140,15 @@ namespace Chronokeep.MemStore
                 locationsLock.AcquireWriterLock(lockTimeout);
                 // load locations
                 locations.Clear();
+                if (!theEvent.CommonStartFinish)
+                {
+                    locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
+                    locations[Constants.Timing.LOCATION_START] = new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow);
+                }
+                else
+                {
+                    locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
+                }
                 foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
                 {
                     locations[loc.Identifier] = loc;

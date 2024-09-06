@@ -30,7 +30,6 @@ namespace Chronokeep.UI.Announcer
             this.window = window;
             this.database = database;
             theEvent = database.GetCurrentEvent();
-            TimeResult.theEvent = theEvent;
             AnnouncerParticipant.theEvent = theEvent;
             announcerWorker = AnnouncerWorker.NewAnnouncer(window, database);
             announcerThread = new Thread(new ThreadStart(announcerWorker.Run));

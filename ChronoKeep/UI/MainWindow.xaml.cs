@@ -117,8 +117,6 @@ namespace Chronokeep.UI
             // Setup AgeGroup static variables
             Event theEvent = database.GetCurrentEvent();
 
-            TimeResult.SetupStaticVariables(database);
-
             page = new DashboardPage(this, database);
             TheFrame.Content = page;
             UpdateStatus();

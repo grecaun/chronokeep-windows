@@ -35,6 +35,7 @@ namespace Chronokeep
             }
             Setup.Initialize(version, connectionInfo);
             mutex.ReleaseMutex();
+            Results.GetStaticVariables(this);
         }
 
         /*

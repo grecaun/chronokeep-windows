@@ -1,5 +1,5 @@
-﻿using Chronokeep.Interfaces;
-using Chronokeep.Objects;
+﻿using Chronokeep.Database.SQLite;
+using Chronokeep.Interfaces;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -201,7 +201,10 @@ namespace Chronokeep.UI.MainPages
                 }
                 database.UpdateDistance(listDiv.GetDistance());
             }
-            TimeResult.SetupStaticVariables(database);
+            if (database is SQLiteInterface)
+            {
+                Results.GetStaticVariables(database);
+            }
         }
 
         public void Keyboard_Ctrl_A()
