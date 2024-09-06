@@ -1075,7 +1075,14 @@ namespace Chronokeep.UI.MainPages
                     theDistance.StartOffsetSeconds *= -1;
                     theDistance.StartOffsetMilliseconds *= -1;
                 }
-                theDistance.Upload = Upload.IsChecked == true;
+                if (Upload != null)
+                {
+                    theDistance.Upload = Upload.IsChecked == true;
+                }
+                else
+                {
+                    theDistance.Upload = true;
+                }
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)

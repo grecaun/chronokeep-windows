@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chronokeep.Objects;
+using System;
 using System.Collections.Generic;
 
 namespace Chronokeep.MemStore
@@ -150,6 +151,18 @@ namespace Chronokeep.MemStore
                 {
                     distanceNameDict.Remove(distName);
                 }
+                List<int> participantsToRemove = new();
+                foreach (Participant p in participants.Values)
+                {
+                    if (p.EventSpecific.DistanceIdentifier == identifier)
+                    {
+                        participantsToRemove.Add(p.EventSpecific.Identifier);
+                    }
+                }
+                foreach (int i in participantsToRemove)
+                {
+                    participants.Remove(i);
+                }
                 distanceLock.ReleaseWriterLock();
             }
             catch (Exception e)
@@ -168,6 +181,18 @@ namespace Chronokeep.MemStore
                 database.RemoveDistance(dist);
                 distances.Remove(dist.Identifier);
                 distanceNameDict.Remove(dist.Name);
+                List<int> participantsToRemove = new();
+                foreach (Participant p in participants.Values)
+                {
+                    if (p.EventSpecific.DistanceIdentifier == dist.Identifier)
+                    {
+                        participantsToRemove.Add(p.EventSpecific.Identifier);
+                    }
+                }
+                foreach (int i in participantsToRemove)
+                {
+                    participants.Remove(i);
+                }
                 distanceLock.ReleaseWriterLock();
             }
             catch (Exception e)
@@ -184,10 +209,15 @@ namespace Chronokeep.MemStore
             {
                 distanceLock.AcquireWriterLock(lockTimeout);
                 database.UpdateDistance(dist);
+                Dictionary<string, string> oldDistanceNameDict = new();
                 foreach (Distance old in distances.Values)
                 {
                     if (dist.Equals(old))
                     {
+                        if (!dist.Name.Equals(old.Name))
+                        {
+                            oldDistanceNameDict[old.Name] = dist.Name;
+                        }
                         old.Update(dist);
                     }
                 }
@@ -196,6 +226,24 @@ namespace Chronokeep.MemStore
                     if (dist.Equals(old))
                     {
                         old.Update(dist);
+                    }
+                }
+                foreach (Participant p in participants.Values)
+                {
+                    if (p.EventSpecific.DistanceIdentifier == dist.Identifier)
+                    {
+                        p.EventSpecific.DistanceName = dist.Name;
+                    }
+                }
+                foreach (TimeResult res in timingResults.Values)
+                {
+                    if (oldDistanceNameDict.TryGetValue(res.RealDistanceName, out string newDistName))
+                    {
+                        res.RealDistanceName = newDistName;
+                    }
+                    if (res.LinkedDistanceName.Length > 0 && oldDistanceNameDict.TryGetValue(res.LinkedDistanceName, out string newDistanceName))
+                    {
+                        res.LinkedDistanceName = newDistanceName;
                     }
                 }
                 distanceLock.ReleaseWriterLock();

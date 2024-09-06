@@ -245,7 +245,8 @@ namespace Chronokeep.Objects
         public string ParticipantName { get => string.Format("{0} {1}", firstName, lastName).Trim(); }
         public string PrettyParticipantName { get => anonymous ? string.Format("Bib {0}", bib) : string.Format("{0} {1}", firstName, lastName).Trim(); }
         public string DistanceName { get => linked_distance_name == "" ? distanceName : linked_distance_name; }
-        public string RealDistanceName { get => distanceName; }
+        internal string LinkedDistanceName { get => linked_distance_name; set => linked_distance_name = value; }
+        public string RealDistanceName { get => distanceName; internal set => distanceName = value; }
         public string Bib { get => bib; set => bib = value ?? ""; }
         public int AgeGroupId { get => ageGroupId; set => ageGroupId = value; }
         public string UnknownId { get => unknownId; set => unknownId = value ?? ""; }
