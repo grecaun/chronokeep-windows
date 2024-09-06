@@ -437,7 +437,14 @@ namespace Chronokeep.MemStore
                     }
                 }
                 database.UpdateParticipant(person);
-                participants.Remove(person.EventSpecific.Identifier);
+                if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
+                {
+                    toUpdate.CopyFrom(person);
+                }
+                else
+                {
+                    participants[person.EventSpecific.Identifier] = person;
+                }
                 participantsLock.ReleaseWriterLock();
             }
             catch (Exception e)
@@ -482,6 +489,10 @@ namespace Chronokeep.MemStore
                     if (participants.TryGetValue(p.EventSpecific.Identifier, out Participant toUpdate))
                     {
                         toUpdate.CopyFrom(p);
+                    }
+                    else
+                    {
+                        participants[p.EventSpecific.Identifier] = p;
                     }
                 }
                 participantsLock.ReleaseWriterLock();
