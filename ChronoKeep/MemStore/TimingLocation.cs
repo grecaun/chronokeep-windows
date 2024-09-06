@@ -19,7 +19,7 @@ namespace Chronokeep.MemStore
                 int output = -1;
                 output = database.AddTimingLocation(tp);
                 tp.Identifier = output;
-                if (tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
                 {
                     locations[tp.Identifier] = tp;
                 }
@@ -45,7 +45,7 @@ namespace Chronokeep.MemStore
                 output = database.AddTimingLocations(locs);
                 foreach (TimingLocation tp in locs)
                 {
-                    if (tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                    if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
                     {
                         locations[tp.Identifier] = tp;
                     }
@@ -94,7 +94,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }

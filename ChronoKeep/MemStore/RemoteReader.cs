@@ -17,7 +17,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }
@@ -57,7 +57,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }
@@ -93,7 +93,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }
@@ -132,7 +132,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }

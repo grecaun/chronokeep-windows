@@ -17,7 +17,7 @@ namespace Chronokeep.MemStore
                 eventLock.AcquireReaderLock(lockTimeout);
                 segmentLock.AcquireWriterLock(lockTimeout);
                 int output = database.AddSegment(seg);
-                if (seg.EventId == theEvent.Identifier && seg.Identifier > 0)
+                if (theEvent != null && seg.EventId == theEvent.Identifier && seg.Identifier > 0)
                 {
                     seg.Identifier = output;
                 }
@@ -43,7 +43,7 @@ namespace Chronokeep.MemStore
                 List<Segment> output = database.AddSegments(segs);
                 foreach (Segment seg in output)
                 {
-                    if (seg.EventId == theEvent.Identifier && seg.Identifier > 0)
+                    if (theEvent != null && seg.EventId == theEvent.Identifier && seg.Identifier > 0)
                     {
                         segments[seg.Identifier] = seg;
                     }
@@ -94,7 +94,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }
@@ -131,7 +131,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }
@@ -234,7 +234,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }

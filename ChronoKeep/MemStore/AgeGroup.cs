@@ -38,7 +38,7 @@ namespace Chronokeep.MemStore
                 eventLock.AcquireReaderLock(lockTimeout);
                 participantsLock.AcquireWriterLock(lockTimeout);
                 group.GroupId = database.AddAgeGroup(group);
-                if (group.EventId == theEvent.Identifier)
+                if (theEvent != null && group.EventId == theEvent.Identifier)
                 {
                     if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
                     {
@@ -69,7 +69,7 @@ namespace Chronokeep.MemStore
                 List<AgeGroup> output = database.AddAgeGroups(groups);
                 foreach (AgeGroup group in output)
                 {
-                    if (group.EventId == theEvent.Identifier)
+                    if (theEvent != null && group.EventId == theEvent.Identifier)
                     {
                         if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
                         {
@@ -99,7 +99,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }
@@ -139,7 +139,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }
@@ -200,7 +200,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }
@@ -264,7 +264,7 @@ namespace Chronokeep.MemStore
             try
             {
                 eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.Identifier != eventId)
+                if (theEvent == null || theEvent.Identifier != eventId)
                 {
                     invalidEvent = true;
                 }

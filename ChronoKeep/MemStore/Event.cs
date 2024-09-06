@@ -138,7 +138,7 @@ namespace Chronokeep.MemStore
                 eventLock.AcquireWriterLock(lockTimeout);
                 database.RemoveEvent(identifier);
                 allEvents.RemoveAll(x => x.Identifier == identifier);
-                if (theEvent.Identifier == identifier)
+                if (theEvent != null && theEvent.Identifier == identifier)
                 {
                     LoadEvent();
                 }
@@ -159,7 +159,7 @@ namespace Chronokeep.MemStore
                 eventLock.AcquireWriterLock(lockTimeout);
                 database.RemoveEvent(anEvent);
                 allEvents.RemoveAll(x => x.Identifier == anEvent.Identifier);
-                if (theEvent.Identifier == anEvent.Identifier)
+                if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                 {
                     LoadEvent();
                 }
@@ -179,7 +179,7 @@ namespace Chronokeep.MemStore
             {
                 eventLock.AcquireWriterLock(lockTimeout);
                 database.UpdateEvent(anEvent);
-                if (theEvent.Identifier == anEvent.Identifier)
+                if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                 {
                     theEvent.CopyFrom(anEvent);
                 }
@@ -207,7 +207,7 @@ namespace Chronokeep.MemStore
             {
                 eventLock.AcquireWriterLock(lockTimeout);
                 database.SetFinishOptions(anEvent);
-                if (theEvent.Identifier == anEvent.Identifier)
+                if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                 {
                     theEvent.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
                     theEvent.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
@@ -237,7 +237,7 @@ namespace Chronokeep.MemStore
             {
                 eventLock.AcquireWriterLock(lockTimeout);
                 database.SetStartWindow(anEvent);
-                if (theEvent.Identifier == anEvent.Identifier)
+                if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                 {
                     theEvent.StartWindow = anEvent.StartWindow;
                 }
