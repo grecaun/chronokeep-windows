@@ -416,6 +416,7 @@ namespace Chronokeep.MemStore
             try
             {
                 participantsLock.AcquireWriterLock(lockTimeout);
+                distanceLock.AcquireReaderLock(lockTimeout);
                 if (theEvent.CommonAgeGroups)
                 {
                     if (currentAgeGroups.TryGetValue(
@@ -440,12 +441,21 @@ namespace Chronokeep.MemStore
                 if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
                 {
                     toUpdate.CopyFrom(person);
+                    if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance dist))
+                    {
+                        toUpdate.EventSpecific.DistanceName = dist.Name;
+                    }
                 }
                 else
                 {
                     participants[person.EventSpecific.Identifier] = person;
+                    if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                    {
+                        person.EventSpecific.DistanceName = dist.Name;
+                    }
                 }
                 participantsLock.ReleaseWriterLock();
+                distanceLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
@@ -460,6 +470,7 @@ namespace Chronokeep.MemStore
             try
             {
                 participantsLock.AcquireWriterLock(lockTimeout);
+                distanceLock.AcquireReaderLock(lockTimeout);
                 foreach (Participant person in parts)
                 {
                     if (theEvent.CommonAgeGroups)
@@ -484,18 +495,27 @@ namespace Chronokeep.MemStore
                     }
                 }
                 database.UpdateParticipants(parts);
-                foreach (Participant p in parts)
+                foreach (Participant person in parts)
                 {
-                    if (participants.TryGetValue(p.EventSpecific.Identifier, out Participant toUpdate))
+                    if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
                     {
-                        toUpdate.CopyFrom(p);
+                        toUpdate.CopyFrom(person);
+                        if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance dist))
+                        {
+                            toUpdate.EventSpecific.DistanceName = dist.Name;
+                        }
                     }
                     else
                     {
-                        participants[p.EventSpecific.Identifier] = p;
+                        participants[person.EventSpecific.Identifier] = person;
+                        if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                        {
+                            person.EventSpecific.DistanceName = dist.Name;
+                        }
                     }
                 }
                 participantsLock.ReleaseWriterLock();
+                distanceLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
