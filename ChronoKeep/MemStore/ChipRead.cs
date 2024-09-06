@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chronokeep.Objects;
+using System;
 using System.Collections.Generic;
 
 namespace Chronokeep.MemStore
@@ -15,9 +16,56 @@ namespace Chronokeep.MemStore
             try
             {
                 chipReadsLock.AcquireWriterLock(lockTimeout);
+                bibChipLock.AcquireReaderLock(lockTimeout);
+                locationsLock.AcquireReaderLock(lockTimeout);
+                participantsLock.AcquireReaderLock(lockTimeout);
+                eventLock.AcquireReaderLock(lockTimeout);
                 read.ReadId = database.AddChipRead(read);
+                DateTime start = DateTime.Now;
+                if (theEvent != null)
+                {
+                    start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
+                }
+                read.Start = start;
+                if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation ba))
+                {
+                    read.ChipBib = ba.Bib;
+                }
+                else
+                {
+                    read.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                }
+                read.ReadBib ??= Constants.Timing.CHIPREAD_DUMMYBIB;
+                if (locations.TryGetValue(read.LocationID, out TimingLocation loc))
+                {
+                    read.LocationName = loc.Name;
+                }
+                else
+                {
+                    read.LocationName = "";
+                }
+                Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
+                foreach (Participant part in participants.Values)
+                {
+                    if (part.Bib.Length > 0)
+                    {
+                        partDictionary[part.Bib] = part;
+                    }
+                }
+                if (partDictionary.TryGetValue(read.Bib, out Participant p))
+                {
+                    read.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                }
+                else
+                {
+                    read.Name = "";
+                }
                 chipReads[read.ReadId] = read;
                 chipReadsLock.ReleaseWriterLock();
+                bibChipLock.ReleaseReaderLock();
+                locationsLock.ReleaseReaderLock();
+                participantsLock.ReleaseReaderLock();
+                eventLock.ReleaseReaderLock();
                 return read.ReadId;
             }
             catch (Exception e)
@@ -33,12 +81,51 @@ namespace Chronokeep.MemStore
             try
             {
                 chipReadsLock.AcquireWriterLock(lockTimeout);
+                bibChipLock.AcquireReaderLock(lockTimeout);
+                locationsLock.AcquireReaderLock(lockTimeout);
+                participantsLock.AcquireReaderLock(lockTimeout);
+                Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
+                foreach (Participant part in participants.Values)
+                {
+                    if (part.Bib.Length > 0)
+                    {
+                        partDictionary[part.Bib] = part;
+                    }
+                }
                 List<ChipRead> newReads = database.AddChipReads(reads);
                 foreach (ChipRead read in newReads)
                 {
                     chipReads[read.ReadId] = read;
+                    if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation ba))
+                    {
+                        read.ChipBib = ba.Bib;
+                    }
+                    else
+                    {
+                        read.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                    }
+                    read.ReadBib ??= Constants.Timing.CHIPREAD_DUMMYBIB;
+                    if (locations.TryGetValue(read.LocationID, out TimingLocation loc))
+                    {
+                        read.LocationName = loc.Name;
+                    }
+                    else
+                    {
+                        read.LocationName = "";
+                    }
+                    if (partDictionary.TryGetValue(read.Bib, out Participant p))
+                    {
+                        read.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                    }
+                    else
+                    {
+                        read.Name = "";
+                    }
                 }
                 chipReadsLock.ReleaseWriterLock();
+                bibChipLock.ReleaseReaderLock();
+                locationsLock.ReleaseReaderLock();
+                participantsLock.ReleaseReaderLock();
                 return newReads;
             }
             catch (Exception e)

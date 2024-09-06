@@ -242,7 +242,6 @@ namespace Chronokeep.Database.SQLite
             }
             List<ChipRead> output = new List<ChipRead>();
             Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
-            Dictionary<int, Participant> eventSpecificDictionary = new Dictionary<int, Participant>();
             foreach (Participant p in Participants.GetParticipants(theEvent.Identifier, connection))
             {
                 if (p.Bib.Length > 0)

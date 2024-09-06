@@ -72,16 +72,14 @@ namespace Chronokeep.Timing.Routines
                 if (read.Time > before)
                 {
                     // Bib set on the read, alarm exists and it hasn't went off.
-                    if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB
-                        && bibAlarms.ContainsKey(read.Bib)
-                        && bibAlarms[read.Bib].Enabled)
+                    if (read.Bib != null && read.Bib.Length > 0 && read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB
+                        && bibAlarms.TryGetValue(read.Bib, out Alarm alarm1) && alarm1.Enabled)
                     {
                         window.NotifyAlarm(read.Bib, "");
                     }
                     // Bib not set, chip is set, alarm exists and it hasn't went off.
                     else if (read.ChipNumber != Constants.Timing.CHIPREAD_DUMMYCHIP
-                        && chipAlarms.ContainsKey(read.ChipNumber)
-                        && chipAlarms[read.ChipNumber].Enabled)
+                        && chipAlarms.TryGetValue(read.ChipNumber, out Alarm alarm2) && alarm2.Enabled)
                     {
                         window.NotifyAlarm("", read.ChipNumber);
                     }

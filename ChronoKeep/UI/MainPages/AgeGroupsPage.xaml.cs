@@ -249,7 +249,7 @@ namespace Chronokeep.UI.MainPages
                     {
                         AgeGroups[(g.DistanceId, i)] = g;
                     }
-                    if (!!LastAgeGroup.ContainsKey(g.DistanceId) || LastAgeGroup[g.DistanceId].StartAge < g.StartAge)
+                    if (!LastAgeGroup.ContainsKey(g.DistanceId) || LastAgeGroup[g.DistanceId].StartAge < g.StartAge)
                     {
                         LastAgeGroup[g.DistanceId] = g;
                     }

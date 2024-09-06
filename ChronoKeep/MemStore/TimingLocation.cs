@@ -14,11 +14,16 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "AddTimingLocation");
             try
             {
+                eventLock.AcquireReaderLock(lockTimeout);
                 locationsLock.AcquireWriterLock(lockTimeout);
                 int output = -1;
                 output = database.AddTimingLocation(tp);
                 tp.Identifier = output;
-                locations[tp.Identifier] = tp;
+                if (tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                {
+                    locations[tp.Identifier] = tp;
+                }
+                eventLock.ReleaseReaderLock();
                 locationsLock.ReleaseWriterLock();
                 return output;
             }
@@ -34,13 +39,18 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "AddTimingLocations");
             try
             {
+                eventLock.AcquireReaderLock(lockTimeout);
                 locationsLock.AcquireWriterLock(lockTimeout);
                 List<TimingLocation> output = new();
                 output = database.AddTimingLocations(locs);
                 foreach (TimingLocation tp in locs)
                 {
-                    locations[tp.Identifier] = tp;
+                    if (tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                    {
+                        locations[tp.Identifier] = tp;
+                    }
                 }
+                eventLock.ReleaseReaderLock();
                 locationsLock.ReleaseWriterLock();
                 return output;
             }
@@ -97,7 +107,7 @@ namespace Chronokeep.MemStore
             }
             if (invalidEvent)
             {
-                throw new InvalidEventID("Expected different event id.");
+                return database.GetTimingLocations(eventId);
             }
             try
             {

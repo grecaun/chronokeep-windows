@@ -27,7 +27,7 @@ namespace Chronokeep
         public int Type { get; set; }
 
         // RawReads window functions
-        private DateTime Start { get; set; }
+        internal DateTime Start { get; set; }
         public string LocationName { get; set; }
         public string Bib {
             get
@@ -233,7 +233,7 @@ namespace Chronokeep
             this.LogId = logid;
             this.TimeSeconds = time_seconds;
             this.TimeMilliseconds = time_millisec;
-            this.ReadBib = readbib;
+            this.ReadBib = readbib ?? Constants.Timing.CHIPREAD_DUMMYBIB;
             this.Type = type;
             this.ChipBib = chipbib;
             this.Name = string.Format("{0} {1}", first, last).Trim();
@@ -250,7 +250,7 @@ namespace Chronokeep
             int status
             )
         {
-            this.ReadBib = bib;
+            this.ReadBib = bib ?? Constants.Timing.CHIPREAD_DUMMYBIB;
             this.TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
             this.TimeMilliseconds = time.Millisecond;
             this.Type = Constants.Timing.CHIPREAD_TYPE_MANUAL;

@@ -14,10 +14,15 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "AddSegment");
             try
             {
+                eventLock.AcquireReaderLock(lockTimeout);
                 segmentLock.AcquireWriterLock(lockTimeout);
                 int output = database.AddSegment(seg);
-                seg.Identifier = output;
+                if (seg.EventId == theEvent.Identifier && seg.Identifier > 0)
+                {
+                    seg.Identifier = output;
+                }
                 segments[seg.Identifier] = seg;
+                eventLock.ReleaseReaderLock();
                 segmentLock.ReleaseWriterLock();
                 return output;
             }
@@ -33,12 +38,17 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "AddSegments");
             try
             {
+                eventLock.AcquireReaderLock(lockTimeout);
                 segmentLock.AcquireWriterLock(lockTimeout);
                 List<Segment> output = database.AddSegments(segs);
                 foreach (Segment seg in output)
                 {
-                    segments[seg.Identifier] = seg;
+                    if (seg.EventId == theEvent.Identifier && seg.Identifier > 0)
+                    {
+                        segments[seg.Identifier] = seg;
+                    }
                 }
+                eventLock.ReleaseReaderLock();
                 segmentLock.ReleaseWriterLock();
                 return output;
             }
@@ -97,7 +107,7 @@ namespace Chronokeep.MemStore
             }
             if (invalidEvent)
             {
-                throw new InvalidEventID("Expected different event id.");
+                return database.GetSegments(eventId);
             }
             try
             {
@@ -134,7 +144,7 @@ namespace Chronokeep.MemStore
             }
             if (invalidEvent)
             {
-                throw new InvalidEventID("Expected different event id.");
+                return database.GetMaxSegments(eventId);
             }
             try
             {

@@ -35,15 +35,20 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "AddAgeGroup");
             try
             {
+                eventLock.AcquireReaderLock(lockTimeout);
                 participantsLock.AcquireWriterLock(lockTimeout);
                 group.GroupId = database.AddAgeGroup(group);
-                if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
+                if (group.EventId == theEvent.Identifier)
                 {
-                    value = new List<AgeGroup>();
-                    ageGroups[group.DistanceId] = value;
+                    if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
+                    {
+                        value = new List<AgeGroup>();
+                        ageGroups[group.DistanceId] = value;
+                    }
+                    value.Add(group);
                 }
-                value.Add(group);
                 SetAgeGroups();
+                eventLock.ReleaseReaderLock();
                 participantsLock.ReleaseWriterLock();
                 return group.GroupId;
             }
@@ -59,18 +64,23 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "AddAgeGroups");
             try
             {
+                eventLock.AcquireReaderLock(lockTimeout);
                 participantsLock.AcquireWriterLock(lockTimeout);
                 List<AgeGroup> output = database.AddAgeGroups(groups);
                 foreach (AgeGroup group in output)
                 {
-                    if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
+                    if (group.EventId == theEvent.Identifier)
                     {
-                        value = new List<AgeGroup>();
-                        ageGroups[group.DistanceId] = value;
+                        if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
+                        {
+                            value = new List<AgeGroup>();
+                            ageGroups[group.DistanceId] = value;
+                        }
+                        value.Add(group);
                     }
-                    value.Add(group);
                 }
                 SetAgeGroups();
+                eventLock.ReleaseReaderLock();
                 participantsLock.ReleaseWriterLock();
                 return output;
 
@@ -102,7 +112,7 @@ namespace Chronokeep.MemStore
             }
             if (invalidEvent)
             {
-                throw new InvalidEventID("Expected different event id.");
+                return database.GetAgeGroups(eventId);
             }
             List<AgeGroup> output = new();
             try

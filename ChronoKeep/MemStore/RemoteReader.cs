@@ -145,7 +145,7 @@ namespace Chronokeep.MemStore
             }
             if (invalidEvent)
             {
-                throw new InvalidEventID("Expected different event id.");
+                return database.GetRemoteReaders(eventId);
             }
             try
             {

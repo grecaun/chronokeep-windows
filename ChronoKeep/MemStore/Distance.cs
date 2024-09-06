@@ -15,10 +15,15 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "AddDistance");
             try
             {
+                eventLock.AcquireReaderLock(lockTimeout);
                 distanceLock.AcquireWriterLock(lockTimeout);
                 dist.Identifier = database.AddDistance(dist);
-                distances[dist.Identifier] = dist;
-                distanceNameDict[dist.Name] = dist;
+                if (dist.EventIdentifier == theEvent.Identifier && dist.Identifier > 0)
+                {
+                    distances[dist.Identifier] = dist;
+                    distanceNameDict[dist.Name] = dist;
+                }
+                eventLock.ReleaseReaderLock();
                 distanceLock.ReleaseWriterLock();
                 return dist.Identifier;
             }
@@ -34,13 +39,18 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "AddDistances");
             try
             {
+                eventLock.AcquireReaderLock(lockTimeout);
                 distanceLock.AcquireWriterLock(lockTimeout);
                 List<Distance> output = database.AddDistances(distances);
                 foreach (Distance dist in output)
                 {
-                    distances[dist.Identifier] = dist;
-                    distanceNameDict[dist.Name] = dist;
+                    if (dist.EventIdentifier == theEvent.Identifier && dist.Identifier > 0)
+                    {
+                        distances[dist.Identifier] = dist;
+                        distanceNameDict[dist.Name] = dist;
+                    }
                 }
+                eventLock.ReleaseReaderLock();
                 distanceLock.ReleaseWriterLock();
                 return output;
             }
@@ -113,7 +123,7 @@ namespace Chronokeep.MemStore
             }
             if (invalidEvent)
             {
-                throw new InvalidEventID("Expected different event id.");
+                return database.GetDistances(eventId);
             }
             try
             {

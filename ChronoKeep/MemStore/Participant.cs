@@ -16,6 +16,7 @@ namespace Chronokeep.MemStore
             try
             {
                 participantsLock.AcquireWriterLock(lockTimeout);
+                distanceLock.AcquireReaderLock(lockTimeout);
                 if (theEvent.CommonAgeGroups)
                 {
                     if (currentAgeGroups.TryGetValue(
@@ -37,8 +38,13 @@ namespace Chronokeep.MemStore
                     }
                 }
                 Participant output = database.AddParticipant(person);
+                if (distances.TryGetValue(output.EventSpecific.DistanceIdentifier, out Distance dist))
+                {
+                    output.EventSpecific.DistanceName = dist.Name;
+                }
                 participants[output.EventSpecific.Identifier] = output;
                 participantsLock.ReleaseWriterLock();
+                distanceLock.ReleaseReaderLock();
                 return output;
             }
             catch (Exception e)
@@ -54,6 +60,7 @@ namespace Chronokeep.MemStore
             try
             {
                 participantsLock.AcquireWriterLock(lockTimeout);
+                distanceLock.AcquireReaderLock(lockTimeout);
                 foreach (Participant person in people)
                 {
                     if (theEvent.CommonAgeGroups)
@@ -80,9 +87,14 @@ namespace Chronokeep.MemStore
                 List<Participant> output = database.AddParticipants(people);
                 foreach (Participant person in output)
                 {
+                    if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                    {
+                        person.EventSpecific.DistanceName = dist.Name;
+                    }
                     participants[person.EventSpecific.Identifier] = person;
                 }
                 participantsLock.ReleaseWriterLock();
+                distanceLock.ReleaseReaderLock();
                 return output;
             }
             catch (Exception e)
