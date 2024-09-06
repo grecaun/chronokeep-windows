@@ -142,11 +142,13 @@ namespace Chronokeep.MemStore
                 locations.Clear();
                 if (!theEvent.CommonStartFinish)
                 {
+                    locations[Constants.Timing.LOCATION_ANNOUNCER] = new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0);
                     locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
                     locations[Constants.Timing.LOCATION_START] = new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow);
                 }
                 else
                 {
+                    locations[Constants.Timing.LOCATION_ANNOUNCER] = new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0);
                     locations[Constants.Timing.LOCATION_FINISH] = new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin);
                 }
                 foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))

@@ -92,9 +92,15 @@ namespace Chronokeep.MemStore
                         partDictionary[part.Bib] = part;
                     }
                 }
+                DateTime start = DateTime.Now;
+                if (theEvent != null)
+                {
+                    start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
+                }
                 List<ChipRead> newReads = database.AddChipReads(reads);
                 foreach (ChipRead read in newReads)
                 {
+                    read.Start = start;
                     chipReads[read.ReadId] = read;
                     if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation ba))
                     {
