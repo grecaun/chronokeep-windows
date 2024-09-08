@@ -16,7 +16,8 @@ namespace Chronokeep.MemStore
             try
             {
                 distanceLock.AcquireReaderLock(lockTimeout);
-                Dictionary<string, DistanceStat> distStatDict = new();
+                participantsLock.AcquireReaderLock(lockTimeout);
+                Dictionary<int, DistanceStat> distStatDict = new();
                 DistanceStat allstats = new()
                 {
                     DistanceName = "All",
@@ -28,17 +29,19 @@ namespace Chronokeep.MemStore
                 };
                 foreach (Participant p in participants.Values)
                 {
-                    if (!distStatDict.TryGetValue(p.EventSpecific.DistanceName, out DistanceStat distStats))
+                    string distName = distances.TryGetValue(p.EventSpecific.DistanceIdentifier, out Distance dist) ? dist.Name : "";
+                    if (!distStatDict.TryGetValue(p.EventSpecific.DistanceIdentifier, out DistanceStat distStats))
                     {
                         distStats = new()
                         {
-                            DistanceName = p.EventSpecific.DistanceName,
+                            DistanceName = distName,
                             DistanceID = p.EventSpecific.DistanceIdentifier,
                             Active = 0,
                             DNF = 0,
                             DNS = 0,
                             Finished = 0
                         };
+                        distStatDict[p.EventSpecific.DistanceIdentifier] = distStats;
                     }
                     if (Constants.Timing.EVENTSPECIFIC_DNF == p.Status)
                     {
@@ -62,6 +65,7 @@ namespace Chronokeep.MemStore
                     }
                 }
                 distanceLock.ReleaseReaderLock();
+                participantsLock.ReleaseReaderLock();
                 List<DistanceStat> output = new()
                 {
                     allstats
