@@ -7,7 +7,7 @@ namespace Chronokeep.Objects.API
     {
         public APIResult(Event theEvent, TimeResult result, DateTime start)
         {
-            this.PersonId = result.ParticipantId;
+            this.PersonId = string.Format("{0}{1}{2}", result.ParticipantId, result.First[0], result.Last[0]);
             this.Bib = result.Bib.ToString();
             this.First = result.Anonymous ? "" : result.First;
             this.Last = result.Anonymous ? "" : result.Last;

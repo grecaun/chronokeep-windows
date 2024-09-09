@@ -923,19 +923,6 @@ namespace Chronokeep.UI.MainPages
                         });
                     }
                 }
-                // Delete old information from the API
-                Log.D("UI.MainPages.SegmentsPage", "Deleting old segments.");
-                try
-                {
-                    await APIHandlers.DeleteSegments(api, event_ids[0], event_ids[1]);
-                }
-                catch (APIException ex)
-                {
-                    DialogBox.Show(ex.Message);
-                    UploadButton.IsEnabled = true;
-                    UploadButton.Content = "Upload";
-                    return;
-                }
                 Log.D("UI.MainPages.SegmentsPage", "Attempting to upload " + segments.Count.ToString() + " segments.");
                 try
                 {
