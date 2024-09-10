@@ -13,153 +13,101 @@ namespace Chronokeep.MemStore
         public void AddRemoteReaders(int eventId, List<RemoteReader> readers)
         {
             Log.D("MemStore", "AddRemoteReaders");
-            bool invalidEvent = false;
+            database.AddRemoteReaders(eventId, readers);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        foreach (RemoteReader reader in readers)
+                        {
+                            remoteReaders.RemoveAll(x => reader.APIIDentifier == x.APIIDentifier && reader.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
+                            remoteReaders.Add(reader);
+                        }
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                remoteReadersLock.AcquireWriterLock(lockTimeout);
-                database.AddRemoteReaders(eventId, readers);
-                foreach (RemoteReader reader in readers)
-                {
-                    remoteReaders.RemoveAll(x => reader.APIIDentifier == x.APIIDentifier && reader.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
-                    remoteReaders.Add(reader);
-                }
-                remoteReadersLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring remoteReadersLock. " + e.Message);
-                throw new MutexLockException("remoteReadersLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void DeleteRemoteReader(int eventId, RemoteReader reader)
         {
             Log.D("MemStore", "DeleteRemoteReader");
-            bool invalidEvent = false;
+            database.DeleteRemoteReader(eventId, reader);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        remoteReaders.RemoveAll(x => reader.APIIDentifier == x.APIIDentifier && reader.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                remoteReadersLock.AcquireWriterLock(lockTimeout);
-                database.DeleteRemoteReader(eventId, reader);
-                remoteReaders.RemoveAll(x => reader.APIIDentifier == x.APIIDentifier && reader.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
-                remoteReadersLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring remoteReadersLock. " + e.Message);
-                throw new MutexLockException("remoteReadersLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void DeleteRemoteReaders(int eventId, List<RemoteReader> readers)
         {
             Log.D("MemStore", "DeleteRemoteReaders");
-            bool invalidEvent = false;
+            database.DeleteRemoteReaders(eventId, readers);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        foreach (RemoteReader reader in readers)
+                        {
+                            remoteReaders.RemoveAll(x => reader.APIIDentifier == x.APIIDentifier && reader.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
+                        }
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                remoteReadersLock.AcquireWriterLock(lockTimeout);
-                database.DeleteRemoteReaders(eventId, readers);
-                foreach (RemoteReader reader in readers)
-                {
-                    remoteReaders.RemoveAll(x => reader.APIIDentifier == x.APIIDentifier && reader.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
-                }
-                remoteReadersLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring remoteReadersLock. " + e.Message);
-                throw new MutexLockException("remoteReadersLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public List<RemoteReader> GetRemoteReaders(int eventId)
         {
             Log.D("MemStore", "GetRemoteReaders");
-            bool invalidEvent = false;
+            List<RemoteReader> output = new();
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        output.AddRange(remoteReaders);
+                    }
+                    else
+                    {
+                        output.AddRange(database.GetRemoteReaders(eventId));
+                    }
+                    memStoreLock.ExitReadLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
-            if (invalidEvent)
-            {
-                return database.GetRemoteReaders(eventId);
-            }
-            try
-            {
-                remoteReadersLock.AcquireReaderLock(lockTimeout);
-                List<RemoteReader> output = new();
-                output.AddRange(remoteReaders);
-                remoteReadersLock.ReleaseReaderLock();
-                return output;
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring remoteReadersLock. " + e.Message);
-                throw new MutexLockException("remoteReadersLock");
-            }
+            return output;
         }
     }
 }

@@ -12,249 +12,272 @@ namespace Chronokeep.MemStore
         public int AddEvent(Event anEvent)
         {
             Log.D("MemStore", "AddEvent");
+            int output = database.AddEvent(anEvent);
             try
             {
-                eventLock.AcquireWriterLock(lockTimeout);
-                int output = database.AddEvent(anEvent);
-                anEvent.Identifier = output;
-                allEvents.Add(anEvent);
-                eventLock.ReleaseWriterLock();
-                return output;
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    anEvent.Identifier = output;
+                    allEvents.Add(anEvent);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public Event GetCurrentEvent()
         {
             Log.D("MemStore", "GetCurrentEvent");
+            Event output = null;
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                Event output = theEvent;
-                eventLock.ReleaseReaderLock();
-                return output;
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    output = theEvent;
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public void SetCurrentEvent(int eventID)
         {
             Log.D("MemStore", "SetCurrentEvent");
+            database.SetCurrentEvent(eventID);
             try
             {
-                eventLock.AcquireWriterLock(lockTimeout);
-                database.SetCurrentEvent(eventID);
-                LoadEvent();
-                eventLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    LoadEvent();
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public Event GetEvent(int id)
         {
             Log.D("MemStore", "GetEvent");
+            Event output = null;
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                Event output = null;
-                foreach (Event ev in allEvents)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (ev.Identifier == id)
+                    foreach (Event ev in allEvents)
                     {
-                        output = ev;
-                        break;
+                        if (ev.Identifier == id)
+                        {
+                            output = ev;
+                            break;
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                eventLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public int GetEventID(Event anEvent)
         {
             Log.D("MemStore", "GetEventID");
+            int output = -1;
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                int output = -1;
-                foreach (Event ev in allEvents)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (ev.Name.Equals(anEvent.Name, StringComparison.OrdinalIgnoreCase) && ev.Date.Equals(anEvent.Date, StringComparison.OrdinalIgnoreCase))
+                    foreach (Event ev in allEvents)
                     {
-                        output = ev.Identifier;
-                        break;
+                        if (ev.Name.Equals(anEvent.Name, StringComparison.OrdinalIgnoreCase) && ev.Date.Equals(anEvent.Date, StringComparison.OrdinalIgnoreCase))
+                        {
+                            output = ev.Identifier;
+                            break;
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                eventLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public List<Event> GetEvents()
         {
             Log.D("MemStore", "GetEventID");
+            List<Event> output = new();
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                List<Event> output = new();
-                output.AddRange(allEvents);
-                eventLock.ReleaseReaderLock();
-                return output;
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    output.AddRange(allEvents);
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public void RemoveEvent(int identifier)
         {
             Log.D("MemStore", "RemoveEvent");
+            database.RemoveEvent(identifier);
             try
             {
-                eventLock.AcquireWriterLock(lockTimeout);
-                database.RemoveEvent(identifier);
-                allEvents.RemoveAll(x => x.Identifier == identifier);
-                if (theEvent != null && theEvent.Identifier == identifier)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    LoadEvent();
+                    allEvents.RemoveAll(x => x.Identifier == identifier);
+                    if (theEvent != null && theEvent.Identifier == identifier)
+                    {
+                        LoadEvent();
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveEvent(Event anEvent)
         {
             Log.D("MemStore", "RemoveEvent");
+            database.RemoveEvent(anEvent);
             try
             {
-                eventLock.AcquireWriterLock(lockTimeout);
-                database.RemoveEvent(anEvent);
-                allEvents.RemoveAll(x => x.Identifier == anEvent.Identifier);
-                if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    LoadEvent();
+                    allEvents.RemoveAll(x => x.Identifier == anEvent.Identifier);
+                    if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                    {
+                        LoadEvent();
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void UpdateEvent(Event anEvent)
         {
             Log.D("MemStore", "RemoveEvent");
+            database.UpdateEvent(anEvent);
             try
             {
-                eventLock.AcquireWriterLock(lockTimeout);
-                database.UpdateEvent(anEvent);
-                if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    theEvent.CopyFrom(anEvent);
-                }
-                foreach (Event ev in allEvents)
-                {
-                    if (ev.Identifier == anEvent.Identifier)
+                    if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                     {
-                        ev.CopyFrom(anEvent);
-                        break;
+                        theEvent.CopyFrom(anEvent);
                     }
+                    foreach (Event ev in allEvents)
+                    {
+                        if (ev.Identifier == anEvent.Identifier)
+                        {
+                            ev.CopyFrom(anEvent);
+                            break;
+                        }
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void SetFinishOptions(Event anEvent)
         {
             Log.D("MemStore", "RemoveEvent");
+            database.SetFinishOptions(anEvent);
             try
             {
-                eventLock.AcquireWriterLock(lockTimeout);
-                database.SetFinishOptions(anEvent);
-                if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    theEvent.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
-                    theEvent.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
-                }
-                foreach (Event ev in allEvents)
-                {
-                    if (ev.Identifier == anEvent.Identifier)
+                    if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                     {
-                        ev.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
-                        ev.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
-                        break;
+                        theEvent.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
+                        theEvent.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
                     }
+                    foreach (Event ev in allEvents)
+                    {
+                        if (ev.Identifier == anEvent.Identifier)
+                        {
+                            ev.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
+                            ev.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
+                            break;
+                        }
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void SetStartWindow(Event anEvent)
         {
             Log.D("MemStore", "RemoveEvent");
+            database.SetStartWindow(anEvent);
             try
             {
-                eventLock.AcquireWriterLock(lockTimeout);
-                database.SetStartWindow(anEvent);
-                if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    theEvent.StartWindow = anEvent.StartWindow;
-                }
-                foreach (Event ev in allEvents)
-                {
-                    if (ev.Identifier == anEvent.Identifier)
+                    if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                     {
-                        ev.StartWindow = anEvent.StartWindow;
-                        break;
+                        theEvent.StartWindow = anEvent.StartWindow;
                     }
+                    foreach (Event ev in allEvents)
+                    {
+                        if (ev.Identifier == anEvent.Identifier)
+                        {
+                            ev.StartWindow = anEvent.StartWindow;
+                            break;
+                        }
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }

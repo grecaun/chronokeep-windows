@@ -12,74 +12,82 @@ namespace Chronokeep.MemStore
         public void AddBannedEmail(string email)
         {
             Log.D("MemStore", "AddBannedEmail");
+            database.AddBannedEmail(email);
             try
             {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.AddBannedEmail(email);
-                bannedEmails.Add(email);
-                bannedLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    bannedEmails.Add(email);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void AddBannedEmails(List<string> emails)
         {
             Log.D("MemStore", "AddBannedEmails");
+            database.AddBannedEmails(emails);
             try
             {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.AddBannedEmails(emails);
-                foreach (string email in emails)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    bannedEmails.Add(email);
+                    foreach (string email in emails)
+                    {
+                        bannedEmails.Add(email);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                bannedLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void AddBannedPhone(string phone)
         {
             Log.D("MemStore", "AddBannedPhone");
+            database.AddBannedPhone(phone);
             try
             {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.AddBannedPhone(phone);
-                bannedPhones.Add(phone);
-                bannedLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    bannedPhones.Add(phone);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void AddBannedPhones(List<string> phones)
         {
             Log.D("MemStore", "AddBannedPhones");
+            database.AddBannedPhones(phones);
             try
             {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.AddBannedPhones(phones);
-                foreach (string phone in phones)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    bannedPhones.Add(phone);
+                    foreach (string phone in phones)
+                    {
+                        bannedPhones.Add(phone);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                bannedLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
@@ -89,14 +97,16 @@ namespace Chronokeep.MemStore
             List<string> output = new();
             try
             {
-                bannedLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(bannedEmails);
-                bannedLock.ReleaseReaderLock();
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    output.AddRange(bannedEmails);
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -107,14 +117,16 @@ namespace Chronokeep.MemStore
             List<string> output = new();
             try
             {
-                bannedLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(bannedPhones);
-                bannedLock.ReleaseReaderLock();
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    output.AddRange(bannedPhones);
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -122,108 +134,120 @@ namespace Chronokeep.MemStore
         public void RemoveBannedEmail(string email)
         {
             Log.D("MemStore", "RemoveBannedEmail");
+            database.RemoveBannedEmail(email);
             try
             {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBannedEmail(email);
-                bannedEmails.Remove(email);
-                bannedLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    bannedEmails.Remove(email);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveBannedEmails(List<string> emails)
         {
             Log.D("MemStore", "RemoveBannedEmails");
+            database.RemoveBannedEmails(emails);
             try
             {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBannedEmails(emails);
-                foreach (string email in emails)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    bannedEmails.Remove(email);
+                    foreach (string email in emails)
+                    {
+                        bannedEmails.Remove(email);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                bannedLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveBannedPhone(string phone)
         {
             Log.D("MemStore", "RemoveBannedPhone");
+            database.RemoveBannedPhone(phone);
             try
             {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBannedPhone(phone);
-                bannedPhones.Remove(phone);
-                bannedLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    bannedPhones.Remove(phone);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveBannedPhones(List<string> phones)
         {
             Log.D("MemStore", "RemoveBannedPhones");
+            database.RemoveBannedPhones(phones);
             try
             {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBannedPhones(phones);
-                foreach (string phone in phones)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    bannedPhones.Remove(phone);
+                    foreach (string phone in phones)
+                    {
+                        bannedPhones.Remove(phone);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                bannedLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void ClearBannedEmails()
         {
             Log.D("MemStore", "ClearBannedEmails");
+            database.ClearBannedEmails();
             try
             {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.ClearBannedEmails();
-                bannedEmails.Clear();
-                bannedLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    bannedEmails.Clear();
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void ClearBannedPhones()
         {
             Log.D("MemStore", "ClearBannedPhones");
+            database.ClearBannedPhones();
             try
             {
-                bannedLock.AcquireWriterLock(lockTimeout);
-                database.ClearBannedPhones();
-                bannedPhones.Clear();
-                bannedLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    bannedPhones.Clear();
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bannedLock. " + e.Message);
-                throw new MutexLockException("bannedLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }

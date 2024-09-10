@@ -14,51 +14,58 @@ namespace Chronokeep.MemStore
         public AppSetting GetAppSetting(string name)
         {
             Log.D("MemStore", "GetAppSetting");
+            AppSetting output = null;
             try
             {
-                settingsLock.AcquireReaderLock(lockTimeout);
-                settings.TryGetValue(name, out AppSetting output);
-                settingsLock.ReleaseReaderLock();
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    settings.TryGetValue(name, out output);
+                    memStoreLock.ExitReadLock();
+                }
                 return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring settingsLock. " + e.Message);
-                throw new MutexLockException("settingsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void SetAppSetting(string name, string value)
         {
-            Log.D("MemStore", "GetAppSetting");
+            Log.D("MemStore", "SetAppSetting");
+            database.SetAppSetting(name, value);
             try
             {
-                settingsLock.AcquireWriterLock(lockTimeout);
-                database.SetAppSetting(name, value);
-                settings[name] = new() { Name = name, Value = value };
-                settingsLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    settings[name] = new() { Name = name, Value = value };
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring settingsLock. " + e.Message);
-                throw new MutexLockException("settingsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void SetAppSetting(AppSetting setting)
         {
-            Log.D("MemStore", "GetAppSetting");
+            Log.D("MemStore", "SetAppSetting");
+            database.SetAppSetting(setting);
             try
             {
-                settingsLock.AcquireWriterLock(lockTimeout);
-                database.SetAppSetting(setting);
-                settings[setting.Name] = setting;
-                settingsLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    settings[setting.Name] = setting;
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring settingsLock. " + e.Message);
-                throw new MutexLockException("settingsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }

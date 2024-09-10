@@ -12,172 +12,173 @@ namespace Chronokeep.MemStore
         public int AddTimingLocation(TimingLocation tp)
         {
             Log.D("MemStore", "AddTimingLocation");
+            int output = database.AddTimingLocation(tp);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                locationsLock.AcquireWriterLock(lockTimeout);
-                int output = -1;
-                output = database.AddTimingLocation(tp);
-                tp.Identifier = output;
-                if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    locations[tp.Identifier] = tp;
+                    tp.Identifier = output;
+                    if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                    {
+                        locations[tp.Identifier] = tp;
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
-                locationsLock.ReleaseWriterLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring locationsLock. " + e.Message);
-                throw new MutexLockException("locationsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public List<TimingLocation> AddTimingLocations(List<TimingLocation> locs)
         {
             Log.D("MemStore", "AddTimingLocations");
+            List<TimingLocation> output = database.AddTimingLocations(locs);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                locationsLock.AcquireWriterLock(lockTimeout);
-                List<TimingLocation> output = new();
-                output = database.AddTimingLocations(locs);
-                foreach (TimingLocation tp in locs)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                    foreach (TimingLocation tp in locs)
                     {
-                        locations[tp.Identifier] = tp;
+                        if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                        {
+                            locations[tp.Identifier] = tp;
+                        }
                     }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
-                locationsLock.ReleaseWriterLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring locationsLock. " + e.Message);
-                throw new MutexLockException("locationsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public int GetTimingLocationID(TimingLocation tp)
         {
             Log.D("MemStore", "GetTimingLocationID");
+            int output = -1;
             try
             {
-                locationsLock.AcquireReaderLock(lockTimeout);
-                int output = -1;
-                foreach (TimingLocation loc in locations.Values)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (loc.Name.Equals(tp.Name, StringComparison.OrdinalIgnoreCase)
-                        && loc.EventIdentifier == tp.EventIdentifier)
+                    foreach (TimingLocation loc in locations.Values)
                     {
-                        output = loc.Identifier;
-                        break;
+                        if (loc.Name.Equals(tp.Name, StringComparison.OrdinalIgnoreCase)
+                            && loc.EventIdentifier == tp.EventIdentifier)
+                        {
+                            output = loc.Identifier;
+                            break;
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                locationsLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring locationsLock. " + e.Message);
-                throw new MutexLockException("locationsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public List<TimingLocation> GetTimingLocations(int eventId)
         {
             Log.D("MemStore", "GetTimingLocations");
-            bool invalidEvent = false;
+            List<TimingLocation> output = new();
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        foreach (TimingLocation loc in locations.Values)
+                        {
+                            if (loc.Identifier != Constants.Timing.LOCATION_FINISH
+                                && loc.Identifier == Constants.Timing.LOCATION_START
+                                && loc.Identifier == Constants.Timing.LOCATION_ANNOUNCER)
+                            {
+                                output.Add(loc);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        output.AddRange(database.GetTimingLocations(eventId));
+                    }
+                    memStoreLock.ExitReadLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
-            if (invalidEvent)
-            {
-                return database.GetTimingLocations(eventId);
-            }
-            try
-            {
-                locationsLock.AcquireReaderLock(lockTimeout);
-                List<TimingLocation> output = new();
-                output.AddRange(locations.Values);
-                locationsLock.ReleaseReaderLock();
-                output.RemoveAll(x => x.Identifier == Constants.Timing.LOCATION_FINISH
-                                    || x.Identifier == Constants.Timing.LOCATION_START
-                                    || x.Identifier == Constants.Timing.LOCATION_ANNOUNCER);
-                return output;
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring locationsLock. " + e.Message);
-                throw new MutexLockException("locationsLock");
-            }
+            return output;
         }
 
         public void RemoveTimingLocation(TimingLocation tp)
         {
             Log.D("MemStore", "RemoveTimingLocation");
+            database.RemoveTimingLocation(tp);
             try
             {
-                locationsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveTimingLocation(tp);
-                locations.Remove(tp.Identifier);
-                locationsLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    locations.Remove(tp.Identifier);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring locationsLock. " + e.Message);
-                throw new MutexLockException("locationsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveTimingLocation(int identifier)
         {
             Log.D("MemStore", "RemoveTimingLocation");
+            database.RemoveTimingLocation(identifier);
             try
             {
-                locationsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveTimingLocation(identifier);
-                locations.Remove(identifier);
-                locationsLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    locations.Remove(identifier);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring locationsLock. " + e.Message);
-                throw new MutexLockException("locationsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void UpdateTimingLocation(TimingLocation tp)
         {
             Log.D("MemStore", "RemoveTimingLocation");
+            database.UpdateTimingLocation(tp);
             try
             {
-                locationsLock.AcquireWriterLock(lockTimeout);
-                database.UpdateTimingLocation(tp);
-                if (locations.TryGetValue(tp.Identifier, out TimingLocation loc))
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    loc.CopyFrom(tp);
+                    if (locations.TryGetValue(tp.Identifier, out TimingLocation loc))
+                    {
+                        loc.CopyFrom(tp);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                locationsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring locationsLock. " + e.Message);
-                throw new MutexLockException("locationsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }

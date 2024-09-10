@@ -1137,6 +1137,12 @@ namespace Chronokeep.UI.MainPages
                     uploadDistances.Add(d.Name);
                 }
             }
+            string unique_pad = "";
+            AppSetting uniqueID = database.GetAppSetting(Settings.PROGRAM_UNIQUE_MODIFIER);
+            if (uniqueID != null)
+            {
+                unique_pad = uniqueID.Value;
+            }
             foreach (TimeResult tr in results)
             {
                 tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
@@ -1146,7 +1152,7 @@ namespace Chronokeep.UI.MainPages
                 // list of distances we want to upload
                 if (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName))
                 {
-                    upRes.Add(new APIResult(theEvent, tr, trStart));
+                    upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
                 }
             }
             Log.D("UI.MainPages.TimingPage", "Attempting to upload " + upRes.Count.ToString() + " results.");

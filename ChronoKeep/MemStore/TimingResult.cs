@@ -13,82 +13,10 @@ namespace Chronokeep.MemStore
         public void AddTimingResult(TimeResult tr)
         {
             Log.D("MemStore", "AddTimingResult");
+            database.AddTimingResult(tr);
             try
             {
-                resultsLock.AcquireWriterLock(lockTimeout);
-                distanceLock.AcquireReaderLock(lockTimeout);
-                participantsLock.AcquireReaderLock(lockTimeout);
-                chipReadsLock.AcquireReaderLock(lockTimeout);
-                eventLock.AcquireReaderLock(lockTimeout);
-                locationsLock.AcquireReaderLock(lockTimeout);
-                segmentLock.AcquireReaderLock(lockTimeout);
-                database.AddTimingResult(tr);
-                string bib = "";
-                if (participants.TryGetValue(tr.EventSpecificId, out Participant p))
-                {
-                    bib = p.Bib;
-                    tr.SetParticipant(p);
-                    if (distances.TryGetValue(p.EventSpecific.DistanceIdentifier, out Distance distance))
-                    {
-                        tr.SetResultType(distance.Type);
-                        if (distance.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID && distances.TryGetValue(distance.LinkedDistance, out Distance linked))
-                        {
-                            tr.SetLinkedDistanceName(linked.Name);
-                        }
-                    }
-                }
-                else
-                {
-                    tr.SetBlankParticipant();
-                }
-                if (chipReads.TryGetValue(tr.ReadId, out ChipRead chipRead))
-                {
-                    if (bib.Length < 1)
-                    {
-                        bib = chipRead.Bib;
-                    }
-                    tr.SetChipRead(chipRead.ChipNumber, bib, chipRead.TimeSeconds, chipRead.TimeMilliseconds);
-                }
-                else
-                {
-                    tr.SetChipRead("", bib, 0, 0);
-                }
-                tr.SetFinalValues(
-                    locations,
-                    segments,
-                    distanceNameDict,
-                    theEvent
-                    );
-                timingResults[(tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId)] = tr;
-                resultsLock.ReleaseWriterLock();
-                distanceLock.ReleaseReaderLock();
-                participantsLock.ReleaseReaderLock();
-                chipReadsLock.ReleaseReaderLock();
-                eventLock.ReleaseReaderLock();
-                locationsLock.ReleaseReaderLock();
-                segmentLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
-                throw new MutexLockException("resultsLock");
-            }
-        }
-
-        public void AddTimingResults(List<TimeResult> results)
-        {
-            Log.D("MemStore", "AddTimingResults");
-            try
-            {
-                resultsLock.AcquireWriterLock(lockTimeout);
-                distanceLock.AcquireReaderLock(lockTimeout);
-                participantsLock.AcquireReaderLock(lockTimeout);
-                chipReadsLock.AcquireReaderLock(lockTimeout);
-                eventLock.AcquireReaderLock(lockTimeout);
-                locationsLock.AcquireReaderLock(lockTimeout);
-                segmentLock.AcquireReaderLock(lockTimeout);
-                database.AddTimingResults(results);
-                foreach (TimeResult tr in results)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
                     string bib = "";
                     if (participants.TryGetValue(tr.EventSpecificId, out Participant p))
@@ -127,63 +55,101 @@ namespace Chronokeep.MemStore
                         theEvent
                         );
                     timingResults[(tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId)] = tr;
+                    memStoreLock.ExitWriteLock();
                 }
-                resultsLock.ReleaseWriterLock();
-                distanceLock.ReleaseReaderLock();
-                participantsLock.ReleaseReaderLock();
-                chipReadsLock.ReleaseReaderLock();
-                eventLock.ReleaseReaderLock();
-                locationsLock.ReleaseReaderLock();
-                segmentLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
-                throw new MutexLockException("resultsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+        }
+
+        public void AddTimingResults(List<TimeResult> results)
+        {
+            Log.D("MemStore", "AddTimingResults");
+            database.AddTimingResults(results);
+            try
+            {
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    foreach (TimeResult tr in results)
+                    {
+                        string bib = "";
+                        if (participants.TryGetValue(tr.EventSpecificId, out Participant p))
+                        {
+                            bib = p.Bib;
+                            tr.SetParticipant(p);
+                            if (distances.TryGetValue(p.EventSpecific.DistanceIdentifier, out Distance distance))
+                            {
+                                tr.SetResultType(distance.Type);
+                                if (distance.LinkedDistance != Constants.Timing.DISTANCE_NO_LINKED_ID && distances.TryGetValue(distance.LinkedDistance, out Distance linked))
+                                {
+                                    tr.SetLinkedDistanceName(linked.Name);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            tr.SetBlankParticipant();
+                        }
+                        if (chipReads.TryGetValue(tr.ReadId, out ChipRead chipRead))
+                        {
+                            if (bib.Length < 1)
+                            {
+                                bib = chipRead.Bib;
+                            }
+                            tr.SetChipRead(chipRead.ChipNumber, bib, chipRead.TimeSeconds, chipRead.TimeMilliseconds);
+                        }
+                        else
+                        {
+                            tr.SetChipRead("", bib, 0, 0);
+                        }
+                        tr.SetFinalValues(
+                            locations,
+                            segments,
+                            distanceNameDict,
+                            theEvent
+                            );
+                        timingResults[(tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId)] = tr;
+                    }
+                    memStoreLock.ExitWriteLock();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public List<TimeResult> GetSegmentTimes(int eventId, int segmentId)
         {
             Log.D("MemStore", "GetSegmentTimes");
-            bool invalidEvent = false;
+            List<TimeResult> output = new();
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                resultsLock.AcquireReaderLock(lockTimeout);
-                List<TimeResult> output = new();
-                foreach (TimeResult tr in timingResults.Values)
-                {
-                    if (tr.EventIdentifier == eventId && tr.SegmentId == segmentId)
+                    if (theEvent != null && theEvent.Identifier == eventId)
                     {
-                        output.Add(tr);
+                        foreach (TimeResult tr in timingResults.Values)
+                        {
+                            if (tr.EventIdentifier == eventId && tr.SegmentId == segmentId)
+                            {
+                                output.Add(tr);
+                            }
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                resultsLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
-                throw new MutexLockException("resultsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public List<TimeResult> GetFinishTimes(int eventId)
@@ -195,96 +161,68 @@ namespace Chronokeep.MemStore
         public List<TimeResult> GetLastSeenResults(int eventId)
         {
             Log.D("MemStore", "GetLastSeenResults");
-            bool invalidEvent = false;
+            List<TimeResult> output = new();
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                resultsLock.AcquireReaderLock(lockTimeout);
-                Dictionary<int, TimeResult> trDict = new();
-                foreach (TimeResult tr in timingResults.Values)
-                {
-                    if (trDict.TryGetValue(tr.EventSpecificId, out TimeResult result))
+                    if (theEvent != null && theEvent.Identifier == eventId)
                     {
-                        if (result.Seconds < tr.Seconds || (result.Seconds == tr.Seconds && result.Milliseconds < tr.Milliseconds))
+                        Dictionary<int, TimeResult> trDict = new();
+                        foreach (TimeResult tr in timingResults.Values)
                         {
-                            trDict[tr.EventSpecificId] = tr;
+                            if (trDict.TryGetValue(tr.EventSpecificId, out TimeResult result))
+                            {
+                                if (result.Seconds < tr.Seconds || (result.Seconds == tr.Seconds && result.Milliseconds < tr.Milliseconds))
+                                {
+                                    trDict[tr.EventSpecificId] = tr;
+                                }
+                            }
+                            else
+                            {
+                                trDict[tr.EventSpecificId] = tr;
+                            }
                         }
+                        output.AddRange(trDict.Values);
                     }
-                    else
-                    {
-                        trDict[tr.EventSpecificId] = tr;
-                    }
+                    memStoreLock.ExitReadLock();
                 }
-                resultsLock.ReleaseReaderLock();
-                List<TimeResult> output = new();
-                output.AddRange(trDict.Values);
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
-                throw new MutexLockException("resultsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public List<TimeResult> GetNonUploadedResults(int eventId)
         {
             Log.D("MemStore", "GetNonUploadedResults");
-            bool invalidEvent = false;
+            List<TimeResult> output = new();
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                resultsLock.AcquireReaderLock(lockTimeout);
-                List<TimeResult> output = new();
-                foreach (TimeResult tr in timingResults.Values)
-                {
-                    if (tr.EventIdentifier == eventId && !tr.IsUploaded())
+                    if (theEvent != null && theEvent.Identifier == eventId)
                     {
-                        output.Add(tr);
+                        foreach (TimeResult tr in timingResults.Values)
+                        {
+                            if (tr.EventIdentifier == eventId && !tr.IsUploaded())
+                            {
+                                output.Add(tr);
+                            }
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                resultsLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
-                throw new MutexLockException("resultsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public List<TimeResult> GetStartTimes(int eventId)
@@ -296,126 +234,102 @@ namespace Chronokeep.MemStore
         public List<TimeResult> GetTimingResults(int eventId)
         {
             Log.D("MemStore", "GetTimingResults");
-            bool invalidEvent = false;
+            List<TimeResult> output = new();
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        output.AddRange(timingResults.Values);
+                    }
+                    memStoreLock.ExitReadLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                resultsLock.AcquireReaderLock(lockTimeout);
-                List<TimeResult> output = new();
-                output.AddRange(timingResults.Values);
-                resultsLock.ReleaseReaderLock();
-                return output;
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
-                throw new MutexLockException("resultsLock");
-            }
+            return output;
         }
 
         public void RemoveTimingResult(TimeResult tr)
         {
             Log.D("MemStore", "RemoveTimingResult");
+            database.RemoveTimingResult(tr);
             try
             {
-                resultsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveTimingResult(tr);
-                timingResults.Remove((tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId));
-                resultsLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    timingResults.Remove((tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId));
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
-                throw new MutexLockException("resultsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void SetUploadedTimingResults(List<TimeResult> results)
         {
             Log.D("MemStore", "SetUploadedTimingResults");
+            database.SetUploadedTimingResults(results);
             try
             {
-                resultsLock.AcquireWriterLock(lockTimeout);
-                database.SetUploadedTimingResults(results);
-                foreach (TimeResult changed in results)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    foreach (TimeResult toChange in timingResults.Values)
+                    foreach (TimeResult changed in results)
                     {
-                        if (changed.Equals(toChange))
+                        foreach (TimeResult toChange in timingResults.Values)
                         {
-                            toChange.Uploaded = changed.Uploaded;
-                            break;
+                            if (changed.Equals(toChange))
+                            {
+                                toChange.Uploaded = changed.Uploaded;
+                                break;
+                            }
                         }
                     }
+                    memStoreLock.ExitWriteLock();
                 }
-                resultsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
-                throw new MutexLockException("resultsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public bool UnprocessedResultsExist(int eventId)
         {
             Log.D("MemStore", "UnprocessedResultsExist");
-            bool invalidEvent = false;
+            bool output = false;
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                resultsLock.AcquireReaderLock(lockTimeout);
-                bool output = false;
-                foreach (TimeResult result in timingResults.Values)
-                {
-                    if (result.Status == Constants.Timing.TIMERESULT_STATUS_NONE)
+                    if (theEvent != null && theEvent.Identifier == eventId)
                     {
-                        output = true;
-                        break;
+                        foreach (TimeResult result in timingResults.Values)
+                        {
+                            if (result.Status == Constants.Timing.TIMERESULT_STATUS_NONE)
+                            {
+                                output = true;
+                                break;
+                            }
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                resultsLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
-                throw new MutexLockException("resultsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         // Reset Timing Results clears all timing results
@@ -425,94 +339,62 @@ namespace Chronokeep.MemStore
         public void ResetTimingResultsEvent(int eventId)
         {
             Log.D("MemStore", "ResetTimingResultsEvent");
-            bool invalidEvent = false;
+            database.ResetTimingResultsEvent(eventId);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                resultsLock.AcquireWriterLock(lockTimeout);
-                chipReadsLock.AcquireWriterLock(lockTimeout);
-                participantsLock.AcquireWriterLock(lockTimeout);
-                database.ResetTimingResultsEvent(eventId);
-                timingResults.Clear();
-                foreach (ChipRead cr in chipReads.Values)
-                {
-                    if (cr.CanBeReset())
+                    if (theEvent != null && theEvent.Identifier == eventId)
                     {
-                        cr.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+                        timingResults.Clear();
+                        foreach (ChipRead cr in chipReads.Values)
+                        {
+                            if (cr.CanBeReset())
+                            {
+                                cr.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+                            }
+                        }
+                        foreach (Participant p in participants.Values)
+                        {
+                            p.EventSpecific.Status = Constants.Timing.EVENTSPECIFIC_UNKNOWN;
+                        }
                     }
+                    memStoreLock.ExitWriteLock();
                 }
-                foreach (Participant p in participants.Values)
-                {
-                    p.EventSpecific.Status = Constants.Timing.EVENTSPECIFIC_UNKNOWN;
-                }
-                resultsLock.ReleaseWriterLock();
-                chipReadsLock.ReleaseWriterLock();
-                participantsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring resultsLock/chipReadsLock/participantsLock. " + e.Message);
-                throw new MutexLockException("resultsLock/chipReadsLock/participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void ResetTimingResultsPlacements(int eventId)
         {
             Log.D("MemStore", "ResetTimingResultsPlacements");
-            bool invalidEvent = false;
+            database.ResetTimingResultsPlacements(eventId);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        foreach (TimeResult tr in timingResults.Values)
+                        {
+                            tr.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+                            tr.Place = -1;
+                            tr.AgePlace = -1;
+                            tr.GenderPlace = -1;
+                            tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
+                        }
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                resultsLock.AcquireWriterLock(lockTimeout);
-                database.ResetTimingResultsPlacements(eventId);
-                foreach (TimeResult tr in timingResults.Values)
-                {
-                    tr.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
-                    tr.Place = -1;
-                    tr.AgePlace = -1;
-                    tr.GenderPlace = -1;
-                    tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
-                }
-                resultsLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring resultsLock. " + e.Message);
-                throw new MutexLockException("resultsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }

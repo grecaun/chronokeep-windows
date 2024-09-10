@@ -33,12 +33,10 @@ namespace Chronokeep.MemStore
         public int AddAgeGroup(AgeGroup group)
         {
             Log.D("MemStore", "AddAgeGroup");
+            group.GroupId = database.AddAgeGroup(group);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                participantsLock.AcquireWriterLock(lockTimeout);
-                group.GroupId = database.AddAgeGroup(group);
-                if (theEvent != null && group.EventId == theEvent.Identifier)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
                     if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
                     {
@@ -46,30 +44,27 @@ namespace Chronokeep.MemStore
                         ageGroups[group.DistanceId] = value;
                     }
                     value.Add(group);
+                    SetAgeGroups();
+                    memStoreLock.ExitWriteLock();
                 }
-                SetAgeGroups();
-                eventLock.ReleaseReaderLock();
-                participantsLock.ReleaseWriterLock();
                 return group.GroupId;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLocks");
             }
         }
 
         public List<AgeGroup> AddAgeGroups(List<AgeGroup> groups)
         {
             Log.D("MemStore", "AddAgeGroups");
+            List<AgeGroup> output = database.AddAgeGroups(groups);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                participantsLock.AcquireWriterLock(lockTimeout);
-                List<AgeGroup> output = database.AddAgeGroups(groups);
-                foreach (AgeGroup group in output)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    if (theEvent != null && group.EventId == theEvent.Identifier)
+                    foreach (AgeGroup group in output)
                     {
                         if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
                         {
@@ -78,249 +73,205 @@ namespace Chronokeep.MemStore
                         }
                         value.Add(group);
                     }
+                    SetAgeGroups();
+                    memStoreLock.ExitWriteLock();
                 }
-                SetAgeGroups();
-                eventLock.ReleaseReaderLock();
-                participantsLock.ReleaseWriterLock();
                 return output;
-
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public List<AgeGroup> GetAgeGroups(int eventId)
         {
             Log.D("MemStore", "GetAgeGroups");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                return database.GetAgeGroups(eventId);
-            }
             List<AgeGroup> output = new();
             try
             {
-                participantsLock.AcquireReaderLock(lockTimeout);
-                foreach (List<AgeGroup> groups in ageGroups.Values)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    output.AddRange(groups);
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        foreach (List<AgeGroup> groups in ageGroups.Values)
+                        {
+                            output.AddRange(groups);
+                        }
+                    }
+                    else
+                    {
+                        output.AddRange(database.GetAgeGroups(eventId));
+                    }
+                    memStoreLock.ExitReadLock();
                 }
-                participantsLock.ReleaseReaderLock();
                 return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public List<AgeGroup> GetAgeGroups(int eventId, int distanceId)
         {
             Log.D("MemStore", "GetAgeGroups");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
             List<AgeGroup> output = new();
             try
             {
-                participantsLock.AcquireReaderLock(lockTimeout);
-                if (ageGroups.TryGetValue(distanceId, out List<AgeGroup> groups))
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    output.AddRange(groups);
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        if (ageGroups.TryGetValue(distanceId, out List<AgeGroup> groups))
+                        {
+                            output.AddRange(groups);
+                        }
+                    }
+                    else
+                    {
+                        output.AddRange(database.GetAgeGroups(eventId, distanceId));
+                    }
+                    memStoreLock.ExitReadLock();
                 }
-                participantsLock.ReleaseReaderLock();
                 return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveAgeGroup(AgeGroup group)
         {
             Log.D("MemStore", "RemoveAgeGroup");
+            database.RemoveAgeGroup(group);
             try
             {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveAgeGroup(group);
-                if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    list.Remove(group);
+                    if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                    {
+                        list.Remove(group);
+                    }
+                    SetAgeGroups();
+                    memStoreLock.ExitWriteLock();
                 }
-                SetAgeGroups();
-                participantsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveAgeGroups(int eventId, int distanceId)
         {
             Log.D("MemStore", "RemoveAgeGroup");
-            bool invalidEvent = false;
+            database.RemoveAgeGroups(eventId, distanceId);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        if (ageGroups.TryGetValue(distanceId, out List<AgeGroup> list))
+                        {
+                            list.Clear();
+                        }
+                        SetAgeGroups();
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveAgeGroups(eventId, distanceId);
-                if (ageGroups.TryGetValue(distanceId, out List<AgeGroup> list))
-                {
-                    list.Clear();
-                }
-                SetAgeGroups();
-                participantsLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveAgeGroups(List<AgeGroup> groups)
         {
             Log.D("MemStore", "RemoveAgeGroups");
+            database.RemoveAgeGroups(groups);
             try
             {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveAgeGroups(groups);
-                foreach (AgeGroup group in groups)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                    foreach (AgeGroup group in groups)
                     {
-                        list.Remove(group);
+                        if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                        {
+                            list.Remove(group);
+                        }
                     }
+                    SetAgeGroups();
+                    memStoreLock.ExitWriteLock();
                 }
-                SetAgeGroups();
-                participantsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void ResetAgeGroups(int eventId)
         {
             Log.D("MemStore", "ResetAgeGroups");
-            bool invalidEvent = false;
+            database.ResetAgeGroups(eventId);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        ageGroups.Clear();
+                        SetAgeGroups();
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                database.ResetAgeGroups(eventId);
-                ageGroups.Clear();
-                SetAgeGroups();
-                participantsLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void UpdateAgeGroup(AgeGroup group)
         {
             Log.D("MemStore", "UpdateAgeGroup");
+            database.UpdateAgeGroup(group);
             try
             {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                database.UpdateAgeGroup(group);
-                if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    foreach (AgeGroup ageGroup in list)
+                    if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
                     {
-                        if (ageGroup.GroupId == group.GroupId)
+                        foreach (AgeGroup ageGroup in list)
                         {
-                            ageGroup.StartAge = group.StartAge;
-                            ageGroup.EndAge = group.EndAge;
-                            ageGroup.LastGroup = group.LastGroup;
-                            ageGroup.CustomName = group.CustomName;
+                            if (ageGroup.GroupId == group.GroupId)
+                            {
+                                ageGroup.StartAge = group.StartAge;
+                                ageGroup.EndAge = group.EndAge;
+                                ageGroup.LastGroup = group.LastGroup;
+                                ageGroup.CustomName = group.CustomName;
+                            }
                         }
                     }
+                    SetAgeGroups();
+                    memStoreLock.ExitWriteLock();
                 }
-                SetAgeGroups();
-                participantsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }

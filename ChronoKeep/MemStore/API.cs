@@ -13,12 +13,14 @@ namespace Chronokeep.MemStore
         public int AddAPI(APIObject anAPI)
         {
             Log.D("MemStore", "UpdateAgeGroup");
+            anAPI.Identifier = database.AddAPI(anAPI);
             try
             {
-                apiLock.AcquireWriterLock(lockTimeout);
-                anAPI.Identifier = database.AddAPI(anAPI);
-                apis[anAPI.Identifier] = anAPI;
-                apiLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    apis[anAPI.Identifier] = anAPI;
+                    memStoreLock.ExitWriteLock();
+                }
                 return anAPI.Identifier;
             }
             catch (Exception e)
@@ -34,9 +36,11 @@ namespace Chronokeep.MemStore
             List<APIObject> output = new();
             try
             {
-                apiLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(apis.Values);
-                apiLock.ReleaseReaderLock();
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    output.AddRange(apis.Values);
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
@@ -49,15 +53,17 @@ namespace Chronokeep.MemStore
         public APIObject GetAPI(int identifier)
         {
             Log.D("MemStore", "GetAPI");
-            APIObject output;
+            APIObject output = null;
             try
             {
-                apiLock.AcquireReaderLock(lockTimeout);
-                if (!apis.TryGetValue(identifier, out output))
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    output = null;
+                    if (!apis.TryGetValue(identifier, out output))
+                    {
+                        output = null;
+                    }
+                    memStoreLock.ExitReadLock();
                 }
-                apiLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
@@ -70,12 +76,14 @@ namespace Chronokeep.MemStore
         public void RemoveAPI(int identifier)
         {
             Log.D("MemStore", "RemoveAPI");
+            database.RemoveAPI(identifier);
             try
             {
-                apiLock.AcquireWriterLock(lockTimeout);
-                database.RemoveAPI(identifier);
-                apis.Remove(identifier);
-                apiLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    apis.Remove(identifier);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
@@ -87,23 +95,25 @@ namespace Chronokeep.MemStore
         public void UpdateAPI(APIObject anAPI)
         {
             Log.D("MemStore", "UpdateAPI");
+            database.UpdateAPI(anAPI);
             try
             {
-                apiLock.AcquireWriterLock(lockTimeout);
-                database.UpdateAPI(anAPI);
-                if (apis.TryGetValue(anAPI.Identifier, out APIObject api))
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    api.Type = anAPI.Type;
-                    api.URL = anAPI.URL;
-                    api.AuthToken = anAPI.AuthToken;
-                    api.Nickname = anAPI.Nickname;
-                    api.WebURL = anAPI.WebURL;
+                    if (apis.TryGetValue(anAPI.Identifier, out APIObject api))
+                    {
+                        api.Type = anAPI.Type;
+                        api.URL = anAPI.URL;
+                        api.AuthToken = anAPI.AuthToken;
+                        api.Nickname = anAPI.Nickname;
+                        api.WebURL = anAPI.WebURL;
+                    }
+                    else
+                    {
+                        apis[anAPI.Identifier] = anAPI;
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                else
-                {
-                    apis[anAPI.Identifier] = anAPI;
-                }
-                apiLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {

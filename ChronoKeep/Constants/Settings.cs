@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace Chronokeep.Constants
 {
@@ -29,6 +30,8 @@ namespace Chronokeep.Constants
         public const string ANNOUNCER_WINDOW            = "SETTING_ANNOUNCER_WINDOW";
         public const string ALARM_SOUND                 = "SETTING_ALARM_SOUND";
         public const string MINIMUM_COMPATIBLE_DATABASE = "SETTING_MINIMUM_COMPATIBLE_DATABASE";
+        // Settings 5
+        public const string PROGRAM_UNIQUE_MODIFIER     = "SETTING_UNIQUE_MODIFIER";
         // Twilio
         public const string TWILIO_ACCOUNT_SID    = "TWILIO_ACCOUNT_SID";
         public const string TWILIO_AUTH_TOKEN     = "TWILIO_AUTH_TOKEN";
@@ -129,6 +132,12 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(MINIMUM_COMPATIBLE_DATABASE) == null)
             {
                 database.SetAppSetting(MINIMUM_COMPATIBLE_DATABASE, SQLiteInterface.minimum_compatible_version.ToString());
+            }
+            // Settings 5
+            if (database.GetAppSetting(PROGRAM_UNIQUE_MODIFIER) == null)
+            {
+                string randomMod = Regex.Replace(Guid.NewGuid().ToString("N"), "[^a-zA-Z0-9]", "").ToUpper()[0..3];
+                database.SetAppSetting(PROGRAM_UNIQUE_MODIFIER, randomMod);
             }
             // Twilio
             if (database.GetAppSetting(TWILIO_ACCOUNT_SID) == null)

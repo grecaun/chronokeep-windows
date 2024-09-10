@@ -13,113 +13,136 @@ namespace Chronokeep.MemStore
         public int AddTimingSystem(TimingSystem system)
         {
             Log.D("MemStore", "AddTimingSystem");
+            int output = database.AddTimingSystem(system);
             try
             {
-                timingSystemsLock.AcquireWriterLock(lockTimeout);
-                int output = -1;
-                output = database.AddTimingSystem(system);
-                system.SystemIdentifier = output;
-                timingSystems[system.SystemIdentifier] = system;
-                timingSystemsLock.ReleaseWriterLock();
-                return output;
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    system.SystemIdentifier = output;
+                    timingSystems[system.IPAddress.Trim()] = system;
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring timingSystemsLock. " + e.Message);
-                throw new MutexLockException("timingSystemsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public List<TimingSystem> GetTimingSystems()
         {
             Log.D("MemStore", "GetTimingSystems");
+            List<TimingSystem> output = new();
             try
             {
-                timingSystemsLock.AcquireReaderLock(lockTimeout);
-                List<TimingSystem> output = new();
-                output.AddRange(timingSystems.Values);
-                timingSystemsLock.ReleaseReaderLock();
-                return output;
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    output.AddRange(timingSystems.Values);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring timingSystemsLock. " + e.Message);
-                throw new MutexLockException("timingSystemsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public void RemoveTimingSystem(TimingSystem system)
         {
             Log.D("MemStore", "RemoveTimingSystem");
+            database.RemoveTimingSystem(system);
             try
             {
-                timingSystemsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveTimingSystem(system);
-                timingSystems.Remove(system.SystemIdentifier);
-                timingSystemsLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    timingSystems.Remove(system.IPAddress.Trim());
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring timingSystemsLock. " + e.Message);
-                throw new MutexLockException("timingSystemsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveTimingSystem(int systemId)
         {
             Log.D("MemStore", "RemoveTimingSystem");
+            database.RemoveTimingSystem(systemId);
             try
             {
-                timingSystemsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveTimingSystem(systemId);
-                timingSystems.Remove(systemId);
-                timingSystemsLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    string ip = "";
+                    foreach (TimingSystem system in timingSystems.Values)
+                    {
+                        if (system.SystemIdentifier == systemId)
+                        {
+                            ip = system.IPAddress.Trim();
+                            break;
+                        }
+                    }
+                    if (ip.Length > 0)
+                    {
+                        timingSystems.Remove(ip);
+                    }
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring timingSystemsLock. " + e.Message);
-                throw new MutexLockException("timingSystemsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void SetTimingSystems(List<TimingSystem> systems)
         {
             Log.D("MemStore", "SetTimingSystems");
+            database.SetTimingSystems(systems);
             try
             {
-                timingSystemsLock.AcquireWriterLock(lockTimeout);
-                database.SetTimingSystems(systems);
-                timingSystems.Clear();
-                foreach (TimingSystem system in systems)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    timingSystems[system.SystemIdentifier] = system;
+                    timingSystems.Clear();
+                    foreach (TimingSystem system in systems)
+                    {
+                        timingSystems[system.IPAddress.Trim()] = system;
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                timingSystemsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring timingSystemsLock. " + e.Message);
-                throw new MutexLockException("timingSystemsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void UpdateTimingSystem(TimingSystem system)
         {
             Log.D("MemStore", "UpdateTimingSystem");
+            database.UpdateTimingSystem(system);
             try
             {
-                timingSystemsLock.AcquireWriterLock(lockTimeout);
-                database.UpdateTimingSystem(system);
-                if (timingSystems.TryGetValue(system.SystemIdentifier, out TimingSystem oldSystem))
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    oldSystem.CopyFrom(system);
+                    if (timingSystems.TryGetValue(system.IPAddress.Trim(), out TimingSystem oldSystem))
+                    {
+                        oldSystem.CopyFrom(system);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                timingSystemsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring timingSystemsLock. " + e.Message);
-                throw new MutexLockException("timingSystemsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }

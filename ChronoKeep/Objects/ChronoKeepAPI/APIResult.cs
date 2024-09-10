@@ -5,9 +5,9 @@ namespace Chronokeep.Objects.API
 {
     public class APIResult
     {
-        public APIResult(Event theEvent, TimeResult result, DateTime start)
+        public APIResult(Event theEvent, TimeResult result, DateTime start, string unique_pad)
         {
-            this.PersonId = string.Format("{0}{1}{2}", result.ParticipantId, result.First[0], result.Last[0]);
+            this.PersonId = string.Format("{0}-{1}", result.ParticipantId, unique_pad);
             this.Bib = result.Bib.ToString();
             this.First = result.Anonymous ? "" : result.First;
             this.Last = result.Anonymous ? "" : result.Last;

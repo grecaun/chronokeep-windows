@@ -13,95 +13,17 @@ namespace Chronokeep.MemStore
         public int AddChipRead(ChipRead read)
         {
             Log.D("MemStore", "AddChipRead");
+            read.ReadId = database.AddChipRead(read);
             try
             {
-                chipReadsLock.AcquireWriterLock(lockTimeout);
-                bibChipLock.AcquireReaderLock(lockTimeout);
-                locationsLock.AcquireReaderLock(lockTimeout);
-                participantsLock.AcquireReaderLock(lockTimeout);
-                eventLock.AcquireReaderLock(lockTimeout);
-                read.ReadId = database.AddChipRead(read);
-                DateTime start = DateTime.Now;
-                if (theEvent != null)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
-                }
-                read.Start = start;
-                if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation ba))
-                {
-                    read.ChipBib = ba.Bib;
-                }
-                else
-                {
-                    read.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
-                }
-                read.ReadBib ??= Constants.Timing.CHIPREAD_DUMMYBIB;
-                if (locations.TryGetValue(read.LocationID, out TimingLocation loc))
-                {
-                    read.LocationName = loc.Name;
-                }
-                else
-                {
-                    read.LocationName = "";
-                }
-                Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
-                foreach (Participant part in participants.Values)
-                {
-                    if (part.Bib.Length > 0)
+                    DateTime start = DateTime.Now;
+                    if (theEvent != null)
                     {
-                        partDictionary[part.Bib] = part;
+                        start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
                     }
-                }
-                if (partDictionary.TryGetValue(read.Bib, out Participant p))
-                {
-                    read.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
-                }
-                else
-                {
-                    read.Name = "";
-                }
-                chipReads[read.ReadId] = read;
-                chipReadsLock.ReleaseWriterLock();
-                bibChipLock.ReleaseReaderLock();
-                locationsLock.ReleaseReaderLock();
-                participantsLock.ReleaseReaderLock();
-                eventLock.ReleaseReaderLock();
-                return read.ReadId;
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
-            }
-        }
-
-        public List<ChipRead> AddChipReads(List<ChipRead> reads)
-        {
-            Log.D("MemStore", "AddChipReads");
-            try
-            {
-                chipReadsLock.AcquireWriterLock(lockTimeout);
-                bibChipLock.AcquireReaderLock(lockTimeout);
-                locationsLock.AcquireReaderLock(lockTimeout);
-                participantsLock.AcquireReaderLock(lockTimeout);
-                Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
-                foreach (Participant part in participants.Values)
-                {
-                    if (part.Bib.Length > 0)
-                    {
-                        partDictionary[part.Bib] = part;
-                    }
-                }
-                DateTime start = DateTime.Now;
-                if (theEvent != null)
-                {
-                    start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
-                }
-                List<ChipRead> newReads = database.AddChipReads(reads);
-                foreach (ChipRead read in newReads)
-                {
                     read.Start = start;
-                    chipReads[read.ReadId] = read;
                     if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation ba))
                     {
                         read.ChipBib = ba.Bib;
@@ -119,6 +41,14 @@ namespace Chronokeep.MemStore
                     {
                         read.LocationName = "";
                     }
+                    Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
+                    foreach (Participant part in participants.Values)
+                    {
+                        if (part.Bib.Length > 0)
+                        {
+                            partDictionary[part.Bib] = part;
+                        }
+                    }
                     if (partDictionary.TryGetValue(read.Bib, out Participant p))
                     {
                         read.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
@@ -127,37 +57,99 @@ namespace Chronokeep.MemStore
                     {
                         read.Name = "";
                     }
+                    chipReads[read.ReadId] = read;
+                    memStoreLock.ExitWriteLock();
                 }
-                chipReadsLock.ReleaseWriterLock();
-                bibChipLock.ReleaseReaderLock();
-                locationsLock.ReleaseReaderLock();
-                participantsLock.ReleaseReaderLock();
+                return read.ReadId;
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+        }
+
+        public List<ChipRead> AddChipReads(List<ChipRead> reads)
+        {
+            Log.D("MemStore", "AddChipReads");
+            List<ChipRead> newReads = database.AddChipReads(reads);
+            try
+            {
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
+                    foreach (Participant part in participants.Values)
+                    {
+                        if (part.Bib.Length > 0)
+                        {
+                            partDictionary[part.Bib] = part;
+                        }
+                    }
+                    DateTime start = DateTime.Now;
+                    if (theEvent != null)
+                    {
+                        start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
+                    }
+                    foreach (ChipRead read in newReads)
+                    {
+                        read.Start = start;
+                        chipReads[read.ReadId] = read;
+                        if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation ba))
+                        {
+                            read.ChipBib = ba.Bib;
+                        }
+                        else
+                        {
+                            read.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                        }
+                        read.ReadBib ??= Constants.Timing.CHIPREAD_DUMMYBIB;
+                        if (locations.TryGetValue(read.LocationID, out TimingLocation loc))
+                        {
+                            read.LocationName = loc.Name;
+                        }
+                        else
+                        {
+                            read.LocationName = "";
+                        }
+                        if (partDictionary.TryGetValue(read.Bib, out Participant p))
+                        {
+                            read.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                        }
+                        else
+                        {
+                            read.Name = "";
+                        }
+                    }
+                    memStoreLock.ExitWriteLock();
+                }
                 return newReads;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void DeleteChipReads(List<ChipRead> reads)
         {
             Log.D("MemStore", "DeleteChipReads");
+            database.DeleteChipReads(reads);
             try
             {
-                chipReadsLock.AcquireWriterLock(lockTimeout);
-                database.DeleteChipReads(reads);
-                foreach (ChipRead read in reads)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    chipReads.Remove(read.ReadId);
+                    foreach (ChipRead read in reads)
+                    {
+                        chipReads.Remove(read.ReadId);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                chipReadsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
@@ -167,14 +159,16 @@ namespace Chronokeep.MemStore
             List<ChipRead> output = new();
             try
             {
-                chipReadsLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(chipReads.Values);
-                chipReadsLock.ReleaseReaderLock();
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    output.AddRange(chipReads.Values);
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -182,43 +176,26 @@ namespace Chronokeep.MemStore
         public List<ChipRead> GetAnnouncerChipReads(int eventId)
         {
             Log.D("MemStore", "GetAnnouncerChipReads");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
             List<ChipRead> output = new();
             try
             {
-                chipReadsLock.AcquireReaderLock(lockTimeout);
-                foreach (ChipRead read in chipReads.Values)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (Constants.Timing.LOCATION_ANNOUNCER == read.LocationID
-                        && Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                    foreach (ChipRead read in chipReads.Values)
                     {
-                        output.Add(read);
+                        if (Constants.Timing.LOCATION_ANNOUNCER == read.LocationID
+                            && Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                        {
+                            output.Add(read);
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                chipReadsLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -226,43 +203,26 @@ namespace Chronokeep.MemStore
         public List<ChipRead> GetAnnouncerUsedChipReads(int eventId)
         {
             Log.D("MemStore", "GetAnnouncerUsedChipReads");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
             List<ChipRead> output = new();
             try
             {
-                chipReadsLock.AcquireReaderLock(lockTimeout);
-                foreach (ChipRead read in chipReads.Values)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (Constants.Timing.LOCATION_ANNOUNCER == read.LocationID
-                        && Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED == read.Status)
+                    foreach (ChipRead read in chipReads.Values)
                     {
-                        output.Add(read);
+                        if (Constants.Timing.LOCATION_ANNOUNCER == read.LocationID
+                            && Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED == read.Status)
+                        {
+                            output.Add(read);
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                chipReadsLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -270,36 +230,19 @@ namespace Chronokeep.MemStore
         public List<ChipRead> GetChipReads(int eventId)
         {
             Log.D("MemStore", "GetChipReads");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
             List<ChipRead> output = new();
             try
             {
-                chipReadsLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(chipReads.Values);
-                chipReadsLock.ReleaseReaderLock();
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    output.AddRange(chipReads.Values);
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -307,36 +250,19 @@ namespace Chronokeep.MemStore
         public List<ChipRead> GetChipReadsSafemode(int eventId)
         {
             Log.D("MemStore", "GetChipReadsSafemode");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
             List<ChipRead> output = new();
             try
             {
-                chipReadsLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(chipReads.Values);
-                chipReadsLock.ReleaseReaderLock();
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    output.AddRange(chipReads.Values);
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -344,42 +270,25 @@ namespace Chronokeep.MemStore
         public List<ChipRead> GetDNSChipReads(int eventId)
         {
             Log.D("MemStore", "GetDNSChipReads");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
             List<ChipRead> output = new();
             try
             {
-                chipReadsLock.AcquireReaderLock(lockTimeout);
-                foreach (ChipRead read in chipReads.Values)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (Constants.Timing.CHIPREAD_STATUS_DNS == read.Status)
+                    foreach (ChipRead read in chipReads.Values)
                     {
-                        output.Add(read);
+                        if (Constants.Timing.CHIPREAD_STATUS_DNS == read.Status)
+                        {
+                            output.Add(read);
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                chipReadsLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -387,42 +296,25 @@ namespace Chronokeep.MemStore
         public List<ChipRead> GetUsefulChipReads(int eventId)
         {
             Log.D("MemStore", "GetUsefulChipReads");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
             List<ChipRead> output = new();
             try
             {
-                chipReadsLock.AcquireReaderLock(lockTimeout);
-                foreach (ChipRead read in chipReads.Values)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (read.IsUseful() && Constants.Timing.LOCATION_ANNOUNCER != read.LocationID)
+                    foreach (ChipRead read in chipReads.Values)
                     {
-                        output.Add(read);
+                        if (read.IsUseful() && Constants.Timing.LOCATION_ANNOUNCER != read.LocationID)
+                        {
+                            output.Add(read);
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                chipReadsLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -430,76 +322,57 @@ namespace Chronokeep.MemStore
         public void SetChipReadStatus(ChipRead read)
         {
             Log.D("MemStore", "SetChipReadStatus");
+            database.SetChipReadStatus(read);
             try
             {
-                chipReadsLock.AcquireWriterLock(lockTimeout);
-                database.SetChipReadStatus(read);
-                if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    known.Status = read.Status;
+                    if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
+                    {
+                        known.Status = read.Status;
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                chipReadsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void SetChipReadStatuses(List<ChipRead> reads)
         {
             Log.D("MemStore", "SetChipReadStatuses");
+            database.SetChipReadStatuses(reads);
             try
             {
-                chipReadsLock.AcquireWriterLock(lockTimeout);
-                database.SetChipReadStatuses(reads);
-                foreach (ChipRead read in reads)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
+                    foreach (ChipRead read in reads)
                     {
-                        known.Status = read.Status;
+                        if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
+                        {
+                            known.Status = read.Status;
+                        }
                     }
+                    memStoreLock.ExitWriteLock();
                 }
-                chipReadsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void UpdateChipRead(ChipRead read)
         {
             Log.D("MemStore", "UpdateChipRead");
+            database.UpdateChipRead(read);
             try
             {
-                chipReadsLock.AcquireWriterLock(lockTimeout);
-                database.UpdateChipRead(read);
-                if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
-                {
-                    known.Status = read.Status;
-                    known.TimeSeconds = read.TimeSeconds;
-                    known.TimeMilliseconds = read.TimeMilliseconds;
-                }
-                chipReadsLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
-            }
-        }
-
-        public void UpdateChipReads(List<ChipRead> reads)
-        {
-            Log.D("MemStore", "UpdateChipReads");
-            try
-            {
-                chipReadsLock.AcquireWriterLock(lockTimeout);
-                database.UpdateChipReads(reads);
-                foreach (ChipRead read in reads)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
                     if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
                     {
@@ -507,13 +380,40 @@ namespace Chronokeep.MemStore
                         known.TimeSeconds = read.TimeSeconds;
                         known.TimeMilliseconds = read.TimeMilliseconds;
                     }
+                    memStoreLock.ExitWriteLock();
                 }
-                chipReadsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+        }
+
+        public void UpdateChipReads(List<ChipRead> reads)
+        {
+            Log.D("MemStore", "UpdateChipReads");
+            database.UpdateChipReads(reads);
+            try
+            {
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    foreach (ChipRead read in reads)
+                    {
+                        if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
+                        {
+                            known.Status = read.Status;
+                            known.TimeSeconds = read.TimeSeconds;
+                            known.TimeMilliseconds = read.TimeMilliseconds;
+                        }
+                    }
+                    memStoreLock.ExitWriteLock();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
@@ -523,22 +423,24 @@ namespace Chronokeep.MemStore
             bool output = false;
             try
             {
-                chipReadsLock.AcquireReaderLock(lockTimeout);
-                foreach (ChipRead read in chipReads.Values)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                    foreach (ChipRead read in chipReads.Values)
                     {
-                        output = true;
-                        break;
+                        if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
+                        {
+                            output = true;
+                            break;
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                chipReadsLock.ReleaseReaderLock();
                 return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring chipReadsLock. " + e.Message);
-                throw new MutexLockException("chipReadsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }

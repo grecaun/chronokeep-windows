@@ -13,55 +13,10 @@ namespace Chronokeep.MemStore
         public Participant AddParticipant(Participant person)
         {
             Log.D("MemStore", "AddParticipant");
+            Participant output = null;
             try
             {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                distanceLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.CommonAgeGroups)
-                {
-                    if (currentAgeGroups.TryGetValue(
-                        (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
-                        out AgeGroup ageGroup))
-                    {
-                        person.EventSpecific.AgeGroupId = ageGroup.GroupId;
-                        person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
-                    }
-                }
-                else
-                {
-                    if (currentAgeGroups.TryGetValue(
-                        (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
-                        out AgeGroup ageGroup))
-                    {
-                        person.EventSpecific.AgeGroupId = ageGroup.GroupId;
-                        person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
-                    }
-                }
-                Participant output = database.AddParticipant(person);
-                if (distances.TryGetValue(output.EventSpecific.DistanceIdentifier, out Distance dist))
-                {
-                    output.EventSpecific.DistanceName = dist.Name;
-                }
-                participants[output.EventSpecific.Identifier] = output;
-                participantsLock.ReleaseWriterLock();
-                distanceLock.ReleaseReaderLock();
-                return output;
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
-            }
-        }
-
-        public List<Participant> AddParticipants(List<Participant> people)
-        {
-            Log.D("MemStore", "AddParticipants");
-            try
-            {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                distanceLock.AcquireReaderLock(lockTimeout);
-                foreach (Participant person in people)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
                     if (theEvent.CommonAgeGroups)
                     {
@@ -83,330 +38,380 @@ namespace Chronokeep.MemStore
                             person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
                         }
                     }
-                }
-                List<Participant> output = database.AddParticipants(people);
-                foreach (Participant person in output)
-                {
-                    if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                    output = database.AddParticipant(person);
+                    if (distances.TryGetValue(output.EventSpecific.DistanceIdentifier, out Distance dist))
                     {
-                        person.EventSpecific.DistanceName = dist.Name;
+                        output.EventSpecific.DistanceName = dist.Name;
                     }
-                    participants[person.EventSpecific.Identifier] = person;
+                    participants[output.EventSpecific.Identifier] = output;
+                    memStoreLock.ExitWriteLock();
                 }
-                participantsLock.ReleaseWriterLock();
-                distanceLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
-        public Participant GetParticipant(int eventIdentifier, int identifier)
+        public List<Participant> AddParticipants(List<Participant> people)
         {
-            Log.D("MemStore", "GetParticipant");
+            Log.D("MemStore", "AddParticipants");
+            List<Participant> output = new();
             try
             {
-                participantsLock.AcquireReaderLock(lockTimeout);
-                Participant output = null;
-                foreach (Participant person in participants.Values)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    if (person.Identifier == identifier)
+                    foreach (Participant person in people)
                     {
-                        output = person;
-                        break;
+                        if (theEvent.CommonAgeGroups)
+                        {
+                            if (currentAgeGroups.TryGetValue(
+                                (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
+                                out AgeGroup ageGroup))
+                            {
+                                person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                                person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
+                            }
+                        }
+                        else
+                        {
+                            if (currentAgeGroups.TryGetValue(
+                                (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
+                                out AgeGroup ageGroup))
+                            {
+                                person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                                person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
+                            }
+                        }
                     }
+                    output.AddRange(database.AddParticipants(people));
+                    foreach (Participant person in output)
+                    {
+                        if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                        {
+                            person.EventSpecific.DistanceName = dist.Name;
+                        }
+                        participants[person.EventSpecific.Identifier] = person;
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                participantsLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
-        public Participant GetParticipant(int eventIdentifier, Participant unknown)
+        public Participant GetParticipant(int eventId, int identifier)
         {
             Log.D("MemStore", "GetParticipant");
+            Participant output = null;
             try
             {
-                participantsLock.AcquireReaderLock(lockTimeout);
-                Participant output = null;
-                foreach (Participant person in participants.Values)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (unknown.Chip.Length > 0 && person.Chip.Equals(unknown.Chip, StringComparison.OrdinalIgnoreCase))
+                    if (theEvent != null && theEvent.Identifier == eventId)
                     {
-                        output = person;
-                        break;
+                        foreach (Participant person in participants.Values)
+                        {
+                            if (person.Identifier == identifier)
+                            {
+                                output = person;
+                                break;
+                            }
+                        }
                     }
-                    else if (unknown.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
-                        && unknown.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
-                        && unknown.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
-                        && unknown.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
-                        && unknown.State.Equals(person.State, StringComparison.OrdinalIgnoreCase)
-                        && unknown.Zip.Equals(person.Zip, StringComparison.OrdinalIgnoreCase)
-                        && unknown.Birthdate.Equals(person.Birthdate, StringComparison.OrdinalIgnoreCase))
-                    {
-                        output = person;
-                        break;
-                    }
+                    memStoreLock.ExitReadLock();
                 }
-                participantsLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
-        public Participant GetParticipantBib(int eventIdentifier, string bib)
+        public Participant GetParticipant(int eventId, Participant unknown)
+        {
+            Log.D("MemStore", "GetParticipant");
+            Participant output = null;
+            try
+            {
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        foreach (Participant person in participants.Values)
+                        {
+                            if (unknown.Chip.Length > 0 && person.Chip.Equals(unknown.Chip, StringComparison.OrdinalIgnoreCase))
+                            {
+                                output = person;
+                                break;
+                            }
+                            else if (unknown.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
+                                && unknown.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
+                                && unknown.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
+                                && unknown.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
+                                && unknown.State.Equals(person.State, StringComparison.OrdinalIgnoreCase)
+                                && unknown.Zip.Equals(person.Zip, StringComparison.OrdinalIgnoreCase)
+                                && unknown.Birthdate.Equals(person.Birthdate, StringComparison.OrdinalIgnoreCase))
+                            {
+                                output = person;
+                                break;
+                            }
+                        }
+                    }
+                    memStoreLock.ExitReadLock();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+            return output;
+        }
+
+        public Participant GetParticipantBib(int eventId, string bib)
         {
             Log.D("MemStore", "GetParticipantBib");
+            Participant output = null;
             try
             {
-                participantsLock.AcquireReaderLock(lockTimeout);
-                Participant output = null;
-                foreach (Participant person in participants.Values)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (person.Bib.Equals(bib, StringComparison.OrdinalIgnoreCase))
+                    if (theEvent != null && theEvent.Identifier == eventId)
                     {
-                        output = person;
-                        break;
+                        foreach (Participant person in participants.Values)
+                        {
+                            if (person.Bib.Equals(bib, StringComparison.OrdinalIgnoreCase))
+                            {
+                                output = person;
+                                break;
+                            }
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                participantsLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
-        public Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId)
+        public Participant GetParticipantEventSpecific(int eventId, int eventSpecificId)
         {
             Log.D("MemStore", "GetParticipantEventSpecific");
+            Participant output = null;
             try
             {
-                participantsLock.AcquireReaderLock(lockTimeout);
-                Participant output = null;
-                foreach (Participant person in participants.Values)
+
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (person.EventSpecific.Identifier == eventSpecificId)
+                    if (theEvent != null && theEvent.Identifier == eventId)
                     {
-                        output = person;
-                        break;
+                        foreach (Participant person in participants.Values)
+                        {
+                            if (person.EventSpecific.Identifier == eventSpecificId)
+                            {
+                                output = person;
+                                break;
+                            }
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                participantsLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public int GetParticipantID(Participant person)
         {
             Log.D("MemStore", "GetParticipantID");
+            int output = -1;
             try
             {
-                participantsLock.AcquireReaderLock(lockTimeout);
-                int output = -1;
-                foreach (Participant p in participants.Values)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    if (p.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
-                        && p.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
-                        && p.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
-                        && p.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
-                        && p.State.Equals(person.State, StringComparison.OrdinalIgnoreCase)
-                        && p.Zip.Equals(person.Zip, StringComparison.OrdinalIgnoreCase)
-                        && p.Birthdate.Equals(person.Birthdate, StringComparison.OrdinalIgnoreCase))
+                    foreach (Participant p in participants.Values)
                     {
-                        output = p.Identifier;
-                        break;
+                        if (p.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
+                            && p.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
+                            && p.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
+                            && p.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
+                            && p.State.Equals(person.State, StringComparison.OrdinalIgnoreCase)
+                            && p.Zip.Equals(person.Zip, StringComparison.OrdinalIgnoreCase)
+                            && p.Birthdate.Equals(person.Birthdate, StringComparison.OrdinalIgnoreCase))
+                        {
+                            output = p.Identifier;
+                            break;
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                participantsLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public List<Participant> GetParticipants()
         {
             Log.D("MemStore", "GetParticipants");
+            List<Participant> output = new();
             try
             {
-                participantsLock.AcquireReaderLock(lockTimeout);
-                List<Participant> output = new();
-                output.AddRange(participants.Values);
-                participantsLock.ReleaseReaderLock();
-                return output;
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    output.AddRange(participants.Values);
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public List<Participant> GetParticipants(int eventId)
         {
             Log.D("MemStore", "GetParticipants");
-            bool invalidEvent = false;
+            List<Participant> output = new();
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        output.AddRange(participants.Values);
+                    }
+                    memStoreLock.ExitReadLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                participantsLock.AcquireReaderLock(lockTimeout);
-                List<Participant> output = new();
-                output.AddRange(participants.Values);
-                participantsLock.ReleaseReaderLock();
-                return output;
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
-            }
+            return output;
         }
 
         public List<Participant> GetParticipants(int eventId, int distanceId)
         {
             Log.D("MemStore", "GetParticipants");
-            bool invalidEvent = false;
+            List<Participant> output = new();
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                participantsLock.AcquireReaderLock(lockTimeout);
-                List<Participant> output = new();
-                foreach (Participant person in participants.Values)
-                {
-                    if (person.EventSpecific.DistanceIdentifier == distanceId)
+                    if (theEvent != null && theEvent.Identifier == eventId)
                     {
-                        output.Add(person);
+                        foreach (Participant person in participants.Values)
+                        {
+                            if (person.EventSpecific.DistanceIdentifier == distanceId)
+                            {
+                                output.Add(person);
+                            }
+                        }
                     }
+                    memStoreLock.ExitReadLock();
                 }
-                participantsLock.ReleaseReaderLock();
-                return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
+            return output;
         }
 
         public void RemoveParticipant(int identifier)
         {
             Log.D("MemStore", "RemoveParticipant");
+            database.RemoveParticipant(identifier);
             try
             {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveParticipant(identifier);
-                int eventSpecId = -1;
-                foreach (Participant person in participants.Values)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    if (person.Identifier == identifier)
+                    int eventSpecId = -1;
+                    foreach (Participant person in participants.Values)
                     {
-                        eventSpecId = person.EventSpecific.Identifier;
-                        break;
+                        if (person.Identifier == identifier)
+                        {
+                            eventSpecId = person.EventSpecific.Identifier;
+                            break;
+                        }
                     }
+                    if (eventSpecId > 0)
+                    {
+                        participants.Remove(eventSpecId);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                if (eventSpecId > 0)
-                {
-                    participants.Remove(eventSpecId);
-                }
-                participantsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveParticipantEntries(List<Participant> parts)
         {
             Log.D("MemStore", "RemoveParticipantEntries");
+            database.RemoveParticipantEntries(parts);
             try
             {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveParticipantEntries(parts);
-                foreach (Participant person in parts)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    participants.Remove(person.EventSpecific.Identifier);
+                    foreach (Participant person in parts)
+                    {
+                        participants.Remove(person.EventSpecific.Identifier);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                participantsLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveParticipantEntry(Participant person)
         {
             Log.D("MemStore", "RemoveParticipantEntries");
+            database.RemoveParticipantEntry(person);
             try
             {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                database.RemoveParticipantEntry(person);
-                participants.Remove(person.EventSpecific.Identifier);
-                participantsLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    participants.Remove(person.EventSpecific.Identifier);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
@@ -415,63 +420,7 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "UpdateParticipant");
             try
             {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                distanceLock.AcquireReaderLock(lockTimeout);
-                if (theEvent.CommonAgeGroups)
-                {
-                    if (currentAgeGroups.TryGetValue(
-                        (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
-                        out AgeGroup ageGroup))
-                    {
-                        person.EventSpecific.AgeGroupId = ageGroup.GroupId;
-                        person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
-                    }
-                }
-                else
-                {
-                    if (currentAgeGroups.TryGetValue(
-                        (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
-                        out AgeGroup ageGroup))
-                    {
-                        person.EventSpecific.AgeGroupId = ageGroup.GroupId;
-                        person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
-                    }
-                }
-                database.UpdateParticipant(person);
-                if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
-                {
-                    toUpdate.CopyFrom(person);
-                    if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance dist))
-                    {
-                        toUpdate.EventSpecific.DistanceName = dist.Name;
-                    }
-                }
-                else
-                {
-                    participants[person.EventSpecific.Identifier] = person;
-                    if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
-                    {
-                        person.EventSpecific.DistanceName = dist.Name;
-                    }
-                }
-                participantsLock.ReleaseWriterLock();
-                distanceLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
-            }
-        }
-
-        public void UpdateParticipants(List<Participant> parts)
-        {
-            Log.D("MemStore", "UpdateParticipants");
-            try
-            {
-                participantsLock.AcquireWriterLock(lockTimeout);
-                distanceLock.AcquireReaderLock(lockTimeout);
-                foreach (Participant person in parts)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
                     if (theEvent.CommonAgeGroups)
                     {
@@ -493,10 +442,9 @@ namespace Chronokeep.MemStore
                             person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
                         }
                     }
-                }
-                database.UpdateParticipants(parts);
-                foreach (Participant person in parts)
-                {
+                    // This is one of the few functions that has a database call within the ReadWriteLock
+                    // This is because we need to update the age group id before putting it in the database
+                    database.UpdateParticipant(person);
                     if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
                     {
                         toUpdate.CopyFrom(person);
@@ -513,14 +461,75 @@ namespace Chronokeep.MemStore
                             person.EventSpecific.DistanceName = dist.Name;
                         }
                     }
+                    memStoreLock.ExitWriteLock();
                 }
-                participantsLock.ReleaseWriterLock();
-                distanceLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring participantsLock. " + e.Message);
-                throw new MutexLockException("participantsLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+        }
+
+        public void UpdateParticipants(List<Participant> parts)
+        {
+            Log.D("MemStore", "UpdateParticipants");
+            try
+            {
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    foreach (Participant person in parts)
+                    {
+                        if (theEvent.CommonAgeGroups)
+                        {
+                            if (currentAgeGroups.TryGetValue(
+                                (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
+                                out AgeGroup ageGroup))
+                            {
+                                person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                                person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
+                            }
+                        }
+                        else
+                        {
+                            if (currentAgeGroups.TryGetValue(
+                                (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
+                                out AgeGroup ageGroup))
+                            {
+                                person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                                person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
+                            }
+                        }
+                    }
+                    // This is one of the few functions that has a database call within the ReadWriteLock
+                    // This is because we need to update the age group id before putting it in the database
+                    database.UpdateParticipants(parts);
+                    foreach (Participant person in parts)
+                    {
+                        if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
+                        {
+                            toUpdate.CopyFrom(person);
+                            if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance dist))
+                            {
+                                toUpdate.EventSpecific.DistanceName = dist.Name;
+                            }
+                        }
+                        else
+                        {
+                            participants[person.EventSpecific.Identifier] = person;
+                            if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                            {
+                                person.EventSpecific.DistanceName = dist.Name;
+                            }
+                        }
+                    }
+                    memStoreLock.ExitWriteLock();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }

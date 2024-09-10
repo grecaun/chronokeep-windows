@@ -12,40 +12,26 @@ namespace Chronokeep.MemStore
         public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
         {
             Log.D("MemStore", "AddBibChipAssociation");
-            bool invalidEvent = false;
+            database.AddBibChipAssociation(eventId, assoc);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        foreach (BibChipAssociation bc in assoc)
+                        {
+                            chipToBibAssociations[bc.Chip] = bc;
+                            bibToChipAssociations[bc.Bib] = bc;
+                        }
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                bibChipLock.AcquireWriterLock(lockTimeout);
-                database.AddBibChipAssociation(eventId, assoc);
-                foreach (BibChipAssociation bc in assoc)
-                {
-                    chipToBibAssociations[bc.Chip] = bc;
-                    bibToChipAssociations[bc.Bib] = bc;
-                }
-                bibChipLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
@@ -55,14 +41,16 @@ namespace Chronokeep.MemStore
             List<BibChipAssociation> output = new();
             try
             {
-                bibChipLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(chipToBibAssociations.Values);
-                bibChipLock.ReleaseReaderLock();
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    output.AddRange(chipToBibAssociations.Values);
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -70,36 +58,22 @@ namespace Chronokeep.MemStore
         public List<BibChipAssociation> GetBibChips(int eventId)
         {
             Log.D("MemStore", "GetBibChips");
-            bool invalidEvent = false;
-            try
-            {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
-                {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
             List<BibChipAssociation> output = new();
             try
             {
-                bibChipLock.AcquireReaderLock(lockTimeout);
-                output.AddRange(chipToBibAssociations.Values);
-                bibChipLock.ReleaseReaderLock();
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                {
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        output.AddRange(chipToBibAssociations.Values);
+                    }
+                    memStoreLock.ExitReadLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
             return output;
         }
@@ -107,88 +81,78 @@ namespace Chronokeep.MemStore
         public void RemoveBibChipAssociation(int eventId, string chip)
         {
             Log.D("MemStore", "RemoveBibChipAssociation");
-            bool invalidEvent = false;
+            database.RemoveBibChipAssociation(eventId, chip);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
-                }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                bibChipLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBibChipAssociation(eventId, chip);
-                chipToBibAssociations.Remove(chip);
-                string bib = "";
-                foreach (BibChipAssociation b in chipToBibAssociations.Values)
-                {
-                    if (b.Chip == chip)
+                    if (theEvent != null && theEvent.Identifier == eventId)
                     {
-                        bib = b.Bib;
-                        break;
+                        chipToBibAssociations.Remove(chip);
+                        string bib = "";
+                        foreach (BibChipAssociation b in chipToBibAssociations.Values)
+                        {
+                            if (b.Chip == chip)
+                            {
+                                bib = b.Bib;
+                                break;
+                            }
+                        }
+                        if (bib.Length > 0)
+                        {
+                            bibToChipAssociations.Remove(bib);
+                        }
                     }
+                    memStoreLock.ExitWriteLock();
                 }
-                if (bib.Length > 0)
-                {
-                    bibToChipAssociations.Remove(bib);
-                }
-                bibChipLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveBibChipAssociation(BibChipAssociation assoc)
         {
             Log.D("MemStore", "RemoveBibChipAssociation");
+            database.RemoveBibChipAssociation(assoc);
             try
             {
-                bibChipLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBibChipAssociation(assoc);
-                chipToBibAssociations.Remove(assoc.Chip);
-                bibToChipAssociations.Remove(assoc.Bib);
-                bibChipLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    chipToBibAssociations.Remove(assoc.Chip);
+                    bibToChipAssociations.Remove(assoc.Bib);
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void RemoveBibChipAssociations(List<BibChipAssociation> assocs)
         {
             Log.D("MemStore", "RemoveBibChipAssociation");
+            database.RemoveBibChipAssociations(assocs);
             try
             {
-                bibChipLock.AcquireWriterLock(lockTimeout);
-                database.RemoveBibChipAssociations(assocs);
-                foreach (BibChipAssociation assoc in assocs)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    chipToBibAssociations.Remove(assoc.Chip);
-                    bibToChipAssociations.Remove(assoc.Bib);
+                    foreach (BibChipAssociation assoc in assocs)
+                    {
+                        chipToBibAssociations.Remove(assoc.Chip);
+                        bibToChipAssociations.Remove(assoc.Bib);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                bibChipLock.ReleaseWriterLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring bibChipLock. " + e.Message);
-                throw new MutexLockException("bibChipLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }

@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using Chronokeep.UI.UIObjects;
 using Chronokeep.Helpers;
 using System.Media;
+using System.Text.RegularExpressions;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -137,6 +138,7 @@ namespace Chronokeep.UI.MainPages
             MailgunFromEmailBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL).Value;
             MailgunAPIKeyBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY).Value;
             MailgunAPIURLBox.Text = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL).Value;
+            UniqueProgramID.Text = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER).Value;
         }
 
         private async void ResetDB_Click(object sender, RoutedEventArgs e)
@@ -372,6 +374,13 @@ namespace Chronokeep.UI.MainPages
             {
                 announcerBlock.Text = announcerSlider.Value.ToString();
             }
+        }
+
+        private void RegenerateUniqueProgramIDButton_Click(object sender, RoutedEventArgs e)
+        {
+            string randomMod = Regex.Replace(Guid.NewGuid().ToString("N"), "[^a-zA-Z0-9]", "").ToUpper()[0..3];
+            database.SetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER, randomMod);
+            UpdateView();
         }
     }
 }

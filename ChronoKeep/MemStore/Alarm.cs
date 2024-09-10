@@ -14,163 +14,111 @@ namespace Chronokeep.MemStore
         public void DeleteAlarm(Alarm alarm)
         {
             Log.D("MemStore", "DeleteAlarms");
+            database.DeleteAlarm(alarm);
             try
             {
-                alarmLock.AcquireWriterLock(lockTimeout);
-                database.DeleteAlarm(alarm);
-                alarms.Remove((alarm.Bib, alarm.Chip));
-                alarmLock.ReleaseWriterLock();
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                {
+                    alarms.RemoveAll(x => alarm.Bib.Equals(x.Bib, StringComparison.OrdinalIgnoreCase) && alarm.Chip.Equals(x.Chip, StringComparison.OrdinalIgnoreCase));
+                    memStoreLock.ExitWriteLock();
+                }
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring alarmLock. " + e.Message);
-                throw new MutexLockException("alarmLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public void DeleteAlarms(int eventId)
         {
             Log.D("MemStore", "DeleteAlarms");
-            bool invalidEvent = false;
+            database.DeleteAlarms(eventId);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        alarms.Clear();
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                alarmLock.AcquireWriterLock(lockTimeout);
-                database.DeleteAlarms(eventId);
-                alarms.Clear();
-                alarmLock.ReleaseWriterLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring alarmLock. " + e.Message);
-                throw new MutexLockException("alarmLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public List<Alarm> GetAlarms(int eventId)
         {
             Log.D("MemStore", "GetAlarms");
-            bool invalidEvent = false;
+            List<Alarm> output = new();
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterReadLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        output.AddRange(alarms);
+                    }
+                    memStoreLock.ExitReadLock();
                 }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                alarmLock.AcquireReaderLock(lockTimeout);
-                List<Alarm> output = new();
-                output.AddRange(alarms.Values);
-                alarmLock.ReleaseReaderLock();
                 return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring alarmLock. " + e.Message);
-                throw new MutexLockException("alarmLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
         public int SaveAlarm(int eventId, Alarm alarm)
         {
             Log.D("MemStore", "SaveAlarm");
-            bool invalidEvent = false;
+            alarm.Identifier = database.SaveAlarm(eventId, alarm);
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        alarms.Add(alarm);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring eventLock. " + e.Message);
-                throw new MutexLockException("eventLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                alarmLock.AcquireWriterLock(lockTimeout);
-                alarm.Identifier = database.SaveAlarm(eventId, alarm);
-                alarmLock.ReleaseWriterLock();
                 return alarm.Identifier;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring alarmLock. " + e.Message);
-                throw new MutexLockException("alarmLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
 
-        public List<Alarm> SaveAlarms(int eventId, List<Alarm> alarms)
+        public List<Alarm> SaveAlarms(int eventId, List<Alarm> iAlarms)
         {
             Log.D("MemStore", "SaveAlarms");
-            bool invalidEvent = false;
+            List<Alarm> output = new();
+            output.AddRange(database.SaveAlarms(eventId, iAlarms));
             try
             {
-                eventLock.AcquireReaderLock(lockTimeout);
-                if (theEvent == null || theEvent.Identifier != eventId)
+                if (memStoreLock.TryEnterWriteLock(lockTimeout))
                 {
-                    invalidEvent = true;
+                    if (theEvent != null && theEvent.Identifier == eventId)
+                    {
+                        alarms.AddRange(output);
+                    }
+                    memStoreLock.ExitWriteLock();
                 }
-                eventLock.ReleaseReaderLock();
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring ageGroupLock. " + e.Message);
-                throw new MutexLockException("ageGroupLock");
-            }
-            if (invalidEvent)
-            {
-                throw new InvalidEventID("Expected different event id.");
-            }
-            try
-            {
-                alarmLock.AcquireWriterLock(lockTimeout);
-                List<Alarm> output = new();
-                output.AddRange(database.SaveAlarms(eventId, alarms));
-                alarmLock.ReleaseWriterLock();
                 return output;
             }
             catch (Exception e)
             {
-                Log.D("MemStore", "Exception acquiring alarmLock. " + e.Message);
-                throw new MutexLockException("alarmLock");
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
             }
         }
     }
