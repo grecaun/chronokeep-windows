@@ -545,7 +545,7 @@ namespace Chronokeep.Network.API
                         Method = HttpMethod.Delete,
                         RequestUri = new Uri(api.URL + "participants/delete"),
                         Content = new StringContent(
-                            JsonSerializer.Serialize(new GetParticipantsRequest
+                            JsonSerializer.Serialize(new DeleteParticipantsRequest
                             {
                                 Slug = slug,
                                 Year = year
@@ -577,7 +577,7 @@ namespace Chronokeep.Network.API
             throw new APIException(content);
         }
 
-        public static async Task<GetParticipantsResponse> GetParticipants(APIObject api, string slug, string year)
+        public static async Task<GetParticipantsResponse> GetParticipants(APIObject api, string slug, string year, int limit, int page)
         {
             string content;
             Log.D("Network.API.APIHandlers", "Getting participants.");
@@ -593,7 +593,9 @@ namespace Chronokeep.Network.API
                             JsonSerializer.Serialize(new GetParticipantsRequest
                             {
                                 Slug = slug,
-                                Year = year
+                                Year = year,
+                                Limit = limit,
+                                Page = page,
                             }),
                             Encoding.UTF8,
                             "application/json"

@@ -77,6 +77,18 @@ namespace Chronokeep.Objects.API
         public string Slug { get; set; }
         [JsonPropertyName("year")]
         public string Year { get; set; }
+        [JsonPropertyName("limit")]
+        public int Limit { get; set; }
+        [JsonPropertyName("page")]
+        public int Page { get; set; }
+    }
+
+    public class DeleteParticipantsRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
     }
 
     public class AddParticipantsRequest
@@ -87,16 +99,6 @@ namespace Chronokeep.Objects.API
         public string Year { get; set; }
         [JsonPropertyName("participants")]
         public List<APIPerson> Participants { get; set; }
-    }
-
-    public class DeleteParticipantsRequest
-    {
-        [JsonPropertyName("slug")]
-        public string Slug { get; set; }
-        [JsonPropertyName("year")]
-        public string Year { get; set; }
-        [JsonPropertyName("identifiers")]
-        public List<string> Identifiers { get; set; }
     }
 
     // Bibchip specific requests

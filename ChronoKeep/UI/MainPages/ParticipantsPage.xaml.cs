@@ -485,7 +485,18 @@ namespace Chronokeep.UI.MainPages
             }
             try
             {
-                GetParticipantsResponse response = await APIHandlers.GetParticipants(api, event_ids[0], event_ids[1]);
+                int page = 1;
+                List<APIPerson> newPersons = new();
+                do
+                {
+                    GetParticipantsResponse response = await APIHandlers.GetParticipants(api, event_ids[0], event_ids[1], 50, page);
+                    newPersons.AddRange(response.Participants);
+                    if (response.Participants.Count != 50)
+                    {
+                        break;
+                    }
+                    page++;
+                } while (true);
                 // Key is (First, Last, Birthdate, Distance)
                 Dictionary<(string, string, string, string), Participant> partDictionary = new();
                 Dictionary<string, Participant> partESDictionary = new();
@@ -499,7 +510,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     distDictionary[d.Name.ToLower()] = d;
                 }
-                foreach (APIPerson person in response.Participants)
+                foreach (APIPerson person in newPersons)
                 {
                     if (person.Bib.Length > 0 && distDictionary.TryGetValue(person.Distance.ToLower(), out Distance distance))
                     {
