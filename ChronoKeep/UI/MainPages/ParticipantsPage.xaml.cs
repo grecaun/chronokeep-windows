@@ -491,12 +491,14 @@ namespace Chronokeep.UI.MainPages
                 {
                     GetParticipantsResponse response = await APIHandlers.GetParticipants(api, event_ids[0], event_ids[1], 50, page);
                     newPersons.AddRange(response.Participants);
+                    Log.D("UI.MainPages.ParticipantsPage", response.Participants.Count.ToString() + " participants downloaded.");
                     if (response.Participants.Count != 50)
                     {
                         break;
                     }
                     page++;
                 } while (true);
+                Log.D("UI.MainPages.ParticipantsPage", newPersons.Count.ToString() + " total participants downloaded.");
                 // Key is (First, Last, Birthdate, Distance)
                 Dictionary<(string, string, string, string), Participant> partDictionary = new();
                 Dictionary<string, Participant> partESDictionary = new();
@@ -510,13 +512,15 @@ namespace Chronokeep.UI.MainPages
                 {
                     distDictionary[d.Name.ToLower()] = d;
                 }
+                List<Participant> partsToUpdate = new();
+                List<Participant> partsToAdd = new();
                 foreach (APIPerson person in newPersons)
                 {
                     if (person.Bib.Length > 0 && distDictionary.TryGetValue(person.Distance.ToLower(), out Distance distance))
                     {
                         if (partESDictionary.TryGetValue(person.Identifier, out Participant old) && old != null && old.IsSimilar(person))
                         {
-                            Participant updated = new(
+                            partsToUpdate.Add(new(
                                 old.Identifier,
                                 person.First.Length > 0 ? person.First : old.FirstName,
                                 person.Last.Length > 0 ? person.Last : old.LastName,
@@ -552,12 +556,11 @@ namespace Chronokeep.UI.MainPages
                                 old.ECName,
                                 old.ECPhone,
                                 old.Chip
-                                );
-                            database.UpdateParticipant(updated);
+                                ));
                         }
                         else if (partDictionary.TryGetValue((person.First, person.Last, person.Birthdate, person.Distance), out Participant oldTwo))
                         {
-                            Participant updated = new(
+                            partsToUpdate.Add(new(
                                 oldTwo.Identifier,
                                 person.First.Length > 0 ? person.First : oldTwo.FirstName,
                                 person.Last.Length > 0 ? person.Last : oldTwo.LastName,
@@ -593,12 +596,11 @@ namespace Chronokeep.UI.MainPages
                                 oldTwo.ECName,
                                 oldTwo.ECPhone,
                                 oldTwo.Chip
-                                );
-                            database.UpdateParticipant(updated);
+                                ));
                         }
                         else
                         {
-                            database.AddParticipant(
+                            partsToAdd.Add(
                                 new Participant(
                                     person.First,
                                     person.Last,
@@ -633,6 +635,14 @@ namespace Chronokeep.UI.MainPages
                             );
                         }
                     }
+                }
+                if (partsToUpdate.Count > 0) 
+                {
+                    database.UpdateParticipants(partsToUpdate);
+                }
+                if (partsToAdd.Count > 0)
+                {
+                    database.AddParticipants(partsToAdd);
                 }
             }
             catch (APIException ex)
@@ -685,17 +695,6 @@ namespace Chronokeep.UI.MainPages
                     Bib = bc.Bib,
                     Chip = bc.Chip,
                 });
-            }
-            // Get rid of old information.
-            try
-            {
-                await APIHandlers.DeleteBibChips(api, event_ids[0], event_ids[1]);
-            }
-            catch (APIException ex)
-            {
-                DialogBox.Show(ex.Message);
-                Upload.Content = "Upload";
-                return;
             }
             Log.D("UI.MainPages.ParticipantsPage", "Attempting to upload " + upParticipants.Count.ToString() + " participants.");
             int total = 0;
@@ -806,6 +805,7 @@ namespace Chronokeep.UI.MainPages
                     {
                         Log.D("UI.MainPages.ParticipantsPage", "Deleting participants from API.");
                         await APIHandlers.DeleteParticipants(api, event_ids[0], event_ids[1]);
+                        await APIHandlers.DeleteBibChips(api, event_ids[0], event_ids[1]);
                     }
                     catch (APIException ex)
                     {
