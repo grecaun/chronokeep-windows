@@ -15,14 +15,14 @@ namespace Chronokeep.MemStore
             int output = database.AddSegment(seg);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && seg.EventId == theEvent.Identifier && seg.Identifier > 0)
                     {
                         seg.Identifier = output;
                     }
                     segments[seg.Identifier] = seg;
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -39,7 +39,7 @@ namespace Chronokeep.MemStore
             List<Segment> output = database.AddSegments(segs);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (Segment seg in output)
                     {
@@ -48,7 +48,7 @@ namespace Chronokeep.MemStore
                             segments[seg.Identifier] = seg;
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -65,7 +65,7 @@ namespace Chronokeep.MemStore
             int output = -1;
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (Segment s in segments.Values)
                     {
@@ -78,7 +78,7 @@ namespace Chronokeep.MemStore
                             break;
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -95,7 +95,7 @@ namespace Chronokeep.MemStore
             List<Segment> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -105,7 +105,7 @@ namespace Chronokeep.MemStore
                     {
                         output.AddRange(database.GetSegments(eventId));
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -122,7 +122,7 @@ namespace Chronokeep.MemStore
             int output = 0;
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -144,7 +144,7 @@ namespace Chronokeep.MemStore
                     {
                         output = database.GetMaxSegments(eventId);
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -161,10 +161,10 @@ namespace Chronokeep.MemStore
             database.RemoveSegment(seg);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     segments.Remove(seg.Identifier);
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -180,10 +180,10 @@ namespace Chronokeep.MemStore
             database.RemoveSegment(identifier);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     segments.Remove(identifier);
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -199,13 +199,13 @@ namespace Chronokeep.MemStore
             database.RemoveSegments(segs);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (Segment s in segs)
                     {
                         segments.Remove(s.Identifier);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -221,13 +221,13 @@ namespace Chronokeep.MemStore
             database.ResetSegments(eventId);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         segments.Clear();
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -243,13 +243,13 @@ namespace Chronokeep.MemStore
             database.UpdateSegment(seg);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (segments.TryGetValue(seg.Identifier, out Segment oldSeg))
                     {
                         oldSeg.CopyFrom(seg);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -265,7 +265,7 @@ namespace Chronokeep.MemStore
             database.UpdateSegments(segs);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (Segment s in segs)
                     {
@@ -274,7 +274,7 @@ namespace Chronokeep.MemStore
                             oldSeg.CopyFrom(s);
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

@@ -16,14 +16,14 @@ namespace Chronokeep.MemStore
             dist.Identifier = database.AddDistance(dist);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && dist.EventIdentifier == theEvent.Identifier && dist.Identifier > 0)
                     {
                         distances[dist.Identifier] = dist;
                         distanceNameDict[dist.Name] = dist;
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -40,7 +40,7 @@ namespace Chronokeep.MemStore
             List<Distance> output = database.AddDistances(distances);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (Distance dist in output)
                     {
@@ -50,7 +50,7 @@ namespace Chronokeep.MemStore
                             distanceNameDict[dist.Name] = dist;
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -67,10 +67,10 @@ namespace Chronokeep.MemStore
             Distance output = null;
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     distances.TryGetValue(divId, out output);
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -87,7 +87,7 @@ namespace Chronokeep.MemStore
             int output = -1;
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (Distance known in distances.Values)
                     {
@@ -97,7 +97,7 @@ namespace Chronokeep.MemStore
                             break;
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -114,7 +114,7 @@ namespace Chronokeep.MemStore
             List<Distance> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -124,7 +124,7 @@ namespace Chronokeep.MemStore
                     {
                         output.AddRange(database.GetDistances(eventId));
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -141,7 +141,7 @@ namespace Chronokeep.MemStore
             database.RemoveDistance(identifier);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     distances.Remove(identifier);
                     string distName = "";
@@ -169,7 +169,7 @@ namespace Chronokeep.MemStore
                     {
                         participants.Remove(i);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -185,7 +185,7 @@ namespace Chronokeep.MemStore
             database.RemoveDistance(dist);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     distances.Remove(dist.Identifier);
                     distanceNameDict.Remove(dist.Name);
@@ -201,7 +201,7 @@ namespace Chronokeep.MemStore
                     {
                         participants.Remove(i);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -217,7 +217,7 @@ namespace Chronokeep.MemStore
             database.UpdateDistance(dist);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     Dictionary<string, string> oldDistanceNameDict = new();
                     foreach (Distance old in distances.Values)
@@ -256,7 +256,7 @@ namespace Chronokeep.MemStore
                             res.LinkedDistanceName = newDistanceName;
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -272,7 +272,7 @@ namespace Chronokeep.MemStore
             database.SetWaveTimes(eventId, wave, seconds, milliseconds);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -291,7 +291,7 @@ namespace Chronokeep.MemStore
                             }
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

@@ -15,7 +15,7 @@ namespace Chronokeep.MemStore
             database.AddBibChipAssociation(eventId, assoc);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -25,7 +25,7 @@ namespace Chronokeep.MemStore
                             bibToChipAssociations[bc.Bib] = bc;
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -41,10 +41,10 @@ namespace Chronokeep.MemStore
             List<BibChipAssociation> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     output.AddRange(chipToBibAssociations.Values);
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -61,13 +61,13 @@ namespace Chronokeep.MemStore
             List<BibChipAssociation> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         output.AddRange(chipToBibAssociations.Values);
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -84,7 +84,7 @@ namespace Chronokeep.MemStore
             database.RemoveBibChipAssociation(eventId, chip);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -103,7 +103,7 @@ namespace Chronokeep.MemStore
                             bibToChipAssociations.Remove(bib);
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -119,11 +119,11 @@ namespace Chronokeep.MemStore
             database.RemoveBibChipAssociation(assoc);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     chipToBibAssociations.Remove(assoc.Chip);
                     bibToChipAssociations.Remove(assoc.Bib);
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -139,14 +139,14 @@ namespace Chronokeep.MemStore
             database.RemoveBibChipAssociations(assocs);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (BibChipAssociation assoc in assocs)
                     {
                         chipToBibAssociations.Remove(assoc.Chip);
                         bibToChipAssociations.Remove(assoc.Bib);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

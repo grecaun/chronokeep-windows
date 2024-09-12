@@ -16,13 +16,13 @@ namespace Chronokeep.MemStore
             database.AddEmailAlert(eventId, eventspecific_id);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         emailAlerts.Add(eventspecific_id);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -38,13 +38,13 @@ namespace Chronokeep.MemStore
             List<int> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         output.AddRange(emailAlerts);
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return output;
             }
@@ -65,13 +65,13 @@ namespace Chronokeep.MemStore
             database.AddSMSAlert(eventId, eventspecific_id, segment_id);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         smsAlerts.Add((eventspecific_id, segment_id));
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -87,13 +87,13 @@ namespace Chronokeep.MemStore
             database.AddSmsSubscriptions(eventId, subscriptions);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         smsSubscriptions.AddRange(subscriptions);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -109,13 +109,13 @@ namespace Chronokeep.MemStore
             database.DeleteSmsSubscriptions(eventId);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         smsSubscriptions.Clear();
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -131,13 +131,13 @@ namespace Chronokeep.MemStore
             List<(int, int)> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         output.AddRange(smsAlerts);
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return output;
             }
@@ -154,13 +154,13 @@ namespace Chronokeep.MemStore
             List<APISmsSubscription> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         output.AddRange(smsSubscriptions);
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return output;
             }

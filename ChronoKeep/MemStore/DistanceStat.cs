@@ -16,7 +16,7 @@ namespace Chronokeep.MemStore
             List<DistanceStat> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -70,7 +70,7 @@ namespace Chronokeep.MemStore
                         output.Add(allstats);
                         output.AddRange(distStatDict.Values);
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return output;
             }

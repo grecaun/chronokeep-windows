@@ -36,7 +36,7 @@ namespace Chronokeep.MemStore
             group.GroupId = database.AddAgeGroup(group);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (!ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> value))
                     {
@@ -45,7 +45,7 @@ namespace Chronokeep.MemStore
                     }
                     value.Add(group);
                     SetAgeGroups();
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return group.GroupId;
             }
@@ -62,7 +62,7 @@ namespace Chronokeep.MemStore
             List<AgeGroup> output = database.AddAgeGroups(groups);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (AgeGroup group in output)
                     {
@@ -74,7 +74,7 @@ namespace Chronokeep.MemStore
                         value.Add(group);
                     }
                     SetAgeGroups();
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return output;
             }
@@ -91,7 +91,7 @@ namespace Chronokeep.MemStore
             List<AgeGroup> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -104,7 +104,7 @@ namespace Chronokeep.MemStore
                     {
                         output.AddRange(database.GetAgeGroups(eventId));
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return output;
             }
@@ -121,7 +121,7 @@ namespace Chronokeep.MemStore
             List<AgeGroup> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -134,7 +134,7 @@ namespace Chronokeep.MemStore
                     {
                         output.AddRange(database.GetAgeGroups(eventId, distanceId));
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return output;
             }
@@ -151,14 +151,14 @@ namespace Chronokeep.MemStore
             database.RemoveAgeGroup(group);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
                     {
                         list.Remove(group);
                     }
                     SetAgeGroups();
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -174,7 +174,7 @@ namespace Chronokeep.MemStore
             database.RemoveAgeGroups(eventId, distanceId);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -184,7 +184,7 @@ namespace Chronokeep.MemStore
                         }
                         SetAgeGroups();
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -200,7 +200,7 @@ namespace Chronokeep.MemStore
             database.RemoveAgeGroups(groups);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (AgeGroup group in groups)
                     {
@@ -210,7 +210,7 @@ namespace Chronokeep.MemStore
                         }
                     }
                     SetAgeGroups();
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -226,14 +226,14 @@ namespace Chronokeep.MemStore
             database.ResetAgeGroups(eventId);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         ageGroups.Clear();
                         SetAgeGroups();
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -249,7 +249,7 @@ namespace Chronokeep.MemStore
             database.UpdateAgeGroup(group);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (ageGroups.TryGetValue(group.DistanceId, out List<AgeGroup> list))
                     {
@@ -265,7 +265,7 @@ namespace Chronokeep.MemStore
                         }
                     }
                     SetAgeGroups();
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

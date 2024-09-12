@@ -16,11 +16,11 @@ namespace Chronokeep.MemStore
             int output = database.AddTimingSystem(system);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     system.SystemIdentifier = output;
                     timingSystems[system.IPAddress.Trim()] = system;
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -37,10 +37,10 @@ namespace Chronokeep.MemStore
             List<TimingSystem> output = new();
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     output.AddRange(timingSystems.Values);
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -57,10 +57,10 @@ namespace Chronokeep.MemStore
             database.RemoveTimingSystem(system);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     timingSystems.Remove(system.IPAddress.Trim());
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -76,7 +76,7 @@ namespace Chronokeep.MemStore
             database.RemoveTimingSystem(systemId);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     string ip = "";
                     foreach (TimingSystem system in timingSystems.Values)
@@ -91,7 +91,7 @@ namespace Chronokeep.MemStore
                     {
                         timingSystems.Remove(ip);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -107,14 +107,14 @@ namespace Chronokeep.MemStore
             database.SetTimingSystems(systems);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     timingSystems.Clear();
                     foreach (TimingSystem system in systems)
                     {
                         timingSystems[system.IPAddress.Trim()] = system;
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -130,13 +130,13 @@ namespace Chronokeep.MemStore
             database.UpdateTimingSystem(system);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (timingSystems.TryGetValue(system.IPAddress.Trim(), out TimingSystem oldSystem))
                     {
                         oldSystem.CopyFrom(system);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

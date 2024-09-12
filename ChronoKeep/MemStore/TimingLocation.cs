@@ -15,14 +15,14 @@ namespace Chronokeep.MemStore
             int output = database.AddTimingLocation(tp);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     tp.Identifier = output;
                     if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
                     {
                         locations[tp.Identifier] = tp;
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -39,7 +39,7 @@ namespace Chronokeep.MemStore
             List<TimingLocation> output = database.AddTimingLocations(locs);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (TimingLocation tp in locs)
                     {
@@ -48,7 +48,7 @@ namespace Chronokeep.MemStore
                             locations[tp.Identifier] = tp;
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -65,7 +65,7 @@ namespace Chronokeep.MemStore
             int output = -1;
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (TimingLocation loc in locations.Values)
                     {
@@ -76,7 +76,7 @@ namespace Chronokeep.MemStore
                             break;
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -93,7 +93,7 @@ namespace Chronokeep.MemStore
             List<TimingLocation> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -111,7 +111,7 @@ namespace Chronokeep.MemStore
                     {
                         output.AddRange(database.GetTimingLocations(eventId));
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -128,10 +128,10 @@ namespace Chronokeep.MemStore
             database.RemoveTimingLocation(tp);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     locations.Remove(tp.Identifier);
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -147,10 +147,10 @@ namespace Chronokeep.MemStore
             database.RemoveTimingLocation(identifier);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     locations.Remove(identifier);
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -166,13 +166,13 @@ namespace Chronokeep.MemStore
             database.UpdateTimingLocation(tp);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (locations.TryGetValue(tp.Identifier, out TimingLocation loc))
                     {
                         loc.CopyFrom(tp);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

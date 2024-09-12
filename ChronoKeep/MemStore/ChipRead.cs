@@ -16,7 +16,7 @@ namespace Chronokeep.MemStore
             read.ReadId = database.AddChipRead(read);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     DateTime start = DateTime.Now;
                     if (theEvent != null)
@@ -58,7 +58,7 @@ namespace Chronokeep.MemStore
                         read.Name = "";
                     }
                     chipReads[read.ReadId] = read;
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return read.ReadId;
             }
@@ -75,7 +75,7 @@ namespace Chronokeep.MemStore
             List<ChipRead> newReads = database.AddChipReads(reads);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
                     foreach (Participant part in participants.Values)
@@ -120,7 +120,7 @@ namespace Chronokeep.MemStore
                             read.Name = "";
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return newReads;
             }
@@ -137,13 +137,13 @@ namespace Chronokeep.MemStore
             database.DeleteChipReads(reads);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (ChipRead read in reads)
                     {
                         chipReads.Remove(read.ReadId);
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -159,10 +159,10 @@ namespace Chronokeep.MemStore
             List<ChipRead> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     output.AddRange(chipReads.Values);
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -179,7 +179,7 @@ namespace Chronokeep.MemStore
             List<ChipRead> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (ChipRead read in chipReads.Values)
                     {
@@ -189,7 +189,7 @@ namespace Chronokeep.MemStore
                             output.Add(read);
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -206,7 +206,7 @@ namespace Chronokeep.MemStore
             List<ChipRead> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (ChipRead read in chipReads.Values)
                     {
@@ -216,7 +216,7 @@ namespace Chronokeep.MemStore
                             output.Add(read);
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -233,10 +233,10 @@ namespace Chronokeep.MemStore
             List<ChipRead> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     output.AddRange(chipReads.Values);
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -253,10 +253,10 @@ namespace Chronokeep.MemStore
             List<ChipRead> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     output.AddRange(chipReads.Values);
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -273,7 +273,7 @@ namespace Chronokeep.MemStore
             List<ChipRead> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (ChipRead read in chipReads.Values)
                     {
@@ -282,7 +282,7 @@ namespace Chronokeep.MemStore
                             output.Add(read);
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -299,7 +299,7 @@ namespace Chronokeep.MemStore
             List<ChipRead> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (ChipRead read in chipReads.Values)
                     {
@@ -308,7 +308,7 @@ namespace Chronokeep.MemStore
                             output.Add(read);
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -325,13 +325,13 @@ namespace Chronokeep.MemStore
             database.SetChipReadStatus(read);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
                     {
                         known.Status = read.Status;
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -347,7 +347,7 @@ namespace Chronokeep.MemStore
             database.SetChipReadStatuses(reads);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (ChipRead read in reads)
                     {
@@ -356,7 +356,7 @@ namespace Chronokeep.MemStore
                             known.Status = read.Status;
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -372,7 +372,7 @@ namespace Chronokeep.MemStore
             database.UpdateChipRead(read);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (chipReads.TryGetValue(read.ReadId, out ChipRead known))
                     {
@@ -380,7 +380,7 @@ namespace Chronokeep.MemStore
                         known.TimeSeconds = read.TimeSeconds;
                         known.TimeMilliseconds = read.TimeMilliseconds;
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -396,7 +396,7 @@ namespace Chronokeep.MemStore
             database.UpdateChipReads(reads);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (ChipRead read in reads)
                     {
@@ -407,7 +407,7 @@ namespace Chronokeep.MemStore
                             known.TimeMilliseconds = read.TimeMilliseconds;
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -423,7 +423,7 @@ namespace Chronokeep.MemStore
             bool output = false;
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (ChipRead read in chipReads.Values)
                     {
@@ -433,7 +433,7 @@ namespace Chronokeep.MemStore
                             break;
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return output;
             }

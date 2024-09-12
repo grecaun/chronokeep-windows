@@ -16,7 +16,7 @@ namespace Chronokeep.MemStore
             database.AddRemoteReaders(eventId, readers);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -26,7 +26,7 @@ namespace Chronokeep.MemStore
                             remoteReaders.Add(reader);
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -42,13 +42,13 @@ namespace Chronokeep.MemStore
             database.DeleteRemoteReader(eventId, reader);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         remoteReaders.RemoveAll(x => reader.APIIDentifier == x.APIIDentifier && reader.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -64,7 +64,7 @@ namespace Chronokeep.MemStore
             database.DeleteRemoteReaders(eventId, readers);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -73,7 +73,7 @@ namespace Chronokeep.MemStore
                             remoteReaders.RemoveAll(x => reader.APIIDentifier == x.APIIDentifier && reader.Name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -89,7 +89,7 @@ namespace Chronokeep.MemStore
             List<RemoteReader> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -99,7 +99,7 @@ namespace Chronokeep.MemStore
                     {
                         output.AddRange(database.GetRemoteReaders(eventId));
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

@@ -1,5 +1,4 @@
-﻿using Chronokeep.Interfaces;
-using Chronokeep.Objects;
+﻿using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects.ChronokeepRemote;
 using System;
@@ -25,7 +24,7 @@ namespace Chronokeep.MemStore
         // Singleton
         private static MemStore instance;
 
-        private static ReaderWriterLockSlim memStoreLock = new();
+        private static Mutex memStoreLock = new();
 
         // Items that don't rely on a specific Event
         // key == setting name
@@ -234,10 +233,10 @@ namespace Chronokeep.MemStore
             database.HardResetDatabase();
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     ResetVariables();
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -253,7 +252,7 @@ namespace Chronokeep.MemStore
             // Use eventLock to ensure nothing reads from the database.
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     // Load settings
                     // Settings 1
@@ -314,7 +313,7 @@ namespace Chronokeep.MemStore
                     allEvents.AddRange(database.GetEvents());
                     // Load event data
                     LoadEvent();
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -330,10 +329,10 @@ namespace Chronokeep.MemStore
             database.ResetDatabase();
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     ResetVariables();
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

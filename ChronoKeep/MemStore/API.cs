@@ -16,10 +16,10 @@ namespace Chronokeep.MemStore
             anAPI.Identifier = database.AddAPI(anAPI);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     apis[anAPI.Identifier] = anAPI;
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return anAPI.Identifier;
             }
@@ -36,10 +36,10 @@ namespace Chronokeep.MemStore
             List<APIObject> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     output.AddRange(apis.Values);
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -56,13 +56,13 @@ namespace Chronokeep.MemStore
             APIObject output = null;
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (!apis.TryGetValue(identifier, out output))
                     {
                         output = null;
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -79,10 +79,10 @@ namespace Chronokeep.MemStore
             database.RemoveAPI(identifier);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     apis.Remove(identifier);
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -98,7 +98,7 @@ namespace Chronokeep.MemStore
             database.UpdateAPI(anAPI);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (apis.TryGetValue(anAPI.Identifier, out APIObject api))
                     {
@@ -112,7 +112,7 @@ namespace Chronokeep.MemStore
                     {
                         apis[anAPI.Identifier] = anAPI;
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

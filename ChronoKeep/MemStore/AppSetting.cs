@@ -1,7 +1,4 @@
-﻿using Chronokeep.Objects;
-using System.Collections.Generic;
-using System;
-using DocumentFormat.OpenXml.Wordprocessing;
+﻿using System;
 
 namespace Chronokeep.MemStore
 {
@@ -17,10 +14,10 @@ namespace Chronokeep.MemStore
             AppSetting output = null;
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     settings.TryGetValue(name, out output);
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
                 return output;
             }
@@ -37,10 +34,10 @@ namespace Chronokeep.MemStore
             database.SetAppSetting(name, value);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     settings[name] = new() { Name = name, Value = value };
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -56,10 +53,10 @@ namespace Chronokeep.MemStore
             database.SetAppSetting(setting);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     settings[setting.Name] = setting;
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

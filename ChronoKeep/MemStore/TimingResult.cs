@@ -16,7 +16,7 @@ namespace Chronokeep.MemStore
             database.AddTimingResult(tr);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     string bib = "";
                     if (participants.TryGetValue(tr.EventSpecificId, out Participant p))
@@ -55,7 +55,7 @@ namespace Chronokeep.MemStore
                         theEvent
                         );
                     timingResults[(tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId)] = tr;
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -71,7 +71,7 @@ namespace Chronokeep.MemStore
             database.AddTimingResults(results);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (TimeResult tr in results)
                     {
@@ -113,7 +113,7 @@ namespace Chronokeep.MemStore
                             );
                         timingResults[(tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId)] = tr;
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -129,7 +129,7 @@ namespace Chronokeep.MemStore
             List<TimeResult> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -141,7 +141,7 @@ namespace Chronokeep.MemStore
                             }
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -164,7 +164,7 @@ namespace Chronokeep.MemStore
             List<TimeResult> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -185,7 +185,7 @@ namespace Chronokeep.MemStore
                         }
                         output.AddRange(trDict.Values);
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -202,7 +202,7 @@ namespace Chronokeep.MemStore
             List<TimeResult> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -214,7 +214,7 @@ namespace Chronokeep.MemStore
                             }
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -237,13 +237,13 @@ namespace Chronokeep.MemStore
             List<TimeResult> output = new();
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         output.AddRange(timingResults.Values);
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -260,10 +260,10 @@ namespace Chronokeep.MemStore
             database.RemoveTimingResult(tr);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     timingResults.Remove((tr.EventSpecificId, tr.LocationId, tr.Occurrence, tr.UnknownId));
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -279,7 +279,7 @@ namespace Chronokeep.MemStore
             database.SetUploadedTimingResults(results);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     foreach (TimeResult changed in results)
                     {
@@ -292,7 +292,7 @@ namespace Chronokeep.MemStore
                             }
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -308,7 +308,7 @@ namespace Chronokeep.MemStore
             bool output = false;
             try
             {
-                if (memStoreLock.TryEnterReadLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -321,7 +321,7 @@ namespace Chronokeep.MemStore
                             }
                         }
                     }
-                    memStoreLock.ExitReadLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -342,7 +342,7 @@ namespace Chronokeep.MemStore
             database.ResetTimingResultsEvent(eventId);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -359,7 +359,7 @@ namespace Chronokeep.MemStore
                             p.EventSpecific.Status = Constants.Timing.EVENTSPECIFIC_UNKNOWN;
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -375,7 +375,7 @@ namespace Chronokeep.MemStore
             database.ResetTimingResultsPlacements(eventId);
             try
             {
-                if (memStoreLock.TryEnterWriteLock(lockTimeout))
+                if (memStoreLock.WaitOne(lockTimeout))
                 {
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
@@ -388,7 +388,7 @@ namespace Chronokeep.MemStore
                             tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_FALSE;
                         }
                     }
-                    memStoreLock.ExitWriteLock();
+                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
