@@ -208,7 +208,7 @@ namespace Chronokeep.MemStore
                     {
                         foreach (TimeResult tr in timingResults.Values)
                         {
-                            if (tr.EventIdentifier == eventId && !tr.IsUploaded())
+                            if (tr.EventIdentifier == eventId && !tr.IsUploaded() && tr.DistanceName.Length > 0)
                             {
                                 output.Add(tr);
                             }
