@@ -52,11 +52,7 @@ namespace Chronokeep.Timing.API
 
         public static bool GrabMutex(int millisecondsTimeout)
         {
-            if (mut.WaitOne(millisecondsTimeout))
-            {
-                return true;
-            }
-            return false;
+            return mut.WaitOne(millisecondsTimeout);
         }
 
         public static void ReleaseMutex()
@@ -187,63 +183,67 @@ namespace Chronokeep.Timing.API
                             upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
                         }
                     }
-                    Log.D("API.APIController", "Attempting to upload " + upRes.Count.ToString() + " results.");
-                    int total = 0;
-                    int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
-                    AddResultsResponse response = null;
-                    for (int i = 0; i < loops; i += 1)
+                    if (GrabMutex(3000))
                     {
-                        Log.D("API.APIController", string.Format("Loop {0}", i));
-                        try
+                        Log.D("API.APIController", "Attempting to upload " + upRes.Count.ToString() + " results.");
+                        int total = 0;
+                        int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
+                        AddResultsResponse response = null;
+                        for (int i = 0; i < loops; i += 1)
                         {
-                            response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
+                            Log.D("API.APIController", string.Format("Loop {0}", i));
+                            try
+                            {
+                                response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
+                            }
+                            catch
+                            {
+                                // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
+                                Log.D("API.APIController", "Unable to handle API response. Loop " + i);
+                                this.Errors += 1;
+                                mainWindow.UpdateTimingFromController();
+                                loop_error = true;
+                                break;
+                            }
+                            if (response != null)
+                            {
+                                total += response.Count;
+                                Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
+                            }
                         }
-                        catch
+                        int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
+                        if (leftovers > 0 && !loop_error)
                         {
-                            // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
-                            Log.D("API.APIController", "Unable to handle API response. Loop " + i);
-                            this.Errors += 1;
-                            mainWindow.UpdateTimingFromController();
-                            loop_error = true;
-                            break;
+                            response = null;
+                            try
+                            {
+                                response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
+                            }
+                            catch
+                            {
+                                // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
+                                Log.D("API.APIController", "Unable to handle API response. Leftovers");
+                                this.Errors += 1;
+                                mainWindow.UpdateTimingFromController();
+                                loop_error = true;
+                            }
+                            if (response != null)
+                            {
+                                total += response.Count;
+                                Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
+                            }
+                            Log.D("API.APIController", "Upload finished. Count total: " + total);
                         }
-                        if (response != null)
+                        if (results.Count == total)
                         {
-                            total += response.Count;
-                            Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
+                            Log.D("API.APIController", "Count matches, updating records.");
+                            database.AddTimingResults(results);
                         }
-                    }
-                    int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
-                    if (leftovers > 0 && !loop_error)
-                    {
-                        response = null;
-                        try
+                        if (!loop_error)
                         {
-                            response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
+                            this.Errors = 0;
                         }
-                        catch
-                        {
-                            // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
-                            Log.D("API.APIController", "Unable to handle API response. Leftovers");
-                            this.Errors += 1;
-                            mainWindow.UpdateTimingFromController();
-                            loop_error = true;
-                        }
-                        if (response != null)
-                        {
-                            total += response.Count;
-                            Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
-                        }
-                        Log.D("API.APIController", "Upload finished. Count total: " + total);
-                    }
-                    if (results.Count == total)
-                    {
-                        Log.D("API.APIController", "Count matches, updating records.");
-                        database.AddTimingResults(results);
-                    }
-                    if (!loop_error)
-                    {
-                        this.Errors = 0;
+                        ReleaseMutex();
                     }
                     mainWindow.UpdateTimingFromController();
                 }

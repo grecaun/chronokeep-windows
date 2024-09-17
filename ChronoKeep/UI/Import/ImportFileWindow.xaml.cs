@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using Chronokeep.Timing.API;
 using Chronokeep.UI.Import;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -571,7 +572,11 @@ namespace Chronokeep
                 database.AddParticipants(importParticipants);
             });
             Log.D("ImportFileWindow", "All done with the import.");
-            database.ResetTimingResultsEvent(theEvent.Identifier);
+            if (APIController.GrabMutex(15000))
+            {
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                APIController.ReleaseMutex();
+            }
             window.NetworkClearResults();
             window.NotifyTimingWorker();
             this.Close();

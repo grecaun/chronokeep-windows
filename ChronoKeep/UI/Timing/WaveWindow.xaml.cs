@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.Timing.API;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -86,7 +87,11 @@ namespace Chronokeep.UI.Timing
             }
             if (update)
             {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
+                if (APIController.GrabMutex(15000))
+                {
+                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    APIController.ReleaseMutex();
+                }
                 window.UpdateTiming();
                 window.NotifyTimingWorker();
             }

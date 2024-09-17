@@ -619,7 +619,11 @@ namespace Chronokeep.UI.MainPages
             if (oldStartSeconds != theEvent.StartSeconds || oldStartMilliseconds != theEvent.StartMilliseconds)
             {
                 database.UpdateEvent(theEvent);
-                database.ResetTimingResultsEvent(theEvent.Identifier);
+                if (APIController.GrabMutex(15000))
+                {
+                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    APIController.ReleaseMutex();
+                }
                 UpdateView();
                 mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
@@ -776,6 +780,11 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             recalculateButton.Content = "Working...";
+            if (!APIController.GrabMutex(15000))
+            {
+                recalculateButton.Content = "Recalculate";
+                return;
+            }
             APIObject api = null;
             try
             {
@@ -786,11 +795,8 @@ namespace Chronokeep.UI.MainPages
             // Get the event id values. Exit if not valid.
             string[] event_ids = theEvent.API_Event_ID.Split(',');
             Log.D("UI.MainPages.TimingPage", "Event Id's found: " + event_ids.Length + " API is null? " + (api == null).ToString());
-            // Create a bool for checking if we've grabbed the APIController's mutex so we release it later
-            bool mutexGrabbed = false;
-            if (event_ids.Length == 2 && api != null && APIController.GrabMutex(15000))
+            if (event_ids.Length == 2 && api != null)
             {
-                mutexGrabbed = true;
                 try
                 {
                     Log.D("UI.MainPages.TimingPage", "Deleting results from API.");
@@ -819,10 +825,7 @@ namespace Chronokeep.UI.MainPages
             // the auto uploader to start uploading any more results so we don't upload
             // old results over our brand new results.
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            if (mutexGrabbed)
-            {
-                APIController.ReleaseMutex();
-            }
+            APIController.ReleaseMutex();
             UpdateView();
             mWindow.NetworkClearResults();
             mWindow.NotifyTimingWorker();
@@ -1155,52 +1158,56 @@ namespace Chronokeep.UI.MainPages
                     upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
                 }
             }
-            Log.D("UI.MainPages.TimingPage", "Attempting to upload " + upRes.Count.ToString() + " results.");
-            int total = 0;
-            int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
-            AddResultsResponse response;
-            for (int i = 0; i < loops; i += 1)
+            if (APIController.GrabMutex(3000))
             {
-                try
+                Log.D("UI.MainPages.TimingPage", "Attempting to upload " + upRes.Count.ToString() + " results.");
+                int total = 0;
+                int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
+                AddResultsResponse response;
+                for (int i = 0; i < loops; i += 1)
                 {
-                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
+                    try
+                    {
+                        response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
+                    }
+                    catch (APIException ex)
+                    {
+                        DialogBox.Show(ex.Message);
+                        ManualAPIButton.Content = "Manual Upload";
+                        return;
+                    }
+                    if (response != null)
+                    {
+                        total += response.Count;
+                        Log.D("UI.MainPages.TimingPage", "Total: " + total + " Count: " + response.Count);
+                    }
                 }
-                catch (APIException ex)
+                int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
+                if (leftovers > 0)
                 {
-                    DialogBox.Show(ex.Message);
-                    ManualAPIButton.Content = "Manual Upload";
-                    return;
+                    try
+                    {
+                        response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
+                    }
+                    catch (APIException ex)
+                    {
+                        DialogBox.Show(ex.Message);
+                        ManualAPIButton.Content = "Manual Upload";
+                        return;
+                    }
+                    if (response != null)
+                    {
+                        total += response.Count;
+                        Log.D("UI.MainPages.TimingPage", "Total: " + total + " Count: " + response.Count);
+                    }
+                    Log.D("UI.MainPages.TimingPage", "Upload finished. Count total: " + total);
                 }
-                if (response != null)
+                if (results.Count == total)
                 {
-                    total += response.Count;
-                    Log.D("UI.MainPages.TimingPage", "Total: " + total + " Count: " + response.Count);
+                    Log.D("UI.MainPages.TimingPage", "Count matches, updating records.");
+                    database.AddTimingResults(results);
                 }
-            }
-            int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
-            if (leftovers > 0)
-            {
-                try
-                {
-                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
-                }
-                catch (APIException ex)
-                {
-                    DialogBox.Show(ex.Message);
-                    ManualAPIButton.Content = "Manual Upload";
-                    return;
-                }
-                if (response != null)
-                {
-                    total += response.Count;
-                    Log.D("UI.MainPages.TimingPage", "Total: " + total + " Count: " + response.Count);
-                }
-                Log.D("UI.MainPages.TimingPage", "Upload finished. Count total: " + total);
-            }
-            if (results.Count == total)
-            {
-                Log.D("UI.MainPages.TimingPage", "Count matches, updating records.");
-                database.AddTimingResults(results);
+                APIController.ReleaseMutex();
             }
             ManualAPIButton.Content = "Manual Upload";
         }

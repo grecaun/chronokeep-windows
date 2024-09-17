@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Database.SQLite;
 using Chronokeep.Interfaces;
+using Chronokeep.Timing.API;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -233,7 +234,11 @@ namespace Chronokeep.UI.MainPages
             }
             if (UpdateTimingWorker || distancesChanged.Count > 0)
             {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
+                if (APIController.GrabMutex(15000))
+                {
+                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    APIController.ReleaseMutex();
+                }
                 mWindow.NotifyTimingWorker();
                 mWindow.UpdateRegistrationDistances();
                 mWindow.NetworkUpdateResults();

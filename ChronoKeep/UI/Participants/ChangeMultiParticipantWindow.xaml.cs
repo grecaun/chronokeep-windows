@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using Chronokeep.Timing.API;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -47,7 +48,11 @@ namespace Chronokeep.UI.Participants
                 part.EventSpecific.DistanceIdentifier = distanceId;
             }
             database.UpdateParticipants(toChange);
-            database.ResetTimingResultsEvent(theEvent.Identifier);
+            if (APIController.GrabMutex(15000))
+            {
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                APIController.ReleaseMutex();
+            }
             window.NotifyTimingWorker();
             this.Close();
         }

@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Chronokeep.UI.UIObjects;
+using Chronokeep.Timing.API;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -436,7 +437,11 @@ namespace Chronokeep.UI.MainPages
             }
             if (BibsChanged)
             {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
+                if (APIController.GrabMutex(15000))
+                {
+                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    APIController.ReleaseMutex();
+                }
                 mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
             }

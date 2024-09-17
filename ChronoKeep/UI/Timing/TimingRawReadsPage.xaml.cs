@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.Timing.API;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
 using System.Collections.Generic;
@@ -68,7 +69,11 @@ namespace Chronokeep.UI.Timing
                 newChipReads.Add(read);
             }
             database.SetChipReadStatuses(newChipReads);
-            database.ResetTimingResultsEvent(theEvent.Identifier);
+            if (APIController.GrabMutex(15000))
+            {
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                APIController.ReleaseMutex();
+            }
             if (parent is TimingPage)
             {
                 PrivateUpdateView();
@@ -206,7 +211,11 @@ namespace Chronokeep.UI.Timing
                         readsToDelete.Add(read);
                     }
                     database.DeleteChipReads(readsToDelete);
-                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    if (APIController.GrabMutex(15000))
+                    {
+                        database.ResetTimingResultsEvent(theEvent.Identifier);
+                        APIController.ReleaseMutex();
+                    }
                     if (parent is TimingPage)
                     {
                         PrivateUpdateView();
@@ -238,7 +247,11 @@ namespace Chronokeep.UI.Timing
                 newChipReads.Add(read);
             }
             database.SetChipReadStatuses(newChipReads);
-            database.ResetTimingResultsEvent(theEvent.Identifier);
+            if (APIController.GrabMutex(15000))
+            {
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                APIController.ReleaseMutex();
+            }
             if (parent is TimingPage)
             {
                 PrivateUpdateView();
@@ -269,7 +282,11 @@ namespace Chronokeep.UI.Timing
                 newChipReads.Add(read);
             }
             database.SetChipReadStatuses(newChipReads);
-            database.ResetTimingResultsEvent(theEvent.Identifier);
+            if (APIController.GrabMutex(15000))
+            {
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                APIController.ReleaseMutex();
+            }
             if (parent is TimingPage)
             {
                 PrivateUpdateView();

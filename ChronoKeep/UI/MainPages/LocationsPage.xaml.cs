@@ -1,6 +1,7 @@
 ﻿using Chronokeep.Database.SQLite;
 using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using Chronokeep.Timing.API;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -351,7 +352,11 @@ namespace Chronokeep.UI.MainPages
             if (UpdateTimingWorker)
             {
                 Log.D("UI.MainPages.LocationsPage", "Resetting results.");
-                database.ResetTimingResultsEvent(theEvent.Identifier);
+                if (APIController.GrabMutex(15000))
+                {
+                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    APIController.ReleaseMutex();
+                }
                 mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
             }

@@ -1,5 +1,4 @@
 ﻿using Chronokeep.Network.API;
-using Chronokeep.Objects;
 using Chronokeep.Objects.API;
 using Chronokeep.Objects.Notifications;
 using System.Collections.Generic;
@@ -20,8 +19,8 @@ namespace Chronokeep.Constants
         // keep track of banned emails
         public static HashSet<string> BannedEmails = new();
 
-        private static Regex phoneRegex = new Regex("^(?:\\+?1)?\\s*\\-?\\s*(?:\\d{3}|\\(\\d{3}\\))\\s*\\-?\\s*\\d{3}\\s*\\-?\\s*\\d{4}$");
-        private static Regex whitespace = new Regex("\\s+");
+        private static readonly Regex phoneRegex = new Regex("^(?:\\+?1)?\\s*\\-?\\s*(?:\\d{3}|\\(\\d{3}\\))\\s*\\-?\\s*\\d{3}\\s*\\-?\\s*\\d{4}$");
+        private static readonly Regex whitespace = new Regex("\\s+");
 
         public static async void UpdateBannedPhones()
         {

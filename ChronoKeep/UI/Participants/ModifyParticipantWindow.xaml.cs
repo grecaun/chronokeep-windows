@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using Chronokeep.Timing.API;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -449,7 +450,11 @@ namespace Chronokeep.UI.Participants
         {
             if (ParticipantChanged)
             {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
+                if (APIController.GrabMutex(15000))
+                {
+                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    APIController.ReleaseMutex();
+                }
                 if (window != null)
                 {
                     window.NotifyTimingWorker();

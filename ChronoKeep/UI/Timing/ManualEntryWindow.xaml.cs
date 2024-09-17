@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using Chronokeep.Timing.API;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -304,7 +305,11 @@ namespace Chronokeep.UI.Timing
             if (window != null) window.WindowFinalize(this);
             if (bibsAdded.Count > 0)
             {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
+                if (APIController.GrabMutex(15000))
+                {
+                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    APIController.ReleaseMutex();
+                }
                 window.NotifyTimingWorker();
             }
         }

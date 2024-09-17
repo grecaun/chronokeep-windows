@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Interfaces;
+using Chronokeep.Timing.API;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -92,7 +93,11 @@ namespace Chronokeep.UI.Timing
                 }
             }
             database.UpdateChipReads(chipReads);
-            database.ResetTimingResultsEvent(theEvent.Identifier);
+            if (APIController.GrabMutex(15000))
+            {
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                APIController.ReleaseMutex();
+            }
             parent.UpdateView();
             parent.NotifyTimingWorker();
             this.Close();

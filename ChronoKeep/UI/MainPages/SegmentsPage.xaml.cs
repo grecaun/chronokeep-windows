@@ -4,6 +4,7 @@ using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
 using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.Timing.API;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -241,7 +242,11 @@ namespace Chronokeep.UI.MainPages
             }
             if (UpdateTimingWorker)
             {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
+                if (APIController.GrabMutex(15000))
+                {
+                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    APIController.ReleaseMutex();
+                }
                 mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
             }
