@@ -429,7 +429,7 @@ namespace Chronokeep.UI.Participants
             else if (LastAgeGroup.TryGetValue(agDivId, out AgeGroup lGroup))
             {
                 output.EventSpecific.AgeGroupId = lGroup.GroupId;
-                output.EventSpecific.AgeGroupName = group.PrettyName();
+                output.EventSpecific.AgeGroupName = lGroup.PrettyName();
             }
             else
             {
