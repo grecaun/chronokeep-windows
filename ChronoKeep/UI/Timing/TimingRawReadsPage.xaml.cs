@@ -69,11 +69,9 @@ namespace Chronokeep.UI.Timing
                 newChipReads.Add(read);
             }
             database.SetChipReadStatuses(newChipReads);
-            if (APIController.GrabMutex(15000))
-            {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
-                APIController.ReleaseMutex();
-            }
+            APIController.SetUploadableFalse(15000);
+            database.ResetTimingResultsEvent(theEvent.Identifier);
+            APIController.SetUploadableTrue(15000);
             if (parent is TimingPage)
             {
                 PrivateUpdateView();
@@ -211,11 +209,9 @@ namespace Chronokeep.UI.Timing
                         readsToDelete.Add(read);
                     }
                     database.DeleteChipReads(readsToDelete);
-                    if (APIController.GrabMutex(15000))
-                    {
-                        database.ResetTimingResultsEvent(theEvent.Identifier);
-                        APIController.ReleaseMutex();
-                    }
+                    APIController.SetUploadableFalse(15000);
+                    database.ResetTimingResultsEvent(theEvent.Identifier);
+                    APIController.SetUploadableTrue(15000);
                     if (parent is TimingPage)
                     {
                         PrivateUpdateView();
@@ -247,11 +243,9 @@ namespace Chronokeep.UI.Timing
                 newChipReads.Add(read);
             }
             database.SetChipReadStatuses(newChipReads);
-            if (APIController.GrabMutex(15000))
-            {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
-                APIController.ReleaseMutex();
-            }
+            APIController.SetUploadableFalse(15000);
+            database.ResetTimingResultsEvent(theEvent.Identifier);
+            APIController.SetUploadableTrue(15000);
             if (parent is TimingPage)
             {
                 PrivateUpdateView();
@@ -282,11 +276,9 @@ namespace Chronokeep.UI.Timing
                 newChipReads.Add(read);
             }
             database.SetChipReadStatuses(newChipReads);
-            if (APIController.GrabMutex(15000))
-            {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
-                APIController.ReleaseMutex();
-            }
+            APIController.SetUploadableFalse(15000);
+            database.ResetTimingResultsEvent(theEvent.Identifier);
+            APIController.SetUploadableTrue(15000);
             if (parent is TimingPage)
             {
                 PrivateUpdateView();

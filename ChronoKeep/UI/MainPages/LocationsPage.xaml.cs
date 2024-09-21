@@ -352,11 +352,9 @@ namespace Chronokeep.UI.MainPages
             if (UpdateTimingWorker)
             {
                 Log.D("UI.MainPages.LocationsPage", "Resetting results.");
-                if (APIController.GrabMutex(15000))
-                {
-                    database.ResetTimingResultsEvent(theEvent.Identifier);
-                    APIController.ReleaseMutex();
-                }
+                APIController.SetUploadableFalse(15000);
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                APIController.SetUploadableTrue(15000);
                 mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
             }

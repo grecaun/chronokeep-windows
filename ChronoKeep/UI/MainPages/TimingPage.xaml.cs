@@ -619,11 +619,9 @@ namespace Chronokeep.UI.MainPages
             if (oldStartSeconds != theEvent.StartSeconds || oldStartMilliseconds != theEvent.StartMilliseconds)
             {
                 database.UpdateEvent(theEvent);
-                if (APIController.GrabMutex(15000))
-                {
-                    database.ResetTimingResultsEvent(theEvent.Identifier);
-                    APIController.ReleaseMutex();
-                }
+                APIController.SetUploadableFalse(15000);
+                database.ResetTimingResultsEvent(theEvent.Identifier);
+                APIController.SetUploadableTrue(15000);
                 UpdateView();
                 mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
@@ -780,11 +778,7 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             recalculateButton.Content = "Working...";
-            if (!APIController.GrabMutex(15000))
-            {
-                recalculateButton.Content = "Recalculate";
-                return;
-            }
+            APIController.SetUploadableFalse(15000);
             APIObject api = null;
             try
             {
@@ -825,7 +819,7 @@ namespace Chronokeep.UI.MainPages
             // the auto uploader to start uploading any more results so we don't upload
             // old results over our brand new results.
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            APIController.ReleaseMutex();
+            APIController.SetUploadableTrue(15000);
             UpdateView();
             mWindow.NetworkClearResults();
             mWindow.NotifyTimingWorker();
@@ -1158,7 +1152,7 @@ namespace Chronokeep.UI.MainPages
                     upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
                 }
             }
-            if (APIController.GrabMutex(3000))
+            if (APIController.GetUploadable(3000))
             {
                 Log.D("UI.MainPages.TimingPage", "Attempting to upload " + upRes.Count.ToString() + " results.");
                 int total = 0;
@@ -1207,7 +1201,6 @@ namespace Chronokeep.UI.MainPages
                     Log.D("UI.MainPages.TimingPage", "Count matches, updating records.");
                     database.AddTimingResults(results);
                 }
-                APIController.ReleaseMutex();
             }
             ManualAPIButton.Content = "Manual Upload";
         }

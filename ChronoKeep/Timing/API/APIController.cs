@@ -17,6 +17,7 @@ namespace Chronokeep.Timing.API
 
         private static readonly Mutex mut = new Mutex();
         private static readonly Semaphore waiter = new Semaphore(0, 1);
+        private static bool CanUpload = true;
         private static bool Running = false;
         private static bool KeepAlive = true;
 
@@ -50,14 +51,37 @@ namespace Chronokeep.Timing.API
             return response;
         }
 
-        public static bool GrabMutex(int millisecondsTimeout)
+        public static bool SetUploadableTrue(int millisecondsTimeout)
         {
-            return mut.WaitOne(millisecondsTimeout);
+            if (mut.WaitOne(millisecondsTimeout))
+            {
+                CanUpload = true;
+                mut.ReleaseMutex();
+                return true;
+            }
+            return false;
         }
 
-        public static void ReleaseMutex()
+        public static bool SetUploadableFalse(int millisecondsTimeout)
         {
-            mut.ReleaseMutex();
+            if (mut.WaitOne(millisecondsTimeout))
+            {
+                CanUpload = false;
+                mut.ReleaseMutex();
+                return true;
+            }
+            return false;
+        }
+
+        public static bool GetUploadable(int millisecondsTimeout)
+        {
+            bool output = false;
+            if (mut.WaitOne(millisecondsTimeout))
+            {
+                output = CanUpload;
+                mut.ReleaseMutex();
+            }
+            return output;
         }
 
         public static bool IsRunning()
@@ -183,7 +207,13 @@ namespace Chronokeep.Timing.API
                             upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
                         }
                     }
-                    if (GrabMutex(3000))
+                    bool upload = false;
+                    if (mut.WaitOne(3000))
+                    {
+                        upload = CanUpload;
+                        mut.ReleaseMutex();
+                    }
+                    if (upload)
                     {
                         Log.D("API.APIController", "Attempting to upload " + upRes.Count.ToString() + " results.");
                         int total = 0;
@@ -243,7 +273,6 @@ namespace Chronokeep.Timing.API
                         {
                             this.Errors = 0;
                         }
-                        ReleaseMutex();
                     }
                     mainWindow.UpdateTimingFromController();
                 }

@@ -572,11 +572,9 @@ namespace Chronokeep
                 database.AddParticipants(importParticipants);
             });
             Log.D("ImportFileWindow", "All done with the import.");
-            if (APIController.GrabMutex(15000))
-            {
-                database.ResetTimingResultsEvent(theEvent.Identifier);
-                APIController.ReleaseMutex();
-            }
+            APIController.SetUploadableFalse(15000);
+            database.ResetTimingResultsEvent(theEvent.Identifier);
+            APIController.SetUploadableTrue(15000);
             window.NetworkClearResults();
             window.NotifyTimingWorker();
             this.Close();
