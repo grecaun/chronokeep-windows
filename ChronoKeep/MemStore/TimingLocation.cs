@@ -100,8 +100,8 @@ namespace Chronokeep.MemStore
                         foreach (TimingLocation loc in locations.Values)
                         {
                             if (loc.Identifier != Constants.Timing.LOCATION_FINISH
-                                && loc.Identifier == Constants.Timing.LOCATION_START
-                                && loc.Identifier == Constants.Timing.LOCATION_ANNOUNCER)
+                                && loc.Identifier != Constants.Timing.LOCATION_START
+                                && loc.Identifier != Constants.Timing.LOCATION_ANNOUNCER)
                             {
                                 output.Add(loc);
                             }
