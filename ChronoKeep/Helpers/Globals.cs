@@ -1,4 +1,6 @@
 ﻿using Chronokeep.UI.UIObjects;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Chronokeep.Helpers
 {
@@ -22,6 +24,40 @@ namespace Chronokeep.Helpers
             {
                 DialogBox.Show("Something went wrong trying to get the announcer window.");
             }
+        }
+
+        private static readonly List<string> readerMessages = new();
+        private static readonly Mutex readerMessageMutex = new();
+
+        public static List<string> GetReaderMessages()
+        {
+            List<string> output = new();
+            if (readerMessageMutex.WaitOne(1000))
+            {
+                output.AddRange(readerMessages);
+                readerMessageMutex.ReleaseMutex();
+            }
+            return output;
+        }
+
+        public static void ClearReaderMessages()
+        {
+            if (readerMessageMutex.WaitOne(1000))
+            {
+                readerMessages.Clear();
+                readerMessageMutex.ReleaseMutex();
+            }
+        }
+
+        public static bool AddReaderMessage(string msg)
+        {
+            if (readerMessageMutex.WaitOne(1000))
+            {
+                readerMessages.Add(msg);
+                readerMessageMutex.ReleaseMutex();
+                return true;
+            }
+            return false;
         }
     }
 }

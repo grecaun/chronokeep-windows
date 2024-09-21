@@ -1023,7 +1023,7 @@ namespace Chronokeep.UI
                 }
                 else
                 {
-                    DialogBox.Show(PortalNotification.GetRemoteNotificationMessage(ReaderName, notification.Type));
+                    Globals.AddReaderMessage(PortalNotification.GetRemoteNotificationMessage(ReaderName, notification.Type));
                 }
             }));
         }

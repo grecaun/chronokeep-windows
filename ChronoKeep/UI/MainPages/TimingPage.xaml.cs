@@ -494,7 +494,17 @@ namespace Chronokeep.UI.MainPages
                     EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
                 }
             }
-
+            List<string> readerMsgs = Helpers.Globals.GetReaderMessages();
+            if (readerMsgs.Count > 0)
+            {
+                ReaderMessageButton.Visibility = Visibility.Visible;
+                ReaderMessageNumberBox.Value = readerMsgs.Count.ToString();
+            }
+            else
+            {
+                ReaderMessageButton.Visibility = Visibility.Collapsed;
+                ReaderMessageNumberBox.Value = 0.ToString();
+            }
             subPage.UpdateView();
         }
 
@@ -1528,6 +1538,11 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.TimingPage", "Changing button back and sending dialog box.");
             DialogBox.Show("Emails sent.");
             sendEmailsButton.Content = "Send Emails";
+        }
+
+        private void ReaderMessageButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private class AReaderBox : ListBoxItem
