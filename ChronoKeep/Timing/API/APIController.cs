@@ -17,9 +17,10 @@ namespace Chronokeep.Timing.API
 
         private static readonly Mutex mut = new Mutex();
         private static readonly Semaphore waiter = new Semaphore(0, 1);
-        private static bool CanUpload = true;
-        private static bool Running = false;
-        private static bool KeepAlive = true;
+        private static bool canUpload = true;
+        private static bool isUploading = false;
+        private static bool running = false;
+        private static bool keepAlive = true;
 
         public int Errors { get; private set; }
 
@@ -51,11 +52,111 @@ namespace Chronokeep.Timing.API
             return response;
         }
 
+        public static async Task UploadResults(
+            List<APIResult> upRes,
+            List<TimeResult> results,
+            APIObject api,
+            string[] event_ids,
+            IDBInterface database,
+            APIController controller,
+            IMainWindow mainWindow
+            )
+        {
+            Log.D("API.APIController", "Attempting to upload " + upRes.Count.ToString() + " results.");
+            if (mut.WaitOne(3000))
+            {
+                if (isUploading)
+                {
+                    mut.ReleaseMutex();
+                    return;
+                }
+                isUploading = true;
+                mut.ReleaseMutex();
+            }
+            else
+            {
+                throw new Exception("error grabbing mutex to signal start");
+            }
+            int total = 0;
+            int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
+            AddResultsResponse response = null;
+            bool loop_error = false;
+            for (int i = 0; i < loops; i += 1)
+            {
+                Log.D("API.APIController", string.Format("Loop {0}", i));
+                try
+                {
+                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
+                }
+                catch
+                {
+                    // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
+                    Log.D("API.APIController", "Unable to handle API response. Loop " + i);
+                    loop_error = true;
+                    if (controller != null)
+                    {
+                        controller.Errors += 1;
+                    }
+                    mainWindow?.UpdateTimingFromController();
+                    break;
+                }
+                if (response != null)
+                {
+                    total += response.Count;
+                    Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
+                }
+            }
+            int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
+            if (leftovers > 0 && !loop_error)
+            {
+                response = null;
+                try
+                {
+                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
+                }
+                catch
+                {
+                    // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
+                    Log.D("API.APIController", "Unable to handle API response. Leftovers");
+                    loop_error = true;
+                    if (controller != null)
+                    {
+                        controller.Errors += 1;
+                    }
+                    mainWindow?.UpdateTimingFromController();
+                }
+                if (response != null)
+                {
+                    total += response.Count;
+                    Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
+                }
+                Log.D("API.APIController", "Upload finished. Count total: " + total);
+            }
+            if (results.Count == total)
+            {
+                Log.D("API.APIController", "Count matches, updating records.");
+                database.AddTimingResults(results);
+            }
+            if (!loop_error && controller != null)
+            {
+                controller.Errors = 0;
+            }
+            if (mut.WaitOne(3000))
+            {
+                isUploading = false;
+                mut.ReleaseMutex();
+            }
+            else
+            {
+                throw new Exception("error grabbing mutex to signal completion");
+            }
+        }
+
         public static bool SetUploadableTrue(int millisecondsTimeout)
         {
             if (mut.WaitOne(millisecondsTimeout))
             {
-                CanUpload = true;
+                canUpload = true;
                 mut.ReleaseMutex();
                 return true;
             }
@@ -66,7 +167,7 @@ namespace Chronokeep.Timing.API
         {
             if (mut.WaitOne(millisecondsTimeout))
             {
-                CanUpload = false;
+                canUpload = false;
                 mut.ReleaseMutex();
                 return true;
             }
@@ -78,7 +179,18 @@ namespace Chronokeep.Timing.API
             bool output = false;
             if (mut.WaitOne(millisecondsTimeout))
             {
-                output = CanUpload;
+                output = canUpload;
+                mut.ReleaseMutex();
+            }
+            return output;
+        }
+
+        public static bool IsUploading()
+        {
+            bool output = true;
+            if (mut.WaitOne(3000))
+            {
+                output = isUploading;
                 mut.ReleaseMutex();
             }
             return output;
@@ -89,7 +201,7 @@ namespace Chronokeep.Timing.API
             bool output = false;
             if (mut.WaitOne(6000))
             {
-                output = Running;
+                output = running;
                 mut.ReleaseMutex();
             }
             return output;
@@ -100,7 +212,7 @@ namespace Chronokeep.Timing.API
             if (mut.WaitOne(6000))
             {
                 Log.D("API.APIController", "Shutting down API Auto Upload.");
-                KeepAlive = false;
+                keepAlive = false;
                 waiter.Release();
                 mut.ReleaseMutex();
             }
@@ -111,14 +223,14 @@ namespace Chronokeep.Timing.API
             Log.D("API.APIController", "API Controller is now running.");
             if (mut.WaitOne(6000))
             {
-                if (Running)
+                if (running)
                 {
                     Log.D("API.APIController", "API Controller thread is already running.");
                     mut.ReleaseMutex();
                     return;
                 }
-                Running = true;
-                KeepAlive = true;
+                running = true;
+                keepAlive = true;
                 mut.ReleaseMutex();
             }
             else
@@ -138,8 +250,8 @@ namespace Chronokeep.Timing.API
                 if (theEvent.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
                 {
                     Log.D("API.APIController", "Unable to find API information.");
-                    KeepAlive = false;
-                    Running = false;
+                    keepAlive = false;
+                    running = false;
                     mainWindow.UpdateTimingFromController();
                     return;
                 }
@@ -151,8 +263,8 @@ namespace Chronokeep.Timing.API
                 catch
                 {
                     Log.D("API.APIController", "Database doesn't contain information about the specified API.");
-                    KeepAlive = false;
-                    Running = false;
+                    keepAlive = false;
+                    running = false;
                     mainWindow.UpdateTimingFromController();
                     return;
                 }
@@ -161,8 +273,8 @@ namespace Chronokeep.Timing.API
                 if (event_ids.Length != 2)
                 {
                     Log.D("API.APIController", "Event ID values for API upload not valid.");
-                    KeepAlive = false;
-                    Running = false;
+                    keepAlive = false;
+                    running = false;
                     mainWindow.UpdateTimingFromController();
                     return;
                 }
@@ -210,69 +322,12 @@ namespace Chronokeep.Timing.API
                     bool upload = false;
                     if (mut.WaitOne(3000))
                     {
-                        upload = CanUpload;
+                        upload = canUpload;
                         mut.ReleaseMutex();
                     }
                     if (upload)
                     {
-                        Log.D("API.APIController", "Attempting to upload " + upRes.Count.ToString() + " results.");
-                        int total = 0;
-                        int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
-                        AddResultsResponse response = null;
-                        for (int i = 0; i < loops; i += 1)
-                        {
-                            Log.D("API.APIController", string.Format("Loop {0}", i));
-                            try
-                            {
-                                response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
-                            }
-                            catch
-                            {
-                                // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
-                                Log.D("API.APIController", "Unable to handle API response. Loop " + i);
-                                this.Errors += 1;
-                                mainWindow.UpdateTimingFromController();
-                                loop_error = true;
-                                break;
-                            }
-                            if (response != null)
-                            {
-                                total += response.Count;
-                                Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
-                            }
-                        }
-                        int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
-                        if (leftovers > 0 && !loop_error)
-                        {
-                            response = null;
-                            try
-                            {
-                                response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
-                            }
-                            catch
-                            {
-                                // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
-                                Log.D("API.APIController", "Unable to handle API response. Leftovers");
-                                this.Errors += 1;
-                                mainWindow.UpdateTimingFromController();
-                                loop_error = true;
-                            }
-                            if (response != null)
-                            {
-                                total += response.Count;
-                                Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
-                            }
-                            Log.D("API.APIController", "Upload finished. Count total: " + total);
-                        }
-                        if (results.Count == total)
-                        {
-                            Log.D("API.APIController", "Count matches, updating records.");
-                            database.AddTimingResults(results);
-                        }
-                        if (!loop_error)
-                        {
-                            this.Errors = 0;
-                        }
+                        await UploadResults(upRes, results, api, event_ids, database, this, mainWindow);
                     }
                     mainWindow.UpdateTimingFromController();
                 }
@@ -310,10 +365,10 @@ namespace Chronokeep.Timing.API
                 if (mut.WaitOne(6000))
                 {
                     Log.D("API.APIController", "Checking keep alive status.");
-                    if (!KeepAlive)
+                    if (!keepAlive)
                     {
                         Log.D("API.APIController", "Exiting API thread.");
-                        Running = false;
+                        running = false;
                         mut.ReleaseMutex();
                         mainWindow.UpdateTimingFromController();
                         return;
@@ -323,8 +378,8 @@ namespace Chronokeep.Timing.API
                 else
                 {
                     Log.D("API.APIController", "Error with API mutex.");
-                    KeepAlive = false;
-                    Running = false;
+                    keepAlive = false;
+                    running = false;
                     mainWindow.UpdateTimingFromController();
                     return;
                 }

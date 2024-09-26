@@ -789,6 +789,28 @@ namespace Chronokeep.UI.MainPages
             }
             recalculateButton.Content = "Working...";
             APIController.SetUploadableFalse(15000);
+            bool canRecalculate = await Task<bool>.Run(() =>
+            {
+                int counter = 0;
+                while (true)
+                {
+                    if (counter > 5)
+                    {
+                        return false;
+                    }
+                    if (!APIController.IsUploading())
+                    {
+                        return true;
+                    }
+                    Thread.Sleep(1000);
+                };
+            });
+            if (!canRecalculate)
+            {
+                APIController.SetUploadableTrue(15000);
+                recalculateButton.Content = "Recalculate";
+                return;
+            }
             APIObject api = null;
             try
             {
@@ -1164,53 +1186,7 @@ namespace Chronokeep.UI.MainPages
             }
             if (APIController.GetUploadable(3000))
             {
-                Log.D("UI.MainPages.TimingPage", "Attempting to upload " + upRes.Count.ToString() + " results.");
-                int total = 0;
-                int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
-                AddResultsResponse response;
-                for (int i = 0; i < loops; i += 1)
-                {
-                    try
-                    {
-                        response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
-                    }
-                    catch (APIException ex)
-                    {
-                        DialogBox.Show(ex.Message);
-                        ManualAPIButton.Content = "Manual Upload";
-                        return;
-                    }
-                    if (response != null)
-                    {
-                        total += response.Count;
-                        Log.D("UI.MainPages.TimingPage", "Total: " + total + " Count: " + response.Count);
-                    }
-                }
-                int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
-                if (leftovers > 0)
-                {
-                    try
-                    {
-                        response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
-                    }
-                    catch (APIException ex)
-                    {
-                        DialogBox.Show(ex.Message);
-                        ManualAPIButton.Content = "Manual Upload";
-                        return;
-                    }
-                    if (response != null)
-                    {
-                        total += response.Count;
-                        Log.D("UI.MainPages.TimingPage", "Total: " + total + " Count: " + response.Count);
-                    }
-                    Log.D("UI.MainPages.TimingPage", "Upload finished. Count total: " + total);
-                }
-                if (results.Count == total)
-                {
-                    Log.D("UI.MainPages.TimingPage", "Count matches, updating records.");
-                    database.AddTimingResults(results);
-                }
+                await APIController.UploadResults(upRes, results, api, event_ids, database, null, null);
             }
             ManualAPIButton.Content = "Manual Upload";
         }
