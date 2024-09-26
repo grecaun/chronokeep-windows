@@ -67,8 +67,9 @@ namespace Chronokeep.MemStore
                                 allstats.DNS += 1;
                             }
                         }
-                        output.Add(allstats);
                         output.AddRange(distStatDict.Values);
+                        output.Sort((x1, x2) => x1.DistanceName.CompareTo(x2.DistanceName));
+                        output.Insert(0, allstats);
                     }
                     memStoreLock.ReleaseMutex();
                 }
