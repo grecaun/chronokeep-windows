@@ -320,5 +320,10 @@ namespace Chronokeep.UI.Timing
             updateListView.SelectedItem = null;
             Log.D("UI.Timing.TimingRawReadsPage", "We're at the bottom.");
         }
+
+        private void updateListView_ScrollChanged(object sender, System.Windows.Controls.ScrollChangedEventArgs e)
+        {
+            labelsViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
+        }
     }
 }

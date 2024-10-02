@@ -231,5 +231,10 @@ namespace Chronokeep.UI.Timing
             ModifyParticipantWindow modifyParticipant = new ModifyParticipantWindow(parent, database, selected.EventSpecificId, selected.Bib);
             modifyParticipant.ShowDialog();
         }
+
+        private void updateListView_ScrollChanged(object sender, System.Windows.Controls.ScrollChangedEventArgs e)
+        {
+            labelsViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
+        }
     }
 }

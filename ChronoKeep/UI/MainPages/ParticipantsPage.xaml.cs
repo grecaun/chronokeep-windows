@@ -830,5 +830,10 @@ namespace Chronokeep.UI.MainPages
             }
             Log.D("UI.MainPages.ParticipantsPage", "Already downloading.");
         }
+
+        private void ParticipantsList_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            labelsViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
+        }
     }
 }

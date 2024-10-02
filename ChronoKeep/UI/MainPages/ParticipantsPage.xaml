@@ -224,7 +224,7 @@
                 </StackPanel>
             </Expander>
         </StackPanel>
-        <Grid>
+        <Grid Grid.Column="0">
             <Grid.Resources>
                 <Style TargetType="ListViewItem" x:Key="alternatingStyle">
                     <Style.Triggers>
@@ -238,41 +238,50 @@
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0" Margin="4,3,4,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="45" />     <!-- Bib -->
-                    <ColumnDefinition Width="125" />    <!-- Distance -->
-                    <ColumnDefinition Width="100" />    <!-- First -->
-                    <ColumnDefinition Width="175" />    <!-- Last -->
-                    <ColumnDefinition Width="75" />     <!-- Gender -->
-                    <ColumnDefinition Width="100" />    <!-- Birthday -->
-                    <ColumnDefinition Width="120" />    <!-- Phone -->
-                    <ColumnDefinition Width="120" />    <!-- Mobile -->
-                    <ColumnDefinition Width="150" />    <!-- EC Name -->
-                    <ColumnDefinition Width="150" />    <!-- EC Phone -->
-                    <ColumnDefinition Width="35" />     <!-- Anon -->
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Bib"/>
-                <TextBlock Grid.Column="1" Text="Distance"/>
-                <TextBlock Grid.Column="2" Text="First"/>
-                <TextBlock Grid.Column="3" Text="Last"/>
-                <TextBlock Grid.Column="4" Text="Gender"/>
-                <TextBlock Grid.Column="5" Text="Birthday"/>
-                <TextBlock Grid.Column="6" Text="Phone"/>
-                <TextBlock Grid.Column="7" Text="Mobile"/>
-                <TextBlock Grid.Column="8" Text="EC Name"/>
-                <TextBlock Grid.Column="9" Text="EC Phone"/>
-                <TextBlock Grid.Column="10" Text="Anon"/>
-            </Grid>
+            <ScrollViewer
+                x:Name="labelsViewer"
+                Grid.Row="0"
+                Margin="0,0,0,0"
+                CanContentScroll="False"
+                HorizontalScrollBarVisibility="Hidden"
+                VerticalScrollBarVisibility="Disabled"
+                >
+                <Grid Grid.Row="0" Margin="7,3,7,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="45" />   <!-- Bib -->
+                        <ColumnDefinition Width="125" />  <!-- Distance -->
+                        <ColumnDefinition Width="100" />  <!-- First -->
+                        <ColumnDefinition Width="175" />  <!-- Last -->
+                        <ColumnDefinition Width="75" />   <!-- Gender -->
+                        <ColumnDefinition Width="100" />  <!-- Birthday -->
+                        <ColumnDefinition Width="120" />  <!-- Phone -->
+                        <ColumnDefinition Width="120" />  <!-- Mobile -->
+                        <ColumnDefinition Width="150" />  <!-- EC Name -->
+                        <ColumnDefinition Width="150" />  <!-- EC Phone -->
+                        <ColumnDefinition Width="35" />   <!-- Anon -->
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Bib"/>
+                    <TextBlock Grid.Column="1" Text="Distance"/>
+                    <TextBlock Grid.Column="2" Text="First"/>
+                    <TextBlock Grid.Column="3" Text="Last"/>
+                    <TextBlock Grid.Column="4" Text="Gender"/>
+                    <TextBlock Grid.Column="5" Text="Birthday"/>
+                    <TextBlock Grid.Column="6" Text="Phone"/>
+                    <TextBlock Grid.Column="7" Text="Mobile"/>
+                    <TextBlock Grid.Column="8" Text="EC Name"/>
+                    <TextBlock Grid.Column="9" Text="EC Phone"/>
+                    <TextBlock Grid.Column="10" Text="Anon"/>
+                </Grid>
+            </ScrollViewer>
             <ListView 
-                Name="ParticipantsList" 
-                VerticalAlignment="Stretch"
-                HorizontalAlignment="Stretch"
+                Name="ParticipantsList"
                 SelectionMode="Extended"
                 Loaded="ParticipantsList_Loaded"
                 MouseDoubleClick="ParticipantsList_MouseDoubleClick"
                 ScrollViewer.CanContentScroll="True"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                ScrollViewer.ScrollChanged="ParticipantsList_ScrollChanged"    
                 Grid.Row="1"
                 AlternationCount="2"
                 ItemContainerStyle="{StaticResource alternatingStyle}"
@@ -281,17 +290,17 @@
                     <DataTemplate>
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="45" />     <!-- Bib -->
-                                <ColumnDefinition Width="125" />    <!-- Distance -->
-                                <ColumnDefinition Width="100" />    <!-- First -->
-                                <ColumnDefinition Width="175" />    <!-- Last -->
-                                <ColumnDefinition Width="75" />     <!-- Gender -->
-                                <ColumnDefinition Width="100" />    <!-- Birthday -->
-                                <ColumnDefinition Width="120" />    <!-- Phone -->
-                                <ColumnDefinition Width="120" />    <!-- Mobile -->
-                                <ColumnDefinition Width="150" />    <!-- EC Name -->
-                                <ColumnDefinition Width="150" />    <!-- EC Phone -->
-                                <ColumnDefinition Width="35" />     <!-- Anon -->
+                                <ColumnDefinition Width="45" />  <!-- Bib -->
+                                <ColumnDefinition Width="125" /> <!-- Distance -->
+                                <ColumnDefinition Width="100" /> <!-- First -->
+                                <ColumnDefinition Width="175" /> <!-- Last -->
+                                <ColumnDefinition Width="75" />  <!-- Gender -->
+                                <ColumnDefinition Width="100" /> <!-- Birthday -->
+                                <ColumnDefinition Width="120" /> <!-- Phone -->
+                                <ColumnDefinition Width="120" /> <!-- Mobile -->
+                                <ColumnDefinition Width="150" /> <!-- EC Name -->
+                                <ColumnDefinition Width="150" /> <!-- EC Phone -->
+                                <ColumnDefinition Width="35" />  <!-- Anon -->
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{Binding Bib}"/>
                             <TextBlock Grid.Column="1" Text="{Binding Distance}"/>
