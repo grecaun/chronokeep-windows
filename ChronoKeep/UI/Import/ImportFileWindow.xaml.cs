@@ -92,6 +92,7 @@ namespace Chronokeep
          */
         List<Participant> existingParticipants;
         List<Participant> importParticipants;
+        List<Participant> updatedParticipants = new List<Participant>();
         List<Participant> existingToRemoveParticipants = new List<Participant>();
 
         private ImportFileWindow(IMainWindow window, IDataImporter importer, IDBInterface database)
@@ -177,7 +178,15 @@ namespace Chronokeep
                 else
                 {
                     Log.D("ImportFileWindow", "No repeat headers found.");
-                    StartImport(((ImportFilePage1)page1).GetListBoxItems());
+                    try
+                    {
+                        StartImport(((ImportFilePage1)page1).GetListBoxItems());
+                    }
+                    catch
+                    {
+                        DialogBox.Show("Error importing participant data. Please check the file.");
+                        Close();
+                    }
                 }
             }
             else if (page2 != null)
@@ -462,10 +471,19 @@ namespace Chronokeep
                         {
                             // check if its someone who's already in the database thus we don't need to add to multiples and
                             // we can remove them from the import
-                            if (importParticipants[inner].Bib == part.Bib 
+                            if ((importParticipants[inner].Bib == part.Bib || importParticipants[inner].Bib.Length < 1 && part.Bib.Length > 0)
                                 && importParticipants[inner].Distance.Equals(part.Distance, StringComparison.OrdinalIgnoreCase))
                             {
+                                // bib remains the same or isn't set in new import
                                 duplicatesImport.Add(importParticipants[inner]);
+                            }
+                            else if (importParticipants[inner].Bib.Length > 0 && part.Bib.Length < 1
+                                && importParticipants[inner].Distance.Equals(part.Distance, StringComparison.OrdinalIgnoreCase))
+                            {
+                                // bib is an update, add to duplicates so we don't add it again,
+                                // then add to list of participants to update
+                                duplicatesImport.Add(importParticipants[inner]);
+                                updatedParticipants.Add(importParticipants[inner]);
                             }
                             else
                             {
@@ -523,7 +541,8 @@ namespace Chronokeep
                 }
                 foreach (Participant import in importParticipants)
                 {
-                    if (ExistingParticipants.ContainsKey(import.Bib))
+                    // this is checking for bib repeats, so check if we're actually checking a specified bib
+                    if (import.Bib.Trim().Length > 0 && ExistingParticipants.ContainsKey(import.Bib))
                     {
                         if (!ExistingParticipants[import.Bib].Is(import))
                         {
@@ -568,6 +587,8 @@ namespace Chronokeep
                 importParticipants.RemoveAll(x => toRemove.Contains(x));
                 Log.D("ImportFileWindow", "Removing old participants we were told to.");
                 database.RemoveParticipantEntries(existingToRemoveParticipants);
+                Log.D("ImportFileWindow", "Updating participants.");
+                database.UpdateParticipants(updatedParticipants);
                 Log.D("ImportFileWindow", "Adding new participants.");
                 database.AddParticipants(importParticipants);
             });
