@@ -561,7 +561,7 @@ namespace Chronokeep.UI
             // Let the announcer window know that it has new information.
             Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
-                if (announcerWindow != null) announcerWindow.UpdateView();
+                announcerWindow?.UpdateView();
             }));
         }
 
@@ -574,10 +574,6 @@ namespace Chronokeep.UI
                 {
                     page.UpdateView();
                 }
-                if (announcerWindow != null)
-                {
-                    announcerWindow.UpdateTiming();
-                }
             }));
         }
 
@@ -589,10 +585,7 @@ namespace Chronokeep.UI
                 {
                     page.UpdateView();
                 }
-                if (announcerWindow != null)
-                {
-                    announcerWindow.UpdateTiming();
-                }
+                announcerWindow?.UpdateTiming();
             }
         }
 
@@ -671,7 +664,7 @@ namespace Chronokeep.UI
                 TimingController.ConnectTimingSystem(system);
             });
             UpdateTiming();
-            if (announcerWindow != null) announcerWindow.UpdateView();
+            announcerWindow?.UpdateView();
             await Task.Run(() =>
             {
                 if (!TimingController.IsRunning())
@@ -689,7 +682,7 @@ namespace Chronokeep.UI
                 TimingController.DisconnectTimingSystem(system);
             });
             UpdateTiming();
-            if (announcerWindow != null) announcerWindow.UpdateView();
+            announcerWindow?.UpdateView();
         }
 
         public void ShutdownTimingController()
@@ -716,7 +709,7 @@ namespace Chronokeep.UI
                 }
                 system.Status = SYSTEM_STATUS.DISCONNECTED;
                 UpdateTiming();
-                if (announcerWindow != null) announcerWindow.UpdateView();
+                announcerWindow?.UpdateView();
             }));
         }
 

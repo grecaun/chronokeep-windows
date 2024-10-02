@@ -53,6 +53,8 @@ namespace Chronokeep.UI.MainPages
         private SetTimeWindow timeWindow = null;
         private RewindWindow rewindWindow = null;
 
+        private static bool alreadyRecalculating = false;
+
         ObservableCollection<DistanceStat> stats = new ObservableCollection<DistanceStat>();
 
         int total = 4, connected = 0;
@@ -283,6 +285,15 @@ namespace Chronokeep.UI.MainPages
                     break;
                 }
             }
+
+            if (alreadyRecalculating)
+            {
+                recalculateButton.Content = "Working...";
+            }
+            else
+            {
+                recalculateButton.Content = "Recalculate";
+            }
         }
 
         public void Keyboard_Ctrl_A() { }
@@ -506,6 +517,14 @@ namespace Chronokeep.UI.MainPages
                 ReaderMessageNumberBox.Value = 0.ToString();
             }
             subPage.UpdateView();
+            if (alreadyRecalculating)
+            {
+                recalculateButton.Content = "Working...";
+            }
+            else
+            {
+                recalculateButton.Content = "Recalculate";
+            }
         }
 
         public void UpdateSubView()
@@ -783,11 +802,12 @@ namespace Chronokeep.UI.MainPages
         private async void Recalculate_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Recalculate results clicked.");
-            if ((string)recalculateButton.Content == "Working...")
+            if ((string)recalculateButton.Content == "Working..." || alreadyRecalculating)
             {
                 return;
             }
             recalculateButton.Content = "Working...";
+            alreadyRecalculating = true;
             APIController.SetUploadableFalse(15000);
             bool canRecalculate = await Task<bool>.Run(() =>
             {
@@ -802,6 +822,8 @@ namespace Chronokeep.UI.MainPages
                     {
                         return true;
                     }
+                    counter++;
+                    //Log.D("UI.MainPages.TimingPage", "APIController is uploading. Sleeping for 1 second. Counter is " + counter.ToString());
                     Thread.Sleep(1000);
                 };
             });
@@ -809,6 +831,7 @@ namespace Chronokeep.UI.MainPages
             {
                 APIController.SetUploadableTrue(15000);
                 recalculateButton.Content = "Recalculate";
+                alreadyRecalculating = false;
                 return;
             }
             APIObject api = null;
@@ -852,10 +875,11 @@ namespace Chronokeep.UI.MainPages
             // old results over our brand new results.
             database.ResetTimingResultsEvent(theEvent.Identifier);
             APIController.SetUploadableTrue(15000);
+            recalculateButton.Content = "Recalculate";
+            alreadyRecalculating = false;
             UpdateView();
             mWindow.NetworkClearResults();
             mWindow.NotifyTimingWorker();
-            recalculateButton.Content = "Recalculate";
         }
 
         private void ViewOnlyBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -1111,14 +1135,18 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
-        private void ManualAPI_Click(object sender, RoutedEventArgs e)
+        private async void ManualAPI_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Manual API clicked.");
             if (ManualAPIButton.Content.ToString() != "Uploading")
             {
                 Log.D("UI.MainPages.TimingPage", "Uploading data.");
                 ManualAPIButton.Content = "Uploading";
-                UploadResults();
+                await Task.Run(() =>
+                {
+                    UploadResults();
+                });
+                ManualAPIButton.Content = "Manual Upload";
                 return;
             }
             Log.D("UI.MainPages.TimingPage", "Already uploading.");
@@ -1129,14 +1157,12 @@ namespace Chronokeep.UI.MainPages
             // Get API to upload.
             if (theEvent.API_ID < 0 && theEvent.API_Event_ID.Length > 1)
             {
-                ManualAPIButton.Content = "Manual Upload";
                 return;
             }
             APIObject api = database.GetAPI(theEvent.API_ID);
             string[] event_ids = theEvent.API_Event_ID.Split(',');
             if (event_ids.Length != 2)
             {
-                ManualAPIButton.Content = "Manual Upload";
                 return;
             }
             // Get results to upload.
@@ -1149,7 +1175,6 @@ namespace Chronokeep.UI.MainPages
             if (results.Count < 1)
             {
                 Log.D("UI.MainPages.TimingPage", "Nothing to upload.");
-                ManualAPIButton.Content = "Manual Upload";
                 return;
             }
             // Change TimeResults to APIResults
@@ -1188,7 +1213,6 @@ namespace Chronokeep.UI.MainPages
             {
                 await APIController.UploadResults(upRes, results, api, event_ids, database, null, null);
             }
-            ManualAPIButton.Content = "Manual Upload";
         }
 
         private void SaveLog(object sender, RoutedEventArgs e)

@@ -97,7 +97,7 @@ namespace Chronokeep.Timing.API
                     {
                         controller.Errors += 1;
                     }
-                    mainWindow?.UpdateTimingFromController();
+                    mainWindow?.UpdateTiming();
                     break;
                 }
                 if (response != null)
@@ -123,7 +123,7 @@ namespace Chronokeep.Timing.API
                     {
                         controller.Errors += 1;
                     }
-                    mainWindow?.UpdateTimingFromController();
+                    mainWindow?.UpdateTiming();
                 }
                 if (response != null)
                 {
@@ -238,12 +238,10 @@ namespace Chronokeep.Timing.API
                 Log.D("API.APIController", "Unable to acquire mutex.");
                 return;
             }
-            mainWindow.UpdateTimingFromController();
+            mainWindow.UpdateTiming();
             // keep looping until told to stop
             while (true)
             {
-                // Boolean for tracking errors to abort current loot.
-                bool loop_error = false;
                 // Start upload of data to API.
                 Event theEvent = database.GetCurrentEvent();
                 // Get API to upload. Exit if not found
@@ -252,7 +250,7 @@ namespace Chronokeep.Timing.API
                     Log.D("API.APIController", "Unable to find API information.");
                     keepAlive = false;
                     running = false;
-                    mainWindow.UpdateTimingFromController();
+                    mainWindow.UpdateTiming();
                     return;
                 }
                 APIObject api;
@@ -265,7 +263,7 @@ namespace Chronokeep.Timing.API
                     Log.D("API.APIController", "Database doesn't contain information about the specified API.");
                     keepAlive = false;
                     running = false;
-                    mainWindow.UpdateTimingFromController();
+                    mainWindow.UpdateTiming();
                     return;
                 }
                 // Get the event id values. Exit if not valid.
@@ -275,7 +273,7 @@ namespace Chronokeep.Timing.API
                     Log.D("API.APIController", "Event ID values for API upload not valid.");
                     keepAlive = false;
                     running = false;
-                    mainWindow.UpdateTimingFromController();
+                    mainWindow.UpdateTiming();
                     return;
                 }
                 // Get results to upload.
@@ -286,7 +284,14 @@ namespace Chronokeep.Timing.API
                     && x.Status != Constants.Timing.TIMERESULT_STATUS_DNS
                     && x.SegmentId != Constants.Timing.SEGMENT_START);
                 Log.D("API.APIController", "Results count: " + results.Count.ToString());
-                if (results.Count > 0)
+                bool upload = false;
+                if (mut.WaitOne(3000))
+                {
+                    upload = canUpload;
+                    mut.ReleaseMutex();
+                }
+                //Log.D("Timing.API.APIController", "We are " + (!upload ? "not " : "") + "able to upload right now.");
+                if (results.Count > 0 && upload)
                 {
                     // Change TimeResults to APIResults
                     List<APIResult> upRes = new List<APIResult>();
@@ -319,17 +324,8 @@ namespace Chronokeep.Timing.API
                             upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
                         }
                     }
-                    bool upload = false;
-                    if (mut.WaitOne(3000))
-                    {
-                        upload = canUpload;
-                        mut.ReleaseMutex();
-                    }
-                    if (upload)
-                    {
-                        await UploadResults(upRes, results, api, event_ids, database, this, mainWindow);
-                    }
-                    mainWindow.UpdateTimingFromController();
+                    await UploadResults(upRes, results, api, event_ids, database, this, mainWindow);
+                    mainWindow.UpdateTiming();
                 }
                 else // KeepAlive check
                 {
@@ -346,7 +342,7 @@ namespace Chronokeep.Timing.API
                     {
                         Log.D("API.APIController", ex.Message);
                         this.Errors += 1;
-                        mainWindow.UpdateTimingFromController();
+                        mainWindow.UpdateTiming();
                     }
                 }
                 // Block with timeout on a semaphore
@@ -370,7 +366,7 @@ namespace Chronokeep.Timing.API
                         Log.D("API.APIController", "Exiting API thread.");
                         running = false;
                         mut.ReleaseMutex();
-                        mainWindow.UpdateTimingFromController();
+                        mainWindow.UpdateTiming();
                         return;
                     }
                     mut.ReleaseMutex();
@@ -380,7 +376,7 @@ namespace Chronokeep.Timing.API
                     Log.D("API.APIController", "Error with API mutex.");
                     keepAlive = false;
                     running = false;
-                    mainWindow.UpdateTimingFromController();
+                    mainWindow.UpdateTiming();
                     return;
                 }
             }
