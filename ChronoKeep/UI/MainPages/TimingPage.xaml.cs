@@ -674,10 +674,7 @@ namespace Chronokeep.UI.MainPages
 
         public void NewMessage()
         {
-            if (timeWindow != null)
-            {
-                timeWindow.UpdateTime();
-            }
+            timeWindow?.UpdateTime();
         }
 
         public void OpenTimeWindow(TimingSystem system)

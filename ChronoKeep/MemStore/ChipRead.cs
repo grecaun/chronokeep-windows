@@ -41,7 +41,7 @@ namespace Chronokeep.MemStore
                     {
                         read.LocationName = "";
                     }
-                    Dictionary<string, Participant> partDictionary = new Dictionary<string, Participant>();
+                    Dictionary<string, Participant> partDictionary = new();
                     foreach (Participant part in participants.Values)
                     {
                         if (part.Bib.Length > 0)

@@ -44,6 +44,16 @@ namespace Chronokeep.MemStore
                         output.EventSpecific.DistanceName = dist.Name;
                     }
                     participants[output.EventSpecific.Identifier] = output;
+                    if (output.Bib.Length > 0)
+                    {
+                        foreach (ChipRead read in chipReads.Values)
+                        {
+                            if (read.Bib.Equals(output.Bib))
+                            {
+                                read.Name = string.Format("{0} {1}", output.FirstName, output.LastName).Trim();
+                            }
+                        }
+                    }
                     memStoreLock.ReleaseMutex();
                 }
             }
@@ -59,6 +69,7 @@ namespace Chronokeep.MemStore
         {
             Log.D("MemStore", "AddParticipants");
             List<Participant> output = new();
+            Dictionary<string, List<ChipRead>> baseChipReads = new();
             try
             {
                 if (memStoreLock.WaitOne(lockTimeout))
@@ -87,6 +98,14 @@ namespace Chronokeep.MemStore
                         }
                     }
                     output.AddRange(database.AddParticipants(people));
+                    foreach (ChipRead read in chipReads.Values)
+                    {
+                        if (!baseChipReads.TryGetValue(read.Bib, out List<ChipRead> chipReadList))
+                        {
+                            chipReadList = new List<ChipRead>();
+                        }
+                        chipReadList.Add(read);
+                    }
                     foreach (Participant person in output)
                     {
                         if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
@@ -94,6 +113,13 @@ namespace Chronokeep.MemStore
                             person.EventSpecific.DistanceName = dist.Name;
                         }
                         participants[person.EventSpecific.Identifier] = person;
+                        if (baseChipReads.TryGetValue(person.Bib, out List<ChipRead> lChipReads))
+                        {
+                            foreach (ChipRead read in lChipReads)
+                            {
+                                read.Name = string.Format("{0} {1}", person.FirstName, person.LastName).Trim();
+                            }
+                        }
                     }
                     memStoreLock.ReleaseMutex();
                 }
@@ -445,12 +471,28 @@ namespace Chronokeep.MemStore
                     // This is one of the few functions that has a database call within the ReadWriteLock
                     // This is because we need to update the age group id before putting it in the database
                     database.UpdateParticipant(person);
+                    Dictionary<string, List<ChipRead>> baseChipReads = new();
+                    foreach (ChipRead read in chipReads.Values)
+                    {
+                        if (!baseChipReads.TryGetValue(read.Bib, out List<ChipRead> chipReadList))
+                        {
+                            chipReadList = new List<ChipRead>();
+                        }
+                        chipReadList.Add(read);
+                    }
                     if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
                     {
                         toUpdate.CopyFrom(person);
                         if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance dist))
                         {
                             toUpdate.EventSpecific.DistanceName = dist.Name;
+                        }
+                        if (toUpdate.Bib.Length > 0 && baseChipReads.TryGetValue(toUpdate.Bib, out List<ChipRead> lChipReads))
+                        {
+                            foreach (ChipRead read in lChipReads)
+                            {
+                                read.Name = string.Format("{0} {1}", toUpdate.FirstName, toUpdate.LastName).Trim();
+                            }
                         }
                     }
                     else
@@ -459,6 +501,13 @@ namespace Chronokeep.MemStore
                         if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
                         {
                             person.EventSpecific.DistanceName = dist.Name;
+                        }
+                        if (person.Bib.Length > 0 && baseChipReads.TryGetValue(person.Bib, out List<ChipRead> dChipReads))
+                        {
+                            foreach (ChipRead read in dChipReads)
+                            {
+                                read.Name = string.Format("{0} {1}", person.FirstName, person.LastName).Trim();
+                            }
                         }
                     }
                     memStoreLock.ReleaseMutex();
@@ -504,6 +553,15 @@ namespace Chronokeep.MemStore
                     // This is one of the few functions that has a database call within the ReadWriteLock
                     // This is because we need to update the age group id before putting it in the database
                     database.UpdateParticipants(parts);
+                    Dictionary<string, List<ChipRead>> baseChipReads = new();
+                    foreach (ChipRead read in chipReads.Values)
+                    {
+                        if (!baseChipReads.TryGetValue(read.Bib, out List<ChipRead> chipReadList))
+                        {
+                            chipReadList = new List<ChipRead>();
+                        }
+                        chipReadList.Add(read);
+                    }
                     foreach (Participant person in parts)
                     {
                         if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
@@ -513,6 +571,13 @@ namespace Chronokeep.MemStore
                             {
                                 toUpdate.EventSpecific.DistanceName = dist.Name;
                             }
+                            if (toUpdate.Bib.Length > 0 && baseChipReads.TryGetValue(toUpdate.Bib, out List<ChipRead> lChipReads))
+                            {
+                                foreach (ChipRead read in lChipReads)
+                                {
+                                    read.Name = string.Format("{0} {1}", toUpdate.FirstName, toUpdate.LastName).Trim();
+                                }
+                            }
                         }
                         else
                         {
@@ -520,6 +585,13 @@ namespace Chronokeep.MemStore
                             if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
                             {
                                 person.EventSpecific.DistanceName = dist.Name;
+                            }
+                            if (person.Bib.Length > 0 && baseChipReads.TryGetValue(person.Bib, out List<ChipRead> dChipReads))
+                            {
+                                foreach (ChipRead read in dChipReads)
+                                {
+                                    read.Name = string.Format("{0} {1}", person.FirstName, person.LastName).Trim();
+                                }
                             }
                         }
                     }

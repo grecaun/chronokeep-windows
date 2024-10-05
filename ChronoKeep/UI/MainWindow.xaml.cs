@@ -504,11 +504,12 @@ namespace Chronokeep.UI
             TimingWorker.Notify();
             Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
-                if (page is TimingPage)
+                if (page is TimingPage timingPage)
                 {
-                    page.UpdateView();
-                    ((TimingPage)page).NewMessage();
+                    timingPage.UpdateView();
+                    timingPage.NewMessage();
                 }
+                announcerWindow?.UpdateView();
             }));
         }
 
