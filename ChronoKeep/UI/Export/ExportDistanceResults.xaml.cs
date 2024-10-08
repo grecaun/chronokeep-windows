@@ -624,7 +624,7 @@ namespace Chronokeep.UI.Export
                     {
                         status = 2;
                     }
-                    else if (Constants.Timing.DISTANCE_TYPE_UNOFFICIAL == result.Type || Constants.Timing.DISTANCE_TYPE_EARLY == result.Type)
+                    else if (Constants.Timing.DISTANCE_TYPE_UNOFFICIAL == result.Type)
                     {
                         status = 4;
                     }
