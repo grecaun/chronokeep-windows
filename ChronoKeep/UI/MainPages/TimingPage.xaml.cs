@@ -461,7 +461,7 @@ namespace Chronokeep.UI.MainPages
             UpdateDNSButton();
 
             // Check if there are waves we don't know about and only update the box if so.
-            HashSet<int> newWaves = new HashSet<int>();
+            HashSet<int> newWaves = new();
             foreach (Distance div in database.GetDistances(theEvent.Identifier))
             {
                 newWaves.Add(div.Wave);
@@ -555,10 +555,10 @@ namespace Chronokeep.UI.MainPages
         private void Timer_Click(object sender, EventArgs e)
         {
             TimeSpan ellapsed = DateTime.Now - startTime;
-            if (selectedWave != -1 && waveTimes.ContainsKey(selectedWave))
+            if (waveTimes.TryGetValue(selectedWave, out (long seconds, int milliseconds) value))
             {
-                ellapsed = ellapsed.Subtract(TimeSpan.FromSeconds(waveTimes[selectedWave].seconds));
-                ellapsed = ellapsed.Subtract(TimeSpan.FromMilliseconds(waveTimes[selectedWave].milliseconds));
+                ellapsed = ellapsed.Subtract(TimeSpan.FromSeconds(value.seconds));
+                ellapsed = ellapsed.Subtract(TimeSpan.FromMilliseconds(value.milliseconds));
             }
             EllapsedTime.Text = string.Format("{0:D2}:{1:D2}:{2:D2}", Math.Abs(ellapsed.Days) * 24 + Math.Abs(ellapsed.Hours), Math.Abs(ellapsed.Minutes), Math.Abs(ellapsed.Seconds));
         }
@@ -829,6 +829,7 @@ namespace Chronokeep.UI.MainPages
                 APIController.SetUploadableTrue(15000);
                 recalculateButton.Content = "Recalculate";
                 alreadyRecalculating = false;
+                DialogBox.Show("Unable to recalculate results.");
                 return;
             }
             APIObject api = null;
@@ -1434,7 +1435,7 @@ namespace Chronokeep.UI.MainPages
         {
             Log.D("UI.MainPages.TimingPage", "EllapsedRelativeToBox selection changed.");
             selectedWave = -1;
-            if (EllapsedRelativeToBox.SelectedIndex > 0)
+            if (EllapsedRelativeToBox.SelectedIndex >= 0)
             {
                 try
                 {

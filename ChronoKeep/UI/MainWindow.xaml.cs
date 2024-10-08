@@ -768,10 +768,7 @@ namespace Chronokeep.UI
 
         public void NetworkUpdateResults()
         {
-            if (httpServer != null)
-            {
-                httpServer.UpdateInformation();
-            }
+            httpServer?.UpdateInformation();
         }
 
         public void NetworkAddResults()

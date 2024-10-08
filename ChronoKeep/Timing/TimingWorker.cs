@@ -578,6 +578,7 @@ namespace Chronokeep.Timing
                             NewResults = true;
                             ResultsMutex.ReleaseMutex();
                         }
+                        window.UpdateTiming();
                     }
                 }
             } while (true);
