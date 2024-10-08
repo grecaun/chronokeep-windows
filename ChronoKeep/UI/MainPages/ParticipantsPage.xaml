@@ -17,169 +17,174 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="200"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="1">
-            <Button
-                Name="ImportExcel"
-                Content="Import"
-                FontSize="14"
-                Height="35"
-                Margin="10,10,10,5"
-                Click="Import_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <Button
-                Name="Export"
-                Content="Export"
-                FontSize="14" 
-                Height="35"
-                Margin="10,0,10,0"
-                Click="Export_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <StackPanel
-                x:Name="apiPanel"
-                Visibility="Collapsed"
-                >
-                <TextBlock 
-                    Text="API Commands"
-                    FontSize="16" 
-                    VerticalAlignment="Center"
+        <ScrollViewer
+            Grid.Column="1"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto"
+            >
+            <StackPanel>
+                <Button
+                    Name="ImportExcel"
+                    Content="Import"
+                    FontSize="14"
+                    Height="35"
+                    Margin="10,10,10,5"
+                    Click="Import_Click"
+                    HorizontalAlignment="Stretch"
+                    />
+                <Button
+                    Name="Export"
+                    Content="Export"
+                    FontSize="14" 
+                    Height="35"
+                    Margin="10,0,10,0"
+                    Click="Export_Click"
+                    HorizontalAlignment="Stretch"
+                    />
+                <StackPanel
+                    x:Name="apiPanel"
+                    Visibility="Collapsed"
+                    >
+                    <TextBlock 
+                        Text="API Commands"
+                        FontSize="16" 
+                        VerticalAlignment="Center"
+                        TextAlignment="Center"
+                        Margin="5,10,5,0"
+                        Padding="0,0,0,0"
+                        />
+                    <Button 
+                        Name="Upload" 
+                        Content="Upload" 
+                        FontSize="14" 
+                        Height="35" 
+                        Margin="10,5,10,5"
+                        Click="Upload_Click" 
+                        HorizontalAlignment="Stretch"
+                        />
+                    <Button 
+                        Name="Download" 
+                        Content="Download" 
+                        FontSize="14" 
+                        Height="35" 
+                        Margin="10,5,10,5"
+                        Click="Download_Click" 
+                        HorizontalAlignment="Stretch"
+                        />
+                    <Button 
+                        Name="Delete"
+                        Content="Delete Uploaded"
+                        FontSize="14"
+                        Height="35"
+                        Margin="10,0,10,5"
+                        Click="Delete_Click"
+                        HorizontalAlignment="Stretch"
+                        />
+                </StackPanel>
+                <TextBlock
+                    Text="View"
+                    FontSize="16"
+                    Margin="10,5"
                     TextAlignment="Center"
-                    Margin="5,10,5,0"
-                    Padding="0,0,0,0"
+                    />
+                <DockPanel Name="DistanceBoxHolder" />
+                <ComboBox 
+                    Name="DistanceBox"
+                    FontSize="16"
+                    Margin="10,0,10,0"
+                    SelectionChanged="DistanceBox_SelectionChanged"
+                    />
+                <TextBlock 
+                    Text="Sort By"
+                    FontSize="16"
+                    Margin="10,5" 
+                    TextAlignment="Center"
+                    />
+                <ComboBox 
+                    Name="SortBox" 
+                    FontSize="16"
+                    Margin="10,0,10,5"
+                    SelectionChanged="SortBox_SelectionChanged" 
+                    SelectedIndex="0"
+                    >
+                    <ComboBoxItem Content="Distance" />
+                    <ComboBoxItem Content="Name" />
+                    <ComboBoxItem Content="Bib" />
+                </ComboBox>
+                <ui:AutoSuggestBox 
+                    Name="SearchBox"
+                    Margin="10,0,10,0"
+                    TextChanged="SearchBox_TextChanged"
+                    FontSize="16" 
+                    Height="45"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    PlaceholderText="Search"
                     />
                 <Button 
-                    Name="Upload" 
-                    Content="Upload" 
-                    FontSize="14" 
-                    Height="35" 
-                    Margin="10,5,10,5"
-                    Click="Upload_Click" 
+                    Name="Add"
+                    Content="Add" 
+                    FontSize="14"
+                    Height="35"
+                    Margin="10,10,10,5" 
+                    Click="Add_Click"
                     HorizontalAlignment="Stretch"
                     />
                 <Button 
-                    Name="Download" 
-                    Content="Download" 
+                    Name="Modify"
+                    Content="Modify" 
                     FontSize="14" 
                     Height="35" 
-                    Margin="10,5,10,5"
-                    Click="Download_Click" 
+                    Margin="10,0,10,5"
+                    Click="Modify_Click"
                     HorizontalAlignment="Stretch"
                     />
                 <Button 
-                    Name="Delete"
-                    Content="Delete Uploaded"
+                    Name="Remove" 
+                    Content="Remove" 
                     FontSize="14"
                     Height="35"
                     Margin="10,0,10,5"
-                    Click="Delete_Click"
+                    Click="Remove_Click"
                     HorizontalAlignment="Stretch"
                     />
-            </StackPanel>
-            <TextBlock
-                Text="View"
-                FontSize="16"
-                Margin="10,5"
-                TextAlignment="Center"
-                />
-            <DockPanel Name="DistanceBoxHolder" />
-            <ComboBox 
-                Name="DistanceBox"
-                FontSize="16"
-                Margin="10,0,10,0"
-                SelectionChanged="DistanceBox_SelectionChanged"
-                />
-            <TextBlock 
-                Text="Sort By"
-                FontSize="16"
-                Margin="10,5" 
-                TextAlignment="Center"
-                />
-            <ComboBox 
-                Name="SortBox" 
-                FontSize="16"
-                Margin="10,0,10,5"
-                SelectionChanged="SortBox_SelectionChanged" 
-                SelectedIndex="0"
-                >
-                <ComboBoxItem Content="Distance" />
-                <ComboBoxItem Content="Name" />
-                <ComboBoxItem Content="Bib" />
-            </ComboBox>
-            <ui:AutoSuggestBox 
-                Name="SearchBox"
-                Margin="10,0,10,0"
-                TextChanged="SearchBox_TextChanged"
-                FontSize="16" 
-                Height="45"
-                VerticalContentAlignment="Center"
-                HorizontalContentAlignment="Center"
-                PlaceholderText="Search"
-                />
-            <Button 
-                Name="Add"
-                Content="Add" 
-                FontSize="14"
-                Height="35"
-                Margin="10,10,10,5" 
-                Click="Add_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <Button 
-                Name="Modify"
-                Content="Modify" 
-                FontSize="14" 
-                Height="35" 
-                Margin="10,0,10,5"
-                Click="Modify_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <Button 
-                Name="Remove" 
-                Content="Remove" 
-                FontSize="14"
-                Height="35"
-                Margin="10,0,10,5"
-                Click="Remove_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <Expander
+                <Expander
                     Name="statsExpander"
                     Header="Bibs"
                     Margin="5,5,5,0"
                     IsExpanded="True"
                     Visibility="Collapsed"
                     >
-                <StackPanel>
-                    <Grid Margin="3,0,3,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="75" />
-                            <ColumnDefinition Width="35" />
-                            <ColumnDefinition Width="35" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock 
+                    <StackPanel>
+                        <Grid Margin="3,0,3,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="75" />
+                                <ColumnDefinition Width="35" />
+                                <ColumnDefinition Width="35" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock 
                                 Grid.Column="0"
                                 Margin="2,4"
                                 Text="Distance"
                                 FontSize="12"
                                 VerticalAlignment="Center"
                                 />
-                        <TextBlock
+                            <TextBlock
                                 Grid.Column="1"
                                 Margin="2,4"
                                 Text="w/"
                                 FontSize="12"
                                 VerticalAlignment="Center"
                                 />
-                        <TextBlock 
+                            <TextBlock 
                                 Grid.Column="2"
                                 Margin="2,4"
                                 Text="w/o"
                                 FontSize="12"
                                 VerticalAlignment="Center"
                                 />
-                    </Grid>
-                    <ListView 
+                        </Grid>
+                        <ListView 
                             x:Name="statsListView" 
                             VerticalAlignment="Stretch"
                             HorizontalAlignment="Stretch"
@@ -188,42 +193,43 @@
                             FontSize="10"
                             ScrollViewer.CanContentScroll="False"
                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="75" />
-                                        <ColumnDefinition Width="35" />
-                                        <ColumnDefinition Width="35" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="75" />
+                                            <ColumnDefinition Width="35" />
+                                            <ColumnDefinition Width="35" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
                                             Grid.Column="0"
                                             Margin="2,4" 
                                             Text="{Binding DistanceName}"
                                             FontSize="12"
                                             VerticalAlignment="Center"
                                             />
-                                    <TextBlock 
+                                        <TextBlock 
                                             Grid.Column="1"
                                             Margin="2,4"
                                             Text="{Binding With}" 
                                             FontSize="12" 
                                             VerticalAlignment="Center"
                                             />
-                                    <TextBlock
+                                        <TextBlock
                                             Grid.Column="2"
                                             Margin="2,4"
                                             Text="{Binding Without}"
                                             FontSize="12"
                                             VerticalAlignment="Center"
                                             />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </StackPanel>
-            </Expander>
-        </StackPanel>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </ScrollViewer>
         <Grid Grid.Column="0">
             <Grid.Resources>
                 <Style TargetType="ListViewItem" x:Key="alternatingStyle">
