@@ -804,31 +804,49 @@ namespace Chronokeep.UI.MainPages
             }
             recalculateButton.Content = "Working...";
             alreadyRecalculating = true;
-            APIController.SetUploadableFalse(uploadTimer);
-            bool canRecalculate = await Task<bool>.Run(() =>
+            if (APIController.SetUploadableFalse(uploadTimer))
             {
-                int counter = 0;
-                while (true)
+                bool canRecalculate = await Task<bool>.Run(() =>
                 {
-                    if (counter > 5)
+                    int counter = 0;
+                    while (true)
                     {
-                        return false;
-                    }
-                    if (!APIController.IsUploading())
-                    {
-                        return true;
-                    }
-                    counter++;
-                    //Log.D("UI.MainPages.TimingPage", "APIController is uploading. Sleeping for 1 second. Counter is " + counter.ToString());
-                    Thread.Sleep(1000);
-                };
-            });
-            if (!canRecalculate)
+                        if (counter > 5)
+                        {
+                            return false;
+                        }
+                        if (!APIController.IsUploading())
+                        {
+                            return true;
+                        }
+                        counter++;
+                        //Log.D("UI.MainPages.TimingPage", "APIController is uploading. Sleeping for 1 second. Counter is " + counter.ToString());
+                        Thread.Sleep(1000);
+                    };
+                });
+                if (!canRecalculate)
+                {
+                    await Task.Run(() => {
+                        int counter = 0;
+                        while (!APIController.SetUploadableTrue(uploadTimer))
+                        {
+                            counter++;
+                            if (counter > 5)
+                            {
+                                break;
+                            }
+                        }
+                    });
+                    recalculateButton.Content = "Recalculate";
+                    alreadyRecalculating = false;
+                    DialogBox.Show("Unable to recalculate results.");
+                    return;
+                }
+            }
+            else
             {
-                APIController.SetUploadableTrue(uploadTimer);
                 recalculateButton.Content = "Recalculate";
                 alreadyRecalculating = false;
-                DialogBox.Show("Unable to recalculate results.");
                 return;
             }
             APIObject api = null;
@@ -871,7 +889,17 @@ namespace Chronokeep.UI.MainPages
             // the auto uploader to start uploading any more results so we don't upload
             // old results over our brand new results.
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            APIController.SetUploadableTrue(uploadTimer);
+            await Task.Run(() => {
+                int counter = 0;
+                while (!APIController.SetUploadableTrue(uploadTimer))
+                {
+                    counter++;
+                    if (counter > 5)
+                    {
+                        break;
+                    }
+                }
+            });
             recalculateButton.Content = "Recalculate";
             alreadyRecalculating = false;
             UpdateSubView();
