@@ -54,6 +54,7 @@ namespace Chronokeep.UI.MainPages
         private RewindWindow rewindWindow = null;
 
         private static bool alreadyRecalculating = false;
+        private static readonly int uploadTimer = 1000;
 
         ObservableCollection<DistanceStat> stats = new ObservableCollection<DistanceStat>();
 
@@ -516,7 +517,7 @@ namespace Chronokeep.UI.MainPages
                 ReaderMessageButton.Visibility = Visibility.Collapsed;
                 ReaderMessageNumberBox.Value = 0.ToString();
             }
-            subPage.UpdateView();
+            UpdateSubView();
             if (alreadyRecalculating)
             {
                 recalculateButton.Content = "Working...";
@@ -648,9 +649,7 @@ namespace Chronokeep.UI.MainPages
             if (oldStartSeconds != theEvent.StartSeconds || oldStartMilliseconds != theEvent.StartMilliseconds)
             {
                 database.UpdateEvent(theEvent);
-                APIController.SetUploadableFalse(15000);
                 database.ResetTimingResultsEvent(theEvent.Identifier);
-                APIController.SetUploadableTrue(15000);
                 UpdateView();
                 mWindow.NetworkClearResults();
                 mWindow.NotifyTimingWorker();
@@ -805,7 +804,7 @@ namespace Chronokeep.UI.MainPages
             }
             recalculateButton.Content = "Working...";
             alreadyRecalculating = true;
-            APIController.SetUploadableFalse(15000);
+            APIController.SetUploadableFalse(uploadTimer);
             bool canRecalculate = await Task<bool>.Run(() =>
             {
                 int counter = 0;
@@ -826,7 +825,7 @@ namespace Chronokeep.UI.MainPages
             });
             if (!canRecalculate)
             {
-                APIController.SetUploadableTrue(15000);
+                APIController.SetUploadableTrue(uploadTimer);
                 recalculateButton.Content = "Recalculate";
                 alreadyRecalculating = false;
                 DialogBox.Show("Unable to recalculate results.");
@@ -872,10 +871,10 @@ namespace Chronokeep.UI.MainPages
             // the auto uploader to start uploading any more results so we don't upload
             // old results over our brand new results.
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            APIController.SetUploadableTrue(15000);
+            APIController.SetUploadableTrue(uploadTimer);
             recalculateButton.Content = "Recalculate";
             alreadyRecalculating = false;
-            UpdateView();
+            UpdateSubView();
             mWindow.NetworkClearResults();
             mWindow.NotifyTimingWorker();
         }

@@ -87,9 +87,7 @@ namespace Chronokeep.UI.Timing
             }
             if (update)
             {
-                APIController.SetUploadableFalse(15000);
                 database.ResetTimingResultsEvent(theEvent.Identifier);
-                APIController.SetUploadableTrue(15000);
                 window.UpdateTiming();
                 window.NotifyTimingWorker();
             }

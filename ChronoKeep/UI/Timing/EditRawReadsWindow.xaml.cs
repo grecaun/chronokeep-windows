@@ -93,9 +93,7 @@ namespace Chronokeep.UI.Timing
                 }
             }
             database.UpdateChipReads(chipReads);
-            APIController.SetUploadableFalse(15000);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            APIController.SetUploadableTrue(15000);
             parent.UpdateView();
             parent.NotifyTimingWorker();
             this.Close();

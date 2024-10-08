@@ -234,9 +234,7 @@ namespace Chronokeep.UI.MainPages
             }
             if (UpdateTimingWorker || distancesChanged.Count > 0)
             {
-                APIController.SetUploadableFalse(15000);
                 database.ResetTimingResultsEvent(theEvent.Identifier);
-                APIController.SetUploadableTrue(15000);
                 mWindow.NotifyTimingWorker();
                 mWindow.UpdateRegistrationDistances();
                 mWindow.NetworkUpdateResults();

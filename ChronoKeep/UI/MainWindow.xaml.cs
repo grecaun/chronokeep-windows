@@ -582,9 +582,9 @@ namespace Chronokeep.UI
         {
             if (TimingWorker.NewResultsExist())
             {
-                if (page is TimingPage)
+                if (page is TimingPage timingPage)
                 {
-                    page.UpdateView();
+                    timingPage.UpdateSubView();
                 }
                 announcerWindow?.UpdateTiming();
             }
@@ -1015,6 +1015,7 @@ namespace Chronokeep.UI
                 else
                 {
                     Globals.AddReaderMessage(PortalNotification.GetRemoteNotificationMessage(ReaderName, notification.Type));
+                    UpdateTiming();
                 }
             }));
         }

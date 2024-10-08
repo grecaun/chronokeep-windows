@@ -69,9 +69,7 @@ namespace Chronokeep.UI.Timing
                 newChipReads.Add(read);
             }
             database.SetChipReadStatuses(newChipReads);
-            APIController.SetUploadableFalse(15000);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            APIController.SetUploadableTrue(15000);
             if (parent is TimingPage)
             {
                 PrivateUpdateView();
@@ -209,9 +207,7 @@ namespace Chronokeep.UI.Timing
                         readsToDelete.Add(read);
                     }
                     database.DeleteChipReads(readsToDelete);
-                    APIController.SetUploadableFalse(15000);
                     database.ResetTimingResultsEvent(theEvent.Identifier);
-                    APIController.SetUploadableTrue(15000);
                     if (parent is TimingPage)
                     {
                         PrivateUpdateView();
@@ -243,9 +239,7 @@ namespace Chronokeep.UI.Timing
                 newChipReads.Add(read);
             }
             database.SetChipReadStatuses(newChipReads);
-            APIController.SetUploadableFalse(15000);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            APIController.SetUploadableTrue(15000);
             if (parent is TimingPage)
             {
                 PrivateUpdateView();
@@ -276,9 +270,7 @@ namespace Chronokeep.UI.Timing
                 newChipReads.Add(read);
             }
             database.SetChipReadStatuses(newChipReads);
-            APIController.SetUploadableFalse(15000);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            APIController.SetUploadableTrue(15000);
             if (parent is TimingPage)
             {
                 PrivateUpdateView();

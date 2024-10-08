@@ -450,9 +450,7 @@ namespace Chronokeep.UI.Participants
         {
             if (ParticipantChanged)
             {
-                APIController.SetUploadableFalse(15000);
                 database.ResetTimingResultsEvent(theEvent.Identifier);
-                APIController.SetUploadableTrue(15000);
                 if (window != null)
                 {
                     window.NotifyTimingWorker();

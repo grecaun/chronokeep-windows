@@ -305,9 +305,7 @@ namespace Chronokeep.UI.Timing
             if (window != null) window.WindowFinalize(this);
             if (bibsAdded.Count > 0)
             {
-                APIController.SetUploadableFalse(15000);
                 database.ResetTimingResultsEvent(theEvent.Identifier);
-                APIController.SetUploadableTrue(15000);
                 window.NotifyTimingWorker();
             }
         }

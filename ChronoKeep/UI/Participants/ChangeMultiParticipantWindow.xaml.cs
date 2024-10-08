@@ -48,9 +48,7 @@ namespace Chronokeep.UI.Participants
                 part.EventSpecific.DistanceIdentifier = distanceId;
             }
             database.UpdateParticipants(toChange);
-            APIController.SetUploadableFalse(15000);
             database.ResetTimingResultsEvent(theEvent.Identifier);
-            APIController.SetUploadableTrue(15000);
             window.NotifyTimingWorker();
             this.Close();
         }
