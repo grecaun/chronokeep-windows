@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -16,7 +17,9 @@ namespace Chronokeep.Timing.Announcer
 
         private static bool QuittingTime = false;
         private static List<AnnouncerParticipant> participants = new List<AnnouncerParticipant>();
-        private static HashSet<string> bibSeen = new HashSet<string>();
+        private static Dictionary<string, DateTime> bibSeen = new();
+
+        private static readonly int seenWindow = 5; // minutes
 
         private AnnouncerWorker(IMainWindow window, IDBInterface database)
         {
@@ -82,17 +85,20 @@ namespace Chronokeep.Timing.Announcer
         {
             Log.D("Timing.Announcer.AnnouncerWorker", "Processing chip reads.");
             bool newParticipants = false;
+            DateTime timeRightNow = DateTime.Now;
             foreach (ChipRead read in announcerReads)
             {
                 // Check to ensure we know the bib of this person
                 if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
-                    // Check if we've already seen the bib.
+                    // Check if we've already seen the bib (or we haven't seen the bib in seenWindow minutes).
                     // Only work if we've not seen it before.
-                    if (!bibSeen.Contains(read.Bib) && participantBibDictionary.ContainsKey(read.Bib))
+                    if ((!bibSeen.TryGetValue(read.Bib, out DateTime lastSeen)
+                        || lastSeen.AddMinutes(seenWindow).CompareTo(timeRightNow) < 0)
+                        && participantBibDictionary.ContainsKey(read.Bib))
                     {
                         newParticipants = true;
-                        bibSeen.Add(read.Bib);
+                        bibSeen.Add(read.Bib, timeRightNow);
                         participants.Add(new AnnouncerParticipant(participantBibDictionary[read.Bib], read.Seconds));
                         // Mark this chipread as USED
                         read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED;
