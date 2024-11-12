@@ -118,7 +118,7 @@ namespace Chronokeep
 
         internal void KillReader()
         {
-            serial.Disconnect();
+            serial?.Disconnect();
             chipNumbers.Items.Add(new RFIDSerial.Info { DecNumber = -1 });
             reader.Kill();
             if (readingThread != null)

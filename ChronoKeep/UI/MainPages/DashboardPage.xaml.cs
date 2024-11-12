@@ -622,7 +622,7 @@ namespace Chronokeep.UI.MainPages
             if (crWindow != null)
             {
                 mWindow.AddWindow(crWindow);
-                crWindow.ShowDialog();
+                crWindow.Show();
             }
         }
 
