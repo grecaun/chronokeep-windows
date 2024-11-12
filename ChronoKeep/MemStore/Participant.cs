@@ -179,13 +179,13 @@ namespace Chronokeep.MemStore
                                 output = person;
                                 break;
                             }
-                            else if (unknown.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
-                                && unknown.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
-                                && unknown.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
-                                && unknown.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
-                                && unknown.State.Equals(person.State, StringComparison.OrdinalIgnoreCase)
-                                && unknown.Zip.Equals(person.Zip, StringComparison.OrdinalIgnoreCase)
-                                && unknown.Birthdate.Equals(person.Birthdate, StringComparison.OrdinalIgnoreCase))
+                            else if (unknown.FirstName != null && unknown.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
+                                && unknown.LastName != null && unknown.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
+                                && unknown.Street != null && unknown.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
+                                && unknown.City != null && unknown.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
+                                && unknown.State != null && unknown.State.Equals(person.State, StringComparison.OrdinalIgnoreCase)
+                                && unknown.Zip != null && unknown.Zip.Equals(person.Zip, StringComparison.OrdinalIgnoreCase)
+                                && unknown.Birthdate != null && unknown.Birthdate.Equals(person.Birthdate, StringComparison.OrdinalIgnoreCase))
                             {
                                 output = person;
                                 break;

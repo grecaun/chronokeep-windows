@@ -35,5 +35,11 @@ namespace Chronokeep
             if (other == null) return false;
             return this.EventId == other.EventId && this.Bib.Equals(other.Bib, StringComparison.OrdinalIgnoreCase);
         }
+
+        public void TrimFields()
+        {
+            Bib = Bib.Trim();
+            Chip = Chip.Trim();
+        }
     }
 }

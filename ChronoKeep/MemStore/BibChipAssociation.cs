@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chronokeep.Objects;
+using System;
 using System.Collections.Generic;
 
 namespace Chronokeep.MemStore
@@ -12,6 +13,10 @@ namespace Chronokeep.MemStore
         public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
         {
             Log.D("MemStore", "AddBibChipAssociation");
+            foreach (BibChipAssociation bc in assoc)
+            {
+                bc.TrimFields();
+            }
             database.AddBibChipAssociation(eventId, assoc);
             try
             {
@@ -23,6 +28,14 @@ namespace Chronokeep.MemStore
                         {
                             chipToBibAssociations[bc.Chip] = bc;
                             bibToChipAssociations[bc.Bib] = bc;
+                        }
+                        foreach (Participant part in participants.Values)
+                        {
+                            part.Chip = "";
+                            if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
+                            {
+                                part.Chip = bc.Chip;
+                            }
                         }
                     }
                     memStoreLock.ReleaseMutex();
@@ -102,6 +115,14 @@ namespace Chronokeep.MemStore
                         {
                             bibToChipAssociations.Remove(bib);
                         }
+                        foreach (Participant part in participants.Values)
+                        {
+                            part.Chip = "";
+                            if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
+                            {
+                                part.Chip = bc.Chip;
+                            }
+                        }
                     }
                     memStoreLock.ReleaseMutex();
                 }
@@ -123,6 +144,14 @@ namespace Chronokeep.MemStore
                 {
                     chipToBibAssociations.Remove(assoc.Chip);
                     bibToChipAssociations.Remove(assoc.Bib);
+                    foreach (Participant part in participants.Values)
+                    {
+                        part.Chip = "";
+                        if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
+                        {
+                            part.Chip = bc.Chip;
+                        }
+                    }
                     memStoreLock.ReleaseMutex();
                 }
             }
@@ -145,6 +174,14 @@ namespace Chronokeep.MemStore
                     {
                         chipToBibAssociations.Remove(assoc.Chip);
                         bibToChipAssociations.Remove(assoc.Bib);
+                    }
+                    foreach (Participant part in participants.Values)
+                    {
+                        part.Chip = "";
+                        if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
+                        {
+                            part.Chip = bc.Chip;
+                        }
                     }
                     memStoreLock.ReleaseMutex();
                 }

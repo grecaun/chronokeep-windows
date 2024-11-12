@@ -13,6 +13,13 @@ namespace Chronokeep.Objects
 
         public Participant()
         {
+            firstName = "";
+            lastName = "";
+            this.street = "";
+            this.city = "";
+            this.state = "";
+            this.zip = "";
+            this.birthdate = "";
             eventSpecific = new EventSpecific();
         }
 
@@ -23,7 +30,7 @@ namespace Chronokeep.Objects
             string ecName, string ecPhone
             )
         {
-            birthdate = birthday.Trim();
+            birthdate = birthday != null ? birthday.Trim() : "";
             firstName = first ?? "";
             lastName = last ?? "";
             this.street = street ?? "";
