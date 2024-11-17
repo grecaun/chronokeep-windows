@@ -1,5 +1,4 @@
 ﻿using Chronokeep.Interfaces;
-using Chronokeep.Timing.API;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
 using System.Collections.Generic;
@@ -114,12 +113,13 @@ namespace Chronokeep.UI.Timing
         {
             List<ChipRead> reads = new List<ChipRead>();
             SortType sortType = parent.GetSortType();
+            PeopleType peopleType = parent.GetPeopleType();
             reads.AddRange(database.GetChipReads(theEvent.Identifier));
             chipReads.Clear();
             chipReads.AddRange(reads);
             string search = parent.GetSearchValue();
             bool manualOnly = onlyManualBox.IsChecked == true;
-            SortWorker(reads, sortType, search, manualOnly);
+            SortWorker(reads, sortType, peopleType, search, manualOnly);
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
@@ -133,12 +133,13 @@ namespace Chronokeep.UI.Timing
             }
             List<ChipRead> reads = new List<ChipRead>();
             SortType sortType = parent.GetSortType();
+            PeopleType peopleType = parent.GetPeopleType();
             reads.AddRange(database.GetChipReadsSafemode(theEvent.Identifier));
             chipReads.Clear();
             chipReads.AddRange(reads);
             string search = parent.GetSearchValue();
             bool manualOnly = onlyManualBox.IsChecked == true;
-            SortWorker(reads, sortType, search, manualOnly);
+            SortWorker(reads, sortType, peopleType, search, manualOnly);
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
@@ -159,8 +160,18 @@ namespace Chronokeep.UI.Timing
 
         public void EditSelected() { }
 
-        private void SortWorker(List<ChipRead> reads, SortType sortType, string search, bool manualOnly)
+        private void SortWorker(
+            List<ChipRead> reads,
+            SortType sortType,
+            PeopleType peopleType,
+            string search,
+            bool manualOnly
+            )
         {
+            if (peopleType == PeopleType.UNKNOWN)
+            {
+                reads.RemoveAll(read => read.Name.Length > 0);
+            }
             reads.RemoveAll(read => read.IsNotMatch(search));
             if (manualOnly)
             {
@@ -176,16 +187,30 @@ namespace Chronokeep.UI.Timing
             }
         }
 
-        public void Show(PeopleType type) { }
+        public async void Show(PeopleType peopleType)
+        {
+            List<ChipRead> reads = new List<ChipRead>(chipReads);
+            string search = parent.GetSearchValue();
+            SortType sortType = parent.GetSortType();
+            bool manualOnly = onlyManualBox.IsChecked == true;
+            await Task.Run(() =>
+            {
+                SortWorker(reads, sortType, peopleType, search, manualOnly);
+            });
+            updateListView.SelectedItems.Clear();
+            updateListView.ItemsSource = reads;
+            updateListView.Items.Refresh();
+        }
 
         public async void SortBy(SortType sortType)
         {
             List<ChipRead> reads = new List<ChipRead>(chipReads);
             string search = parent.GetSearchValue();
+            PeopleType peopleType = parent.GetPeopleType();
             bool manualOnly = onlyManualBox.IsChecked == true;
             await Task.Run(() =>
             {
-                SortWorker(reads, sortType, search, manualOnly);
+                SortWorker(reads, sortType, peopleType, search, manualOnly);
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
@@ -289,8 +314,9 @@ namespace Chronokeep.UI.Timing
             reads.AddRange(chipReads);
             string search = parent.GetSearchValue();
             SortType sortType = parent.GetSortType();
+            PeopleType peopleType = parent.GetPeopleType();
             bool manualOnly = onlyManualBox.IsChecked == true;
-            SortWorker(reads, sortType, search, manualOnly);
+            SortWorker(reads, sortType, peopleType, search, manualOnly);
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();

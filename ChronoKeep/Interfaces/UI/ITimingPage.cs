@@ -7,6 +7,7 @@ namespace Chronokeep.Interfaces
     {
         public string GetSearchValue();
         public SortType GetSortType();
+        public PeopleType GetPeopleType();
         public void LoadMainDisplay();
         public void NotifyTimingWorker();
         public void UpdateView();

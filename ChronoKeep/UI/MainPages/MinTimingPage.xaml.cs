@@ -346,6 +346,11 @@ namespace Chronokeep.UI.MainPages
 
         public void LoadMainDisplay(){}
 
+        public PeopleType GetPeopleType()
+        {
+            return PeopleType.DEFAULT;
+        }
+
         private class MinReaderBox : ListBoxItem
         {
             public ComboBox ReaderType { get; private set; }
