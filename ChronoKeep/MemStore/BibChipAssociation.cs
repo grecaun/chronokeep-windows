@@ -29,12 +29,27 @@ namespace Chronokeep.MemStore
                             chipToBibAssociations[bc.Chip] = bc;
                             bibToChipAssociations[bc.Bib] = bc;
                         }
+                        Dictionary<string, Participant> bibPartDict = new();
                         foreach (Participant part in participants.Values)
                         {
                             part.Chip = "";
                             if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
                             {
                                 part.Chip = bc.Chip;
+                            }
+                            bibPartDict[part.Bib] = part;
+                        }
+                        foreach (ChipRead cr in chipReads.Values)
+                        {
+                            cr.ChipBib = "";
+                            cr.Name = "";
+                            if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                            {
+                                cr.ChipBib = bc.Bib;
+                                if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                                {
+                                    cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                                }
                             }
                         }
                     }
@@ -115,12 +130,27 @@ namespace Chronokeep.MemStore
                         {
                             bibToChipAssociations.Remove(bib);
                         }
+                        Dictionary<string, Participant> bibPartDict = new();
                         foreach (Participant part in participants.Values)
                         {
                             part.Chip = "";
                             if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
                             {
                                 part.Chip = bc.Chip;
+                            }
+                            bibPartDict[part.Bib] = part;
+                        }
+                        foreach (ChipRead cr in chipReads.Values)
+                        {
+                            cr.ChipBib = "";
+                            cr.Name = "";
+                            if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                            {
+                                cr.ChipBib = bc.Bib;
+                                if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                                {
+                                    cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                                }
                             }
                         }
                     }
@@ -144,12 +174,27 @@ namespace Chronokeep.MemStore
                 {
                     chipToBibAssociations.Remove(assoc.Chip);
                     bibToChipAssociations.Remove(assoc.Bib);
+                    Dictionary<string, Participant> bibPartDict = new();
                     foreach (Participant part in participants.Values)
                     {
                         part.Chip = "";
                         if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
                         {
                             part.Chip = bc.Chip;
+                        }
+                        bibPartDict[part.Bib] = part;
+                    }
+                    foreach (ChipRead cr in chipReads.Values)
+                    {
+                        cr.ChipBib = "";
+                        cr.Name = "";
+                        if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                        {
+                            cr.ChipBib = bc.Bib;
+                            if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                            {
+                                cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                            }
                         }
                     }
                     memStoreLock.ReleaseMutex();
@@ -175,12 +220,27 @@ namespace Chronokeep.MemStore
                         chipToBibAssociations.Remove(assoc.Chip);
                         bibToChipAssociations.Remove(assoc.Bib);
                     }
+                    Dictionary<string, Participant> bibPartDict = new();
                     foreach (Participant part in participants.Values)
                     {
                         part.Chip = "";
                         if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
                         {
                             part.Chip = bc.Chip;
+                        }
+                        bibPartDict[part.Bib] = part;
+                    }
+                    foreach (ChipRead cr in chipReads.Values)
+                    {
+                        cr.ChipBib = "";
+                        cr.Name = "";
+                        if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                        {
+                            cr.ChipBib = bc.Bib;
+                            if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                            {
+                                cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                            }
                         }
                     }
                     memStoreLock.ReleaseMutex();
