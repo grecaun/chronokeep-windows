@@ -466,12 +466,14 @@ namespace Chronokeep.Objects
             if (gender != null && gender.Length > 0)
             {
                 gender = CapitalizeFirstAll(gender.Trim());
-                if (gender.Equals("M", StringComparison.OrdinalIgnoreCase))
+                if (gender.Equals("M", StringComparison.OrdinalIgnoreCase)
+                    || gender.Equals("Male", StringComparison.OrdinalIgnoreCase))
                 {
                     gender = "Man";
                 }
-                else if (gender.Equals("F", StringComparison.OrdinalIgnoreCase) ||
-                    gender.Equals("W", StringComparison.OrdinalIgnoreCase))
+                else if (gender.Equals("F", StringComparison.OrdinalIgnoreCase)
+                    || gender.Equals("Female", StringComparison.OrdinalIgnoreCase)
+                    || gender.Equals("W", StringComparison.OrdinalIgnoreCase))
                 {
                     gender = "Woman";
                 }
@@ -604,7 +606,7 @@ namespace Chronokeep.Objects
 
         public string Age(string eventDate)
         {
-            if (birthdate == null || birthdate.Length < 1)
+            if (birthdate == null || birthdate.Length < 1 || birthdate.Equals("01/01/0001"))
             {
                 return "";
             }
@@ -615,12 +617,16 @@ namespace Chronokeep.Objects
             {
                 numYears--;
             }
+            if (numYears > 120)
+            {
+                return "";
+            }
             return Convert.ToString(numYears);
         }
 
         public int GetAge(string eventDate)
         {
-            if (birthdate == null || birthdate.Length < 1)
+            if (birthdate == null || birthdate.Length < 1 || birthdate.Equals("01/01/0001"))
             {
                 return -1;
             }
@@ -630,6 +636,10 @@ namespace Chronokeep.Objects
             if (eventDateTime.Month < myDateTime.Month || eventDateTime.Month == myDateTime.Month && eventDateTime.Day < myDateTime.Day)
             {
                 numYears--;
+            }
+            if (numYears > 120)
+            {
+                return -1;
             }
             return numYears;
         }

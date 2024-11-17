@@ -1021,11 +1021,14 @@ namespace Chronokeep.Timing.Routines
                         genderPlaceDictionary[(distanceId, gender)] = 0;
                     }
                     result.GenderPlace = ++(genderPlaceDictionary[(distanceId, gender)]);
-                    if (!ageGroupPlaceDictionary.ContainsKey((distanceId, ageGroupId, gender)))
+                    if (ageGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
                     {
-                        ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)] = 0;
+                        if (!ageGroupPlaceDictionary.ContainsKey((distanceId, ageGroupId, gender)))
+                        {
+                            ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)] = 0;
+                        }
+                        result.AgePlace = ++(ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)]);
                     }
-                    result.AgePlace = ++(ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)]);
                 }
                 result.Status = Constants.Timing.TIMERESULT_STATUS_PROCESSED;
             }

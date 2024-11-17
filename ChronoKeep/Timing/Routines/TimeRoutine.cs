@@ -815,11 +815,14 @@ namespace Chronokeep.Timing.Routines
                         genderPlaceDictionary[(distanceId, person.Gender)] = 0;
                     }
                     result.GenderPlace = ++genderPlaceDictionary[(distanceId, person.Gender)];
-                    if (!ageGroupPlaceDictionary.ContainsKey((distanceId, person.EventSpecific.AgeGroupId, person.Gender)))
+                    if (person.EventSpecific.AgeGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
                     {
-                        ageGroupPlaceDictionary[(distanceId, person.EventSpecific.AgeGroupId, person.Gender)] = 0;
+                        if (!ageGroupPlaceDictionary.ContainsKey((distanceId, person.EventSpecific.AgeGroupId, person.Gender)))
+                        {
+                            ageGroupPlaceDictionary[(distanceId, person.EventSpecific.AgeGroupId, person.Gender)] = 0;
+                        }
+                        result.AgePlace = ++ageGroupPlaceDictionary[(distanceId, person.EventSpecific.AgeGroupId, person.Gender)];
                     }
-                    result.AgePlace = ++ageGroupPlaceDictionary[(distanceId, person.EventSpecific.AgeGroupId, person.Gender)];
                     foreach (TimeResult otherResult in personResults[result.EventSpecificId])
                     {
                         otherResult.Place = result.Place;

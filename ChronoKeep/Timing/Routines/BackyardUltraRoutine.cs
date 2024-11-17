@@ -1048,11 +1048,14 @@ namespace Chronokeep.Timing.Routines
                         genderPlaceDictionary[gender] = 0;
                     }
                     result.GenderPlace = ++(genderPlaceDictionary[gender]);
-                    if (!ageGroupPlaceDictionary.ContainsKey((ageGroupId, gender)))
+                    if (ageGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
                     {
-                        ageGroupPlaceDictionary[(ageGroupId, gender)] = 0;
+                        if (!ageGroupPlaceDictionary.ContainsKey((ageGroupId, gender)))
+                        {
+                            ageGroupPlaceDictionary[(ageGroupId, gender)] = 0;
+                        }
+                        result.AgePlace = ++(ageGroupPlaceDictionary[(ageGroupId, gender)]);
                     }
-                    result.AgePlace = ++(ageGroupPlaceDictionary[(ageGroupId, gender)]);
                 }
             }
             // Update every result we're outputting with calculated places.
