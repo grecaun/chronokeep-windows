@@ -265,18 +265,34 @@
                         <ColumnDefinition Width="150" />  <!-- EC Name -->
                         <ColumnDefinition Width="150" />  <!-- EC Phone -->
                         <ColumnDefinition Width="35" />   <!-- Anon -->
+                                <ColumnDefinition Width="200" />  <!-- Comments -->
+                                <ColumnDefinition Width="150" />  <!-- Other -->
+                                <ColumnDefinition Width="200" />  <!-- Email -->
+                                <ColumnDefinition Width="175" />  <!-- Street -->
+                                <ColumnDefinition Width="50" />  <!-- Apartment -->
+                                <ColumnDefinition Width="120" />  <!-- City -->
+                                <ColumnDefinition Width="50" />  <!-- State -->
+                                <ColumnDefinition Width="60" />  <!-- Country -->
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Bib"/>
-                    <TextBlock Grid.Column="1" Text="Distance"/>
-                    <TextBlock Grid.Column="2" Text="First"/>
-                    <TextBlock Grid.Column="3" Text="Last"/>
-                    <TextBlock Grid.Column="4" Text="Gender"/>
-                    <TextBlock Grid.Column="5" Text="Birthday"/>
-                    <TextBlock Grid.Column="6" Text="Phone"/>
-                    <TextBlock Grid.Column="7" Text="Mobile"/>
-                    <TextBlock Grid.Column="8" Text="EC Name"/>
-                    <TextBlock Grid.Column="9" Text="EC Phone"/>
-                    <TextBlock Grid.Column="10" Text="Anon"/>
+                    <TextBlock Grid.Column="0" Text="Bib" Margin="2"/>
+                    <TextBlock Grid.Column="1" Text="Distance" Margin="2"/>
+                    <TextBlock Grid.Column="2" Text="First" Margin="2"/>
+                    <TextBlock Grid.Column="3" Text="Last" Margin="2"/>
+                    <TextBlock Grid.Column="4" Text="Gender" Margin="2"/>
+                    <TextBlock Grid.Column="5" Text="Birthday" Margin="2"/>
+                    <TextBlock Grid.Column="6" Text="Phone" Margin="2"/>
+                    <TextBlock Grid.Column="7" Text="Mobile" Margin="2"/>
+                    <TextBlock Grid.Column="8" Text="EC Name" Margin="2"/>
+                    <TextBlock Grid.Column="9" Text="EC Phone" Margin="2"/>
+                    <TextBlock Grid.Column="10" Text="Anon" Margin="2"/>
+                    <TextBlock Grid.Column="11" Text="Comments" Margin="2"/>
+                    <TextBlock Grid.Column="12" Text="Other" Margin="2"/>
+                    <TextBlock Grid.Column="13" Text="Email" Margin="2"/>
+                    <TextBlock Grid.Column="14" Text="Street" Margin="2"/>
+                    <TextBlock Grid.Column="15" Text="Apt" Margin="2"/>
+                    <TextBlock Grid.Column="16" Text="City" Margin="2"/>
+                    <TextBlock Grid.Column="17" Text="State" Margin="2"/>
+                    <TextBlock Grid.Column="18" Text="Country" Margin="2"/>
                 </Grid>
             </ScrollViewer>
             <ListView 
@@ -307,18 +323,34 @@
                                 <ColumnDefinition Width="150" /> <!-- EC Name -->
                                 <ColumnDefinition Width="150" /> <!-- EC Phone -->
                                 <ColumnDefinition Width="35" />  <!-- Anon -->
+                                <ColumnDefinition Width="200" />  <!-- Comments -->
+                                <ColumnDefinition Width="150" />  <!-- Other -->
+                                <ColumnDefinition Width="200" />  <!-- Email -->
+                                <ColumnDefinition Width="175" />  <!-- Street -->
+                                <ColumnDefinition Width="50" />  <!-- Apartment -->
+                                <ColumnDefinition Width="120" />  <!-- City -->
+                                <ColumnDefinition Width="50" />  <!-- State -->
+                                <ColumnDefinition Width="60" />  <!-- Country -->
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding Bib}"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Distance}"/>
-                            <TextBlock Grid.Column="2" Text="{Binding FirstName}"/>
-                            <TextBlock Grid.Column="3" Text="{Binding LastName}"/>
-                            <TextBlock Grid.Column="4" Text="{Binding Gender}"/>
-                            <TextBlock Grid.Column="5" Text="{Binding Birthdate}"/>
-                            <TextBlock Grid.Column="6" Text="{Binding Phone}"/>
-                            <TextBlock Grid.Column="7" Text="{Binding Mobile}"/>
-                            <TextBlock Grid.Column="8" Text="{Binding ECName}"/>
-                            <TextBlock Grid.Column="9" Text="{Binding ECPhone}"/>
-                            <TextBlock Grid.Column="10" Text="{Binding PrettyAnonymous}"/>
+                            <TextBlock Grid.Column="0" Text="{Binding Bib}" Margin="2"/>
+                            <TextBlock Grid.Column="1" Text="{Binding Distance}" Margin="2"/>
+                            <TextBlock Grid.Column="2" Text="{Binding FirstName}" Margin="2"/>
+                            <TextBlock Grid.Column="3" Text="{Binding LastName}" Margin="2"/>
+                            <TextBlock Grid.Column="4" Text="{Binding Gender}" Margin="2"/>
+                            <TextBlock Grid.Column="5" Text="{Binding Birthdate}" Margin="2"/>
+                            <TextBlock Grid.Column="6" Text="{Binding Phone}" Margin="2"/>
+                            <TextBlock Grid.Column="7" Text="{Binding Mobile}" Margin="2"/>
+                            <TextBlock Grid.Column="8" Text="{Binding ECName}" Margin="2"/>
+                            <TextBlock Grid.Column="9" Text="{Binding ECPhone}" Margin="2"/>
+                            <TextBlock Grid.Column="10" Text="{Binding PrettyAnonymous}" Margin="2"/>
+                            <TextBlock Grid.Column="11" Text="{Binding Comments}" Margin="2"/>
+                            <TextBlock Grid.Column="12" Text="{Binding Other}" Margin="2"/>
+                            <TextBlock Grid.Column="13" Text="{Binding Email}" Margin="2"/>
+                            <TextBlock Grid.Column="14" Text="{Binding Street}" Margin="2"/>
+                            <TextBlock Grid.Column="15" Text="{Binding Street2}" Margin="2"/>
+                            <TextBlock Grid.Column="16" Text="{Binding City}" Margin="2"/>
+                            <TextBlock Grid.Column="17" Text="{Binding State}" Margin="2"/>
+                            <TextBlock Grid.Column="18" Text="{Binding Country}" Margin="2"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
