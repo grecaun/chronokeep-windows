@@ -436,7 +436,6 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             private System.Windows.Controls.TextBox portBox;
             private ToggleSwitch autoConnectSwitch;
             private ToggleSwitch connectedSwitch;
-            private ToggleSwitch readingSwitch;
             private StackPanel antennaPanel;
             private Button saveReaderButton;
             private Button removeReaderButton;
@@ -539,18 +538,6 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 connectedSwitch.Click += new RoutedEventHandler(this.ConnectReader);
                 subPanel.Children.Add(connectedSwitch);
-                readingSwitch = new ToggleSwitch()
-                {
-                    IsChecked = reader.Reading,
-                    IsEnabled = reader.Connected,
-                    Content = "Started",
-                    Width = 95,
-                    Margin = new Thickness(5),
-                    FontSize = 10,
-                    VerticalContentAlignment = VerticalAlignment.Center
-                };
-                readingSwitch.Click += new RoutedEventHandler(this.StartReader);
-                subPanel.Children.Add(readingSwitch);
                 saveReaderButton = new Button()
                 {
                     Icon = new SymbolIcon() { Symbol = SymbolRegular.Save24 },
@@ -636,9 +623,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 this.portBox.Text = reader.Port.ToString();
                 autoConnectSwitch.IsChecked = reader.AutoConnect;
                 connectedSwitch.IsChecked = reader.Connected;
-                readingSwitch.IsChecked = reader.Reading && reader.Connected;
                 connectedSwitch.IsEnabled = true;
-                readingSwitch.IsEnabled = reader.Connected;
                 antennaPanel.Children.Clear();
                 for (int ix = 0; ix < reader.Antennas.Length; ix++)
                 {
@@ -685,23 +670,6 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     readerInterface.SendConnectReader(reader);
                 }
                 connectedSwitch.IsEnabled = false;
-                readingSwitch.IsEnabled = false;
-            }
-
-            private void StartReader(object sender, RoutedEventArgs e)
-            {
-                Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Stopping/starting reader " + reader.Id);
-                if (reader.Reading)
-                {
-                    readerInterface.SendStopReader(reader);
-                }
-                else
-                {
-                    readerInterface.SendStartReader(reader);
-                }
-                connectedSwitch.IsEnabled = false;
-                readingSwitch.IsEnabled = false;
-
             }
 
             private void SaveReader(object sender, RoutedEventArgs e)
