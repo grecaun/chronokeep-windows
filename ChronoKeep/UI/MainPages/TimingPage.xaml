@@ -597,7 +597,7 @@
                     HorizontalAlignment="Stretch"
                     KeyboardNavigation.TabNavigation="Continue"
                     Height="170"
-                    ScrollViewer.CanContentScroll="True"
+                    ScrollViewer.CanContentScroll="false"
                     ScrollViewer.VerticalScrollBarVisibility="Visible"
                     >
                     <ListBox.ItemContainerStyle>
