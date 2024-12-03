@@ -973,10 +973,9 @@ namespace Chronokeep.UI.MainPages
                 catch (APIException ex)
                 {
                     DialogBox.Show(ex.Message);
-                    DeleteButton.IsEnabled = true;
-                    DeleteButton.Content = "Delete Uploaded";
-                    return;
                 }
+                DeleteButton.IsEnabled = true;
+                DeleteButton.Content = "Delete Uploaded";
             }
         }
     }

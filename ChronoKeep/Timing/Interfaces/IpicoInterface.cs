@@ -164,8 +164,10 @@ namespace Chronokeep.Timing.Interfaces
                     string year = message.Substring(29, 4);
                     string dateStr = string.Format("{0:D2} {1} {2}  {3}", dayVal, month, year, time);
                     Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- date string is " + dateStr);
-                    output[MessageType.TIME] = new List<string>();
-                    output[MessageType.TIME].Add(dateStr);
+                    output[MessageType.TIME] = new List<string>
+                    {
+                        dateStr
+                    };
                 }
                 m = msg.Match(bufferDict[sock].ToString());
             }

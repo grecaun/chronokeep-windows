@@ -41,7 +41,7 @@ namespace Chronokeep.MemStore
                         }
                         foreach (ChipRead cr in chipReads.Values)
                         {
-                            cr.ChipBib = "";
+                            cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
                             cr.Name = "";
                             if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
                             {
@@ -142,7 +142,7 @@ namespace Chronokeep.MemStore
                         }
                         foreach (ChipRead cr in chipReads.Values)
                         {
-                            cr.ChipBib = "";
+                            cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
                             cr.Name = "";
                             if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
                             {
@@ -186,7 +186,7 @@ namespace Chronokeep.MemStore
                     }
                     foreach (ChipRead cr in chipReads.Values)
                     {
-                        cr.ChipBib = "";
+                        cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
                         cr.Name = "";
                         if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
                         {
@@ -232,7 +232,7 @@ namespace Chronokeep.MemStore
                     }
                     foreach (ChipRead cr in chipReads.Values)
                     {
-                        cr.ChipBib = "";
+                        cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
                         cr.Name = "";
                         if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
                         {

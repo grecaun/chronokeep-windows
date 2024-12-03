@@ -19,7 +19,7 @@ namespace Chronokeep.MemStore
             public InvalidEventID(string message) : base(message) { }
         }
 
-        private readonly int lockTimeout = 3000;
+        private readonly int lockTimeout = 5000;
 
         // Singleton
         private static MemStore instance;

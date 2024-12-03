@@ -57,7 +57,11 @@ namespace Chronokeep.MemStore
                     {
                         read.Name = "";
                     }
-                    chipReads[read.ReadId] = read;
+                    // Do not overwrite our current chipread.
+                    if (read.ReadId > 0 && !chipReads.ContainsKey(read.ReadId))
+                    {
+                        chipReads[read.ReadId] = read;
+                    }
                     memStoreLock.ReleaseMutex();
                 }
                 return read.ReadId;
@@ -93,7 +97,6 @@ namespace Chronokeep.MemStore
                     foreach (ChipRead read in newReads)
                     {
                         read.Start = start;
-                        chipReads[read.ReadId] = read;
                         if (chipToBibAssociations.TryGetValue(read.ChipNumber, out BibChipAssociation ba))
                         {
                             read.ChipBib = ba.Bib;
@@ -118,6 +121,11 @@ namespace Chronokeep.MemStore
                         else
                         {
                             read.Name = "";
+                        }
+                        // Do not overwrite our current chipread.
+                        if (read.ReadId > 0 && !chipReads.ContainsKey(read.ReadId))
+                        {
+                            chipReads[read.ReadId] = read;
                         }
                     }
                     memStoreLock.ReleaseMutex();

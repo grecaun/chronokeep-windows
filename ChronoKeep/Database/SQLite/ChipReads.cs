@@ -37,8 +37,23 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@type", read.Type)
             });
             command.ExecuteNonQuery();
-            long outVal = connection.LastInsertRowId;
-            return (int)outVal;
+            command.CommandText = "SELECT read_id FROM chipreads WHERE event_id=@event AND read_chipnumber=@chip AND read_bib=@bib " +
+                "AND read_seconds=@sec AND read_milliseconds=@milli;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event", read.EventId),
+                new SQLiteParameter("@chip", read.ChipNumber),
+                new SQLiteParameter("@sec", read.Seconds),
+                new SQLiteParameter("@milli", read.Milliseconds),
+                new SQLiteParameter("@bib", read.ReadBib)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            int outVal = -1;
+            if (reader.Read())
+            {
+                outVal = Convert.ToInt32(reader["read_id"]);
+            }
+            return outVal;
         }
 
         internal static void UpdateChipRead(ChipRead read, SQLiteConnection connection)

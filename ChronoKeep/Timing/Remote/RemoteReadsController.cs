@@ -4,7 +4,6 @@ using Chronokeep.Interfaces.Timing;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing.Announcer;
-using Chronokeep.UI.Announcer;
 using System;
 using System.Collections.Generic;
 using System.Threading;
