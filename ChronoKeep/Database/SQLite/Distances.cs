@@ -37,8 +37,22 @@ namespace Chronokeep.Database.SQLite
             });
             Log.D("Database.SQLite.Distances", "SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
-            long outVal = connection.LastInsertRowId;
-            return (int)outVal;
+            command.CommandText = "SELECT distance_id FROM distances " +
+                "WHERE event_id=@event_id " +
+                "AND distance_name=@name;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event_id", d.EventIdentifier),
+                new SQLiteParameter("@name", d.Name)
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            int outVal = -1;
+            if (reader.Read())
+            {
+                outVal = Convert.ToInt32(reader["distance_id"]);
+            }
+            reader.Close();
+            return outVal;
         }
 
         internal static void RemoveDistance(int identifier, SQLiteConnection connection)

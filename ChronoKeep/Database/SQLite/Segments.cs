@@ -26,8 +26,26 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@map",seg.MapLink) 
             });
             command.ExecuteNonQuery();
-            long outVal = connection.LastInsertRowId;
-            return (int)outVal;
+            command.CommandText = "SELECT segment_id FROM segments " +
+                "WHERE event_id=@event " +
+                "AND distance_id=@distance " +
+                "AND location_id=@location " +
+                "AND location_occurance=@occurance;";
+            command.Parameters.AddRange(new SQLiteParameter[]
+            {
+                new SQLiteParameter("@event",seg.EventId),
+                new SQLiteParameter("@distance",seg.DistanceId),
+                new SQLiteParameter("@location",seg.LocationId),
+                new SQLiteParameter("@occurance",seg.Occurrence),
+            });
+            SQLiteDataReader reader = command.ExecuteReader();
+            int outVal = -1;
+            if (reader.Read())
+            {
+                outVal = Convert.ToInt32(reader["segment_id"]);
+            }
+            reader.Close();
+            return outVal;
         }
         internal static void RemoveSegment(int identifier, SQLiteConnection connection)
         {

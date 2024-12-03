@@ -77,6 +77,10 @@ namespace Chronokeep
             {
                 return this.distance_id.CompareTo(other.distance_id);
             }
+            if (this.distance_cumulative != other.distance_cumulative)
+            {
+                return this.distance_cumulative.CompareTo(other.distance_cumulative);
+            }
             if (this.location_id != other.location_id)
             {
                 return this.location_id.CompareTo(other.location_id);

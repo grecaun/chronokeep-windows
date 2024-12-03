@@ -184,7 +184,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     ((ASegment)seg).UpdateSegment();
                     Segment thisSegment = ((ASegment)seg).mySegment;
-                    if (thisSegment.Identifier < 0)
+                    if (thisSegment.Identifier < 1)
                     {
                         newSegs.Add(thisSegment);
                     }
@@ -194,7 +194,7 @@ namespace Chronokeep.UI.MainPages
                     }
                 }
             }
-            newSegs.RemoveAll(x => !LocationDict.ContainsKey(x.LocationId) || x.Occurrence > LocationDict[x.LocationId].MaxOccurrences || x.Occurrence < 1);
+            newSegs.RemoveAll(x => x.Occurrence < 1);
             database.AddSegments(newSegs);
             UpdateTimingWorker = true;
             database.UpdateSegments(upSegs);
@@ -251,10 +251,6 @@ namespace Chronokeep.UI.MainPages
         public void AddSegment(int distanceId)
         {
             Log.D("UI.MainPages.SegmentsPage", "Adding segment.");
-            if (database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE)
-            {
-                UpdateDatabase();
-            }
             Segment newSeg = new Segment(theEvent.Identifier, distanceId, Constants.Timing.LOCATION_FINISH, 0, 0.0, 0.0, Constants.Distances.MILES, "", "", "");
             allSegments[distanceId].Add(newSeg);
             UpdateView();
@@ -305,6 +301,8 @@ namespace Chronokeep.UI.MainPages
                 StackPanel thePanel = new StackPanel();
                 this.Content = thePanel;
                 this.IsTabStop = false;
+                this.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                this.VerticalContentAlignment = VerticalAlignment.Center;
                 Grid namePanel = new Grid()
                 {
                     Margin = new Thickness(5)
@@ -411,6 +409,7 @@ namespace Chronokeep.UI.MainPages
                 finish_occurrences = 0;
                 SegmentItems.Add(new ASegmentHeader(theEvent));
                 //segmentHolder.Items.Add(new ASegmentHeader(theEvent));
+                segments.Sort((x1, x2) => x1.CompareTo(x2));
                 foreach (Segment s in segments)
                 {
                     ASegment newSeg = new ASegment(theEvent, page, s, locations);
@@ -533,6 +532,8 @@ namespace Chronokeep.UI.MainPages
                     MaxWidth = 1150
                 };
                 this.Content = dockPanel;
+                this.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                this.VerticalContentAlignment = VerticalAlignment.Center;
                 dockPanel.Children.Add(Where);
                 dockPanel.Children.Add(NameLabel);
                 if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
@@ -574,6 +575,8 @@ namespace Chronokeep.UI.MainPages
                     MaxWidth = 1150
                 };
                 this.Content = thePanel;
+                this.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                this.VerticalContentAlignment = VerticalAlignment.Center;
 
                 // Where
                 Location = new ComboBox()
@@ -775,7 +778,7 @@ namespace Chronokeep.UI.MainPages
 
             public void UpdateSegment()
             {
-                Log.D("UI.MainPages.SegmentsPage", "Segments - Save clicked.");
+                Log.D("UI.MainPages.SegmentsPage", "Segments - Updating segment.");
                 try
                 {
                     mySegment.Name = SegName.Text;
