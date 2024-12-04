@@ -27,6 +27,10 @@
                 </ListBox.ItemContainerStyle>
             </ListBox>
             <DockPanel Grid.Row="1" HorizontalAlignment="Center">
+                <DockPanel x:Name="apiPanel" Visibility="Collapsed" HorizontalAlignment="Center">
+                    <Button Name="UploadButton" Content="Upload" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="UploadButton_Click" />
+                    <Button Name="DeleteButton" Content="Delete Uploaded" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="DeleteButton_Click" />
+                </DockPanel>
                 <Button Name="Add" Content="Add Distance" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click" />
                 <Button Name="UpdateBtn" Content="Update" Click="Update_Click" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" />
                 <Button Name="ResetBtn" Content="Reset" Click="Revert_Click" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" />

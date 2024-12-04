@@ -194,4 +194,31 @@ namespace Chronokeep.Objects.API
         [JsonPropertyName("year")]
         public string Year { get; set; }
     }
+
+    // Distance requests
+    public class GetDistancesRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+    }
+
+    public class AddDistancesRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+        [JsonPropertyName("distances")]
+        public List<APIDistance> Distances { get; set; }
+    }
+
+    public class DeleteDistancesRequest
+    {
+        [JsonPropertyName("slug")]
+        public string Slug { get; set; }
+        [JsonPropertyName("year")]
+        public string Year { get; set; }
+    }
 }

@@ -107,4 +107,16 @@ namespace Chronokeep.Objects.API
         [JsonPropertyName("count")]
         public long Count { get; set; }
     }
+
+    // Distance responses
+    public class GetDistancesResponse
+    {
+        [JsonPropertyName("distances")]
+        public List<APIDistance> Distances { get; set; }
+    }
+    public class DeleteDistancesResponse
+    {
+        [JsonPropertyName("count")]
+        public long Count { get; set; }
+    }
 }

@@ -14,8 +14,8 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "INSERT INTO distances (distance_name, event_id, distance_distance, distance_distance_unit," +
                 "distance_start_location, distance_start_within, distance_finish_location, distance_finish_occurance, distance_wave, " +
                 "distance_start_offset_seconds, distance_start_offset_milliseconds, distance_end_offset_seconds, " +
-                "distance_linked_id, distance_type, distance_ranking_order, distance_sms_enabled, distance_upload_results) " +
-                "values (@name,@event_id,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@soffsec,@soffmill,@endSec,@linked,@type,@rank,@sms,@upload)";
+                "distance_linked_id, distance_type, distance_ranking_order, distance_sms_enabled, distance_upload_results, distance_certification) " +
+                "values (@name,@event_id,@distance,@unit,@startloc,@startwithin,@finishloc,@finishocc,@wave,@soffsec,@soffmill,@endSec,@linked,@type,@rank,@sms,@upload,@cert)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", d.Name),
                 new SQLiteParameter("@event_id", d.EventIdentifier),
@@ -34,6 +34,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@rank", d.Ranking),
                 new SQLiteParameter("@sms", d.SMSEnabled ? 1 : 0),
                 new SQLiteParameter("@upload", d.Upload ? 1 : 0),
+                new SQLiteParameter("@cert", d.Certification),
             });
             Log.D("Database.SQLite.Distances", "SQL query: '" + command.CommandText + "'");
             command.ExecuteNonQuery();
@@ -73,7 +74,8 @@ namespace Chronokeep.Database.SQLite
                 "distance_distance_unit=@unit, distance_start_location=@startloc, distance_start_within=@within, distance_finish_location=@finishloc," +
                 "distance_finish_occurance=@occurance, distance_wave=@wave, distance_start_offset_seconds=@soffsec, " +
                 "distance_start_offset_milliseconds=@soffmill, distance_end_offset_seconds=@endSec, " +
-                "distance_linked_id=@linked, distance_type=@type, distance_ranking_order=@rank, distance_sms_enabled=@sms, distance_upload_results=@upload " +
+                "distance_linked_id=@linked, distance_type=@type, distance_ranking_order=@rank, distance_sms_enabled=@sms, " +
+                "distance_upload_results=@upload, distance_certification=@cert " +
                 "WHERE distance_id=@id";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@name", d.Name),
@@ -94,6 +96,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@rank", d.Ranking),
                 new SQLiteParameter("@sms", d.SMSEnabled ? 1 : 0),
                 new SQLiteParameter("@upload", d.Upload ? 1 : 0),
+                new SQLiteParameter("@cert", d.Certification),
             });
             command.ExecuteNonQuery();
         }
@@ -123,7 +126,8 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["distance_type"]),
                     Convert.ToInt32(reader["distance_ranking_order"]),
                     Convert.ToInt32(reader["distance_sms_enabled"]) == 0 ? false : true,
-                    Convert.ToInt32(reader["distance_upload_results"]) == 0 ? false : true
+                    Convert.ToInt32(reader["distance_upload_results"]) == 0 ? false : true,
+                    reader["distance_certification"].ToString()
                     ));
             }
             reader.Close();
@@ -159,7 +163,8 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["distance_type"]),
                     Convert.ToInt32(reader["distance_ranking_order"]),
                     Convert.ToInt32(reader["distance_sms_enabled"]) == 0 ? false : true,
-                    Convert.ToInt32(reader["distance_upload_results"]) == 0 ? false : true
+                    Convert.ToInt32(reader["distance_upload_results"]) == 0 ? false : true,
+                    reader["distance_certification"].ToString()
                     ));
             }
             reader.Close();
@@ -214,7 +219,8 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["distance_type"]),
                     Convert.ToInt32(reader["distance_ranking_order"]),
                     Convert.ToInt32(reader["distance_sms_enabled"]) == 0 ? false : true,
-                    Convert.ToInt32(reader["distance_upload_results"]) == 0 ? false : true
+                    Convert.ToInt32(reader["distance_upload_results"]) == 0 ? false : true,
+                    reader["distance_certification"].ToString()
                     );
             }
             reader.Close();

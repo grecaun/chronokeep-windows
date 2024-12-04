@@ -955,6 +955,93 @@ namespace Chronokeep.Network.API
             }
         }
 
+        public static async Task<GetDistancesResponse> AddDistances(APIObject api, string slug, string year, List<APIDistance> distances)
+        {
+            Log.D("Network.API.APIHandlers", "Adding Distances.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Post,
+                        RequestUri = new Uri(api.URL + "distances/add"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new AddDistancesRequest
+                            {
+                                Slug = slug,
+                                Year = year,
+                                Distances = distances,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<GetDistancesResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    throw new APIException(errresult.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown adding distances: " + ex.Message);
+            }
+        }
+
+        public static async Task<DeleteDistancesResponse> DeleteDistances(APIObject api, string slug, string year)
+        {
+            Log.D("Network.API.APIHandlers", "Deleting Distances.");
+            try
+            {
+                using (var client = GetHttpClient())
+                {
+                    var request = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri(api.URL + "distances/delete"),
+                        Content = new StringContent(
+                            JsonSerializer.Serialize(new DeleteDistancesRequest
+                            {
+                                Slug = slug,
+                                Year = year,
+                            }),
+                            Encoding.UTF8,
+                            "application/json"
+                            )
+                    };
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", api.AuthToken);
+                    HttpResponseMessage response = await client.SendAsync(request);
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        Log.D("Network.API.APIHandlers", "Status code ok.");
+                        var json = await response.Content.ReadAsStringAsync();
+                        var result = JsonSerializer.Deserialize<DeleteDistancesResponse>(json);
+                        return result;
+                    }
+                    Log.D("Network.API.APIHandlers", "Status code not ok.");
+                    var errjson = await response.Content.ReadAsStringAsync();
+                    var errresult = JsonSerializer.Deserialize<ErrorResponse>(errjson);
+                    throw new APIException(errresult.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.D("Network.API.APIHandlers", "Exception thrown.");
+                throw new APIException("Exception thrown deleting distances: " + ex.Message);
+            }
+        }
+
         public static async Task<GetSmsSubscriptionsResponse> GetSmsSubscriptions(APIObject api, string slug, string year)
         {
             Log.D("Network.API.APIHandlers", "Adding Segments.");

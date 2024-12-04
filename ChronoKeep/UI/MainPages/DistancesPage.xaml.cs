@@ -1,6 +1,9 @@
 ﻿using Chronokeep.Database.SQLite;
 using Chronokeep.Interfaces;
-using Chronokeep.Timing.API;
+using Chronokeep.Network.API;
+using Chronokeep.Objects.API;
+using Chronokeep.Objects.ChronoKeepAPI;
+using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -33,6 +36,14 @@ namespace Chronokeep.UI.MainPages
             this.mWindow = mWindow;
             this.database = database;
             this.theEvent = database.GetCurrentEvent();
+            if (theEvent.API_ID > 0 && theEvent.API_Event_ID.Length > 1)
+            {
+                apiPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                apiPanel.Visibility = Visibility.Collapsed;
+            }
             UpdateView();
         }
 
@@ -590,6 +601,7 @@ namespace Chronokeep.UI.MainPages
         private class ADistance : ListBoxItem, ADistanceInterface
         {
             public TextBox DistanceName { get; private set; }
+            public TextBox Certification { get; private set; }
             public ComboBox CopyFromBox { get; private set; }
             public TextBox Distance { get; private set; }
             public ComboBox DistanceUnit { get; private set; }
@@ -929,37 +941,28 @@ namespace Chronokeep.UI.MainPages
                 numGrid.Children.Add(wavePanel);
                 Grid.SetColumn(wavePanel, columnOffset);
                 columnOffset++;
-                Grid secondGrid = new Grid();
-                secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                secondGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                AddSubDistance = new Button()
+                DockPanel certificationPanel = new DockPanel()
                 {
-                    Content = "Add Linked",
-                    FontSize = 14,
-                    Width = 100,
-                    Height = 30,
-                    Margin = new Thickness(0, 5, 0, 5),
-                    HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
-                AddSubDistance.Click += new RoutedEventHandler(this.AddSub_Click);
-                secondGrid.Children.Add(AddSubDistance);
-                Grid.SetColumn(AddSubDistance, 0);
-                Remove = new Button()
+                certificationPanel.Children.Add(new TextBlock()
                 {
-                    Content = "Remove",
-                    FontSize = 14,
-                    Width = 100,
-                    Height = 30,
-                    Margin = new Thickness(0, 5, 0, 5),
-                    HorizontalAlignment = HorizontalAlignment.Center,
+                    Text = "Certification",
+                    Width = 65,
+                    FontSize = 12,
+                    Margin = new Thickness(6, 0, 4, 0),
                     VerticalAlignment = VerticalAlignment.Center
+                });
+                Certification = new TextBox()
+                {
+                    Text = theDistance.Certification.ToString(),
+                    FontSize = 16,
+                    Margin = new Thickness(0, 5, 0, 5),
+                    VerticalContentAlignment = VerticalAlignment.Center
                 };
-                Remove.Click += new RoutedEventHandler(this.Remove_Click);
-                secondGrid.Children.Add(Remove);
-                Grid.SetColumn(Remove, 1);
-                numGrid.Children.Add(secondGrid);
-                Grid.SetColumn(secondGrid, columnOffset);
+                certificationPanel.Children.Add(Certification);
+                numGrid.Children.Add(certificationPanel);
+                Grid.SetColumn(certificationPanel, columnOffset);
                 if (theEvent.UploadSpecific == true)
                 {
                     Upload = new()
@@ -975,6 +978,36 @@ namespace Chronokeep.UI.MainPages
                     Grid.SetColumn(Upload, 0);
                 }
                 thePanel.Children.Add(numGrid);
+                DockPanel secondGrid = new()
+                {
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+                AddSubDistance = new Button()
+                {
+                    Content = "Add Linked",
+                    FontSize = 14,
+                    Width = 100,
+                    Height = 30,
+                    Margin = new Thickness(0, 5, 5, 5),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                AddSubDistance.Click += new RoutedEventHandler(this.AddSub_Click);
+                secondGrid.Children.Add(AddSubDistance);
+                Remove = new Button()
+                {
+                    Content = "Remove",
+                    FontSize = 14,
+                    Width = 100,
+                    Height = 30,
+                    Margin = new Thickness(5, 5, 0, 5),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                Remove.Click += new RoutedEventHandler(this.Remove_Click);
+                secondGrid.Children.Add(Remove);
+                thePanel.Children.Add(secondGrid);
                 if (theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
                 {
                     wavePanel.Visibility = Visibility.Collapsed;
@@ -1084,6 +1117,14 @@ namespace Chronokeep.UI.MainPages
                 {
                     theDistance.Upload = true;
                 }
+                if (Certification != null)
+                {
+                    theDistance.Certification = Certification.Text;
+                }
+                else
+                {
+                    theDistance.Certification = "";
+                }
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)
@@ -1137,6 +1178,99 @@ namespace Chronokeep.UI.MainPages
                 {
                     scrollViewer.ScrollToVerticalOffset(scrollViewer.VerticalOffset - 35);
                 }
+            }
+        }
+
+        private async void UploadButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.SegmentsPage", "Uploading segments.");
+            if (UploadButton.Content.ToString() == "Upload")
+            {
+                UploadButton.IsEnabled = false;
+                UploadButton.Content = "Working...";
+                if (theEvent.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
+                {
+                    UploadButton.Content = "Error";
+                    return;
+                }
+                APIObject api = database.GetAPI(theEvent.API_ID);
+                string[] event_ids = theEvent.API_Event_ID.Split(',');
+                if (event_ids.Length != 2)
+                {
+                    UploadButton.Content = "Error";
+                    return;
+                }
+                // Save distances displayed
+                UpdateDatabase();
+                UpdateView();
+                // Get Distances and Locations to get their names
+                List<APIDistance> distances = new();
+                foreach (Distance d in database.GetDistances(theEvent.Identifier))
+                {
+                    if (d.Certification.Trim().Length > 0)
+                    {
+                        distances.Add(new APIDistance
+                        {
+                            Name = d.Name.Trim(),
+                            Certification = d.Certification.Trim(),
+                        });
+                    }
+                }
+                if (distances.Count > 0)
+                {
+                    Log.D("UI.MainPages.DistancesPage", "Attempting to upload " + distances.Count.ToString() + " distances.");
+                    try
+                    {
+                        GetDistancesResponse response = await APIHandlers.AddDistances(api, event_ids[0], event_ids[1], distances);
+                        if (response == null || response.Distances == null)
+                        {
+                            DialogBox.Show("Error uploading distances.");
+                        }
+                        else if (response.Distances.Count != distances.Count)
+                        {
+                            DialogBox.Show("Error uploading distances. Uploaded count doesn't match.");
+                        }
+                    }
+                    catch (APIException ex)
+                    {
+                        DialogBox.Show(ex.Message);
+                    }
+                }
+                UploadButton.IsEnabled = true;
+                UploadButton.Content = "Upload";
+            }
+        }
+
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.DistancesPage", "Deleting uploaded distances.");
+            if (DeleteButton.Content.ToString() == "Delete Uploaded")
+            {
+                DeleteButton.IsEnabled = false;
+                DeleteButton.Content = "Working...";
+                if (theEvent.API_ID < 0 || theEvent.API_Event_ID.Length < 1)
+                {
+                    DeleteButton.Content = "Error";
+                    return;
+                }
+                APIObject api = database.GetAPI(theEvent.API_ID);
+                string[] event_ids = theEvent.API_Event_ID.Split(',');
+                if (event_ids.Length != 2)
+                {
+                    DeleteButton.Content = "Error";
+                    return;
+                }
+                // Delete old information from the API
+                try
+                {
+                    await APIHandlers.DeleteDistances(api, event_ids[0], event_ids[1]);
+                }
+                catch (APIException ex)
+                {
+                    DialogBox.Show(ex.Message);
+                }
+                DeleteButton.IsEnabled = true;
+                DeleteButton.Content = "Delete Uploaded";
             }
         }
     }

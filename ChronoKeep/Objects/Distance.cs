@@ -4,7 +4,7 @@ namespace Chronokeep
 {
     public class Distance : IEquatable<Distance>, IComparable<Distance>
     {
-        private string name;
+        private string name, certification;
         private int identifier, eventIdentifier;
         private double distance;
         private int distance_unit = Constants.Distances.MILES, finish_location = Constants.Timing.LOCATION_FINISH,
@@ -38,7 +38,7 @@ namespace Chronokeep
         public Distance(int identifier, string name, int eventIdentifier,
             double distance, int distance_unit, int finish_location, int finish_occurrence,
             int start_location, int start_within, int wave, int start_offset_seconds, int start_offset_milliseconds,
-            int endseconds, int linked_distance, int type, int ranking, bool sms_enabled, bool upload)
+            int endseconds, int linked_distance, int type, int ranking, bool sms_enabled, bool upload, string certification)
         {
             this.identifier = identifier;
             this.name = name;
@@ -58,7 +58,7 @@ namespace Chronokeep
             this.ranking = ranking;
             this.sms_enabled = sms_enabled;
             this.upload = upload;
-
+            this.certification = certification;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -78,7 +78,8 @@ namespace Chronokeep
         public int Type { get => type; set => type = value; }
         public int Ranking { get => ranking; set => ranking = value; }
         public bool SMSEnabled { get => sms_enabled; set => sms_enabled = value; }
-        public bool Upload { get=> upload; set => upload = value; }
+        public bool Upload { get => upload; set => upload = value; }
+        public string Certification { get => certification; set => certification = value; }
 
         public int CompareTo(Distance other)
         {
@@ -114,6 +115,7 @@ namespace Chronokeep
             this.Type = other.Type;
             this.Ranking = other.Ranking;
             this.SMSEnabled = other.SMSEnabled;
+            this.Certification = other.Certification;
         }
 
         public void SetWaveTime(int wave, long seconds, int milliseconds)

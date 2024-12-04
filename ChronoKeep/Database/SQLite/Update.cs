@@ -1087,7 +1087,8 @@ namespace Chronokeep.Database.SQLite
                                 Convert.ToInt32(reader["distance_type"]),
                                 Convert.ToInt32(reader["distance_ranking_order"]),
                                 false,
-                                true
+                                true,
+                                ""
                                 ));
                         }
                         reader.Close();
@@ -1582,6 +1583,13 @@ namespace Chronokeep.Database.SQLite
                         command.CommandText = "ALTER TABLE events ADD COLUMN event_upload_specific_distance_results INTEGER NOT NULL DEFAULT 0; " +
                             "ALTER TABLE distances ADD COLUMN distance_upload_results INTEGER NOT NULL DEFAULT 1; " +
                             "UPDATE settings SET VALUE='67' WHERE setting='"+Constants.Settings.DATABASE_VERSION+"';";
+                        command.ExecuteNonQuery();
+                        goto case 67;
+                    case 67:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 67.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE distances ADD COLUMN distance_certification VARCHAR(150) NOT NULL DEFAULT ''; " +
+                            "UPDATE settings SET VALUE='68' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;
                 }

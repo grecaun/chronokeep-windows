@@ -100,6 +100,7 @@ namespace Chronokeep.Database.SQLite
                 queries.Add("CREATE TABLE IF NOT EXISTS distances (" +
                     "distance_id INTEGER PRIMARY KEY," +
                     "distance_name VARCHAR(100) NOT NULL," +
+                    "distance_certification VARCHAR(150) NOT NULL," +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
                     "distance_distance DECIMAL(10,2) DEFAULT 0.0," +
                     "distance_distance_unit INTEGER DEFAULT 0," +
