@@ -4,7 +4,7 @@ namespace Chronokeep
 {
     public class Distance : IEquatable<Distance>, IComparable<Distance>
     {
-        private string name, certification;
+        private string name, certification = "";
         private int identifier, eventIdentifier;
         private double distance;
         private int distance_unit = Constants.Distances.MILES, finish_location = Constants.Timing.LOCATION_FINISH,

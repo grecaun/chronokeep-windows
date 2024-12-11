@@ -7,6 +7,8 @@ namespace Chronokeep.Objects.API
     {
         [JsonPropertyName("name")]
         public string Name { get; set; }
+        [JsonPropertyName("cert_name")]
+        public string CertificateName { get; set; }
         [JsonPropertyName("slug")]
         public string Slug { get; set; }
         [JsonPropertyName("website")]

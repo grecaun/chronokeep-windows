@@ -2,6 +2,7 @@
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
 using Chronokeep.UI.UIObjects;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,6 +18,8 @@ namespace Chronokeep.UI.API
         APIObject api;
         Event theEvent;
 
+        Dictionary<string, string> eventNameToSlugDict = new();
+
         GetEventsResponse events;
 
         private async void GetEvents()
@@ -31,38 +34,33 @@ namespace Chronokeep.UI.API
                 window.Close();
                 return;
             }
-            EventBox.Items.Add(new ComboBoxItem
-            {
-                Content = "New Event",
-                Uid = "NEW"
-            });
-            int ix = 0;
-            int count = 1;
             Log.D("UI.API.APIPage2", "Adding events to combo box.");
             events.Events.Sort((a, b) => b.CompareTo(a));
+            List<string> eventNames = new()
+            {
+                "New Event"
+            };
+            EventBox.ItemsSource = eventNames;
             if (events.Events != null)
             {
                 foreach (APIEvent ev in events.Events)
                 {
-                    EventBox.Items.Add(new ComboBoxItem
-                    {
-                        Content = ev.Name,
-                        Uid = ev.Slug
-                    });
+                    eventNames.Add(ev.Name);
+                    eventNameToSlugDict.Add(ev.Name, ev.Slug);
                     if (theEvent.Name == ev.Name)
                     {
-                        ix = count;
+
                     }
-                    count++;
                 }
             }
-            EventBox.SelectedIndex = ix;
-            if (ix == 0)
+            if (!eventNameToSlugDict.ContainsKey(theEvent.Name))
             {
+                EventBox.SelectedIndex = 0;
                 newPanel.Visibility = Visibility.Visible;
             }
             else
             {
+                EventBox.SelectedIndex = eventNames.IndexOf(theEvent.Name);
                 newPanel.Visibility = Visibility.Collapsed;
             }
             nameBox.Text = theEvent.Name;
@@ -79,13 +77,12 @@ namespace Chronokeep.UI.API
             this.database = database;
             this.api = api;
             this.theEvent = theEvent;
-
             GetEvents();
         }
 
         private void EventBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (((ComboBoxItem)EventBox.SelectedItem).Uid == "NEW")
+            if (EventBox.SelectedIndex < 1 || !eventNameToSlugDict.ContainsKey(((string)EventBox.SelectedItem)))
             {
                 newPanel.Visibility = Visibility.Visible;
             }
@@ -94,16 +91,14 @@ namespace Chronokeep.UI.API
                 newPanel.Visibility = Visibility.Collapsed;
             }
         }
-
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
-            if (EventBox == null || EventBox.SelectedItem == null)
+            if (EventBox == null)
             {
                 window.Close();
                 return;
             }
-            string slug = ((ComboBoxItem)EventBox.SelectedItem).Uid;
-            if (slug == "NEW")
+            if (!eventNameToSlugDict.TryGetValue(EventBox.Text, out string slug))
             {
                 try
                 {
@@ -124,11 +119,12 @@ namespace Chronokeep.UI.API
                     ModifyEventResponse addResponse = await APIHandlers.AddEvent(api, new APIEvent
                     {
                         Name = nameBox.Text,
+                        CertificateName = certNameBox.Text,
                         Slug = slugBox.Text,
-                        Website = "",
-                        Image = "",
+                        Website = websiteBox.Text,
+                        Image = imageBox.Text,
                         ContactEmail = contactBox.Text,
-                        AccessRestricted = (bool)restrictBox.IsChecked ? true : false,
+                        AccessRestricted = (bool)restrictBox.IsChecked,
                         Type = type
                     });
                     slug = addResponse.Event.Slug;

@@ -74,6 +74,23 @@
                 </DockPanel>
                 <DockPanel Margin="0,0,0,5">
                     <TextBlock
+                        Text="Cert Name"
+                        FontSize="15"
+                        Width="100"
+                        VerticalAlignment="Center"
+                        TextAlignment="Right"
+                        Padding="0,0,5,0"
+                        />
+                    <TextBox
+                        x:Name="certNameBox"
+                        FontSize="15"
+                        Width="180"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        />
+                </DockPanel>
+                <DockPanel Margin="0,0,0,5">
+                    <TextBlock
                         Text="Slug" 
                         FontSize="15"
                         Width="100"
@@ -100,6 +117,40 @@
                         />
                     <TextBox 
                         Name="contactBox"
+                        FontSize="15" 
+                        Width="180"
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Stretch"
+                        />
+                </DockPanel>
+                <DockPanel Margin="0,0,0,5" Visibility="Collapsed">
+                    <TextBlock
+                        Text="Website URL"
+                        FontSize="15"
+                        Width="100"
+                        VerticalAlignment="Center" 
+                        TextAlignment="Right"
+                        Padding="0,0,5,0"
+                        />
+                    <TextBox 
+                        Name="websiteBox"
+                        FontSize="15" 
+                        Width="180"
+                        VerticalAlignment="Center" 
+                        HorizontalAlignment="Stretch"
+                        />
+                </DockPanel>
+                <DockPanel Margin="0,0,0,5" Visibility="Collapsed">
+                    <TextBlock
+                        Text="Image URL"
+                        FontSize="15"
+                        Width="100"
+                        VerticalAlignment="Center" 
+                        TextAlignment="Right"
+                        Padding="0,0,5,0"
+                        />
+                    <TextBox 
+                        Name="imageBox"
                         FontSize="15" 
                         Width="180"
                         VerticalAlignment="Center" 
