@@ -276,7 +276,11 @@ namespace Chronokeep.Objects
 
         public string PrettyTypeStr()
         {
-            string output = type == Constants.Timing.DISTANCE_TYPE_EARLY ? "E" : type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL ? "U" : "";
+            string output = type == Constants.Timing.DISTANCE_TYPE_EARLY ? "E"
+                : type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL ? "U"
+                : type == Constants.Timing.DISTANCE_TYPE_LATE ? "L"
+                : type == Constants.Timing.DISTANCE_TYPE_VIRTUAL ? "V"
+                : "";
             return anonymous ? "A" + output : output;
         }
 

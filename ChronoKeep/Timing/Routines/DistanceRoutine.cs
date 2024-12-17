@@ -264,6 +264,15 @@ namespace Chronokeep.Timing.Routines
                                 // Create a result for the start value.
                                 long secondsDiff = read.TimeSeconds - startSeconds;
                                 int millisecDiff = read.TimeMilliseconds - startMilliseconds;
+                                // If the distance is linked as a late distance, use the linked distance's start time as the gun time.
+                                if (d != null
+                                    && d.Type == Constants.Timing.DISTANCE_TYPE_LATE
+                                    && d.LinkedDistance != Constants.Timing.DISTANCE_DUMMYIDENTIFIER
+                                    && dictionary.distanceStartDict.TryGetValue(d.LinkedDistance, out (long, int) tmp))
+                                {
+                                    secondsDiff = read.TimeSeconds - tmp.Item1;
+                                    millisecDiff = read.TimeMilliseconds - tmp.Item2;
+                                }
                                 if (millisecDiff < 0)
                                 {
                                     secondsDiff--;
@@ -424,6 +433,15 @@ namespace Chronokeep.Timing.Routines
                                     // Create a result for the start value.
                                     long secondsDiff = read.TimeSeconds - startSeconds;
                                     int millisecDiff = read.TimeMilliseconds - startMilliseconds;
+                                    // If the distance is linked as a late distance, use the linked distance's start time as the gun time.
+                                    if (d != null
+                                        && d.Type == Constants.Timing.DISTANCE_TYPE_LATE
+                                        && d.LinkedDistance != Constants.Timing.DISTANCE_DUMMYIDENTIFIER
+                                        && dictionary.distanceStartDict.TryGetValue(d.LinkedDistance, out (long, int) tmp))
+                                    {
+                                        secondsDiff = read.TimeSeconds - tmp.Item1;
+                                        millisecDiff = read.TimeMilliseconds - tmp.Item2;
+                                    }
                                     if (millisecDiff < 0)
                                     {
                                         secondsDiff--;

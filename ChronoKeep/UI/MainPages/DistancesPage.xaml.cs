@@ -473,6 +473,12 @@ namespace Chronokeep.UI.MainPages
                 TypeBox.Items.Add(
                     new ComboBoxItem
                     {
+                        Content = "Late Start",
+                        Uid = Constants.Timing.DISTANCE_TYPE_LATE.ToString()
+                    });
+                TypeBox.Items.Add(
+                    new ComboBoxItem
+                    {
                         Content = "Unranked",
                         Uid = Constants.Timing.DISTANCE_TYPE_UNOFFICIAL.ToString()
                     });
@@ -486,20 +492,41 @@ namespace Chronokeep.UI.MainPages
                 {
                     TypeBox.SelectedIndex = 1;
                 }
+                else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_LATE)
+                {
+                    Ranking.Text = "0";
+                    Ranking.IsEnabled = false;
+                    TypeBox.SelectedIndex = 2;
+                }
                 else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL)
                 {
-                    TypeBox.SelectedIndex = 2;
+                    TypeBox.SelectedIndex = 3;
                 }
                 else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_VIRTUAL)
                 {
-                    TypeBox.SelectedIndex = 3;
+                    TypeBox.SelectedIndex = 4;
                 }
                 else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_NORMAL)
                 {
                     TypeBox.SelectedIndex = 0;
                 }
+                TypeBox.SelectionChanged += TypeBox_SelectionChanged;
                 wavePanel.Children.Add(TypeBox);
                 thePanel.Children.Add(wavePanel);
+            }
+
+            private void TypeBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+            {
+                if (TypeBox.SelectedIndex == 2)
+                {
+                    Ranking.Text = "0";
+                    Ranking.IsEnabled = false;
+                }
+                else
+                {
+                    Ranking.Text = theDistance.Ranking.ToString();
+                    Ranking.IsEnabled = true;
+                }
             }
 
             private void Remove_Click(object sender, RoutedEventArgs e)

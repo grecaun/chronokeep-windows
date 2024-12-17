@@ -75,7 +75,14 @@ namespace Chronokeep.UI.Timing
             int selectedLoc;
             try
             {
-                selectedLoc = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem).Uid);
+                if (LocationBox.SelectedIndex >= 0)
+                {
+                    selectedLoc = Convert.ToInt32(((ComboBoxItem)LocationBox.SelectedItem).Uid);
+                }
+                else
+                {
+                    selectedLoc = Constants.Timing.LOCATION_FINISH;
+                }
             }
             catch
             {
