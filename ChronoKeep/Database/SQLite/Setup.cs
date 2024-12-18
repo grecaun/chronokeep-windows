@@ -266,7 +266,7 @@ namespace Chronokeep.Database.SQLite
                     "event_id INTEGER NOT NULL REFERENCES events(event_id), " +
                     "eventspecific_id INTEGER NOT NULL REFERENCES eventspecific(eventspecific_id)," +
                     "segment_id INTEGER NOT NULL DEFAULT '"+Constants.Timing.SEGMENT_FINISH+"'," +
-                    "UNIQUE(event_id, eventspecific_id, segment)" +
+                    "UNIQUE(event_id, eventspecific_id, segment_id)" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS sms_ban_list(" +
                     "banned_phone VARCHAR(100), " +
