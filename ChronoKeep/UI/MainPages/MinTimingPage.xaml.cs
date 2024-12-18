@@ -357,11 +357,11 @@ namespace Chronokeep.UI.MainPages
             public TextBox ReaderIP { get; private set; }
             public TextBox ReaderPort { get; private set; }
             public ComboBox ReaderLocation { get; private set; }
-            public Wpf.Ui.Controls.Button ConnectButton { get; private set; }
-            public Wpf.Ui.Controls.Button ClockButton { get; private set; }
-            public Wpf.Ui.Controls.Button RewindButton { get; private set; }
-            public Wpf.Ui.Controls.Button SettingsButton { get; private set; }
-            public Wpf.Ui.Controls.Button RemoveButton { get; private set; }
+            public Button ConnectButton { get; private set; }
+            public Button ClockButton { get; private set; }
+            public Button RewindButton { get; private set; }
+            public Button SettingsButton { get; private set; }
+            public Button RemoveButton { get; private set; }
 
             readonly ITimingPage parent;
             private List<TimingLocation> locations;
@@ -480,9 +480,9 @@ namespace Chronokeep.UI.MainPages
                 }
                 thePanel.Children.Add(ReaderLocation);
                 Grid.SetColumn(ReaderLocation, 3);
-                ClockButton = new Wpf.Ui.Controls.Button()
+                ClockButton = new Button()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Clock24 },
+                    Content = "Cl",
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -493,9 +493,9 @@ namespace Chronokeep.UI.MainPages
                 ClockButton.Click += new RoutedEventHandler(this.Clock);
                 thePanel.Children.Add(ClockButton);
                 Grid.SetColumn(ClockButton, 4);
-                RewindButton = new Wpf.Ui.Controls.Button()
+                RewindButton = new Button()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Rewind24 },
+                    Content = "<<",
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -506,9 +506,9 @@ namespace Chronokeep.UI.MainPages
                 RewindButton.Click += new RoutedEventHandler(this.Rewind);
                 thePanel.Children.Add(RewindButton);
                 Grid.SetColumn(RewindButton, 5);
-                SettingsButton = new Wpf.Ui.Controls.Button()
+                SettingsButton = new Button()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Settings24 },
+                    Content = "Se",
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -517,9 +517,9 @@ namespace Chronokeep.UI.MainPages
                 SettingsButton.Click += new RoutedEventHandler(this.Settings);
                 thePanel.Children.Add(SettingsButton);
                 Grid.SetColumn(SettingsButton, 6);
-                ConnectButton = new Wpf.Ui.Controls.Button()
+                ConnectButton = new Button()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Play24 },
+                    Content = ">",
                     Uid = "connect",
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -529,9 +529,9 @@ namespace Chronokeep.UI.MainPages
                 ConnectButton.Click += new RoutedEventHandler(this.Connect);
                 thePanel.Children.Add(ConnectButton);
                 Grid.SetColumn(ConnectButton, 7);
-                RemoveButton = new Wpf.Ui.Controls.Button()
+                RemoveButton = new Button()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Delete24 },
+                    Content = "x",
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -732,7 +732,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 ConnectButton.IsEnabled = true;
                 ConnectButton.Opacity = 1.0;
-                ConnectButton.Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Stop24 };
+                ConnectButton.Content = "<";
                 ConnectButton.Uid = "disconnect";
             }
 
@@ -754,7 +754,7 @@ namespace Chronokeep.UI.MainPages
                 ClockButton.Opacity = 0.2;
                 RewindButton.Opacity = 0.2;
                 SettingsButton.Opacity = 0.2;
-                ConnectButton.Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Play24 };
+                ConnectButton.Content = ">";
                 ConnectButton.Uid = "connect";
             }
 
@@ -774,7 +774,7 @@ namespace Chronokeep.UI.MainPages
                 ConnectButton.Opacity = 0.2;
                 RemoveButton.Opacity = 0.2;
                 SettingsButton.Opacity = 0.2;
-                ConnectButton.Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.CatchUp24 };
+                ConnectButton.Content = "..";
                 ConnectButton.Uid = "working";
             }
 

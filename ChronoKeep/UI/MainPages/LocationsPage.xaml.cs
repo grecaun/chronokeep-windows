@@ -170,9 +170,9 @@ namespace Chronokeep.UI.MainPages
                 this.IsTabStop = false;
                 // Name information.
                 DockPanel namePanel = new DockPanel();
-                namePanel.Children.Add(new TextBlock()
+                namePanel.Children.Add(new Label()
                 {
-                    Text = "Name",
+                    Content = "Name",
                     Width = 140,
                     FontSize = 16,
                     Margin = new Thickness(10,0,0,0),
@@ -195,9 +195,9 @@ namespace Chronokeep.UI.MainPages
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 settingsGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 DockPanel occPanel = new DockPanel();
-                occPanel.Children.Add(new TextBlock()
+                occPanel.Children.Add(new Label()
                 {
-                    Text = "Max Occurrences",
+                    Content = "Max Occurrences",
                     Width = 140,
                     FontSize = 16,
                     Margin = new Thickness(10, 0, 0, 0),
@@ -224,9 +224,9 @@ namespace Chronokeep.UI.MainPages
                     occPanel.Visibility = Visibility.Collapsed;
                     labelWidth = 140;
                 }
-                ignPanel.Children.Add(new TextBlock()
+                ignPanel.Children.Add(new Label()
                 {
-                    Text = labelLabel,
+                    Content = labelLabel,
                     Width = labelWidth,
                     FontSize = 16,
                     Margin = new Thickness(10, 0, 0, 0),

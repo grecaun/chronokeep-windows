@@ -32,7 +32,7 @@ namespace Chronokeep.UI.MainPages
             if (Directory.Exists(dirPath))
             {
                 dirPath = Path.Combine(dirPath, "index.html");
-                HelpDocsButton.NavigateUri = dirPath;
+                HelpDocsButton.NavigateUri = new Uri(dirPath);
             }
             VersionLabel.Text = gitVersion;
         }

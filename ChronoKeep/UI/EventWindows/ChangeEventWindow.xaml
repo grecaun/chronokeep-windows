@@ -1,27 +1,16 @@
-﻿<ui:FluentWindow x:Class="Chronokeep.UI.ChangeEventWindow"
+﻿<Window x:Class="Chronokeep.UI.ChangeEventWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chronokeep.UI"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
         Title="Change Event" Height="400" Width="500"  Closing="Window_Closing" Topmost="True"
         d:DataContext="{d:DesignInstance local:ChangeEventWindow, IsDesignTimeCreatable=True}"
-        ExtendsContentIntoTitleBar="True"
-        WindowBackdropType="Mica"
-        WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
         >
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="35" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <ui:TitleBar
-            Grid.Row="0">
-        </ui:TitleBar>
-        <Grid Grid.Row="1" Margin="5">
+        <Grid Margin="5">
             <Grid.Resources>
                 <Style TargetType="ListViewItem" x:Key="alternatingStyle">
                     <Style.Triggers>
@@ -42,8 +31,8 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ui:SymbolIcon Symbol="Search24" Grid.Column="0" Margin="20,0,10,10" VerticalAlignment="Center"/>
-                <ui:TextBox Height="40" Margin="5,0,15,15" Name="searchBox" TextChanged="searchBox_TextChanged" PlaceholderText="Search..." Grid.Column="1" />
+                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE71E;" VerticalAlignment="Center" />
+                <TextBox Height="40" Margin="5,0,15,15" Name="searchBox" TextChanged="searchBox_TextChanged" Grid.Column="1" />
             </Grid>
             <Grid Grid.Row="1" Margin="19,0,19,0">
                 <Grid.ColumnDefinitions>
@@ -88,4 +77,4 @@
             </StackPanel>
         </Grid>
     </Grid>
-</ui:FluentWindow>
+</Window>

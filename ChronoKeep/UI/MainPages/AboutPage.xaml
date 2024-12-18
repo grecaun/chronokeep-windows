@@ -7,7 +7,6 @@
         mc:Ignorable="d"
         d:DesignHeight="550" d:DesignWidth="800"
         Title="AboutPage"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         FlowDirection="LeftToRight"
         Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         >
@@ -45,22 +44,12 @@
             FontWeight="Medium"
             Text="Links"
             />
-        <ui:HyperlinkButton
-            Content="Project website on Github"
-            NavigateUri="https://github.com/grecaun/chronokeep-windows"
-            >
-            <ui:HyperlinkButton.Icon>
-                <ui:SymbolIcon Symbol="Link24"/>
-            </ui:HyperlinkButton.Icon>
-        </ui:HyperlinkButton>
-        <ui:HyperlinkButton
-            Content="Latest release on Github"
-            NavigateUri="https://github.com/grecaun/chronokeep-windows/releases/latest"
-            >
-            <ui:HyperlinkButton.Icon>
-                <ui:SymbolIcon Symbol="Link24"/>
-            </ui:HyperlinkButton.Icon>
-        </ui:HyperlinkButton>
+        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
+            <Hyperlink NavigateUri="https://github.com/grecaun/chronokeep-windows">&#xE71B; Project website on Github</Hyperlink>
+        </TextBlock>
+        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
+            <Hyperlink NavigateUri="https://github.com/grecaun/chronokeep-windows/releases/latest">&#xE71B; Latest release on Github</Hyperlink>
+        </TextBlock>
         <TextBlock
             Padding="0,24,0,8"
             FontSize="14"
@@ -74,58 +63,28 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="0,0,32,0">
-                <ui:HyperlinkButton
-                    Content="SQLite"
-                    NavigateUri="https://system.data.sqlite.org/"
-                    >
-                    <ui:HyperlinkButton.Icon>
-                        <ui:SymbolIcon Symbol="Link24"/>
-                    </ui:HyperlinkButton.Icon>
-                </ui:HyperlinkButton>
-                <ui:HyperlinkButton
-                    Content="wkhtmltopdf"
-                    NavigateUri="https://wkhtmltopdf.org/"
-                    >
-                    <ui:HyperlinkButton.Icon>
-                        <ui:SymbolIcon Symbol="Link24"/>
-                    </ui:HyperlinkButton.Icon>
-                </ui:HyperlinkButton>
+                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
+                    <Hyperlink NavigateUri="https://system.data.sqlite.org/">&#xE71B; SQLite</Hyperlink>
+                </TextBlock>
+                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
+                    <Hyperlink NavigateUri="https://wkhtmltopdf.org/">&#xE71B; wkhtmltopdf</Hyperlink>
+                </TextBlock>
             </StackPanel>
             <StackPanel Grid.Column="1" Margin="0,0,32,0">
-                <ui:HyperlinkButton
-                    Content="WPF UI"
-                    NavigateUri="https://github.com/lepoco/wpfui"
-                    >
-                    <ui:HyperlinkButton.Icon>
-                        <ui:SymbolIcon Symbol="Link24"/>
-                    </ui:HyperlinkButton.Icon>
-                </ui:HyperlinkButton>
-                <ui:HyperlinkButton
-                    Content="Ghostscript"
-                    NavigateUri="https://www.ghostscript.com/"
-                    >
-                    <ui:HyperlinkButton.Icon>
-                        <ui:SymbolIcon Symbol="Link24"/>
-                    </ui:HyperlinkButton.Icon>
-                </ui:HyperlinkButton>
+                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
+                    <Hyperlink NavigateUri="https://github.com/lepoco/wpfui">&#xE71B; WPF UI</Hyperlink>
+                </TextBlock>
+                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
+                    <Hyperlink NavigateUri="https://www.ghostscript.com/">&#xE71B; Ghostscript</Hyperlink>
+                </TextBlock>
             </StackPanel>
             <StackPanel Grid.Column="2">
-                <ui:HyperlinkButton
-                    Content="Extended WPF Toolkit"
-                    NavigateUri="https://github.com/xceedsoftware/wpftoolkit"
-                    >
-                    <ui:HyperlinkButton.Icon>
-                        <ui:SymbolIcon Symbol="Link24"/>
-                    </ui:HyperlinkButton.Icon>
-                </ui:HyperlinkButton>
-                <ui:HyperlinkButton
-                    Content="ClosedXML"
-                    NavigateUri="https://closedxml.github.io/ClosedXML/"
-                    >
-                    <ui:HyperlinkButton.Icon>
-                        <ui:SymbolIcon Symbol="Link24"/>
-                    </ui:HyperlinkButton.Icon>
-                </ui:HyperlinkButton>
+                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
+                    <Hyperlink NavigateUri="https://github.com/xceedsoftware/wpftoolkit">&#xE71B; Extended WPF Toolkit</Hyperlink>
+                </TextBlock>
+                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
+                    <Hyperlink NavigateUri="https://closedxml.github.io/ClosedXML/">&#xE71B; ClosedXML</Hyperlink>
+                </TextBlock>
             </StackPanel>
         </Grid>
         <TextBlock
@@ -135,22 +94,12 @@
             Text="Application Folders"
             />
         <StackPanel Orientation="Horizontal">
-            <ui:HyperlinkButton
-                Click="OpenDataFolder_Click"
-                Content="Data"
-                >
-                <ui:HyperlinkButton.Icon>
-                    <ui:SymbolIcon Symbol="Folder24"/>
-                </ui:HyperlinkButton.Icon>
-            </ui:HyperlinkButton>
-            <ui:HyperlinkButton
-                Name="HelpDocsButton"
-                Content="Help Docs"
-                >
-                <ui:HyperlinkButton.Icon>
-                    <ui:SymbolIcon Symbol="Link24"/>
-                </ui:HyperlinkButton.Icon>
-            </ui:HyperlinkButton>
+            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
+                <Hyperlink Click="OpenDataFolder_Click">&#xE71B; Data</Hyperlink>
+            </TextBlock>
+            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
+                <Hyperlink Name="HelpDocsButton">&#xE71B; Help Docs</Hyperlink>
+            </TextBlock>
         </StackPanel>
     </StackPanel>
 </Page>

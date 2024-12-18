@@ -13,7 +13,6 @@ using System.Windows.Threading;
 using Chronokeep.UI.UIObjects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Objects.ChronokeepPortal;
-using Chronokeep.UI.Timing;
 using Chronokeep.UI.MainPages;
 
 namespace Chronokeep.UI
@@ -159,18 +158,7 @@ namespace Chronokeep.UI
         }
 
 
-        public void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system)
-        {
-            Wpf.Ui.Appearance.ApplicationThemeManager.Apply(theme);
-            if (system)
-            {
-                Wpf.Ui.Appearance.SystemThemeWatcher.Watch(this);
-            }
-            else
-            {
-                Wpf.Ui.Appearance.SystemThemeWatcher.UnWatch(this);
-            }
-        }
+        public void UpdateTheme(ApplicationTheme theme, bool system) {}
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -302,11 +290,11 @@ namespace Chronokeep.UI
             AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
             if (OperatingSystem.IsWindowsVersionAtLeast(7))
             {
-                Wpf.Ui.Appearance.ApplicationTheme theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
+                ApplicationTheme theme = ApplicationTheme.Light;
                 bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
                 if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
                 {
-                    theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
+                    theme = ApplicationTheme.Dark;
                 }
                 UpdateTheme(theme, system);
             }

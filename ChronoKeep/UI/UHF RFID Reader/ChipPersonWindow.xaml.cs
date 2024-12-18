@@ -3,14 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for ChipPersonWindow.xaml
     /// </summary>
-    public partial class ChipPersonWindow : FluentWindow
+    public partial class ChipPersonWindow : Window
     {
         private ChipReaderWindow readerWindow;
         private string eventDate;

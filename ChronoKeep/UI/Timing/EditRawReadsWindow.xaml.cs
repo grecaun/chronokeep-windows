@@ -1,20 +1,17 @@
 ﻿using Chronokeep.Interfaces;
-using Chronokeep.Timing.API;
-using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for EditRawReadsWindow.xaml
     /// </summary>
-    public partial class EditRawReadsWindow : FluentWindow
+    public partial class EditRawReadsWindow : Window
     {
         ITimingPage parent;
         IDBInterface database;

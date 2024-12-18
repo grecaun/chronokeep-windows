@@ -1,6 +1,5 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
-using Chronokeep.Timing.API;
 using Chronokeep.UI.Import;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -10,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Wpf.Ui.Controls;
 using static Chronokeep.UI.Import.ImportFilePage2Alt;
 
 namespace Chronokeep
@@ -18,7 +16,7 @@ namespace Chronokeep
     /// <summary>
     /// Interaction logic for ImportFileWindow.xaml
     /// </summary>
-    public partial class ImportFileWindow : FluentWindow
+    public partial class ImportFileWindow : Window
     {
         IDataImporter importer;
         IMainWindow window = null;

@@ -1,20 +1,18 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
-using Chronokeep.Timing.API;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for ManualEntryWindow.xaml
     /// </summary>
-    public partial class ManualEntryWindow : FluentWindow
+    public partial class ManualEntryWindow : Window
     {
         IMainWindow window;
         IDBInterface database;

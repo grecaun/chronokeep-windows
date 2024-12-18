@@ -4,14 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI
 {
     /// <summary>
     /// Interaction logic for ChangeEventWindow.xaml
     /// </summary>
-    public partial class ChangeEventWindow : FluentWindow
+    public partial class ChangeEventWindow : Window
     {
         private IWindowCallback window;
         private IDBInterface database;

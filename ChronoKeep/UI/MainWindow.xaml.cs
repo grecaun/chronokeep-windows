@@ -75,8 +75,6 @@ namespace Chronokeep.UI
 
         public MainWindow()
         {
-            InitializeComponent();
-
             // Check that no other instance of this program are running.
             if (!OneWindow.WaitOne(TimeSpan.Zero, true))
             {
@@ -84,6 +82,8 @@ namespace Chronokeep.UI
                 this.Close();
             }
             OneWindow.ReleaseMutex();
+
+            InitializeComponent();
 
             string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
             string path = Path.Combine(dirPath, dbName);
@@ -157,17 +157,17 @@ namespace Chronokeep.UI
         }
 
 
-        public void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system)
+        public void UpdateTheme(ApplicationTheme theme, bool system)
         {
-            Wpf.Ui.Appearance.ApplicationThemeManager.Apply(theme);
-            if (system)
-            {
-                Wpf.Ui.Appearance.SystemThemeWatcher.Watch(this);
-            }
-            else
-            {
-                Wpf.Ui.Appearance.SystemThemeWatcher.UnWatch(this);
-            }
+            //ApplicationThemeManager.Apply(theme);
+            //if (system)
+            //{
+            //    Wpf.Ui.Appearance.SystemThemeWatcher.Watch(this);
+            //}
+            //else
+            //{
+            //    Wpf.Ui.Appearance.SystemThemeWatcher.UnWatch(this);
+            //}
         }
 
         private void DashboardButton_Click(object sender, RoutedEventArgs e)
@@ -642,20 +642,20 @@ namespace Chronokeep.UI
                 // Pull alarms from the database.
                 Alarm.AddAlarms(database.GetAlarms(theEvent.Identifier));
             }
-            if (OperatingSystem.IsWindowsVersionAtLeast(8))
-            {
-                dashboardButton.IsActive = page.GetType() == typeof(DashboardPage);
-                timingButton.IsActive = page.GetType() == typeof(TimingPage);
-                announcerButton.IsActive = announcerWindow != null;
-                participantsButton.IsActive = page.GetType() == typeof(ParticipantsPage);
-                chipsButton.IsActive = page.GetType() == typeof(ChipAssigmentPage);
-                locationsButton.IsActive = page.GetType() == typeof(LocationsPage);
-                distancesButton.IsActive = page.GetType() == typeof(DistancesPage);
-                segmentsButton.IsActive = page.GetType() == typeof(SegmentsPage);
-                agegroupsButton.IsActive = page.GetType() == typeof(AgeGroupsPage);
-                settingsButton.IsActive = page.GetType() == typeof(SettingsPage);
-                aboutButton.IsActive = page.GetType() == typeof(AboutPage);
-            }
+            //if (OperatingSystem.IsWindowsVersionAtLeast(8))
+            //{
+            //    dashboardButton.IsActive = page.GetType() == typeof(DashboardPage);
+            //    timingButton.IsActive = page.GetType() == typeof(TimingPage);
+            //    announcerButton.IsActive = announcerWindow != null;
+            //    participantsButton.IsActive = page.GetType() == typeof(ParticipantsPage);
+            //    chipsButton.IsActive = page.GetType() == typeof(ChipAssigmentPage);
+            //    locationsButton.IsActive = page.GetType() == typeof(LocationsPage);
+            //    distancesButton.IsActive = page.GetType() == typeof(DistancesPage);
+            //    segmentsButton.IsActive = page.GetType() == typeof(SegmentsPage);
+            //    agegroupsButton.IsActive = page.GetType() == typeof(AgeGroupsPage);
+            //    settingsButton.IsActive = page.GetType() == typeof(SettingsPage);
+            //    aboutButton.IsActive = page.GetType() == typeof(AboutPage);
+            //}
         }
 
         public async void ConnectTimingSystem(TimingSystem system)
@@ -732,16 +732,13 @@ namespace Chronokeep.UI
             TimingWorker.Notify();
             // Check for current theme color and apply it.
             AppSetting themeColor = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
-            if (OperatingSystem.IsWindowsVersionAtLeast(7))
+            ApplicationTheme theme = ApplicationTheme.Light;
+            bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
+            if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
             {
-                Wpf.Ui.Appearance.ApplicationTheme theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
-                bool system = themeColor.Value == Constants.Settings.THEME_SYSTEM;
-                if ((themeColor.Value == Constants.Settings.THEME_SYSTEM && Utils.GetSystemTheme() == 0) || themeColor.Value == Constants.Settings.THEME_DARK)
-                {
-                    theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
-                }
-                UpdateTheme(theme, system);
+                theme = ApplicationTheme.Dark;
             }
+            UpdateTheme(theme, system);
         }
 
         public void SwitchPage(IMainPage iPage)

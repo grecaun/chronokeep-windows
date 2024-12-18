@@ -8,7 +8,6 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Export
 {
@@ -22,7 +21,7 @@ namespace Chronokeep.UI.Export
     /// <summary>
     /// Interaction logic for ExportDistanceResults.xaml
     /// </summary>
-    public partial class ExportDistanceResults : FluentWindow
+    public partial class ExportDistanceResults : Window
     {
         IMainWindow window;
         IDBInterface database;

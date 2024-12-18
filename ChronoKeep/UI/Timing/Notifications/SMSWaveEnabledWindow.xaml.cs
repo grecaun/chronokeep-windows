@@ -1,19 +1,14 @@
 ﻿using Chronokeep.Interfaces;
-using Chronokeep.Objects;
-using Chronokeep.UI.UIObjects;
-using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing.Notifications
 {
     /// <summary>
     /// Interaction logic for SMSWaveEnabledWindow.xaml
     /// </summary>
-    public partial class SMSWaveEnabledWindow : FluentWindow
+    public partial class SMSWaveEnabledWindow : Window
     {
         IMainWindow window;
         IDBInterface database;

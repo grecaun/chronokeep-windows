@@ -208,8 +208,8 @@ namespace Chronokeep.UI.Timing
             public TextBox BibBox;
             public TextBox ChipBox;
             public ComboBox AlarmSoundBox;
-            public Wpf.Ui.Controls.ToggleSwitch EnabledBox;
-            public Wpf.Ui.Controls.Button RemoveButton;
+            public CheckBox EnabledBox;
+            public Button RemoveButton;
 
             readonly AlarmsPage page;
             private Alarm theAlarm;
@@ -345,7 +345,7 @@ namespace Chronokeep.UI.Timing
                 theGrid.Children.Add(AlarmSoundBox);
                 Grid.SetColumn(AlarmSoundBox, 2);
                 Log.D("UI.Timing.AlarmsPage.AnAlarmItem", "Alarm enabled set to: " + alarm.Enabled.ToString());
-                EnabledBox = new Wpf.Ui.Controls.ToggleSwitch()
+                EnabledBox = new CheckBox()
                 {
                     IsChecked = alarm.Enabled,
                     Margin = new Thickness(2),
@@ -354,7 +354,7 @@ namespace Chronokeep.UI.Timing
                 };
                 theGrid.Children.Add(EnabledBox);
                 Grid.SetColumn(EnabledBox, 3);
-                RemoveButton = new Wpf.Ui.Controls.Button()
+                RemoveButton = new Button()
                 {
                     Content = "X",
                     FontSize = 16,

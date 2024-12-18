@@ -5,14 +5,13 @@ using System;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for ChipReaderWindow.xaml
     /// </summary>
-    public partial class ChipReaderWindow : FluentWindow
+    public partial class ChipReaderWindow : Window
     {
         public static byte deviceNo = 0;
         private static Thread readingThread;

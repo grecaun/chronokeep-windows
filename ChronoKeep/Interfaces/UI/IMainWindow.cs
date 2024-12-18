@@ -1,11 +1,18 @@
 ﻿using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
-using Chronokeep.Timing;
 using System.Collections.Generic;
 using System.Windows;
 
 namespace Chronokeep.Interfaces
 {
+    public enum ApplicationTheme
+    {
+        None,
+        Light,
+        Dark,
+        System,
+    }
+
     public interface IMainWindow : IWindowCallback
     {
         // Window related calls.
@@ -62,7 +69,7 @@ namespace Chronokeep.Interfaces
         void ShowNotificationDialog(string ReaderName, RemoteNotification notification);
 
         // Theme related calls
-        void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system);
+        void UpdateTheme(ApplicationTheme theme, bool system);
 
         // Registration related calls
         bool StartRegistration();

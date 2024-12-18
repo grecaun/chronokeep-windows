@@ -1,6 +1,4 @@
-﻿using Chronokeep.Constants;
-using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing.Announcer;
@@ -8,14 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Announcer
 {
     /// <summary>
     /// Interaction logic for AnnouncerWindow.xaml
     /// </summary>
-    public partial class AnnouncerWindow : FluentWindow
+    public partial class AnnouncerWindow : Window
     {
         IMainWindow window = null;
         AnnouncerWorker announcerWorker = null;

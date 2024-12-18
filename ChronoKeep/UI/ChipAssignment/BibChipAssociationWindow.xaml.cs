@@ -7,14 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for BibChipAssociationWindow.xaml
     /// </summary>
-    public partial class BibChipAssociationWindow : FluentWindow
+    public partial class BibChipAssociationWindow : Window
     {
         IDataImporter importer;
         IWindowCallback window = null;

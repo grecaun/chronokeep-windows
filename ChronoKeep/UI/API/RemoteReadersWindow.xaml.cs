@@ -6,18 +6,16 @@ using Chronokeep.Timing.Remote;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
-using Wpf.Ui.Controls;
-using Wpf.Ui.Extensions;
 using Xceed.Wpf.Toolkit;
-using Button = Wpf.Ui.Controls.Button;
 
 namespace Chronokeep.UI.API
 {
     /// <summary>
     /// Interaction logic for RemoteReaders.xaml
     /// </summary>
-    public partial class RemoteReadersWindow : FluentWindow
+    public partial class RemoteReadersWindow : Window
     {
         private static RemoteReadersWindow theOne = null;
 
@@ -77,8 +75,8 @@ namespace Chronokeep.UI.API
                 Close();
                 return;
             }
-            loadingPanel.Visibility = System.Windows.Visibility.Collapsed;
-            apiListView.Visibility = System.Windows.Visibility.Visible;
+            loadingPanel.Visibility = Visibility.Collapsed;
+            apiListView.Visibility = Visibility.Visible;
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -88,7 +86,7 @@ namespace Chronokeep.UI.API
             window.WindowFinalize(this);
         }
 
-        private void Close_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void Close_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.API.RemoteReaders", "Close button clicked.");
             List<RemoteReader> readersToSave = new();
@@ -128,9 +126,9 @@ namespace Chronokeep.UI.API
             Close();
         }
 
-        internal class APIExpander : Wpf.Ui.Controls.ListViewItem
+        internal class APIExpander : ListViewItem
         {
-            private Wpf.Ui.Controls.ListView readerListView;
+            private ListView readerListView;
 
             public APIExpander(APIObject api, List<RemoteReader> readers, Dictionary<(int, string), RemoteReader> savedReaders, IDBInterface database, IMainWindow mainWindow)
             {
@@ -138,16 +136,16 @@ namespace Chronokeep.UI.API
                 {
                     Header = api.Nickname,
                     IsExpanded = true,
-                    HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
-                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
                     Width = 1050,
-                    Margin = new System.Windows.Thickness(5),
+                    Margin = new Thickness(5),
                 };
                 this.Content = expander;
                 readerListView = new()
                 {
-                    HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
-                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
                 };
                 expander.Content = readerListView;
                 foreach (RemoteReader reader in readers)
@@ -172,15 +170,15 @@ namespace Chronokeep.UI.API
             }
         }
 
-        internal class ReaderListItem : Wpf.Ui.Controls.ListViewItem
+        internal class ReaderListItem : ListViewItem
         {
             private RemoteReader reader;
             private APIObject api;
             private IDBInterface database;
             private IMainWindow mainWindow;
 
-            ToggleSwitch autoFetch;
-            Wpf.Ui.Controls.TextBlock nameBlock;
+            CheckBox autoFetch;
+            TextBlock nameBlock;
             ComboBox locationBox;
             DatePicker startDatePicker;
             DatePicker endDatePicker;
@@ -221,31 +219,31 @@ namespace Chronokeep.UI.API
                 StackPanel thePanel = new()
                 {
                     Orientation = Orientation.Horizontal,
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
                 };
                 this.Content = thePanel;
                 autoFetch = new()
                 {
                     Height = 35,
                     Width = 55,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
                     IsChecked = savedReaders.ContainsKey((reader.APIIDentifier, reader.Name)),
-                    Margin = new System.Windows.Thickness(5),
+                    Margin = new Thickness(5),
                 };
                 thePanel.Children.Add(autoFetch);
                 nameBlock = new()
                 {
                     Text = reader.Name,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
                     Width = 100,
-                    Margin = new System.Windows.Thickness(5),
+                    Margin = new Thickness(5),
                 };
                 thePanel.Children.Add(nameBlock);
                 locationBox = new()
                 {
-                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
-                    Margin = new System.Windows.Thickness(5),
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5),
                     Height = 35,
                     Width = 170,
                 };
@@ -268,7 +266,7 @@ namespace Chronokeep.UI.API
                     Text = dateStr,
                     Height = 35,
                     Width = 200,
-                    Margin = new System.Windows.Thickness(5)
+                    Margin = new Thickness(5)
                 };
                 thePanel.Children.Add(startDatePicker);
                 startTimeBox = new()
@@ -277,10 +275,10 @@ namespace Chronokeep.UI.API
                     Mask = "00:00:00",
                     Height = 35,
                     Width = 80,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
-                    TextAlignment = System.Windows.TextAlignment.Center,
-                    Margin = new System.Windows.Thickness(5)
+                    VerticalAlignment = VerticalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    TextAlignment = TextAlignment.Center,
+                    Margin = new Thickness(5)
                 };
                 thePanel.Children.Add(startTimeBox);
                 endDatePicker = new()
@@ -288,7 +286,7 @@ namespace Chronokeep.UI.API
                     Text = dateStr,
                     Height = 35,
                     Width = 200,
-                    Margin = new System.Windows.Thickness(5)
+                    Margin = new Thickness(5)
                 };
                 thePanel.Children.Add(endDatePicker);
                 endTimeBox = new()
@@ -297,20 +295,20 @@ namespace Chronokeep.UI.API
                     Mask = "00:00:00",
                     Height = 35,
                     Width = 80,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
-                    TextAlignment = System.Windows.TextAlignment.Center,
-                    Margin = new System.Windows.Thickness(5)
+                    VerticalAlignment = VerticalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    TextAlignment = TextAlignment.Center,
+                    Margin = new Thickness(5)
                 };
                 thePanel.Children.Add(endTimeBox);
                 Button rewind = new()
                 {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Rewind24 },
+                    Content = "<<",
                     Height = 35,
                     Width = 35,
-                    Margin = new System.Windows.Thickness(5),
+                    Margin = new Thickness(5),
                 };
-                rewind.Click += new System.Windows.RoutedEventHandler(async (sender, e) =>
+                rewind.Click += new RoutedEventHandler(async (sender, e) =>
                 {
                     Log.D("UI.API.RemoteReadersWindow.ReaderListItem", "Rewind clicked.");
                     if (!DateTime.TryParse(string.Format("{0} {1}", startDatePicker.Text, startTimeBox.Text.Replace('_', '0')), out DateTime startDate))

@@ -1,6 +1,5 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
-using Chronokeep.Timing.API;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -8,14 +7,13 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Participants
 {
     /// <summary>
     /// Interaction logic for ModifyParticipantWindow.xaml
     /// </summary>
-    public partial class ModifyParticipantWindow : FluentWindow
+    public partial class ModifyParticipantWindow : Window
     {
         IMainWindow window;
         IDBInterface database;

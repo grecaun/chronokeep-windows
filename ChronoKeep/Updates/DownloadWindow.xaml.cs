@@ -8,14 +8,13 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.Updates
 {
     /// <summary>
     /// Interaction logic for DownloadWindow.xaml
     /// </summary>
-    public partial class DownloadWindow : FluentWindow
+    public partial class DownloadWindow : Window
     {
         private string uri;
         private string download_uri;

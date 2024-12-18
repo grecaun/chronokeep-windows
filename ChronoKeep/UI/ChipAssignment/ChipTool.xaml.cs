@@ -5,14 +5,13 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.ChipAssignment
 {
     /// <summary>
     /// Interaction logic for ChipTool.xaml
     /// </summary>
-    public partial class ChipTool : FluentWindow
+    public partial class ChipTool : Window
     {
         IWindowCallback window;
         IDBInterface database;
@@ -43,11 +42,11 @@ namespace Chronokeep.UI.ChipAssignment
 
         private class ATagRange : ListBoxItem
         {
-            public System.Windows.Controls.TextBox StartBib { get; private set; }
-            public System.Windows.Controls.TextBox EndBib { get; private set; }
-            public System.Windows.Controls.TextBox StartChip { get; private set; }
-            public Wpf.Ui.Controls.TextBlock EndChip { get; private set; }
-            public System.Windows.Controls.Button Remove { get; private set; }
+            public TextBox StartBib { get; private set; }
+            public TextBox EndBib { get; private set; }
+            public TextBox StartChip { get; private set; }
+            public TextBlock EndChip { get; private set; }
+            public Button Remove { get; private set; }
 
             ListBox parent;
 
@@ -73,7 +72,7 @@ namespace Chronokeep.UI.ChipAssignment
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                StartBib = new System.Windows.Controls.TextBox
+                StartBib = new TextBox
                 {
                     Text = string.Format("{0}", lastEndBib + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -82,7 +81,7 @@ namespace Chronokeep.UI.ChipAssignment
                 StartBib.TextChanged += new TextChangedEventHandler(this.StartBib_TextChanged);
                 StartBib.GotFocus += new RoutedEventHandler(this.SelectAll);
                 StartBib.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                EndBib = new System.Windows.Controls.TextBox
+                EndBib = new TextBox
                 {
                     Text = string.Format("{0}", lastEndBib + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -91,7 +90,7 @@ namespace Chronokeep.UI.ChipAssignment
                 EndBib.TextChanged += new TextChangedEventHandler(this.EndBib_TextChanged);
                 EndBib.GotFocus += new RoutedEventHandler(SelectAll);
                 EndBib.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                StartChip = new System.Windows.Controls.TextBox
+                StartChip = new TextBox
                 {
                     Text = string.Format("{0}", lastEndChip + 1),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -100,13 +99,13 @@ namespace Chronokeep.UI.ChipAssignment
                 StartChip.TextChanged += new TextChangedEventHandler(this.StartChip_TextChanged);
                 StartChip.GotFocus += new RoutedEventHandler(SelectAll);
                 StartChip.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                EndChip = new Wpf.Ui.Controls.TextBlock
+                EndChip = new TextBlock
                 {
                     Text = string.Format("{0}", lastEndChip + 1),
                     Margin = new Thickness(7, 2, 2, 2),
                     VerticalAlignment = VerticalAlignment.Center,
                 };
-                Remove = new System.Windows.Controls.Button
+                Remove = new Button
                 {
                     Content = "Remove",
                     Width = 75
@@ -182,7 +181,7 @@ namespace Chronokeep.UI.ChipAssignment
 
             private void SelectAll(object sender, RoutedEventArgs e)
             {
-                System.Windows.Controls.TextBox src = (System.Windows.Controls.TextBox)e.OriginalSource;
+                TextBox src = (TextBox)e.OriginalSource;
                 src.SelectAll();
             }
 

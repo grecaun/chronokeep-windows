@@ -130,7 +130,7 @@ namespace Chronokeep.UI.MainPages
             public TextBox APIURL { get; private set; }
             public TextBox APIToken { get; private set; }
             public TextBox APIWebURL { get; private set; }
-            public Wpf.Ui.Controls.Button Remove { get; private set; }
+            public Button Remove { get; private set; }
 
             readonly APIPage page;
             public APIObject theAPI;
@@ -270,9 +270,9 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(webURLPanel);
                 Grid.SetColumn(webURLPanel, 4);
 
-                Remove = new Wpf.Ui.Controls.Button()
+                Remove = new Button()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Delete24 },
+                    Content = "x",
                     Margin = new Thickness(0, 5, 0, 9),
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Bottom,

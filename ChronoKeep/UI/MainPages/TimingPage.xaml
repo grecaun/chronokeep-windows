@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
         d:DesignHeight="950"
         d:DesignWidth="1000"
@@ -162,7 +161,7 @@
                             Grid.Column="1"
                             />
                     </Grid>
-                    <ui:AutoSuggestBox
+                    <TextBox
                         Name="searchBox"
                         Width="250" 
                         Height="35"
@@ -171,7 +170,6 @@
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
                         TextChanged="SearchBox_TextChanged"
-                        PlaceholderText="Search"
                         />
                     <ComboBox
                         Name="viewOnlyBox"
@@ -555,7 +553,7 @@
                             Margin="5,0,0,0"
                             VerticalAlignment="Center"
                             />
-                        <ui:Button 
+                        <Button 
                             Content="Remote Readers" 
                             x:Name="remoteReadersButton" 
                             DockPanel.Dock="Right" 
@@ -564,7 +562,7 @@
                             Click="remoteReadersButton_Click"
                             Visibility="Collapsed"
                             />
-                        <ui:ToggleSwitch 
+                        <CheckBox
                             x:Name="remoteControllerSwitch" 
                             Margin="0,0,10,0" 
                             VerticalAlignment="Center"
@@ -573,17 +571,17 @@
                             Unchecked="remoteControllerSwitch_Unchecked"
                             Visibility="Collapsed"
                             />
-                        <ui:Button
+                        <CheckBox
                             x:Name="ReaderMessageButton"
                             Click="ReaderMessageButton_Click"
                             Visibility="Collapsed"
                             >
-                            <ui:InfoBadge 
+                            <TextBlock
                                 x:Name="ReaderMessageNumberBox"
-                                Severity="Caution"
-                                Value="0"
+                                Background="{DynamicResource SystemFillColorCriticalBrush}"
+                                Text="0"
                                 />
-                        </ui:Button>
+                        </CheckBox>
                         <TextBlock 
                             x:Name="remoteErrorsBlock"
                             Margin="0,0,5,0"

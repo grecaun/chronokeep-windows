@@ -1,4 +1,4 @@
-﻿<ui:FluentWindow
+﻿<Window
         x:Class="Chronokeep.UI.MinWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,32 +7,16 @@
         mc:Ignorable="d"
         Title="Chronokeep" Height="700" Width="1320" MinHeight="600" MinWidth="800"
         Closing="Window_Closing" Loaded="Window_Loaded"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:local="clr-namespace:Chronokeep.UI"
-        d:DataContext="{d:DesignInstance local:MinWindow, IsDesignTimeCreatable=True}"
-        d:Background="{DynamicResource ApplicationBackgroundBrush}"
-        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-        ExtendsContentIntoTitleBar="True"
-        WindowBackdropType="Mica"
-        WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
         >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ui:TitleBar
-            FontSize="14"
-            Grid.Row="0"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Margin="36,0,0,0"
-            >
-        </ui:TitleBar>
         <Grid
-            Grid.Row="1"
+            Grid.Row="0"
             >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
@@ -40,7 +24,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <ui:Button
+            <Button
                 Name="newEvent"
                 Content="New Event"
                 FontSize="16"
@@ -51,7 +35,7 @@
                 Click="NewEvent_Click"
                 Height="40"
                 />
-            <ui:Button
+            <Button
                 Name="changeEvent"
                 Content="Change Event"
                 FontSize="16"
@@ -64,10 +48,10 @@
                 />
         </Grid>
         <Border
-            Grid.Row="2"
+            Grid.Row="1"
             Background="{DynamicResource ControlFillColorDefaultBrush}"
             CornerRadius="8,0,0,0">
             <Frame x:Name="TheFrame" Margin="6" />
         </Border>
     </Grid>
-</ui:FluentWindow>
+</Window>

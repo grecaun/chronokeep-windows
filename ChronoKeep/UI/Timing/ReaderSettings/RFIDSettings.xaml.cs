@@ -3,14 +3,13 @@ using Chronokeep.Timing.Interfaces;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Windows;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing.ReaderSettings
 {
     /// <summary>
     /// Interaction logic for RFIDSettings.xaml
     /// </summary>
-    public partial class RFIDSettings : FluentWindow
+    public partial class RFIDSettings : Window
     {
         private RFIDUltraInterface reader = null;
 

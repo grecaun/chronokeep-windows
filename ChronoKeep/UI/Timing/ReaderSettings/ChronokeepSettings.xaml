@@ -1,18 +1,13 @@
-﻿<ui:FluentWindow x:Class="Chronokeep.UI.Timing.ReaderSettings.ChronokeepSettings"
+﻿<Window x:Class="Chronokeep.UI.Timing.ReaderSettings.ChronokeepSettings"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chronokeep.UI.Timing.ReaderSettings"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="Chronokeep Settings" 
-        d:DataContext="{d:DesignInstance local:ChronokeepSettings, IsDesignTimeCreatable=True}"
-        ExtendsContentIntoTitleBar="True"
-        WindowBackdropType="Mica"
-        WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
         Closed="Window_Closed"
         Height="500"
@@ -21,17 +16,7 @@
         SizeToContent="WidthAndHeight"
         >
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <ui:TitleBar
-            Margin="10,0,0,0"
-            Name="titleBar"
-            Grid.Row="0">
-        </ui:TitleBar>
         <StackPanel
-            Grid.Row="1"
             Margin="20,10,20,20"
             VerticalAlignment="Center"
             >
@@ -180,18 +165,16 @@
                     <Expander.Header>
                         <DockPanel LastChildFill="False" VerticalAlignment="Center">
                             <TextBlock Text="Readers" Margin="5,0,0,0" VerticalAlignment="Center" />
-                            <ui:Button
+                            <Button
                                 x:Name="addReaderButton"
                                 DockPanel.Dock="Right"
                                 Margin="0,0,10,0"
                                 VerticalAlignment="Center"
                                 Click="addReaderButton_Click"
                                 Visibility="Collapsed"
-                                >
-                                <ui:Button.Icon>
-                                    <ui:SymbolIcon Symbol="Add24"/>
-                                </ui:Button.Icon>
-                            </ui:Button>
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                >&#xE710;
+                            </Button>
                         </DockPanel>
                     </Expander.Header>
                     <ListView
@@ -217,18 +200,16 @@
                     <Expander.Header>
                         <DockPanel LastChildFill="False" VerticalAlignment="Center">
                             <TextBlock Text="API Keys" Margin="5,0,0,0" VerticalAlignment="Center" />
-                            <ui:Button
+                            <Button
                                 x:Name="addAPIButton"
                                 DockPanel.Dock="Right"
                                 Margin="0,0,10,0"
                                 VerticalAlignment="Center"
                                 Click="addAPIButton_Click"
                                 Visibility="Collapsed"
-                                >
-                                <ui:Button.Icon>
-                                    <ui:SymbolIcon Symbol="Add24"/>
-                                </ui:Button.Icon>
-                            </ui:Button>
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                >&#xE710;
+                            </Button>
                         </DockPanel>
                     </Expander.Header>
                     <ListView
@@ -297,7 +278,7 @@
                         Height="35"
                         Margin="5,5,5,5"
                         />
-                    <ui:ToggleSwitch
+                    <CheckBox
                         Content="Auto Upload Results"
                         x:Name="autoResultsSwitch"
                         Click="autoResultsSwitch_Checked"
@@ -363,4 +344,4 @@
             </StackPanel>
         </StackPanel>
     </Grid>
-</ui:FluentWindow>
+</Window>

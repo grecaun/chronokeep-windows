@@ -5,14 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep
 {
     /// <summary>
     /// Interaction logic for Window1.xaml
     /// </summary>
-    public partial class NewEventWindow : FluentWindow
+    public partial class NewEventWindow : Window
     {
         private IDBInterface database = null;
         private IWindowCallback window = null;
@@ -38,7 +37,7 @@ namespace Chronokeep
                 eventDict.Add(name, e);
                 eventNames.Add(name);
             }
-            oldEvent.OriginalItemsSource = eventNames;
+            oldEvent.ItemsSource = eventNames;
         }
 
         public static NewEventWindow NewWindow(IWindowCallback window, IDBInterface database)

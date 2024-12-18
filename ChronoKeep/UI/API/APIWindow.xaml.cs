@@ -2,14 +2,14 @@
 using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
 using System.Collections.Generic;
-using Wpf.Ui.Controls;
+using System.Windows;
 
 namespace Chronokeep.UI.API
 {
     /// <summary>
     /// Interaction logic for APIWindow.xaml
     /// </summary>
-    public partial class APIWindow : FluentWindow
+    public partial class APIWindow : Window
     {
         IMainWindow window = null;
         IDBInterface database;

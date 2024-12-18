@@ -1,13 +1,12 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.UIObjects
 {
     /// <summary>
     /// Interaction logic for DialogBox.xaml
     /// </summary>
-    public partial class DialogBox : FluentWindow
+    public partial class DialogBox : Window
     {
         public delegate void LeftClickDelegate();
 

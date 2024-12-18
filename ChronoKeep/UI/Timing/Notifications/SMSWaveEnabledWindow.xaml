@@ -1,59 +1,43 @@
-﻿<ui:FluentWindow x:Class="Chronokeep.UI.Timing.Notifications.SMSWaveEnabledWindow"
+﻿<Window x:Class="Chronokeep.UI.Timing.Notifications.SMSWaveEnabledWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:s="clr-namespace:System;assembly=mscorlib"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chronokeep.UI.Timing.Notifications"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
         Title="SMS Waves" Height="300" Width="230" Closing="Window_Closing" SizeToContent="Height"
         d:DataContext="{d:DesignInstance local:SMSWaveEnabledWindow, IsDesignTimeCreatable=True}"
-        ExtendsContentIntoTitleBar="True"
-        WindowBackdropType="Mica"
-        WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
         >
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <ui:TitleBar
-            Grid.Row="0"
-            ShowMinimize="False"
-            ShowMaximize="False"
-            >
-        </ui:TitleBar>
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-                <StackPanel Name="mainPanel">
-                    <ListView Name="WaveList" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" KeyboardNavigation.TabNavigation="Continue" BorderThickness="0" Margin="15,0">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding WaveName}" Margin="4,4"/>
-                                    <ui:ToggleSwitch
-                                        x:Name="smsEnabledSwitch"
-                                        Margin="4,4"
-                                        VerticalAlignment="Center"
-                                        DockPanel.Dock="Right"
-                                        IsChecked="{Binding SMSEnabled}"
-                                        />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </StackPanel>
-            </ScrollViewer>
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10,10,10,15">
-                <Button Name="Set" Content="Set" Click="Set_Click" Width="100" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Center"/>
-                <Button Name="Done" Content="Done" Click="Done_Click" Width="100" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Center"/>
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="mainPanel">
+                <ListView Name="WaveList" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" KeyboardNavigation.TabNavigation="Continue" BorderThickness="0" Margin="15,0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding WaveName}" Margin="4,4"/>
+                                <CheckBox
+                                    x:Name="smsEnabledSwitch"
+                                    Margin="4,4"
+                                    VerticalAlignment="Center"
+                                    DockPanel.Dock="Right"
+                                    IsChecked="{Binding SMSEnabled}"
+                                    />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </StackPanel>
-        </Grid>
+        </ScrollViewer>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="10,10,10,15">
+            <Button Name="Set" Content="Set" Click="Set_Click" Width="100" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Center"/>
+            <Button Name="Done" Content="Done" Click="Done_Click" Width="100" Margin="10,0,10,0" FontSize="14" Height="35" HorizontalAlignment="Center"/>
+        </StackPanel>
     </Grid>
-</ui:FluentWindow>
+</Window>

@@ -2,14 +2,13 @@
 using Chronokeep.Objects;
 using System;
 using System.Windows;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for SetTimeWindow.xaml
     /// </summary>
-    public partial class SetTimeWindow : FluentWindow
+    public partial class SetTimeWindow : Window
     {
         ITimingPage parent;
         TimingSystem timingSystem;

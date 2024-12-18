@@ -9,14 +9,13 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Export
 {
     /// <summary>
     /// Interaction logic for ExportResults.xaml
     /// </summary>
-    public partial class ExportResults : FluentWindow
+    public partial class ExportResults : Window
     {
         IMainWindow window;
         IDBInterface database;

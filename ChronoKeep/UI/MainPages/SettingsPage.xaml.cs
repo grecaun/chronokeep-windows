@@ -113,17 +113,17 @@ namespace Chronokeep.UI.MainPages
             }
             if (int.TryParse(database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL).Value, out int uploadInt) && uploadInt > 0 && uploadInt < 60) {
                 uploadSlider.Value = uploadInt;
-                uploadBlock.Text = uploadInt.ToString();
+                uploadBlock.Content = uploadInt.ToString();
             }
             if (int.TryParse(database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL).Value, out int downloadInt) && downloadInt > 0 && downloadInt < 60)
             {
                 downloadSlider.Value = downloadInt;
-                downloadBlock.Text = downloadInt.ToString();
+                downloadBlock.Content = downloadInt.ToString();
             }
             if (int.TryParse(database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW).Value, out int announcerWindow) && announcerWindow >= 15 && announcerWindow <= 180)
             {
                 announcerSlider.Value = announcerWindow;
-                announcerBlock.Text = announcerWindow.ToString();
+                announcerBlock.Content = announcerWindow.ToString();
             }
             int alarm = 1;
             if (int.TryParse(database.GetAppSetting(Constants.Settings.ALARM_SOUND).Value, out alarm))
@@ -288,11 +288,11 @@ namespace Chronokeep.UI.MainPages
             if (selectedItem != null)
             {
                 database.SetAppSetting(Constants.Settings.CURRENT_THEME, ((ComboBoxItem)ThemeColorBox.SelectedItem).Uid);
-                Wpf.Ui.Appearance.ApplicationTheme theme = Wpf.Ui.Appearance.ApplicationTheme.Light;
+                ApplicationTheme theme = ApplicationTheme.Light;
                 bool system = selectedItem.Uid == Constants.Settings.THEME_SYSTEM;
                 if ((selectedItem.Uid == Constants.Settings.THEME_SYSTEM && SystemTheme == 0) || selectedItem.Uid == Constants.Settings.THEME_DARK)
                 {
-                    theme = Wpf.Ui.Appearance.ApplicationTheme.Dark;
+                    theme = ApplicationTheme.Dark;
                 }
                 mWindow.UpdateTheme(theme, system);
             }
@@ -356,7 +356,7 @@ namespace Chronokeep.UI.MainPages
         {
             if (uploadSlider != null && uploadBlock != null)
             {
-                uploadBlock.Text = uploadSlider.Value.ToString();
+                uploadBlock.Content = uploadSlider.Value.ToString();
             }
         }
 
@@ -364,7 +364,7 @@ namespace Chronokeep.UI.MainPages
         {
             if (downloadSlider != null && downloadBlock != null)
             {
-                downloadBlock.Text = downloadSlider.Value.ToString();
+                downloadBlock.Content = downloadSlider.Value.ToString();
             }
         }
 
@@ -372,7 +372,7 @@ namespace Chronokeep.UI.MainPages
         {
             if (announcerSlider != null && announcerBlock != null)
             {
-                announcerBlock.Text = announcerSlider.Value.ToString();
+                announcerBlock.Content = announcerSlider.Value.ToString();
             }
         }
 

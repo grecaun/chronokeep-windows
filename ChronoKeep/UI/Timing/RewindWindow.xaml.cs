@@ -4,14 +4,13 @@ using Chronokeep.UI.UIObjects;
 using System;
 using System.ComponentModel;
 using System.Windows;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Timing
 {
     /// <summary>
     /// Interaction logic for RewindWindow.xaml
     /// </summary>
-    public partial class RewindWindow : FluentWindow
+    public partial class RewindWindow : Window
     {
         TimingSystem system;
 

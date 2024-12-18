@@ -9,15 +9,13 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Wpf.Ui.Controls;
-using Button = Wpf.Ui.Controls.Button;
 
 namespace Chronokeep.UI.Timing.ReaderSettings
 {
     /// <summary>
     /// Interaction logic for ChronokeepSettings.xaml
     /// </summary>
-    public partial class ChronokeepSettings : FluentWindow
+    public partial class ChronokeepSettings : Window
     {
         private ChronokeepInterface reader = null;
         private IDBInterface database = null;
@@ -228,11 +226,6 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 settingsPanel.Visibility = Visibility.Visible;
                 if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.SETTINGS))
                 {
-                    if (allSettings.PortalVersion != null && allSettings.PortalVersion.Length > 0)
-                    {
-                        titleBar.Title = string.Format("v{0}", allSettings.PortalVersion.Trim());
-                    }
-
                     nameBox.Text = allSettings.Name;
                     if (allSettings.SightingPeriod > 3600)
                     {
@@ -421,7 +414,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }
         }
 
-        private class ReaderListItem : Wpf.Ui.Controls.ListViewItem
+        private class ReaderListItem : ListViewItem
         {
             private PortalReader reader;
             private ChronokeepInterface readerInterface;
@@ -430,12 +423,12 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             private const string allowedChars = "[^0-9.]";
             private const string allowedNums = "[^0-9]";
 
-            private System.Windows.Controls.TextBox nameBox;
+            private TextBox nameBox;
             private ComboBox kindBox;
-            private System.Windows.Controls.TextBox ipBox;
-            private System.Windows.Controls.TextBox portBox;
-            private ToggleSwitch autoConnectSwitch;
-            private ToggleSwitch connectedSwitch;
+            private TextBox ipBox;
+            private TextBox portBox;
+            private CheckBox autoConnectSwitch;
+            private CheckBox connectedSwitch;
             private StackPanel antennaPanel;
             private Button saveReaderButton;
             private Button removeReaderButton;
@@ -457,7 +450,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     HorizontalAlignment = HorizontalAlignment.Center,
                 };
                 thePanel.Children.Add(subPanel);
-                nameBox = new System.Windows.Controls.TextBox()
+                nameBox = new TextBox()
                 {
                     Text = reader.Name,
                     Width = 190,
@@ -494,7 +487,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
                 thePanel.Children.Add(subPanel);
-                ipBox = new System.Windows.Controls.TextBox()
+                ipBox = new TextBox()
                 {
                     Text = reader.IPAddress,
                     Width = 120,
@@ -502,7 +495,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 ipBox.PreviewTextInput += new TextCompositionEventHandler(this.IPValidation);
                 subPanel.Children.Add(ipBox);
-                portBox = new System.Windows.Controls.TextBox()
+                portBox = new TextBox()
                 {
                     Text = reader.Port.ToString(),
                     Width = 60,
@@ -510,7 +503,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 };
                 portBox.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
                 subPanel.Children.Add(portBox);
-                autoConnectSwitch = new ToggleSwitch()
+                autoConnectSwitch = new CheckBox()
                 {
                     IsChecked = reader.AutoConnect,
                     Content = "Auto Connect",
@@ -527,7 +520,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
                 thePanel.Children.Add(subPanel);
-                connectedSwitch = new ToggleSwitch()
+                connectedSwitch = new CheckBox()
                 {
                     IsChecked = reader.Connected,
                     Content = "Connected",
@@ -540,7 +533,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(connectedSwitch);
                 saveReaderButton = new Button()
                 {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Save24 },
+                    Content = "+",
                     Margin = new Thickness(5),
                     Width = 40,
                 };
@@ -548,7 +541,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(saveReaderButton);
                 removeReaderButton = new Button()
                 {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
+                    Content = "x",
                     Margin = new Thickness(5),
                     Width = 40,
                 };
@@ -567,11 +560,11 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     {
                         if (reader.Antennas[ix] != Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_NONE)
                         {
-                            antennaPanel.Children.Add(new InfoBadge()
-                            {
-                                Severity = reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Critical,
-                                Value = (ix + 1).ToString(),
-                            });
+                            //antennaPanel.Children.Add(new InfoBadge()
+                            //{
+                            //    Severity = reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Critical,
+                            //    Value = (ix + 1).ToString(),
+                            //});
                         }
                     }
                 }
@@ -590,11 +583,11 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 {
                     if (reader.Antennas[ix] != Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_NONE)
                     {
-                        antennaPanel.Children.Add(new InfoBadge()
-                        {
-                            Severity = reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Critical,
-                            Value = (ix + 1).ToString(),
-                        });
+                        //antennaPanel.Children.Add(new InfoBadge()
+                        //{
+                        //    Severity = reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Critical,
+                        //    Value = (ix + 1).ToString(),
+                        //});
                     }
                 }
             }
@@ -629,11 +622,11 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 {
                     if (this.reader.Antennas[ix] != Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_NONE)
                     {
-                        antennaPanel.Children.Add(new InfoBadge()
-                        {
-                            Severity = this.reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Critical,
-                            Value = (ix + 1).ToString(),
-                        });
+                        //antennaPanel.Children.Add(new InfoBadge()
+                        //{
+                        //    Severity = this.reader.Antennas[ix] == Constants.Readers.CHRONOKEEP_ANTENNA_STATUS_CONNECTED ? InfoBadgeSeverity.Success : InfoBadgeSeverity.Critical,
+                        //    Value = (ix + 1).ToString(),
+                        //});
                     }
                 }
             }
@@ -728,15 +721,15 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             }
         }
 
-        private class APIListItem : Wpf.Ui.Controls.ListViewItem
+        private class APIListItem : ListViewItem
         {
             private PortalAPI api = null;
             private ChronokeepInterface reader = null;
 
-            private System.Windows.Controls.TextBox nameBox;
+            private TextBox nameBox;
             private ComboBox kindBox;
-            private System.Windows.Controls.TextBox tokenBox;
-            private System.Windows.Controls.TextBox uriBox;
+            private TextBox tokenBox;
+            private TextBox uriBox;
 
             private Button saveAPIButton;
             private Button removeAPIButton;
@@ -757,7 +750,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     HorizontalAlignment = HorizontalAlignment.Center,
                 };
                 thePanel.Children.Add(subPanel);
-                nameBox = new System.Windows.Controls.TextBox()
+                nameBox = new TextBox()
                 {
                     Text = api.Nickname,
                     Width = 170,
@@ -815,7 +808,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
                 thePanel.Children.Add(subPanel);
-                tokenBox = new System.Windows.Controls.TextBox()
+                tokenBox = new TextBox()
                 {
                     Text = api.Token,
                     Width = 320,
@@ -828,7 +821,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     HorizontalAlignment = HorizontalAlignment.Center
                 };
                 thePanel.Children.Add(subPanel);
-                uriBox = new System.Windows.Controls.TextBox()
+                uriBox = new TextBox()
                 {
                     Text = api.Uri,
                     Width = 220,
@@ -837,7 +830,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(uriBox);
                 saveAPIButton = new Button()
                 {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Save24 },
+                    Content = "+",
                     Margin = new Thickness(5),
                     Width = 40,
                     Height = 35,
@@ -846,7 +839,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 subPanel.Children.Add(saveAPIButton);
                 removeAPIButton = new Button()
                 {
-                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
+                    Content = "X",
                     Margin = new Thickness(5),
                     Width = 40,
                     Height = 35,

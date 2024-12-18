@@ -1,18 +1,16 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
-using Chronokeep.Timing.API;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.Participants
 {
     /// <summary>
     /// Interaction logic for ChangeMultiParticipantWindow.xaml
     /// </summary>
-    public partial class ChangeMultiParticipantWindow : FluentWindow
+    public partial class ChangeMultiParticipantWindow : Window
     {
         IMainWindow window;
         IDBInterface database;
