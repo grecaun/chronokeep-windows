@@ -5,10 +5,10 @@ using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing.Remote;
 using Chronokeep.UI.UIObjects;
 using System;
+using System.Windows;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using Wpf.Ui.Controls;
-using Wpf.Ui.Extensions;
 using Xceed.Wpf.Toolkit;
 using Button = Wpf.Ui.Controls.Button;
 
@@ -77,8 +77,8 @@ namespace Chronokeep.UI.API
                 Close();
                 return;
             }
-            loadingPanel.Visibility = System.Windows.Visibility.Collapsed;
-            apiListView.Visibility = System.Windows.Visibility.Visible;
+            loadingPanel.Visibility = Visibility.Collapsed;
+            apiListView.Visibility = Visibility.Visible;
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -88,7 +88,7 @@ namespace Chronokeep.UI.API
             window.WindowFinalize(this);
         }
 
-        private void Close_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void Close_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.API.RemoteReaders", "Close button clicked.");
             List<RemoteReader> readersToSave = new();
@@ -138,16 +138,18 @@ namespace Chronokeep.UI.API
                 {
                     Header = api.Nickname,
                     IsExpanded = true,
-                    HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
-                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
                     Width = 1050,
-                    Margin = new System.Windows.Thickness(5),
+                    Margin = new Thickness(5),
                 };
                 this.Content = expander;
+                Style style = (Style)FindResource("NoFocusListViewItem");
                 readerListView = new()
                 {
-                    HorizontalContentAlignment = System.Windows.HorizontalAlignment.Center,
-                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    ItemContainerStyle = style,
                 };
                 expander.Content = readerListView;
                 foreach (RemoteReader reader in readers)
@@ -221,31 +223,31 @@ namespace Chronokeep.UI.API
                 StackPanel thePanel = new()
                 {
                     Orientation = Orientation.Horizontal,
-                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
                 };
                 this.Content = thePanel;
                 autoFetch = new()
                 {
                     Height = 35,
                     Width = 55,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
                     IsChecked = savedReaders.ContainsKey((reader.APIIDentifier, reader.Name)),
-                    Margin = new System.Windows.Thickness(5),
+                    Margin = new Thickness(5),
                 };
                 thePanel.Children.Add(autoFetch);
                 nameBlock = new()
                 {
                     Text = reader.Name,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
                     Width = 100,
-                    Margin = new System.Windows.Thickness(5),
+                    Margin = new Thickness(5),
                 };
                 thePanel.Children.Add(nameBlock);
                 locationBox = new()
                 {
-                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
-                    Margin = new System.Windows.Thickness(5),
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(5),
                     Height = 35,
                     Width = 170,
                 };
@@ -268,7 +270,7 @@ namespace Chronokeep.UI.API
                     Text = dateStr,
                     Height = 35,
                     Width = 200,
-                    Margin = new System.Windows.Thickness(5)
+                    Margin = new Thickness(5)
                 };
                 thePanel.Children.Add(startDatePicker);
                 startTimeBox = new()
@@ -277,10 +279,10 @@ namespace Chronokeep.UI.API
                     Mask = "00:00:00",
                     Height = 35,
                     Width = 80,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
-                    TextAlignment = System.Windows.TextAlignment.Center,
-                    Margin = new System.Windows.Thickness(5)
+                    VerticalAlignment = VerticalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    TextAlignment = TextAlignment.Center,
+                    Margin = new Thickness(5)
                 };
                 thePanel.Children.Add(startTimeBox);
                 endDatePicker = new()
@@ -288,7 +290,7 @@ namespace Chronokeep.UI.API
                     Text = dateStr,
                     Height = 35,
                     Width = 200,
-                    Margin = new System.Windows.Thickness(5)
+                    Margin = new Thickness(5)
                 };
                 thePanel.Children.Add(endDatePicker);
                 endTimeBox = new()
@@ -297,10 +299,10 @@ namespace Chronokeep.UI.API
                     Mask = "00:00:00",
                     Height = 35,
                     Width = 80,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Center,
-                    VerticalContentAlignment = System.Windows.VerticalAlignment.Center,
-                    TextAlignment = System.Windows.TextAlignment.Center,
-                    Margin = new System.Windows.Thickness(5)
+                    VerticalAlignment = VerticalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    TextAlignment = TextAlignment.Center,
+                    Margin = new Thickness(5)
                 };
                 thePanel.Children.Add(endTimeBox);
                 Button rewind = new()
@@ -308,9 +310,9 @@ namespace Chronokeep.UI.API
                     Icon = new SymbolIcon() { Symbol = SymbolRegular.Rewind24 },
                     Height = 35,
                     Width = 35,
-                    Margin = new System.Windows.Thickness(5),
+                    Margin = new Thickness(5),
                 };
-                rewind.Click += new System.Windows.RoutedEventHandler(async (sender, e) =>
+                rewind.Click += new RoutedEventHandler(async (sender, e) =>
                 {
                     Log.D("UI.API.RemoteReadersWindow.ReaderListItem", "Rewind clicked.");
                     if (!DateTime.TryParse(string.Format("{0} {1}", startDatePicker.Text, startTimeBox.Text.Replace('_', '0')), out DateTime startDate))

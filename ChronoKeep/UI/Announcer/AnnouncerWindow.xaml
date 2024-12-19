@@ -15,15 +15,6 @@
         WindowStartupLocation="CenterScreen"
         >
     <Grid>
-        <Grid.Resources>
-            <Style TargetType="ListViewItem" x:Key="alternatingStyle">
-                <Style.Triggers>
-                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                        <Setter Property="Background" Value="#48A6A6A6" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="35" />
@@ -70,7 +61,7 @@
             ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
             Visibility="Collapsed"
             AlternationCount="2"
-            ItemContainerStyle="{StaticResource alternatingStyle}"
+            ItemContainerStyle="{StaticResource announcerStyle}"
             Margin="10,0"
             >
             <ListView.ItemTemplate>
@@ -102,7 +93,7 @@
             ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             AlternationCount="2"
-            ItemContainerStyle="{StaticResource alternatingStyle}"
+            ItemContainerStyle="{StaticResource announcerStyle}"
             Margin="10,0"
             >
             <ListView.ItemTemplate>

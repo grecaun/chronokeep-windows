@@ -9,15 +9,15 @@
       d:DesignHeight="300"
       d:DesignWidth="400"
       Title="ImportFilePage1"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <Grid>
-        <ListBox x:Name="headerListBox" KeyboardNavigation.TabNavigation="Continue" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" >
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListBox.ItemContainerStyle>
+        <ListBox
+            x:Name="headerListBox"
+            KeyboardNavigation.TabNavigation="Continue"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+            >
         </ListBox>
     </Grid>
 </Page>

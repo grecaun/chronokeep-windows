@@ -53,13 +53,13 @@
                 <TextBlock Grid.Column="3" Margin="10,0,0,0" Text="End Tag #" />
             </Grid>
             <Grid x:Name="itemsWindow" Grid.Row="2">
-                <ListBox x:Name="correlationBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" >
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
+                <ListBox
+                    x:Name="correlationBox"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalContentAlignment="Center"
+                    KeyboardNavigation.TabNavigation="Continue"
+                    ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+                    >
                 </ListBox>
             </Grid>
         </Grid>

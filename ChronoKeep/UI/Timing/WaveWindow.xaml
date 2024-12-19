@@ -40,13 +40,14 @@
                         <TextBlock Text="Time" VerticalAlignment="Center" TextAlignment="Center" Width="150" FontSize="14"/>
                     </DockPanel>
                     <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                    <ListBox Name="WaveList" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" KeyboardNavigation.TabNavigation="Continue" BorderThickness="0">
-                        <ListBox.ItemContainerStyle>
-                            <Style TargetType="ListBoxItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                            </Style>
-                        </ListBox.ItemContainerStyle>
+                    <ListBox
+                        Name="WaveList"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        KeyboardNavigation.TabNavigation="Continue"
+                        BorderThickness="0"
+                        ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+                        >
                     </ListBox>
                 </StackPanel>
             </ScrollViewer>

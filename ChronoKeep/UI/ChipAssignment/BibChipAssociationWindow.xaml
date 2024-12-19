@@ -35,12 +35,15 @@
                     <ComboBox x:Name="events" Margin="0,0,0,0" Width="350" Height="25" />
                 </DockPanel>
             </StackPanel>
-            <ListBox x:Name="headerListBox" Margin="0,0,0,0" KeyboardNavigation.TabNavigation="Continue" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Row="1">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListBox.ItemContainerStyle>
+            <ListBox
+                x:Name="headerListBox"
+                Margin="0,0,0,0"
+                KeyboardNavigation.TabNavigation="Continue"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                Grid.Row="1"
+                ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+                >
             </ListBox>
             <StackPanel Grid.Row="2">
                 <CheckBox

@@ -9,39 +9,37 @@
         Title="AboutPage"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         FlowDirection="LeftToRight"
-        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         >
     <StackPanel Margin="10,10,10,10">
         <TextBlock
-            Margin="0,16,0,24"
+            Margin="0,0,0,14"
             FontSize="24"
             FontWeight="Medium"
             Text="About"
             />
         <TextBlock
-            Padding="0,0,0,8"
+            Margin="0,0,0,5"
             Text="Chronokeep"
             />
         <TextBlock
+            Margin="0,0,0,5"
             x:Name="VersionLabel"
-            Padding="0,0,0,8"
+            />
+        <TextBlock
+            Margin="0,0,0,20"
+            Text="Created by James Sentinella"
             />
         <Button
             Name="Update"
             Content="Check for Updates"
-            FontSize="12"
+            Padding="20,10"
             VerticalAlignment="Top"
-            Margin="0,-5,0,16"
-            Padding="6"
+            Margin="0,5,0,5"
             Click="VersionLabel_Click"
             />
         <TextBlock
-            Padding="0,8,0,0"
-            Text="Created by James Sentinella"
-            />
-        <TextBlock
-            Padding="0,24,0,8"
-            FontSize="14"
+            Margin="0,20,0,8"
+            FontSize="16"
             FontWeight="Medium"
             Text="Links"
             />
@@ -62,8 +60,8 @@
             </ui:HyperlinkButton.Icon>
         </ui:HyperlinkButton>
         <TextBlock
-            Padding="0,24,0,8"
-            FontSize="14"
+            Margin="0,24,0,8"
+            FontSize="16"
             FontWeight="Medium"
             Text="3rd Party Libraries"
             />
@@ -129,8 +127,8 @@
             </StackPanel>
         </Grid>
         <TextBlock
-            Padding="0,24,0,8"
-            FontSize="14"
+            Margin="0,24,0,8"
+            FontSize="16"
             FontWeight="Medium"
             Text="Application Folders"
             />

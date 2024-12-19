@@ -9,7 +9,6 @@
       d:DesignHeight="450"
       d:DesignWidth="800"
       Title="AgeGroupsPage"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
 
     <Grid>
@@ -25,13 +24,16 @@
                 <ColumnDefinition Width="150"/>
             </Grid.ColumnDefinitions>
             <ComboBox Name="Distances" FontSize="16" Margin="10,10,10,10" Height="35" Width="250" SelectionChanged="Distances_SelectionChanged" VerticalContentAlignment="Center"/>
-            <ListBox Name="AgeGroupsBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" Grid.Row="1" ScrollViewer.CanContentScroll="False" PreviewMouseWheel="AgeGroupsBox_PreviewMouseWheel">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    </Style>
-                </ListBox.ItemContainerStyle>
+            <ListBox
+                Name="AgeGroupsBox"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Center"
+                KeyboardNavigation.TabNavigation="Continue"
+                Grid.Row="1"
+                ScrollViewer.CanContentScroll="False"
+                PreviewMouseWheel="AgeGroupsBox_PreviewMouseWheel"
+                ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+                >
             </ListBox>
             <DockPanel LastChildFill="False" Grid.Row="2" HorizontalAlignment="Center">
                 <Button Name="Add" Content="Add Group" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click"/>

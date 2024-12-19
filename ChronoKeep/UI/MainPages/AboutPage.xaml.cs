@@ -34,7 +34,7 @@ namespace Chronokeep.UI.MainPages
                 dirPath = Path.Combine(dirPath, "index.html");
                 HelpDocsButton.NavigateUri = dirPath;
             }
-            VersionLabel.Text = gitVersion;
+            VersionLabel.Text = gitVersion.Trim();
         }
 
         public void Closing() { }

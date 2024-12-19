@@ -11,7 +11,6 @@
         d:DesignWidth="1000"
         Title="MinTimingPage"
         Loaded="Page_Loaded"
-        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         >
     <Grid Grid.Column="0">
         <Grid.RowDefinitions>
@@ -46,13 +45,8 @@
                     Height="170"
                     ScrollViewer.CanContentScroll="True"
                     ScrollViewer.VerticalScrollBarVisibility="Visible"
+                    ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
                     >
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListBox.ItemContainerStyle>
             </ListBox>
         </Expander>
         <Frame

@@ -9,7 +9,6 @@
       d:DesignHeight="450"
       d:DesignWidth="800"
       Title="ImportFilePage2Alt"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <Grid>
         <Grid.RowDefinitions>
@@ -17,12 +16,15 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Select distances to link to those found in file." FontSize="16" Margin="10,0,10,0" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
-        <ListBox x:Name="distanceListBox" KeyboardNavigation.TabNavigation="Continue" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" IsTabStop="False" Grid.Row="1">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListBox.ItemContainerStyle>
+        <ListBox
+            x:Name="distanceListBox"
+            KeyboardNavigation.TabNavigation="Continue"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            IsTabStop="False"
+            Grid.Row="1"
+            ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+            >
         </ListBox>
     </Grid>
 </Page>

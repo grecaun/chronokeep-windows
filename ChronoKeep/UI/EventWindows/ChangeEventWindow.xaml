@@ -22,15 +22,6 @@
             Grid.Row="0">
         </ui:TitleBar>
         <Grid Grid.Row="1" Margin="5">
-            <Grid.Resources>
-                <Style TargetType="ListViewItem" x:Key="alternatingStyle">
-                    <Style.Triggers>
-                        <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                            <Setter Property="Background" Value="#48A6A6A6" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Grid.Resources>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="30"/>

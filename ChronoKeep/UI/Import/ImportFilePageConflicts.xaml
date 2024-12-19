@@ -9,7 +9,6 @@
       d:DesignHeight="450"
       d:DesignWidth="400"
       Title="ImportPageMultiples"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <Grid>
         <Grid.RowDefinitions>
@@ -36,12 +35,15 @@
                 <TextBlock Text="Age" Grid.Column="6"/>
             </Grid>
         </StackPanel>
-        <ListBox x:Name="multiplesListBox" KeyboardNavigation.TabNavigation="Continue" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" IsTabStop="False" Grid.Row="1">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                </Style>
-            </ListBox.ItemContainerStyle>
+        <ListBox
+            x:Name="multiplesListBox"
+            KeyboardNavigation.TabNavigation="Continue"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            IsTabStop="False"
+            Grid.Row="1"
+            ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+            >
         </ListBox>
     </Grid>
 </Page>
