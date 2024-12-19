@@ -24,13 +24,8 @@
                 ScrollViewer.CanContentScroll="False"
                 PreviewMouseWheel="LocationsBox_PreviewMouseWheel"
                 Background="Transparent"
+                ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
                 >
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    </Style>
-                </ListBox.ItemContainerStyle>
             </ListBox>
             <DockPanel HorizontalAlignment="Center" Grid.Row="1">
                 <Button Name="Add" Content="Add Location" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click" />

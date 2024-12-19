@@ -16,13 +16,17 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
-            <ListBox Name="APIBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" Grid.Row="0" ScrollViewer.CanContentScroll="False" PreviewMouseWheel="APIBox_PreviewMouseWheel">
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    </Style>
-                </ListBox.ItemContainerStyle>
+            <ListBox
+                Name="APIBox"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Center"
+                KeyboardNavigation.TabNavigation="Continue"
+                Grid.Row="0"
+                ScrollViewer.CanContentScroll="False"
+                PreviewMouseWheel="APIBox_PreviewMouseWheel"
+                Background="Transparent"
+                ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+                >
             </ListBox>
             <DockPanel Grid.Row="1" HorizontalAlignment="Center">
                 <Button Name="Add" Content="Add API" Margin="10,5,10,5" FontSize="16" Height="35" Width="150" Click="Add_Click" />

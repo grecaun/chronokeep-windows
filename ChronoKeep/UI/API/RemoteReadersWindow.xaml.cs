@@ -142,11 +142,12 @@ namespace Chronokeep.UI.API
                     Margin = new Thickness(5),
                 };
                 this.Content = expander;
+                Style style = (Style)FindResource("NoFocusListViewItem");
                 readerListView = new()
                 {
                     HorizontalContentAlignment = HorizontalAlignment.Center,
                     VerticalContentAlignment = VerticalAlignment.Center,
-                    Focusable = false,
+                    ItemContainerStyle = style,
                 };
                 expander.Content = readerListView;
                 foreach (RemoteReader reader in readers)

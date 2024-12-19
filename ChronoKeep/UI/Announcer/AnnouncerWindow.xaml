@@ -11,15 +11,6 @@
     WindowStartupLocation="CenterScreen"
     >
     <Grid>
-        <Grid.Resources>
-            <Style TargetType="ListViewItem" x:Key="alternatingStyle">
-                <Style.Triggers>
-                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                        <Setter Property="Background" Value="#48A6A6A6" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="35" />
             <RowDefinition Height="*" />

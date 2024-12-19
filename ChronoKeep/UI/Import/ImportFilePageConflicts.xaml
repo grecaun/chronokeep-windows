@@ -34,12 +34,16 @@
                 <Label Content="Age" Grid.Column="6"/>
             </Grid>
         </StackPanel>
-        <ListBox x:Name="multiplesListBox" KeyboardNavigation.TabNavigation="Continue" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" IsTabStop="False" Grid.Row="1">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                </Style>
-            </ListBox.ItemContainerStyle>
+        <ListBox
+            x:Name="multiplesListBox"
+            KeyboardNavigation.TabNavigation="Continue"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            IsTabStop="False"
+            Grid.Row="1"
+            Background="Transparent"
+            ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+            >
         </ListBox>
     </Grid>
 </Page>

@@ -24,19 +24,8 @@
                 x:Name="apiListView"
                 Visibility="Collapsed"
                 Margin="10,0,10,10"
+                ItemContainerStyle="{StaticResource NoFocusListViewItem}"
                 >
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="Focusable" Value="False" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate>
-                                    <ContentPresenter Content="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>
             </ListView>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button x:Name="CloseButton" Content="Close" Click="Close_Click" Height="35" Width="150" HorizontalAlignment="Center" Margin="20,0,10,20" />

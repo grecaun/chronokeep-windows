@@ -15,12 +15,16 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="55"/>
         </Grid.RowDefinitions>
-        <ListBox x:Name="itemListBox" KeyboardNavigation.TabNavigation="Continue" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" IsTabStop="False" Grid.Row="0">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListBox.ItemContainerStyle>
+        <ListBox
+            x:Name="itemListBox"
+            KeyboardNavigation.TabNavigation="Continue"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+            IsTabStop="False"
+            Grid.Row="0"
+            Background="Transparent"
+            ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+            >
         </ListBox>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>

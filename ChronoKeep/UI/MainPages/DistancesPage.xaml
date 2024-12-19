@@ -25,13 +25,8 @@
                 ScrollViewer.CanContentScroll="False"
                 PreviewMouseWheel="DistanceBox_PreviewMouseWheel"
                 Background="Transparent"
+                ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
                 >
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    </Style>
-                </ListBox.ItemContainerStyle>
             </ListBox>
             <DockPanel Grid.Row="1" HorizontalAlignment="Center">
                 <DockPanel x:Name="apiPanel" Visibility="Collapsed" HorizontalAlignment="Center">

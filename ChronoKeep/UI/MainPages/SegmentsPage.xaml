@@ -17,19 +17,15 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
-            <ListBox Name="SegmentsBox"
-                    KeyboardNavigation.TabNavigation="Continue"
-                    Grid.Row="0"
-                    ScrollViewer.CanContentScroll="False"
-                    PreviewMouseWheel="SegmentsBox_PreviewMouseWheel"
-                    Background="Transparent"
-                    >
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-                    </Style>
-                </ListBox.ItemContainerStyle>
+            <ListBox
+                Name="SegmentsBox"
+                KeyboardNavigation.TabNavigation="Continue"
+                Grid.Row="0"
+                ScrollViewer.CanContentScroll="False"
+                PreviewMouseWheel="SegmentsBox_PreviewMouseWheel"
+                Background="Transparent"
+                ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
+                >
             </ListBox>
             <DockPanel Grid.Row="1" HorizontalAlignment="Center">
                 <DockPanel x:Name="apiPanel" Visibility="Collapsed" HorizontalAlignment="Center">

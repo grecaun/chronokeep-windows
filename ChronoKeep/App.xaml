@@ -8,6 +8,34 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/PresentationFramework.Fluent;component/Themes/Fluent.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="ListViewItem" x:Key="NoFocusListViewItem">
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <ContentPresenter Content="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="ListViewItem" x:Key="alternatingStyle">
+                <Style.Triggers>
+                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                        <Setter Property="Background" Value="#48A6A6A6" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style TargetType="ListBoxItem" x:Key="NoFocusListBoxItem">
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <ContentPresenter Content="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

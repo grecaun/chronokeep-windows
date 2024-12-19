@@ -532,7 +532,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Expander 
-                MaxHeight="235"
+                MaxHeight="230"
                 Margin="5,0,5,5"
                 HorizontalAlignment="Stretch"
                 IsExpanded="False"
@@ -596,13 +596,8 @@
                     ScrollViewer.CanContentScroll="false"
                     ScrollViewer.VerticalScrollBarVisibility="Visible"
                     Background="Transparent"
+                    ItemContainerStyle="{StaticResource NoFocusListBoxItem}"
                     >
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListBox.ItemContainerStyle>
                 </ListBox>
             </Expander>
             <Frame
