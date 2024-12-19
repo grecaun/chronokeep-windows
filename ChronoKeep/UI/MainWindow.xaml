@@ -35,23 +35,21 @@
             >
         </ui:TitleBar>
         <ui:NavigationView
-            PaneDisplayMode="LeftMinimal"
             IsBackButtonVisible="Collapsed"
             x:Name="RootNavigation"
             Grid.Column="0"
             Grid.Row="0"
             Grid.RowSpan="2"
-            FrameMargin="0"
+            FrameMargin="0,48,0,0"
             Margin="0,5,0,0"
             Transition="FadeInWithSlide"
-            MaxWidth="150"
+            OpenPaneLength="150"
             >
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem
                     Content="Dashboard"
                     Click="DashboardButton_Click"
                     x:Name="dashboardButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Home24" />
@@ -61,7 +59,6 @@
                     Content="Timing"
                     Click="TimingButton_Click"
                     x:Name="timingButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="ClipboardClock24" />
@@ -71,7 +68,6 @@
                     Content="Announcer"
                     Click="Announcer_Click"
                     x:Name="announcerButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="AlertUrgent24" />
@@ -81,7 +77,6 @@
                     Content="Participants"
                     Click="ParticipantsButton_Click"
                     x:Name="participantsButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Person24" />
@@ -91,7 +86,6 @@
                     Content="Chips"
                     Click="ChipsButton_Click"
                     x:Name="chipsButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="DeveloperBoard24" />
@@ -101,7 +95,6 @@
                     Content="Locations"
                     Click="LocationsButton_Click"
                     x:Name="locationsButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Map24" />
@@ -111,7 +104,6 @@
                     Content="Distances"
                     Click="DistancesButton_Click"
                     x:Name="distancesButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Ruler24" />
@@ -121,7 +113,6 @@
                     Content="Segments"
                     Click="SegmentsButton_Click"
                     x:Name="segmentsButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Organization24" />
@@ -131,7 +122,6 @@
                     Content="Age Groups"
                     Click="AgegroupsButton_Click"
                     x:Name="agegroupsButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Trophy24" />
@@ -143,7 +133,6 @@
                     Content="Settings"
                     Click="SettingsButton_Click"
                     x:Name="settingsButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Settings24" />
@@ -153,7 +142,6 @@
                     Content="About"
                     Click="AboutButton_Click"
                     x:Name="aboutButton"
-                    HorizontalAlignment="Stretch"
                     >
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="QuestionCircle24" />
@@ -164,6 +152,7 @@
         <Grid 
             Grid.Column="1"
             Grid.Row="1"
+            Margin="-1,0"
             >
             <Border
                 Background="{DynamicResource ControlFillColorDefaultBrush}"
