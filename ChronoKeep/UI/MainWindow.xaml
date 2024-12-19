@@ -1,90 +1,139 @@
 ﻿<Window
-        x:Class="Chronokeep.UI.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Title="Chronokeep" Height="700" Width="1320" MinHeight="600" MinWidth="800"
-        Closing="Window_Closing" Loaded="Window_Loaded"
-        xmlns:local="clr-namespace:Chronokeep.UI"
-        WindowStartupLocation="CenterScreen"
-        >
+    x:Class="Chronokeep.UI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title=""
+    Height="700"
+    Width="1320"
+    MinHeight="600"
+    MinWidth="800"
+    Closing="Window_Closing" Loaded="Window_Loaded"
+    xmlns:local="clr-namespace:Chronokeep.UI"
+    WindowStartupLocation="CenterScreen"
+    >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ListView Grid.Column="0" SelectionMode="Single">
-            <ListViewItem 
-                Content="Dashboard"
-                x:Name="dashboardButton"
-                Selected="DashboardButton_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <ListViewItem 
-                Content="Timing"
-                x:Name="timingButton"
-                Selected="TimingButton_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <ListViewItem 
-                Content="Announcer"
-                x:Name="announcerButton"
-                Selected="Announcer_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <ListViewItem 
-                Content="Participants"
-                x:Name="participantsButton"
-                Selected="ParticipantsButton_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <ListViewItem 
-                Content="Chips"
-                x:Name="chipsButton"
-                Selected="ChipsButton_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <ListViewItem 
-                Content="Locations"
-                x:Name="locationsButton"
-                Selected="LocationsButton_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <ListViewItem 
-                Content="Distances"
-                x:Name="distancesButton"
-                Selected="DistancesButton_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <ListViewItem 
-                Content="Segments"
-                x:Name="segmentsButton"
-                Selected="SegmentsButton_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <ListViewItem 
-                Content="Age Groups"
-                x:Name="agegroupsButton"
-                Selected="AgegroupsButton_Click"
-                HorizontalAlignment="Stretch"
-                />
-            <ListViewItem 
-                Content="Settings"
-                x:Name="settingsButton"
-                Selected="SettingsButton_Click"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Bottom"
-                />
-            <ListViewItem
-                Content="About"
-                x:Name="aboutButton"
-                Selected="AboutButton_Click"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Bottom"
-                />
-        </ListView>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ListView
+                x:Name="ControlsList"
+                Grid.Row="1"
+                Margin="8,8,0,0"
+                AutomationProperties.Name="Navigation Pane"
+                >
+                <ListViewItem
+                    x:Name="dashboardButton"
+                    Selected="DashboardButton_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xE80F;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="Dashboard" />
+                    </DockPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="timingButton"
+                    Selected="TimingButton_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xE916;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="Timing"/>
+                    </DockPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="announcerButton"
+                    Selected="Announcer_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xE789;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="Announcer"/>
+                    </DockPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="participantsButton"
+                    Selected="ParticipantsButton_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xE716;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="Participants"/>
+                    </DockPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="chipsButton"
+                    Selected="ChipsButton_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xE950;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="Chips"/>
+                    </DockPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="locationsButton"
+                    Selected="LocationsButton_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xE819;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="Locations"/>
+                    </DockPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="distancesButton"
+                    Selected="DistancesButton_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xED5E;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="Distances"/>
+                    </DockPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="segmentsButton"
+                    Selected="SegmentsButton_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xF0B9;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="Segments"/>
+                    </DockPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="agegroupsButton"
+                    Selected="AgegroupsButton_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xE787;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="Age Groups"/>
+                    </DockPanel>
+                </ListViewItem>
+            </ListView>
+            <ListView Grid.Row="2">
+                <ListViewItem
+                    x:Name="settingsButton"
+                    Selected="SettingsButton_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xE713;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="Settings"/>
+                    </DockPanel>
+                </ListViewItem>
+                <ListViewItem
+                    x:Name="aboutButton"
+                    Selected="AboutButton_Click"
+                    >
+                    <DockPanel MinHeight="30" Focusable="False">
+                        <TextBlock MaxWidth="16" VerticalAlignment="Center" Focusable="False" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16" Text="&#xE946;" />
+                        <TextBlock Margin="9,0,20,0" VerticalAlignment="Center" Text="About"/>
+                    </DockPanel>
+                </ListViewItem>
+            </ListView>
+        </Grid>
         <Grid 
             Grid.Column="1"
             >
