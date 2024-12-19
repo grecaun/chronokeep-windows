@@ -23,9 +23,9 @@
             <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
                 <StackPanel Name="mainPanel">
                     <DockPanel>
-                        <TextBlock Text="Wave" VerticalAlignment="Center" TextAlignment="Center" Width="60" FontSize="14"/>
+                        <Label Content="Wave" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="60" FontSize="14"/>
                         <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                        <TextBlock Text="Time" VerticalAlignment="Center" TextAlignment="Center" Width="150" FontSize="14"/>
+                        <Label Content="Time" VerticalAlignment="Center" HorizontalContentAlignment="Center" Width="150" FontSize="14"/>
                     </DockPanel>
                     <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
                     <ListBox Name="WaveList" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" KeyboardNavigation.TabNavigation="Continue" BorderThickness="0">

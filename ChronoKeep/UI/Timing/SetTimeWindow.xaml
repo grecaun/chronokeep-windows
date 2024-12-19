@@ -12,7 +12,7 @@
         >
     <Grid>
         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center" Margin="10,10,10,10">
-            <TextBlock Text="Set Time To" FontSize="18" VerticalAlignment="Center" TextAlignment="Center"/>
+            <Label Content="Set Time To" FontSize="18" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
             <RadioButton Name="NowTimeRadioButton" Margin="10,5,10,5" VerticalContentAlignment="Center" GroupName="TimeGroup" Content="Now" FontSize="14" IsChecked="True"/>
             <RadioButton Name="SpecificTimeRadioButton" Margin="10,5,10,5" VerticalContentAlignment="Center" GroupName="TimeGroup" HorizontalAlignment="Stretch">
                 <Grid HorizontalAlignment="Stretch">
@@ -25,8 +25,8 @@
                 </Grid>
             </RadioButton>
             <CheckBox Name="SetAllCheckBox" Content="Set all connected readers" FontSize="14" VerticalContentAlignment="Center" Margin="10,5,10,5"/>
-            <TextBlock Name="CurrentTimeLabel" VerticalAlignment="Center" TextAlignment="Center" Text="" FontSize="14" Margin="10,5,10,5"/>
-            <TextBlock Name="TimeLabel" VerticalAlignment="Center" TextAlignment="Center" Text="" FontSize="14" Margin="10,5,10,5"/>
+            <Label Name="CurrentTimeLabel" VerticalAlignment="Center" HorizontalContentAlignment="Center" Content="" FontSize="14" Margin="10,5,10,5"/>
+            <Label Name="TimeLabel" VerticalAlignment="Center" HorizontalContentAlignment="Center" Content="" FontSize="14" Margin="10,5,10,5"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>

@@ -28,7 +28,7 @@ namespace Chronokeep.UI.Timing
             theEvent = database.GetCurrentEvent();
             if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
             {
-                ChipTimeHeader.Text = "Lap Time";
+                ChipTimeHeader.Content = "Lap Time";
             }
             if (database is SQLiteInterface)
             {

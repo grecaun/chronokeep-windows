@@ -4,12 +4,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Chronokeep.UI.Timing"
-        
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
       Title="TimingRawReadsPage"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <Grid>
         <Grid.Resources>
@@ -59,15 +57,15 @@
                                 <ColumnDefinition Width="100"/> <!-- Status -->
                                 <ColumnDefinition Width="100"/> <!-- Type -->
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Box}"/>
-                            <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding LocationName}"/>
-                            <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding ChipNumber}"/>
-                            <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Bib}"/>
-                            <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Name}"/>
-                            <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding TimeString}"/>
-                            <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding NetTime}"/>
-                            <TextBlock Grid.Column="7" Margin="4,4" Text="{Binding StatusName}"/>
-                            <TextBlock Grid.Column="8" Margin="4,4" Text="{Binding TypeName}"/>
+                            <Label Grid.Column="0" Margin="4,4" Content="{Binding Box}"/>
+                            <Label Grid.Column="1" Margin="4,4" Content="{Binding LocationName}"/>
+                            <Label Grid.Column="2" Margin="4,4" Content="{Binding ChipNumber}"/>
+                            <Label Grid.Column="3" Margin="4,4" Content="{Binding Bib}"/>
+                            <Label Grid.Column="4" Margin="4,4" Content="{Binding Name}"/>
+                            <Label Grid.Column="5" Margin="4,4" Content="{Binding TimeString}"/>
+                            <Label Grid.Column="6" Margin="4,4" Content="{Binding NetTime}"/>
+                            <Label Grid.Column="7" Margin="4,4" Content="{Binding StatusName}"/>
+                            <Label Grid.Column="8" Margin="4,4" Content="{Binding TypeName}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -92,15 +90,15 @@
                         <ColumnDefinition Width="100"/> <!-- Status -->
                         <ColumnDefinition Width="100"/> <!-- Type -->
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Margin="4,4" Text="Box"/>
-                    <TextBlock Grid.Column="1" Margin="4,4" Text="Location"/>
-                    <TextBlock Grid.Column="2" Margin="4,4" Text="Chip"/>
-                    <TextBlock Grid.Column="3" Margin="4,4" Text="Bib"/>
-                    <TextBlock Grid.Column="4" Margin="4,4" Text="Name"/>
-                    <TextBlock Grid.Column="5" Margin="4,4" Text="Clock"/>
-                    <TextBlock Grid.Column="6" Margin="4,4" Text="Net Time"/>
-                    <TextBlock Grid.Column="7" Margin="4,4" Text="Status"/>
-                    <TextBlock Grid.Column="8" Margin="4,4" Text="Type"/>
+                    <Label Grid.Column="0" Margin="4,4" Content="Box"/>
+                    <Label Grid.Column="1" Margin="4,4" Content="Location"/>
+                    <Label Grid.Column="2" Margin="4,4" Content="Chip"/>
+                    <Label Grid.Column="3" Margin="4,4" Content="Bib"/>
+                    <Label Grid.Column="4" Margin="4,4" Content="Name"/>
+                    <Label Grid.Column="5" Margin="4,4" Content="Clock"/>
+                    <Label Grid.Column="6" Margin="4,4" Content="Net Time"/>
+                    <Label Grid.Column="7" Margin="4,4" Content="Status"/>
+                    <Label Grid.Column="8" Margin="4,4" Content="Type"/>
                 </Grid>
             </ScrollViewer>
         </Grid>

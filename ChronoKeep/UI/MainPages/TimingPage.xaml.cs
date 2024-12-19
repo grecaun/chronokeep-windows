@@ -85,8 +85,8 @@ namespace Chronokeep.UI.MainPages
             Timer.Tick += new EventHandler(Timer_Click);
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
 
-            IPAdd.Text = "localhost";
-            Port.Text = "6933";
+            IPAdd.Content = "localhost";
+            Port.Content = "6933";
             // Check for default IP address to give to our reader boxes for connections
             foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces())
             {
@@ -98,7 +98,7 @@ namespace Chronokeep.UI.MainPages
                         {
                             if (ipinfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                             {
-                                IPAdd.Text = ipinfo.Address.ToString();
+                                IPAdd.Content = ipinfo.Address.ToString();
                                 Log.D("UI.MainPages.TimingPage", "IP Address :" + ipinfo.Address);
                                 Log.D("UI.MainPages.TimingPage", "IPv4 Mask  :" + ipinfo.IPv4Mask);
                                 string[] ipParts = ipinfo.Address.ToString().Split('.');
@@ -258,12 +258,12 @@ namespace Chronokeep.UI.MainPages
             if (mWindow.IsRemoteRunning())
             {
                 remoteControllerSwitch.IsChecked = true;
-                remoteErrorsBlock.Text = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
+                remoteErrorsBlock.Content = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
             }
             else
             {
                 remoteControllerSwitch.IsChecked = false;
-                remoteErrorsBlock.Text = "";
+                remoteErrorsBlock.Content = "";
             }
             remoteControllerSwitch.IsEnabled = true;
 
@@ -450,12 +450,12 @@ namespace Chronokeep.UI.MainPages
             if (mWindow.IsRemoteRunning())
             {
                 remoteControllerSwitch.IsChecked = true;
-                remoteErrorsBlock.Text = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
+                remoteErrorsBlock.Content = mWindow.RemoteErrors() > 0 ? mWindow.RemoteErrors().ToString() : "";
             }
             else
             {
                 remoteControllerSwitch.IsChecked = false;
-                remoteErrorsBlock.Text = "";
+                remoteErrorsBlock.Content = "";
             }
             remoteControllerSwitch.IsEnabled = true;
 
@@ -510,12 +510,12 @@ namespace Chronokeep.UI.MainPages
             if (readerMsgs.Count > 0)
             {
                 ReaderMessageButton.Visibility = Visibility.Visible;
-                ReaderMessageNumberBox.Text = readerMsgs.Count.ToString();
+                ReaderMessageNumberBox.Content = readerMsgs.Count.ToString();
             }
             else
             {
                 ReaderMessageButton.Visibility = Visibility.Collapsed;
-                ReaderMessageNumberBox.Text = "0";
+                ReaderMessageNumberBox.Content = "0";
             }
             UpdateSubView();
             if (alreadyRecalculating)
@@ -561,7 +561,7 @@ namespace Chronokeep.UI.MainPages
                 ellapsed = ellapsed.Subtract(TimeSpan.FromSeconds(value.seconds));
                 ellapsed = ellapsed.Subtract(TimeSpan.FromMilliseconds(value.milliseconds));
             }
-            EllapsedTime.Text = string.Format("{0:D2}:{1:D2}:{2:D2}", Math.Abs(ellapsed.Days) * 24 + Math.Abs(ellapsed.Hours), Math.Abs(ellapsed.Minutes), Math.Abs(ellapsed.Seconds));
+            EllapsedTime.Content = string.Format("{0:D2}:{1:D2}:{2:D2}", Math.Abs(ellapsed.Days) * 24 + Math.Abs(ellapsed.Hours), Math.Abs(ellapsed.Minutes), Math.Abs(ellapsed.Seconds));
         }
 
         private void StartRaceClick(object sender, RoutedEventArgs e)

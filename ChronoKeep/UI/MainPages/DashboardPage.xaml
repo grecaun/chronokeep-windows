@@ -10,7 +10,6 @@
       d:DesignHeight="450"
       d:DesignWidth="660"
       Title="DashboardPage"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <Grid>
         <Grid.ColumnDefinitions>
@@ -90,15 +89,15 @@
         <ScrollViewer Name="LeftPanel" Grid.Column="1" Grid.Row="1" Margin="10,15,10,0" HorizontalScrollBarVisibility="Auto">
             <StackPanel>
                 <DockPanel LastChildFill="True" Margin="0,0,0,5">
-                    <TextBlock Text="Event Name" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
+                    <Label Content="Event Name" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
                     <TextBox Name="eventNameTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
                 </DockPanel>
                 <DockPanel LastChildFill="True" Margin="0,0,0,5">
-                    <TextBlock Text="Year Code" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
+                    <Label Content="Year Code" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
                     <TextBox Name="eventYearCodeTextBox" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
                 </DockPanel>
                 <DockPanel LastChildFill="True">
-                    <TextBlock Text="Date" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
+                    <Label Content="Date" FontSize="16" Margin="10,0,5,0" VerticalAlignment="Center" Width="130" HorizontalAlignment="Right"/>
                     <DatePicker Name="eventDatePicker" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
                 </DockPanel>
                 <Separator Margin="5,5,5,5" />
@@ -110,7 +109,7 @@
                 <CheckBox Name="ageGroupDivisions" Content="Use Age Groups as Divisions?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <CheckBox Name="uploadSpecificDistanceResults" Content="Upload Results for Select Distances?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <DockPanel Margin="10,5,10,5">
-                    <TextBlock Text="Event Type" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <Label Content="Event Type" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     <ComboBox Name="TypeBox" Margin="10,0,0,0" VerticalContentAlignment="Center" IsEnabled="False" SelectionChanged="TypeBox_SelectionChanged">
                         <ComboBoxItem Content="Distance Based" Uid="0" IsSelected="True"/>
                         <ComboBoxItem Content="Time Based" Uid="1" />

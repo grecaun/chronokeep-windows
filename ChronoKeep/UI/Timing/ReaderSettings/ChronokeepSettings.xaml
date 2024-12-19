@@ -23,9 +23,9 @@
             <StackPanel x:Name="sacrifice" Margin="1,1,1,1" Height="1" />
             <StackPanel x:Name="settingsPanel" Visibility="Hidden" Margin="0,-25,0,0">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="Name"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Name"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="120"
                         Margin="5,5,5,5"
@@ -37,9 +37,9 @@
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="Sighting Period"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Sighting Period"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="120"
                         Margin="5,5,5,5"
@@ -51,9 +51,9 @@
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="Read Window"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Read Window"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="120"
                         Margin="5,5,5,5"
@@ -65,9 +65,9 @@
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="Chip Type"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Chip Type"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="120"
                         Margin="5,5,5,5"
@@ -97,9 +97,9 @@
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="Volume"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Volume"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="120"
                         Margin="5,5,5,5"
@@ -114,21 +114,21 @@
                         TickFrequency="1"
                         ValueChanged="volumeSlider_ValueChanged"
                         />
-                    <TextBlock
+                    <Label
                         FontSize="14"
                         x:Name="volumeBlock"
-                        Text="0"
+                        Content="0"
                         Width="30"
                         Margin="0,5,5,5"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        TextAlignment="Center"
+                        HorizontalContentAlignment="Center"
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="Voice"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Voice"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="120"
                         Margin="5,5,5,5"
@@ -164,7 +164,7 @@
                     >
                     <Expander.Header>
                         <DockPanel LastChildFill="False" VerticalAlignment="Center">
-                            <TextBlock Text="Readers" Margin="5,0,0,0" VerticalAlignment="Center" />
+                            <Label Content="Readers" Margin="5,0,0,0" VerticalAlignment="Center" />
                             <Button
                                 x:Name="addReaderButton"
                                 DockPanel.Dock="Right"
@@ -199,7 +199,7 @@
                     >
                     <Expander.Header>
                         <DockPanel LastChildFill="False" VerticalAlignment="Center">
-                            <TextBlock Text="API Keys" Margin="5,0,0,0" VerticalAlignment="Center" />
+                            <Label Content="API Keys" Margin="5,0,0,0" VerticalAlignment="Center" />
                             <Button
                                 x:Name="addAPIButton"
                                 DockPanel.Dock="Right"
@@ -241,9 +241,9 @@
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock
-                        Text="Upload Interval"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Upload Interval"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="120"
                         Margin="5,5,5,5"
@@ -258,15 +258,15 @@
                         TickFrequency="5"
                         ValueChanged="uploadSlider_ValueChanged"
                         />
-                    <TextBlock
+                    <Label
                         FontSize="14"
                         x:Name="uploadBlock"
-                        Text="10"
+                        Content="10"
                         Width="30"
                         Margin="0,5,5,5"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        TextAlignment="Center"
+                        HorizontalContentAlignment="Center"
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

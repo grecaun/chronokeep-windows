@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -32,9 +33,9 @@ namespace Chronokeep.UI.MainPages
             if (Directory.Exists(dirPath))
             {
                 dirPath = Path.Combine(dirPath, "index.html");
-                HelpDocsButton.NavigateUri = new Uri(dirPath);
+                HelpDocsButton.Uid = dirPath;
             }
-            VersionLabel.Text = gitVersion;
+            VersionLabel.Content = gitVersion;
         }
 
         public void Closing() { }
@@ -61,6 +62,16 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             Process.Start("explorer", dirPath);
+        }
+
+        private void Html_Click(object sender, RoutedEventArgs e)
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = ((Button)sender).Uid,
+                UseShellExecute = true,
+            };
+            Process.Start(psi);
         }
     }
 }

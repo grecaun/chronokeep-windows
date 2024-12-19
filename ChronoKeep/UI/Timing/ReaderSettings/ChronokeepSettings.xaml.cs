@@ -934,7 +934,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         {
             if (volumeSlider != null && volumeBlock != null)
             {
-                volumeBlock.Text = volumeSlider.Value.ToString();
+                volumeBlock.Content = volumeSlider.Value.ToString();
             }
         }
 
@@ -942,7 +942,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         {
             if (uploadSlider != null && uploadBlock != null)
             {
-                uploadBlock.Text = uploadSlider.Value.ToString();
+                uploadBlock.Content = uploadSlider.Value.ToString();
             }
         }
 

@@ -8,7 +8,7 @@ namespace Chronokeep
 {
     internal class HeaderListBoxItem : ListBoxItem
     {
-        public TextBlock HeaderLabel { get; private set; }
+        public Label HeaderLabel { get; private set; }
         public ComboBox HeaderBox { get; private set; }
         public int Index { get; private set; }
 
@@ -20,9 +20,9 @@ namespace Chronokeep
             this.Content = theGrid;
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(150) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            HeaderLabel = new TextBlock
+            HeaderLabel = new Label
             {
-                Text = s,
+                Content = s,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 18,
             };
@@ -40,7 +40,7 @@ namespace Chronokeep
 
     internal class LogListBoxItem : ListBoxItem
     {
-        public TextBlock HeaderLabel { get; private set; }
+        public Label HeaderLabel { get; private set; }
         public ComboBox HeaderBox { get; private set; }
         public int Index { get; private set; }
 
@@ -52,9 +52,9 @@ namespace Chronokeep
             this.Content = theGrid;
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            HeaderLabel = new TextBlock
+            HeaderLabel = new Label
             {
-                Text = s,
+                Content = s,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 18,
             };
@@ -72,7 +72,7 @@ namespace Chronokeep
 
     internal class BibChipHeaderListBoxItem : ListBoxItem
     {
-        public TextBlock HeaderLabel { get; private set; }
+        public Label HeaderLabel { get; private set; }
         public ComboBox HeaderBox { get; private set; }
         public int Index { get; private set; }
         public string[] human_fields = {
@@ -89,9 +89,9 @@ namespace Chronokeep
             this.Content = theGrid;
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            HeaderLabel = new TextBlock
+            HeaderLabel = new Label
             {
-                Text = s,
+                Content = s,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 18,
                 Margin = new Thickness(5, 0, 0, 0),
@@ -122,7 +122,7 @@ namespace Chronokeep
 
     internal class DistanceListBoxItemAlternate : ListBoxItem
     {
-        public TextBlock DistanceName { get; private set; }
+        public Label DistanceName { get; private set; }
         public ComboBox Distances { get; private set; }
 
         public DistanceListBoxItemAlternate(string name, List<Distance> distances)
@@ -132,9 +132,9 @@ namespace Chronokeep
             this.Content = theGrid;
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            DistanceName = new TextBlock
+            DistanceName = new Label
             {
-                Text = name,
+                Content = name,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = 18,
             };
@@ -161,7 +161,7 @@ namespace Chronokeep
 
         public string NameFromFile()
         {
-            return DistanceName.Text.ToString().Trim();
+            return DistanceName.Content.ToString().Trim();
         }
 
         public int DistanceId()
@@ -175,12 +175,12 @@ namespace Chronokeep
     internal class MultipleEntryListBoxItem : ListBoxItem
     {
         public CheckBox Keep { get; private set; }
-        public TextBlock Existing { get; private set; }
-        public TextBlock Bib { get; private set; }
-        public TextBlock Distance { get; private set; }
-        public TextBlock PartName { get; private set; }
-        public TextBlock Age { get; private set; }
-        public TextBlock Sex { get; private set; }
+        public Label Existing { get; private set; }
+        public Label Bib { get; private set; }
+        public Label Distance { get; private set; }
+        public Label PartName { get; private set; }
+        public Label Age { get; private set; }
+        public Label Sex { get; private set; }
         public Participant Part { get; private set; }
 
         public MultipleEntryListBoxItem(Participant person, Event theEvent)
@@ -199,45 +199,45 @@ namespace Chronokeep
             Keep = new CheckBox();
             theGrid.Children.Add(Keep);
             Grid.SetColumn(Keep, 0);
-            Existing = new TextBlock
+            Existing = new Label
             {
                 VerticalAlignment = VerticalAlignment.Center,
-                Text = (person.Identifier == Constants.Timing.PARTICIPANT_DUMMYIDENTIFIER ? "" : "X")
+                Content = (person.Identifier == Constants.Timing.PARTICIPANT_DUMMYIDENTIFIER ? "" : "X")
             };
             theGrid.Children.Add(Existing);
             Grid.SetColumn(Existing, 1);
-            Bib = new TextBlock
+            Bib = new Label
             {
                 VerticalAlignment = VerticalAlignment.Center,
-                Text = person.Bib.ToString()
+                Content = person.Bib.ToString()
             };
             theGrid.Children.Add(Bib);
             Grid.SetColumn(Bib, 2);
-            Distance = new TextBlock
+            Distance = new Label
             {
                 VerticalAlignment = VerticalAlignment.Center,
-                Text = person.Distance
+                Content = person.Distance
             };
             theGrid.Children.Add(Distance);
             Grid.SetColumn(Distance, 3);
-            PartName = new TextBlock
+            PartName = new Label
             {
                 VerticalAlignment = VerticalAlignment.Center,
-                Text = string.Format("{0} {1}", person.FirstName, person.LastName)
+                Content = string.Format("{0} {1}", person.FirstName, person.LastName)
             };
             theGrid.Children.Add(PartName);
             Grid.SetColumn(PartName, 4);
-            Sex = new TextBlock
+            Sex = new Label
             {
                 VerticalAlignment = VerticalAlignment.Center,
-                Text = person.Gender
+                Content = person.Gender
             };
             theGrid.Children.Add(Sex);
             Grid.SetColumn(Sex, 5);
-            Age = new TextBlock
+            Age = new Label
             {
                 VerticalAlignment = VerticalAlignment.Center,
-                Text = person.Age(theEvent.Date)
+                Content = person.Age(theEvent.Date)
             };
             theGrid.Children.Add(Age);
             Grid.SetColumn(Age, 6);

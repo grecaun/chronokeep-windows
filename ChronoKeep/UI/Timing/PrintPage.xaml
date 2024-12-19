@@ -4,12 +4,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Chronokeep.UI.Timing"
-      
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
       Title="PrintPage"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <StackPanel HorizontalAlignment="Center">
@@ -18,8 +16,8 @@
                     <ColumnDefinition Width="200" />
                     <ColumnDefinition Width="130" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Text="Distances" FontSize="16" Grid.Column="0" TextAlignment="Center"/>
-                <TextBlock Text="Type" FontSize="16" Grid.Column="1" TextAlignment="Center"/>
+                <Label Content="Distances" FontSize="16" Grid.Column="0" HorizontalContentAlignment="Center"/>
+                <Label Content="Type" FontSize="16" Grid.Column="1" HorizontalContentAlignment="Center"/>
             </Grid>
             <Grid Margin="5,5,5,5">
                 <Grid.ColumnDefinitions>

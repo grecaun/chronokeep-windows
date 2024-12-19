@@ -13,7 +13,7 @@
             <RowDefinition Height="70" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock x:Name="MessageBox" Text="This is some random text for testing purposes." FontSize="16" TextWrapping="Wrap" Margin="15" TextAlignment="Center" VerticalAlignment="Center" />
+            <Label x:Name="MessageBox" Content="This is some random text for testing purposes." FontSize="16" Margin="15" HorizontalContentAlignment="Center" VerticalAlignment="Center" />
             <TextBox x:Name="CopyBox" Text="" FontSize="16" Margin="15,0,15,15" HorizontalAlignment="Stretch" Visibility="Collapsed" TextChanged="CopyBox_TextChanged"/>
         </StackPanel>
         <Grid Grid.Row="1">

@@ -101,7 +101,7 @@ namespace Chronokeep.Updates
             {
                 Log.D("Updates.DownloadWindow", $"Download clicked. Downloading to {download_uri}");
                 DownloadProgress.Visibility = Visibility.Visible;
-                DownloadLabel.Text = $"Downloading {version}";
+                DownloadLabel.Content = $"Downloading {version}";
                 InstallButton.Content = "Install";
                 InstallButton.IsEnabled = false;
                 BackupDatabaseButton.IsEnabled = false;
@@ -164,7 +164,7 @@ namespace Chronokeep.Updates
             UpdatePanel.Visibility = Visibility.Collapsed;
             BackupDatabaseButton.Visibility = Visibility.Collapsed;
             BackupPanel.Visibility = Visibility.Visible;
-            backupBlock.Text = $"{backupBlock.Text}\nChecking for old database files.";
+            backupBlock.Content = $"{backupBlock.Content}\nChecking for old database files.";
             string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), appName);
             string path = Path.Combine(dirPath, dbName);
             Log.D("Updates.DownloadWindow", "Looking for database file.");
@@ -175,13 +175,13 @@ namespace Chronokeep.Updates
                     string backup = System.IO.Path.Combine(dirPath, $"Chronokeep-{DateTime.Now.ToString("yyyy-MM-dd")}-backup.sqlite");
                     try
                     {
-                        backupBlock.Text = $"{backupBlock.Text}\nBacking up database.";
+                        backupBlock.Content = $"{backupBlock.Content}\nBacking up database.";
                         File.Copy(path, backup, false);
-                        backupBlock.Text = $"{backupBlock.Text}\n{backup}";
+                        backupBlock.Content = $"{backupBlock.Content}\n{backup}";
                     }
                     catch
                     {
-                        backupBlock.Text = $"{backupBlock.Text}\nError backing up database.";
+                        backupBlock.Content = $"{backupBlock.Content}\nError backing up database.";
                     }
                 }
             }

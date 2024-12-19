@@ -25,7 +25,7 @@
                 Grid.Row="0" 
                 Margin="5,5,5,5"
                 />
-        <TextBlock
+        <Label
             FontSize="60"
             Name="Unknown"
             HorizontalAlignment="Center"
@@ -38,13 +38,13 @@
                 Name="InfoHolder"
                 VerticalAlignment="Center"
                 >
-            <TextBlock FontSize="20" Name="Bib" HorizontalAlignment="Center" />
-            <TextBlock FontSize="20" Name="Chip" HorizontalAlignment="Center" />
-            <TextBlock FontSize="60" Name="PersonName" HorizontalAlignment="Center" />
-            <TextBlock FontSize="60" Name="AgeGender" HorizontalAlignment="Center" />
-            <TextBlock FontSize="60" Name="Distance" HorizontalAlignment="Center" />
-            <TextBlock FontSize="20" Text="" HorizontalAlignment="Center" />
-            <TextBlock FontSize="20" Text="" HorizontalAlignment="Center" />
+            <Label FontSize="20" Name="Bib" HorizontalAlignment="Center" />
+            <Label FontSize="20" Name="Chip" HorizontalAlignment="Center" />
+            <Label FontSize="60" Name="PersonName" HorizontalAlignment="Center" />
+            <Label FontSize="60" Name="AgeGender" HorizontalAlignment="Center" />
+            <Label FontSize="60" Name="Distance" HorizontalAlignment="Center" />
+            <Label FontSize="20" Content="" HorizontalAlignment="Center" />
+            <Label FontSize="20" Content="" HorizontalAlignment="Center" />
         </StackPanel>
     </Grid>
 </Window>

@@ -31,8 +31,8 @@ namespace Chronokeep.UI.Timing
 
         public void UpdateTime()
         {
-            TimeLabel.Text = string.Format("Reader time is {0}", timingSystem.SystemTime);
-            CurrentTimeLabel.Text = string.Format("System time is {0}", DateTime.Now.ToString("dd MMM yyyy HH:mm:ss"));
+            TimeLabel.Content = string.Format("Reader time is {0}", timingSystem.SystemTime);
+            CurrentTimeLabel.Content = string.Format("System time is {0}", DateTime.Now.ToString("dd MMM yyyy HH:mm:ss"));
         }
 
         private void Set_Click(object sender, RoutedEventArgs e)

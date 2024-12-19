@@ -12,26 +12,26 @@
     <Grid>
         <StackPanel VerticalAlignment="Center" Margin="0,-20,0,0">
             <DockPanel>
-                <TextBlock Text="Bib" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Bib" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="BibBox" FontSize="16" Margin="0,5,15,5" Width="100" VerticalContentAlignment="Center" KeyDown="Box_KeyDown"/>
                 <ComboBox Name="DistanceBox" FontSize="16" Margin="0,5,15,5"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="First" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="First" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="FirstBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Last" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Last" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="LastBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Birthday" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Birthday" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <DatePicker Name="BirthdayBox" FontSize="16" Margin="0,5,15,5" Width="260" KeyDown="Box_KeyDown" VerticalContentAlignment="Center"/>
-                <TextBlock Text="Age" FontSize="16" Margin="0,0,5,0" Width="45" VerticalAlignment="Center"/>
+                <Label Content="Age" FontSize="16" Margin="0,0,5,0" Width="45" VerticalAlignment="Center"/>
                 <TextBox Name="AgeBox" FontSize="16" Margin="0,5,5,5" Width="60" KeyDown="Box_KeyDown" VerticalContentAlignment="Center"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Gender" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Gender" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <ComboBox Name="GenderBox" FontSize="16" Margin="0,5,15,5" Width="200" SelectionChanged="GenderBox_SelectionChanged">
                     <ComboBoxItem Content="Man"/>
                     <ComboBoxItem Content="Woman"/>
@@ -42,53 +42,53 @@
                 <TextBox Name="otherGenderBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown" HorizontalAlignment="Stretch"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Street" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Street" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="StreetBox" FontSize="16" Margin="0,5,15,5" Width="180" KeyDown="Box_KeyDown"/>
-                <TextBlock Text="Appartment" FontSize="16" Margin="0,0,5,0" Width="100" VerticalAlignment="Center"/>
+                <Label Content="Appartment" FontSize="16" Margin="0,0,5,0" Width="100" VerticalAlignment="Center"/>
                 <TextBox Name="Street2Box" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="City" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="City" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="CityBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="State" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="State" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="StateBox" FontSize="16" Margin="0,5,15,5" Width="180" KeyDown="Box_KeyDown"/>
-                <TextBlock Text="Zip" FontSize="16" Margin="0,0,5,0" Width="70" VerticalAlignment="Center"/>
+                <Label Content="Zip" FontSize="16" Margin="0,0,5,0" Width="70" VerticalAlignment="Center"/>
                 <TextBox Name="ZipBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Country" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Country" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="CountryBox" FontSize="16" Margin="0,5,15,5" Width="180" KeyDown="Box_KeyDown"/>
-                <TextBlock Text="Private" FontSize="16" Margin="0,0,5,0" Width="70" VerticalAlignment="Center"/>
+                <Label Content="Private" FontSize="16" Margin="0,0,5,0" Width="70" VerticalAlignment="Center"/>
                 <CheckBox Name="AnonymousBox" Margin="0,5,15,5" VerticalContentAlignment="Center"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Email" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Email" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="EmailBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Phone" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Phone" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="PhoneBox" FontSize="16" Margin="0,5,15,5" Width="140" KeyDown="Box_KeyDown"/>
-                <TextBlock Text="Mobile" FontSize="16" Margin="0,0,0,0" Width="80" VerticalAlignment="Center"/>
+                <Label Content="Mobile" FontSize="16" Margin="0,0,0,0" Width="80" VerticalAlignment="Center"/>
                 <TextBox Name="MobileBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Parent" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Parent" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="ParentBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="EC Name" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="EC Name" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="ECNameBox" FontSize="16" Margin="0,5,15,5" Width="140" KeyDown="Box_KeyDown"/>
-                <TextBlock Text="EC Phone" FontSize="16" Margin="0,0,0,0" Width="80" VerticalAlignment="Center"/>
+                <Label Content="EC Phone" FontSize="16" Margin="0,0,0,0" Width="80" VerticalAlignment="Center"/>
                 <TextBox Name="ECPhoneBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Comments" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Comments" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="CommentsBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Apparel" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <Label Content="Apparel" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="ApparelBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

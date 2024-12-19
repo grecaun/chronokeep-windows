@@ -12,7 +12,7 @@
     <Grid>
         <xctf:BusyIndicator Name="busyIndicator">
             <StackPanel VerticalAlignment="Top" Margin="10,10,10,10" Grid.Row="1">
-                <TextBlock Text="Rewind" FontSize="18" TextAlignment="Center" VerticalAlignment="Center"/>
+                <Label Content="Rewind" FontSize="18" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -24,8 +24,8 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="From" FontSize="14" VerticalAlignment="Center" TextAlignment="Center" Grid.Column="0" Grid.Row="0" Margin="10,5,5,5"/>
-                    <TextBlock Text="To" FontSize="14" VerticalAlignment="Center" TextAlignment="Center" Grid.Column="1" Grid.Row="0" Margin="5,5,10,5"/>
+                    <Label Content="From" FontSize="14" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0" Grid.Row="0" Margin="10,5,5,5"/>
+                    <Label Content="To" FontSize="14" VerticalAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="1" Grid.Row="0" Margin="5,5,10,5"/>
                     <DatePicker Name="FromDate" FontSize="14" VerticalContentAlignment="Center" Grid.Column="0" Grid.Row="1" Margin="10,5,5,5"/>
                     <DatePicker Name="ToDate" FontSize="14" VerticalContentAlignment="Center" Grid.Column="1" Grid.Row="1" Margin="5,5,10,5"/>
                     <xctf:MaskedTextBox Name="FromTime" FontSize="14" Mask="00:00:00" ValueDataType="{x:Type s:String}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Column="0" Grid.Row="2" Margin="10,5,5,5"/>

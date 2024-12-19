@@ -314,9 +314,9 @@ namespace Chronokeep.UI.MainPages
                 {
                     namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(250) });
                 }
-                TextBlock distanceName = new TextBlock()
+                Label distanceName = new Label()
                 {
-                    Text = distance == null ? "All Distances" : distance.Name,
+                    Content = distance == null ? "All Distances" : distance.Name,
                     FontSize = 20,
                     Margin = new Thickness(10, 5, 0, 5),
                     VerticalAlignment = VerticalAlignment.Center
@@ -355,9 +355,9 @@ namespace Chronokeep.UI.MainPages
                 if (distance != null)
                 {
                     DockPanel copyPanel = new DockPanel();
-                    copyPanel.Children.Add(new TextBlock()
+                    copyPanel.Children.Add(new Label()
                     {
-                        Text = "Copy from",
+                        Content = "Copy from",
                         FontSize = 14,
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Right,
@@ -460,65 +460,65 @@ namespace Chronokeep.UI.MainPages
 
         private class ASegmentHeader : ListBoxItem
         {
-            public TextBlock Where = new TextBlock()
+            public Label Where = new Label()
             {
-                Text = "Where",
+                Content = "Where",
                 FontSize = 14,
                 Width = 140,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(10, 0, 5, 0)
             };
-            public TextBlock NameLabel = new TextBlock()
+            public Label NameLabel = new Label()
             {
-                Text = "Name",
+                Content = "Name",
                 FontSize = 14,
                 Width = 190,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock Occurrence = new TextBlock()
+            public Label Occurrence = new Label()
             {
-                Text = "Occ",
+                Content = "Occ",
                 FontSize = 14,
                 Width = 70,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock SegDistance = new TextBlock()
+            public Label SegDistance = new Label()
             {
-                Text = "Dist",
+                Content = "Dist",
                 FontSize = 14,
                 Width = 70,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock Unit = new TextBlock()
+            public Label Unit = new Label()
             {
-                Text = "Unit",
+                Content = "Unit",
                 FontSize = 14,
                 Width = 90,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock GPSLabel = new TextBlock()
+            public Label GPSLabel = new Label()
             {
-                Text = "GPS",
+                Content = "GPS",
                 FontSize = 14,
                 Width = 190,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock MapLinkLabel = new TextBlock()
+            public Label MapLinkLabel = new Label()
             {
-                Text = "Map Link",
+                Content = "Map Link",
                 FontSize = 14,
                 Width = 190,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(5, 0, 5, 0)
             };
-            public TextBlock Remove = new TextBlock()
+            public Label Remove = new Label()
             {
-                Text = "",
+                Content = "",
                 FontSize = 14,
                 Width = 45,
                 HorizontalAlignment = HorizontalAlignment.Center,

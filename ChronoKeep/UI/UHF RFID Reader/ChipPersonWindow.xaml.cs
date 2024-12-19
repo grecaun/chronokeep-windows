@@ -34,23 +34,23 @@ namespace Chronokeep
             });
             if (person != null)
             {
-                Bib.Text = "Bib: " + person.EventSpecific.Bib;
-                Chip.Text = "Chip: " + person.Chip;
-                PersonName.Text = string.Format("{0} {1}", person.FirstName, person.LastName);
-                AgeGender.Text = string.Format("{0} {1}", person.Age(eventDate), person.Gender);
-                Distance.Text = "" + person.EventSpecific.DistanceName;
-                Unknown.Text = "";
+                Bib.Content = "Bib: " + person.EventSpecific.Bib;
+                Chip.Content = "Chip: " + person.Chip;
+                PersonName.Content = string.Format("{0} {1}", person.FirstName, person.LastName);
+                AgeGender.Content = string.Format("{0} {1}", person.Age(eventDate), person.Gender);
+                Distance.Content = "" + person.EventSpecific.DistanceName;
+                Unknown.Content = "";
                 Unknown.Visibility = Visibility.Collapsed;
                 InfoHolder.Visibility = Visibility.Visible;
             }
             else
             {
-                Bib.Text = "";
-                Chip.Text = "";
-                PersonName.Text = "";
-                AgeGender.Text = "";
-                Distance.Text = "";
-                Unknown.Text = "Information not found.";
+                Bib.Content = "";
+                Chip.Content = "";
+                PersonName.Content = "";
+                AgeGender.Content = "";
+                Distance.Content = "";
+                Unknown.Content = "Information not found.";
                 Unknown.Visibility = Visibility.Visible;
                 InfoHolder.Visibility = Visibility.Collapsed;
             }
@@ -61,12 +61,12 @@ namespace Chronokeep
                     Monitor.Wait(_locker, 5000);
                 }
             });
-            Bib.Text = "";
-            Chip.Text = "";
-            PersonName.Text = "";
-            AgeGender.Text = "";
-            Distance.Text = "";
-            Unknown.Text = "";
+            Bib.Content = "";
+            Chip.Content = "";
+            PersonName.Content = "";
+            AgeGender.Content = "";
+            Distance.Content = "";
+            Unknown.Content = "";
             Unknown.Visibility = Visibility.Collapsed;
             InfoHolder.Visibility = Visibility.Collapsed;
         }

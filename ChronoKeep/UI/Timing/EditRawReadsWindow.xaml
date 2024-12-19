@@ -23,8 +23,8 @@
                 <RowDefinition Height="95"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Days" FontSize="14" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Center"/>
-            <TextBlock Text="Time" FontSize="14" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" TextAlignment="Center"/>
+            <Label Content="Days" FontSize="14" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
+            <Label Content="Time" FontSize="14" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" HorizontalContentAlignment="Center"/>
             <TextBox Name="DaysBox" FontSize="14" Grid.Column="0" Grid.Row="2" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="5,5,5,5" KeyDown="Enter_KeyDown" PreviewTextInput="DaysBox_PreviewTextInput"/>
             <xctk:MaskedTextBox Name="TimeBox" FontSize="14" Grid.Column="1" Grid.Row="2" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="5,5,5,5" KeyDown="Enter_KeyDown"/>
         <Grid Grid.Row="3" Grid.ColumnSpan="2">
@@ -37,46 +37,46 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <RadioButton
-                    Content="Add"
-                    Grid.Column="0"
-                    Grid.Row="0"
-                    Name="AddRadio"
-                    GroupName="RadioGroup"
-                    IsChecked="True"
-                    KeyDown="Enter_KeyDown"
-                    Margin="10,0,5,0"
-                    />
+                Content="Add"
+                Grid.Column="0"
+                Grid.Row="0"
+                Name="AddRadio"
+                GroupName="RadioGroup"
+                IsChecked="True"
+                KeyDown="Enter_KeyDown"
+                Margin="10,0,5,0"
+                />
             <RadioButton
-                    Content="Subtract"
-                    Grid.Column="1"
-                    Grid.Row="0"
-                    Name="SubRadio"
-                    GroupName="RadioGroup"
-                    KeyDown="Enter_KeyDown"
-                    Margin="5,0,0,0"
-                    />
+                Content="Subtract"
+                Grid.Column="1"
+                Grid.Row="0"
+                Name="SubRadio"
+                GroupName="RadioGroup"
+                KeyDown="Enter_KeyDown"
+                Margin="5,0,0,0"
+                />
             <Button
-                    Content="Submit"
-                    Name="Submit"
-                    Grid.Column="0"
-                    Grid.Row="1"
-                    Margin="5,5,5,5"
-                    Click="Submit_Click"
-                    HorizontalAlignment="Center"
-                    Width="100"
-                    Height="35"
-                    />
+                Content="Submit"
+                Name="Submit"
+                Grid.Column="0"
+                Grid.Row="1"
+                Margin="5,5,5,5"
+                Click="Submit_Click"
+                HorizontalAlignment="Center"
+                Width="100"
+                Height="35"
+                />
             <Button
-                    Content="Cancel"
-                    Name="Cancel"
-                    Grid.Column="1"
-                    Grid.Row="1"
-                    Margin="5,5,5,5"
-                    Click="Cancel_Click"
-                    HorizontalAlignment="Center"
-                    Width="100"
-                    Height="35"
-                    />
+                Content="Cancel"
+                Name="Cancel"
+                Grid.Column="1"
+                Grid.Row="1"
+                Margin="5,5,5,5"
+                Click="Cancel_Click"
+                HorizontalAlignment="Center"
+                Width="100"
+                Height="35"
+                />
         </Grid>
     </Grid>
 </Window>

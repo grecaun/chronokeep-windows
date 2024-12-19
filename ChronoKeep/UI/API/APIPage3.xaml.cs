@@ -130,7 +130,7 @@ namespace Chronokeep.UI.API
         {
             if (DaysAllowedSlider != null && DaysAllowedText != null)
             {
-                DaysAllowedText.Text = DaysAllowedSlider.Value.ToString();
+                DaysAllowedText.Content = DaysAllowedSlider.Value.ToString();
             }
         }
     }

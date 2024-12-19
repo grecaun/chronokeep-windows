@@ -23,12 +23,12 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Margin="4" Text="{Binding DecNumber}" />
-                            <TextBlock Grid.Column="1" Margin="4" Text="{Binding HexNumber}" />
-                            <TextBlock Grid.Column="2" Margin="4" Text="{Binding AntennaNumber}" />
-                            <TextBlock Grid.Column="3" Margin="4" Text="{Binding DeviceNumber}" />
-                            <TextBlock Grid.Column="4" Margin="4" Text="{Binding DataRep}" />
-                            <TextBlock Grid.Column="5" Margin="4" Text="{Binding ReadNumber}" />
+                            <Label Grid.Column="0" Margin="4" Content="{Binding DecNumber}" />
+                            <Label Grid.Column="1" Margin="4" Content="{Binding HexNumber}" />
+                            <Label Grid.Column="2" Margin="4" Content="{Binding AntennaNumber}" />
+                            <Label Grid.Column="3" Margin="4" Content="{Binding DeviceNumber}" />
+                            <Label Grid.Column="4" Margin="4" Content="{Binding DataRep}" />
+                            <Label Grid.Column="5" Margin="4" Content="{Binding ReadNumber}" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -43,12 +43,12 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Margin="4" Text="Dec Number" />
-                <TextBlock Grid.Column="1" Margin="4" Text="Hex Number" />
-                <TextBlock Grid.Column="2" Margin="4" Text="Ant Number" />
-                <TextBlock Grid.Column="3" Margin="4" Text="Dev Number" />
-                <TextBlock Grid.Column="4" Margin="4" Text="Data" />
-                <TextBlock Grid.Column="5" Margin="4" Text="Read Number" />
+                <Label Grid.Column="0" Margin="4" Content="Dec Number" />
+                <Label Grid.Column="1" Margin="4" Content="Hex Number" />
+                <Label Grid.Column="2" Margin="4" Content="Ant Number" />
+                <Label Grid.Column="3" Margin="4" Content="Dev Number" />
+                <Label Grid.Column="4" Margin="4" Content="Data" />
+                <Label Grid.Column="5" Margin="4" Content="Read Number" />
             </Grid>
             <Grid HorizontalAlignment="Center" Height="55">
                 <Grid.ColumnDefinitions>
@@ -60,9 +60,9 @@
                     <ColumnDefinition Width="148" />
                 </Grid.ColumnDefinitions>
                 <DockPanel Margin="5,0,15,0" Grid.Column="0" Name="EventNameHolder" Visibility="Hidden">
-                    <TextBlock Text="TEST" VerticalAlignment="Center" Name="eventName"/>
+                    <Label Content="TEST" VerticalAlignment="Center" Name="eventName"/>
                 </DockPanel>
-                <TextBlock Text="Serial Port" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Height="Auto" Grid.Column="1" />
+                <Label Content="Serial Port" Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Height="Auto" Grid.Column="1" />
                 <ComboBox Name="serialPortCB" Height="35" Margin="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="2" />
                 <Button Content="Refresh" Name="refreshBtn" Width="80" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Grid.Column="3" Click="RefreshBtn_Click" />
                 <Button Content="Connect" Name="connectBtn" Width="92" Height="35" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2" Grid.Column="4" Click="ConnectBtn_Click" />

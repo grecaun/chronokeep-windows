@@ -24,9 +24,9 @@
                     Orientation="Horizontal"
                     Height="45"
                     >
-                    <TextBlock
-                        Text="Ultra ID"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Ultra ID"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="100"
                         Margin="5,5,5,5"
@@ -42,10 +42,10 @@
                         ValueChanged="idSlider_ValueChanged"
                         VerticalAlignment="Center"
                         />
-                    <TextBlock
+                    <Label
                         x:Name="idDisplay"
-                        Text="10"
-                        TextAlignment="Left"
+                        Content="10"
+                        HorizontalContentAlignment="Left"
                         VerticalAlignment="Center"
                         Width="40"
                         Margin="5,5,5,5"
@@ -62,9 +62,9 @@
                     Orientation="Horizontal"
                     Height="45"
                     >
-                    <TextBlock
-                        Text="Chip Type"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Chip Type"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="100"
                         Margin="5,5,5,5"
@@ -90,9 +90,9 @@
                     Orientation="Horizontal"
                     Height="45"
                     >
-                    <TextBlock
-                        Text="Gating Mode"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Gating Mode"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="100"
                         Margin="5,5,5,5"
@@ -119,9 +119,9 @@
                     Orientation="Horizontal"
                     Height="45"
                     >
-                    <TextBlock
-                        Text="Gating Interval"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Gating Interval"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="100"
                         Margin="5,5,5,5"
@@ -137,10 +137,10 @@
                         ValueChanged="gatingSlider_ValueChanged"
                         VerticalAlignment="Center"
                         />
-                    <TextBlock
+                    <Label
                         x:Name="gatingDisplay"
-                        Text="10"
-                        TextAlignment="Left"
+                        Content="10"
+                        HorizontalContentAlignment="Left"
                         VerticalAlignment="Center"
                         Width="40"
                         Margin="5,5,5,5"
@@ -157,9 +157,9 @@
                     Orientation="Horizontal"
                     Height="45"
                     >
-                    <TextBlock
-                        Text="When to Beep"
-                        TextAlignment="Right"
+                    <Label
+                        Content="When to Beep"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="100"
                         Margin="5,5,5,5"
@@ -185,9 +185,9 @@
                     Orientation="Horizontal"
                     Height="45"
                     >
-                    <TextBlock
-                        Text="Beeper Volume"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Beeper Volume"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="100"
                         Margin="5,5,5,5"
@@ -214,9 +214,9 @@
                     Orientation="Horizontal"
                     Height="45"
                     >
-                    <TextBlock
-                        Text="Time Zone"
-                        TextAlignment="Right"
+                    <Label
+                        Content="Time Zone"
+                        HorizontalContentAlignment="Right"
                         VerticalAlignment="Center"
                         Width="100"
                         Margin="5,5,5,5"
@@ -232,10 +232,10 @@
                         ValueChanged="timeZoneSlider_ValueChanged"
                         VerticalAlignment="Center"
                         />
-                    <TextBlock
+                    <Label
                         x:Name="timeZoneDisplay"
-                        Text="10"
-                        TextAlignment="Left"
+                        Content="10"
+                        HorizontalContentAlignment="Left"
                         VerticalAlignment="Center"
                         Width="40"
                         Margin="5,5,5,5"

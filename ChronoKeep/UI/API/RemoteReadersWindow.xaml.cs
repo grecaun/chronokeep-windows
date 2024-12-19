@@ -146,6 +146,7 @@ namespace Chronokeep.UI.API
                 {
                     HorizontalContentAlignment = HorizontalAlignment.Center,
                     VerticalContentAlignment = VerticalAlignment.Center,
+                    Focusable = false,
                 };
                 expander.Content = readerListView;
                 foreach (RemoteReader reader in readers)
@@ -178,7 +179,7 @@ namespace Chronokeep.UI.API
             private IMainWindow mainWindow;
 
             CheckBox autoFetch;
-            TextBlock nameBlock;
+            Label nameBlock;
             ComboBox locationBox;
             DatePicker startDatePicker;
             DatePicker endDatePicker;
@@ -234,7 +235,7 @@ namespace Chronokeep.UI.API
                 thePanel.Children.Add(autoFetch);
                 nameBlock = new()
                 {
-                    Text = reader.Name,
+                    Content = reader.Name,
                     VerticalAlignment = VerticalAlignment.Center,
                     Width = 100,
                     Margin = new Thickness(5),

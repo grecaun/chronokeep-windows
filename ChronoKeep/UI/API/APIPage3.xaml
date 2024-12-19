@@ -4,22 +4,19 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Chronokeep.UI.API"
-      
       mc:Ignorable="d" 
       d:DesignHeight="450"
       d:DesignWidth="300"
       Title="APIPage3"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <StackPanel>
-        <TextBlock
+        <Label
             Name="holdingLabel" 
-            Text="Retrieving Events, Please Hold." 
+            Content="Retrieving Events, Please Hold." 
             FontSize="18" 
             VerticalAlignment="Center"
             MaxWidth="250"
             HorizontalAlignment="Center"
-            TextWrapping="Wrap"
             Visibility="Visible"
             Margin="0,10,0,0"
             />
@@ -29,8 +26,8 @@
             VerticalAlignment="Center" 
             Visibility="Collapsed"
             >
-            <TextBlock
-                Text="Select Year to link to:"
+            <Label
+                Content="Select Year to link to:"
                 FontSize="16"
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
@@ -45,20 +42,20 @@
                 />
             <StackPanel
                 x:Name="newPanel" Visibility="Collapsed">
-                <TextBlock 
-                    Text="New Year:"
+                <Label 
+                    Content="New Year:"
                     FontSize="16"
                     VerticalAlignment="Center" 
                     HorizontalAlignment="Center"
                     Margin="0,0,0,5"
                     />
                 <DockPanel Margin="0,0,0,5">
-                    <TextBlock
-                        Text="Year"
+                    <Label
+                        Content="Year"
                         FontSize="15"
                         Width="60"
                         VerticalAlignment="Center"
-                        TextAlignment="Right"
+                        HorizontalContentAlignment="Right"
                         Padding="0,0,5,0"
                         />
                     <TextBox
@@ -70,12 +67,12 @@
                         />
                 </DockPanel>
                 <DockPanel Margin="0,0,0,5">
-                    <TextBlock 
-                        Text="Date"
+                    <Label 
+                        Content="Date"
                         FontSize="15"
                         Width="60"
                         VerticalAlignment="Center"
-                        TextAlignment="Right"
+                        HorizontalContentAlignment="Right"
                         Padding="0,0,5,0"
                         />
                     <DatePicker 
@@ -95,10 +92,10 @@
                     Content="Live?"
                     IsChecked="False"
                     />
-                <TextBlock
+                <Label
                     HorizontalAlignment="Center"
                     Margin="0,0,0,5"
-                    Text="Days Allowed"
+                    Content="Days Allowed"
                     />
                 <StackPanel
                     Orientation="Horizontal"
@@ -116,13 +113,13 @@
                         Maximum="9"
                         ValueChanged="DaysAllowed_ValueChanged"
                         />
-                    <TextBlock
+                    <Label
                         Name="DaysAllowedText"
-                        Text="0"
+                        Content="0"
                         Width="20"
                         Margin="10,0,0,0"
                         VerticalAlignment="Center"
-                        TextAlignment="Right"
+                        HorizontalContentAlignment="Right"
                         />
                 </StackPanel>
             </StackPanel>

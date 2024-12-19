@@ -126,7 +126,7 @@ namespace Chronokeep.UI.Timing
         private class AWave : ListBoxItem
         {
             public MaskedTextBox StartOffset { get; private set; }
-            public TextBlock WaveType { get; private set; }
+            public Label WaveType { get; private set; }
             private int Wave;
             private int waveType = 1;
 
@@ -136,12 +136,12 @@ namespace Chronokeep.UI.Timing
                 DockPanel thePanel = new DockPanel();
                 this.Content = thePanel;
                 thePanel.VerticalAlignment = VerticalAlignment.Center;
-                thePanel.Children.Add(new TextBlock()
+                thePanel.Children.Add(new Label()
                 {
-                    Text = num.ToString(),
+                    Content = num.ToString(),
                     FontSize = 14,
                     Width = 60,
-                    TextAlignment = TextAlignment.Center,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                 });
                 string waveText = "+";
@@ -154,15 +154,15 @@ namespace Chronokeep.UI.Timing
                     startSeconds *= -1;
                     startMilliseconds *= -1;
                 }
-                WaveType = new TextBlock()
+                WaveType = new()
                 {
                     Width = 25,
                     Margin = new Thickness(0, 0, 3, 0),
-                    Text = waveText,
+                    Content = waveText,
                     FontSize = 30,
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Center,
-                    TextAlignment = TextAlignment.Center
+                    HorizontalContentAlignment = HorizontalAlignment.Center
                 };
                 WaveType.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
                 thePanel.Children.Add(WaveType);
@@ -198,11 +198,11 @@ namespace Chronokeep.UI.Timing
                 Log.D("UI.Timing.WaveWindow", "Plus/Minus sign clicked. WaveType is: " + waveType);
                 if (waveType < 0)
                 {
-                    WaveType.Text = "+";
+                    WaveType.Content = "+";
                 }
                 else if (waveType > 0)
                 {
-                    WaveType.Text = "-";
+                    WaveType.Content = "-";
                 }
                 else
                 {

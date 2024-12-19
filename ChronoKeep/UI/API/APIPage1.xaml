@@ -4,15 +4,13 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Chronokeep.UI.API"
-      
       mc:Ignorable="d" 
       d:DesignHeight="450"
       d:DesignWidth="300"
       Title="APIPage1"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2">
-        <TextBlock Text="Select API to use:" FontSize="16" TextAlignment="Center" Margin="0,0,0,5"/>
+        <Label Content="Select API to use:" FontSize="16" HorizontalContentAlignment="Center" Margin="0,0,0,5"/>
         <ComboBox Name="APIBox" Width="250" VerticalAlignment="Center" Margin="0,0,0,15" />
         <Button x:Name="unlinkButton" Content="Unlink API" Height="35" Width="150" HorizontalAlignment="Center" Margin="0,0,0,15" Click="Unlink_Click" Visibility="Collapsed" Grid.ColumnSpan="2"/>
         <DockPanel>

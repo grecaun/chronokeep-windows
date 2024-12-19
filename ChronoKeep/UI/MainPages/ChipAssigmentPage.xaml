@@ -4,18 +4,16 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Chronokeep.UI.MainPages"
-      
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
       Title="ChipAssigmentPage"
       Loaded="Page_Loaded"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <Grid>
-        <TextBlock 
+        <Label 
             Name="nothing"
-            Text="Event not set. Please choose an event before selecting this option."
+            Content="Event not set. Please choose an event before selecting this option."
             Visibility="Collapsed" />
         <Grid Name="everything">
             <Grid.ColumnDefinitions>
@@ -42,8 +40,8 @@
                         <ColumnDefinition Width="90"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Margin="10,0" Text="Bib"/>
-                    <TextBlock Grid.Column="1" Margin="4,0" Text="Chip"/>
+                    <Label Grid.Column="0" Margin="10,0" Content="Bib"/>
+                    <Label Grid.Column="1" Margin="4,0" Content="Chip"/>
                 </Grid>
                 <ListView
                     Name="bibChipList" 
@@ -54,6 +52,7 @@
                     AlternationCount="2"
                     ItemContainerStyle="{StaticResource alternatingStyle}"
                     ScrollViewer.CanContentScroll="True"
+                    Background="Transparent"
                     >
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -62,8 +61,8 @@
                                     <ColumnDefinition Width="90"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Margin="10,4" Text="{Binding Bib}"/>
-                                <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding Chip}"/>
+                                <Label Grid.Column="0" Margin="10,4" Content="{Binding Bib}"/>
+                                <Label Grid.Column="1" Margin="4,4" Content="{Binding Chip}"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -97,11 +96,11 @@
             </Grid>
             <StackPanel Grid.Column="0">
                 <DockPanel HorizontalAlignment="Center">
-                    <TextBlock 
-                        Text="Chip Type"
+                    <Label 
+                        Content="Chip Type"
                         Margin="10"
                         VerticalAlignment="Center" 
-                        TextAlignment="Center"
+                        HorizontalContentAlignment="Center"
                         FontSize="16"
                         />
                     <ComboBox
@@ -121,15 +120,15 @@
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
-                        <TextBlock
-                            Text="Assign Single"
+                        <Label
+                            Content="Assign Single"
                             FontSize="20"
                             Margin="10,5,10,5"
                             HorizontalAlignment="Center"
                             />
                         <DockPanel>
-                            <TextBlock
-                                Text="Bib"
+                            <Label
+                                Content="Bib"
                                 Margin="10,0,10,0"
                                 FontSize="16"
                                 Width="50"
@@ -144,8 +143,8 @@
                                 />
                         </DockPanel>
                         <DockPanel>
-                            <TextBlock
-                                Text="Chip"
+                            <Label
+                                Content="Chip"
                                 Margin="10,0,10,0"
                                 FontSize="16"
                                 Width="50"
@@ -204,8 +203,8 @@
                             />
                     </StackPanel>
                     <StackPanel Grid.Column="1">
-                        <TextBlock
-                            Text="Assign Range" 
+                        <Label
+                            Content="Assign Range" 
                             FontSize="20"
                             Margin="10,5,10,5"
                             HorizontalAlignment="Center"
@@ -216,8 +215,8 @@
                                 <ColumnDefinition Width="1*"/>
                                 <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Text="Bib" 
+                            <Label
+                                Content="Bib" 
                                 Margin="10,0,0,0"
                                 FontSize="16"
                                 Grid.Column="0"
@@ -248,8 +247,8 @@
                                 <ColumnDefinition Width="1*"/>
                                 <ColumnDefinition Width="1*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock 
-                                Text="Chip"
+                            <Label 
+                                Content="Chip"
                                 Margin="10,0,0,0"
                                 FontSize="16"
                                 Grid.Column="0"
@@ -265,7 +264,7 @@
                                 PreviewTextInput="ChipValidation"
                                 GotFocus="SelectAll"
                                 />
-                            <TextBlock
+                            <Label
                                 Name="RangeEndChipLabel"
                                 FontSize="16"
                                 Margin="10,0,5,0"
@@ -284,8 +283,8 @@
                             FontSize="16"
                             />
                         <Separator/>
-                        <TextBlock 
-                            Text="Copy from:" 
+                        <Label 
+                            Content="Copy from:" 
                             Margin="10,2,10,0" 
                             FontSize="20"
                             HorizontalAlignment="Center"

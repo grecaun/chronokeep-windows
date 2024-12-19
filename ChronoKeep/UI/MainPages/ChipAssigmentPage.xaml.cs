@@ -14,7 +14,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Chronokeep.UI.UIObjects;
-using Chronokeep.Timing.API;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -180,7 +179,7 @@ namespace Chronokeep.UI.MainPages
             if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
             {
                 if (!long.TryParse(RangeStartChipBox.Text, out startChip) ||
-                    !long.TryParse(RangeEndChipLabel.Text.ToString(), out endChip))
+                    !long.TryParse(RangeEndChipLabel.Content.ToString(), out endChip))
                 {
                     DialogBox.Show("Invalid chip values.");
                     return;
@@ -189,7 +188,7 @@ namespace Chronokeep.UI.MainPages
             else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
             {
                 if (!long.TryParse(RangeStartChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out startChip) ||
-                    !long.TryParse(RangeEndChipLabel.Text.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip) )
+                    !long.TryParse(RangeEndChipLabel.Content.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out endChip) )
                 {
                     DialogBox.Show("Invalid chip values.");
                     return;
@@ -341,11 +340,11 @@ namespace Chronokeep.UI.MainPages
             {
                 if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
                 {
-                    RangeEndChipLabel.Text = endChip.ToString();
+                    RangeEndChipLabel.Content = endChip.ToString();
                 }
                 else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
                 {
-                    RangeEndChipLabel.Text = endChip.ToString("X");
+                    RangeEndChipLabel.Content = endChip.ToString("X");
                 }
             }
         }

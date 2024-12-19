@@ -8,19 +8,36 @@
         Title="Remote Readers"
         d:DataContext="{d:DesignInstance local:RemoteReadersWindow, IsDesignTimeCreatable=True}"
         Height="400"
-        Width="1090"
+        Width="1100"
         ResizeMode="NoResize"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
         Closed="Window_Closed"
         >
     <Grid>
-        <StackPanel Width="1090">
+        <StackPanel Width="1100">
             <StackPanel x:Name="loadingPanel" Width="300" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,20,10,20" Height="300">
-                <TextBlock Text="Loading..." FontSize="36" Margin="5,5,5,5" TextAlignment="Center"/>
+                <Label Content="Loading..." FontSize="36" Margin="5,5,5,5" HorizontalContentAlignment="Center"/>
                 <ProgressBar IsIndeterminate="True" Margin="5,5,5,5"/>
             </StackPanel>
-            <ListView x:Name="apiListView" Visibility="Collapsed" Margin="10,0,10,10"/>
+            <ListView
+                x:Name="apiListView"
+                Visibility="Collapsed"
+                Margin="10,0,10,10"
+                >
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Focusable" Value="False" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <ContentPresenter Content="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button x:Name="CloseButton" Content="Close" Click="Close_Click" Height="35" Width="150" HorizontalAlignment="Center" Margin="20,0,10,20" />
             </StackPanel>

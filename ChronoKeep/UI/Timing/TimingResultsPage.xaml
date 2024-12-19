@@ -4,12 +4,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Chronokeep.UI.Timing"
-      
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
       Title="TimingResultsPage"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <Grid>
         <Grid.Resources>
@@ -62,21 +60,21 @@
                             <ColumnDefinition Width="20"/>  <!-- Type -->
                             <ColumnDefinition Width="120"/>  <!-- Segment -->
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding LocationName}" />
-                        <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding Occurrence}" />
-                        <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding SysTime}" />
-                        <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Time}" />
-                        <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding ChipLapTime}" />
-                        <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding Bib}" />
-                        <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding ParticipantName}" />
-                        <TextBlock Grid.Column="7" Margin="4,4" Text="{Binding PlaceStr}" />
-                        <TextBlock Grid.Column="8" Margin="4,4" Text="{Binding PrettyGender}" />
-                        <TextBlock Grid.Column="9" Margin="4,4" Text="{Binding GenderPlaceStr}" />
-                        <TextBlock Grid.Column="10" Margin="4,4" Text="{Binding AgeGroupName}" />
-                        <TextBlock Grid.Column="11" Margin="4,4" Text="{Binding AgePlaceStr}" />
-                        <TextBlock Grid.Column="12" Margin="4,4" Text="{Binding DistanceName}" />
-                        <TextBlock Grid.Column="13" Margin="4,4" Text="{Binding PrettyType}" />
-                        <TextBlock Grid.Column="14" Margin="4,4" Text="{Binding SegmentName}" />
+                        <Label Grid.Column="0" Margin="4,4" Content="{Binding LocationName}" />
+                        <Label Grid.Column="1" Margin="4,4" Content="{Binding Occurrence}" />
+                        <Label Grid.Column="2" Margin="4,4" Content="{Binding SysTime}" />
+                        <Label Grid.Column="3" Margin="4,4" Content="{Binding Time}" />
+                        <Label Grid.Column="4" Margin="4,4" Content="{Binding ChipLapTime}" />
+                        <Label Grid.Column="5" Margin="4,4" Content="{Binding Bib}" />
+                        <Label Grid.Column="6" Margin="4,4" Content="{Binding ParticipantName}" />
+                        <Label Grid.Column="7" Margin="4,4" Content="{Binding PlaceStr}" />
+                        <Label Grid.Column="8" Margin="4,4" Content="{Binding PrettyGender}" />
+                        <Label Grid.Column="9" Margin="4,4" Content="{Binding GenderPlaceStr}" />
+                        <Label Grid.Column="10" Margin="4,4" Content="{Binding AgeGroupName}" />
+                        <Label Grid.Column="11" Margin="4,4" Content="{Binding AgePlaceStr}" />
+                        <Label Grid.Column="12" Margin="4,4" Content="{Binding DistanceName}" />
+                        <Label Grid.Column="13" Margin="4,4" Content="{Binding PrettyType}" />
+                        <Label Grid.Column="14" Margin="4,4" Content="{Binding SegmentName}" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -109,21 +107,21 @@
                     <ColumnDefinition Width="20"/>  <!-- Type -->
                     <ColumnDefinition Width="120"/>  <!-- Segment -->
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Margin="4,4" Text="Loc"/>
-                <TextBlock Grid.Column="1" Margin="4,4" Text="Occ"/>
-                <TextBlock Grid.Column="2" Margin="4,4" Text="System Time"/>
-                <TextBlock Grid.Column="3" Margin="4,4" Text="Time"/>
-                <TextBlock Grid.Column="4" Margin="4,4" Text="Chip Time" x:Name="ChipTimeHeader"/>
-                <TextBlock Grid.Column="5" Margin="4,4" Text="Bib"/>
-                <TextBlock Grid.Column="6" Margin="4,4" Text="Name"/>
-                <TextBlock Grid.Column="7" Margin="4,4" Text="Pl" x:Name="placeText"/>
-                <TextBlock Grid.Column="8" Margin="4,4" Text="G"/>
-                <TextBlock Grid.Column="9" Margin="4,4" Text="GP" x:Name="genderPlaceText"/>
-                <TextBlock Grid.Column="10" Margin="4,4" Text="Age Grp"/>
-                <TextBlock Grid.Column="11" Margin="4,4" Text="AP" x:Name="agePlaceText"/>
-                <TextBlock Grid.Column="12" Margin="4,4" Text="Distance"/>
-                <TextBlock Grid.Column="13" Margin="4,4" Text="T"/>
-                <TextBlock Grid.Column="14" Margin="4,4" Text="Segment"/>
+                <Label Grid.Column="0" Margin="4,4" Content="Loc"/>
+                <Label Grid.Column="1" Margin="4,4" Content="Occ"/>
+                <Label Grid.Column="2" Margin="4,4" Content="System Time"/>
+                <Label Grid.Column="3" Margin="4,4" Content="Time"/>
+                <Label Grid.Column="4" Margin="4,4" Content="Chip Time" x:Name="ChipTimeHeader"/>
+                <Label Grid.Column="5" Margin="4,4" Content="Bib"/>
+                <Label Grid.Column="6" Margin="4,4" Content="Name"/>
+                <Label Grid.Column="7" Margin="4,4" Content="Pl" x:Name="placeText"/>
+                <Label Grid.Column="8" Margin="4,4" Content="G"/>
+                <Label Grid.Column="9" Margin="4,4" Content="GP" x:Name="genderPlaceText"/>
+                <Label Grid.Column="10" Margin="4,4" Content="Age Grp"/>
+                <Label Grid.Column="11" Margin="4,4" Content="AP" x:Name="agePlaceText"/>
+                <Label Grid.Column="12" Margin="4,4" Content="Distance"/>
+                <Label Grid.Column="13" Margin="4,4" Content="T"/>
+                <Label Grid.Column="14" Margin="4,4" Content="Segment"/>
             </Grid>
         </ScrollViewer>
     </Grid>

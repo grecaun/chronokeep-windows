@@ -36,7 +36,7 @@ namespace Chronokeep
             }
             eventId = theEvent.Identifier;
             EventNameHolder.Visibility = Visibility.Visible;
-            eventName.Text = theEvent.Name;
+            eventName.Content = theEvent.Name;
         }
 
         public static ChipReaderWindow NewWindow(IWindowCallback window, IDBInterface database)

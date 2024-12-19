@@ -87,11 +87,13 @@
         </ListView>
         <Grid 
             Grid.Column="1"
-            Grid.Row="1"
             >
             <Border
-                CornerRadius="8,0,0,0">
-                <Frame x:Name="TheFrame" Margin="6" />
+                CornerRadius="15,0,0,0"
+                BorderThickness="0"
+                Background="{DynamicResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+                >
+                <Frame x:Name="TheFrame" Margin="6"/>
             </Border>
         </Grid>
     </Grid>

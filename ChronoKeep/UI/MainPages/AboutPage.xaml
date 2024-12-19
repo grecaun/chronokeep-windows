@@ -8,98 +8,116 @@
         d:DesignHeight="550" d:DesignWidth="800"
         Title="AboutPage"
         FlowDirection="LeftToRight"
-        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         >
-    <StackPanel Margin="10,10,10,10">
-        <TextBlock
-            Margin="0,16,0,24"
+    <StackPanel Margin="10,10,10,10" UseLayoutRounding="True">
+        <Label
+            Margin="5,6,0,14"
             FontSize="24"
             FontWeight="Medium"
-            Text="About"
+            Content="About"
             />
-        <TextBlock
-            Padding="0,0,0,8"
-            Text="Chronokeep"
-            />
-        <TextBlock
-            x:Name="VersionLabel"
-            Padding="0,0,0,8"
+        <DockPanel>
+            <Label
+                Padding="5,0,0,8"
+                Content="Chronokeep"
+                />
+            <Label
+                x:Name="VersionLabel"
+                Padding="5,0,0,8"
+                />
+        </DockPanel>
+        <Label
+            Padding="5,0,0,12"
+            Content="Created by James Sentinella"
             />
         <Button
             Name="Update"
             Content="Check for Updates"
-            FontSize="12"
             VerticalAlignment="Top"
-            Margin="0,-5,0,16"
-            Padding="6"
+            FontSize="12"
+            Margin="0,0,0,0"
+            Padding="15,6,15,6"
             Click="VersionLabel_Click"
             />
-        <TextBlock
-            Padding="0,8,0,0"
-            Text="Created by James Sentinella"
-            />
-        <TextBlock
-            Padding="0,24,0,8"
+        <Label
+            Padding="5,14,0,8"
             FontSize="14"
             FontWeight="Medium"
-            Text="Links"
+            Content="Links"
             />
-        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
-            <Hyperlink NavigateUri="https://github.com/grecaun/chronokeep-windows">&#xE71B; Project website on Github</Hyperlink>
-        </TextBlock>
-        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
-            <Hyperlink NavigateUri="https://github.com/grecaun/chronokeep-windows/releases/latest">&#xE71B; Latest release on Github</Hyperlink>
-        </TextBlock>
-        <TextBlock
-            Padding="0,24,0,8"
+        <DockPanel>
+            <Button Margin="5" Padding="15,7,15,5" Click="Html_Click" Uid="https://github.com/grecaun/chronokeep-windows">
+                <TextBlock>
+                    <Label FontSize="12" FontFamily="{StaticResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemFillColorAttentionBrush}">&#xE71B; </Label>
+                    <Label FontSize="12" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}">Project website on Github</Label>
+                </TextBlock>
+            </Button>
+            <Button Margin="5" Padding="15,7,15,5" Click="Html_Click" Uid="https://github.com/grecaun/chronokeep-windows/releases/latest">
+                <TextBlock>
+                    <Label FontSize="12" FontFamily="{StaticResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemFillColorAttentionBrush}">&#xE71B; </Label>
+                    <Label FontSize="12" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}">Latest release on Github</Label>
+                </TextBlock>
+            </Button>
+        </DockPanel>
+        <Label
+            Padding="5,14,0,8"
             FontSize="14"
             FontWeight="Medium"
-            Text="3rd Party Libraries"
+            Content="3rd Party Libraries"
             />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0" Margin="0,0,32,0">
-                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
-                    <Hyperlink NavigateUri="https://system.data.sqlite.org/">&#xE71B; SQLite</Hyperlink>
+        <DockPanel>
+            <Button Margin="5" Padding="15,7,15,5" Click="Html_Click" Uid="https://system.data.sqlite.org/">
+                <TextBlock>
+                    <Label FontSize="12" FontFamily="{StaticResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemFillColorAttentionBrush}">&#xE71B; </Label>
+                    <Label FontSize="12" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}">SQLite</Label>
                 </TextBlock>
-                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
-                    <Hyperlink NavigateUri="https://wkhtmltopdf.org/">&#xE71B; wkhtmltopdf</Hyperlink>
+            </Button>
+            <Button Margin="5" Padding="15,7,15,5" Click="Html_Click" Uid="https://wkhtmltopdf.org/">
+                <TextBlock>
+                        <Label FontSize="12" FontFamily="{StaticResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemFillColorAttentionBrush}">&#xE71B; </Label>
+                        <Label FontSize="12" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}">wkhtmltopdf</Label>
                 </TextBlock>
-            </StackPanel>
-            <StackPanel Grid.Column="1" Margin="0,0,32,0">
-                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
-                    <Hyperlink NavigateUri="https://github.com/lepoco/wpfui">&#xE71B; WPF UI</Hyperlink>
+            </Button>
+            <Button Margin="5" Padding="15,7,15,5" Click="Html_Click" Uid="https://www.ghostscript.com/">
+                <TextBlock>
+                    <Label FontSize="12" FontFamily="{StaticResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemFillColorAttentionBrush}">&#xE71B; </Label>
+                    <Label FontSize="12" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}">Ghostscript</Label>
                 </TextBlock>
-                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
-                    <Hyperlink NavigateUri="https://www.ghostscript.com/">&#xE71B; Ghostscript</Hyperlink>
+            </Button>
+        </DockPanel>
+        <DockPanel>
+            <Button Margin="5" Padding="15,7,15,5" Click="Html_Click" Uid="https://closedxml.github.io/ClosedXML/">
+                <TextBlock>
+                    <Label FontSize="12" FontFamily="{StaticResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemFillColorAttentionBrush}">&#xE71B; </Label>
+                    <Label FontSize="12" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}">ClosedXML</Label>
                 </TextBlock>
-            </StackPanel>
-            <StackPanel Grid.Column="2">
-                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
-                    <Hyperlink NavigateUri="https://github.com/xceedsoftware/wpftoolkit">&#xE71B; Extended WPF Toolkit</Hyperlink>
+            </Button>
+            <Button Margin="5" Padding="15,7,15,5" Click="Html_Click" Uid="https://github.com/xceedsoftware/wpftoolkit">
+                <TextBlock>
+                    <Label FontSize="12" FontFamily="{StaticResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemFillColorAttentionBrush}">&#xE71B; </Label>
+                    <Label FontSize="12" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}">Extended WPF Toolkit</Label>
                 </TextBlock>
-                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
-                    <Hyperlink NavigateUri="https://closedxml.github.io/ClosedXML/">&#xE71B; ClosedXML</Hyperlink>
-                </TextBlock>
-            </StackPanel>
-        </Grid>
-        <TextBlock
-            Padding="0,24,0,8"
+            </Button>
+        </DockPanel>
+        <Label
+            Padding="5,14,0,8"
             FontSize="14"
             FontWeight="Medium"
-            Text="Application Folders"
+            Content="Application Folders"
             />
         <StackPanel Orientation="Horizontal">
-            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
-                <Hyperlink Click="OpenDataFolder_Click">&#xE71B; Data</Hyperlink>
-            </TextBlock>
-            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}">
-                <Hyperlink Name="HelpDocsButton">&#xE71B; Help Docs</Hyperlink>
-            </TextBlock>
+            <Button Margin="5" Padding="15,7,15,5" Click="OpenDataFolder_Click">
+                <TextBlock>
+                    <Label FontSize="12" FontFamily="{StaticResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemFillColorAttentionBrush}">&#xE71B; </Label>
+                    <Label FontSize="12" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}">Data</Label>
+                </TextBlock>
+            </Button>
+            <Button Margin="5" Padding="15,7,15,5" Click="Html_Click" Name="HelpDocsButton">
+                <TextBlock>
+                    <Label FontSize="12" FontFamily="{StaticResource SymbolThemeFontFamily}" Foreground="{DynamicResource SystemFillColorAttentionBrush}">&#xE71B; </Label>
+                    <Label FontSize="12" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}">Help Docs</Label>
+                </TextBlock>
+            </Button>
         </StackPanel>
     </StackPanel>
 </Page>

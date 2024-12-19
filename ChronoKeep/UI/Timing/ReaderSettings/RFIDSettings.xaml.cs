@@ -31,7 +31,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 if (settings.UltraID > 0 && settings.UltraID < 256)
                 {
                     idSlider.Value = settings.UltraID;
-                    idDisplay.Text = settings.UltraID.ToString();
+                    idDisplay.Content = settings.UltraID.ToString();
                 }
                 switch (settings.ChipType)
                 {
@@ -57,7 +57,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 if (settings.GatingInterval >= 0 && settings.GatingInterval < 21)
                 {
                     gatingSlider.Value = settings.GatingInterval;
-                    gatingDisplay.Text = settings.GatingInterval.ToString();
+                    gatingDisplay.Content = settings.GatingInterval.ToString();
                 }
                 switch (settings.Beep)
                 {
@@ -92,7 +92,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 if (settings.TimeZone > -24 && settings.TimeZone < 24)
                 {
                     timeZoneSlider.Value = settings.TimeZone;
-                    timeZoneDisplay.Text = settings.TimeZone.ToString();
+                    timeZoneDisplay.Content = settings.TimeZone.ToString();
                 }
                 switch (settings.Status)
                 {
@@ -113,7 +113,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Time zone changed.");
             if (timeZoneDisplay != null && timeZoneSlider != null)
             {
-                timeZoneDisplay.Text = timeZoneSlider.Value.ToString();
+                timeZoneDisplay.Content = timeZoneSlider.Value.ToString();
             }
         }
 
@@ -150,7 +150,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             Log.D("UI.Timing.ReaderSettings.RFIDSettings", "Gating changed.");
             if (gatingDisplay != null && gatingSlider != null)
             {
-                gatingDisplay.Text = gatingSlider.Value.ToString();
+                gatingDisplay.Content = gatingSlider.Value.ToString();
             }
         }
 
@@ -159,7 +159,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             Log.D("UI.Timing.ReaderSettings.RFIDSettings", "ID changed.");
             if (idDisplay != null && idSlider != null)
             {
-                idDisplay.Text = idSlider.Value.ToString();
+                idDisplay.Content = idSlider.Value.ToString();
             }
         }
 

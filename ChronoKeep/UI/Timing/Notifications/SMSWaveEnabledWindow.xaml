@@ -21,7 +21,7 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding WaveName}" Margin="4,4"/>
+                                <Label Content="{Binding WaveName}" Margin="4,4"/>
                                 <CheckBox
                                     x:Name="smsEnabledSwitch"
                                     Margin="4,4"

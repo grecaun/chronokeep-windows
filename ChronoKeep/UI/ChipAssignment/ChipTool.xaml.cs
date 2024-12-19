@@ -45,7 +45,7 @@ namespace Chronokeep.UI.ChipAssignment
             public TextBox StartBib { get; private set; }
             public TextBox EndBib { get; private set; }
             public TextBox StartChip { get; private set; }
-            public TextBlock EndChip { get; private set; }
+            public Label EndChip { get; private set; }
             public Button Remove { get; private set; }
 
             ListBox parent;
@@ -63,7 +63,7 @@ namespace Chronokeep.UI.ChipAssignment
                     try
                     {
                         int.TryParse(lastItem.EndBib.Text, out lastEndBib);
-                        int.TryParse(lastItem.EndChip.Text.ToString(), out lastEndChip);
+                        int.TryParse(lastItem.EndChip.Content.ToString(), out lastEndChip);
                     }
                     catch { }
                 }
@@ -99,9 +99,9 @@ namespace Chronokeep.UI.ChipAssignment
                 StartChip.TextChanged += new TextChangedEventHandler(this.StartChip_TextChanged);
                 StartChip.GotFocus += new RoutedEventHandler(SelectAll);
                 StartChip.KeyDown += new KeyEventHandler(this.KeyPressHandler);
-                EndChip = new TextBlock
+                EndChip = new()
                 {
-                    Text = string.Format("{0}", lastEndChip + 1),
+                    Content = string.Format("{0}", lastEndChip + 1),
                     Margin = new Thickness(7, 2, 2, 2),
                     VerticalAlignment = VerticalAlignment.Center,
                 };
@@ -176,7 +176,7 @@ namespace Chronokeep.UI.ChipAssignment
                 int.TryParse(EndBib.Text, out endBib);
                 int.TryParse(StartChip.Text, out startChip);
                 endChip = endBib - startBib + startChip;
-                EndChip.Text = endChip.ToString();
+                EndChip.Content = endChip.ToString();
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)
@@ -217,7 +217,7 @@ namespace Chronokeep.UI.ChipAssignment
                 int.TryParse(tag.StartBib.Text, out startBib);
                 int.TryParse(tag.EndBib.Text, out endBib);
                 int.TryParse(tag.StartChip.Text, out startChip);
-                int.TryParse(tag.EndChip.Text.ToString(), out endChip);
+                int.TryParse(tag.EndChip.Content.ToString(), out endChip);
                 Log.D("UI.ChipAssignment.ChipTool", "StartBib " + startBib + " EndBib " + endBib + " StartChip " + startChip + " EndChip " + endChip);
                 Objects.Range curRange = new Objects.Range
                 {

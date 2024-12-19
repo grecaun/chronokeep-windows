@@ -15,7 +15,7 @@ namespace Chronokeep.UI.UIObjects
         public DialogBox(string Message, string LeftButtonContent, string RightButtonContent, bool ShowLeftButton, LeftClickDelegate LeftClick)
         {
             InitializeComponent();
-            MessageBox.Text = Message;
+            MessageBox.Content = Message;
             LeftButton.Content = LeftButtonContent;
             RightButton.Content = RightButtonContent;
             if (ShowLeftButton )

@@ -12,7 +12,7 @@
             this.window = window;
             if (noAPI)
             {
-                errorLabel.Text = "An API must be set up before you can use this tool.";
+                errorLabel.Content = "An API must be set up before you can use this tool.";
             }
         }
     }

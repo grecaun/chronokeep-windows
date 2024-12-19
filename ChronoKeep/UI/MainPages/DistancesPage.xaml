@@ -4,21 +4,28 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Chronokeep.UI.MainPages"
-      
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
       Title="DistancesPage"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <Grid>
-        <TextBlock Name="nothing" Text="Event not set. Please choose an event before selecting this option." Visibility="Collapsed" />
+        <Label Name="nothing" Content="Event not set. Please choose an event before selecting this option." Visibility="Collapsed" />
         <Grid Name="everything">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="55"/>
             </Grid.RowDefinitions>
-            <ListBox Name="DistancesBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" Grid.Row="0" ScrollViewer.CanContentScroll="False" PreviewMouseWheel="DistanceBox_PreviewMouseWheel">
+            <ListBox
+                Name="DistancesBox"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Center"
+                KeyboardNavigation.TabNavigation="Continue"
+                Grid.Row="0"
+                ScrollViewer.CanContentScroll="False"
+                PreviewMouseWheel="DistanceBox_PreviewMouseWheel"
+                Background="Transparent"
+                >
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

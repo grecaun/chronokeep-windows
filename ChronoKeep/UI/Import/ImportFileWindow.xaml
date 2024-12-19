@@ -24,7 +24,7 @@
                 <TextBox x:Name="eventLabel" FontSize="17" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,10,10,0" Width="340" TabIndex="0"/>
                 <DatePicker x:Name="date" Height="35" Width="120" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10,10,10,0" TabIndex="1" />
 
-                <TextBlock Text="Shirt Price" VerticalAlignment="Center" TextAlignment="Right" Margin="0,47,420,0" />
+                <Label Content="Shirt Price" VerticalAlignment="Center" HorizontalContentAlignment="Right" Margin="0,47,420,0" />
                 <TextBox x:Name="shirtPriceBox" VerticalAlignment="Center" HorizontalAlignment="Right" Width="75" Height="25" FontSize="16" Margin="0,47,345,0" TabIndex="2" />
                 <CheckBox x:Name="shirtOptionalBox" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Shirt Optional" IsChecked="True" Margin="10,53,245,0" TabIndex="3"/>
 

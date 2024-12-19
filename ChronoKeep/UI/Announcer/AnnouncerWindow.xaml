@@ -34,13 +34,13 @@
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="When" FontSize="20" Margin="4,4" />
-            <TextBlock Grid.Column="1" Text="Distance" FontSize="20" Margin="4,4" />
-            <TextBlock Grid.Column="2" Text="Bib" FontSize="20" Margin="4,4" />
-            <TextBlock Grid.Column="3" Text="Name" FontSize="20" Margin="4,4" />
-            <TextBlock Grid.Column="4" Text="City, State" FontSize="20" Margin="4,4" />
-            <TextBlock Grid.Column="5" Text="Age G" FontSize="20" Margin="4,4" />
-            <TextBlock Grid.Column="6" Text="Comments" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="0" Content="When" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="1" Content="Distance" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="2" Content="Bib" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="3" Content="Name" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="4" Content="City, State" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="5" Content="Age G" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="6" Content="Comments" FontSize="20" Margin="4,4" />
         </Grid>
         <Grid Grid.Row="0" Margin="18,0" x:Name="ResultsHeader">
             <Grid.ColumnDefinitions>
@@ -50,11 +50,11 @@
                 <ColumnDefinition Width="440" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Distance" FontSize="20" Margin="4,4" />
-            <TextBlock Grid.Column="1" Text="Pl" FontSize="20" Margin="4,4" />
-            <TextBlock Grid.Column="2" Text="Time" FontSize="20" Margin="4,4" />
-            <TextBlock Grid.Column="3" Text="Name" FontSize="20" Margin="4,4" />
-            <TextBlock Grid.Column="4" Text="Age G" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="0" Content="Distance" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="1" Content="Pl" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="2" Content="Time" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="3" Content="Name" FontSize="20" Margin="4,4" />
+            <Label Grid.Column="4" Content="Age G" FontSize="20" Margin="4,4" />
         </Grid>
         <ListView 
             Grid.Row="1"
@@ -78,13 +78,13 @@
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding AnnouncerWhen}" FontSize="20" Margin="4,4" />
-                        <TextBlock Grid.Column="1" Text="{Binding Distance}" FontSize="20" Margin="4,4" />
-                        <TextBlock Grid.Column="2" Text="{Binding Bib}" FontSize="20" Margin="4,4" />
-                        <TextBlock Grid.Column="3" Text="{Binding ParticipantName}" FontSize="20" Margin="4,4" />
-                        <TextBlock Grid.Column="4" Text="{Binding CityState}" FontSize="20" Margin="4,4" />
-                        <TextBlock Grid.Column="5" Text="{Binding AgeGender}" FontSize="20" Margin="4,4" />
-                        <TextBlock Grid.Column="6" Text="{Binding Comments}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="0" Content="{Binding AnnouncerWhen}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="1" Content="{Binding Distance}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="2" Content="{Binding Bib}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="3" Content="{Binding ParticipantName}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="4" Content="{Binding CityState}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="5" Content="{Binding AgeGender}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="6" Content="{Binding Comments}" FontSize="20" Margin="4,4" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -108,11 +108,11 @@
                             <ColumnDefinition Width="440" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding DistanceName}" FontSize="20" Margin="4,4" />
-                        <TextBlock Grid.Column="1" Text="{Binding PlaceStr}" FontSize="20" Margin="4,4" />
-                        <TextBlock Grid.Column="2" Text="{Binding ChipTime}" FontSize="20" Margin="4,4" />
-                        <TextBlock Grid.Column="3" Text="{Binding ParticipantName}" FontSize="20" Margin="4,4" />
-                        <TextBlock Grid.Column="4" Text="{Binding AgeGenderString}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="0" Content="{Binding DistanceName}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="1" Content="{Binding PlaceStr}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="2" Content="{Binding ChipTime}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="3" Content="{Binding ParticipantName}" FontSize="20" Margin="4,4" />
+                        <Label Grid.Column="4" Content="{Binding AgeGenderString}" FontSize="20" Margin="4,4" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

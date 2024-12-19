@@ -4,13 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:Chronokeep.UI.MainPages"
-        
         mc:Ignorable="d"
         d:DesignHeight="450"
         d:DesignWidth="800"
         Title="ParticipantsPage"
         Loaded="Page_Loaded"
-        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         >
     <Grid>
         <Grid.ColumnDefinitions>
@@ -45,11 +43,11 @@
                     x:Name="apiPanel"
                     Visibility="Collapsed"
                     >
-                    <TextBlock 
-                        Text="API Commands"
+                    <Label 
+                        Content="API Commands"
                         FontSize="16" 
                         VerticalAlignment="Center"
-                        TextAlignment="Center"
+                        HorizontalContentAlignment="Center"
                         Margin="5,10,5,0"
                         Padding="0,0,0,0"
                         />
@@ -81,11 +79,11 @@
                         HorizontalAlignment="Stretch"
                         />
                 </StackPanel>
-                <TextBlock
-                    Text="View"
+                <Label
+                    Content="View"
                     FontSize="16"
                     Margin="10,5"
-                    TextAlignment="Center"
+                    HorizontalContentAlignment="Center"
                     />
                 <DockPanel Name="DistanceBoxHolder" />
                 <ComboBox 
@@ -94,11 +92,11 @@
                     Margin="10,0,10,0"
                     SelectionChanged="DistanceBox_SelectionChanged"
                     />
-                <TextBlock 
-                    Text="Sort By"
+                <Label 
+                    Content="Sort By"
                     FontSize="16"
                     Margin="10,5" 
-                    TextAlignment="Center"
+                    HorizontalContentAlignment="Center"
                     />
                 <ComboBox 
                     Name="SortBox" 
@@ -161,24 +159,24 @@
                                 <ColumnDefinition Width="35" />
                                 <ColumnDefinition Width="35" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock 
+                            <Label 
                                 Grid.Column="0"
                                 Margin="2,4"
-                                Text="Distance"
+                                Content="Distance"
                                 FontSize="12"
                                 VerticalAlignment="Center"
                                 />
-                            <TextBlock
+                            <Label
                                 Grid.Column="1"
                                 Margin="2,4"
-                                Text="w/"
+                                Content="w/"
                                 FontSize="12"
                                 VerticalAlignment="Center"
                                 />
-                            <TextBlock 
+                            <Label 
                                 Grid.Column="2"
                                 Margin="2,4"
-                                Text="w/o"
+                                Content="w/o"
                                 FontSize="12"
                                 VerticalAlignment="Center"
                                 />
@@ -191,7 +189,8 @@
                             SelectionMode="Single"
                             FontSize="10"
                             ScrollViewer.CanContentScroll="False"
-                            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            >
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid>
@@ -200,24 +199,24 @@
                                             <ColumnDefinition Width="35" />
                                             <ColumnDefinition Width="35" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock
+                                        <Label
                                             Grid.Column="0"
                                             Margin="2,4" 
-                                            Text="{Binding DistanceName}"
+                                            Content="{Binding DistanceName}"
                                             FontSize="12"
                                             VerticalAlignment="Center"
                                             />
-                                        <TextBlock 
+                                        <Label 
                                             Grid.Column="1"
                                             Margin="2,4"
-                                            Text="{Binding With}" 
+                                            Content="{Binding With}" 
                                             FontSize="12" 
                                             VerticalAlignment="Center"
                                             />
-                                        <TextBlock
+                                        <Label
                                             Grid.Column="2"
                                             Margin="2,4"
-                                            Text="{Binding Without}"
+                                            Content="{Binding Without}"
                                             FontSize="12"
                                             VerticalAlignment="Center"
                                             />
@@ -273,25 +272,25 @@
                                 <ColumnDefinition Width="50" />  <!-- State -->
                                 <ColumnDefinition Width="60" />  <!-- Country -->
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="Bib" Margin="2"/>
-                    <TextBlock Grid.Column="1" Text="Distance" Margin="2"/>
-                    <TextBlock Grid.Column="2" Text="First" Margin="2"/>
-                    <TextBlock Grid.Column="3" Text="Last" Margin="2"/>
-                    <TextBlock Grid.Column="4" Text="Gender" Margin="2"/>
-                    <TextBlock Grid.Column="5" Text="Birthday" Margin="2"/>
-                    <TextBlock Grid.Column="6" Text="Phone" Margin="2"/>
-                    <TextBlock Grid.Column="7" Text="Mobile" Margin="2"/>
-                    <TextBlock Grid.Column="8" Text="EC Name" Margin="2"/>
-                    <TextBlock Grid.Column="9" Text="EC Phone" Margin="2"/>
-                    <TextBlock Grid.Column="10" Text="Anon" Margin="2"/>
-                    <TextBlock Grid.Column="11" Text="Comments" Margin="2"/>
-                    <TextBlock Grid.Column="12" Text="Other" Margin="2"/>
-                    <TextBlock Grid.Column="13" Text="Email" Margin="2"/>
-                    <TextBlock Grid.Column="14" Text="Street" Margin="2"/>
-                    <TextBlock Grid.Column="15" Text="Apt" Margin="2"/>
-                    <TextBlock Grid.Column="16" Text="City" Margin="2"/>
-                    <TextBlock Grid.Column="17" Text="State" Margin="2"/>
-                    <TextBlock Grid.Column="18" Text="Country" Margin="2"/>
+                    <Label Grid.Column="0" Content="Bib" Margin="2"/>
+                    <Label Grid.Column="1" Content="Distance" Margin="2"/>
+                    <Label Grid.Column="2" Content="First" Margin="2"/>
+                    <Label Grid.Column="3" Content="Last" Margin="2"/>
+                    <Label Grid.Column="4" Content="Gender" Margin="2"/>
+                    <Label Grid.Column="5" Content="Birthday" Margin="2"/>
+                    <Label Grid.Column="6" Content="Phone" Margin="2"/>
+                    <Label Grid.Column="7" Content="Mobile" Margin="2"/>
+                    <Label Grid.Column="8" Content="EC Name" Margin="2"/>
+                    <Label Grid.Column="9" Content="EC Phone" Margin="2"/>
+                    <Label Grid.Column="10" Content="Anon" Margin="2"/>
+                    <Label Grid.Column="11" Content="Comments" Margin="2"/>
+                    <Label Grid.Column="12" Content="Other" Margin="2"/>
+                    <Label Grid.Column="13" Content="Email" Margin="2"/>
+                    <Label Grid.Column="14" Content="Street" Margin="2"/>
+                    <Label Grid.Column="15" Content="Apt" Margin="2"/>
+                    <Label Grid.Column="16" Content="City" Margin="2"/>
+                    <Label Grid.Column="17" Content="State" Margin="2"/>
+                    <Label Grid.Column="18" Content="Country" Margin="2"/>
                 </Grid>
             </ScrollViewer>
             <ListView 
@@ -331,25 +330,25 @@
                                 <ColumnDefinition Width="50" />  <!-- State -->
                                 <ColumnDefinition Width="60" />  <!-- Country -->
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding Bib}" Margin="2"/>
-                            <TextBlock Grid.Column="1" Text="{Binding Distance}" Margin="2"/>
-                            <TextBlock Grid.Column="2" Text="{Binding FirstName}" Margin="2"/>
-                            <TextBlock Grid.Column="3" Text="{Binding LastName}" Margin="2"/>
-                            <TextBlock Grid.Column="4" Text="{Binding Gender}" Margin="2"/>
-                            <TextBlock Grid.Column="5" Text="{Binding Birthdate}" Margin="2"/>
-                            <TextBlock Grid.Column="6" Text="{Binding Phone}" Margin="2"/>
-                            <TextBlock Grid.Column="7" Text="{Binding Mobile}" Margin="2"/>
-                            <TextBlock Grid.Column="8" Text="{Binding ECName}" Margin="2"/>
-                            <TextBlock Grid.Column="9" Text="{Binding ECPhone}" Margin="2"/>
-                            <TextBlock Grid.Column="10" Text="{Binding PrettyAnonymous}" Margin="2"/>
-                            <TextBlock Grid.Column="11" Text="{Binding Comments}" Margin="2"/>
-                            <TextBlock Grid.Column="12" Text="{Binding Other}" Margin="2"/>
-                            <TextBlock Grid.Column="13" Text="{Binding Email}" Margin="2"/>
-                            <TextBlock Grid.Column="14" Text="{Binding Street}" Margin="2"/>
-                            <TextBlock Grid.Column="15" Text="{Binding Street2}" Margin="2"/>
-                            <TextBlock Grid.Column="16" Text="{Binding City}" Margin="2"/>
-                            <TextBlock Grid.Column="17" Text="{Binding State}" Margin="2"/>
-                            <TextBlock Grid.Column="18" Text="{Binding Country}" Margin="2"/>
+                            <Label Grid.Column="0" Content="{Binding Bib}" Margin="2"/>
+                            <Label Grid.Column="1" Content="{Binding Distance}" Margin="2"/>
+                            <Label Grid.Column="2" Content="{Binding FirstName}" Margin="2"/>
+                            <Label Grid.Column="3" Content="{Binding LastName}" Margin="2"/>
+                            <Label Grid.Column="4" Content="{Binding Gender}" Margin="2"/>
+                            <Label Grid.Column="5" Content="{Binding Birthdate}" Margin="2"/>
+                            <Label Grid.Column="6" Content="{Binding Phone}" Margin="2"/>
+                            <Label Grid.Column="7" Content="{Binding Mobile}" Margin="2"/>
+                            <Label Grid.Column="8" Content="{Binding ECName}" Margin="2"/>
+                            <Label Grid.Column="9" Content="{Binding ECPhone}" Margin="2"/>
+                            <Label Grid.Column="10" Content="{Binding PrettyAnonymous}" Margin="2"/>
+                            <Label Grid.Column="11" Content="{Binding Comments}" Margin="2"/>
+                            <Label Grid.Column="12" Content="{Binding Other}" Margin="2"/>
+                            <Label Grid.Column="13" Content="{Binding Email}" Margin="2"/>
+                            <Label Grid.Column="14" Content="{Binding Street}" Margin="2"/>
+                            <Label Grid.Column="15" Content="{Binding Street2}" Margin="2"/>
+                            <Label Grid.Column="16" Content="{Binding City}" Margin="2"/>
+                            <Label Grid.Column="17" Content="{Binding State}" Margin="2"/>
+                            <Label Grid.Column="18" Content="{Binding Country}" Margin="2"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

@@ -4,19 +4,16 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Chronokeep.UI.Timing.Import"
-      
       mc:Ignorable="d"
       Title="ImportLogPage1"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
-
     <StackPanel VerticalAlignment="Center">
         <DockPanel LastChildFill="False" HorizontalAlignment="Center" Margin="10,10,10,5">
-            <TextBlock Text="Log Type" Width="70" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,10,0" />
+            <Label Content="Log Type" Width="70" VerticalAlignment="Center" HorizontalContentAlignment="Right" Margin="0,0,10,0" />
             <ComboBox Name="TypeHolder" Width="200" FontSize="16" VerticalAlignment="Center" VerticalContentAlignment="Center" SelectionChanged="TypeHolder_SelectionChanged" />
         </DockPanel>
         <DockPanel LastChildFill="False" HorizontalAlignment="Center" Margin="10,5,10,10">
-            <TextBlock Text="Location" Width="70" VerticalAlignment="Center" TextAlignment="Right" Margin="0,0,10,0"/>
+            <Label Content="Location" Width="70" VerticalAlignment="Center" HorizontalContentAlignment="Right" Margin="0,0,10,0"/>
             <ComboBox Name="LocationHolder" Width="200" FontSize="16" VerticalAlignment="Center" VerticalContentAlignment="Center" />
         </DockPanel>
         <Grid>

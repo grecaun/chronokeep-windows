@@ -4,14 +4,11 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Chronokeep.UI.Timing"
-      
       mc:Ignorable="d" 
       d:DesignHeight="450"
       d:DesignWidth="800"
       Title="DistanceStatsPage"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
-
     <Grid>
         <Grid.Resources>
             <Style TargetType="ListViewItem" x:Key="alternatingStyle">
@@ -28,7 +25,7 @@
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" x:Name="mainScroll">
             <StackPanel>
-                <TextBlock Name="DistanceName" Text="Distance Name" HorizontalAlignment="Center" FontSize="18" Margin="0,5,0,5"/>
+                <Label Name="DistanceName" Content="Distance Name" HorizontalAlignment="Center" FontSize="18" Margin="0,5,0,5"/>
                 <Expander x:Name="activePanel" Header="Active" Margin="0,0,0,5" IsExpanded="True" FontSize="12" HorizontalAlignment="Stretch">
                     <ListView
                         x:Name="activeListView"
@@ -55,14 +52,14 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="150" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
-                                    <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
-                                    <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding LastName}" />
-                                    <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Gender}" />
-                                    <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Phone}" />
-                                    <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding Mobile}" />
-                                    <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding LastSeen}" />
-                                    <TextBlock Grid.Column="7" Margin="4,4" Text="{Binding LastSeenTime}" />
+                                    <Label Grid.Column="0" Margin="4,4" Content="{Binding Bib}" />
+                                    <Label Grid.Column="1" Margin="4,4" Content="{Binding FirstName}" />
+                                    <Label Grid.Column="2" Margin="4,4" Content="{Binding LastName}" />
+                                    <Label Grid.Column="3" Margin="4,4" Content="{Binding Gender}" />
+                                    <Label Grid.Column="4" Margin="4,4" Content="{Binding Phone}" />
+                                    <Label Grid.Column="5" Margin="4,4" Content="{Binding Mobile}" />
+                                    <Label Grid.Column="6" Margin="4,4" Content="{Binding LastSeen}" />
+                                    <Label Grid.Column="7" Margin="4,4" Content="{Binding LastSeenTime}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -90,10 +87,10 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="60" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
-                                    <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
-                                    <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding LastName}" />
-                                    <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Gender}" />
+                                    <Label Grid.Column="0" Margin="4,4" Content="{Binding Bib}" />
+                                    <Label Grid.Column="1" Margin="4,4" Content="{Binding FirstName}" />
+                                    <Label Grid.Column="2" Margin="4,4" Content="{Binding LastName}" />
+                                    <Label Grid.Column="3" Margin="4,4" Content="{Binding Gender}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -120,10 +117,10 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="60" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
-                                    <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
-                                    <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding LastName}" />
-                                    <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Gender}" />
+                                    <Label Grid.Column="0" Margin="4,4" Content="{Binding Bib}" />
+                                    <Label Grid.Column="1" Margin="4,4" Content="{Binding FirstName}" />
+                                    <Label Grid.Column="2" Margin="4,4" Content="{Binding LastName}" />
+                                    <Label Grid.Column="3" Margin="4,4" Content="{Binding Gender}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -151,10 +148,10 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="60" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
-                                    <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
-                                    <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding LastName}" />
-                                    <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Gender}" />
+                                    <Label Grid.Column="0" Margin="4,4" Content="{Binding Bib}" />
+                                    <Label Grid.Column="1" Margin="4,4" Content="{Binding FirstName}" />
+                                    <Label Grid.Column="2" Margin="4,4" Content="{Binding LastName}" />
+                                    <Label Grid.Column="3" Margin="4,4" Content="{Binding Gender}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -182,10 +179,10 @@
                                         <ColumnDefinition Width="100" />
                                         <ColumnDefinition Width="60" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Bib}" />
-                                    <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding FirstName}" />
-                                    <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding LastName}" />
-                                    <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Gender}" />
+                                    <Label Grid.Column="0" Margin="4,4" Content="{Binding Bib}" />
+                                    <Label Grid.Column="1" Margin="4,4" Content="{Binding FirstName}" />
+                                    <Label Grid.Column="2" Margin="4,4" Content="{Binding LastName}" />
+                                    <Label Grid.Column="3" Margin="4,4" Content="{Binding Gender}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>

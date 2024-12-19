@@ -5,13 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        
         mc:Ignorable="d"
         d:DesignHeight="950"
         d:DesignWidth="1000"
         Title="MinTimingPage"
         Loaded="Page_Loaded"
-        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         >
     <Grid Grid.Column="0">
         <Grid.RowDefinitions>
@@ -32,8 +30,8 @@
                         LastChildFill="False"
                         VerticalAlignment="Center"
                         >
-                    <TextBlock
-                            Text="Readers"
+                    <Label
+                            Content="Readers"
                             Margin="5,0,0,0"
                             VerticalAlignment="Center"
                             />

@@ -4,14 +4,12 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Chronokeep.UI.API"
-      
       mc:Ignorable="d" 
       d:DesignHeight="450"
       d:DesignWidth="300"
       Title="APIErrorPage"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <Grid>
-        <TextBlock Name="errorLabel" Text="Error, unable to continue." TextWrapping="Wrap" MaxWidth="250" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Label Name="errorLabel" Content="Error, unable to continue." MaxWidth="250" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 </Page>

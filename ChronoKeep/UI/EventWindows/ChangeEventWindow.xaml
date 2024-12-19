@@ -31,7 +31,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE71E;" VerticalAlignment="Center" />
+                <Label FontFamily="{StaticResource SymbolThemeFontFamily}" Content="&#xE71E;" VerticalAlignment="Center" />
                 <TextBox Height="40" Margin="5,0,15,15" Name="searchBox" TextChanged="searchBox_TextChanged" Grid.Column="1" />
             </Grid>
             <Grid Grid.Row="1" Margin="19,0,19,0">
@@ -40,9 +40,9 @@
                     <ColumnDefinition Width="70" />
                     <ColumnDefinition Width="100" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Margin="8,4" Text="Name" />
-                <TextBlock Grid.Column="1" Margin="8,4" Text="Year" />
-                <TextBlock Grid.Column="2" Margin="8,4" Text="Date" />
+                <Label Grid.Column="0" Margin="8,4" Content="Name" />
+                <Label Grid.Column="1" Margin="8,4" Content="Year" />
+                <Label Grid.Column="2" Margin="8,4" Content="Date" />
             </Grid>
             <ListView
                 x:Name="eventList"
@@ -63,9 +63,9 @@
                                 <ColumnDefinition Width="70" />
                                 <ColumnDefinition Width="100" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Margin="8,4" Text="{Binding Name}" />
-                            <TextBlock Grid.Column="1" Margin="8,4" Text="{Binding YearCode}" />
-                            <TextBlock Grid.Column="2" Margin="8,4" Text="{Binding Date}" />
+                            <Label Grid.Column="0" Margin="8,4" Content="{Binding Name}" />
+                            <Label Grid.Column="1" Margin="8,4" Content="{Binding YearCode}" />
+                            <Label Grid.Column="2" Margin="8,4" Content="{Binding Date}" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

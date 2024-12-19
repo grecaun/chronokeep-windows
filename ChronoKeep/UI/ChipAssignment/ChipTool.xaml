@@ -34,10 +34,10 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Margin="10,0,0,0" Text="Start Bib #" />
-            <TextBlock Grid.Column="1" Margin="10,0,0,0" Text="End Bib #" />
-            <TextBlock Grid.Column="2" Margin="10,0,0,0" Text="Start Tag #" />
-            <TextBlock Grid.Column="3" Margin="10,0,0,0" Text="End Tag #" />
+            <Label Grid.Column="0" Margin="10,0,0,0" Content="Start Bib #" />
+            <Label Grid.Column="1" Margin="10,0,0,0" Content="End Bib #" />
+            <Label Grid.Column="2" Margin="10,0,0,0" Content="Start Tag #" />
+            <Label Grid.Column="3" Margin="10,0,0,0" Content="End Tag #" />
         </Grid>
         <Grid x:Name="itemsWindow" Grid.Row="2">
             <ListBox x:Name="correlationBox" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center" KeyboardNavigation.TabNavigation="Continue" >

@@ -11,7 +11,7 @@
         >
     <Grid>
         <StackPanel VerticalAlignment="Center">
-            <TextBlock Text="Switch Participants to" FontSize="14" VerticalAlignment="Center" Width="210"/>
+            <Label Content="Switch Participants to" FontSize="14" VerticalAlignment="Center" Width="210"/>
             <ComboBox Name="DistanceBox" Width="210" FontSize="16" Margin="10,5,10,5"/>
             <Grid>
                 <Grid.ColumnDefinitions>
