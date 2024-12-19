@@ -95,7 +95,7 @@
             </ScrollViewer>
         </Grid>
         <DockPanel Grid.Row="1" LastChildFill="False" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <CheckBox x:Name="onlyManualBox" Content="Show Only Manual Reads" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Margin="5,5,5,5" Unchecked="onlyManualBox_Unchecked" Checked="onlyManualBox_Unchecked"/>
+            <ui:ToggleSwitch x:Name="onlyManualBox" Content="Show Only Manual Reads" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Margin="5,5,5,5" Unchecked="onlyManualBox_Unchecked" Checked="onlyManualBox_Unchecked"/>
             <Button Name="DeleteButton" Content="Delete" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="DeleteButton_Click"/>
             <Button Name="IgnoreButton" Content="Ignore" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="IgnoreButton_Click"/>
             <Button Name="ChangeDNS" Content="Set DNS" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="ChangeDNS_Click"/>

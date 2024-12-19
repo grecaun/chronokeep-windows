@@ -24,20 +24,20 @@
                 </ListBox>
                 <TextBlock Text="Overall" FontSize="16" HorizontalAlignment="Center" Margin="0,5"/>
                 <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
-                    <CheckBox Content="Print" FontSize="12" Name="overallYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0"/>
+                    <ui:ToggleSwitch Content="Print" FontSize="12" Name="overallYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0" Width="120"/>
                     <TextBox Text="3" Name="overallNumberParticipants" Width="40" Height="35" PreviewTextInput="IsNumber" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
                 </DockPanel>
-                <CheckBox Content="Exclude winners from Age Group awards." Name="overallExcludeAG" IsChecked="False" Margin="0,0,0,5"/>
-                <CheckBox Content="Exclude winners from Custom awards." Name="overallExcludeCustom" IsChecked="False" Margin="0,0,0,5"/>
+                <ui:ToggleSwitch Content="Exclude winners from Age Group awards." Name="overallExcludeAG" IsChecked="False" Margin="0,0,0,5"/>
+                <ui:ToggleSwitch Content="Exclude winners from Custom awards." Name="overallExcludeCustom" IsChecked="False" Margin="0,0,0,5"/>
                 <TextBlock Text="Age Groups" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                 <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
-                    <CheckBox Content="Print" FontSize="12" Name="agYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0"/>
+                    <ui:ToggleSwitch Content="Print" FontSize="12" Name="agYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0" Width="120"/>
                     <TextBox Text="3" Name="agNumberParticipants" Width="40" Height="35" PreviewTextInput="IsNumber" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
                 </DockPanel>
-                <CheckBox Content="Exclude winners from Custom awards." Name="agExcludeCustom" IsChecked="False" Margin="0,0,0,5"/>
+                <ui:ToggleSwitch Content="Exclude winners from Custom awards." Name="agExcludeCustom" IsChecked="False" Margin="0,0,0,5"/>
                 <TextBlock Text="Custom" FontSize="16" HorizontalAlignment="Center" Margin="0,0,0,5"/>
                 <DockPanel HorizontalAlignment="Left" Margin="0,0,0,5">
-                    <CheckBox Content="Print" FontSize="12" Name="customYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0"/>
+                    <ui:ToggleSwitch Content="Print" FontSize="12" Name="customYes" IsChecked="True" VerticalAlignment="Center" Margin="0,0,13,0" Width="120"/>
                     <TextBox Text="3" Name="customNumberParticipants" Width="40" Height="35" PreviewTextInput="IsNumber" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
                 </DockPanel>
                 <Grid Margin="0,10,0,5">

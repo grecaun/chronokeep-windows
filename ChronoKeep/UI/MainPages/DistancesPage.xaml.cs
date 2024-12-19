@@ -637,7 +637,7 @@ namespace Chronokeep.UI.MainPages
             public TextBlock WaveType { get; private set; }
             public MaskedTextBox StartOffset { get; private set; }
             public MaskedTextBox TimeLimit { get; private set; } = null;
-            public CheckBox Upload { get; private set; }
+            public Wpf.Ui.Controls.ToggleSwitch Upload { get; private set; }
             public Button AddSubDistance { get; private set; }
             public Button Remove { get; private set; }
 
@@ -992,6 +992,7 @@ namespace Chronokeep.UI.MainPages
                 Grid.SetColumn(certificationPanel, columnOffset);
                 if (theEvent.UploadSpecific == true)
                 {
+#pragma warning disable CA1416 // Validate platform compatibility -- Program isn't compiled for Windows < 7, but this warning pops up because...
                     Upload = new()
                     {
                         Content = "Upload Results",
@@ -1001,6 +1002,7 @@ namespace Chronokeep.UI.MainPages
                         VerticalAlignment = VerticalAlignment.Center,
                         HorizontalAlignment = HorizontalAlignment.Center,
                     };
+#pragma warning restore CA1416 // Validate platform compatibility
                     numGrid.Children.Add(Upload);
                     Grid.SetColumn(Upload, 0);
                 }

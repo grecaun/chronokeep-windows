@@ -86,7 +86,7 @@
                         HorizontalAlignment="Stretch"
                         />
                 </DockPanel>
-                <CheckBox
+                <ui:ToggleSwitch
                     x:Name="LiveBox"
                     Width="auto"
                     VerticalAlignment="Center"

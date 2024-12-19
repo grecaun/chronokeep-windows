@@ -180,9 +180,9 @@
                 </StackPanel>
             </ScrollViewer>
             <StackPanel Grid.Column="1">
-                <CheckBox Name="UpdatePage" Content="Auto-save changes" FontSize="14" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
-                <CheckBox Name="ExitNoPrompt" Content="Do not prompt before exit" FontSize="14" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
-                <CheckBox Name="CheckUpdates" Content="Check for updates" FontSize="14" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
+                <ui:ToggleSwitch Name="UpdatePage" Content="Auto-save changes" FontSize="14" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
+                <ui:ToggleSwitch Name="ExitNoPrompt" Content="Do not prompt before exit" FontSize="14" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
+                <ui:ToggleSwitch Name="CheckUpdates" Content="Check for updates" FontSize="14" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalContentAlignment="Center" />
             </StackPanel>
         </Grid>
     </Grid>

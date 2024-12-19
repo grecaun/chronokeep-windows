@@ -174,7 +174,7 @@ namespace Chronokeep
 
     internal class MultipleEntryListBoxItem : ListBoxItem
     {
-        public CheckBox Keep { get; private set; }
+        public Wpf.Ui.Controls.ToggleSwitch Keep { get; private set; }
         public TextBlock Existing { get; private set; }
         public TextBlock Bib { get; private set; }
         public TextBlock Distance { get; private set; }
@@ -196,7 +196,9 @@ namespace Chronokeep
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
             theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(50) });
-            Keep = new CheckBox();
+#pragma warning disable CA1416 // Validate platform compatibility
+            Keep = new();
+#pragma warning restore CA1416 // Validate platform compatibility
             theGrid.Children.Add(Keep);
             Grid.SetColumn(Keep, 0);
             Existing = new TextBlock

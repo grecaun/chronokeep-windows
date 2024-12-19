@@ -46,7 +46,7 @@
                 >
             </ListBox>
             <StackPanel Grid.Row="2">
-                <CheckBox
+                <ui:ToggleSwitch
                     Name="Headers"
                     Content="First Row Contains Headers"
                     IsChecked="True"

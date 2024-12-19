@@ -36,7 +36,7 @@
                     <xctk:MaskedTextBox Name="SpecificTimeBox" FontSize="14" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ValueDataType="{x:Type s:String}" Mask="00:00:00.000" Grid.Column="1" Margin="10,0,0,0"/>
                 </Grid>
             </RadioButton>
-            <CheckBox Name="SetAllCheckBox" Content="Set all connected readers" FontSize="14" VerticalContentAlignment="Center" Margin="10,5,10,5"/>
+            <ui:ToggleSwitch Name="SetAllCheckBox" Content="Set all connected readers" FontSize="14" VerticalContentAlignment="Center" Margin="10,5,10,5"/>
             <TextBlock Name="CurrentTimeLabel" VerticalAlignment="Center" TextAlignment="Center" Text="" FontSize="14" Margin="10,5,10,5"/>
             <TextBlock Name="TimeLabel" VerticalAlignment="Center" TextAlignment="Center" Text="" FontSize="14" Margin="10,5,10,5"/>
             <Grid>

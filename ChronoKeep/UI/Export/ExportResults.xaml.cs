@@ -556,13 +556,14 @@ namespace Chronokeep.UI.Export
 
         private class AHeaderBox : ListBoxItem
         {
-            public CheckBox Include;
+            public ToggleSwitch Include;
             public string NameValue { get; private set; }
 
             public AHeaderBox(string name)
             {
                 NameValue = name;
-                Include = new CheckBox()
+#pragma warning disable CA1416 // Validate platform compatibility
+                Include = new ToggleSwitch()
                 {
                     Content = name,
                     FontSize = 16,
@@ -570,6 +571,7 @@ namespace Chronokeep.UI.Export
                     Margin = new Thickness(20,10,0,10),
                     IsChecked = true
                 };
+#pragma warning restore CA1416 // Validate platform compatibility
                 this.Content = Include;
                 this.Selected += new RoutedEventHandler(this.This_Selected);
             }

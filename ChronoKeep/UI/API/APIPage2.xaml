@@ -158,11 +158,11 @@
                         />
                 </DockPanel>
                 <DockPanel>
-                    <CheckBox 
+                    <ui:ToggleSwitch
                         x:Name="restrictBox"
-                        Content="Restrict Access" 
+                        Content="Restrict Access"
                         FontSize="15"
-                        VerticalContentAlignment="Center" 
+                        VerticalContentAlignment="Center"
                         HorizontalAlignment="Center"
                         Margin="0,0,0,5"
                         />
