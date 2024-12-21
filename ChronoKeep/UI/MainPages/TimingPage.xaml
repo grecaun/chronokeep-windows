@@ -590,7 +590,7 @@
                             >
                             <ui:InfoBadge 
                                 x:Name="ReaderMessageNumberBox"
-                                Severity="Caution"
+                                Severity="Attention"
                                 Value="0"
                                 />
                         </ui:Button>

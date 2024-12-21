@@ -34,6 +34,7 @@ namespace Chronokeep.Timing.Interfaces
 
         private ChronokeepSettings settingsWindow = null;
         private string reader_ip = "";
+        private string reader_name = "";
 
         private static readonly Regex zeroconf = new Regex(@"^\[(?'PORTAL_NAME'[^|]*)\|(?'PORTAL_ID'[^|]*)\|(?'PORTAL_PORT'\d{1,5})\]");
         private static readonly Regex msg = new Regex(@"^[^\n]*\n");
@@ -73,6 +74,7 @@ namespace Chronokeep.Timing.Interfaces
                             + match.Groups["PORTAL_PORT"].Value
                             );
                         int port = Constants.Network.CHRONOKEEP_ZCONF_PORT;
+                        reader_name = match.Groups["PORTAL_NAME"].Value;
                         if (!int.TryParse(match.Groups["PORTAL_PORT"].Value, out port))
                         {
                             Log.E("Timing.Interfaces.ChronokeepInterface", "Error parsing port.");
@@ -198,10 +200,11 @@ namespace Chronokeep.Timing.Interfaces
                                     output[MessageType.ERROR] = new List<string>();
                                 }
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error sent to us is of type '" + err.Value.Type + "' and has message '" + err.Value.Message + "'.");
-                                window.ShowNotificationDialog("", new RemoteNotification
+                                window.ShowNotificationDialog(reader_name, reader_ip, new RemoteNotification
                                 {
                                     Type = err.Value.Type,
                                     When = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                                    Message = err.Value.Message
                                 });
                                 output[MessageType.ERROR].Add(err.Value.Message);
                             }

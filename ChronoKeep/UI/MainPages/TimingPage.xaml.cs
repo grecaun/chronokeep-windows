@@ -288,6 +288,18 @@ namespace Chronokeep.UI.MainPages
                 }
             }
 
+            List<ReaderMessage> readerMsgs = GetReaderMessages();
+            if (readerMsgs.Count > 0)
+            {
+                ReaderMessageButton.Visibility = Visibility.Visible;
+                ReaderMessageNumberBox.Value = readerMsgs.FindAll(x => !x.Notified).Count().ToString();
+            }
+            else
+            {
+                ReaderMessageButton.Visibility = Visibility.Hidden;
+                ReaderMessageNumberBox.Value = 0.ToString();
+            }
+
             if (alreadyRecalculating)
             {
                 recalculateButton.Content = "Working...";

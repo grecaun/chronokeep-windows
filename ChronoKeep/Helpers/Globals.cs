@@ -1,6 +1,7 @@
 ﻿using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.UI.UIObjects;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -28,12 +29,13 @@ namespace Chronokeep.Helpers
             }
         }
 
-        public class ReaderMessage
+        public class ReaderMessage : IComparable
         {
             public SeverityLevel Severity;
             public RemoteNotification Message;
             public bool Notified = false;
-            public string ReaderName = "";
+            public string SystemName = "";
+            public string Address = "";
 
             public enum SeverityLevel
             {
@@ -42,10 +44,29 @@ namespace Chronokeep.Helpers
                 Low
             }
 
+            public string Who { get => SystemName; }
+            public string Where { get => Address; }
             public string When { get => Message.When; }
-            public string Where { get => ReaderName; }
             public string Information { get => PortalNotification.GetRemoteNotificationMessage(Message.Type); }
-            public string DialogBoxString { get => PortalNotification.GetRemoteNotificationMessage(ReaderName, Message.Type); }
+            public string DialogBoxString { get => PortalNotification.GetRemoteNotificationMessage(SystemName, Address, Message); }
+            public string SeverityString { get => Severity == SeverityLevel.High ? "High" : Severity == SeverityLevel.Moderate ? "Moderate" : "Low"; }
+            public string Background { get => Severity == SeverityLevel.High ? "#3FFF0000" : Severity == SeverityLevel.Moderate ? "#4FF75605" : "#3FF7CF05"; }
+
+            public int CompareTo(object other)
+            {
+                if (other is not ReaderMessage) return -1;
+                if (DateTime.TryParse(Message.When, out DateTime thisWhen)
+                    && DateTime.TryParse(((ReaderMessage)other).Message.When, out DateTime otherWhen))
+                {
+                    return thisWhen.CompareTo(otherWhen);
+                }
+                return Message.Type.CompareTo(((ReaderMessage)other).Message.Type);
+            }
+
+            public bool Equals(ReaderMessage other)
+            {
+                return Severity == other.Severity && When.Equals(other.When, StringComparison.Ordinal) && Address.Equals(other.Address, StringComparison.Ordinal) && Message.Type.Equals(other.Message.Type, StringComparison.Ordinal);
+            }
         }
 
         private static readonly Dictionary<(string, RemoteNotification), ReaderMessage> readerMessages = new();
@@ -68,11 +89,12 @@ namespace Chronokeep.Helpers
             {
                 foreach (ReaderMessage m in msgs)
                 {
-                    if (readerMessages.TryGetValue((m.ReaderName, m.Message), out ReaderMessage found))
+                    if (readerMessages.TryGetValue((m.SystemName, m.Message), out ReaderMessage found))
                     {
                         found.Notified = m.Notified;
                     }
                 }
+                readerMessageMutex.ReleaseMutex();
             }
         }
 
@@ -80,10 +102,11 @@ namespace Chronokeep.Helpers
         {
             if (readerMessageMutex.WaitOne(1000))
             {
-                if (readerMessages.TryGetValue((msg.ReaderName, msg.Message), out ReaderMessage found))
+                if (readerMessages.TryGetValue((msg.SystemName, msg.Message), out ReaderMessage found))
                 {
                     found.Notified = msg.Notified;
                 }
+                readerMessageMutex.ReleaseMutex();
             }
         }
 
@@ -100,7 +123,7 @@ namespace Chronokeep.Helpers
         {
             if (readerMessageMutex.WaitOne(1000))
             {
-                readerMessages.Add((msg.ReaderName, msg.Message), msg);
+                readerMessages.Add((msg.SystemName, msg.Message), msg);
                 readerMessageMutex.ReleaseMutex();
                 return true;
             }

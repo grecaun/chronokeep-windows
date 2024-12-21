@@ -10,5 +10,6 @@ namespace Chronokeep.Objects.ChronokeepRemote
         public string Type { get; set; }
         [JsonPropertyName("when")]
         public string When { get; set; }
+        public string Message { get; set; }
     }
 }

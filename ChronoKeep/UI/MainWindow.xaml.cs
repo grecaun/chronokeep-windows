@@ -582,21 +582,27 @@ namespace Chronokeep.UI
 
         public void UpdateTimingNonBlocking()
         {
+            Log.D("UI.MainWindow", "UpdateTimingNonBlocking called.");
+            List<ReaderMessage> toShow = [];
+            List<ReaderMessage> readerMsgs = GetReaderMessages();
+            foreach (ReaderMessage message in readerMsgs)
+            {
+                if (message.Severity == ReaderMessage.SeverityLevel.High && !message.Notified)
+                {
+                    toShow.Add(message);
+                    message.Notified = true;
+                    UpdateReaderMessage(message);
+                }
+            }
             Thread newThread = new(new ThreadStart(() =>
             {
                 // show any dialogboxes that need to be shown due to importance
-                List<ReaderMessage> readerMsgs = GetReaderMessages();
-                foreach (ReaderMessage message in readerMsgs)
+                foreach (ReaderMessage message in toShow)
                 {
-                    if (message.Severity == ReaderMessage.SeverityLevel.High && !message.Notified)
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
                     {
-                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
-                        {
-                            DialogBox.Show(message.DialogBoxString);
-                        }));
-                        message.Notified = true;
-                        UpdateReaderMessage(message);
-                    }
+                        DialogBox.Show(message.DialogBoxString);
+                    }));
                 }
                 // Let the announcer window know that it has new information.
                 Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
@@ -676,17 +682,42 @@ namespace Chronokeep.UI
             }
             if (OperatingSystem.IsWindowsVersionAtLeast(8))
             {
-                dashboardButton.IsActive = page.GetType() == typeof(DashboardPage);
-                timingButton.IsActive = page.GetType() == typeof(TimingPage);
+                dashboardButton.IsActive = page is DashboardPage;
+                timingButton.IsActive = page is TimingPage;
                 announcerButton.IsActive = announcerWindow != null;
-                participantsButton.IsActive = page.GetType() == typeof(ParticipantsPage);
-                chipsButton.IsActive = page.GetType() == typeof(ChipAssigmentPage);
-                locationsButton.IsActive = page.GetType() == typeof(LocationsPage);
-                distancesButton.IsActive = page.GetType() == typeof(DistancesPage);
-                segmentsButton.IsActive = page.GetType() == typeof(SegmentsPage);
-                agegroupsButton.IsActive = page.GetType() == typeof(AgeGroupsPage);
-                settingsButton.IsActive = page.GetType() == typeof(SettingsPage);
-                aboutButton.IsActive = page.GetType() == typeof(AboutPage);
+                participantsButton.IsActive = page is ParticipantsPage;
+                chipsButton.IsActive = page is ChipAssigmentPage;
+                locationsButton.IsActive = page is LocationsPage;
+                distancesButton.IsActive = page is DistancesPage;
+                segmentsButton.IsActive = page is SegmentsPage;
+                agegroupsButton.IsActive = page is AgeGroupsPage;
+                settingsButton.IsActive = page is SettingsPage;
+                aboutButton.IsActive = page is AboutPage;
+            }
+            UpdateTimingBadge();
+        }
+
+        public void UpdateTimingBadge()
+        {
+            if (page is not TimingPage)
+            {
+                List<ReaderMessage> messages = GetReaderMessages();
+                messages.RemoveAll(x => x.Notified);
+                if (messages.Count > 0)
+                {
+                    TimingButtonInfoBadge.Visibility = Visibility.Visible;
+                    TimingButtonInfoBadge.Value = $"{messages.Count}";
+                }
+                else
+                {
+                    TimingButtonInfoBadge.Visibility = Visibility.Hidden;
+                    TimingButtonInfoBadge.Value = "0";
+                }
+            }
+            else
+            {
+                TimingButtonInfoBadge.Visibility = Visibility.Hidden;
+                TimingButtonInfoBadge.Value = "0";
             }
         }
 
@@ -779,6 +810,7 @@ namespace Chronokeep.UI
             HardwareChecker hwCheck = new HardwareChecker(database);
             Thread hardwareThread = new Thread(new ThreadStart(hwCheck.Run));
             hardwareThread.Start();
+            UpdateTimingBadge();
         }
 
         public void SwitchPage(IMainPage iPage)
@@ -1041,53 +1073,52 @@ namespace Chronokeep.UI
             }));
         }
 
-        public void ShowNotificationDialog(string ReaderName, RemoteNotification notification)
+        public void ShowNotificationDialog(string ReaderName, string Address, RemoteNotification notification)
         {
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            Log.D("UI.MainWindow", $"Show Notification Dialog called. When '{notification.When}' - Type '{notification.Type}' - ReaderName '{ReaderName}' - Address '{Address}'");
+            ReaderMessage msg = new()
             {
-                ReaderMessage msg = new()
-                {
-                    Message = notification,
-                    ReaderName = ReaderName
-                };
-                switch (notification.Type)
-                {
-                    // All of the portal errors should display a dialogbox
-                    // with information about what happened
-                    case PortalError.TOO_MANY_REMOTE_API:
-                    case PortalError.TOO_MANY_CONNECTIONS:
-                    case PortalError.SERVER_ERROR:
-                    case PortalError.DATABASE_ERROR:
-                    case PortalError.INVALID_READER_TYPE:
-                    case PortalError.READER_CONNECTION:
-                    case PortalError.NOT_FOUND:
-                    case PortalError.INVALID_SETTING:
-                    case PortalError.INVALID_API_TYPE:
-                    case PortalError.ALREADY_SUBSCRIBED:
-                    case PortalError.ALREADY_RUNNING:
-                    case PortalError.NOT_RUNNING:
-                    case PortalError.NO_REMOTE_API:
-                    case PortalError.STARTING_UP:
-                    case PortalError.INVALID_READ:
-                    case PortalError.NOT_ALLOWED:
-                    // Only some of the Portal Notifications should display
-                    // dialogboxes
-                    case PortalNotification.UPS_DISCONNECTED:
-                    case PortalNotification.UPS_ON_BATTERY:
-                    case PortalNotification.UPS_LOW_BATTERY:
-                    case PortalNotification.SHUTTING_DOWN:
-                        msg.Severity = ReaderMessage.SeverityLevel.High;
-                        return;
-                    case PortalNotification.MAX_TEMP:
-                        msg.Severity = ReaderMessage.SeverityLevel.Moderate;
-                        break;
-                    default:
-                        msg.Severity = ReaderMessage.SeverityLevel.Low;
-                        break;
-                }
-                AddReaderMessage(msg);
-                UpdateTimingNonBlocking();
-            }));
+                Message = notification,
+                SystemName = ReaderName,
+                Address = Address,
+            };
+            switch (notification.Type)
+            {
+                // All of the portal errors should display a dialogbox
+                // with information about what happened
+                case PortalError.TOO_MANY_REMOTE_API:
+                case PortalError.TOO_MANY_CONNECTIONS:
+                case PortalError.SERVER_ERROR:
+                case PortalError.DATABASE_ERROR:
+                case PortalError.INVALID_READER_TYPE:
+                case PortalError.READER_CONNECTION:
+                case PortalError.NOT_FOUND:
+                case PortalError.INVALID_SETTING:
+                case PortalError.INVALID_API_TYPE:
+                case PortalError.ALREADY_SUBSCRIBED:
+                case PortalError.ALREADY_RUNNING:
+                case PortalError.NOT_RUNNING:
+                case PortalError.NO_REMOTE_API:
+                case PortalError.STARTING_UP:
+                case PortalError.INVALID_READ:
+                case PortalError.NOT_ALLOWED:
+                // Only some of the Portal Notifications should display
+                // dialogboxes
+                case PortalNotification.UPS_DISCONNECTED:
+                case PortalNotification.UPS_ON_BATTERY:
+                case PortalNotification.UPS_LOW_BATTERY:
+                case PortalNotification.SHUTTING_DOWN:
+                    msg.Severity = ReaderMessage.SeverityLevel.High;
+                    break;
+                case PortalNotification.MAX_TEMP:
+                    msg.Severity = ReaderMessage.SeverityLevel.Moderate;
+                    break;
+                default:
+                    msg.Severity = ReaderMessage.SeverityLevel.Low;
+                    break;
+            }
+            AddReaderMessage(msg);
+            UpdateTimingNonBlocking();
         }
     }
 }

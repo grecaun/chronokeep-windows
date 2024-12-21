@@ -59,7 +59,7 @@ namespace Chronokeep.Interfaces
         bool StopRemote();
         bool IsRemoteRunning();
         int RemoteErrors();
-        void ShowNotificationDialog(string ReaderName, RemoteNotification notification);
+        void ShowNotificationDialog(string ReaderName, string Address, RemoteNotification notification);
 
         // Theme related calls
         void UpdateTheme(Wpf.Ui.Appearance.ApplicationTheme theme, bool system);

@@ -1,4 +1,6 @@
-﻿namespace Chronokeep.Objects.ChronokeepPortal
+﻿using Chronokeep.Objects.ChronokeepRemote;
+
+namespace Chronokeep.Objects.ChronokeepPortal
 {
     internal class PortalNotification
     {
@@ -12,58 +14,73 @@
         public const string HIGH_TEMP = "HIGH_TEMP";
         public const string MAX_TEMP = "MAX_TEMP";
 
-        // TODO - add information for all portal error messages
-        public static string GetRemoteNotificationMessage(string reader, string Type) {
-            switch (Type)
+        public static string GetRemoteNotificationMessage(string reader, string address, RemoteNotification message) {
+            if (message.Message != null && message.Message.Length > 0)
             {
-                case UPS_DISCONNECTED:
-                    return string.Format("Notification from '{0}'\nUPS has been disconnected.", reader);
-                case UPS_CONNECTED:
-                    return string.Format("Notification from '{0}'\nUPS connection has been re-established.", reader);
-                case UPS_ON_BATTERY:
-                    return string.Format("Notification from '{0}'\nUPS is working from battery power.\nCheck to ensure the UPS is plugged in and the power source is working.", reader);
-                case UPS_LOW_BATTERY:
-                    return string.Format("Notification from '{0}'\nUPS battery is low. Shutdown imminent.", reader);
-                case UPS_ONLINE:
-                    return string.Format("Notification from '{0}'\nUPS is back on line power and no longer running off the UPS battery.", reader);
-                case SHUTTING_DOWN:
-                    return string.Format("Notification from '{0}'\nShutting down.", reader);
-                case RESTARTING:
-                    return string.Format("Notification from '{0}'\nRestarting.", reader);
-                case HIGH_TEMP:
-                    return string.Format("Notification from '{0}'\nTemperature is high.", reader);
-                case MAX_TEMP:
-                    return string.Format("Notification from '{0}'\nTemperature is very high. Throttling wil most likely occur.", reader);
-                default:
-                    return string.Format("Notification from '{0}'\nUnknown notification. {1}", reader, Type);
+                Log.E("Objects.ChronokeepPortal.PortalNotification", $"'{message.Type}' '{message.Message}'");
             }
+            return message.Type switch
+            {
+                PortalError.TOO_MANY_REMOTE_API => $"Notification from '{reader}-{address}'\nOnly one remote api can be assigned to a portal.\nPlease remove or update the currently defined remote api.",
+                PortalError.TOO_MANY_CONNECTIONS => $"Notification from '{reader}-{address}'\nUnable to connect to the timing system, there are too many devices already connected.",
+                PortalError.SERVER_ERROR => $"Notification from '{reader}-{address}'\nThe timing system encountered an error trying to process that request.",
+                PortalError.DATABASE_ERROR => $"Notification from '{reader}-{address}'\nThe timing system encountered an error with their database while trying to process that request.",
+                PortalError.INVALID_READER_TYPE => $"Notification from '{reader}-{address}'\nReader type specified is not valid.",
+                PortalError.READER_CONNECTION => $"Notification from '{reader}-{address}'\nUnable to connect to the reader.",
+                PortalError.NOT_FOUND => $"Notification from '{reader}-{address}'\nThe timing system was not able to find the specified value.",
+                PortalError.INVALID_SETTING => $"Notification from '{reader}-{address}'\nOne or more settings specified was not valid.",
+                PortalError.INVALID_API_TYPE => $"Notification from '{reader}-{address}'\nAPI type specified is not valid.",
+                PortalError.ALREADY_SUBSCRIBED => $"Notification from '{reader}-{address}'\nUser is already subscribed to reads/sightings from the timing system.",
+                PortalError.ALREADY_RUNNING => $"Notification from '{reader}-{address}'\nUnable to start the specified reader as it is already running.",
+                PortalError.NOT_RUNNING => $"Notification from '{reader}-{address}'\nUnable to stop the specified reader as it is not currently running.",
+                PortalError.NO_REMOTE_API => $"Notification from '{reader}-{address}'\nUnable to upload reads to remote api as none is set up.",
+                PortalError.STARTING_UP => $"Notification from '{reader}-{address}'\nTiming system is currently in startup mode.\nPlease wait to try to start the readers.",
+                PortalError.INVALID_READ => $"Notification from '{reader}-{address}'\nUnable to add read.\nSpecified read is not valid.",
+                PortalError.NOT_ALLOWED => $"Notification from '{reader}-{address}'\nUnable to set the time on the timing system while a reader is connected.",
+                UPS_DISCONNECTED => $"Notification from '{reader}-{address}'\nUPS has been disconnected.",
+                UPS_CONNECTED => $"Notification from '{reader}-{address}'\nUPS connection has been re-established.",
+                UPS_ON_BATTERY => $"Notification from '{reader}-{address}'\nUPS is working from battery power.\nCheck to ensure the UPS is plugged in and the power source is working.",
+                UPS_LOW_BATTERY => $"Notification from '{reader}-{address}'\nUPS battery is low. Shutdown imminent.",
+                UPS_ONLINE => $"Notification from '{reader}-{address}'\nUPS is back on line power and no longer running off the UPS battery.",
+                SHUTTING_DOWN => $"Notification from '{reader}-{address}'\nShutting down.",
+                RESTARTING => $"Notification from '{reader}-{address}'\nRestarting.",
+                HIGH_TEMP => $"Notification from '{reader}-{address}'\nTemperature is high.",
+                MAX_TEMP => $"Notification from '{reader}-{address}'\nTemperature is very high. Throttling wil most likely occur.",
+                _ => $"Notification from '{reader}-{address}'\nUnknown notification '{message.Type}'",
+            };
         }
 
         public static string GetRemoteNotificationMessage(string Type)
         {
-            switch (Type)
+            return Type switch
             {
-                case UPS_DISCONNECTED:
-                    return string.Format("UPS has been disconnected.");
-                case UPS_CONNECTED:
-                    return string.Format("UPS connection has been re-established.");
-                case UPS_ON_BATTERY:
-                    return string.Format("UPS is working from battery power.\nCheck to ensure the UPS is plugged in and the power source is working.");
-                case UPS_LOW_BATTERY:
-                    return string.Format("UPS battery is low. Shutdown imminent.");
-                case UPS_ONLINE:
-                    return string.Format("UPS is back on line power and no longer running off the UPS battery.");
-                case SHUTTING_DOWN:
-                    return string.Format("Shutting down.");
-                case RESTARTING:
-                    return string.Format("Restarting.");
-                case HIGH_TEMP:
-                    return string.Format("Temperature is high.");
-                case MAX_TEMP:
-                    return string.Format("Temperature is very high. Throttling wil most likely occur.");
-                default:
-                    return string.Format("Unknown notification. {1}", Type);
-            }
+                PortalError.TOO_MANY_REMOTE_API => "Only one remote api can be assigned to a portal. Please remove or update the currently defined remote api.",
+                PortalError.TOO_MANY_CONNECTIONS => "Unable to connect to the timing system, there are too many devices already connected.",
+                PortalError.SERVER_ERROR => "The timing system encountered an error trying to process that request.",
+                PortalError.DATABASE_ERROR => "The timing system encountered an error with their database while trying to process that request.",
+                PortalError.INVALID_READER_TYPE => "Reader type specified is not valid.",
+                PortalError.READER_CONNECTION => "Unable to connect to the reader.",
+                PortalError.NOT_FOUND => "The timing system was not able to find the specified value.",
+                PortalError.INVALID_SETTING => "One or more settings specified was not valid.",
+                PortalError.INVALID_API_TYPE => "API type specified is not valid.",
+                PortalError.ALREADY_SUBSCRIBED => "User is already subscribed to reads/sightings from the timing system.",
+                PortalError.ALREADY_RUNNING => "Unable to start the specified reader as it is already running.",
+                PortalError.NOT_RUNNING => "Unable to stop the specified reader as it is not currently running.",
+                PortalError.NO_REMOTE_API => "Unable to upload reads to remote api as none is set up.",
+                PortalError.STARTING_UP => "Timing system is currently in startup mode. Please wait to try to start the readers.",
+                PortalError.INVALID_READ => "Unable to add read. Specified read is not valid.",
+                PortalError.NOT_ALLOWED => "Unable to set the time on the timing system while a reader is connected.",
+                UPS_DISCONNECTED => $"UPS has been disconnected.",
+                UPS_CONNECTED => $"UPS connection has been re-established.",
+                UPS_ON_BATTERY => $"UPS is working from battery power. Check to ensure the UPS is plugged in and the power source is working.",
+                UPS_LOW_BATTERY => $"UPS battery is low. Shutdown imminent.",
+                UPS_ONLINE => $"UPS is back on line power and no longer running off the UPS battery.",
+                SHUTTING_DOWN => $"Shutting down.",
+                RESTARTING => $"Restarting.",
+                HIGH_TEMP => $"Temperature is high.",
+                MAX_TEMP => $"Temperature is very high. Throttling wil most likely occur.",
+                _ => $"Unknown notification. {Type}",
+            };
         }
     }
 }

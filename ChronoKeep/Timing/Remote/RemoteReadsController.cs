@@ -139,7 +139,7 @@ namespace Chronokeep.Timing.Remote
                                 && (!RemoteNotificationDictionary.ContainsKey(reader)
                                     || RemoteNotificationDictionary[reader] != note.Id))
                             {
-                                mainWindow.ShowNotificationDialog(reader.Name, note);
+                                mainWindow.ShowNotificationDialog(reader.Name, "Remote", note);
                                 RemoteNotificationDictionary[reader] = note.Id;
                             }
                         }

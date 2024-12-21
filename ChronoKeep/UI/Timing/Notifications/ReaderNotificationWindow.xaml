@@ -6,7 +6,12 @@
         xmlns:local="clr-namespace:Chronokeep.UI.Timing.Notifications"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Change Event" Height="400" Width="500"  Closing="Window_Closing" Topmost="True"
+        Title="Change Event"
+        Height="400"
+        Width="700"
+        MinWidth="700"
+        Closing="Window_Closing"
+        Topmost="True"
         d:DataContext="{d:DesignInstance local:ReaderNotificationWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -15,9 +20,9 @@
         >
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="35" />
+            <RowDefinition Height="30" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="70" />
+            <RowDefinition Height="55" />
         </Grid.RowDefinitions>
         <ui:TitleBar
             Grid.Row="0">
@@ -25,32 +30,14 @@
         <ListView
             x:Name="notificationsList"
             Grid.Row="1"
-            Margin="19,5,19,5"
-            ScrollViewer.HorizontalScrollBarVisibility="Auto"
-            Width="Auto"
-            Height="Auto"
-            >
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderBrush="#88A6A6A6" BorderThickness="1,1,1,0">
-                        <Grid Background="{Binding Background}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="80" />
-                                <ColumnDefinition Width="250" />
-                                <ColumnDefinition Width="50" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Margin="8,4" Text="{Binding When}" />
-                            <TextBlock Grid.Column="0" Margin="8,4" Text="{Binding Where}" />
-                            <TextBlock Grid.Column="1" Margin="8,4" Text="{Binding Information}" />
-                            <TextBlock Grid.Column="2" Margin="8,4" Text="{Binding Severity}" />
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            Margin="10,0"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            ItemContainerStyle="{StaticResource NoFocusNotification}"
+            ScrollViewer.CanContentScroll="False"
+            Background="Transparent"
+            />
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Button Name="cancelButton" Height="35" Width="150" FontSize="16" Content="Done" Margin="10,0,10,0" Click="CancelButton_Click" HorizontalAlignment="Center"/>
+            <Button Name="cancelButton" Height="35" Width="150" FontSize="16" Content="Done" Margin="10,-5,10,0" Click="CancelButton_Click" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>
 </ui:FluentWindow>

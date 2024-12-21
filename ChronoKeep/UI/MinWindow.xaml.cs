@@ -15,6 +15,7 @@ using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.UI.Timing;
 using Chronokeep.UI.MainPages;
+using static Chronokeep.Helpers.Globals;
 
 namespace Chronokeep.UI
 {
@@ -331,19 +332,55 @@ namespace Chronokeep.UI
             catch { }
         }
 
-        public void ShowNotificationDialog(string ReaderName, RemoteNotification notification)
+        public void ShowNotificationDialog(string ReaderName, string Address, RemoteNotification notification)
         {
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            Log.D("UI.MainWindow", $"Show Notification Dialog called. When '{notification.When}' - Type '{notification.Type}' - ReaderName '{ReaderName}' - Address '{Address}'");
+            ReaderMessage msg = new()
             {
-                if (notification.Type == PortalError.NOT_ALLOWED)
+                Message = notification,
+                SystemName = ReaderName,
+                Address = Address,
+                // MinWindow can just set it to high always because it lacks an info badge.
+                Severity = ReaderMessage.SeverityLevel.High,
+            };
+            AddReaderMessage(msg);
+            UpdateTimingNonBlocking();
+        }
+
+        public void UpdateTimingNonBlocking()
+        {
+            Log.D("UI.MainWindow", "UpdateTimingNonBlocking called.");
+            List<ReaderMessage> toShow = [];
+            List<ReaderMessage> readerMsgs = GetReaderMessages();
+            foreach (ReaderMessage message in readerMsgs)
+            {
+                if (message.Severity == ReaderMessage.SeverityLevel.High && !message.Notified)
                 {
-                    DialogBox.Show("Unable to set time with a reader connected.");
+                    toShow.Add(message);
+                    message.Notified = true;
+                    UpdateReaderMessage(message);
                 }
-                else
+            }
+            Thread newThread = new(new ThreadStart(() =>
+            {
+                // show any dialogboxes that need to be shown due to importance
+                foreach (ReaderMessage message in toShow)
                 {
-                    DialogBox.Show(PortalNotification.GetRemoteNotificationMessage(ReaderName, notification.Type));
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+                    {
+                        DialogBox.Show(message.DialogBoxString);
+                    }));
                 }
+                // Let the announcer window know that it has new information.
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+                {
+                    if (page is TimingPage)
+                    {
+                        page.UpdateView();
+                    }
+                }));
             }));
+            newThread.Start();
         }
 
         public void SwitchPage(IMainPage iPage) { }

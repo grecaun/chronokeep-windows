@@ -11,6 +11,29 @@
                 <ui:ThemesDictionary Theme="Dark"/>
                 <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="ListViewItem" x:Key="NoFocusNotification">
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Border Margin="1" BorderBrush="#88A6A6A6" BorderThickness="1,1,1,1">
+                                <Grid Background="{Binding Background}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Margin="8,4" Text="{Binding When}" VerticalAlignment="Center" TextAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Margin="8,4" Text="{Binding Who}" TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Margin="8,4" Text="{Binding Where}" TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center"/>
+                                    <TextBlock Grid.Column="3" Margin="8,4" Text="{Binding Information}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
             <Style TargetType="ListViewItem" x:Key="NoFocusListViewItem">
                 <Setter Property="Focusable" Value="False" />
                 <Setter Property="Template">
