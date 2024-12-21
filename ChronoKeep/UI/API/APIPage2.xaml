@@ -37,23 +37,47 @@
                 HorizontalAlignment="Center"
                 Margin="0,0,0,10"
                 />
-            <ComboBox
-                Name="EventBox"
-                Width="200"
-                VerticalAlignment="Center"
-                Margin="0,0,0,10"
+            <Grid Grid.Row="0" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ui:SymbolIcon Symbol="Search24" Grid.Column="0" Margin="20,0,10,10" VerticalAlignment="Center"/>
+                <ui:TextBox Height="40" Margin="5,0,15,15" Name="searchBox" TextChanged="searchBox_TextChanged" PlaceholderText="Search..." Grid.Column="1" />
+            </Grid>
+            <ListView
+                x:Name="eventList"
+                Grid.Row="2"
+                Margin="4,0,4,5"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                HorizontalAlignment="Stretch"
+                Width="253px"
+                Height="Auto"
+                MaxHeight="113"
+                AlternationCount="2"
+                ItemContainerStyle="{StaticResource alternatingStyle}"
+                MouseDoubleClick="eventList_MouseDoubleClick"
                 SelectionChanged="EventBox_SelectionChanged"
-                />
+                ScrollViewer.CanContentScroll="False"
+                >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <TextBlock Margin="8,4" Text="{Binding Name}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
             <StackPanel 
                 x:Name="newPanel" 
                 Visibility="Collapsed"
                 >
                 <TextBlock 
                     Text="New Event:" 
-                    FontSize="16"
+                    FontSize="20"
                     VerticalAlignment="Center" 
                     HorizontalAlignment="Center"
-                    Margin="0,0,0,5"
+                    Margin="0,10,0,10"
                     />
                 <DockPanel Margin="0,0,0,5">
                     <TextBlock

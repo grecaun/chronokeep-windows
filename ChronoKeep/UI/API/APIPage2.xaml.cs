@@ -2,6 +2,7 @@
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
 using Chronokeep.UI.UIObjects;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,8 +18,6 @@ namespace Chronokeep.UI.API
         IDBInterface database;
         APIObject api;
         Event theEvent;
-
-        Dictionary<string, string> eventNameToSlugDict = new();
 
         GetEventsResponse events;
 
@@ -36,32 +35,23 @@ namespace Chronokeep.UI.API
             }
             Log.D("UI.API.APIPage2", "Adding events to combo box.");
             events.Events.Sort((a, b) => b.CompareTo(a));
-            List<string> eventNames = new()
+            events.Events ??= [];
+            events.Events.Insert(0, new APIEvent
             {
-                "New Event"
-            };
-            EventBox.ItemsSource = eventNames;
-            if (events.Events != null)
+                Name = "New Event"
+            });
+            List<APIEvent> ev = new(events.Events);
+            eventList.ItemsSource = ev;
+            APIEvent maybeEvent = ev.Find(x => x.Name.Equals(theEvent.Name, StringComparison.OrdinalIgnoreCase));
+            if (maybeEvent != null)
             {
-                foreach (APIEvent ev in events.Events)
-                {
-                    eventNames.Add(ev.Name);
-                    eventNameToSlugDict.Add(ev.Name, ev.Slug);
-                    if (theEvent.Name == ev.Name)
-                    {
-
-                    }
-                }
-            }
-            if (!eventNameToSlugDict.ContainsKey(theEvent.Name))
-            {
-                EventBox.SelectedIndex = 0;
-                newPanel.Visibility = Visibility.Visible;
+                eventList.SelectedItem = maybeEvent;
+                eventList.ScrollIntoView(maybeEvent);
             }
             else
             {
-                EventBox.SelectedIndex = eventNames.IndexOf(theEvent.Name);
-                newPanel.Visibility = Visibility.Collapsed;
+                eventList.SelectedIndex = 0;
+                eventList.ScrollIntoView(ev[0]);
             }
             nameBox.Text = theEvent.Name;
             slugBox.Text = theEvent.Name.Replace(' ', '-').Replace("'","").ToLower();
@@ -82,7 +72,7 @@ namespace Chronokeep.UI.API
 
         private void EventBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (EventBox.SelectedIndex < 1 || !eventNameToSlugDict.ContainsKey(((string)EventBox.SelectedItem)))
+            if (eventList.SelectedIndex < 1)
             {
                 newPanel.Visibility = Visibility.Visible;
             }
@@ -91,14 +81,47 @@ namespace Chronokeep.UI.API
                 newPanel.Visibility = Visibility.Collapsed;
             }
         }
+
+        private void eventList_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Log.D("UI.ChangeEventWindow", "Double Click detected.");
+            Next_Click(sender, null);
+        }
+
+        private void searchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            List<APIEvent> ev = new(events.Events);
+            if (searchBox.Text.Trim().Length > 0)
+            {
+                Log.D("UI.API.APIPage2", $"searchBox.Text {searchBox.Text}");
+                ev.RemoveAll(x => 
+                    !x.Name.Contains(searchBox.Text, StringComparison.OrdinalIgnoreCase)
+                    && !x.Name.Contains("New Event", StringComparison.OrdinalIgnoreCase)
+                );
+            }
+            eventList.ItemsSource = ev;
+            APIEvent maybeEvent = ev.Find(x =>x.Name.Equals(theEvent.Name, StringComparison.OrdinalIgnoreCase));
+            if (maybeEvent != null)
+            {
+                eventList.SelectedItem = maybeEvent;
+                eventList.ScrollIntoView(maybeEvent);
+            }
+            else
+            {
+                eventList.SelectedIndex = 0;
+                eventList.ScrollIntoView(ev[0]);
+            }
+        }
+
         private async void Next_Click(object sender, RoutedEventArgs e)
         {
-            if (EventBox == null)
+            if (eventList == null)
             {
                 window.Close();
                 return;
             }
-            if (!eventNameToSlugDict.TryGetValue(EventBox.Text, out string slug))
+            string slug;
+            if (eventList.SelectedItem == null || ((APIEvent)eventList.SelectedItem).Slug.Length < 1)
             {
                 try
                 {
@@ -134,6 +157,10 @@ namespace Chronokeep.UI.API
                     DialogBox.Show(ex.Message);
                     return;
                 }
+            }
+            else
+            {
+                slug = ((APIEvent)eventList.SelectedItem).Slug;
             }
             window.GotoPage3(slug);
         }
