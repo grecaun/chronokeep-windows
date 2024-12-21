@@ -39,21 +39,21 @@
                 />
             <Grid Grid.Row="0" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="46" />
+                    <ColumnDefinition Width="234" />
                 </Grid.ColumnDefinitions>
                 <ui:SymbolIcon Symbol="Search24" Grid.Column="0" Margin="20,0,10,10" VerticalAlignment="Center"/>
-                <ui:TextBox Height="40" Margin="5,0,15,15" Name="searchBox" TextChanged="searchBox_TextChanged" PlaceholderText="Search..." Grid.Column="1" />
+                <ui:TextBox Height="40" Margin="5,0,15,15" Name="searchBox" TextChanged="searchBox_TextChanged" PlaceholderText="Search..." Grid.Column="1" VerticalContentAlignment="Center" />
             </Grid>
             <ListView
                 x:Name="eventList"
                 Grid.Row="2"
                 Margin="4,0,4,5"
-                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 HorizontalAlignment="Stretch"
                 Width="253px"
                 Height="Auto"
-                MaxHeight="113"
+                MaxHeight="114"
                 AlternationCount="2"
                 ItemContainerStyle="{StaticResource alternatingStyle}"
                 MouseDoubleClick="eventList_MouseDoubleClick"

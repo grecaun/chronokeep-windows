@@ -24,7 +24,7 @@
             <Style TargetType="ListViewItem" x:Key="alternatingStyle">
                 <Style.Triggers>
                     <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                        <Setter Property="Background" Value="#48A6A6A6" />
+                        <Setter Property="Background" Value="#18A6A6A6" />
                     </Trigger>
                 </Style.Triggers>
             </Style>
@@ -33,7 +33,7 @@
                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Style.Triggers>
                     <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                        <Setter Property="Background" Value="#48A6A6A6" />
+                        <Setter Property="Background" Value="#18A6A6A6" />
                     </Trigger>
                 </Style.Triggers>
             </Style>
