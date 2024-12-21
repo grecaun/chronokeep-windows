@@ -70,6 +70,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Margin="0,0,32,0">
                 <ui:HyperlinkButton
@@ -119,6 +120,16 @@
                 <ui:HyperlinkButton
                     Content="ClosedXML"
                     NavigateUri="https://closedxml.github.io/ClosedXML/"
+                    >
+                    <ui:HyperlinkButton.Icon>
+                        <ui:SymbolIcon Symbol="Link24"/>
+                    </ui:HyperlinkButton.Icon>
+                </ui:HyperlinkButton>
+            </StackPanel>
+            <StackPanel Grid.Column="3">
+                <ui:HyperlinkButton
+                    Content="Hardware.Info"
+                    NavigateUri="https://github.com/Jinjinov/Hardware.Info"
                     >
                     <ui:HyperlinkButton.Icon>
                         <ui:SymbolIcon Symbol="Link24"/>

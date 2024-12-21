@@ -742,6 +742,11 @@ namespace Chronokeep.UI
                 }
                 UpdateTheme(theme, system);
             }
+            // Check for hardware changes.
+            Log.D("UI.MainWindow", "Starting hardware checker.");
+            HardwareChecker hwCheck = new HardwareChecker(database);
+            Thread hardwareThread = new Thread(new ThreadStart(hwCheck.Run));
+            hardwareThread.Start();
         }
 
         public void SwitchPage(IMainPage iPage)

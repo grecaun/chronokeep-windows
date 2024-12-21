@@ -378,7 +378,7 @@ namespace Chronokeep.UI.MainPages
 
         private void RegenerateUniqueProgramIDButton_Click(object sender, RoutedEventArgs e)
         {
-            string randomMod = Regex.Replace(Guid.NewGuid().ToString("N"), "[^a-zA-Z0-9]", "").ToUpper()[0..3];
+            string randomMod = Constants.Settings.AlphaNumRegex().Replace(Guid.NewGuid().ToString("N"), "").ToUpper()[0..3];
             database.SetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER, randomMod);
             UpdateView();
         }

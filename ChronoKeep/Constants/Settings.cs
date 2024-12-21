@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Chronokeep.Constants
 {
-    class Settings
+    partial class Settings
     {
         public const string PROGRAM_DIR           = "Chronokeep";
         public const string HELP_DIR              = "help";
@@ -11,6 +11,7 @@ namespace Chronokeep.Constants
         // Settings 1
         public const string SERVER_NAME                 = "SETTING_SERVER_NAME";
         public const string DATABASE_VERSION            = "DATABASE_VERSION";           // default is database managed
+        public const string HARDWARE_IDENTIFIER         = "HARDWARE_IDENTIFIER";        // used to detect if hardware changes so we can update SETTING_UNIQUE_MODIFIER if the user desires
         // Settings 2
         public const string DEFAULT_EXPORT_DIR          = "SETTING_DEFAULT_EXPORT_DIR";
         public const string DEFAULT_TIMING_SYSTEM       = "SETTING_DEFAULT_TIMING_SYSTEM";
@@ -61,6 +62,9 @@ namespace Chronokeep.Constants
         public const string DEFAULT_INTERVAL  = "30";
         public const string DEFAULT_ANNOUNCER = "45";
         public const string DEFAULT_ALARM     = "1";
+
+        [GeneratedRegex("[^a-zA-Z0-9]")]
+        public static partial Regex AlphaNumRegex();
 
         public static void SetupSettings(IDBInterface database)
         {
@@ -136,7 +140,7 @@ namespace Chronokeep.Constants
             // Settings 5
             if (database.GetAppSetting(PROGRAM_UNIQUE_MODIFIER) == null)
             {
-                string randomMod = Regex.Replace(Guid.NewGuid().ToString("N"), "[^a-zA-Z0-9]", "").ToUpper()[0..3];
+                string randomMod = AlphaNumRegex().Replace(Guid.NewGuid().ToString("N"), "").ToUpper()[0..3];
                 database.SetAppSetting(PROGRAM_UNIQUE_MODIFIER, randomMod);
             }
             // Twilio
