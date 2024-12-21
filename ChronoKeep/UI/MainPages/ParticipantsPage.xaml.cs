@@ -503,10 +503,16 @@ namespace Chronokeep.UI.MainPages
                 Dictionary<(string, string, string, string), Participant> partDictionary = new();
                 Dictionary<string, Participant> partESDictionary = new();
                 Dictionary<string, Distance> distDictionary = new();
+                string uniqueID = "";
+                AppSetting programID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
+                if (programID != null)
+                {
+                    uniqueID = string.Format("{0}-", programID.Value);
+                }
                 foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                 {
                     partDictionary[(p.FirstName, p.LastName, p.Birthdate, p.Distance)] = p;
-                    partESDictionary[p.EventSpecific.Identifier.ToString()] = p;
+                    partESDictionary[string.Format("{0}{1}", uniqueID, p.EventSpecific.Identifier)] = p;
                 }
                 foreach (Distance d in database.GetDistances(theEvent.Identifier))
                 {
@@ -683,9 +689,15 @@ namespace Chronokeep.UI.MainPages
             List<APIPerson> upParticipants = new();
             List<BibChip> upBibChips = new();
             Log.D("UI.MainPages.ParticipantsPage", "Participants count: " + participants.Count.ToString());
+            string uniqueID = "";
+            AppSetting programID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
+            if (programID != null)
+            {
+                uniqueID = string.Format("{0}-", programID.Value);
+            }
             foreach (Participant part in participants)
             {
-                upParticipants.Add(new APIPerson(part));
+                upParticipants.Add(new APIPerson(part, uniqueID));
             }
             Log.D("UI.MainPages.ParticipantsPage", "BibChips count: " + bibChips.Count.ToString());
             foreach (BibChipAssociation bc in bibChips)
