@@ -22,6 +22,8 @@ using Chronokeep.Timing.Remote;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Network.Registration;
+using static Chronokeep.Helpers.Globals;
+using System.Windows.Interop;
 
 namespace Chronokeep.UI
 {
@@ -578,6 +580,36 @@ namespace Chronokeep.UI
             }));
         }
 
+        public void UpdateTimingNonBlocking()
+        {
+            Thread newThread = new(new ThreadStart(() =>
+            {
+                // show any dialogboxes that need to be shown due to importance
+                List<ReaderMessage> readerMsgs = GetReaderMessages();
+                foreach (ReaderMessage message in readerMsgs)
+                {
+                    if (message.Severity == ReaderMessage.SeverityLevel.High && !message.Notified)
+                    {
+                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+                        {
+                            DialogBox.Show(message.DialogBoxString);
+                        }));
+                        message.Notified = true;
+                        UpdateReaderMessage(message);
+                    }
+                }
+                // Let the announcer window know that it has new information.
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+                {
+                    if (page is TimingPage)
+                    {
+                        page.UpdateView();
+                    }
+                }));
+            }));
+            newThread.Start();
+        }
+
         public void UpdateTimingTick(object sender, EventArgs e)
         {
             if (TimingWorker.NewResultsExist())
@@ -1013,15 +1045,48 @@ namespace Chronokeep.UI
         {
             Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
-                if (notification.Type == PortalError.NOT_ALLOWED)
+                ReaderMessage msg = new()
                 {
-                    DialogBox.Show("Unable to set time with a reader connected.");
-                }
-                else
+                    Message = notification,
+                    ReaderName = ReaderName
+                };
+                switch (notification.Type)
                 {
-                    Globals.AddReaderMessage(PortalNotification.GetRemoteNotificationMessage(ReaderName, notification.Type));
-                    UpdateTiming();
+                    // All of the portal errors should display a dialogbox
+                    // with information about what happened
+                    case PortalError.TOO_MANY_REMOTE_API:
+                    case PortalError.TOO_MANY_CONNECTIONS:
+                    case PortalError.SERVER_ERROR:
+                    case PortalError.DATABASE_ERROR:
+                    case PortalError.INVALID_READER_TYPE:
+                    case PortalError.READER_CONNECTION:
+                    case PortalError.NOT_FOUND:
+                    case PortalError.INVALID_SETTING:
+                    case PortalError.INVALID_API_TYPE:
+                    case PortalError.ALREADY_SUBSCRIBED:
+                    case PortalError.ALREADY_RUNNING:
+                    case PortalError.NOT_RUNNING:
+                    case PortalError.NO_REMOTE_API:
+                    case PortalError.STARTING_UP:
+                    case PortalError.INVALID_READ:
+                    case PortalError.NOT_ALLOWED:
+                    // Only some of the Portal Notifications should display
+                    // dialogboxes
+                    case PortalNotification.UPS_DISCONNECTED:
+                    case PortalNotification.UPS_ON_BATTERY:
+                    case PortalNotification.UPS_LOW_BATTERY:
+                    case PortalNotification.SHUTTING_DOWN:
+                        msg.Severity = ReaderMessage.SeverityLevel.High;
+                        return;
+                    case PortalNotification.MAX_TEMP:
+                        msg.Severity = ReaderMessage.SeverityLevel.Moderate;
+                        break;
+                    default:
+                        msg.Severity = ReaderMessage.SeverityLevel.Low;
+                        break;
                 }
+                AddReaderMessage(msg);
+                UpdateTimingNonBlocking();
             }));
         }
     }

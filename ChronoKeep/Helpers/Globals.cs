@@ -1,4 +1,6 @@
-﻿using Chronokeep.UI.UIObjects;
+﻿using Chronokeep.Objects.ChronokeepPortal;
+using Chronokeep.Objects.ChronokeepRemote;
+using Chronokeep.UI.UIObjects;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -26,18 +28,63 @@ namespace Chronokeep.Helpers
             }
         }
 
-        private static readonly List<string> readerMessages = new();
+        public class ReaderMessage
+        {
+            public SeverityLevel Severity;
+            public RemoteNotification Message;
+            public bool Notified = false;
+            public string ReaderName = "";
+
+            public enum SeverityLevel
+            {
+                High,
+                Moderate,
+                Low
+            }
+
+            public string When { get => Message.When; }
+            public string Where { get => ReaderName; }
+            public string Information { get => PortalNotification.GetRemoteNotificationMessage(Message.Type); }
+            public string DialogBoxString { get => PortalNotification.GetRemoteNotificationMessage(ReaderName, Message.Type); }
+        }
+
+        private static readonly Dictionary<(string, RemoteNotification), ReaderMessage> readerMessages = new();
         private static readonly Mutex readerMessageMutex = new();
 
-        public static List<string> GetReaderMessages()
+        public static List<ReaderMessage> GetReaderMessages()
         {
-            List<string> output = new();
+            List<ReaderMessage> output = [];
             if (readerMessageMutex.WaitOne(1000))
             {
-                output.AddRange(readerMessages);
+                output.AddRange(readerMessages.Values);
                 readerMessageMutex.ReleaseMutex();
             }
             return output;
+        }
+
+        public static void UpdateReaderMessages(List<ReaderMessage> msgs)
+        {
+            if (readerMessageMutex.WaitOne(1000))
+            {
+                foreach (ReaderMessage m in msgs)
+                {
+                    if (readerMessages.TryGetValue((m.ReaderName, m.Message), out ReaderMessage found))
+                    {
+                        found.Notified = m.Notified;
+                    }
+                }
+            }
+        }
+
+        public static void UpdateReaderMessage(ReaderMessage msg)
+        {
+            if (readerMessageMutex.WaitOne(1000))
+            {
+                if (readerMessages.TryGetValue((msg.ReaderName, msg.Message), out ReaderMessage found))
+                {
+                    found.Notified = msg.Notified;
+                }
+            }
         }
 
         public static void ClearReaderMessages()
@@ -49,11 +96,11 @@ namespace Chronokeep.Helpers
             }
         }
 
-        public static bool AddReaderMessage(string msg)
+        public static bool AddReaderMessage(ReaderMessage msg)
         {
             if (readerMessageMutex.WaitOne(1000))
             {
-                readerMessages.Add(msg);
+                readerMessages.Add((msg.ReaderName, msg.Message), msg);
                 readerMessageMutex.ReleaseMutex();
                 return true;
             }

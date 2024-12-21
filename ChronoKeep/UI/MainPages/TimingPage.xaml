@@ -577,7 +577,16 @@
                         <ui:Button
                             x:Name="ReaderMessageButton"
                             Click="ReaderMessageButton_Click"
-                            Visibility="Collapsed"
+                            Visibility="Hidden"
+                            DockPanel.Dock="Right"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            Background="Transparent"
+                            MouseOverBackground="Transparent"
+                            PressedBackground="Transparent"
+                            Width="Auto"
+                            Margin="0,0,10,0"
+                            Padding="0"
                             >
                             <ui:InfoBadge 
                                 x:Name="ReaderMessageNumberBox"

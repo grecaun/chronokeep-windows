@@ -30,6 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using static Chronokeep.Helpers.Globals;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -506,15 +507,15 @@ namespace Chronokeep.UI.MainPages
                     EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
                 }
             }
-            List<string> readerMsgs = Helpers.Globals.GetReaderMessages();
-            if (readerMsgs.Count > 0)
+            List<ReaderMessage> readerMsgs = GetReaderMessages();
+            if (readerMsgs.Count() > 0)
             {
                 ReaderMessageButton.Visibility = Visibility.Visible;
-                ReaderMessageNumberBox.Value = readerMsgs.Count.ToString();
+                ReaderMessageNumberBox.Value = readerMsgs.FindAll(x => !x.Notified).Count().ToString();
             }
             else
             {
-                ReaderMessageButton.Visibility = Visibility.Collapsed;
+                ReaderMessageButton.Visibility = Visibility.Hidden;
                 ReaderMessageNumberBox.Value = 0.ToString();
             }
             UpdateSubView();
@@ -1567,7 +1568,8 @@ namespace Chronokeep.UI.MainPages
 
         private void ReaderMessageButton_Click(object sender, RoutedEventArgs e)
         {
-
+            ReaderNotificationWindow notificationWindow = ReaderNotificationWindow.NewWindow(mWindow);
+            notificationWindow.Show();
         }
 
         private class AReaderBox : ListBoxItem
@@ -1853,10 +1855,10 @@ namespace Chronokeep.UI.MainPages
             {
                 Log.D("UI.MainPages.TimingPage", "Reader type has changed.");
                 string type = ((ComboBoxItem)ReaderType.SelectedItem).Uid;
-                Log.D("UI.MainPages.TimingPage", "Updating to type: " + Constants.Readers.SYSTEM_NAMES[type]);
+                Log.D("UI.MainPages.TimingPage", "Updating to type: " + Readers.SYSTEM_NAMES[type]);
                 reader.UpdateSystemType(type);
                 ReaderPort.Text = reader.Port.ToString();
-                ReaderPort.IsEnabled = Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL == type ? false : true;
+                ReaderPort.IsEnabled = Readers.SYSTEM_CHRONOKEEP_PORTAL == type ? false : true;
             }
 
             private void Remove(object sender, RoutedEventArgs e)
