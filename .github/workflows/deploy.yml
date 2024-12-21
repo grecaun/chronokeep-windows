@@ -17,7 +17,8 @@ jobs:
       SigningCertificate: Chronokeep\Chronokeep.pfx
       Solution_Path: Chronokeep.sln
       App_Packages_Archive: chronokeep-setup.exe
-      Compile_Path: Chronokeep\bin\Release\net7.0-windows7.0
+      App_Zip_Archive: chronokeep.zip
+      Compile_Path: Chronokeep\bin\Release\net9.0-windows8.0
       Version_Path: ChronoKeep\version.txt
       Actions_Allow_Unsecure_Commands: true # Allows AddPAth and SetEnv commands
 
@@ -62,6 +63,10 @@ jobs:
     - name: Create setup with Inno Setup
       run: .\Inno\ISCC.exe /DMyAppVersion=${{ steps.release-version.outputs.RELEASE_VERSION }} /DMyAppDirectory=$env:Compile_Path /O$env:Compile_Path /SCompression=bzip2 .\install-script.iss
 
+    # Create zip
+    - name: Create zip of all files.
+      run: Compress-Archive -Path $env:Compile_Path\* -Destination $env:Compile_Path\$env:App_Zip_Archive
+
     # Create the release
     - name: Create release
       id: create_release
@@ -71,10 +76,19 @@ jobs:
       with:
         tag: ${{ steps.release-version.outputs.RELEASE_VERSION }}
 
-    # Upload release asset
-    - name: Update release asset
-      id: upload-release-asset
+    # Upload installer
+    - name: Update installer
+      id: upload-installer
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: ${{ env.Compile_Path }}\${{ env.App_Packages_Archive }}
+
+      
+    # Upload archive
+    - name: Update archive
+      id: upload-archive
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: ${{ env.Compile_Path }}\${{ env.App_Zip_Archive }}
