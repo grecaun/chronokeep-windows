@@ -11,7 +11,9 @@
     "Introduced a hardware check to ensure the user is prompted to change the program's unique identifier if they transfer their database file to a new computer",
     "Added the ability to search for an event when linking an event to the results API",
     "Changed how the program deals with Timing System notifications/errors. Now the program keeps a log stored in memory of all notifications received from the timing system. Notifications are classified by severity with those classified as High severity prompting the program to display a DialogBox with information. All notifications can be viewed by clicking on the InfoBadge on the Timing page. When not on the Timing page the program displays an InfoBadge with notification count if there are notifications that haven't been viewed.",
-    "Finished documentation that can be found via link on the about page"
+    "Added the ability to quickly start or stop a timing systems readers by holding CTRL or ALT while clicking on the settings button",
+    "The settings button for a timing system now changes colors based upon the known state of the reader(s) connected to the system"
+    //"Finished documentation that can be found via link on the about page"
   ],
   "fixes": [
     "Fixed an issue where new installs would immediately crash due to an improper query during database creation",
