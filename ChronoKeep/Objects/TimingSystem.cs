@@ -9,6 +9,11 @@ namespace Chronokeep.Objects
 {
     public class TimingSystem : IEquatable<TimingSystem>
     {
+        public const string READING_STATUS_STOPPED = "STOPPED";
+        public const string READING_STATUS_READING = "READING";
+        public const string READING_STATUS_PARTIAL = "PARTIAL";
+        public const string READING_STATUS_UNKNOWN = "UNKNOWN";
+
         public int SystemIdentifier { get; set; } = Constants.Timing.TIMINGSYSTEM_UNKNOWN;
         public string IPAddress { get; set; }
         public int Port { get; set; }

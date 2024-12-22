@@ -663,11 +663,11 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Connecting/disconnecting reader " + reader.Id);
                 if (reader.Connected)
                 {
-                    readerInterface.SendDisconnectReader(reader);
+                    readerInterface.SendStopReader(reader);
                 }
                 else
                 {
-                    readerInterface.SendConnectReader(reader);
+                    readerInterface.SendStartReader(reader);
                 }
                 connectedSwitch.IsEnabled = false;
             }

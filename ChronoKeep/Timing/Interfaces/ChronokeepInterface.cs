@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Interfaces.Timing;
+using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepPortal.Requests;
 using Chronokeep.Objects.ChronokeepPortal.Responses;
@@ -50,7 +51,7 @@ namespace Chronokeep.Timing.Interfaces
         public List<Socket> Connect(string IP_Address, int Port)
         {
             reader_ip = IP_Address;
-            List<Socket> output = new List<Socket>();
+            List<Socket> output = [];
             sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {
@@ -117,7 +118,7 @@ namespace Chronokeep.Timing.Interfaces
             Dictionary<MessageType, List<string>> output = new Dictionary<MessageType, List<string>>();
             buffer.Append(inMessage);
             Match m = msg.Match(buffer.ToString());
-            List<ChipRead> chipReads = new List<ChipRead>();
+            List<ChipRead> chipReads = [];
             while (m.Success)
             {
                 buffer.Remove(m.Index, m.Length);
@@ -145,20 +146,49 @@ namespace Chronokeep.Timing.Interfaces
                                         }
                                         );
                                 }
-                                if (!output.ContainsKey(MessageType.SETTINGVALUE))
+                                int oneReadingCount = 0;
+                                foreach (PortalReader reader in readRes.List)
                                 {
-                                    output[MessageType.SETTINGVALUE] = new List<string>();
+                                    if (reader.Reading)
+                                    {
+                                        oneReadingCount++;
+                                    }
                                 }
-                                output[MessageType.SETTINGVALUE].Add(message);
+                                if (!output.TryGetValue(MessageType.STATUS, out List<string> readersStatusList))
+                                {
+                                    readersStatusList = [];
+                                    output[MessageType.STATUS] = readersStatusList;
+                                }
+                                if (oneReadingCount == 0)
+                                {
+                                    readersStatusList.Add(TimingSystem.READING_STATUS_STOPPED);
+                                }
+                                else if (oneReadingCount == readRes.List.Count)
+                                {
+                                    output[MessageType.STATUS].Add(TimingSystem.READING_STATUS_READING);
+                                }
+                                else
+                                {
+                                    output[MessageType.STATUS].Add(TimingSystem.READING_STATUS_PARTIAL);
+                                }
+                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string> settingList))
+                                {
+                                    settingList = [];
+                                    output[MessageType.SETTINGVALUE] = settingList;
+                                }
+
+                                settingList.Add(message);
                             }
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing readers. " + e.Message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
-                                output[MessageType.ERROR].Add("Error processing readers.");
+
+                                errorList.Add("Error processing readers.");
                             }
                             break;
                         case Response.READER_ANTENNAS:
@@ -183,11 +213,13 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing reader antennas. " + e.Message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
-                                output[MessageType.ERROR].Add("Error processing reader antennas.");
+
+                                errorList.Add("Error processing reader antennas.");
                             }
                             break;
                         case Response.ERROR:
@@ -195,9 +227,10 @@ namespace Chronokeep.Timing.Interfaces
                             try
                             {
                                 ErrorResponse err = JsonSerializer.Deserialize<ErrorResponse>(message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error sent to us is of type '" + err.Value.Type + "' and has message '" + err.Value.Message + "'.");
                                 window.ShowNotificationDialog(reader_name, reader_ip, new RemoteNotification
@@ -206,16 +239,17 @@ namespace Chronokeep.Timing.Interfaces
                                     When = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                                     Message = err.Value.Message
                                 });
-                                output[MessageType.ERROR].Add(err.Value.Message);
+                                errorList.Add(err.Value.Message);
                             }
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Unable to process chip read. " + e.Message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
-                                output[MessageType.ERROR].Add("Error processing chip read.");
+                                errorList.Add("Error processing chip read.");
                             }
                             break;
                         case Response.SETTINGS:
@@ -274,20 +308,23 @@ namespace Chronokeep.Timing.Interfaces
                                     }
                                     settingsWindow.UpdateView(updSettings);
                                 }
-                                if (!output.ContainsKey(MessageType.SETTINGVALUE))
+                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string> settingList))
                                 {
-                                    output[MessageType.SETTINGVALUE] = new List<string>();
+                                    settingList = [];
+                                    output[MessageType.SETTINGVALUE] = settingList;
                                 }
-                                output[MessageType.SETTINGVALUE].Add(message);
+
+                                settingList.Add(message);
                             }
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing settings. " + e.Message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
-                                output[MessageType.ERROR].Add("Error processing settings.");
+                                errorList.Add("Error processing settings.");
                             }
                             break;
                         case Response.API_LIST:
@@ -304,20 +341,23 @@ namespace Chronokeep.Timing.Interfaces
                                         }
                                         );
                                 }
-                                if (!output.ContainsKey(MessageType.SETTINGVALUE))
+                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string> settingList))
                                 {
-                                    output[MessageType.SETTINGVALUE] = new List<string>();
+                                    settingList = [];
+                                    output[MessageType.SETTINGVALUE] = settingList;
                                 }
-                                output[MessageType.SETTINGVALUE].Add(message);
+
+                                settingList.Add(message);
                             }
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing api list. " + e.Message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
-                                output[MessageType.ERROR].Add("Error processing api list.");
+                                errorList.Add("Error processing api list.");
                             }
                             break;
                         case Response.SETTINGS_ALL:
@@ -379,27 +419,55 @@ namespace Chronokeep.Timing.Interfaces
                                                 break;
                                         }
                                     }
+                                    int settingsReadingCount = 0;
+                                    foreach (PortalReader reader in allSettings.Readers)
+                                    {
+                                        if (reader.Reading)
+                                        {
+                                            settingsReadingCount++;
+                                        }
+                                    }
+                                    if (!output.TryGetValue(MessageType.STATUS, out List<string> settingsStatusList))
+                                    {
+                                        settingsStatusList = [];
+                                        output[MessageType.STATUS] = settingsStatusList;
+                                    }
+                                    if (settingsReadingCount == 0)
+                                    {
+                                        settingsStatusList.Add(TimingSystem.READING_STATUS_STOPPED);
+                                    }
+                                    else if (settingsReadingCount == allSettings.Readers.Count)
+                                    {
+                                        output[MessageType.STATUS].Add(TimingSystem.READING_STATUS_READING);
+                                    }
+                                    else
+                                    {
+                                        output[MessageType.STATUS].Add(TimingSystem.READING_STATUS_PARTIAL);
+                                    }
                                     updSettings.Changes.Add(PortalSettingsHolder.ChangeType.SETTINGS);
                                     updSettings.Changes.Add(PortalSettingsHolder.ChangeType.READERS);
                                     updSettings.Changes.Add(PortalSettingsHolder.ChangeType.APIS);
-                                    settingsWindow.UpdateView(
+                                    settingsWindow?.UpdateView(
                                         updSettings
                                         );
                                 }
-                                if (!output.ContainsKey(MessageType.SETTINGVALUE))
+                                if (!output.TryGetValue(MessageType.SETTINGVALUE, out List<string> settingList))
                                 {
-                                    output[MessageType.SETTINGVALUE] = new List<string>();
+                                    settingList = [];
+                                    output[MessageType.SETTINGVALUE] = settingList;
                                 }
-                                output[MessageType.SETTINGVALUE].Add(message);
+
+                                settingList.Add(message);
                             }
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing all settings. " + e.Message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
-                                output[MessageType.ERROR].Add("Error processing settings.");
+                                errorList.Add("Error processing settings.");
                             }
                             break;
                         case Response.READS:
@@ -435,11 +503,12 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Unable to process chip read. " + e.Message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
-                                output[MessageType.ERROR].Add("Error processing chip read.");
+                                errorList.Add("Error processing chip read.");
                             }
                             break;
                         case Response.SUCCESS:
@@ -454,22 +523,25 @@ namespace Chronokeep.Timing.Interfaces
                             try
                             {
                                 TimeResponse t = JsonSerializer.Deserialize<TimeResponse>(message);
-                                if (!output.ContainsKey(MessageType.TIME))
+                                if (!output.TryGetValue(MessageType.TIME, out List<string> timeList))
                                 {
-                                    output[MessageType.TIME] = new List<string>();
+                                    timeList = [];
+                                    output[MessageType.TIME] = timeList;
                                 }
-                                output[MessageType.TIME].Clear();
+
+                                timeList.Clear();
                                 DateTime timeDT = DateTime.ParseExact(t.Local, "yyyy-MM-dd HH:mm:ss", CultureInfo.CurrentCulture);
-                                output[MessageType.TIME].Add(timeDT.ToString("dd MMM yyyy  HH:mm:ss"));
+                                timeList.Add(timeDT.ToString("dd MMM yyyy  HH:mm:ss"));
                             }
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Unable to process time message. " + e.Message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
-                                output[MessageType.ERROR].Add("Error processing time message.");
+                                errorList.Add("Error processing time message.");
                             }
                             break;
                         case Response.PARTICIPANTS:
@@ -498,15 +570,42 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error auto upload message. " + e.Message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
-                                output[MessageType.ERROR].Add("Error processing auto upload message.");
+                                errorList.Add("Error processing auto upload message.");
                             }
                             break;
                         case Response.CONNECTION_SUCCESSFUL:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent connection successful message.");
+                            ConnectionSuccessfulResponse connectionResponse = JsonSerializer.Deserialize<ConnectionSuccessfulResponse>(message);
+                            int readingCount = 0;
+                            foreach (PortalReader reader in connectionResponse.Readers)
+                            {
+                                if (reader.Reading)
+                                {
+                                    readingCount++;
+                                }
+                            }
+                            if (!output.TryGetValue(MessageType.STATUS, out List<string> statusList))
+                            {
+                                statusList = [];
+                                output[MessageType.STATUS] = statusList;
+                            }
+                            if (readingCount == 0)
+                            {
+                                statusList.Add(TimingSystem.READING_STATUS_STOPPED);
+                            }
+                            else if (readingCount == connectionResponse.Readers.Count)
+                            {
+                                output[MessageType.STATUS].Add(TimingSystem.READING_STATUS_READING);
+                            }
+                            else
+                            {
+                                output[MessageType.STATUS].Add(TimingSystem.READING_STATUS_PARTIAL);
+                            }
                             if (!output.ContainsKey(MessageType.CONNECTED))
                             {
                                 output[MessageType.CONNECTED] = null;
@@ -516,7 +615,7 @@ namespace Chronokeep.Timing.Interfaces
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent disconnect message.");
                             if (!output.ContainsKey(MessageType.DISCONNECT))
                             {
-                                output[MessageType.DISCONNECT] = new List<string>();
+                                output[MessageType.DISCONNECT] = null;
                             }
                             break;
                         case Response.NOTIFICATION:
@@ -563,11 +662,12 @@ namespace Chronokeep.Timing.Interfaces
                             catch (Exception e)
                             {
                                 Log.E("Timing.Interfaces.ChronokeepInterface", "Error processing reader antennas. " + e.Message);
-                                if (!output.ContainsKey(MessageType.ERROR))
+                                if (!output.TryGetValue(MessageType.ERROR, out List<string> errorList))
                                 {
-                                    output[MessageType.ERROR] = new List<string>();
+                                    errorList = [];
+                                    output[MessageType.ERROR] = errorList;
                                 }
-                                output[MessageType.ERROR].Add("Error processing reader antennas.");
+                                errorList.Add("Error processing reader antennas.");
                             }
                             break;
                         default:
@@ -620,11 +720,17 @@ namespace Chronokeep.Timing.Interfaces
             }));
         }
 
-        public void StartReading() { }
+        public void StartReading()
+        {
+            SendMessage(JsonSerializer.Serialize(new ReaderStartAllRequest()));
+        }
 
         public void StartSending() { }
 
-        public void StopReading() { }
+        public void StopReading()
+        {
+            SendMessage(JsonSerializer.Serialize(new ReaderStopAllRequest()));
+        }
 
         public void StopSending() { }
 
@@ -655,7 +761,7 @@ namespace Chronokeep.Timing.Interfaces
         {
             SettingsSetRequest settingsReq = new SettingsSetRequest
             {
-                Settings = new List<PortalSetting>()
+                Settings = []
             };
             settingsReq.Settings.Add(new PortalSetting
             {
@@ -807,22 +913,6 @@ namespace Chronokeep.Timing.Interfaces
                 IPAddress = reader.IPAddress,
                 Port = reader.Port,
                 AutoConnect = reader.AutoConnect,
-            }));
-        }
-
-        public void SendConnectReader(PortalReader reader)
-        {
-            SendMessage(JsonSerializer.Serialize(new ReaderConnectRequest
-            {
-                Id = reader.Id,
-            }));
-        }
-
-        public void SendDisconnectReader(PortalReader reader)
-        {
-            SendMessage(JsonSerializer.Serialize(new ReaderDisconnectRequest
-            {
-                Id = reader.Id,
             }));
         }
 

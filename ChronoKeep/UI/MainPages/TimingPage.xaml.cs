@@ -29,8 +29,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
+using Wpf.Ui.Controls;
 using static Chronokeep.Helpers.Globals;
+using TextBox = System.Windows.Controls.TextBox;
+using UiButton = Wpf.Ui.Controls.Button;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -180,7 +184,7 @@ namespace Chronokeep.UI.MainPages
             }
             List<TimingSystem> systems = mWindow.GetConnectedSystems();
             int numSystems = systems.Count;
-            string system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+            string system = Readers.DEFAULT_TIMING_SYSTEM;
             try
             {
                 system = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM).Value;
@@ -188,7 +192,7 @@ namespace Chronokeep.UI.MainPages
             catch
             {
                 Log.D("UI.MainPages.TimingPage", "Error fetching default timing system information.");
-                system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+                system = Readers.DEFAULT_TIMING_SYSTEM;
             }
             if (numSystems < 3)
             {
@@ -402,7 +406,7 @@ namespace Chronokeep.UI.MainPages
             }
             if (total < 4)
             {
-                string system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+                string system = Readers.DEFAULT_TIMING_SYSTEM;
                 try
                 {
                     system = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM).Value;
@@ -410,7 +414,7 @@ namespace Chronokeep.UI.MainPages
                 catch
                 {
                     Log.D("UI.MainPages.TimingPage", "Error fetching default timing system information.");
-                    system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+                    system = Readers.DEFAULT_TIMING_SYSTEM;
                 }
                 for (int i = total; i < 4; i++)
                 {
@@ -748,7 +752,7 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.TimingPage", connected + " systems connected or trying to connect.");
             if (connected >= total)
             {
-                string system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+                string system = Readers.DEFAULT_TIMING_SYSTEM;
                 try
                 {
                     system = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM).Value;
@@ -756,7 +760,7 @@ namespace Chronokeep.UI.MainPages
                 catch
                 {
                     Log.D("UI.MainPages.TimingPage", "Error fetching default timing system information.");
-                    system = Constants.Readers.DEFAULT_TIMING_SYSTEM;
+                    system = Readers.DEFAULT_TIMING_SYSTEM;
                 }
                 ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system), locations));
                 total = ReadersBox.Items.Count;
@@ -1590,11 +1594,11 @@ namespace Chronokeep.UI.MainPages
             public TextBox ReaderIP { get; private set; }
             public TextBox ReaderPort { get; private set; }
             public ComboBox ReaderLocation { get; private set; }
-            public Wpf.Ui.Controls.Button ConnectButton { get; private set; }
-            public Wpf.Ui.Controls.Button ClockButton { get; private set; }
-            public Wpf.Ui.Controls.Button RewindButton { get; private set; }
-            public Wpf.Ui.Controls.Button SettingsButton { get; private set; }
-            public Wpf.Ui.Controls.Button RemoveButton { get; private set; }
+            public UiButton ConnectButton { get; private set; }
+            public UiButton ClockButton { get; private set; }
+            public UiButton RewindButton { get; private set; }
+            public UiButton SettingsButton { get; private set; }
+            public UiButton RemoveButton { get; private set; }
 
             readonly TimingPage parent;
             private List<TimingLocation> locations;
@@ -1608,9 +1612,9 @@ namespace Chronokeep.UI.MainPages
 
             public AReaderBox(TimingPage window, TimingSystem sys, List<TimingLocation> locations)
             {
-                this.parent = window;
+                parent = window;
                 this.locations = locations;
-                this.reader = sys;
+                reader = sys;
                 Grid thePanel = new Grid()
                 {
                     VerticalAlignment = VerticalAlignment.Center,
@@ -1625,7 +1629,7 @@ namespace Chronokeep.UI.MainPages
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Settings
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Connect
                 thePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60) });  // Disconnect
-                this.Content = thePanel;
+                Content = thePanel;
                 ReaderType = new ComboBox()
                 {
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -1634,11 +1638,11 @@ namespace Chronokeep.UI.MainPages
                     Height = 40
                 };
                 ComboBoxItem current = null, selected = null;
-                foreach (string SYSTEM_IDVAL in Constants.Readers.SYSTEM_NAMES.Keys)
+                foreach (string SYSTEM_IDVAL in Readers.SYSTEM_NAMES.Keys)
                 {
                     current = new ComboBoxItem()
                     {
-                        Content = Constants.Readers.SYSTEM_NAMES[SYSTEM_IDVAL],
+                        Content = Readers.SYSTEM_NAMES[SYSTEM_IDVAL],
                         Uid = SYSTEM_IDVAL
                     };
                     if (SYSTEM_IDVAL == reader.Type)
@@ -1713,9 +1717,9 @@ namespace Chronokeep.UI.MainPages
                 }
                 thePanel.Children.Add(ReaderLocation);
                 Grid.SetColumn(ReaderLocation, 3);
-                ClockButton = new Wpf.Ui.Controls.Button()
+                ClockButton = new()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Clock24 },
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Clock24 },
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -1726,9 +1730,9 @@ namespace Chronokeep.UI.MainPages
                 ClockButton.Click += new RoutedEventHandler(this.Clock);
                 thePanel.Children.Add(ClockButton);
                 Grid.SetColumn(ClockButton, 4);
-                RewindButton = new Wpf.Ui.Controls.Button()
+                RewindButton = new()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Rewind24 },
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Rewind24 },
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -1739,9 +1743,9 @@ namespace Chronokeep.UI.MainPages
                 RewindButton.Click += new RoutedEventHandler(this.Rewind);
                 thePanel.Children.Add(RewindButton);
                 Grid.SetColumn(RewindButton, 5);
-                SettingsButton = new Wpf.Ui.Controls.Button()
+                SettingsButton = new()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Settings24 },
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Settings24 },
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -1750,9 +1754,9 @@ namespace Chronokeep.UI.MainPages
                 SettingsButton.Click += new RoutedEventHandler(this.Settings);
                 thePanel.Children.Add(SettingsButton);
                 Grid.SetColumn(SettingsButton, 6);
-                ConnectButton = new Wpf.Ui.Controls.Button()
+                ConnectButton = new()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Play24 },
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Play24 },
                     Uid = "connect",
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
@@ -1762,9 +1766,9 @@ namespace Chronokeep.UI.MainPages
                 ConnectButton.Click += new RoutedEventHandler(this.Connect);
                 thePanel.Children.Add(ConnectButton);
                 Grid.SetColumn(ConnectButton, 7);
-                RemoveButton = new Wpf.Ui.Controls.Button()
+                RemoveButton = new()
                 {
-                    Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Delete24 },
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
                     Margin = new Thickness(5, 5, 5, 5),
                     VerticalContentAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -1822,6 +1826,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     SetWorking();
                 }
+                ChangeReadingStatus(reader.SystemStatus);
             }
 
             private void SelectAll(object sender, RoutedEventArgs e)
@@ -1884,6 +1889,24 @@ namespace Chronokeep.UI.MainPages
 
             private void Settings(object sender, RoutedEventArgs e)
             {
+                if (reader == null || reader.SystemInterface == null)
+                {
+                    return;
+                }
+                if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control
+                    || (Keyboard.Modifiers & ModifierKeys.Alt) == ModifierKeys.Alt)
+                {
+                    if (reader.SystemStatus == TimingSystem.READING_STATUS_READING
+                        || reader.SystemStatus == TimingSystem.READING_STATUS_PARTIAL)
+                    {
+                        reader.SystemInterface.StopReading();
+                    }
+                    else if (reader.SystemStatus == TimingSystem.READING_STATUS_STOPPED)
+                    {
+                        reader.SystemInterface.StartReading();
+                    }
+                    return;
+                }
                 if (reader.SystemInterface.SettingsEditable())
                 {
                     reader.SystemInterface.OpenSettings();
@@ -1937,7 +1960,7 @@ namespace Chronokeep.UI.MainPages
                 ReaderLocation.IsEnabled = false;
                 RemoveButton.IsEnabled = false;
                 RemoveButton.Opacity = 0.2;
-                if (reader.Type.Equals(Constants.Readers.SYSTEM_IPICO_LITE, StringComparison.OrdinalIgnoreCase))
+                if (reader.Type.Equals(Readers.SYSTEM_IPICO_LITE, StringComparison.OrdinalIgnoreCase))
                 {
                     RewindButton.IsEnabled = false;
                     ClockButton.IsEnabled = false;
@@ -1965,7 +1988,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 ConnectButton.IsEnabled = true;
                 ConnectButton.Opacity = 1.0;
-                ConnectButton.Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Stop24 };
+                ConnectButton.Icon = new SymbolIcon() { Symbol = SymbolRegular.Stop24 };
                 ConnectButton.Uid = "disconnect";
             }
 
@@ -1973,7 +1996,7 @@ namespace Chronokeep.UI.MainPages
             {
                 ReaderType.IsEnabled = true;
                 ReaderIP.IsEnabled = true;
-                ReaderPort.IsEnabled = Constants.Readers.SYSTEM_CHRONOKEEP_PORTAL == reader.Type ? false : true;
+                ReaderPort.IsEnabled = Readers.SYSTEM_CHRONOKEEP_PORTAL == reader.Type ? false : true;
                 ReaderLocation.IsEnabled = true;
                 // Set Remove and Connect buttons to enabled
                 RemoveButton.IsEnabled = true;
@@ -1987,7 +2010,7 @@ namespace Chronokeep.UI.MainPages
                 ClockButton.Opacity = 0.2;
                 RewindButton.Opacity = 0.2;
                 SettingsButton.Opacity = 0.2;
-                ConnectButton.Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.Play24 };
+                ConnectButton.Icon = new SymbolIcon() { Symbol = SymbolRegular.Play24 };
                 ConnectButton.Uid = "connect";
             }
 
@@ -2007,7 +2030,7 @@ namespace Chronokeep.UI.MainPages
                 ConnectButton.Opacity = 0.2;
                 RemoveButton.Opacity = 0.2;
                 SettingsButton.Opacity = 0.2;
-                ConnectButton.Icon = new Wpf.Ui.Controls.SymbolIcon() { Symbol = Wpf.Ui.Controls.SymbolRegular.CatchUp24 };
+                ConnectButton.Icon = new SymbolIcon() { Symbol = SymbolRegular.CatchUp24 };
                 ConnectButton.Uid = "working";
             }
 
@@ -2021,6 +2044,26 @@ namespace Chronokeep.UI.MainPages
             {
                 Log.D("UI.MainPages.TimingPage", "Clock button pressed. IP is " + ReaderIP.Text);
                 parent.OpenTimeWindow(reader);
+            }
+
+            private void ChangeReadingStatus(string status)
+            {
+                if (status == TimingSystem.READING_STATUS_STOPPED)
+                {
+                    SettingsButton.Foreground = new SolidColorBrush(Colors.Red);
+                }
+                else if (status == TimingSystem.READING_STATUS_READING)
+                {
+                    SettingsButton.Foreground = new SolidColorBrush(Colors.LimeGreen);
+                }
+                else if (status == TimingSystem.READING_STATUS_PARTIAL)
+                {
+                    SettingsButton.Foreground = new SolidColorBrush(Colors.Violet);
+                }
+                else
+                {
+                    SettingsButton.SetResourceReference(ForegroundProperty, "TextFillColorPrimaryBrush");
+                }
             }
 
             internal void UpdateSystemType(string type, IDBInterface database)

@@ -44,6 +44,8 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public const string READER_REMOVE     = "reader_remove";
         public const string READER_START      = "reader_start";
         public const string READER_STOP       = "reader_stop";
+        public const string READER_START_ALL  = "reader_start_all";
+        public const string READER_STOP_ALL   = "reader_stop_all";
 
         // Reads related requests
         public const string READS_ADD         = "reads_add";
@@ -370,6 +372,14 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long Id { get; set; }
     }
 
+    public class ReaderStartAllRequest : Request
+    {
+        public ReaderStartAllRequest()
+        {
+            Command = READER_START_ALL;
+        }
+    }
+
     public class ReaderStopRequest : Request
     {
         public ReaderStopRequest()
@@ -379,6 +389,14 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
 
         [JsonPropertyName("id")]
         public long Id { get; set; }
+    }
+
+    public class ReaderStopAllRequest : Request
+    {
+        public ReaderStopAllRequest()
+        {
+            Command = READER_STOP_ALL;
+        }
     }
 
     public class ReadsAddRequest : Request
