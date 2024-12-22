@@ -259,6 +259,8 @@ namespace Chronokeep.MemStore
                     settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME);
                     settings[Constants.Settings.DATABASE_VERSION] = database.GetAppSetting(Constants.Settings.DATABASE_VERSION);
                     settings[Constants.Settings.HARDWARE_IDENTIFIER] = database.GetAppSetting(Constants.Settings.HARDWARE_IDENTIFIER);
+                    settings[Constants.Settings.PROGRAM_VERSION] = database.GetAppSetting(Constants.Settings.PROGRAM_VERSION);
+                    settings[Constants.Settings.AUTO_SHOW_CHANGELOG] = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
                     // Settings 2
                     settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
                     settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);

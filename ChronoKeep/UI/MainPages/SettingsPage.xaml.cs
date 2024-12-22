@@ -94,6 +94,7 @@ namespace Chronokeep.UI.MainPages
             UpdatePage.IsChecked = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE).Value == Constants.Settings.SETTING_TRUE;
             ExitNoPrompt.IsChecked = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT).Value == Constants.Settings.SETTING_TRUE;
             CheckUpdates.IsChecked = database.GetAppSetting(Constants.Settings.CHECK_UPDATES).Value == Constants.Settings.SETTING_TRUE;
+            AutoChangelog.IsChecked = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG).Value == Constants.Settings.SETTING_TRUE;
             AppSetting themeSetting = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
             Log.D("UI.MainPages.SettingsPage", "Current theme set to " + themeSetting.Value + " Theme Offset is " + ThemeOffset);
             if (themeSetting.Value == Constants.Settings.THEME_SYSTEM)
@@ -211,6 +212,7 @@ namespace Chronokeep.UI.MainPages
             database.SetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE, UpdatePage.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.EXIT_NO_PROMPT, ExitNoPrompt.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.CHECK_UPDATES, CheckUpdates.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
+            database.SetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG, AutoChangelog.IsChecked == true ? Constants.Settings.SETTING_TRUE : Constants.Settings.SETTING_FALSE);
             database.SetAppSetting(Constants.Settings.UPLOAD_INTERVAL, Convert.ToInt32(uploadSlider.Value).ToString());
             Globals.UploadInterval = Convert.ToInt32(uploadSlider.Value);
             database.SetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL, Convert.ToInt32(downloadSlider.Value).ToString());

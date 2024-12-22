@@ -13,8 +13,9 @@ namespace Chronokeep.UI.MainPages
     public partial class AboutPage : IMainPage
     {
         IMainWindow mWindow;
+        IDBInterface database;
 
-        public AboutPage(IMainWindow mWindow)
+        public AboutPage(IMainWindow mWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mWindow = mWindow;
@@ -22,10 +23,8 @@ namespace Chronokeep.UI.MainPages
 
             using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
             {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    gitVersion = reader.ReadToEnd();
-                }
+                using StreamReader reader = new(stream);
+                gitVersion = reader.ReadToEnd();
             }
             Log.D("UI.MainPages.AboutPage", "Version: " + gitVersion);
             string dirPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Constants.Settings.HELP_DIR);
@@ -35,6 +34,8 @@ namespace Chronokeep.UI.MainPages
                 HelpDocsButton.NavigateUri = dirPath;
             }
             VersionLabel.Text = gitVersion.Trim();
+            this.database = database;
+
         }
 
         public void Closing() { }
@@ -61,6 +62,12 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             Process.Start("explorer", dirPath);
+        }
+
+        private void Changelog_Click(object sender, RoutedEventArgs e)
+        {
+            ChangelogWindow clw = ChangelogWindow.NewWindow(mWindow, database);
+            clw.Show();
         }
     }
 }

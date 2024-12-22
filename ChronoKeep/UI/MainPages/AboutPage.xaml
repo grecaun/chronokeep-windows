@@ -35,7 +35,17 @@
             Padding="20,10"
             VerticalAlignment="Top"
             Margin="0,5,0,5"
+            Width="160"
             Click="VersionLabel_Click"
+            />
+        <Button
+            Name="Changelog"
+            Content="View Changelog"
+            Padding="20,10"
+            VerticalAlignment="Top"
+            Margin="0,5,0,5"
+            Width="160"
+            Click="Changelog_Click"
             />
         <TextBlock
             Margin="0,20,0,8"

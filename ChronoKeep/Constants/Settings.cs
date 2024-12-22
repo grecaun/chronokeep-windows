@@ -12,6 +12,8 @@ namespace Chronokeep.Constants
         public const string SERVER_NAME                 = "SETTING_SERVER_NAME";
         public const string DATABASE_VERSION            = "DATABASE_VERSION";           // default is database managed
         public const string HARDWARE_IDENTIFIER         = "HARDWARE_IDENTIFIER";        // used to detect if hardware changes so we can update SETTING_UNIQUE_MODIFIER if the user desires
+        public const string PROGRAM_VERSION             = "PROGRAM_VERSION";
+        public const string AUTO_SHOW_CHANGELOG         = "AUTO_SHOW_CHANGELOG";
         // Settings 2
         public const string DEFAULT_EXPORT_DIR          = "SETTING_DEFAULT_EXPORT_DIR";
         public const string DEFAULT_TIMING_SYSTEM       = "SETTING_DEFAULT_TIMING_SYSTEM";
@@ -72,6 +74,10 @@ namespace Chronokeep.Constants
             if (database.GetAppSetting(SERVER_NAME) == null)
             {
                 database.SetAppSetting(SERVER_NAME, "Chronokeep Registration");
+            }
+            if (database.GetAppSetting(AUTO_SHOW_CHANGELOG) == null)
+            {
+                database.SetAppSetting(AUTO_SHOW_CHANGELOG, SETTING_TRUE);
             }
             // Settings 2
             if (database.GetAppSetting(DEFAULT_EXPORT_DIR) == null)

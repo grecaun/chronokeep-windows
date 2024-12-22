@@ -1,0 +1,23 @@
+{
+  "version": "v1.7.0",
+  "changes": [
+    "Added changelog display",
+    "Added late start to distance types to allow for gun time to match the linked distance while allowing for start times past the start window",
+    "Updated about page",
+    "Updated from .NET 7 to .NET 9",
+    "Minimum Windows version changed from 7 to 8",
+    "Various UI tweaks",
+    "The program's unique identifier is now used when dealing with participants and the results API instead of just when dealing with results",
+    "Introduced a hardware check to ensure the user is prompted to change the program's unique identifier if they transfer their database file to a new computer",
+    "Added the ability to search for an event when linking an event to the results API",
+    "Changed how the program deals with Timing System notifications/errors. Now the program keeps a log stored in memory of all notifications received from the timing system. Notifications are classified by severity with those classified as High severity prompting the program to display a DialogBox with information. All notifications can be viewed by clicking on the InfoBadge on the Timing page. When not on the Timing page the program displays an InfoBadge with notification count if there are notifications that haven't been viewed.",
+    "Finished documentation that can be found via link on the about page"
+  ],
+  "fixes": [
+    "Fixed an issue where new installs would immediately crash due to an improper query during database creation",
+    "Modified the UI to remove the change in display when hovering over or selecting certain UI elements",
+    "Fixed style issues with the MaskedTextBoxes used for time input fields",
+    "Fixed a display issue with the navigation panel",
+    "Removed unecessary NuGet packages"
+  ]
+}

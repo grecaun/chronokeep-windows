@@ -50,14 +50,19 @@
                     Content="Dashboard"
                     Click="DashboardButton_Click"
                     x:Name="dashboardButton"
-                    Icon="Home24"
-                    />
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Home24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
                     Click="TimingButton_Click"
                     x:Name="timingButton"
-                    Icon="ClipboardClock24"
                     Content="Timing"
                     >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="ClipboardClock24" />
+                    </ui:NavigationViewItem.Icon>
                     <ui:NavigationViewItem.InfoBadge>
                         <ui:InfoBadge
                             x:Name="TimingButtonInfoBadge"
@@ -72,58 +77,85 @@
                     Content="Announcer"
                     Click="Announcer_Click"
                     x:Name="announcerButton"
-                    Icon="AlertUrgent24"
-                    />
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="AlertUrgent24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
                     Content="Participants"
                     Click="ParticipantsButton_Click"
                     x:Name="participantsButton"
-                    Icon="Person24"
-                    />
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Person24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
                     Content="Chips"
                     Click="ChipsButton_Click"
                     x:Name="chipsButton"
-                    Icon="DeveloperBoard24"
-                    />
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="DeveloperBoard24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
                     Content="Locations"
                     Click="LocationsButton_Click"
                     x:Name="locationsButton"
-                    Icon="Map24"
-                    />
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Map24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
                     Content="Distances"
                     Click="DistancesButton_Click"
                     x:Name="distancesButton"
-                    Icon="Ruler24"
-                    />
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Ruler24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
                     Content="Segments"
                     Click="SegmentsButton_Click"
                     x:Name="segmentsButton"
-                    Icon="Organization24"
-                    />
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Organization24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
                     Content="Age Groups"
                     Click="AgegroupsButton_Click"
                     x:Name="agegroupsButton"
-                    Icon="Trophy24"
-                    />
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Trophy24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem
                     Content="Settings"
                     Click="SettingsButton_Click"
                     x:Name="settingsButton"
-                    Icon="Settings24"
-                    />
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Settings24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem
                     Content="About"
                     Click="AboutButton_Click"
                     x:Name="aboutButton"
-                    Icon="QuestionCircle24"
-                    />
+                    >
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="QuestionCircle24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
             </ui:NavigationView.FooterMenuItems>
         </ui:NavigationView>
         <Grid 

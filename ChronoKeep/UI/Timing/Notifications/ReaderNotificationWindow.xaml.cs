@@ -12,7 +12,6 @@ namespace Chronokeep.UI.Timing.Notifications
     public partial class ReaderNotificationWindow : FluentWindow
     {
         private IWindowCallback window;
-        private IDBInterface database;
 
         private ReaderNotificationWindow(IWindowCallback window)
         {

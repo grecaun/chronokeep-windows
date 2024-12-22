@@ -23,7 +23,7 @@ using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Network.Registration;
 using static Chronokeep.Helpers.Globals;
-using System.Windows.Interop;
+using System.Reflection;
 
 namespace Chronokeep.UI
 {
@@ -807,10 +807,65 @@ namespace Chronokeep.UI
             }
             // Check for hardware changes.
             Log.D("UI.MainWindow", "Starting hardware checker.");
-            HardwareChecker hwCheck = new HardwareChecker(database);
-            Thread hardwareThread = new Thread(new ThreadStart(hwCheck.Run));
+            HardwareChecker hwCheck = new(database);
+            Thread hardwareThread = new(new ThreadStart(hwCheck.Run));
             hardwareThread.Start();
             UpdateTimingBadge();
+            // Check last known program version
+            Log.D("UI.MainWindow", "Starting changelog version checker.");
+            string gitVersion = "";
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
+            {
+                using StreamReader reader = new(stream);
+                gitVersion = reader.ReadToEnd();
+            }
+            if (gitVersion.Contains('-'))
+            {
+                gitVersion = gitVersion.Split('-')[0];
+            }
+            Log.D("UI.MainWindow", "Version.txt read.");
+            AppSetting programVers = database.GetAppSetting(Constants.Settings.PROGRAM_VERSION);
+            AppSetting showChangelog = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
+            if (programVers == null && showChangelog != null && showChangelog.Value == Constants.Settings.SETTING_TRUE)
+            {
+                Log.D("UI.MainWindow", "AppSetting not set.");
+                // Program version was not set, thus this is an upgraded program.
+                ChangelogWindow clw = ChangelogWindow.NewWindow(this, database);
+                clw.Show();
+            }
+            else
+            {
+                Log.D("UI.MainWindow", "Splitting defined values, parsing them, then checking if newer version.");
+                string[] gitSplit = gitVersion.Replace("v", "").Split('.');
+                string[] dbSplit = programVers.Value.Replace("v", "").Split('.');
+                if (dbSplit.Length != 3 || gitSplit.Length != 3)
+                {
+                    DialogBox.Show($"Expected 3 values when checking the program version. DB ${programVers.Value} - P ${gitVersion}");
+                }
+                else if (int.TryParse(gitSplit[0], out int newMajor) &&
+                        int.TryParse(gitSplit[1], out int newMinor) &&
+                        int.TryParse(gitSplit[2], out int newPatch) &&
+                        int.TryParse(dbSplit[0], out int oldMajor) &&
+                        int.TryParse(dbSplit[1], out int oldMinor) &&
+                        int.TryParse(dbSplit[2], out int oldPatch))
+                {
+                    if (newMajor > oldMajor ||                              // The new Major version is greater than the old Major version (1.9.0 -> 2.0.0)
+                        (newMajor == oldMajor && (newMinor > oldMinor       // The Major versions match but the new Minor version is greater than the old Minor version (1.9.0 -> 1.10.0)
+                        || (newMinor == oldMinor && newPatch > oldPatch)))) // The Major and Minor versions match but the new Patch version is greater than the old Patch version (1.10.0 -> 1.10.1)
+                    {
+                        if (showChangelog != null && showChangelog.Value == Constants.Settings.SETTING_TRUE)
+                        {
+                            ChangelogWindow clw = ChangelogWindow.NewWindow(this, database);
+                            clw.Show();
+                        }
+                    }
+                }
+                else
+                {
+                    DialogBox.Show($"Invalid version values found. DB${dbSplit.Length} - P${gitSplit.Length}");
+                }
+            }
+            database.SetAppSetting(Constants.Settings.PROGRAM_VERSION, gitVersion);
         }
 
         public void SwitchPage(IMainPage iPage)
@@ -860,7 +915,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "About page already displayed.");
                 return;
             }
-            SwitchPage(new AboutPage(this));
+            SwitchPage(new AboutPage(this, database));
         }
 
         public void StartHttpServer()
