@@ -13,7 +13,7 @@ namespace Chronokeep
         private int start_milliseconds;
         private int api_id = Constants.APIConstants.NULL_ID;
         private string api_event_id = Constants.APIConstants.NULL_EVENT_ID;
-        private int display_placements = 1, age_groups_as_divisions = 0, days_allowed = 1, upload_specific = 0;
+        private int display_placements = 1, divisions_enabled = 0, days_allowed = 1, upload_specific = 0;
 
         public Event() { }
 
@@ -103,7 +103,7 @@ namespace Chronokeep
             this.api_id = api_id;
             this.api_event_id = api_event_id;
             this.display_placements = display_placements;
-            this.age_groups_as_divisions = age_groups_as_divisions;
+            this.divisions_enabled = age_groups_as_divisions;
             this.days_allowed = days_allowed;
             this.upload_specific = upload_specific;
         }
@@ -127,7 +127,7 @@ namespace Chronokeep
         public int API_ID { get => api_id; set => api_id = value; }
         public string API_Event_ID { get => api_event_id; set => api_event_id = value; }
         public bool DisplayPlacements { get => display_placements != 0; set => display_placements = value ? 1 : 0; }
-        public bool AgeGroupDivision { get => age_groups_as_divisions != 0; set => age_groups_as_divisions = value ? 1 : 0; }
+        public bool DivisionsEnabled { get => divisions_enabled != 0; set => divisions_enabled = value ? 1 : 0; }
         public int DaysAllowed { get => days_allowed; set => days_allowed = value; }
         public bool UploadSpecific { get => upload_specific != 0; set => upload_specific = value ? 1 : 0; }
 
@@ -171,7 +171,7 @@ namespace Chronokeep
             this.CommonStartFinish = other.CommonStartFinish;
             this.DistanceSpecificSegments = other.DistanceSpecificSegments;
             this.DisplayPlacements = other.DisplayPlacements;
-            this.AgeGroupDivision = other.AgeGroupDivision;
+            this.DivisionsEnabled = other.DivisionsEnabled;
             this.DaysAllowed = other.DaysAllowed;
             this.RankByGun = other.RankByGun;
         }

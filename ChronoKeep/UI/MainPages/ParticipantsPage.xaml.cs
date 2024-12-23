@@ -550,7 +550,8 @@ namespace Chronokeep.UI.MainPages
                                     old.EventSpecific.AgeGroupId,
                                     person.Anonymous,
                                     person.SMSEnabled,
-                                    person.Apparel
+                                    person.Apparel,
+                                    old.EventSpecific.Division
                                     ),
                                 old.Email,
                                 old.Phone,
@@ -590,7 +591,8 @@ namespace Chronokeep.UI.MainPages
                                     oldTwo.EventSpecific.AgeGroupId,
                                     person.Anonymous,
                                     person.SMSEnabled,
-                                    person.Apparel
+                                    person.Apparel,
+                                    old.EventSpecific.Division
                                     ),
                                 oldTwo.Email,
                                 oldTwo.Phone,
@@ -626,7 +628,8 @@ namespace Chronokeep.UI.MainPages
                                         "",
                                         person.Anonymous,
                                         person.SMSEnabled,
-                                        person.Apparel
+                                        person.Apparel,
+                                        ""
                                     ),
                                     "",
                                     "",

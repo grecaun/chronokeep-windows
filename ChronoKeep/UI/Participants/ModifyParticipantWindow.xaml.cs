@@ -48,6 +48,14 @@ namespace Chronokeep.UI.Participants
                 Add.Click += new RoutedEventHandler(this.Modify_Click);
                 UpdateAllFields();
             }
+            if (theEvent.DivisionsEnabled)
+            {
+                DivisionPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                DivisionPanel.Visibility = Visibility.Collapsed;
+            }
             BibBox.Focus();
         }
 
@@ -170,6 +178,7 @@ namespace Chronokeep.UI.Participants
             ECPhoneBox.Text = person.ECPhone;
             AnonymousBox.IsChecked = person.Anonymous;
             ApparelBox.Text = person.EventSpecific.Apparel;
+            DivisionBox.Text = person.EventSpecific.Division;
             Add.Content = "Update";
             Done.Content = "Cancel";
         }
@@ -199,6 +208,7 @@ namespace Chronokeep.UI.Participants
             ECPhoneBox.Text = "";
             AnonymousBox.IsChecked = false;
             ApparelBox.Text = "";
+            DivisionBox.Text = "";
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -387,7 +397,8 @@ namespace Chronokeep.UI.Participants
                     Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
                     AnonymousBox.IsChecked == true,
                     false,
-                    ApparelBox.Text
+                    ApparelBox.Text,
+                    DivisionBox.Text
                     ),
                 EmailBox.Text,
                 PhoneBox.Text,
@@ -469,7 +480,7 @@ namespace Chronokeep.UI.Participants
         {
             if (e.Key == Key.Return)
             {
-                Add.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                Add.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
             }
         }
 

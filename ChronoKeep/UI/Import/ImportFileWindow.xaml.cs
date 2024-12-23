@@ -50,7 +50,8 @@ namespace Chronokeep
             "Age",
             "Apparel",
             "Registration Date",
-            "Anonymous"
+            "Anonymous",
+            "Division"
         };
         internal static readonly int FIRST = 1;
         internal static readonly int LAST = 2;
@@ -77,6 +78,7 @@ namespace Chronokeep
         internal static readonly int APPARELITEM = 23;
         internal static readonly int REGISTRATIONDATE = 24;
         internal static readonly int ANONYMOUS = 25;
+        internal static readonly int DIVISION = 26;
         Page page1 = null;
         Page page2 = null;
         Page multiplesPage = null;
@@ -399,7 +401,8 @@ namespace Chronokeep
                             data.Data[counter][keys[OTHER]], // other
                             data.Data[counter][keys[ANONYMOUS]] != null && data.Data[counter][keys[ANONYMOUS]].Trim().Length > 0, // Set Anonymous if anything is in the field
                             false, // always false, this field is no longer used
-                            data.Data[counter][keys[APPARELITEM]]
+                            data.Data[counter][keys[APPARELITEM]],
+                            data.Data[counter][keys[DIVISION]]
                             ),
                         data.Data[counter][keys[EMAIL]], // email
                         data.Data[counter][keys[PHONE]], // phone

@@ -6,7 +6,7 @@
             checkedIn = 0,
             status = Constants.Timing.EVENTSPECIFIC_UNKNOWN,
             ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-        private string comments, distanceName, owes, other, ageGroupName = "", bib, apparel;
+        private string comments, distanceName, owes, other, ageGroupName = "", bib, apparel, division = "";
         private bool anonymous, sms_enabled;
 
         public EventSpecific() { }
@@ -23,7 +23,8 @@
             string other,
             bool anonymous,
             bool sms_enabled,
-            string apparel
+            string apparel,
+            string distance
             )
         {
             this.eventIdentifier = eid;
@@ -55,7 +56,8 @@
             int ageGroupId,
             bool anonymous,
             bool sms_enabled,
-            string apparel
+            string apparel,
+            string division
             )
         {
             this.identifier = id;
@@ -73,6 +75,7 @@
             this.anonymous = anonymous;
             this.sms_enabled = sms_enabled;
             this.apparel = apparel ?? "";
+            this.division = division;
         }
 
         internal void Trim()
@@ -85,7 +88,7 @@
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false, false, "");
+            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false, false, "", "");
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -104,6 +107,7 @@
         public bool Anonymous { get => anonymous; set => anonymous = value; }
         public bool SMSEnabled { get => sms_enabled; set => sms_enabled = value; }
         public string Apparel { get => apparel; set => apparel = value ?? ""; }
+        public string Division { get => division; set => division = value ?? ""; }
 
         public void CopyFrom(EventSpecific other)
         {
@@ -121,6 +125,7 @@
             this.Anonymous = other.Anonymous;
             this.SMSEnabled = other.SMSEnabled;
             this.Apparel = other.Apparel;
+            this.Division = other.Division;
         }
     }
 }

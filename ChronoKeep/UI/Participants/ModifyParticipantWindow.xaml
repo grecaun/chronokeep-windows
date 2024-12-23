@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Chronokeep.UI.Participants"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Participant" Height="885" Width="520" Closing="Window_Closing" ResizeMode="NoResize"
+        Title="Participant" Height="Auto" SizeToContent="Height" Width="520" Closing="Window_Closing" ResizeMode="NoResize"
         d:DataContext="{d:DesignInstance local:ModifyParticipantWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -27,12 +27,14 @@
                 <TextBox Name="BibBox" FontSize="16" Margin="0,5,15,5" Width="100" VerticalContentAlignment="Center" KeyDown="Box_KeyDown"/>
                 <ComboBox Name="DistanceBox" FontSize="16" Margin="0,5,15,5"/>
             </DockPanel>
-            <DockPanel>
-                <TextBlock Text="First" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
-                <TextBox Name="FirstBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
+            <DockPanel x:Name="DivisionPanel" Visibility="Visible">
+                <TextBlock Text="Division" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <TextBox Name="DivisionBox" Text="" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
-                <TextBlock Text="Last" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <TextBlock Text="First" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
+                <TextBox Name="FirstBox" FontSize="16" Margin="0,5,15,5" Width="140" KeyDown="Box_KeyDown"/>
+                <TextBlock Text="Last" FontSize="16" Margin="0,0,15,0" VerticalAlignment="Center"/>
                 <TextBox Name="LastBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
@@ -102,10 +104,10 @@
                 <TextBlock Text="Apparel" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <TextBox Name="ApparelBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <DockPanel HorizontalAlignment="Center">
                 <Button Name="Add" Content="Add" Height="35" Width="150" FontSize="16" Margin="10,5,10,10"/>
                 <Button Name="Done" Content="Done" Height="35" Width="150" FontSize="16" Margin="10,5,10,10" Click="Done_Click"/>
-            </StackPanel>
+            </DockPanel>
         </StackPanel>
     </Grid>
 </ui:FluentWindow>

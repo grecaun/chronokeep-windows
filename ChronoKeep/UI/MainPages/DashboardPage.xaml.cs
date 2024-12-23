@@ -51,7 +51,7 @@ namespace Chronokeep.UI.MainPages
             commonStartCheckBox.IsChecked = theEvent.CommonStartFinish;
             segmentCheckBox.IsChecked = theEvent.DistanceSpecificSegments;
             placementsCheckBox.IsChecked = theEvent.DisplayPlacements;
-            ageGroupDivisions.IsChecked = theEvent.AgeGroupDivision;
+            divisionsEnabledCheckbox.IsChecked = theEvent.DivisionsEnabled;
             uploadSpecificDistanceResults.IsChecked = theEvent.UploadSpecific;
             ComboBoxItem eventType = null;
             foreach (ComboBoxItem item in TypeBox.Items)
@@ -112,7 +112,7 @@ namespace Chronokeep.UI.MainPages
                 theEvent.CommonStartFinish = commonStartCheckBox.IsChecked ?? false;
                 theEvent.DistanceSpecificSegments = segmentCheckBox.IsChecked ?? false;
                 theEvent.DisplayPlacements = placementsCheckBox.IsChecked ?? true;
-                theEvent.AgeGroupDivision = ageGroupDivisions.IsChecked ?? false;
+                theEvent.DivisionsEnabled = divisionsEnabledCheckbox.IsChecked ?? false;
                 theEvent.UploadSpecific = uploadSpecificDistanceResults.IsChecked ?? false;
                 try
                 {
@@ -156,7 +156,7 @@ namespace Chronokeep.UI.MainPages
             commonStartCheckBox.IsEnabled = false;
             segmentCheckBox.IsEnabled = false;
             placementsCheckBox.IsEnabled = false;
-            ageGroupDivisions.IsEnabled = false;
+            divisionsEnabledCheckbox.IsEnabled = false;
             uploadSpecificDistanceResults.IsEnabled = false;
             TypeBox.IsEnabled = false;
         }
@@ -179,7 +179,7 @@ namespace Chronokeep.UI.MainPages
             segmentCheckBox.IsEnabled = true;
             TypeBox.IsEnabled = true;
             placementsCheckBox.IsEnabled = true;
-            ageGroupDivisions.IsEnabled = true;
+            divisionsEnabledCheckbox.IsEnabled = true;
             uploadSpecificDistanceResults.IsEnabled = true;
         }
 

@@ -31,7 +31,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@window", anEvent.StartWindow),
                 new SQLiteParameter("@type", anEvent.EventType),
                 new SQLiteParameter("@display", anEvent.DisplayPlacements),
-                new SQLiteParameter("@agDiv", anEvent.AgeGroupDivision),
+                new SQLiteParameter("@agDiv", anEvent.DivisionsEnabled),
                 new SQLiteParameter("@daysAllowed", anEvent.DaysAllowed),
                 new SQLiteParameter("@uploadSpecific", anEvent.UploadSpecific ? 1 : 0),
             });
@@ -110,7 +110,7 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@apiid", anEvent.API_ID),
                 new SQLiteParameter("@apieventid", anEvent.API_Event_ID),
                 new SQLiteParameter("@display", anEvent.DisplayPlacements),
-                new SQLiteParameter("@agDiv", anEvent.AgeGroupDivision),
+                new SQLiteParameter("@agDiv", anEvent.DivisionsEnabled),
                 new SQLiteParameter("@daysAllowed", anEvent.DaysAllowed),
                 new SQLiteParameter("@uploadSpecific", anEvent.UploadSpecific ? 1 : 0),
             });

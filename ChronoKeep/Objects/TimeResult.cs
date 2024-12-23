@@ -14,7 +14,7 @@ namespace Chronokeep.Objects
         private long chipSeconds, seconds;
         private string time, locationName, segmentName, firstName, lastName, bib,
             distanceName = "", unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday,
-            linked_distance_name = "", chip = "", participantId = "";
+            linked_distance_name = "", chip = "", participantId = "", division = "";
         private bool anonymous;
         DateTime systemTime;
         Event theEvent;
@@ -56,7 +56,8 @@ namespace Chronokeep.Objects
             Dictionary<int, TimingLocation> locations,
             Dictionary<int, Segment> segments,
             Dictionary<string, Distance> distances,
-            Event theEvent
+            Event theEvent,
+            string division
             )
         {
             this.eventId = eventId;
@@ -176,6 +177,7 @@ namespace Chronokeep.Objects
             this.anonymous = anonymous;
             this.participantId = participantId ?? First+Last;
             this.theEvent = theEvent;
+            this.division = division ?? "";
         }
 
         // Used by routines to add new results to the database.
@@ -191,7 +193,8 @@ namespace Chronokeep.Objects
             string chipTime,
             DateTime systemTime,
             string bib,
-            int status
+            int status,
+            string division
             )
         {
             this.eventId = eventId;
@@ -230,6 +233,7 @@ namespace Chronokeep.Objects
                    + Convert.ToInt64(timeMatch.Groups[3].Value);
                 milliseconds = Convert.ToInt32(timeMatch.Groups[4].Value);
             }
+            this.division = division ?? "";
         }
 
         public int EventSpecificId { get => eventspecificId; set => eventspecificId = value; }
@@ -253,6 +257,7 @@ namespace Chronokeep.Objects
         public int ReadId { get => readId; set => readId = value; }
         public int Place { get => place; set => place = value; }
         public string PlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? place < 1 ? "" : place.ToString() : ""; }
+        public string Division { get => division; set => division = value; }
         public string PrettyPlaceStr
         {
             get => type == Constants.Timing.DISTANCE_TYPE_EARLY && place > 0 ? string.Format("{0}e", place) :

@@ -108,7 +108,7 @@
                 <ui:ToggleSwitch Name="commonStartCheckBox" Content="Common Start/Finish Location" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <ui:ToggleSwitch Name="segmentCheckBox" Content="Distance Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <ui:ToggleSwitch Name="placementsCheckBox" Content="Display Participant Placements" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-                <ui:ToggleSwitch Name="ageGroupDivisions" Content="Use Age Groups as Divisions?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <ui:ToggleSwitch Name="divisionsEnabledCheckbox" Content="Enable divisions?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <ui:ToggleSwitch Name="uploadSpecificDistanceResults" Content="Upload Results for Select Distances?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <DockPanel Margin="10,5,10,5">
                     <TextBlock Text="Event Type" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>

@@ -201,6 +201,7 @@ namespace Chronokeep.Network.Registration
                                                                 "", // other
                                                                 false,
                                                                 addReq.Participant.SMSEnabled,
+                                                                "",
                                                                 ""
                                                                 ),
                                                             "", // email
@@ -327,6 +328,7 @@ namespace Chronokeep.Network.Registration
                                                                         "", // other
                                                                         false,
                                                                         part.SMSEnabled,
+                                                                        "",
                                                                         ""
                                                                         ),
                                                                     "", // email

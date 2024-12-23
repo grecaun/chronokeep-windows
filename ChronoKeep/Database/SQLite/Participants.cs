@@ -261,7 +261,8 @@ namespace Chronokeep.Database.SQLite
                         Convert.ToInt32(reader["eventspecific_age_group_id"]),
                         Convert.ToInt16(reader["eventspecific_anonymous"]) == 0 ? false : true,
                         Convert.ToInt16(reader["eventspecific_sms_enabled"]) == 0 ? false : true,
-                        reader["eventspecific_apparel"].ToString()
+                        reader["eventspecific_apparel"] != DBNull.Value ? reader["eventspecific_apparel"].ToString() : "",
+                        reader["eventspecific_division"] != DBNull.Value ? reader["eventspecific_division"].ToString() : ""
                         ),
                     reader["participant_email"].ToString(),
                     reader["participant_phone"].ToString(),
@@ -307,7 +308,8 @@ namespace Chronokeep.Database.SQLite
                         Convert.ToInt32(reader["eventspecific_age_group_id"]),
                         Convert.ToInt16(reader["eventspecific_anonymous"]) == 0 ? false : true,
                         Convert.ToInt16(reader["eventspecific_sms_enabled"]) == 0 ? false : true,
-                        reader["eventspecific_apparel"] != DBNull.Value ? reader["eventspecific_apparel"].ToString() : ""
+                        reader["eventspecific_apparel"] != DBNull.Value ? reader["eventspecific_apparel"].ToString() : "",
+                        reader["eventspecific_division"] != DBNull.Value ? reader["eventspecific_division"].ToString() : ""
                         ),
                     reader["participant_email"].ToString(),
                     reader["participant_phone"].ToString(),

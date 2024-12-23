@@ -1131,6 +1131,7 @@ namespace Chronokeep.Database.SQLite
                                     Convert.ToInt32(reader["eventspecific_age_group_id"]),
                                     false,
                                     false,
+                                    "",
                                     ""
                                     ),
                                 reader["participant_email"].ToString(),
@@ -1590,6 +1591,13 @@ namespace Chronokeep.Database.SQLite
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE distances ADD COLUMN distance_certification VARCHAR(150) NOT NULL DEFAULT ''; " +
                             "UPDATE settings SET VALUE='68' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
+                        goto case 68;
+                    case 68:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 68.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE eventspecific ADD COLUMN eventspecific_division VARCHAR NOT NULL DEFAULT ''; " +
+                            "UPDATE settings SET VALUE='69' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;
                 }

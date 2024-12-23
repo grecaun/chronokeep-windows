@@ -149,7 +149,8 @@ namespace Chronokeep.Database.SQLite
                     locations,
                     segments,
                     distances,
-                    theEvent
+                    theEvent,
+                    part != null ? part.EventSpecific.Division : ""
                     ));
             }
             reader.Close();

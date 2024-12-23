@@ -256,7 +256,8 @@ namespace Chronokeep.Timing.Routines
                                 "0:00:00.000",
                                 read.Time,
                                 bib,
-                                Constants.Timing.TIMERESULT_STATUS_NONE
+                                Constants.Timing.TIMERESULT_STATUS_NONE,
+                                part == null ? "" : part.EventSpecific.Division
                                 );
                             startTimes[startResult.Identifier] = startResult;
                             newResults.Add(startResult);
@@ -352,7 +353,8 @@ namespace Chronokeep.Timing.Routines
                                     Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
                                     read.Time,
                                     bib,
-                                    Constants.Timing.TIMERESULT_STATUS_NONE
+                                    Constants.Timing.TIMERESULT_STATUS_NONE,
+                                    part == null ? "" : part.EventSpecific.Division
                                     ));
                                 read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                             }
@@ -425,7 +427,8 @@ namespace Chronokeep.Timing.Routines
                                 "0:00:00.000",
                                 read.Time,
                                 read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
-                                Constants.Timing.TIMERESULT_STATUS_NONE
+                                Constants.Timing.TIMERESULT_STATUS_NONE,
+                                ""
                                 );
                             startTimes[startResult.Identifier] = startResult;
                             newResults.Add(startResult);
@@ -513,7 +516,8 @@ namespace Chronokeep.Timing.Routines
                                     Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
                                     read.Time,
                                     read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
-                                    Constants.Timing.TIMERESULT_STATUS_NONE
+                                    Constants.Timing.TIMERESULT_STATUS_NONE,
+                                    ""
                                     ));
                                 read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                             }
@@ -555,7 +559,8 @@ namespace Chronokeep.Timing.Routines
                         "DNS",
                         chipDNSDictionary[chip].Time,
                         chipDNSDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDNSDictionary[chip].ReadBib : chipDNSDictionary[chip].ChipBib,
-                        Constants.Timing.TIMERESULT_STATUS_DNS
+                        Constants.Timing.TIMERESULT_STATUS_DNS,
+                        ""
                         ));
                 }
             }
@@ -596,7 +601,9 @@ namespace Chronokeep.Timing.Routines
                         "DNS",
                         bibDNSDictionary[bib].Time,
                         bib,
-                        Constants.Timing.TIMERESULT_STATUS_DNS));
+                        Constants.Timing.TIMERESULT_STATUS_DNS,
+                        part == null ? "" : part.EventSpecific.Division
+                        ));
                 }
             }
             // process reads that need to be set to ignore
