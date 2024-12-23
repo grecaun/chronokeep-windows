@@ -18,7 +18,7 @@ namespace Chronokeep.UI.Timing
         IDBInterface database;
         Event theEvent;
 
-        List<TimeResult> results = new List<TimeResult>();
+        List<TimeResult> results = [];
 
         public TimingResultsPage(TimingPage parent, IDBInterface database)
         {
@@ -36,7 +36,7 @@ namespace Chronokeep.UI.Timing
             }
             if (theEvent.DivisionsEnabled)
             {
-                DivisionHeaderCol.Width = new System.Windows.GridLength(60);
+                DivisionHeaderCol.Width = new System.Windows.GridLength(80);
                 divisionText.Margin = new System.Windows.Thickness(4);
                 DivisionPlaceHeaderCol.Width = new System.Windows.GridLength(40);
                 divisionPlaceText.Margin = new System.Windows.Thickness(4);

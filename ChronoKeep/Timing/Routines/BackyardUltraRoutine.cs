@@ -876,15 +876,15 @@ namespace Chronokeep.Timing.Routines
             // Dictionary for keeping track of hourly placements.
             Dictionary<(int, string), (TimeResult start, TimeResult end)> HourlyDictionary = new Dictionary<(int, string), (TimeResult, TimeResult)>();
             // Dictionaries for keeping track of placements.
-            Dictionary<string, TimeResult> LastLapDictionary = new Dictionary<string, TimeResult>();
+            Dictionary<string, TimeResult> LastLapDictionary = [];
 
             // Create a dictionary so we can check if placements have changed. (place, location, occurrence, distance)
             Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = new Dictionary<(int, int, int, string), TimeResult>();
             // Dictionary for converting result identifiers into eventspecific id's.
-            Dictionary<string, int> EventSpecificDictionary = new Dictionary<string, int>();
+            Dictionary<string, int> EventSpecificDictionary = [];
 
-            HashSet<string> Finished = new HashSet<string>();
-            HashSet<string> Participants = new HashSet<string>();
+            HashSet<string> Finished = [];
+            HashSet<string> Participants = [];
             foreach (TimeResult result in output)
             {
                 EventSpecificDictionary[result.Identifier] = result.EventSpecificId;
@@ -914,7 +914,7 @@ namespace Chronokeep.Timing.Routines
             }
             // Calculate the current hour.
             int hour = (int)((Constants.Timing.RFIDDateToEpoch(DateTime.Now) - dictionary.distanceStartDict[0].Seconds) / 3600);
-            List<TimeResult> invalid = new List<TimeResult>();
+            List<TimeResult> invalid = [];
             // Process every hour from the start of the event until we don't have any more finishers for that hour
             for (int i = 0; i <= hour; i++)
             {
@@ -927,12 +927,12 @@ namespace Chronokeep.Timing.Routines
                         if (!HourlyDictionary.ContainsKey((i - 1, participant)))
                         {
                             // they have not, so add them to the finished pile from now on
-                            if (EventSpecificDictionary.ContainsKey(participant) && EventSpecificDictionary[participant] != Constants.Timing.TIMERESULT_DUMMYPERSON)
+                            if (EventSpecificDictionary.TryGetValue(participant, out int eventSpecId) && eventSpecId != Constants.Timing.TIMERESULT_DUMMYPERSON)
                             {
-                                TimeResult dnsEntry = new TimeResult(
+                                TimeResult dnsEntry = new(
                                     theEvent.Identifier,
                                     Constants.Timing.TIMERESULT_DUMMYREAD,
-                                    EventSpecificDictionary[participant],
+                                    eventSpecId,
                                     theEvent.CommonStartFinish ? Constants.Timing.LOCATION_FINISH : Constants.Timing.LOCATION_START,
                                     Constants.Timing.SEGMENT_NONE,
                                     i * 2,
@@ -940,7 +940,7 @@ namespace Chronokeep.Timing.Routines
                                     participant,
                                     String.Format("{0}:00:01.000", i-1),
                                     DateTime.Now,
-                                    dictionary.participantEventSpecificDictionary[EventSpecificDictionary[participant]].Bib,
+                                    dictionary.participantEventSpecificDictionary[eventSpecId].Bib,
                                     Constants.Timing.TIMERESULT_STATUS_DNS,
                                     ""
                                     );
@@ -952,17 +952,17 @@ namespace Chronokeep.Timing.Routines
                         else
                         {
                             // check to make sure they finished the previous hour
-                            (TimeResult start, TimeResult end) results = HourlyDictionary[(i - 1, participant)];
-                            if (results.end == null)
+                            (TimeResult start, TimeResult end) = HourlyDictionary[(i - 1, participant)];
+                            if (end == null)
                             {
                                 // No finish time, so they're done
                                 // TODO maybe create a chipread? ensure that we can use a DUMMYREAD id
-                                if (EventSpecificDictionary.ContainsKey(participant) && EventSpecificDictionary[participant] != Constants.Timing.TIMERESULT_DUMMYPERSON)
+                                if (EventSpecificDictionary.TryGetValue(participant, out int eventSpecId) && eventSpecId != Constants.Timing.TIMERESULT_DUMMYPERSON)
                                 {
-                                    TimeResult dnfEntry = new TimeResult(
+                                    TimeResult dnfEntry = new(
                                         theEvent.Identifier,
                                         Constants.Timing.TIMERESULT_DUMMYREAD,
-                                        EventSpecificDictionary[participant],
+eventSpecId,
                                         theEvent.CommonStartFinish ? Constants.Timing.LOCATION_FINISH : Constants.Timing.LOCATION_START,
                                         Constants.Timing.SEGMENT_NONE,
                                         i * 2,
@@ -970,12 +970,12 @@ namespace Chronokeep.Timing.Routines
                                         participant,
                                         String.Format("{0}:59:59.000", i-1),
                                         DateTime.Now,
-                                        dictionary.participantEventSpecificDictionary[EventSpecificDictionary[participant]].Bib,
+                                        dictionary.participantEventSpecificDictionary[eventSpecId].Bib,
                                         Constants.Timing.TIMERESULT_STATUS_DNS,
                                         ""
                                         );
                                     database.AddTimingResult(dnfEntry);
-                                    HourlyDictionary[(i - 1, participant)] = (results.start, dnfEntry);
+                                    HourlyDictionary[(i - 1, participant)] = (start, dnfEntry);
                                 }
                                 Finished.Add(participant);
                             }
@@ -1026,7 +1026,7 @@ namespace Chronokeep.Timing.Routines
             Dictionary<string, int> genderPlaceDictionary = [];
             int place = 0;
             int ageGroupId;
-            string gender;
+            string gender, division;
             // Use the sorted list of results to calculate placements
             foreach (TimeResult result in placementCalculations)
             {
@@ -1039,13 +1039,13 @@ namespace Chronokeep.Timing.Routines
                     {
                         gender = "not specified";
                     }
-                    ageGroupId = person.EventSpecific.AgeGroupId;
                     result.Place = ++place;
                     if (!genderPlaceDictionary.ContainsKey(gender))
                     {
                         genderPlaceDictionary[gender] = 0;
                     }
                     result.GenderPlace = ++genderPlaceDictionary[gender];
+                    ageGroupId = person.EventSpecific.AgeGroupId;
                     if (ageGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
                     {
                         if (!ageGroupPlaceDictionary.ContainsKey((ageGroupId, gender)))
@@ -1054,13 +1054,14 @@ namespace Chronokeep.Timing.Routines
                         }
                         result.AgePlace = ++ageGroupPlaceDictionary[(ageGroupId, gender)];
                     }
-                    if (person.EventSpecific.Division.Length > 0)
+                    division = person.EventSpecific.Division.ToLower();
+                    if (division.Length > 0)
                     {
-                        if (!divisionPlaceDictionary.ContainsKey(person.EventSpecific.Division))
+                        if (!divisionPlaceDictionary.ContainsKey(division))
                         {
-                            divisionPlaceDictionary[person.EventSpecific.Division] = 0;
+                            divisionPlaceDictionary[division] = 0;
                         }
-                        result.DivisionPlace = ++divisionPlaceDictionary[person.EventSpecific.Division];
+                        result.DivisionPlace = ++divisionPlaceDictionary[division];
                     }
                 }
             }

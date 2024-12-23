@@ -52,9 +52,9 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "INSERT INTO time_results (event_id, eventspecific_id, location_id, segment_id, " +
                 "timeresult_occurance, timeresult_time, timeresult_unknown_id, read_id, timeresult_chiptime," +
                 "timeresult_place, timeresult_age_place, timeresult_gender_place," +
-                "timeresult_status, timeresult_splittime, timeresult_uploaded)" +
+                "timeresult_status, timeresult_splittime, timeresult_uploaded, timeresult_division_place)" +
                 " VALUES (@event,@specific,@location,@segment,@occ,@time,@unknown,@read,@chip,@place,@agplace," +
-                "@gendplace,@status,@split,@uploaded)";
+                "@gendplace,@status,@split,@uploaded,@divPlace)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@event", tr.EventIdentifier),
                 new SQLiteParameter("@specific", tr.EventSpecificId),
@@ -70,7 +70,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@gendplace", tr.GenderPlace),
                 new SQLiteParameter("@status", tr.Status),
                 new SQLiteParameter("@split", tr.LapTime),
-                new SQLiteParameter("@uploaded", tr.Uploaded)
+                new SQLiteParameter("@uploaded", tr.Uploaded),
+                new SQLiteParameter("@divPlace", tr.DivisionPlace)
             });
             command.ExecuteNonQuery();
         }

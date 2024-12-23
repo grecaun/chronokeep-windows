@@ -792,7 +792,7 @@ namespace Chronokeep.Timing.Routines
                 return rank1.CompareTo(rank2);
             });
             int ageGroupId;
-            string gender;
+            string gender, division;
             foreach (TimeResult result in topResults)
             {
                 // Make sure we know who we're looking at. Can't rank otherwise.
@@ -829,13 +829,14 @@ namespace Chronokeep.Timing.Routines
                         }
                         result.AgePlace = ++ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)];
                     }
-                    if (person.EventSpecific.Division.Length > 0)
+                    division = person.EventSpecific.Division.ToLower();
+                    if (division.Length > 0)
                     {
-                        if (!divisionPlaceDictionary.ContainsKey((distanceId, person.EventSpecific.Division)))
+                        if (!divisionPlaceDictionary.ContainsKey((distanceId, division)))
                         {
-                            divisionPlaceDictionary[(distanceId, person.EventSpecific.Division)] = 0;
+                            divisionPlaceDictionary[(distanceId, division)] = 0;
                         }
-                        result.DivisionPlace = ++divisionPlaceDictionary[(distanceId, person.EventSpecific.Division)];
+                        result.DivisionPlace = ++divisionPlaceDictionary[(distanceId, division)];
                     }
                     foreach (TimeResult otherResult in personResults[result.EventSpecificId])
                     {

@@ -66,8 +66,8 @@
                         <TextBlock Grid.Column="9" Margin="4" Text="{Binding GenderPlaceStr}" />
                         <TextBlock Grid.Column="10" Margin="4" Text="{Binding AgeGroupName}" />
                         <TextBlock Grid.Column="11" Margin="4" Text="{Binding AgePlaceStr}" />
-                        <TextBlock Grid.Column="12" Margin="4" Text="{Binding Division}"  Background="Red"/>
-                        <TextBlock Grid.Column="13" Margin="4" Text="{Binding DivisionPlaceStr}"  Background="Red"/>
+                        <TextBlock Grid.Column="12" Margin="4" Text="{Binding Division}"/>
+                        <TextBlock Grid.Column="13" Margin="4" Text="{Binding DivisionPlaceStr}"/>
                         <TextBlock Grid.Column="14" Margin="4" Text="{Binding DistanceName}" />
                         <TextBlock Grid.Column="15" Margin="4" Text="{Binding PrettyType}" />
                         <TextBlock Grid.Column="16" Margin="4" Text="{Binding SegmentName}" />
@@ -99,7 +99,7 @@
                     <ColumnDefinition Width="40"/>  <!-- Gender Place -->
                     <ColumnDefinition Width="60"/>  <!-- Age Group -->
                     <ColumnDefinition Width="40"/>  <!-- Age Group Place -->
-                    <ColumnDefinition Width="60" x:Name="DivisionHeaderCol" />  <!-- Division -->
+                    <ColumnDefinition Width="80" x:Name="DivisionHeaderCol" />  <!-- Division -->
                     <ColumnDefinition Width="40" x:Name="DivisionPlaceHeaderCol" />  <!-- Division Place -->
                     <ColumnDefinition Width="110"/> <!-- Distance -->
                     <ColumnDefinition Width="20"/>  <!-- Type -->
@@ -117,8 +117,8 @@
                 <TextBlock Grid.Column="9" Margin="4" Text="GP" x:Name="genderPlaceText"/>
                 <TextBlock Grid.Column="10" Margin="4" Text="Age Grp"/>
                 <TextBlock Grid.Column="11" Margin="4" Text="AP" x:Name="agePlaceText"/>
-                <TextBlock Grid.Column="12" Margin="4" Text="Division" x:Name="divisionText" Background="Red"/>
-                <TextBlock Grid.Column="13" Margin="4" Text="DP" x:Name="divisionPlaceText" Background="Red"/>
+                <TextBlock Grid.Column="12" Margin="4" Text="Division" x:Name="divisionText"/>
+                <TextBlock Grid.Column="13" Margin="4" Text="DP" x:Name="divisionPlaceText"/>
                 <TextBlock Grid.Column="14" Margin="4" Text="Distance"/>
                 <TextBlock Grid.Column="15" Margin="4" Text="T"/>
                 <TextBlock Grid.Column="16" Margin="4" Text="Segment"/>

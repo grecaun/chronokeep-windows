@@ -43,8 +43,8 @@ namespace Chronokeep.Database.SQLite
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, distance_id, eventspecific_bib, " +
                 "eventspecific_checkedin, eventspecific_comments, eventspecific_owes, eventspecific_other, " +
-                "eventspecific_age_group_name, eventspecific_age_group_id, eventspecific_anonymous, eventspecific_sms_enabled, eventspecific_apparel) " +
-                "VALUES (@participant,@event,@distance,@bib,@checkedin,@comments,@owes,@other,@ageGroupName,@ageGroupId,@anon,@sms,@apparel)";
+                "eventspecific_age_group_name, eventspecific_age_group_id, eventspecific_anonymous, eventspecific_sms_enabled, eventspecific_apparel, eventspecific_division) " +
+                "VALUES (@participant,@event,@distance,@bib,@checkedin,@comments,@owes,@other,@ageGroupName,@ageGroupId,@anon,@sms,@apparel,@division)";
             command.Parameters.AddRange(new SQLiteParameter[] {
                 new SQLiteParameter("@participant", person.Identifier),
                 new SQLiteParameter("@event", person.EventSpecific.EventIdentifier),
@@ -58,7 +58,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@ageGroupId", person.EventSpecific.AgeGroupId),
                 new SQLiteParameter("@anon", person.EventSpecific.Anonymous ? 1 : 0),
                 new SQLiteParameter("@sms", person.EventSpecific.SMSEnabled ? 1 : 0),
-                new SQLiteParameter("@apparel", person.EventSpecific.Apparel)
+                new SQLiteParameter("@apparel", person.EventSpecific.Apparel),
+                new SQLiteParameter("@division", person.EventSpecific.Division)
             });
             command.ExecuteNonQuery();
             long outVal = connection.LastInsertRowId;
@@ -116,7 +117,7 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "UPDATE eventspecific SET distance_id=@distanceId, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
                 "eventspecific_owes=@owes, eventspecific_other=@other, " +
                 "eventspecific_comments=@comments, eventspecific_status=@status, eventspecific_age_group_name=@ageGroupName, eventspecific_age_group_id=@ageGroupId, " +
-                "eventspecific_anonymous=@anon, eventspecific_sms_enabled=@sms, eventspecific_apparel=@apparel " +
+                "eventspecific_anonymous=@anon, eventspecific_sms_enabled=@sms, eventspecific_apparel=@apparel, eventspecific_division=@division " +
                 "WHERE eventspecific_id=@eventspecid";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@distanceId", person.EventSpecific.DistanceIdentifier),
@@ -131,7 +132,8 @@ namespace Chronokeep.Database.SQLite
                     new SQLiteParameter("@ageGroupId", person.EventSpecific.AgeGroupId),
                     new SQLiteParameter("@anon", person.EventSpecific.Anonymous ? 1 : 0),
                     new SQLiteParameter("@sms", person.EventSpecific.SMSEnabled ? 1 : 0),
-                    new SQLiteParameter("@apparel", person.EventSpecific.Apparel)
+                    new SQLiteParameter("@apparel", person.EventSpecific.Apparel),
+                    new SQLiteParameter("@division", person.EventSpecific.Division)
                 });
             command.ExecuteNonQuery();
         }
