@@ -135,6 +135,11 @@ namespace Chronokeep.UI.MainPages
                     Log.D("UI.DashboardPage", "Common Age Groups value has changed.");
                     database.ResetAgeGroups(theEvent.Identifier);
                 }
+                if (oldEvent.DivisionsEnabled != theEvent.DivisionsEnabled)
+                {
+                    Log.D("UI.DashboardPage", "Divisions Enabled value has changed.");
+                    database.UpdateDivisionsEnabled();
+                }
                 database.UpdateEvent(theEvent);
                 Log.D("UI.DashboardPage", "Updating view.");
                 mWindow.NotifyTimingWorker(); ;

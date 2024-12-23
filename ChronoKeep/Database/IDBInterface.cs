@@ -36,6 +36,8 @@ namespace Chronokeep
         void SetCurrentEvent(int eventID);
         Event GetEvent(int id);
         List<Event> GetEvents();
+        void UpdateDivisionsEnabled();
+        void UpdateStart();
 
         // Distance Functions
         int AddDistance(Distance div);

@@ -10,7 +10,8 @@ namespace Chronokeep.Objects
     {
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, readId, place, agePlace, genderPlace,
-            ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds;
+            ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds,
+            divisionPlace;
         private long chipSeconds, seconds;
         private string time, locationName, segmentName, firstName, lastName, bib,
             distanceName = "", unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday,
@@ -57,7 +58,8 @@ namespace Chronokeep.Objects
             Dictionary<int, Segment> segments,
             Dictionary<string, Distance> distances,
             Event theEvent,
-            string division
+            string division,
+            int divisionPlace
             )
         {
             this.eventId = eventId;
@@ -178,6 +180,7 @@ namespace Chronokeep.Objects
             this.participantId = participantId ?? First+Last;
             this.theEvent = theEvent;
             this.division = division ?? "";
+            this.divisionPlace = divisionPlace;
         }
 
         // Used by routines to add new results to the database.
@@ -211,6 +214,7 @@ namespace Chronokeep.Objects
             place = Constants.Timing.TIMERESULT_DUMMYPLACE;
             agePlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             genderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
+            divisionPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             this.status = status;
             splitTime = "";
             Match chipTimeMatch = timeRegex.Match(chipTime);
@@ -257,7 +261,6 @@ namespace Chronokeep.Objects
         public int ReadId { get => readId; set => readId = value; }
         public int Place { get => place; set => place = value; }
         public string PlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? place < 1 ? "" : place.ToString() : ""; }
-        public string Division { get => division; set => division = value; }
         public string PrettyPlaceStr
         {
             get => type == Constants.Timing.DISTANCE_TYPE_EARLY && place > 0 ? string.Format("{0}e", place) :
@@ -268,6 +271,9 @@ namespace Chronokeep.Objects
         public string AgePlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? agePlace < 1 ? "" : agePlace.ToString() : ""; }
         public int GenderPlace { get => genderPlace; set => genderPlace = value; }
         public string GenderPlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? genderPlace < 1 ? "" : genderPlace.ToString() : ""; }
+        public string Division { get => division; set => division = value; }
+        public int DivisionPlace { get => divisionPlace; set => divisionPlace = value; }
+        public string DivisionPlaceStr { get => theEvent != null && theEvent.DisplayPlacements ? divisionPlace < 1 ? "" : divisionPlace.ToString() : ""; }
         public int Type { get => type; set => type = value; }
         public string Identifier { get => unknownId; }
         public string PrettyType
@@ -278,6 +284,9 @@ namespace Chronokeep.Objects
         {
             get => gender == null ? "" : gender == "Man" ? "M" : gender == "Woman" ? "W" : gender == "Non-Binary" ? "X" : gender == "Not Specified" ? "" : gender.Length < 2 ? "" : gender[..2];
         }
+        public int DivisionColWidth { get => theEvent.DivisionsEnabled ? 60 : 0; }
+        public int DivisionPlaceColWidth { get => theEvent.DivisionsEnabled ? 40 : 0; }
+        public int DivisionMargin { get => theEvent.DivisionsEnabled ? 4 : 0; }
 
         public string PrettyTypeStr()
         {
@@ -802,6 +811,11 @@ namespace Chronokeep.Objects
                 && this.LocationId == other.LocationId
                 && this.SegmentId == other.SegmentId
                 && this.Occurrence == other.Occurrence;
+        }
+
+        public void UpdateEvent(Event newEvent)
+        {
+            theEvent = newEvent;
         }
 
         public enum SMSState

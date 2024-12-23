@@ -73,7 +73,6 @@ namespace Chronokeep.Database.SQLite
                     new SQLiteParameter("@mill", read.TimeMilliseconds)
             });
             command.ExecuteNonQuery();
-
         }
 
         internal static void SetChipReadStatus(ChipRead read, SQLiteConnection connection)

@@ -34,6 +34,20 @@ namespace Chronokeep.UI.Timing
             {
                 Results.GetStaticVariables(database);
             }
+            if (theEvent.DivisionsEnabled)
+            {
+                DivisionHeaderCol.Width = new System.Windows.GridLength(60);
+                divisionText.Margin = new System.Windows.Thickness(4);
+                DivisionPlaceHeaderCol.Width = new System.Windows.GridLength(40);
+                divisionPlaceText.Margin = new System.Windows.Thickness(4);
+            }
+            else
+            {
+                DivisionHeaderCol.Width = new System.Windows.GridLength(0);
+                divisionText.Margin = new System.Windows.Thickness(0);
+                DivisionPlaceHeaderCol.Width = new System.Windows.GridLength(0);
+                divisionPlaceText.Margin = new System.Windows.Thickness(0);
+            }
         }
 
         public void Closing() { }
@@ -191,6 +205,7 @@ namespace Chronokeep.UI.Timing
             placeText.Visibility = System.Windows.Visibility.Visible;
             genderPlaceText.Visibility = System.Windows.Visibility.Visible;
             agePlaceText.Visibility = System.Windows.Visibility.Visible;
+            divisionPlaceText.Visibility = System.Windows.Visibility.Visible;
         }
 
         public void HidePlacements()
@@ -198,6 +213,7 @@ namespace Chronokeep.UI.Timing
             placeText.Visibility = System.Windows.Visibility.Hidden;
             genderPlaceText.Visibility = System.Windows.Visibility.Hidden;
             agePlaceText.Visibility = System.Windows.Visibility.Hidden;
+            divisionPlaceText.Visibility = System.Windows.Visibility.Hidden;
         }
 
         public void CancelableUpdateView(CancellationToken token)

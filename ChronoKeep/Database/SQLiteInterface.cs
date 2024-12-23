@@ -2485,5 +2485,9 @@ namespace Chronokeep
             connection.Close();
             mutex.ReleaseMutex();
         }
+
+        public void UpdateDivisionsEnabled() { }
+
+        public void UpdateStart() { }
     }
 }

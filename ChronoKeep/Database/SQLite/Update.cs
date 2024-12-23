@@ -1597,6 +1597,7 @@ namespace Chronokeep.Database.SQLite
                         Log.D("Database.SQLite.Update", "Upgrading from version 68.");
                         command = connection.CreateCommand();
                         command.CommandText = "ALTER TABLE eventspecific ADD COLUMN eventspecific_division VARCHAR NOT NULL DEFAULT ''; " +
+                            "ALTER TABLE time_results ADD COLUMN timeresult_division_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "; " +
                             "UPDATE settings SET VALUE='69' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;

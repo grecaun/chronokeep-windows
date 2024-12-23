@@ -150,7 +150,8 @@ namespace Chronokeep.Database.SQLite
                     segments,
                     distances,
                     theEvent,
-                    part != null ? part.EventSpecific.Division : ""
+                    part != null ? part.EventSpecific.Division : "",
+                    Convert.ToInt32(reader["timeresult_division_place"])
                     ));
             }
             reader.Close();

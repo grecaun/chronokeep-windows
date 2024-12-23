@@ -73,6 +73,7 @@ namespace Chronokeep.UI.MainPages
         Dictionary<int, (long seconds, int milliseconds)> waveTimes = new Dictionary<int, (long, int)>();
         HashSet<int> waves = new HashSet<int>();
         int selectedWave = -1;
+        List<TimeRelativeWave> relativeToWaveList = [];
 
         public TimingPage(IMainWindow window, IDBInterface database)
         {
@@ -87,7 +88,7 @@ namespace Chronokeep.UI.MainPages
             }
 
             // Setup the running clock.
-            Timer.Tick += new EventHandler(Timer_Click);
+            Timer.Tick += new EventHandler(Timer_Tick);
             Timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
 
             IPAdd.Text = "localhost";
@@ -142,23 +143,24 @@ namespace Chronokeep.UI.MainPages
             // Check for multiple wave times, show an ellapsed relative to box if so
             waves.Clear();
             waveTimes.Clear();
-            EllapsedRelativeToBox.Items.Clear();
-            EllapsedRelativeToBox.Items.Add(new ComboBoxItem
+            EllapsedRelativeToBox.ItemsSource = relativeToWaveList;
+            relativeToWaveList.Clear();
+            relativeToWaveList.Add(new()
             {
-                Content = "Start Time",
-                Uid = "-1"
+                Name = "Start Time",
+                Wave = -1
             });
-            EllapsedRelativeToBox.SelectedIndex = 0;
             foreach (Distance div in database.GetDistances(theEvent.Identifier))
             {
-                EllapsedRelativeToBox.Items.Add(new ComboBoxItem
+                relativeToWaveList.Add(new()
                 {
-                    Content = div.Name + " (Wave " + div.Wave + ")",
-                    Uid = div.Wave.ToString()
+                    Name = div.Name + " (Wave " + div.Wave + ")",
+                    Wave = div.Wave
                 });
                 waveTimes[div.Wave] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
                 waves.Add(div.Wave);
             }
+            EllapsedRelativeToBox.SelectedIndex = 0;
             if (waves.Count > 1)
             {
                 EllapsedRelativeToBox.Visibility = Visibility.Visible;
@@ -277,7 +279,7 @@ namespace Chronokeep.UI.MainPages
             // check if we have a remote api set up
             foreach (APIObject api in database.GetAllAPI())
             {
-                if (api.Type == Constants.APIConstants.CHRONOKEEP_REMOTE_SELF || api.Type == Constants.APIConstants.CHRONOKEEP_REMOTE)
+                if (api.Type == APIConstants.CHRONOKEEP_REMOTE_SELF || api.Type == APIConstants.CHRONOKEEP_REMOTE)
                 {
                     if (remoteControllerSwitch != null)
                     {
@@ -409,7 +411,7 @@ namespace Chronokeep.UI.MainPages
                 string system = Readers.DEFAULT_TIMING_SYSTEM;
                 try
                 {
-                    system = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM).Value;
+                    system = database.GetAppSetting(Settings.DEFAULT_TIMING_SYSTEM).Value;
                 }
                 catch
                 {
@@ -497,19 +499,18 @@ namespace Chronokeep.UI.MainPages
             {
                 waves.Clear();
                 waveTimes.Clear();
-                EllapsedRelativeToBox.Items.Clear();
-                EllapsedRelativeToBox.Items.Add(new ComboBoxItem
+                relativeToWaveList.Clear();
+                relativeToWaveList.Add(new()
                 {
-                    Content = "Start Time",
-                    Uid = "-1"
+                    Name = "Start Time",
+                    Wave = -1
                 });
-                EllapsedRelativeToBox.SelectedIndex = 0;
                 foreach (Distance div in database.GetDistances(theEvent.Identifier))
                 {
-                    EllapsedRelativeToBox.Items.Add(new ComboBoxItem
+                    relativeToWaveList.Add(new()
                     {
-                        Content = div.Name + " (Wave " + div.Wave + ")",
-                        Uid = div.Wave.ToString()
+                        Name = div.Name + " (Wave " + div.Wave + ")",
+                        Wave = div.Wave
                     });
                     waveTimes[div.Wave] = (div.StartOffsetSeconds, div.StartOffsetMilliseconds);
                     waves.Add(div.Wave);
@@ -570,7 +571,7 @@ namespace Chronokeep.UI.MainPages
             mWindow.NotifyTimingWorker();
         }
 
-        private void Timer_Click(object sender, EventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
             TimeSpan ellapsed = DateTime.Now - startTime;
             if (waveTimes.TryGetValue(selectedWave, out (long seconds, int milliseconds) value))
@@ -645,6 +646,21 @@ namespace Chronokeep.UI.MainPages
         {
             if (e.Key == Key.Return)
             {
+                if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+                {
+                    Log.D("UI.MainPages.TimingPage", "User wants to reset start time value.");
+                    theEvent.StartSeconds = 0;
+                    theEvent.StartMilliseconds = 0;
+                    if (TimerStarted)
+                    {
+                        TimerStarted = false;
+                        Timer.Stop();
+                    }
+                    database.UpdateEvent(theEvent);
+                    StartTime.Text = "";
+                    EllapsedTime.Text = "00:00:00";
+                    return;
+                }
                 Log.D("UI.MainPages.TimingPage", "Start Time Box return key found.");
                 UpdateStartTime();
             }
@@ -652,8 +668,11 @@ namespace Chronokeep.UI.MainPages
 
         private void StartTimeLostFocus(object sender, RoutedEventArgs e)
         {
-            Log.D("UI.MainPages.TimingPage", "Start Time Box has lost focus.");
-            StartTimeChanged();
+            Log.D("UI.MainPages.TimingPage", $"Start Time Box has lost focus. {StartTime.Text}");
+            if (StartTime.Text.Any(char.IsDigit))
+            {
+                StartTimeChanged();
+            }
         }
 
         private void StartTimeChanged()
@@ -666,6 +685,7 @@ namespace Chronokeep.UI.MainPages
             if (oldStartSeconds != theEvent.StartSeconds || oldStartMilliseconds != theEvent.StartMilliseconds)
             {
                 database.UpdateEvent(theEvent);
+                database.UpdateStart(); // This is a MemStore specific database call that updates the Start value for ChipReads.
                 database.ResetTimingResultsEvent(theEvent.Identifier);
                 UpdateView();
                 mWindow.NetworkClearResults();
@@ -1479,16 +1499,9 @@ namespace Chronokeep.UI.MainPages
         {
             Log.D("UI.MainPages.TimingPage", "EllapsedRelativeToBox selection changed.");
             selectedWave = -1;
-            if (EllapsedRelativeToBox.SelectedIndex >= 0)
+            if (EllapsedRelativeToBox.SelectedIndex >= 0 && EllapsedRelativeToBox.SelectedItem is TimeRelativeWave)
             {
-                try
-                {
-                    selectedWave = Convert.ToInt32(((ComboBoxItem)EllapsedRelativeToBox.SelectedItem).Uid);
-                }
-                catch
-                {
-                    selectedWave = -1;
-                }
+                selectedWave = ((TimeRelativeWave)EllapsedRelativeToBox.SelectedItem).Wave;
             }
         }
 
@@ -2071,6 +2084,12 @@ namespace Chronokeep.UI.MainPages
                 reader.UpdateSystemType(type);
                 this.ReaderPort.Text = reader.Port.ToString();
             }
+        }
+
+        public class TimeRelativeWave
+        {
+            public string Name { get; set; }
+            public int Wave { get; set; }
         }
     }
 }

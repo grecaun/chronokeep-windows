@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chronokeep.Objects;
+using System;
 using System.Collections.Generic;
 
 namespace Chronokeep.MemStore
@@ -125,7 +126,7 @@ namespace Chronokeep.MemStore
 
         public List<Event> GetEvents()
         {
-            Log.D("MemStore", "GetEventID");
+            Log.D("MemStore", "GetEvents");
             List<Event> output = new();
             try
             {
@@ -191,7 +192,7 @@ namespace Chronokeep.MemStore
 
         public void UpdateEvent(Event anEvent)
         {
-            Log.D("MemStore", "RemoveEvent");
+            Log.D("MemStore", "UpdateEvent");
             database.UpdateEvent(anEvent);
             try
             {
@@ -218,10 +219,61 @@ namespace Chronokeep.MemStore
                 throw new MutexLockException("memStoreLock");
             }
         }
+        public void UpdateDivisionsEnabled()
+        {
+            Log.D("MemStore", "UpdateDivisionsEnabled");
+            try
+            {
+                if (memStoreLock.WaitOne(lockTimeout))
+                {
+                    if (theEvent != null)
+                    {
+                        // Update all TimingResults in MemStore
+                        foreach (TimeResult tr in timingResults.Values)
+                        {
+                            tr.UpdateEvent(theEvent);
+                        }
+                    }
+                    memStoreLock.ReleaseMutex();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+        }
+
+        public void UpdateStart()
+        {
+            Log.D("MemStore", "UpdateStart");
+            try
+            {
+                if (memStoreLock.WaitOne(lockTimeout))
+                {
+                    // Update start in chipreads
+                    DateTime start = DateTime.Now;
+                    if (theEvent != null)
+                    {
+                        start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
+                    }
+                    foreach (ChipRead cr in chipReads.Values)
+                    {
+                        cr.Start = start;
+                    }
+                    memStoreLock.ReleaseMutex();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+        }
 
         public void SetFinishOptions(Event anEvent)
         {
-            Log.D("MemStore", "RemoveEvent");
+            Log.D("MemStore", "SetFinishOptions");
             database.SetFinishOptions(anEvent);
             try
             {
@@ -253,7 +305,7 @@ namespace Chronokeep.MemStore
 
         public void SetStartWindow(Event anEvent)
         {
-            Log.D("MemStore", "RemoveEvent");
+            Log.D("MemStore", "SetStartWindow");
             database.SetStartWindow(anEvent);
             try
             {

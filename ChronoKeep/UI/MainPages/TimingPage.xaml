@@ -41,7 +41,15 @@
                         Height="35"
                         HorizontalAlignment="Stretch"
                         SelectionChanged="EllapsedRelativeToBox_SelectionChanged"
-                        Visibility="Collapsed" />
+                        Visibility="Collapsed" >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}" TextAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
                 <StackPanel
                         Orientation="Horizontal"
                         Width="200"
