@@ -282,7 +282,7 @@ namespace Chronokeep.Objects
         }
         public string PrettyGender
         {
-            get => gender == null ? "" : gender == "Man" ? "M" : gender == "Woman" ? "W" : gender == "Non-Binary" ? "X" : gender == "Not Specified" ? "" : gender.Length < 2 ? "" : gender[..2];
+            get => gender == null ? "" : gender == "Man" ? "M" : gender == "Woman" ? "W" : gender == "Non-Binary" ? "X" : gender == "Not Specified" || gender.Equals("ns", StringComparison.OrdinalIgnoreCase) ? "" : gender.Length <= 2 ? gender : gender[..2];
         }
         public int DivisionColWidth { get => theEvent.DivisionsEnabled ? 60 : 0; }
         public int DivisionPlaceColWidth { get => theEvent.DivisionsEnabled ? 40 : 0; }

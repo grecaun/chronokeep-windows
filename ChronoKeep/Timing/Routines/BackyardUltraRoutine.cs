@@ -1018,39 +1018,26 @@ namespace Chronokeep.Timing.Routines
             List<TimeResult> placementCalculations = new List<TimeResult>(LastLapDictionary.Values);
             placementCalculations.Sort(TimeResult.CompareByOccurrence);
             // Get Dictionaries for storing the last known place (age group, gender)
-            // Key is (Age Group ID, int (Gender ID, M=1, F=2, U=3, NB=4))
-            Dictionary<(int, int), int> ageGroupPlaceDictionary = new Dictionary<(int, int), int>();
-            // Key is Gender ID (M=1, F=2, U=3, NB=4)
-            Dictionary<int, int> genderPlaceDictionary = new Dictionary<int, int>();
-            int ageGroupId, age, gender;
+            // The key is as follows: Division
+            Dictionary<string, int> divisionPlaceDictionary = [];
+            // The key is as follows: (Age Group ID, Gender)
+            Dictionary<(int, string), int> ageGroupPlaceDictionary = [];
+            // The key is as follows: Gender
+            Dictionary<string, int> genderPlaceDictionary = [];
             int place = 0;
-            Participant person = null;
+            int ageGroupId;
+            string gender;
             // Use the sorted list of results to calculate placements
             foreach (TimeResult result in placementCalculations)
             {
+                gender = "not specified";
                 ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-                age = -1;
-                gender = -1;
-                if (dictionary.participantEventSpecificDictionary.ContainsKey(result.EventSpecificId))
+                if (dictionary.participantEventSpecificDictionary.TryGetValue(result.EventSpecificId, out Participant person))
                 {
-                    person = dictionary.participantEventSpecificDictionary[result.EventSpecificId];
-                    age = person.GetAge(theEvent.Date);
-                    gender = Constants.Timing.TIMERESULT_GENDER_UNKNOWN;
-                    if (person.Gender.Equals("M", StringComparison.OrdinalIgnoreCase)
-                        || person.Gender.Equals("Male", StringComparison.OrdinalIgnoreCase))
+                    gender = person.Gender.ToLower();
+                    if (gender.Length < 1)
                     {
-                        gender = Constants.Timing.TIMERESULT_GENDER_MALE;
-                    }
-                    else if (person.Gender.Equals("F", StringComparison.OrdinalIgnoreCase)
-                        || person.Gender.Equals("Female", StringComparison.OrdinalIgnoreCase))
-                    {
-                        gender = Constants.Timing.TIMERESULT_GENDER_FEMALE;
-                    }
-                    else if (person.Gender.Equals("NB", StringComparison.OrdinalIgnoreCase)
-                        || person.Gender.Equals("Non-Binary", StringComparison.OrdinalIgnoreCase)
-                        || person.Gender.Equals("X", StringComparison.OrdinalIgnoreCase))
-                    {
-                        gender = Constants.Timing.TIMERESULT_GENDER_NON_BINARY;
+                        gender = "not specified";
                     }
                     ageGroupId = person.EventSpecific.AgeGroupId;
                     result.Place = ++place;
@@ -1058,14 +1045,22 @@ namespace Chronokeep.Timing.Routines
                     {
                         genderPlaceDictionary[gender] = 0;
                     }
-                    result.GenderPlace = ++(genderPlaceDictionary[gender]);
+                    result.GenderPlace = ++genderPlaceDictionary[gender];
                     if (ageGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
                     {
                         if (!ageGroupPlaceDictionary.ContainsKey((ageGroupId, gender)))
                         {
                             ageGroupPlaceDictionary[(ageGroupId, gender)] = 0;
                         }
-                        result.AgePlace = ++(ageGroupPlaceDictionary[(ageGroupId, gender)]);
+                        result.AgePlace = ++ageGroupPlaceDictionary[(ageGroupId, gender)];
+                    }
+                    if (person.EventSpecific.Division.Length > 0)
+                    {
+                        if (!divisionPlaceDictionary.ContainsKey(person.EventSpecific.Division))
+                        {
+                            divisionPlaceDictionary[person.EventSpecific.Division] = 0;
+                        }
+                        result.DivisionPlace = ++divisionPlaceDictionary[person.EventSpecific.Division];
                     }
                 }
             }

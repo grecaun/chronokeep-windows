@@ -2,7 +2,6 @@
 using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Chronokeep.Timing.Routines
 {
@@ -739,31 +738,28 @@ namespace Chronokeep.Timing.Routines
                     result.Status = Constants.Timing.TIMERESULT_STATUS_PROCESSED;
                 }
             }
-            // Get Dictionaries for storing the last known place (age group, gender)
+            // Get Dictionaries for storing the last known place (division, age group, gender, overall)
+            // The key is as follows: (Distance ID, Division)
+            Dictionary<(int, string), int> divisionPlaceDictionary = [];
             // The key is as follows: (Distance ID, Age Group ID, int - Gender)
-            // The value stored is the last place given
-            Dictionary<(int, int, string), int> ageGroupPlaceDictionary = new Dictionary<(int, int, string), int>();
+            Dictionary<(int, int, string), int> ageGroupPlaceDictionary = [];
             // The key is as follows: (Distance ID, Gender)
-            // The value stored is the last place given
-            Dictionary<(int, string), int> genderPlaceDictionary = new Dictionary<(int, string), int>();
+            Dictionary<(int, string), int> genderPlaceDictionary = [];
             // The key is as follows: (Distance ID)
-            // The value stored is the last place given
-            Dictionary<int, int> placeDictionary = new Dictionary<int, int>();
-            int distanceId = -1;
-            Participant person = null;
-            List<TimeResult> topResults = personLastResult.Values.ToList<TimeResult>();
+            Dictionary<int, int> placeDictionary = [];
+            List<TimeResult> topResults = [.. personLastResult.Values];
             topResults.Sort((x1, x2) =>
             {
                 Distance distance1 = null, distance2 = null;
                 int rank1 = 0, rank2 = 0;
                 // Get *linked* distances. (Could be that specific distance)
-                if (dictionary.linkedDistanceDictionary.ContainsKey(x1.RealDistanceName))
+                if (dictionary.linkedDistanceDictionary.TryGetValue(x1.RealDistanceName, out (Distance, int) value1))
                 {
-                    (distance1, rank1) = dictionary.linkedDistanceDictionary[x1.RealDistanceName];
+                    (distance1, rank1) = value1;
                 }
-                if (dictionary.linkedDistanceDictionary.ContainsKey(x2.RealDistanceName))
+                if (dictionary.linkedDistanceDictionary.TryGetValue(x2.RealDistanceName, out (Distance, int) value2))
                 {
-                    (distance2, rank2) = dictionary.linkedDistanceDictionary[x2.RealDistanceName];
+                    (distance2, rank2) = value2;
                 }
                 Log.D("Timing.Routines.TimeRoutine", string.Format("rank 1 {0} - rank 2 {1}", rank1, rank2));
                 if (rank1 == rank2)
@@ -795,18 +791,15 @@ namespace Chronokeep.Timing.Routines
                 Log.D("Timing.Routines.TimeRoutine", "By Rank");
                 return rank1.CompareTo(rank2);
             });
+            int ageGroupId;
+            string gender;
             foreach (TimeResult result in topResults)
             {
                 // Make sure we know who we're looking at. Can't rank otherwise.
-                if (dictionary.participantEventSpecificDictionary.ContainsKey(result.EventSpecificId))
+                if (dictionary.participantEventSpecificDictionary.TryGetValue(result.EventSpecificId, out Participant person))
                 {
-                    person = dictionary.participantEventSpecificDictionary[result.EventSpecificId];
                     // Use a linked distance ID for ranking instead of a specific distance id.
-                    if (dictionary.linkedDistanceIdentifierDictionary.ContainsKey(person.EventSpecific.DistanceIdentifier))
-                    {
-                        distanceId = dictionary.linkedDistanceIdentifierDictionary[person.EventSpecific.DistanceIdentifier];
-                    }
-                    else
+                    if (!dictionary.linkedDistanceIdentifierDictionary.TryGetValue(person.EventSpecific.DistanceIdentifier, out int distanceId))
                     {
                         distanceId = person.EventSpecific.DistanceIdentifier;
                     }
@@ -817,24 +810,39 @@ namespace Chronokeep.Timing.Routines
                         placeDictionary[distanceId] = 0;
                     }
                     result.Place = ++placeDictionary[distanceId];
-                    if (!genderPlaceDictionary.ContainsKey((distanceId, person.Gender)))
+                    gender = person.Gender.ToLower();
+                    if (gender.Length < 1)
                     {
-                        genderPlaceDictionary[(distanceId, person.Gender)] = 0;
+                        gender = "not specified";
                     }
-                    result.GenderPlace = ++genderPlaceDictionary[(distanceId, person.Gender)];
-                    if (person.EventSpecific.AgeGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
+                    ageGroupId = person.EventSpecific.AgeGroupId;
+                    if (!genderPlaceDictionary.ContainsKey((distanceId, gender)))
                     {
-                        if (!ageGroupPlaceDictionary.ContainsKey((distanceId, person.EventSpecific.AgeGroupId, person.Gender)))
+                        genderPlaceDictionary[(distanceId, gender)] = 0;
+                    }
+                    result.GenderPlace = ++genderPlaceDictionary[(distanceId, gender)];
+                    if (ageGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
+                    {
+                        if (!ageGroupPlaceDictionary.ContainsKey((distanceId, ageGroupId, gender)))
                         {
-                            ageGroupPlaceDictionary[(distanceId, person.EventSpecific.AgeGroupId, person.Gender)] = 0;
+                            ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)] = 0;
                         }
-                        result.AgePlace = ++ageGroupPlaceDictionary[(distanceId, person.EventSpecific.AgeGroupId, person.Gender)];
+                        result.AgePlace = ++ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)];
+                    }
+                    if (person.EventSpecific.Division.Length > 0)
+                    {
+                        if (!divisionPlaceDictionary.ContainsKey((distanceId, person.EventSpecific.Division)))
+                        {
+                            divisionPlaceDictionary[(distanceId, person.EventSpecific.Division)] = 0;
+                        }
+                        result.DivisionPlace = ++divisionPlaceDictionary[(distanceId, person.EventSpecific.Division)];
                     }
                     foreach (TimeResult otherResult in personResults[result.EventSpecificId])
                     {
                         otherResult.Place = result.Place;
                         otherResult.GenderPlace = result.GenderPlace;
                         otherResult.AgePlace = result.AgePlace;
+                        otherResult.DivisionPlace = result.DivisionPlace;
                     }
                 }
             }

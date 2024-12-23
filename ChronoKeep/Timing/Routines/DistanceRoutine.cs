@@ -999,42 +999,34 @@ namespace Chronokeep.Timing.Routines
             }
             int removed = segmentResults.RemoveAll(x => x.IsDNF());
             Log.D("Timing.Routines.DistanceRoutine", string.Format("{0} Result(s) in DNFResults - {1} Result(s) removed from segmentResults", DNFResults.Count, removed));
-            // Get Dictionaries for storing the last known place (age group, gender)
+            // Get Dictionaries for storing the last known place (division, age group, gender, overall)
+            // The key is as follows: (Distance ID, Division)
+            Dictionary<(int, string), int> divisionPlaceDictionary = [];
             // The key is as follows: (Distance ID, Age Group ID, Gender)
-            // The value stored is the last place given
-            Dictionary<(int, int, string), int> ageGroupPlaceDictionary = new Dictionary<(int, int, string), int>();
+            Dictionary<(int, int, string), int> ageGroupPlaceDictionary = [];
             // The key is as follows: (Distance ID, Gender)
-            // The value stored is the last place given
-            Dictionary<(int, string), int> genderPlaceDictionary = new Dictionary<(int, string), int>();
+            Dictionary<(int, string), int> genderPlaceDictionary = [];
             // The key is as follows: (Distance ID)
-            // The value stored is the last place given
-            Dictionary<int, int> placeDictionary = new Dictionary<int, int>();
-            int ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
-            int distanceId = -1;
-            int age = -1;
-            string gender = "ns";
-            Participant person = null;
+            Dictionary<int, int> placeDictionary = [];
+            int ageGroupId;
+            string gender;
             foreach (TimeResult result in segmentResults)
             {
+                gender = "not specified";
+                ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
                 // Check if we know who the person is. Can't rank them if we don't know
                 // what distance they're in, their age, or their gender
-                if (dictionary.participantEventSpecificDictionary.ContainsKey(result.EventSpecificId))
+                if (dictionary.participantEventSpecificDictionary.TryGetValue(result.EventSpecificId, out Participant person))
                 {
-                    person = dictionary.participantEventSpecificDictionary[result.EventSpecificId];
                     // Use a linked distance ID for ranking instead of a specific distance id.
-                    if (dictionary.linkedDistanceIdentifierDictionary.ContainsKey(person.EventSpecific.DistanceIdentifier))
-                    {
-                        distanceId = dictionary.linkedDistanceIdentifierDictionary[person.EventSpecific.DistanceIdentifier];
-                    }
-                    else
+                    if (!dictionary.linkedDistanceIdentifierDictionary.TryGetValue(person.EventSpecific.DistanceIdentifier, out int distanceId))
                     {
                         distanceId = person.EventSpecific.DistanceIdentifier;
                     }
-                    age = person.GetAge(theEvent.Date);
                     gender = person.Gender.ToLower();
                     if (gender.Length < 1)
                     {
-                        gender = "ns";
+                        gender = "not specified";
                     }
                     ageGroupId = person.EventSpecific.AgeGroupId;
                     // Since Results were sorted before we started, let's assume that the first item
@@ -1043,19 +1035,27 @@ namespace Chronokeep.Timing.Routines
                     {
                         placeDictionary[distanceId] = 0;
                     }
-                    result.Place = ++(placeDictionary[distanceId]);
+                    result.Place = ++placeDictionary[distanceId];
                     if (!genderPlaceDictionary.ContainsKey((distanceId, gender)))
                     {
                         genderPlaceDictionary[(distanceId, gender)] = 0;
                     }
-                    result.GenderPlace = ++(genderPlaceDictionary[(distanceId, gender)]);
+                    result.GenderPlace = ++genderPlaceDictionary[(distanceId, gender)];
                     if (ageGroupId != Constants.Timing.TIMERESULT_DUMMYAGEGROUP)
                     {
                         if (!ageGroupPlaceDictionary.ContainsKey((distanceId, ageGroupId, gender)))
                         {
                             ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)] = 0;
                         }
-                        result.AgePlace = ++(ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)]);
+                        result.AgePlace = ++ageGroupPlaceDictionary[(distanceId, ageGroupId, gender)];
+                    }
+                    if (person.EventSpecific.Division.Length > 0)
+                    {
+                        if (!divisionPlaceDictionary.ContainsKey((distanceId, person.EventSpecific.Division)))
+                        {
+                            divisionPlaceDictionary[(distanceId, person.EventSpecific.Division)] = 0;
+                        }
+                        result.DivisionPlace = ++divisionPlaceDictionary[(distanceId, person.EventSpecific.Division)];
                     }
                 }
                 result.Status = Constants.Timing.TIMERESULT_STATUS_PROCESSED;
