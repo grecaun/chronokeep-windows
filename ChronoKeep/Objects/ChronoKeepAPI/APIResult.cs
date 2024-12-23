@@ -28,6 +28,8 @@ namespace Chronokeep.Objects.API
             this.Chip = result.Chip;
             this.Anonymous = result.Anonymous;
             this.LocalTime = start.AddSeconds(result.Seconds).AddMilliseconds(result.Milliseconds).ToLocalTime().ToString("o");
+            this.Division = result.Division;
+            this.DivisionRanking = result.DivisionPlace;
             Log.D("Objects.API.APIResult", string.Format("Chip is {0}, Anonymous is {1}.", this.Chip, this.Anonymous));
             if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
             {
@@ -115,5 +117,9 @@ namespace Chronokeep.Objects.API
         public bool Anonymous { get; set; }
         [JsonPropertyName("local_time")]
         public string LocalTime { get; set; }
+        [JsonPropertyName("division")]
+        public string Division { get; set; }
+        [JsonPropertyName("division_ranking")]
+        public int DivisionRanking { get; set; }
     }
 }
