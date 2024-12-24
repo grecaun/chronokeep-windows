@@ -19,7 +19,7 @@ namespace Chronokeep.UI.Import
 
         public List<Participant> GetParticipantsToRemove()
         {
-            List<Participant> output = new List<Participant>();
+            List<Participant> output = [];
             foreach (MultipleEntryListBoxItem item in multiplesListBox.Items)
             {
                 if (item.Keep.IsChecked == false)

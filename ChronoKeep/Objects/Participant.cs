@@ -490,15 +490,11 @@ namespace Chronokeep.Objects
             {
                 gender = "Not Specified";
             }
-            try
+            if (!DateTime.TryParse(birthdate, out DateTime birthDateTime))
             {
-                DateTime birthDateTime = DateTime.Parse(birthdate);
-                birthdate = birthDateTime.ToShortDateString();
+                birthDateTime = DateTime.Parse("0001/01/01");
             }
-            catch
-            {
-                birthdate = "01/01/0001";
-            }
+            birthdate = birthDateTime.ToString("yyyy/MM/dd");
         }
 
         internal bool AllCaps(string val)

@@ -13,6 +13,7 @@
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
+        Topmost="True"
         >
     <Grid>
         <Grid.RowDefinitions>
@@ -41,7 +42,7 @@
                 <Button x:Name="Done" Height="35" Width="55" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Next" Margin="0,47,68,0" Click="Done_Click" TabIndex="500"/>
                 <Button x:Name="Cancel" Height="35" Width="55" VerticalAlignment="Center" HorizontalAlignment="Right" Content="Cancel" Margin="0,47,6,0" Click="Cancel_Click" TabIndex="501"/>
             </Grid>
-            <Frame x:Name="Frame"  NavigationUIVisibility="Hidden" IsTabStop="False" Grid.Row="1"/>
+            <Frame x:Name="Frame"  NavigationUIVisibility="Hidden" IsTabStop="False" Grid.Row="1" Margin="15,5,15,10"/>
         </Grid>
     </Grid>
 </ui:FluentWindow>

@@ -24,7 +24,7 @@
             bool anonymous,
             bool sms_enabled,
             string apparel,
-            string distance
+            string division
             )
         {
             this.eventIdentifier = eid;
@@ -38,6 +38,7 @@
             this.anonymous = anonymous;
             this.sms_enabled = sms_enabled;
             this.apparel = apparel ?? "";
+            this.division = division ?? "";
         }
 
         // Constructor the database uses
@@ -66,24 +67,28 @@
             this.distanceName = distanceName ?? "";
             this.bib = bib ?? "";
             this.checkedIn = ci != 0 ? 1 : 0;
-            this.comments = comments ?? "";
             this.owes = owes ?? "";
             this.other = other ?? "";
+            this.comments = comments ?? "";
             this.status = status;
             this.ageGroupName = ageGroupName ?? "";
             this.ageGroupId = ageGroupId;
             this.anonymous = anonymous;
             this.sms_enabled = sms_enabled;
             this.apparel = apparel ?? "";
-            this.division = division;
+            this.division = division ?? "";
         }
 
         internal void Trim()
         {
             distanceName = distanceName.Trim();
+            bib = bib.Trim();
             owes = owes.Trim();
             other = other.Trim();
             comments = comments.Trim();
+            ageGroupName = ageGroupName.Trim();
+            apparel = apparel.Trim();
+            division = division.Trim();
         }
 
         internal EventSpecific Blank()

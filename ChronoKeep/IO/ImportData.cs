@@ -59,12 +59,12 @@ namespace Chronokeep
 
         public string[] GetDistanceNames(int index)
         {
-            HashSet<string> values = new HashSet<string>();
+            HashSet<string> values = [];
             foreach (string[] line in Data)
             {
                 if (line[index] != null && line[index].Length > 0)
                 {
-                    values.Add(Utils.UppercaseFirst(line[index].Trim().ToLower()));
+                    values.Add(line[index].Trim());
                 }
             }
             string[] output = new string[values.Count];

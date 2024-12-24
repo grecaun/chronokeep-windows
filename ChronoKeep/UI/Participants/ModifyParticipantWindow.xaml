@@ -12,6 +12,7 @@
         WindowBackdropType="Mica"
         WindowCornerPreference="Round"
         WindowStartupLocation="CenterScreen"
+        Topmost="True"
         >
     <Grid>
         <Grid.RowDefinitions>
