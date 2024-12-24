@@ -23,62 +23,62 @@ namespace Chronokeep
         IDataImporter importer;
         IMainWindow window = null;
         IDBInterface database;
-        Boolean init = true;
-        internal static string[] human_fields = new string[] {
+        bool init = true;
+        internal static string[] human_fields = [
             "",
-            "First Name",
-            "Last Name",
-            "Gender",
-            "Birthday",
-            "Street",
-            "Street 2",
-            "City",
-            "State",
-            "Zip",
-            "Country",
-            "Email",
-            "Phone",
-            "Mobile",
-            "Parent",
+            "Age",
+            "Anonymous",
+            "Apparel",
             "Bib",
-            "Owes",
+            "Birthday",
+            "City",
             "Comments",
-            "Other",
+            "Country",
             "Distance",
+            "Division",
+            "Email",
             "Emergency Contact Name",
             "Emergency Contact Phone",
-            "Age",
-            "Apparel",
+            "First Name",
+            "Gender",
+            "Last Name",
+            "Mobile",
+            "Other",
+            "Owes",
+            "Parent",
+            "Phone",
             "Registration Date",
-            "Anonymous",
-            "Division"
-        };
-        internal static readonly int FIRST = 1;
-        internal static readonly int LAST = 2;
-        internal static readonly int GENDER = 3;
-        internal static readonly int BIRTHDAY = 4;
-        internal static readonly int STREET = 5;
-        internal static readonly int STREET2 = 6;
-        internal static readonly int CITY = 7;
-        internal static readonly int STATE = 8;
-        internal static readonly int ZIP = 9;
-        internal static readonly int COUNTRY = 10;
-        internal static readonly int EMAIL = 11;
-        internal static readonly int PHONE = 12;
-        internal static readonly int MOBILE = 13;
-        internal static readonly int PARENT = 14;
-        internal static readonly int BIB = 15;
-        internal static readonly int OWES = 16;
-        internal static readonly int COMMENTS = 17;
-        internal static readonly int OTHER = 18;
-        internal static readonly int DISTANCE = 19;
-        internal static readonly int EMERGENCYNAME = 20;
-        internal static readonly int EMERGENCYPHONE = 21;
-        internal static readonly int AGE = 22;
-        internal static readonly int APPARELITEM = 23;
-        internal static readonly int REGISTRATIONDATE = 24;
-        internal static readonly int ANONYMOUS = 25;
-        internal static readonly int DIVISION = 26;
+            "State",
+            "Street",
+            "Street 2",
+            "Zip"
+        ];
+        internal static readonly int AGE            = 1;
+        internal static readonly int ANONYMOUS      = 2;
+        internal static readonly int APPARELITEM    = 3;
+        internal static readonly int BIB            = 4;
+        internal static readonly int BIRTHDAY       = 5;
+        internal static readonly int CITY           = 6;
+        internal static readonly int COMMENTS       = 7;
+        internal static readonly int COUNTRY        = 8;
+        internal static readonly int DISTANCE       = 9;
+        internal static readonly int DIVISION       = 10;
+        internal static readonly int EMAIL          = 11;
+        internal static readonly int EMERGENCYNAME  = 12;
+        internal static readonly int EMERGENCYPHONE = 13;
+        internal static readonly int FIRST          = 14;
+        internal static readonly int GENDER         = 15;
+        internal static readonly int LAST           = 16;
+        internal static readonly int MOBILE         = 17;
+        internal static readonly int OTHER          = 18;
+        internal static readonly int OWES           = 19;
+        internal static readonly int PARENT         = 20;
+        internal static readonly int PHONE          = 21;
+        internal static readonly int REGDATE        = 22;
+        internal static readonly int STATE          = 23;
+        internal static readonly int STREET         = 24;
+        internal static readonly int STREET2        = 25;
+        internal static readonly int ZIP            = 26;
         Page page = null;
         int[] keys;
 
@@ -749,7 +749,7 @@ namespace Chronokeep
             }
             else if (string.Equals(s, "Registration Date", StringComparison.OrdinalIgnoreCase))
             {
-                return REGISTRATIONDATE;
+                return REGDATE;
             }
             else if (s.Contains("Anonymous", StringComparison.OrdinalIgnoreCase)
                 || s.Contains("Private", StringComparison.OrdinalIgnoreCase))
