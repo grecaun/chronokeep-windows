@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Data.SQLite;
+using System.IO;
+using System.Reflection;
 
 namespace Chronokeep.Database.SQLite
 {
@@ -297,6 +299,19 @@ namespace Chronokeep.Database.SQLite
                 queries.Add("CREATE INDEX idx_chipread_id ON chipreads(read_id);");
                 queries.Add("CREATE INDEX idx_participant_id ON participants(participant_id);");
                 queries.Add("CREATE INDEX idx_distance_id ON distances(distance_id);");
+
+                string gitVersion = "";
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
+                {
+                    using StreamReader fileReader = new(stream);
+                    gitVersion = fileReader.ReadToEnd();
+                }
+                if (gitVersion.Contains('-'))
+                {
+                    gitVersion = gitVersion.Split('-')[0];
+                }
+                queries.Add("INSERT INTO settings (setting, value) VALUES " +
+                    "('" + Constants.Settings.PROGRAM_VERSION + "','" + gitVersion + "');");
 
                 using (var transaction = connection.BeginTransaction())
                 {

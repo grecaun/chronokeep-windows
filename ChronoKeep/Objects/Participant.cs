@@ -30,7 +30,11 @@ namespace Chronokeep.Objects
             string ecName, string ecPhone
             )
         {
-            birthdate = birthday != null ? birthday.Trim() : "";
+            if (!DateTime.TryParse(birthdate, out DateTime birthDateTime))
+            {
+                birthDateTime = DateTime.Parse("0001/01/01");
+            }
+            birthdate = birthDateTime.ToShortDateString();
             firstName = first ?? "";
             lastName = last ?? "";
             this.street = street ?? "";
@@ -58,8 +62,12 @@ namespace Chronokeep.Objects
             string ecName, string ecPhone, string chip
             )
         {
+            if (!DateTime.TryParse(birthdate, out DateTime birthDateTime))
+            {
+                birthDateTime = DateTime.Parse("0001/01/01");
+            }
+            birthdate = birthDateTime.ToShortDateString();
             identifier = id;
-            birthdate = birthday ?? "";
             firstName = first ?? "";
             lastName = last ?? "";
             this.street = street ?? "";
@@ -81,7 +89,21 @@ namespace Chronokeep.Objects
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
-        public string Birthdate { get => birthdate; }
+        public string Birthdate { get => GetBirthdateString(); }
+
+        public string GetBirthdateString()
+        {
+            if (DateTime.TryParse(birthdate, out DateTime bd))
+            {
+                if (bd.Year < 1920)
+                {
+                    return "";
+                }
+                return birthdate;
+            }
+            return "";
+        }
+
         internal EventSpecific EventSpecific { get => eventSpecific; }
 
         internal void Trim()
@@ -494,7 +516,7 @@ namespace Chronokeep.Objects
             {
                 birthDateTime = DateTime.Parse("0001/01/01");
             }
-            birthdate = birthDateTime.ToString("yyyy/MM/dd");
+            birthdate = birthDateTime.ToShortDateString();
         }
 
         internal bool AllCaps(string val)
@@ -602,7 +624,7 @@ namespace Chronokeep.Objects
 
         public string Age(string eventDate)
         {
-            if (birthdate == null || birthdate.Length < 1 || birthdate.Equals("01/01/0001"))
+            if (birthdate == null || birthdate.Length < 1)
             {
                 return "";
             }
