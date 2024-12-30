@@ -12,14 +12,24 @@
     "Added the ability to search for an event when linking an event to the results API",
     "Changed how the program deals with Timing System notifications/errors. Now the program keeps a log stored in memory of all notifications received from the timing system. Notifications are classified by severity with those classified as High severity prompting the program to display a DialogBox with information. All notifications can be viewed by clicking on the InfoBadge on the Timing page. When not on the Timing page the program displays an InfoBadge with notification count if there are notifications that haven't been viewed.",
     "Added the ability to quickly start or stop a timing systems readers by holding CTRL or ALT while clicking on the settings button",
-    "The settings button for a timing system now changes colors based upon the known state of the reader(s) connected to the system"
-    //"Finished documentation that can be found via link on the about page"
+    "The settings button for a timing system now changes colors based upon the known state of the reader(s) connected to the system",
+    "There is no more Age Groups as Divisions option, instead Divisions are a specific category all their own. A division is unique and ranked regardless of gender in an event",
+    "The user can now reset the clock if it was started accidentally with CTRL+Enter while the start time box is selected",
+    "Distance name is no longer modified when importing from a file and auto match creates a new distance",
+    "The windows used when importing files and adding/modifying a participant will now display above all other windows all the time",
+    "Changed the ordering for matching column headers when importing participants"
   ],
   "fixes": [
     "Fixed an issue where new installs would immediately crash due to an improper query during database creation",
     "Modified the UI to remove the change in display when hovering over or selecting certain UI elements",
     "Fixed style issues with the MaskedTextBoxes used for time input fields",
     "Fixed a display issue with the navigation panel",
-    "Removed unecessary NuGet packages"
+    "Removed unecessary NuGet packages",
+    "Fixed some issues with values for TimeResult and ChipRead not being updated due to the change to MemStore",
+    "Fixed some of the issues with the box for changing the clock display relative to a wave/distance time",
+    "Fixed a residual issue where a gender that wasn't specified could be listed as 'ns' instead of Not Specified in the database and would show up as ns instead of a blank string",
+    "BackYardUltra processing now processes gender the same way as other routines",
+    "Fixed an issue where distance names were not ignoring case when importing them and the user selected auto to match to current distances",
+    "Fixed issues with conflicts on participant import"
   ]
 }
