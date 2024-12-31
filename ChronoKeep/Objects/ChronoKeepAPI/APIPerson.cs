@@ -12,7 +12,7 @@ namespace Chronokeep.Objects.API
             this.Bib = person.Bib.ToString();
             this.First = person.Anonymous ? "" : person.FirstName;
             this.Last = person.Anonymous ? "" : person.LastName;
-            this.Birthdate = person.Birthdate;
+            this.Birthdate = person.Birthdate.Length < 1 ? "1901/01/01" : person.Birthdate;
             this.Gender = person.Gender;
             this.AgeGroup = person.EventSpecific.AgeGroupName;
             this.Distance = person.EventSpecific.DistanceName;

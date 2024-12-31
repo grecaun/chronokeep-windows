@@ -1,0 +1,9 @@
+{
+  "version": "v1.7.1",
+  "changes": [],
+  "fixes": [
+    "Fixed an issue where birthdays were not being set correctly",
+    "Fixed an issue where participants wouldn't upload due to a birthday being set at the beginning of the current era",
+    "Fixed an issue where the next and cancel buttons wouldn't re-enable if there were multiple headers detected on participant import"
+  ]
+}

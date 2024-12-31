@@ -30,11 +30,7 @@ namespace Chronokeep.Objects
             string ecName, string ecPhone
             )
         {
-            if (!DateTime.TryParse(birthdate, out DateTime birthDateTime))
-            {
-                birthDateTime = DateTime.Parse("0001/01/01");
-            }
-            birthdate = birthDateTime.ToShortDateString();
+            this.birthdate = birthday;
             firstName = first ?? "";
             lastName = last ?? "";
             this.street = street ?? "";
@@ -62,11 +58,7 @@ namespace Chronokeep.Objects
             string ecName, string ecPhone, string chip
             )
         {
-            if (!DateTime.TryParse(birthdate, out DateTime birthDateTime))
-            {
-                birthDateTime = DateTime.Parse("0001/01/01");
-            }
-            birthdate = birthDateTime.ToShortDateString();
+            this.birthdate = birthday;
             identifier = id;
             firstName = first ?? "";
             lastName = last ?? "";
@@ -95,7 +87,7 @@ namespace Chronokeep.Objects
         {
             if (DateTime.TryParse(birthdate, out DateTime bd))
             {
-                if (bd.Year < 1920)
+                if (bd.Year < (DateTime.Now.Year - 120))
                 {
                     return "";
                 }
@@ -512,9 +504,10 @@ namespace Chronokeep.Objects
             {
                 gender = "Not Specified";
             }
+            string dummyYear = $"{DateTime.Now.Year - 130}";
             if (!DateTime.TryParse(birthdate, out DateTime birthDateTime))
             {
-                birthDateTime = DateTime.Parse("0001/01/01");
+                birthDateTime = DateTime.Parse($"{dummyYear}/01/01");
             }
             birthdate = birthDateTime.ToShortDateString();
         }
@@ -644,7 +637,7 @@ namespace Chronokeep.Objects
 
         public int GetAge(string eventDate)
         {
-            if (birthdate == null || birthdate.Length < 1 || birthdate.Equals("01/01/0001"))
+            if (birthdate == null || birthdate.Length < 1)
             {
                 return -1;
             }

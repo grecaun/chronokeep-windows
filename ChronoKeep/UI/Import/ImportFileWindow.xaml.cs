@@ -1,10 +1,8 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
-using Chronokeep.Timing.API;
 using Chronokeep.UI.Import;
 using Chronokeep.UI.UIObjects;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -209,6 +207,8 @@ namespace Chronokeep
             {
                 Log.D("ImportFileWindow", "Abort! Abort! Something went terribly wrong.");
             }
+            Done.IsEnabled = true;
+            Cancel.IsEnabled = true;
         }
 
         private void StartImport(HeaderListBoxItem[] headerListBoxItems)
