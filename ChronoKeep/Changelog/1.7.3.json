@@ -5,6 +5,8 @@
     "Enabling or disabling distance specific segments no longer leaves behind segments if they were set when the value was changed.",
     "0 is now a valid distance for a Distance.",
     "Segments are now uploaded for all distances if distance specific segments is set to disabled.",
-    "Segments (including finish) will no longer attempt to be uploaded if the distance value is 0."
+    "Segments (including finish) will no longer attempt to be uploaded if the distance value is 0.",
+    "Fixed issues where results would be marked as uploaded regardless of whether or not they were successfully uploaded.",
+    "Fixed an issue where the manual upload button would change back to its not-uploading state immediately after starting the upload."
   ]
 }
