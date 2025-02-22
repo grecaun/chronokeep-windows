@@ -104,7 +104,8 @@ namespace Chronokeep.Timing.API
                 // Change TimeResults to APIResults - breaking this up into chunks so we can
                 // properly update them with the UPLOADED field
                 List<APIResult> upRes = new List<APIResult>();
-                foreach (TimeResult tr in results.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT))
+                List<TimeResult> uploaded = results.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT);
+                foreach (TimeResult tr in uploaded)
                 {
                     //tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
                     DateTime trStart = waveStartTimes.TryGetValue(tr.RealDistanceName, out DateTime value) ? value : start;
@@ -140,7 +141,6 @@ namespace Chronokeep.Timing.API
                     if (response.Count == Constants.Timing.API_LOOP_COUNT)
                     {
                         // Updating uploaded value for uploaded results.
-                        List<TimeResult> uploaded = results.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT);
                         foreach (TimeResult res in uploaded)
                         {
                             res.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
@@ -155,7 +155,8 @@ namespace Chronokeep.Timing.API
                 response = null;
                 // Change TimeResults to APIResults
                 List<APIResult> upRes = new List<APIResult>();
-                foreach (TimeResult tr in results.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers))
+                List<TimeResult> uploaded = results.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers);
+                foreach (TimeResult tr in uploaded)
                 {
                     //tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
                     DateTime trStart = waveStartTimes.TryGetValue(tr.RealDistanceName, out DateTime value) ? value : start;
@@ -188,8 +189,7 @@ namespace Chronokeep.Timing.API
                     Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
                     if (response.Count == leftovers)
                     {
-                        // Updating uploaded value for uploaded results.results.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
-                        List<TimeResult> uploaded = results.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers);
+                        // Updating uploaded value for uploaded results;
                         foreach (TimeResult res in uploaded)
                         {
                             res.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
