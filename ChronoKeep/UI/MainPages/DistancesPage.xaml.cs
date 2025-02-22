@@ -1096,7 +1096,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     dist = 0.0;
                 }
-                if (dist != 0.0)
+                if (dist >= 0.0)
                 {
                     theDistance.DistanceValue = dist;
                 }

@@ -895,19 +895,40 @@ namespace Chronokeep.UI.MainPages
                 List<APISegment> segments = new List<APISegment>();
                 foreach (Segment seg in database.GetSegments(theEvent.Identifier))
                 {
-                    if (locations.ContainsKey(seg.LocationId) && distances.ContainsKey(seg.DistanceId) && distanceUnits.ContainsKey(seg.DistanceUnit))
+                    if (locations.TryGetValue(seg.LocationId, out TimingLocation segmentLocation))
                     {
-                        segments.Add(new APISegment
+                        if (theEvent.DistanceSpecificSegments)
                         {
-                            Location = locations[seg.LocationId].Name,
-                            DistanceName = distances[seg.DistanceId].Name,
-                            Name = seg.Name,
-                            DistanceValue = seg.CumulativeDistance,
-                            DistanceUnit = distanceUnits[seg.DistanceUnit],
-                            GPS = seg.GPS,
-                            MapLink = seg.MapLink,
-
-                        });
+                            if (distances.TryGetValue(seg.DistanceId, out Distance segmentDistance))
+                            {
+                                segments.Add(new APISegment
+                                {
+                                    Location = segmentLocation.Name,
+                                    DistanceName = segmentDistance.Name,
+                                    Name = seg.Name,
+                                    DistanceValue = seg.CumulativeDistance,
+                                    DistanceUnit = distanceUnits[seg.DistanceUnit],
+                                    GPS = seg.GPS,
+                                    MapLink = seg.MapLink,
+                                });
+                            }
+                        }
+                        else
+                        {
+                            foreach (Distance dist in distances.Values)
+                            {
+                                segments.Add(new APISegment
+                                {
+                                    Location = segmentLocation.Name,
+                                    DistanceName = dist.Name,
+                                    Name = seg.Name,
+                                    DistanceValue = seg.CumulativeDistance,
+                                    DistanceUnit = distanceUnits[seg.DistanceUnit],
+                                    GPS = seg.GPS,
+                                    MapLink = seg.MapLink,
+                                });
+                            }
+                        }
                     }
                 }
                 // add finish segments
@@ -927,6 +948,8 @@ namespace Chronokeep.UI.MainPages
                         });
                     }
                 }
+                // Remove all segments without a distance value set.
+                segments.RemoveAll(x => x.DistanceValue <= 0);
                 Log.D("UI.MainPages.SegmentsPage", "Attempting to upload " + segments.Count.ToString() + " segments.");
                 try
                 {

@@ -104,6 +104,12 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.DashboardPage", "Saving");
                 editButton.Content = Constants.DashboardLabels.WORKING;
                 DisableEditableFields();
+                // If distance specific segments are being enabled/disabled then reset all segments
+                // so no residual segments stay around.
+                if (theEvent.DistanceSpecificSegments != segmentCheckBox.IsChecked)
+                {
+                    database.ResetSegments(theEvent.Identifier);
+                }
                 theEvent.Name = eventNameTextBox.Text;
                 theEvent.YearCode = eventYearCodeTextBox.Text;
                 theEvent.Date = eventDatePicker.Text;

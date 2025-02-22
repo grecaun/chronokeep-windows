@@ -1,0 +1,10 @@
+{
+  "version": "v1.7.3",
+  "changes": [],
+  "fixes": [
+    "Enabling or disabling distance specific segments no longer leaves behind segments if they were set when the value was changed.",
+    "0 is now a valid distance for a Distance.",
+    "Segments are now uploaded for all distances if distance specific segments is set to disabled.",
+    "Segments (including finish) will no longer attempt to be uploaded if the distance value is 0."
+  ]
+}
