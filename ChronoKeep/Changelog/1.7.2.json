@@ -1,0 +1,7 @@
+{
+  "version": "v1.7.2",
+  "changes": [],
+  "fixes": [
+    "Results are no longer generated after a participant is marked as DNF."
+  ]
+}

@@ -51,7 +51,7 @@ namespace Chronokeep.Timing.Routines
             // Keep a list of DNF participants so we can mark them as DNF in results.
             // Keep a record of the DNF chipread so we can link it with the TimeResult
             Dictionary<string, ChipRead> bibDNFDictionary = new Dictionary<string, ChipRead>();
-            Dictionary<string, ChipRead> chipDnfDictionary = new Dictionary<string, ChipRead>();
+            Dictionary<string, ChipRead> chipDNFDictionary = new Dictionary<string, ChipRead>();
             // Keep a list of DNS participants so we can mark them as DNS in results.
             // Keep a record of the DNS chipread so we can link it with the TimeResult
             Dictionary<string, ChipRead> bibDNSDictionary = new Dictionary<string, ChipRead>();
@@ -180,7 +180,7 @@ namespace Chronokeep.Timing.Routines
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_DNF == read.Status)
                     {
-                        chipDnfDictionary[read.ChipNumber] = read;
+                        chipDNFDictionary[read.ChipNumber] = read;
                     }
                     else if (Constants.Timing.CHIPREAD_STATUS_DNS == read.Status)
                     {
@@ -333,9 +333,9 @@ namespace Chronokeep.Timing.Routines
                                 {
                                     occursWithin = theEvent.FinishIgnoreWithin;
                                 }
-                                else if (dictionary.locationDictionary.ContainsKey(read.LocationID))
+                                else if (dictionary.locationDictionary.TryGetValue(read.LocationID, out TimingLocation loc))
                                 {
-                                    occursWithin = dictionary.locationDictionary[read.LocationID].IgnoreWithin;
+                                    occursWithin = loc.IgnoreWithin;
                                 }
                                 // Minimum Time Value required to actually create a result
                                 long minSeconds = startSeconds;
@@ -358,22 +358,20 @@ namespace Chronokeep.Timing.Routines
                                         distanceId = Constants.Timing.COMMON_SEGMENTS_DISTANCEID;
                                     }
                                     // or the main (linked) distance for the person's distance
-                                    else if (dictionary.linkedDistanceIdentifierDictionary.ContainsKey(distanceId))
+                                    else if (dictionary.linkedDistanceIdentifierDictionary.TryGetValue(distanceId, out int linkedDistance))
                                     {
-                                        distanceId = dictionary.linkedDistanceIdentifierDictionary[distanceId];
+                                        distanceId = linkedDistance;
                                     }
                                     // Check if we know the last time the person was seen
-                                    if (LastSeen.ContainsKey(part.EventSpecific.Identifier)
-                                        && dictionary.DistanceSegmentOrder.ContainsKey(distanceId)
-                                        && dictionary.SegmentByIDDictionary.ContainsKey(LastSeen[part.EventSpecific.Identifier].SegmentId))
+                                    if (LastSeen.TryGetValue(part.EventSpecific.Identifier, out TimeResult lastResult)
+                                        && dictionary.DistanceSegmentOrder.TryGetValue(distanceId, out List<Segment> distanceSegments)
+                                        && dictionary.SegmentByIDDictionary.TryGetValue(lastResult.SegmentId, out Segment otherSeg))
                                     {
-                                        // Find the next possible occurrence
-                                        Segment lastSegment = dictionary.SegmentByIDDictionary[LastSeen[part.EventSpecific.Identifier].SegmentId];
-                                        foreach (Segment seg in dictionary.DistanceSegmentOrder[distanceId])
+                                        foreach (Segment seg in distanceSegments)
                                         {
                                             // find the next segment at the location where the Cumulative (total) distance is greater than the distance
                                             // when we last saw the runner
-                                            if (seg.LocationId == read.LocationID && seg.CumulativeDistance > lastSegment.CumulativeDistance)
+                                            if (seg.LocationId == read.LocationID && seg.CumulativeDistance > otherSeg.CumulativeDistance)
                                             {
                                                 // if we are set to set the occurrence too low
                                                 if (occurrence < seg.Occurrence)
@@ -400,6 +398,15 @@ namespace Chronokeep.Timing.Routines
                                 else if (read.TimeSeconds < minSeconds || (read.TimeSeconds == minSeconds && read.TimeMilliseconds <= minMilliseconds))
                                 {
                                     read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
+                                }
+                                // Check if part of the DNF list
+                                // And if the read is AFTER they were marked as DNF
+                                else if (bibDNFDictionary.TryGetValue(bib, out ChipRead dnfRead)
+                                    && (dnfRead.TimeSeconds < read.TimeSeconds ||
+                                        (dnfRead.TimeSeconds == read.TimeSeconds && dnfRead.TimeMilliseconds < read.TimeMilliseconds)))
+                                {
+                                    Log.D("Timing.Routines.DistanceRoutine", "bibDNFDictionary contains DNF for bib " + bib);
+                                    read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
                                 }
                                 // occurrence is in [1, maxOccurences] but not in the ignore period
                                 else
@@ -628,6 +635,15 @@ namespace Chronokeep.Timing.Routines
                                 {
                                     read.Status = Constants.Timing.CHIPREAD_STATUS_WITHINIGN;
                                 }
+                                // Check if part of the DNF list
+                                // And if the read is AFTER they were marked as DNF
+                                else if (chipDNFDictionary.TryGetValue(chip, out ChipRead dnfRead)
+                                    && (dnfRead.TimeSeconds < read.TimeSeconds || 
+                                        (dnfRead.TimeSeconds == read.TimeSeconds && dnfRead.TimeMilliseconds < read.TimeMilliseconds)))
+                                {
+                                    Log.D("Timing.Routines.DistanceRoutine", "chipDNFDictionary contains DNF for chip " + chip);
+                                    read.Status = Constants.Timing.CHIPREAD_STATUS_OVERMAX;
+                                }
                                 // occurrence is in [1, maxOccurences] but not in the ignore period
                                 else
                                 {
@@ -657,7 +673,7 @@ namespace Chronokeep.Timing.Routines
                                     }
                                     // Check that we're not adding a finish time for a DNF person, we can use any other times
                                     // for information for that person.
-                                    if (Constants.Timing.SEGMENT_FINISH != segId || !chipDnfDictionary.ContainsKey(chip))
+                                    if (Constants.Timing.SEGMENT_FINISH != segId || !chipDNFDictionary.ContainsKey(chip))
                                     {
                                         newResults.Add(new TimeResult(theEvent.Identifier,
                                         read.ReadId,
@@ -688,12 +704,12 @@ namespace Chronokeep.Timing.Routines
                 }
             }
             // Process the intersection of unknown DNF people and Finish results:
-            foreach (string chip in chipDnfDictionary.Keys)
+            foreach (string chip in chipDNFDictionary.Keys)
             {
                 if (finishTimes.ContainsKey(TimeResult.ChipToIdentifier(chip)))
                 {
                     TimeResult finish = finishTimes[TimeResult.ChipToIdentifier(chip)];
-                    finish.ReadId = chipDnfDictionary[chip].ReadId;
+                    finish.ReadId = chipDNFDictionary[chip].ReadId;
                     finish.Time = "DNF";
                     finish.ChipTime = "DNF";
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
@@ -703,7 +719,7 @@ namespace Chronokeep.Timing.Routines
                 else
                 {
                     newResults.Add(new TimeResult(theEvent.Identifier,
-                        chipDnfDictionary[chip].ReadId,
+                        chipDNFDictionary[chip].ReadId,
                         Constants.Timing.TIMERESULT_DUMMYPERSON,
                         Constants.Timing.LOCATION_FINISH,
                         Constants.Timing.SEGMENT_FINISH,
@@ -711,8 +727,8 @@ namespace Chronokeep.Timing.Routines
                         "DNF",
                         TimeResult.ChipToIdentifier(chip),
                         "DNF",
-                        chipDnfDictionary[chip].Time,
-                        chipDnfDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDnfDictionary[chip].ReadBib : chipDnfDictionary[chip].ChipBib,
+                        chipDNFDictionary[chip].Time,
+                        chipDNFDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDNFDictionary[chip].ReadBib : chipDNFDictionary[chip].ChipBib,
                         Constants.Timing.TIMERESULT_STATUS_DNF,
                         ""
                         ));
