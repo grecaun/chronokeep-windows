@@ -53,16 +53,33 @@ namespace Chronokeep.Timing.API
         }
 
         public static async Task UploadResults(
-            List<APIResult> upRes,
             List<TimeResult> results,
             APIObject api,
             string[] event_ids,
             IDBInterface database,
             APIController controller,
-            IMainWindow mainWindow
+            IMainWindow mainWindow,
+            Event theEvent
             )
         {
-            Log.D("API.APIController", "Attempting to upload " + upRes.Count.ToString() + " results.");
+            DateTime start = DateTime.SpecifyKind(DateTime.Parse(theEvent.Date), DateTimeKind.Local).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
+            Dictionary<string, DateTime> waveStartTimes = new Dictionary<string, DateTime>();
+            HashSet<string> uploadDistances = new();
+            foreach (Distance d in database.GetDistances(theEvent.Identifier))
+            {
+                waveStartTimes[d.Name] = start.AddSeconds(d.StartOffsetSeconds).AddMilliseconds(d.StartOffsetMilliseconds);
+                if (d.Upload && d.LinkedDistance == Constants.Timing.DISTANCE_NO_LINKED_ID)
+                {
+                    uploadDistances.Add(d.Name);
+                }
+            }
+            string unique_pad = "";
+            AppSetting uniqueID = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
+            if (uniqueID != null)
+            {
+                unique_pad = uniqueID.Value;
+            }
+            Log.D("API.APIController", "Attempting to upload " + results.Count.ToString() + " results.");
             if (mut.WaitOne(3000))
             {
                 if (isUploading)
@@ -78,20 +95,36 @@ namespace Chronokeep.Timing.API
                 throw new Exception("error grabbing mutex to signal start");
             }
             int total = 0;
-            int loops = upRes.Count / Constants.Timing.API_LOOP_COUNT;
+            int loops = results.Count / Constants.Timing.API_LOOP_COUNT;
             AddResultsResponse response = null;
             bool loop_error = false;
             for (int i = 0; i < loops; i += 1)
             {
                 Log.D("API.APIController", string.Format("Loop {0}", i));
+                // Change TimeResults to APIResults - breaking this up into chunks so we can
+                // properly update them with the UPLOADED field
+                List<APIResult> upRes = new List<APIResult>();
+                foreach (TimeResult tr in results.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT))
+                {
+                    //tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
+                    DateTime trStart = waveStartTimes.TryGetValue(tr.RealDistanceName, out DateTime value) ? value : start;
+                    // only add to upload list if we want to upload everything (NOT Specific)
+                    // or we only want to upload specific distances and the distance is in the
+                    // list of distances we want to upload
+                    if (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName))
+                    {
+                        upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
+                    }
+                }
                 try
                 {
-                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT));
+                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes);
                 }
                 catch
                 {
                     // Error uploading due to network issues most likely. Keep tally of these errors but continue running.
                     Log.D("API.APIController", "Unable to handle API response. Loop " + i);
+                    response = null;
                     loop_error = true;
                     if (controller != null)
                     {
@@ -104,15 +137,39 @@ namespace Chronokeep.Timing.API
                 {
                     total += response.Count;
                     Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
+                    if (response.Count == Constants.Timing.API_LOOP_COUNT)
+                    {
+                        // Updating uploaded value for uploaded results.
+                        List<TimeResult> uploaded = results.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT);
+                        foreach (TimeResult res in uploaded)
+                        {
+                            res.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
+                        }
+                        database.SetUploadedTimingResults(uploaded);
+                    }
                 }
             }
-            int leftovers = upRes.Count - (loops * Constants.Timing.API_LOOP_COUNT);
+            int leftovers = results.Count - (loops * Constants.Timing.API_LOOP_COUNT);
             if (leftovers > 0 && !loop_error)
             {
                 response = null;
+                // Change TimeResults to APIResults
+                List<APIResult> upRes = new List<APIResult>();
+                foreach (TimeResult tr in results.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers))
+                {
+                    //tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
+                    DateTime trStart = waveStartTimes.TryGetValue(tr.RealDistanceName, out DateTime value) ? value : start;
+                    // only add to upload list if we want to upload everything (NOT Specific)
+                    // or we only want to upload specific distances and the distance is in the
+                    // list of distances we want to upload
+                    if (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName))
+                    {
+                        upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
+                    }
+                }
                 try
                 {
-                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
+                    response = await APIHandlers.UploadResults(api, event_ids[0], event_ids[1], upRes);
                 }
                 catch
                 {
@@ -129,13 +186,18 @@ namespace Chronokeep.Timing.API
                 {
                     total += response.Count;
                     Log.D("API.APIController", "Total: " + total + " Count: " + response.Count);
+                    if (response.Count == leftovers)
+                    {
+                        // Updating uploaded value for uploaded results.results.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers));
+                        List<TimeResult> uploaded = results.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers);
+                        foreach (TimeResult res in uploaded)
+                        {
+                            res.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
+                        }
+                        database.SetUploadedTimingResults(uploaded);
+                    }
                 }
                 Log.D("API.APIController", "Upload finished. Count total: " + total);
-            }
-            if (results.Count == total)
-            {
-                Log.D("API.APIController", "Count matches, updating records.");
-                database.AddTimingResults(results);
             }
             if (!loop_error && controller != null)
             {
@@ -314,7 +376,7 @@ namespace Chronokeep.Timing.API
                     }
                     foreach (TimeResult tr in results)
                     {
-                        tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
+                        //tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
                         DateTime trStart = waveStartTimes.TryGetValue(tr.RealDistanceName, out DateTime value) ? value : start;
                         // only add to upload list if we want to upload everything (NOT Specific)
                         // or we only want to upload specific distances and the distance is in the
@@ -324,7 +386,7 @@ namespace Chronokeep.Timing.API
                             upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
                         }
                     }
-                    await UploadResults(upRes, results, api, event_ids, database, this, mainWindow);
+                    await UploadResults(results, api, event_ids, database, this, mainWindow, theEvent);
                     mainWindow.UpdateTiming();
                 }
                 else // KeepAlive check

@@ -1208,7 +1208,6 @@ namespace Chronokeep.UI.MainPages
                 {
                     UploadResults();
                 });
-                ManualAPIButton.Content = "Manual Upload";
                 return;
             }
             Log.D("UI.MainPages.TimingPage", "Already uploading.");
@@ -1239,42 +1238,16 @@ namespace Chronokeep.UI.MainPages
                 Log.D("UI.MainPages.TimingPage", "Nothing to upload.");
                 return;
             }
-            // Change TimeResults to APIResults
-            List<APIResult> upRes = new List<APIResult>();
+            // Upload results
             Log.D("UI.MainPages.TimingPage", "Results count: " + results.Count.ToString());
-            DateTime start = DateTime.SpecifyKind(DateTime.Parse(theEvent.Date), DateTimeKind.Local).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
-            Dictionary<string, DateTime> waveStartTimes = new Dictionary<string, DateTime>();
-            HashSet<string> uploadDistances = new();
-            foreach (Distance d in database.GetDistances(theEvent.Identifier))
-            {
-                waveStartTimes[d.Name] = start.AddSeconds(d.StartOffsetSeconds).AddMilliseconds(d.StartOffsetMilliseconds);
-                if (d.Upload && d.LinkedDistance == Constants.Timing.DISTANCE_NO_LINKED_ID)
-                {
-                    uploadDistances.Add(d.Name);
-                }
-            }
-            string unique_pad = "";
-            AppSetting uniqueID = database.GetAppSetting(Settings.PROGRAM_UNIQUE_MODIFIER);
-            if (uniqueID != null)
-            {
-                unique_pad = uniqueID.Value;
-            }
-            foreach (TimeResult tr in results)
-            {
-                tr.Uploaded = Constants.Timing.TIMERESULT_UPLOADED_TRUE;
-                DateTime trStart = waveStartTimes.TryGetValue(tr.RealDistanceName, out DateTime value) ? value : start;
-                // only add to upload list if we want to upload everything (NOT Specific)
-                // or we only want to upload specific distances and the distance is in the
-                // list of distances we want to upload
-                if (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName))
-                {
-                    upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
-                }
-            }
             if (APIController.GetUploadable(3000))
             {
-                await APIController.UploadResults(upRes, results, api, event_ids, database, null, null);
+                await APIController.UploadResults(results, api, event_ids, database, null, null, theEvent);
             }
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+            {
+                ManualAPIButton.Content = "Manual Upload";
+            }));
         }
 
         private void SaveLog(object sender, RoutedEventArgs e)
