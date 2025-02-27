@@ -131,9 +131,10 @@ namespace Chronokeep.MemStore
                         {
                             if (!maxSegmentsPerDistance.TryGetValue(s.DistanceId, out int count))
                             {
-                                maxSegmentsPerDistance[s.DistanceId] = 0;
+                                count = 0;
                             }
                             count++;
+                            maxSegmentsPerDistance[s.DistanceId] = count;
                             if (count > output)
                             {
                                 output = count;

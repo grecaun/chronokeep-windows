@@ -1,0 +1,7 @@
+{
+  "version": "v1.7.4",
+  "changes": [],
+  "fixes": [
+    "Exporting results now properly exports all segment results."
+  ]
+}
