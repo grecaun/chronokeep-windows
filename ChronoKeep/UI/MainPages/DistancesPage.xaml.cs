@@ -1212,7 +1212,7 @@ namespace Chronokeep.UI.MainPages
 
         private async void UploadButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("UI.MainPages.SegmentsPage", "Uploading segments.");
+            Log.D("UI.MainPages.DistancesPage", "Uploading distances.");
             if (UploadButton.Content.ToString() == "Upload")
             {
                 UploadButton.IsEnabled = false;
