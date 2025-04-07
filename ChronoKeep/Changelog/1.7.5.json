@@ -2,6 +2,6 @@
   "version": "v1.7.5",
   "changes": [],
   "fixes": [
-    ""
+    "Fixed an issue where a person could run two events in a race but their results would be mixed together when uploaded to the Chronokeep results api."
   ]
 }
