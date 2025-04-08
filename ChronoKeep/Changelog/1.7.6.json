@@ -1,7 +1,8 @@
 {
   "version": "v1.7.6",
   "changes": [
-    "Distances are created when downloading participants if they did not previously exist."
+    "Distances are created when downloading participants if they did not previously exist.",
+    "Distance Stats now shows distances with active participants at the top of the list."
   ],
   "fixes": [
     "Downloading participants no longer creates duplicate entries."
