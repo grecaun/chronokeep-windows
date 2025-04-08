@@ -1,0 +1,9 @@
+{
+  "version": "v1.7.6",
+  "changes": [
+    "Distances are created when downloading participants if they did not previously exist."
+  ],
+  "fixes": [
+    "Downloading participants no longer creates duplicate entries."
+  ]
+}

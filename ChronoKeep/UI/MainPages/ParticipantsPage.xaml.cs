@@ -511,8 +511,20 @@ namespace Chronokeep.UI.MainPages
                 }
                 foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                 {
-                    partDictionary[(p.FirstName, p.LastName, p.Birthdate, p.Distance)] = p;
+                    partDictionary[(p.FirstName, p.LastName, p.Birthdate, p.Distance.ToLower())] = p;
                     partESDictionary[string.Format("{0}{1}", uniqueID, p.EventSpecific.Identifier)] = p;
+                }
+                foreach (Distance d in database.GetDistances(theEvent.Identifier))
+                {
+                    distDictionary[d.Name.ToLower()] = d;
+                }
+                foreach (APIPerson person in newPersons)
+                {
+                    if (!distDictionary.TryGetValue(person.Distance.ToLower(), out Distance dist))
+                    {
+                        distDictionary[person.Distance.ToLower()] = new Distance(person.Distance, theEvent.Identifier);
+                        database.AddDistance(new Distance(person.Distance, theEvent.Identifier));
+                    }
                 }
                 foreach (Distance d in database.GetDistances(theEvent.Identifier))
                 {
@@ -522,89 +534,96 @@ namespace Chronokeep.UI.MainPages
                 List<Participant> partsToAdd = new();
                 foreach (APIPerson person in newPersons)
                 {
-                    if (person.Bib.Length > 0 && distDictionary.TryGetValue(person.Distance.ToLower(), out Distance distance))
+                    person.Trim();
+                    if (distDictionary.TryGetValue(person.Distance.ToLower(), out Distance distance))
                     {
                         if (partESDictionary.TryGetValue(person.Identifier, out Participant old) && old != null && old.IsSimilar(person))
                         {
-                            partsToUpdate.Add(new(
-                                old.Identifier,
-                                person.First.Length > 0 ? person.First : old.FirstName,
-                                person.Last.Length > 0 ? person.Last : old.LastName,
-                                old.Street,
-                                old.City,
-                                old.State,
-                                old.Zip,
-                                person.Birthdate,
-                                new EventSpecific(
-                                    old.EventSpecific.Identifier,
-                                    theEvent.Identifier,
-                                    distDictionary[person.Distance.ToLower()].Identifier,
-                                    distDictionary[person.Distance.ToLower()].Name,
-                                    person.Bib,
-                                    old.EventSpecific.CheckedIn,
-                                    old.EventSpecific.Comments,
-                                    old.EventSpecific.Owes,
-                                    old.EventSpecific.Other,
-                                    old.EventSpecific.Status,
-                                    old.EventSpecific.AgeGroupName,
-                                    old.EventSpecific.AgeGroupId,
-                                    person.Anonymous,
-                                    person.SMSEnabled,
-                                    person.Apparel,
-                                    old.EventSpecific.Division
-                                    ),
-                                old.Email,
-                                old.Phone,
-                                person.Mobile.Length > 0 ? person.Mobile : old.Mobile,
-                                old.Parent,
-                                old.Country,
-                                old.Street2,
-                                person.Gender,
-                                old.ECName,
-                                old.ECPhone,
-                                old.Chip
-                                ));
+                            if (person.Bib.Length > 0)
+                            {
+                                partsToUpdate.Add(new(
+                                    old.Identifier,
+                                    person.First.Length > 0 ? person.First : old.FirstName,
+                                    person.Last.Length > 0 ? person.Last : old.LastName,
+                                    old.Street,
+                                    old.City,
+                                    old.State,
+                                    old.Zip,
+                                    person.Birthdate,
+                                    new EventSpecific(
+                                        old.EventSpecific.Identifier,
+                                        theEvent.Identifier,
+                                        distDictionary[person.Distance.ToLower()].Identifier,
+                                        distDictionary[person.Distance.ToLower()].Name,
+                                        person.Bib,
+                                        old.EventSpecific.CheckedIn,
+                                        old.EventSpecific.Comments,
+                                        old.EventSpecific.Owes,
+                                        old.EventSpecific.Other,
+                                        old.EventSpecific.Status,
+                                        old.EventSpecific.AgeGroupName,
+                                        old.EventSpecific.AgeGroupId,
+                                        person.Anonymous,
+                                        person.SMSEnabled,
+                                        person.Apparel,
+                                        old.EventSpecific.Division
+                                        ),
+                                    old.Email,
+                                    old.Phone,
+                                    person.Mobile.Length > 0 ? person.Mobile : old.Mobile,
+                                    old.Parent,
+                                    old.Country,
+                                    old.Street2,
+                                    person.Gender,
+                                    old.ECName,
+                                    old.ECPhone,
+                                    old.Chip
+                                    ));
+                            }
                         }
-                        else if (partDictionary.TryGetValue((person.First, person.Last, person.Birthdate, person.Distance), out Participant oldTwo))
+                        else if (partDictionary.TryGetValue((person.First, person.Last, person.Birthdate, person.Distance.ToLower()), out Participant oldTwo))
                         {
-                            partsToUpdate.Add(new(
-                                oldTwo.Identifier,
-                                person.First.Length > 0 ? person.First : oldTwo.FirstName,
-                                person.Last.Length > 0 ? person.Last : oldTwo.LastName,
-                                oldTwo.Street,
-                                oldTwo.City,
-                                oldTwo.State,
-                                oldTwo.Zip,
-                                person.Birthdate,
-                                new EventSpecific(
-                                    oldTwo.EventSpecific.Identifier,
-                                    theEvent.Identifier,
-                                    distDictionary[person.Distance.ToLower()].Identifier,
-                                    distDictionary[person.Distance.ToLower()].Name,
-                                    person.Bib,
-                                    oldTwo.EventSpecific.CheckedIn,
-                                    oldTwo.EventSpecific.Comments,
-                                    oldTwo.EventSpecific.Owes,
-                                    oldTwo.EventSpecific.Other,
-                                    oldTwo.EventSpecific.Status,
-                                    oldTwo.EventSpecific.AgeGroupName,
-                                    oldTwo.EventSpecific.AgeGroupId,
-                                    person.Anonymous,
-                                    person.SMSEnabled,
-                                    person.Apparel,
-                                    old.EventSpecific.Division
-                                    ),
-                                oldTwo.Email,
-                                oldTwo.Phone,
-                                person.Mobile.Length > 0 ? person.Mobile : oldTwo.Mobile,
-                                oldTwo.Parent,
-                                oldTwo.Country,
-                                oldTwo.Street2,
-                                person.Gender,
-                                oldTwo.ECName,
-                                oldTwo.ECPhone,
-                                oldTwo.Chip
-                                ));
+                            if (person.Bib.Length > 0)
+                            {
+                                partsToUpdate.Add(new(
+                                    oldTwo.Identifier,
+                                    person.First.Length > 0 ? person.First : oldTwo.FirstName,
+                                    person.Last.Length > 0 ? person.Last : oldTwo.LastName,
+                                    oldTwo.Street,
+                                    oldTwo.City,
+                                    oldTwo.State,
+                                    oldTwo.Zip,
+                                    person.Birthdate,
+                                    new EventSpecific(
+                                        oldTwo.EventSpecific.Identifier,
+                                        theEvent.Identifier,
+                                        distDictionary[person.Distance.ToLower()].Identifier,
+                                        distDictionary[person.Distance.ToLower()].Name,
+                                        person.Bib,
+                                        oldTwo.EventSpecific.CheckedIn,
+                                        oldTwo.EventSpecific.Comments,
+                                        oldTwo.EventSpecific.Owes,
+                                        oldTwo.EventSpecific.Other,
+                                        oldTwo.EventSpecific.Status,
+                                        oldTwo.EventSpecific.AgeGroupName,
+                                        oldTwo.EventSpecific.AgeGroupId,
+                                        person.Anonymous,
+                                        person.SMSEnabled,
+                                        person.Apparel,
+                                        oldTwo.EventSpecific.Division
+                                        ),
+                                    oldTwo.Email,
+                                    oldTwo.Phone,
+                                    person.Mobile.Length > 0 ? person.Mobile : oldTwo.Mobile,
+                                    oldTwo.Parent,
+                                    oldTwo.Country,
+                                    oldTwo.Street2,
+                                    person.Gender,
+                                    oldTwo.ECName,
+                                    oldTwo.ECPhone,
+                                    oldTwo.Chip
+                                    ));
+                            }
                         }
                         else
                         {

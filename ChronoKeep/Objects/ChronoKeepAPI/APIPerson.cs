@@ -46,5 +46,18 @@ namespace Chronokeep.Objects.API
         public string Mobile { get; set; }
         [JsonPropertyName("apparel")]
         public string Apparel { get; set; }
+
+        public void Trim()
+        {
+            Bib = Bib.Trim();
+            First = First.Trim();
+            Last = Last.Trim();
+            Birthdate = Birthdate.Trim();
+            Gender = Gender.Trim();
+            AgeGroup = AgeGroup.Trim();
+            Distance = Distance.Trim();
+            Mobile = Mobile.Trim();
+            Apparel = Apparel.Trim();
+        }
     }
 }
