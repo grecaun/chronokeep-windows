@@ -5,6 +5,7 @@
     "Distance Stats now shows distances with active participants at the top of the list."
   ],
   "fixes": [
-    "Downloading participants no longer creates duplicate entries."
+    "Downloading participants no longer creates duplicate entries.",
+    "ChipReads now properly associate names with them when participant data changes."
   ]
 }

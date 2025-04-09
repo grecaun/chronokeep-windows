@@ -642,13 +642,13 @@ namespace Chronokeep.Objects
                 {
                     return two.Occurrence.CompareTo(one.Occurrence);
                 }
-                if (one.status == 3 && two.status != 3)
-                {
-                    return -1;
-                }
-                if (one.status != 3 && two.status == 3)
+                if (one.Status == Constants.Timing.TIMERESULT_STATUS_DNF && two.Status != Constants.Timing.TIMERESULT_STATUS_DNF)
                 {
                     return 1;
+                }
+                if (one.Status != Constants.Timing.TIMERESULT_STATUS_DNF && two.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
+                {
+                    return -1;
                 }
                 if (one.Place == two.Place)
                 {

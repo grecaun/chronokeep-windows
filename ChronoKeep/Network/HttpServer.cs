@@ -91,7 +91,7 @@ namespace Chronokeep.Network
                 }
             }
             finishResults.AddRange(finishDictionary.Values);
-            finishResults.RemoveAll(r => string.IsNullOrEmpty(r.Bib) || string.IsNullOrEmpty(r.First) || string.IsNullOrEmpty(r.Last));
+            finishResults.RemoveAll(r => string.IsNullOrEmpty(r.Bib));
             // clear response caches whenever we update information
             resultsCache = null;
             participantCache.Clear();
