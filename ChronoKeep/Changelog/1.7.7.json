@@ -1,0 +1,7 @@
+{
+  "version": "v1.7.7",
+  "changes": [],
+  "fixes": [
+    "Fixed an issue where the program would crash when adding a new event to the Chronokeep API."
+  ]
+}

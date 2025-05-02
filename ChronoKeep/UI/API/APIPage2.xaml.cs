@@ -121,7 +121,7 @@ namespace Chronokeep.UI.API
                 return;
             }
             string slug;
-            if (eventList.SelectedItem == null || ((APIEvent)eventList.SelectedItem).Slug.Length < 1)
+            if (eventList.SelectedItem == null || ((APIEvent)eventList.SelectedItem).Slug == null || ((APIEvent)eventList.SelectedItem).Slug.Length < 1)
             {
                 try
                 {
