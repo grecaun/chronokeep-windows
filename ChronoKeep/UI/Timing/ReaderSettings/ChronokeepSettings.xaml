@@ -36,7 +36,7 @@
             VerticalAlignment="Center"
             >
             <StackPanel x:Name="sacrifice" Margin="1,1,1,1" Height="1" />
-            <StackPanel x:Name="settingsPanel" Visibility="Hidden" Margin="0,-25,0,0">
+            <StackPanel x:Name="settingsPanel" Visibility="Visible" Margin="0,-25,0,0">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
                         Text="Name"
@@ -240,6 +240,70 @@
                         VirtualizingPanel.ScrollUnit="Pixel"
                         Margin="0,-10,0,0"
                         />
+                </Expander>
+                <Expander
+                    Header="ntfy"
+                    Margin="5,5,5,5"
+                    HorizontalAlignment="Stretch"
+                    >
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock
+                                Text="URL"
+                                TextAlignment="Right"
+                                VerticalAlignment="Center"
+                                Width="80"
+                                Margin="5,5,5,5"
+                                />
+                            <TextBox
+                                x:Name="ntfyUrlBox"
+                                Width="250"
+                                Margin="5,5,5,5"
+                                />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock
+                                Text="Topic"
+                                TextAlignment="Right"
+                                VerticalAlignment="Center"
+                                Width="80"
+                                Margin="5,5,5,5"
+                                />
+                            <TextBox
+                                x:Name="ntfyTopicBox"
+                                Width="250"
+                                Margin="5,5,5,5"
+                                />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock
+                                Text="User"
+                                TextAlignment="Right"
+                                VerticalAlignment="Center"
+                                Width="80"
+                                Margin="5,5,5,5"
+                                />
+                            <TextBox
+                                x:Name="ntfyUserBox"
+                                Width="250"
+                                Margin="5,5,5,5"
+                                />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock
+                                Text="Password"
+                                TextAlignment="Right"
+                                VerticalAlignment="Center"
+                                Width="80"
+                                Margin="5,5,5,5"
+                                />
+                            <TextBox
+                                x:Name="ntfyPassBox"
+                                Width="250"
+                                Margin="5,5,5,5"
+                                />
+                        </StackPanel>
+                    </StackPanel>
                 </Expander>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button

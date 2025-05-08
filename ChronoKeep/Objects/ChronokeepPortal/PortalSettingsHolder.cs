@@ -46,5 +46,9 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public HashSet<ChangeType> Changes { get; set; } = new HashSet<ChangeType>();
         public string PortalVersion { get; set; }
         public int UploadInterval { get; set; }
+        public string NtfyURL { get; set; }
+        public string NtfyTopic { get; set; }
+        public string NtfyUser { get; set; }
+        public string NtfyPass { get; set; }
     }
 }

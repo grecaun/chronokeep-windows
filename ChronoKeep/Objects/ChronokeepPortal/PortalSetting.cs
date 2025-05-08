@@ -12,6 +12,10 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string SETTING_VOLUME = "SETTING_VOLUME";
         public const string SETTING_VOICE = "SETTING_VOICE";
         public const string SETTING_UPLOAD_INTERVAL = "SETTING_UPLOAD_INTERVAL";
+        public const string SETTING_NTFY_URL = "SETTING_NTFY_URL";
+        public const string SETTING_NTFY_USER = "SETTING_NTFY_USER";
+        public const string SETTING_NTFY_PASS = "SETTING_NTFY_PASS";
+        public const string SETTING_NTFY_TOPIC = "SETTING_NTFY_TOPIC";
 
         public const string TYPE_CHIP_DEC = "DEC";
         public const string TYPE_CHIP_HEX = "HEX";

@@ -186,6 +186,10 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     Voice = voiceBox.SelectedIndex == 0 ? PortalSettingsHolder.VoiceType.EMILY
                         : voiceBox.SelectedIndex == 1 ? PortalSettingsHolder.VoiceType.MICHAEL
                         : PortalSettingsHolder.VoiceType.CUSTOM,
+                    NtfyURL = ntfyUrlBox.Text.Trim(),
+                    NtfyTopic = ntfyTopicBox.Text.Trim(),
+                    NtfyUser = ntfyUserBox.Text.Trim(),
+                    NtfyPass = ntfyPassBox.Text.Trim(),
                 };
                 reader.SendSetSettings(sett);
             }
@@ -259,6 +263,10 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                             voiceBox.SelectedIndex = 2;
                             break;
                     }
+                    ntfyUrlBox.Text = allSettings.NtfyURL;
+                    ntfyTopicBox.Text = allSettings.NtfyTopic;
+                    ntfyUserBox.Text = allSettings.NtfyUser;
+                    ntfyPassBox.Text = allSettings.NtfyPass;
                 }
                 // add readers and apis to views
                 if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.READERS))

@@ -303,6 +303,18 @@ namespace Chronokeep.Timing.Interfaces
                                             case PortalSetting.SETTING_UPLOAD_INTERVAL:
                                                 updSettings.UploadInterval = int.Parse(set.Value);
                                                 break;
+                                            case PortalSetting.SETTING_NTFY_URL:
+                                                updSettings.NtfyURL = set.Value;
+                                                break;
+                                            case PortalSetting.SETTING_NTFY_TOPIC:
+                                                updSettings.NtfyTopic = set.Value;
+                                                break;
+                                            case PortalSetting.SETTING_NTFY_USER:
+                                                updSettings.NtfyUser = set.Value;
+                                                break;
+                                            case PortalSetting.SETTING_NTFY_PASS:
+                                                updSettings.NtfyPass = set.Value;
+                                                break;
                                         }
                                         updSettings.Changes.Add(PortalSettingsHolder.ChangeType.SETTINGS);
                                     }
@@ -416,6 +428,18 @@ namespace Chronokeep.Timing.Interfaces
                                                 break;
                                             case PortalSetting.SETTING_UPLOAD_INTERVAL:
                                                 updSettings.UploadInterval = int.Parse(set.Value);
+                                                break;
+                                            case PortalSetting.SETTING_NTFY_URL:
+                                                updSettings.NtfyURL = set.Value;
+                                                break;
+                                            case PortalSetting.SETTING_NTFY_TOPIC:
+                                                updSettings.NtfyTopic = set.Value;
+                                                break;
+                                            case PortalSetting.SETTING_NTFY_USER:
+                                                updSettings.NtfyUser = set.Value;
+                                                break;
+                                            case PortalSetting.SETTING_NTFY_PASS:
+                                                updSettings.NtfyPass = set.Value;
                                                 break;
                                         }
                                     }
@@ -805,6 +829,26 @@ namespace Chronokeep.Timing.Interfaces
                 Value = settings.Voice == PortalSettingsHolder.VoiceType.EMILY ? PortalSetting.VOICE_EMILY
                     : settings.Voice == PortalSettingsHolder.VoiceType.MICHAEL ? PortalSetting.VOICE_MICHAEL
                     : PortalSetting.VOICE_CUSTOM
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_NTFY_URL,
+                Value = settings.NtfyURL
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_NTFY_TOPIC,
+                Value = settings.NtfyTopic
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_NTFY_USER,
+                Value = settings.NtfyUser
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_NTFY_PASS,
+                Value = settings.NtfyPass
             });
             SendMessage(JsonSerializer.Serialize(settingsReq));
         }
