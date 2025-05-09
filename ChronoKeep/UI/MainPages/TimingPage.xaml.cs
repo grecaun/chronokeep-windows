@@ -2058,6 +2058,22 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
+        private void Export_Runsignup_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.TimingPage", "Export Runsignup Clicked.");
+            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
+            {
+                DialogBox.Show("Exporting time based events not supported.");
+                return;
+            }
+            ExportDistanceResults exportRunsignup = new ExportDistanceResults(mWindow, database, OutputType.Runsignup);
+            if (!exportRunsignup.SetupError())
+            {
+                mWindow.AddWindow(exportRunsignup);
+                exportRunsignup.ShowDialog();
+            }
+        }
+
         public class TimeRelativeWave
         {
             public string Name { get; set; }

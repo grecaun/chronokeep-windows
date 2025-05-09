@@ -414,11 +414,19 @@
                                         />
                                     <Button
                                         Content="Export UltraSignup"
-                                        FontSize="9"
+                                        FontSize="11"
                                         Height="35"
                                         HorizontalAlignment="Stretch"
                                         Margin="0,5,5,0"
                                         Click="Export_US_Click"
+                                        />
+                                    <Button
+                                        Content="Export Runsignup"
+                                        FontSize="11"
+                                        Height="35"
+                                        HorizontalAlignment="Stretch"
+                                        Margin="0,5,5,0"
+                                        Click="Export_Runsignup_Click"
                                         />
                                     <Button
                                         Content="Export Abbott" 
@@ -426,13 +434,6 @@
                                         HorizontalAlignment="Stretch"
                                         Margin="0,5,5,0"
                                         Click="Export_Abbott_Click"
-                                        />
-                                    <Button
-                                        Content="Create HTML"
-                                        Height="35"
-                                        HorizontalAlignment="Stretch"
-                                        Margin="0,5,5,0"
-                                        Click="CreateHTML_Click" 
                                         />
                                 </StackPanel>
                                 <StackPanel 
@@ -483,6 +484,13 @@
                                         HorizontalAlignment="Stretch"
                                         Margin="5,5,0,0"
                                         Click="HTMLServerButton_Click"
+                                        />
+                                    <Button
+                                        Content="Create HTML"
+                                        Height="35"
+                                        HorizontalAlignment="Stretch"
+                                        Margin="5,5,0,0"
+                                        Click="CreateHTML_Click" 
                                         />
                                 </StackPanel>
                             </Grid>

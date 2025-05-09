@@ -556,6 +556,7 @@ namespace Chronokeep.Objects
         public string Other { get => eventSpecific.Other; }
         public string Comments { get => eventSpecific.Comments; }
         public int Status { get => eventSpecific.Status; set => eventSpecific.Status = value; }
+        public string Apparel { get=> eventSpecific.Apparel; }
 
         // Emergency Contact binding stuffs
         public string ECName { get => emergencyName; }

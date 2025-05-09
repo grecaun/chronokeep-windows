@@ -1,0 +1,9 @@
+{
+  "version": "v1.7.9",
+  "changes": [
+    "Added apparel to the participant export.",
+    "Added apparel to the participant display window.",
+    "Added the option to export results for Runsignup."
+  ],
+  "fixes": []
+}

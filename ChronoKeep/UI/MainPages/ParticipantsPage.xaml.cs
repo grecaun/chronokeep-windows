@@ -287,12 +287,14 @@ namespace Chronokeep.UI.MainPages
                             "Last",
                             "Birthday",
                             "Age",
+                            "Age Group",
                             "Street",
                             "Apartment",
                             "City",
                             "State",
                             "Zip",
                             "Country",
+                            "Phone",
                             "Mobile",
                             "Email",
                             "Parent",
@@ -302,12 +304,13 @@ namespace Chronokeep.UI.MainPages
                             "Owes",
                             "Emergency Contact Name",
                             "Emergency Contact Phone",
-                            "Anonymous"
+                            "Anonymous",
+                            "Apparel" // new
                         };
                         List<object[]> data = new List<object[]>();
                         foreach (Participant p in parts)
                         {
-                            data.Add(new object[] {
+                            data.Add([
                                 p.Bib,
                                 p.Distance,
                                 p.EventSpecific.StatusStr,
@@ -315,12 +318,14 @@ namespace Chronokeep.UI.MainPages
                                 p.LastName,
                                 p.Birthdate,
                                 p.Age(theEvent.Date),
+                                p.EventSpecific.AgeGroupName,
                                 p.Street,
                                 p.Street2,
                                 p.City,
                                 p.State,
                                 p.Zip,
                                 p.Country,
+                                p.Phone,
                                 p.Mobile,
                                 p.Email,
                                 p.Parent,
@@ -332,7 +337,8 @@ namespace Chronokeep.UI.MainPages
                                 p.ECName,
                                 p.ECPhone,
                                 p.PrettyAnonymous,
-                            });
+                                p.Apparel,
+                            ]);
                         }
                         IDataExporter exporter = null;
                         string extension = Path.GetExtension(saveFileDialog.FileName);

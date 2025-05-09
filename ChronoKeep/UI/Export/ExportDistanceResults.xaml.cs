@@ -16,6 +16,7 @@ namespace Chronokeep.UI.Export
     {
         Boston,
         UltraSignup,
+        Runsignup,
         Abbott
     }
 
@@ -86,6 +87,10 @@ namespace Chronokeep.UI.Export
             {
                 this.Title = "Export UltraSignup Results";
             }
+            else if (OutputType.Runsignup == type)
+            {
+                this.Title = "Export Runsignup Results";
+            }
             else if (OutputType.Abbott == type)
             {
                 this.Title = "Export AbbottWMM Results";
@@ -112,6 +117,10 @@ namespace Chronokeep.UI.Export
                 else if (OutputType.UltraSignup == type)
                 {
                     SaveUltraSignup(selected.Name);
+                }
+                else if (OutputType.Runsignup == type)
+                {
+                    SaveRunsignup(selected.Name);
                 }
                 else if (OutputType.Abbott == type)
                 {
@@ -151,6 +160,10 @@ namespace Chronokeep.UI.Export
                 {
                     SaveUltraSignup(selected.Name);
                 }
+                else if (OutputType.Runsignup == type)
+                {
+                    SaveRunsignup(selected.Name);
+                }
                 else if (OutputType.Abbott == type)
                 {
                     SaveAbbot(selected.Name);
@@ -169,6 +182,10 @@ namespace Chronokeep.UI.Export
                 else if (OutputType.UltraSignup == type)
                 {
                     SaveAllUltraSignup();
+                }
+                else if (OutputType.Runsignup == type)
+                {
+                    SaveAllRunsignup();
                 }
                 else if (OutputType.Abbott == type)
                 {
@@ -228,6 +245,30 @@ namespace Chronokeep.UI.Export
                 foreach (Distance distance in distanceDictionary.Values)
                 {
                     SaveUltraSignupInternal(
+                        distance.Name,
+                        Path.Combine(filePath, string.Format("{0} {1}{2}", fileName, distance.Name, extension))
+                        );
+                }
+                DialogBox.Show("Files saved.");
+            }
+        }
+
+        private void SaveAllRunsignup()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "CSV (*.csv)|*.csv",
+                FileName = string.Format("{0} {1} Runsignup.{2}", theEvent.YearCode, theEvent.Name, "csv"),
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string extension = Path.GetExtension(saveFileDialog.FileName);
+                string fileName = Path.GetFileNameWithoutExtension(saveFileDialog.FileName);
+                string filePath = Path.GetDirectoryName(saveFileDialog.FileName);
+                foreach (Distance distance in distanceDictionary.Values)
+                {
+                    SaveRunsignupInternal(
                         distance.Name,
                         Path.Combine(filePath, string.Format("{0} {1}{2}", fileName, distance.Name, extension))
                         );
@@ -593,6 +634,32 @@ namespace Chronokeep.UI.Export
             }
         }
 
+        private void SaveRunsignup(string distance)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = "CSV (*.csv)|*.csv",
+                FileName = string.Format("{0} {1} {2} Runsignup.{3}", theEvent.YearCode, theEvent.Name, distance, "csv"),
+                InitialDirectory = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR).Value
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string filename = saveFileDialog.FileName;
+                string[] fileSplit = filename.Split('.');
+                if (fileSplit.Length != 2)
+                {
+                    DialogBox.Show("Filename appears to be invalid.");
+                    return;
+                }
+                if (!fileSplit[1].Equals("csv"))
+                {
+                    filename = string.Format("{0}.{1}", fileSplit[0], "csv");
+                }
+                SaveRunsignupInternal(distance, filename);
+                DialogBox.Show("File saved.");
+            }
+        }
+
         private void SaveUltraSignupInternal(string distance, string fileName)
         {
             string[] headers = new string[]
@@ -641,6 +708,70 @@ namespace Chronokeep.UI.Export
                             participantDictionary[result.Bib].City,
                             participantDictionary[result.Bib].State,
                             status
+                    });
+                }
+            }
+            IDataExporter exporter;
+            StringBuilder format = new StringBuilder();
+            for (int i = 0; i < headers.Length; i++)
+            {
+                format.Append("\"{");
+                format.Append(i);
+                format.Append("}\",");
+            }
+            format.Remove(format.Length - 1, 1);
+            Log.D("UI.Export.ExportDistanceResults", string.Format("The format is '{0}'", format.ToString()));
+            exporter = new CSVExporter(format.ToString());
+            exporter.SetData(headers, data);
+            exporter.ExportData(fileName);
+        }
+
+        private void SaveRunsignupInternal(string distance, string fileName)
+        {
+            string[] headers = new string[]
+            {
+                "place",
+                "clock time",
+                "chip time",
+                "first",
+                "last",
+                "gender",
+                "age",
+                "bib",
+                "city",
+                "state"
+            };
+            Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
+            foreach (Participant person in database.GetParticipants(theEvent.Identifier))
+            {
+                participantDictionary[person.Bib] = person;
+            }
+            List<object[]> data = new List<object[]>();
+            foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
+            {
+                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib) && (result.DistanceName == distance))
+                {
+                    int status = 1;
+                    if (Constants.Timing.TIMERESULT_STATUS_DNF == result.Status)
+                    {
+                        status = 2;
+                    }
+                    else if (Constants.Timing.DISTANCE_TYPE_UNOFFICIAL == result.Type)
+                    {
+                        status = 4;
+                    }
+                    data.Add(new object[]
+                    {
+                            result.Place > 0 ? result.Place.ToString() : "",
+                            result.Time,
+                            result.ChipTime,
+                            result.First,
+                            result.Last,
+                            result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : result.Gender.Equals("Non-Binary", System.StringComparison.OrdinalIgnoreCase) ? "X" : "",
+                            result.Age(theEvent.Date),
+                            result.Bib,
+                            participantDictionary[result.Bib].City,
+                            participantDictionary[result.Bib].State,
                     });
                 }
             }
