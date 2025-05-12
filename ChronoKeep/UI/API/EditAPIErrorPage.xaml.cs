@@ -1,4 +1,6 @@
-﻿namespace Chronokeep.UI.API
+﻿using System.Windows;
+
+namespace Chronokeep.UI.API
 {
     /// <summary>
     /// Interaction logic for EditAPIErrorPage.xaml
@@ -6,6 +8,7 @@
     public partial class EditAPIErrorPage
     {
         EditAPIWindow window;
+
         public EditAPIErrorPage(EditAPIWindow window, bool noAPI)
         {
             InitializeComponent();
@@ -14,6 +17,11 @@
             {
                 errorLabel.Text = "Unable to find linked api/event.";
             }
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            window.Close();
         }
     }
 }
