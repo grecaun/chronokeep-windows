@@ -1132,7 +1132,9 @@ namespace Chronokeep.Database.SQLite
                                     false,
                                     false,
                                     "",
-                                    ""
+                                    "",
+                                    Constants.Timing.EVENTSPECIFIC_DEFAULT_VERSION,
+                                    Constants.Timing.EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION
                                     ),
                                 reader["participant_email"].ToString(),
                                 "",
@@ -1599,6 +1601,14 @@ namespace Chronokeep.Database.SQLite
                         command.CommandText = "ALTER TABLE eventspecific ADD COLUMN eventspecific_division VARCHAR NOT NULL DEFAULT ''; " +
                             "ALTER TABLE time_results ADD COLUMN timeresult_division_place INT NOT NULL DEFAULT " + Constants.Timing.TIMERESULT_DUMMYPLACE + "; " +
                             "UPDATE settings SET VALUE='69' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
+                        goto case 69;
+                    case 69:
+                        Log.D("Database.SQLite.Update", "Upgrading from version 69.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE eventspecific ADD COLUMN eventspecific_version INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_DEFAULT_VERSION + "; " +
+                            "ALTER TABLE eventspecific ADD COLUMN eventspecific_uploaded_version INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION + "; " +
+                            "UPDATE settings SET VALUE='70' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
                         break;
                 }

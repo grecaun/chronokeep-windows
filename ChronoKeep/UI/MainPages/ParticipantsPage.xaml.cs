@@ -545,7 +545,9 @@ namespace Chronokeep.UI.MainPages
                     {
                         if (partESDictionary.TryGetValue(person.Identifier, out Participant old) && old != null && old.IsSimilar(person))
                         {
-                            if (person.Bib.Length > 0)
+                            // Only update if a bib exists and it has not been updated in the software since it was uploaded
+                            // Uploaded Version should equal Version, Version will be higher if it was updated after upload.
+                            if (person.Bib.Length > 0 && old.EventSpecific.UploadedVersion >= old.EventSpecific.Version)
                             {
                                 partsToUpdate.Add(new(
                                     old.Identifier,
@@ -572,7 +574,9 @@ namespace Chronokeep.UI.MainPages
                                         person.Anonymous,
                                         person.SMSEnabled,
                                         person.Apparel,
-                                        old.EventSpecific.Division
+                                        old.EventSpecific.Division,
+                                        old.EventSpecific.Version,
+                                        old.EventSpecific.UploadedVersion
                                         ),
                                     old.Email,
                                     old.Phone,
@@ -589,7 +593,9 @@ namespace Chronokeep.UI.MainPages
                         }
                         else if (partDictionary.TryGetValue((person.First, person.Last, person.Birthdate, person.Distance.ToLower()), out Participant oldTwo))
                         {
-                            if (person.Bib.Length > 0)
+                            // Only update if a bib exists and it has not been updated in the software since it was uploaded
+                            // Uploaded Version should equal Version, Version will be higher if it was updated after upload.
+                            if (person.Bib.Length > 0 && oldTwo.EventSpecific.UploadedVersion >= oldTwo.EventSpecific.Version)
                             {
                                 partsToUpdate.Add(new(
                                     oldTwo.Identifier,
@@ -616,7 +622,9 @@ namespace Chronokeep.UI.MainPages
                                         person.Anonymous,
                                         person.SMSEnabled,
                                         person.Apparel,
-                                        oldTwo.EventSpecific.Division
+                                        oldTwo.EventSpecific.Division,
+                                        oldTwo.EventSpecific.Version,
+                                        oldTwo.EventSpecific.UploadedVersion
                                         ),
                                     oldTwo.Email,
                                     oldTwo.Phone,
@@ -778,6 +786,12 @@ namespace Chronokeep.UI.MainPages
                 }
                 Log.D("UI.MainPages.TimingPage", "Upload finished. Count total: " + total);
             }
+            foreach (Participant part in participants)
+            {
+                // record the version number that we uploaded, should default to 0 for anything we haven't touched
+                part.EventSpecific.UploadedVersion = part.EventSpecific.Version;
+            }
+            database.UpdateParticipants(participants);
             Log.D("UI.MainPages.ParticipantsPage", "Attempting to upload " + upBibChips.Count.ToString() + " bibchips.");
             total = 0;
             loops = upBibChips.Count / Constants.Timing.API_LOOP_COUNT;

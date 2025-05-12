@@ -618,6 +618,18 @@ namespace Chronokeep.Objects
                 && Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
         }
 
+        public bool Matches(Participant other)
+        {
+            if (other == null) return false;
+            return Identifier == other.Identifier
+                && EventSpecific.Equals(other.EventSpecific)
+                && FirstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
+                && LastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
+                && Street.Equals(other.Street, StringComparison.OrdinalIgnoreCase)
+                && Zip.Equals(other.Zip, StringComparison.OrdinalIgnoreCase)
+                && Birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase);
+        }
+
         public string Age(string eventDate)
         {
             if (birthdate == null || birthdate.Length < 1)

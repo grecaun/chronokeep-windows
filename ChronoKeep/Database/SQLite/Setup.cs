@@ -166,7 +166,9 @@ namespace Chronokeep.Database.SQLite
                     "eventspecific_anonymous SMALLINT NOT NULL DEFAULT 0," +
                     "eventspecific_sms_enabled SMALLINT NOT NULL DEFAULT 0, " +
                     "eventspecific_apparel VARCHAR NOT NULL DEFAULT '', " +
-                    "eventspecific_division VARCHAR NOT NULL DEFAULT '', "+
+                    "eventspecific_division VARCHAR NOT NULL DEFAULT '', " +
+                    "eventspecific_version INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_DEFAULT_VERSION + ", " +
+                    "eventspecific_uploaded_version INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION + ", " +
                     "UNIQUE (participant_id, event_id, distance_id) ON CONFLICT REPLACE" +
                     ");");
                 queries.Add("CREATE TABLE IF NOT EXISTS segments (" +

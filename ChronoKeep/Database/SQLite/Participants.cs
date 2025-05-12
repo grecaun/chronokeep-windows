@@ -12,55 +12,123 @@ namespace Chronokeep.Database.SQLite
             person.FormatData();
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO participants (participant_first, participant_last, participant_street, " +
-                "participant_city, participant_state, participant_zip, participant_birthday, participant_email, participant_phone, " +
-                "participant_mobile, participant_parent, participant_country, participant_street2, participant_gender, " +
-                "emergencycontact_name, emergencycontact_phone)" +
-                " VALUES (@first,@last,@street,@city,@state,@zip,@birthdate,@email,@phone,@mobile,@parent,@country,@street2," +
-                "@gender,@ecname,@ecphone); SELECT participant_id FROM participants WHERE participant_first=@first " +
+            command.CommandText = "INSERT INTO participants " +
+                "(" +
+                "participant_first, " +
+                "participant_last, " +
+                "participant_street, " +
+                "participant_city, " +
+                "participant_state, " +
+                "participant_zip, " +
+                "participant_birthday, " +
+                "participant_email, " +
+                "participant_phone, " +
+                "participant_mobile, " +
+                "participant_parent, " +
+                "participant_country, " +
+                "participant_street2, " +
+                "participant_gender, " +
+                "emergencycontact_name, " +
+                "emergencycontact_phone" +
+                ")" +
+                " VALUES " +
+                "(" +
+                "@first," +
+                "@last," +
+                "@street," +
+                "@city," +
+                "@state," +
+                "@zip," +
+                "@birthdate," +
+                "@email," +
+                "@phone," +
+                "@mobile," +
+                "@parent," +
+                "@country," +
+                "@street2," +
+                "@gender," +
+                "@ecname," +
+                "@ecphone" +
+                "); SELECT participant_id FROM participants WHERE participant_first=@first " +
                 "AND participant_last=@last AND participant_street=@street AND participant_city=@city AND " +
                 "participant_state=@state AND participant_zip=@zip;";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                new SQLiteParameter("@first", person.FirstName),
-                new SQLiteParameter("@last", person.LastName),
-                new SQLiteParameter("@street", person.Street),
-                new SQLiteParameter("@city", person.City),
-                new SQLiteParameter("@state", person.State),
-                new SQLiteParameter("@zip", person.Zip),
-                new SQLiteParameter("@birthdate", person.Birthdate),
-                new SQLiteParameter("@email", person.Email),
-                new SQLiteParameter("@phone", person.Phone),
-                new SQLiteParameter("@mobile", person.Mobile),
-                new SQLiteParameter("@parent", person.Parent),
-                new SQLiteParameter("@country", person.Country),
-                new SQLiteParameter("@street2", person.Street2),
-                new SQLiteParameter("@ecname", person.ECName),
-                new SQLiteParameter("@ecphone", person.ECPhone),
-                new SQLiteParameter("@gender", person.Gender) });
+            command.Parameters.AddRange([
+                new("@first", person.FirstName),
+                new("@last", person.LastName),
+                new("@street", person.Street),
+                new("@city", person.City),
+                new("@state", person.State),
+                new("@zip", person.Zip),
+                new("@birthdate", person.Birthdate),
+                new("@email", person.Email),
+                new("@phone", person.Phone),
+                new("@mobile", person.Mobile),
+                new("@parent", person.Parent),
+                new("@country", person.Country),
+                new("@street2", person.Street2),
+                new("@ecname", person.ECName),
+                new("@ecphone", person.ECPhone),
+                new("@gender", person.Gender) ]);
             command.ExecuteNonQuery();
             person.Identifier = GetParticipantID(person, connection);
             command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "INSERT INTO eventspecific (participant_id, event_id, distance_id, eventspecific_bib, " +
-                "eventspecific_checkedin, eventspecific_comments, eventspecific_owes, eventspecific_other, " +
-                "eventspecific_age_group_name, eventspecific_age_group_id, eventspecific_anonymous, eventspecific_sms_enabled, eventspecific_apparel, eventspecific_division) " +
-                "VALUES (@participant,@event,@distance,@bib,@checkedin,@comments,@owes,@other,@ageGroupName,@ageGroupId,@anon,@sms,@apparel,@division)";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                new SQLiteParameter("@participant", person.Identifier),
-                new SQLiteParameter("@event", person.EventSpecific.EventIdentifier),
-                new SQLiteParameter("@distance", person.EventSpecific.DistanceIdentifier),
-                new SQLiteParameter("@bib", person.EventSpecific.Bib),
-                new SQLiteParameter("@checkedin", person.EventSpecific.CheckedIn),
-                new SQLiteParameter("@comments", person.EventSpecific.Comments),
-                new SQLiteParameter("@owes", person.EventSpecific.Owes),
-                new SQLiteParameter("@other", person.EventSpecific.Other),
-                new SQLiteParameter("@ageGroupName", person.EventSpecific.AgeGroupName),
-                new SQLiteParameter("@ageGroupId", person.EventSpecific.AgeGroupId),
-                new SQLiteParameter("@anon", person.EventSpecific.Anonymous ? 1 : 0),
-                new SQLiteParameter("@sms", person.EventSpecific.SMSEnabled ? 1 : 0),
-                new SQLiteParameter("@apparel", person.EventSpecific.Apparel),
-                new SQLiteParameter("@division", person.EventSpecific.Division)
-            });
+            command.CommandText = "INSERT INTO eventspecific " +
+                "(" +
+                "participant_id, " +
+                "event_id, " +
+                "distance_id, " +
+                "eventspecific_bib, " +
+                "eventspecific_checkedin, " +
+                "eventspecific_comments, " +
+                "eventspecific_owes, " +
+                "eventspecific_other, " +
+                "eventspecific_age_group_name, " +
+                "eventspecific_age_group_id, " +
+                "eventspecific_anonymous, " +
+                "eventspecific_sms_enabled, " +
+                "eventspecific_apparel, " +
+                "eventspecific_division, " +
+                "eventspecific_version, " +
+                "eventspecific_uploaded_version" +
+                ") " +
+                "VALUES " +
+                "(" +
+                "@participant," +
+                "@event," +
+                "@distance," +
+                "@bib," +
+                "@checkedin," +
+                "@comments," +
+                "@owes," +
+                "@other," +
+                "@ageGroupName," +
+                "@ageGroupId," +
+                "@anon," +
+                "@sms," +
+                "@apparel," +
+                "@division, " +
+                "@version, " +
+                "@uploaded" +
+                ")";
+            command.Parameters.AddRange([
+                new("@participant", person.Identifier),
+                new("@event", person.EventSpecific.EventIdentifier),
+                new("@distance", person.EventSpecific.DistanceIdentifier),
+                new("@bib", person.EventSpecific.Bib),
+                new("@checkedin", person.EventSpecific.CheckedIn),
+                new("@comments", person.EventSpecific.Comments),
+                new("@owes", person.EventSpecific.Owes),
+                new("@other", person.EventSpecific.Other),
+                new("@ageGroupName", person.EventSpecific.AgeGroupName),
+                new("@ageGroupId", person.EventSpecific.AgeGroupId),
+                new("@anon", person.EventSpecific.Anonymous ? 1 : 0),
+                new("@sms", person.EventSpecific.SMSEnabled ? 1 : 0),
+                new("@apparel", person.EventSpecific.Apparel),
+                new("@division", person.EventSpecific.Division),
+                new("@version", person.EventSpecific.Version),
+                new("@uploaded", person.EventSpecific.UploadedVersion)
+            ]);
             command.ExecuteNonQuery();
             long outVal = connection.LastInsertRowId;
             person.EventSpecific.Identifier = (int)outVal;
@@ -71,8 +139,8 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@0; DELETE FROM participants WHERE participant_id=@0";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                    new SQLiteParameter("@0", identifier) });
+            command.Parameters.AddRange([
+                    new("@0", identifier) ]);
             command.ExecuteNonQuery();
         }
 
@@ -80,8 +148,8 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM eventspecific WHERE participant_id=@0;";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                    new SQLiteParameter("@0", identifier) });
+            command.Parameters.AddRange([
+                    new("@0", identifier) ]);
             command.ExecuteNonQuery();
         }
 
@@ -89,35 +157,61 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE participants SET participant_first=@first, participant_last=@last, participant_street=@street," +
-                " participant_city=@city, participant_state=@state, participant_zip=@zip, participant_birthday=@birthdate," +
-                " emergencycontact_name=@ecname, emergencycontact_phone=@ecphone, participant_email=@email, participant_phone=@phone, participant_mobile=@mobile," +
-                " participant_parent=@parent, participant_country=@country, participant_street2=@street2, participant_gender=@gender WHERE participant_id=@participantid";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                    new SQLiteParameter("@first", person.FirstName),
-                    new SQLiteParameter("@last", person.LastName),
-                    new SQLiteParameter("@street", person.Street),
-                    new SQLiteParameter("@city", person.City),
-                    new SQLiteParameter("@state", person.State),
-                    new SQLiteParameter("@zip", person.Zip),
-                    new SQLiteParameter("@birthdate", person.Birthdate),
-                    new SQLiteParameter("@ecname", person.ECName),
-                    new SQLiteParameter("@ecphone", person.ECPhone),
-                    new SQLiteParameter("@email", person.Email),
-                    new SQLiteParameter("@participantid", person.Identifier),
-                    new SQLiteParameter("@phone", person.Phone),
-                    new SQLiteParameter("@mobile", person.Mobile),
-                    new SQLiteParameter("@parent", person.Parent),
-                    new SQLiteParameter("@country", person.Country),
-                    new SQLiteParameter("@street2", person.Street2),
-                    new SQLiteParameter("@gender", person.Gender) });
+            command.CommandText = "UPDATE participants SET " +
+                "participant_first=@first, " +
+                "participant_last=@last, " +
+                "participant_street=@street, " +
+                "participant_city=@city, " +
+                "participant_state=@state, " +
+                "participant_zip=@zip, " +
+                "participant_birthday=@birthdate, " +
+                "emergencycontact_name=@ecname, " +
+                "emergencycontact_phone=@ecphone, " +
+                "participant_email=@email, " +
+                "participant_phone=@phone, " +
+                "participant_mobile=@mobile, " +
+                "participant_parent=@parent, " +
+                "participant_country=@country, " +
+                "participant_street2=@street2, " +
+                "participant_gender=@gender " +
+                "WHERE participant_id=@participantid";
+            command.Parameters.AddRange([
+                    new("@first", person.FirstName),
+                    new("@last", person.LastName),
+                    new("@street", person.Street),
+                    new("@city", person.City),
+                    new("@state", person.State),
+                    new("@zip", person.Zip),
+                    new("@birthdate", person.Birthdate),
+                    new("@ecname", person.ECName),
+                    new("@ecphone", person.ECPhone),
+                    new("@email", person.Email),
+                    new("@participantid", person.Identifier),
+                    new("@phone", person.Phone),
+                    new("@mobile", person.Mobile),
+                    new("@parent", person.Parent),
+                    new("@country", person.Country),
+                    new("@street2", person.Street2),
+                    new("@gender", person.Gender) ]);
             command.ExecuteNonQuery();
             command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE eventspecific SET distance_id=@distanceId, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
-                "eventspecific_owes=@owes, eventspecific_other=@other, " +
-                "eventspecific_comments=@comments, eventspecific_status=@status, eventspecific_age_group_name=@ageGroupName, eventspecific_age_group_id=@ageGroupId, " +
-                "eventspecific_anonymous=@anon, eventspecific_sms_enabled=@sms, eventspecific_apparel=@apparel, eventspecific_division=@division " +
+            command.CommandText = "UPDATE eventspecific SET " +
+                "distance_id=@distanceId, " +
+                "eventspecific_bib=@bib, " +
+                "eventspecific_checkedin=@checkedin, " +
+                "eventspecific_owes=@owes, " +
+                "eventspecific_other=@other, " +
+                "eventspecific_comments=@comments, " +
+                "eventspecific_status=@status, " +
+                "eventspecific_age_group_name=@ageGroupName, " +
+                "eventspecific_age_group_id=@ageGroupId, " +
+                "eventspecific_anonymous=@anon, " +
+                "eventspecific_sms_enabled=@sms, " +
+                "eventspecific_apparel=@apparel, " +
+                "eventspecific_division=@division, " +
+                "eventspecific_version=@version, " +
+                "eventspecific_uploaded_version=@uploaded " +
                 "WHERE eventspecific_id=@eventspecid";
             command.Parameters.AddRange(new SQLiteParameter[] {
                     new SQLiteParameter("@distanceId", person.EventSpecific.DistanceIdentifier),
@@ -133,7 +227,9 @@ namespace Chronokeep.Database.SQLite
                     new SQLiteParameter("@anon", person.EventSpecific.Anonymous ? 1 : 0),
                     new SQLiteParameter("@sms", person.EventSpecific.SMSEnabled ? 1 : 0),
                     new SQLiteParameter("@apparel", person.EventSpecific.Apparel),
-                    new SQLiteParameter("@division", person.EventSpecific.Division)
+                    new SQLiteParameter("@division", person.EventSpecific.Division),
+                    new SQLiteParameter("@version", person.EventSpecific.Version),
+                    new SQLiteParameter("@uploaded", person.EventSpecific.UploadedVersion)
                 });
             command.ExecuteNonQuery();
         }
@@ -142,46 +238,66 @@ namespace Chronokeep.Database.SQLite
         {
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE participants SET participant_first=@first, participant_last=@last, participant_street=@street," +
-                " participant_city=@city, participant_state=@state, participant_zip=@zip, participant_birthday=@birthdate," +
-                " emergencycontact_name=@ecname, emergencycontact_phone=@ecphone, participant_email=@email, participant_mobile=@mobile," +
-                " participant_parent=@parent, participant_country=@country, participant_street2=@street2, participant_gender=@gender WHERE participant_id=@participantid";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                    new SQLiteParameter("@first", person.FirstName),
-                    new SQLiteParameter("@last", person.LastName),
-                    new SQLiteParameter("@street", person.Street),
-                    new SQLiteParameter("@city", person.City),
-                    new SQLiteParameter("@state", person.State),
-                    new SQLiteParameter("@zip", person.Zip),
-                    new SQLiteParameter("@birthdate", person.Birthdate),
-                    new SQLiteParameter("@ecname", person.ECName),
-                    new SQLiteParameter("@ecphone", person.ECPhone),
-                    new SQLiteParameter("@email", person.Email),
-                    new SQLiteParameter("@participantid", person.Identifier),
-                    new SQLiteParameter("@mobile", person.Mobile),
-                    new SQLiteParameter("@parent", person.Parent),
-                    new SQLiteParameter("@country", person.Country),
-                    new SQLiteParameter("@street2", person.Street2),
-                    new SQLiteParameter("@gender", person.Gender) });
+            command.CommandText = "UPDATE participants SET " +
+                "participant_first=@first, " +
+                "participant_last=@last, " +
+                "participant_street=@street, " +
+                "participant_city=@city, " +
+                "participant_state=@state, " +
+                "participant_zip=@zip, " +
+                "participant_birthday=@birthdate, " +
+                "emergencycontact_name=@ecname, " +
+                "emergencycontact_phone=@ecphone, " +
+                "participant_email=@email, " +
+                "participant_mobile=@mobile, " +
+                "participant_parent=@parent, " +
+                "participant_country=@country, " +
+                "participant_street2=@street2, " +
+                "participant_gender=@gender " +
+                "WHERE participant_id=@participantid";
+            command.Parameters.AddRange([
+                    new("@first", person.FirstName),
+                    new("@last", person.LastName),
+                    new("@street", person.Street),
+                    new("@city", person.City),
+                    new("@state", person.State),
+                    new("@zip", person.Zip),
+                    new("@birthdate", person.Birthdate),
+                    new("@ecname", person.ECName),
+                    new("@ecphone", person.ECPhone),
+                    new("@email", person.Email),
+                    new("@participantid", person.Identifier),
+                    new("@mobile", person.Mobile),
+                    new("@parent", person.Parent),
+                    new("@country", person.Country),
+                    new("@street2", person.Street2),
+                    new("@gender", person.Gender) ]);
             command.ExecuteNonQuery();
             command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
-            command.CommandText = "UPDATE eventspecific SET distance_id=@distanceId, eventspecific_bib=@bib, eventspecific_checkedin=@checkedin, " +
-                "eventspecific_owes=@owes, eventspecific_other=@other, " +
-                "eventspecific_comments=@comments, eventspecific_status=@status, eventspecific_age_group_name=@ageGroupName, eventspecific_age_group_id=@ageGroupId " +
+            command.CommandText = "UPDATE eventspecific SET " +
+                "distance_id=@distanceId, " +
+                "eventspecific_bib=@bib, " +
+                "eventspecific_checkedin=@checkedin, " +
+                "eventspecific_owes=@owes, " +
+                "eventspecific_other=@other, " +
+                "eventspecific_comments=@comments, " +
+                "eventspecific_status=@status, " +
+                "eventspecific_age_group_name=@ageGroupName, " +
+                "eventspecific_age_group_id=@ageGroupId " +
                 "WHERE eventspecific_id=@eventspecid";
-            command.Parameters.AddRange(new SQLiteParameter[] {
-                    new SQLiteParameter("@distanceId", person.EventSpecific.DistanceIdentifier),
-                    new SQLiteParameter("@bib", person.EventSpecific.Bib),
-                    new SQLiteParameter("@checkedin", person.EventSpecific.CheckedIn),
-                    new SQLiteParameter("@eventspecid", person.EventSpecific.Identifier),
-                    new SQLiteParameter("@owes", person.EventSpecific.Owes),
-                    new SQLiteParameter("@other", person.EventSpecific.Other),
-                    new SQLiteParameter("@comments", person.EventSpecific.Comments),
-                    new SQLiteParameter("@status", person.EventSpecific.Status),
-                    new SQLiteParameter("@ageGroupName", person.EventSpecific.AgeGroupName),
-                    new SQLiteParameter("@ageGroupId", person.EventSpecific.AgeGroupId)
-                });
+            command.Parameters.AddRange([
+                    new("@distanceId", person.EventSpecific.DistanceIdentifier),
+                    new("@bib", person.EventSpecific.Bib),
+                    new("@checkedin", person.EventSpecific.CheckedIn),
+                    new("@eventspecid", person.EventSpecific.Identifier),
+                    new("@owes", person.EventSpecific.Owes),
+                    new("@other", person.EventSpecific.Other),
+                    new("@comments", person.EventSpecific.Comments),
+                    new("@status", person.EventSpecific.Status),
+                    new("@ageGroupName", person.EventSpecific.AgeGroupName),
+                    new("@ageGroupId", person.EventSpecific.AgeGroupId),
+                ]);
             command.ExecuteNonQuery();
         }
 
@@ -225,7 +341,7 @@ namespace Chronokeep.Database.SQLite
 
         internal static List<Participant> GetParticipantsWorker(string query, int eventId, int distanceId, SQLiteConnection connection)
         {
-            List<Participant> output = new List<Participant>();
+            List<Participant> output = [];
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = query;
             if (eventId != -1)
@@ -264,7 +380,9 @@ namespace Chronokeep.Database.SQLite
                         Convert.ToInt16(reader["eventspecific_anonymous"]) == 0 ? false : true,
                         Convert.ToInt16(reader["eventspecific_sms_enabled"]) == 0 ? false : true,
                         reader["eventspecific_apparel"] != DBNull.Value ? reader["eventspecific_apparel"].ToString() : "",
-                        reader["eventspecific_division"] != DBNull.Value ? reader["eventspecific_division"].ToString() : ""
+                        reader["eventspecific_division"] != DBNull.Value ? reader["eventspecific_division"].ToString() : "",
+                        Convert.ToInt32(reader["eventspecific_version"]),
+                        Convert.ToInt32(reader["eventspecific_uploaded_version"])
                         ),
                     reader["participant_email"].ToString(),
                     reader["participant_phone"].ToString(),
@@ -311,7 +429,9 @@ namespace Chronokeep.Database.SQLite
                         Convert.ToInt16(reader["eventspecific_anonymous"]) == 0 ? false : true,
                         Convert.ToInt16(reader["eventspecific_sms_enabled"]) == 0 ? false : true,
                         reader["eventspecific_apparel"] != DBNull.Value ? reader["eventspecific_apparel"].ToString() : "",
-                        reader["eventspecific_division"] != DBNull.Value ? reader["eventspecific_division"].ToString() : ""
+                        reader["eventspecific_division"] != DBNull.Value ? reader["eventspecific_division"].ToString() : "",
+                        Convert.ToInt32(reader["eventspecific_version"]),
+                        Convert.ToInt32(reader["eventspecific_uploaded_version"])
                         ),
                     reader["participant_email"].ToString(),
                     reader["participant_phone"].ToString(),

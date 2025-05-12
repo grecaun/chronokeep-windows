@@ -5,7 +5,9 @@
         private int identifier, eventIdentifier, distanceIdentifier,
             checkedIn = 0,
             status = Constants.Timing.EVENTSPECIFIC_UNKNOWN,
-            ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
+            ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP,
+            version = 0,
+            uploaded_version = -1;
         private string comments, distanceName, owes, other, ageGroupName = "", bib, apparel, division = "";
         private bool anonymous, sms_enabled;
 
@@ -39,6 +41,8 @@
             this.sms_enabled = sms_enabled;
             this.apparel = apparel ?? "";
             this.division = division ?? "";
+            this.version = Constants.Timing.EVENTSPECIFIC_DEFAULT_VERSION;
+            this.uploaded_version = Constants.Timing.EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION;
         }
 
         // Constructor the database uses
@@ -58,7 +62,9 @@
             bool anonymous,
             bool sms_enabled,
             string apparel,
-            string division
+            string division,
+            int version,
+            int uploaded_version
             )
         {
             this.identifier = id;
@@ -77,6 +83,8 @@
             this.sms_enabled = sms_enabled;
             this.apparel = apparel ?? "";
             this.division = division ?? "";
+            this.version = version;
+            this.uploaded_version = uploaded_version;
         }
 
         internal void Trim()
@@ -93,7 +101,7 @@
 
         internal EventSpecific Blank()
         {
-            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false, false, "", "");
+            return new EventSpecific(-1, -1, -1, "None", "", 0, "", "", "", 0, "", Constants.Timing.TIMERESULT_DUMMYAGEGROUP, false, false, "", "", Constants.Timing.EVENTSPECIFIC_DEFAULT_VERSION, Constants.Timing.EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION);
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -113,6 +121,8 @@
         public bool SMSEnabled { get => sms_enabled; set => sms_enabled = value; }
         public string Apparel { get => apparel; set => apparel = value ?? ""; }
         public string Division { get => division; set => division = value ?? ""; }
+        public int Version { get => version; set => version = value; }
+        public int UploadedVersion { get => uploaded_version; set => uploaded_version = value; }
 
         public void CopyFrom(EventSpecific other)
         {
@@ -131,6 +141,23 @@
             this.SMSEnabled = other.SMSEnabled;
             this.Apparel = other.Apparel;
             this.Division = other.Division;
+            this.version = other.version;
+            this.uploaded_version = other.uploaded_version;
+        }
+
+        public bool Equals(EventSpecific other)
+        {
+            if (other == null) return false;
+            return this.EventIdentifier == other.EventIdentifier
+                && this.DistanceIdentifier == other.DistanceIdentifier
+                && this.Bib == other.Bib
+                && this.Comments == other.Comments
+                && this.Owes == other.Owes
+                && this.Other == other.Other
+                && this.Anonymous == other.Anonymous
+                && this.SMSEnabled == other.SMSEnabled
+                && this.Apparel == other.Apparel
+                && this.Division == other.Division;
         }
     }
 }

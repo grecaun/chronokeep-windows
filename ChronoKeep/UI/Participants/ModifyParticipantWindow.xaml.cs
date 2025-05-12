@@ -241,8 +241,6 @@ namespace Chronokeep.UI.Participants
                     "No",
                     () =>
                     {
-                        offendingBib.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
-                        database.UpdateParticipant(offendingBib);
                         if (newPart != null)
                         {
                             if (newPart.FirstName.Trim().Length < 1 && newPart.LastName.Trim().Length < 1)
@@ -250,6 +248,11 @@ namespace Chronokeep.UI.Participants
                                 DialogBox.Show("Invalid name given.");
                                 return;
                             }
+                            // only update the participant with the old bib if we're actually adding the person
+                            // but also make sure to increment their version because they were in fact updated
+                            offendingBib.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                            offendingBib.EventSpecific.Version += 1;
+                            database.UpdateParticipant(offendingBib);
                             database.AddParticipant(newPart);
                             if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                             {
@@ -293,11 +296,10 @@ namespace Chronokeep.UI.Participants
         private void Modify_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Participants.ModifyParticipantWindow", "Modify clicked.");
-            if (person != null && person.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
-            {
-                ParticipantChanged = true;
-            }
             Participant newPart = FromFields();
+            // Copy old Version values when modifying.
+            newPart.EventSpecific.Version = person.EventSpecific.Version;
+            newPart.EventSpecific.UploadedVersion = person.EventSpecific.UploadedVersion;
             Participant offendingBib = null;
             // If bib isn't empty and isn't the dummybib, offer to swap bibs.
             if (newPart.Bib.Length > 0 && newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
@@ -318,7 +320,10 @@ namespace Chronokeep.UI.Participants
                         offendingBib.EventSpecific.Bib = person.EventSpecific.Bib;
                         string newBib = newPart.EventSpecific.Bib;
                         newPart.EventSpecific.Bib = Constants.Timing.CHIPREAD_DUMMYBIB;
-                        database.UpdateParticipant(newPart);
+                        // Both participants are being updated, so increment their version numbers.
+                        newPart.EventSpecific.Version += 1;
+                        offendingBib.EventSpecific.Version += 1;
+                        //database.UpdateParticipant(newPart);
                         database.UpdateParticipant(offendingBib);
                         newPart.EventSpecific.Bib = newBib;
                         database.UpdateParticipant(newPart);
@@ -335,6 +340,12 @@ namespace Chronokeep.UI.Participants
                 if (newPart != null)
                 {
                     Log.D("UI.Participants.ModifyParticipantWindow", "NewPart not null ---- Should update --- NewPart birthdate ----" + newPart.Birthdate);
+                    // New Part has information that doesn't match the old participant.
+                    // so increment the version
+                    if (!newPart.Matches(person))
+                    {
+                        newPart.EventSpecific.Version += 1;
+                    }
                     database.UpdateParticipant(newPart);
                     if (newPart.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                     {
@@ -405,7 +416,9 @@ namespace Chronokeep.UI.Participants
                     AnonymousBox.IsChecked == true,
                     false,
                     ApparelBox.Text,
-                    DivisionBox.Text
+                    DivisionBox.Text,
+                    Constants.Timing.EVENTSPECIFIC_DEFAULT_VERSION,
+                    Constants.Timing.EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION
                     ),
                 EmailBox.Text,
                 PhoneBox.Text,

@@ -61,6 +61,9 @@ namespace Chronokeep.Constants
         public static readonly int EVENTSPECIFIC_DNF = 3;
         public static readonly int EVENTSPECIFIC_DNS = 4;
 
+        public static readonly int EVENTSPECIFIC_DEFAULT_VERSION = 0;
+        public static readonly int EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION = -1;
+
         public static readonly int COMMON_SEGMENTS_DISTANCEID = -1;
         public static readonly int COMMON_AGEGROUPS_DISTANCEID = -1;
 
