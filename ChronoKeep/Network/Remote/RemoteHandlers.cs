@@ -96,18 +96,18 @@ namespace Chronokeep.Network.Remote
             throw new APIException(content);
         }
 
-        public static async Task<DeleteReadsResponse> DeleteReads(APIObject api, string reader, int start, int end)
+        public static async Task<DeleteReadsResponse> DeleteReads(APIObject api, string reader, long start, long end)
         {
             string content;
-            Log.D("Network.Remote.RemoteHandlers", "Getting reads.");
+            Log.D("Network.Remote.RemoteHandlers", "Deleting reads.");
             try
             {
                 using (var client = GetHttpClient())
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Get,
-                        RequestUri = new Uri(api.URL + "reads"),
+                        Method = HttpMethod.Delete,
+                        RequestUri = new Uri(api.URL + "reads/delete"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new DeleteReadsRequest
                             {

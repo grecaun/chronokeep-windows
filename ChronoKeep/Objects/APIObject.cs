@@ -54,11 +54,11 @@ namespace Chronokeep.Objects
                 throw new Exception("not a valid reader type");
             }
             var result = await RemoteHandlers.GetReads(
-                            this,
-                            reader.Name,
-                            Constants.Timing.UnixDateToEpoch(start.ToUniversalTime()),
-                            Constants.Timing.UnixDateToEpoch(end.ToUniversalTime())
-                            );
+                    this,
+                    reader.Name,
+                    Constants.Timing.UnixDateToEpoch(start.ToUniversalTime()),
+                    Constants.Timing.UnixDateToEpoch(end.ToUniversalTime())
+                );
             List<ChipRead> output = new List<ChipRead>();
             if (result.Reads == null)
             {
@@ -69,6 +69,21 @@ namespace Chronokeep.Objects
                 output.Add(read.ConvertToChipRead(reader.EventID, reader.LocationID));
             }
             return (output, result.Notification);
+        }
+
+        public async Task<long> DeleteReads(RemoteReader reader, DateTime start, DateTime end)
+        {
+            if (type != Constants.APIConstants.CHRONOKEEP_REMOTE && type != Constants.APIConstants.CHRONOKEEP_REMOTE_SELF)
+            {
+                throw new Exception("not a valid reader type");
+            }
+            var result = await RemoteHandlers.DeleteReads(
+                    this,
+                    reader.Name,
+                    Constants.Timing.UnixDateToEpoch(start.ToUniversalTime()),
+                    Constants.Timing.UnixDateToEpoch(end.ToUniversalTime())
+                );
+            return result.Count;
         }
     }
 }

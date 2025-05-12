@@ -240,7 +240,7 @@ namespace Chronokeep.UI.API
                 {
                     Text = reader.Name,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Width = 100,
+                    Width = 80,
                     Margin = new Thickness(5),
                 };
                 thePanel.Children.Add(nameBlock);
@@ -249,7 +249,7 @@ namespace Chronokeep.UI.API
                     VerticalContentAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(5),
                     Height = 35,
-                    Width = 170,
+                    Width = 150,
                 };
                 foreach (TimingLocation loc in locations)
                 {
@@ -342,6 +342,7 @@ namespace Chronokeep.UI.API
                         (var reads, var note) = await api.GetReads(this.reader, startDate, endDate);
                         this.database.AddChipReads(reads);
                         mainWindow.UpdateTimingFromController();
+                        DialogBox.Show("Rewind complete.");
                     }
                     catch (APIException ex)
                     {
@@ -350,6 +351,45 @@ namespace Chronokeep.UI.API
                     }
                 });
                 thePanel.Children.Add(rewind);
+                Button delete = new()
+                {
+                    Icon = new SymbolIcon() { Symbol = SymbolRegular.Delete24 },
+                    Height = 35,
+                    Width = 35,
+                    Margin = new Thickness(5),
+                };
+                delete.Click += new RoutedEventHandler(async (sender, e) =>
+                {
+                    Log.D("UI.API.RemoteReadersWindow.ReaderListItem", "Delete clicked.");
+                    DialogBox.Show(
+                        "Warning!\n\nThis will delete every read uploaded to the remote api. That data cannot be recoverred once deleted.",
+                        "Delete",
+                        "Cancel",
+                        async () =>
+                        {
+                            Log.D("UI.API.RemoteReadersWindow.ReaderListItem", "User requests deletion.");
+                            if (!DateTime.TryParse(string.Format("{0} {1}", startDatePicker.Text, startTimeBox.Text.Replace('_', '0')), out DateTime startDate))
+                            {
+                                startDate = DateTime.Now;
+                            }
+                            if (!DateTime.TryParse(string.Format("{0} {1}", endDatePicker.Text, endTimeBox.Text.Replace('_', '0')), out DateTime endDate))
+                            {
+                                endDate = DateTime.Now;
+                            }
+                            try
+                            {
+                                long count = await api.DeleteReads(this.reader, startDate, endDate);
+                                mainWindow.UpdateTimingFromController();
+                                DialogBox.Show(string.Format("Successfully deleted\n\n{0}\n\nreads.", count));
+                            }
+                            catch (APIException ex)
+                            {
+                                DialogBox.Show(ex.Message);
+                                return;
+                            }
+                        });
+                });
+                thePanel.Children.Add(delete);
             }
 
             public RemoteReader GetUpdatedReader()
