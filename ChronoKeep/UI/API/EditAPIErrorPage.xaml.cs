@@ -1,7 +1,7 @@
 ﻿namespace Chronokeep.UI.API
 {
     /// <summary>
-    /// Interaction logic for APIErrorPage.xaml
+    /// Interaction logic for EditAPIErrorPage.xaml
     /// </summary>
     public partial class EditAPIErrorPage
     {

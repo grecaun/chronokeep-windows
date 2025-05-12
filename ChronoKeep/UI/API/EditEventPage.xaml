@@ -11,8 +11,186 @@
       Title="APIPage1"
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2">
-        <Button Content="Edit Event" Height="35" Width="120" HorizontalAlignment="Center" Margin="10,0,10,10" Click="Done_Click"/>
-        <Button Content="Cancel" Height="35" Width="120" HorizontalAlignment="Center" Margin="10,0,10,10" Click="Cancel_Click"/>
+    <StackPanel
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        >
+        <TextBlock
+            Name="holdingLabel" 
+            Text="Retrieving Event, Please Hold."
+            FontSize="18" 
+            VerticalAlignment="Center"
+            MaxWidth="250"
+            HorizontalAlignment="Center" 
+            TextWrapping="Wrap" 
+            Visibility="Visible"
+            Margin="0,10,0,0"
+            />
+        <StackPanel
+            Name="eventPanel" 
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center" 
+            Visibility="Visible"
+            Margin="5,0"
+            >
+            <DockPanel Margin="0,0,0,5">
+                <TextBlock
+                    Text="Name"
+                    FontSize="15"
+                    Width="100"
+                    VerticalAlignment="Center"
+                    TextAlignment="Right"
+                    Padding="0,0,5,0"
+                    />
+                <TextBox
+                    x:Name="nameBox"
+                    FontSize="15"
+                    Width="180"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    />
+            </DockPanel>
+            <DockPanel Margin="0,0,0,5">
+                <TextBlock
+                    Text="Cert Name"
+                    FontSize="15"
+                    Width="100"
+                    VerticalAlignment="Center"
+                    TextAlignment="Right"
+                    Padding="0,0,5,0"
+                    />
+                <TextBox
+                    x:Name="certNameBox"
+                    FontSize="15"
+                    Width="180"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    />
+            </DockPanel>
+            <DockPanel Margin="0,0,0,5">
+                <TextBlock
+                    Text="Slug" 
+                    FontSize="15"
+                    Width="100"
+                    VerticalAlignment="Center"
+                    TextAlignment="Right"
+                    Padding="0,0,5,0"
+                    />
+                <TextBox
+                    Name="slugBox"
+                    IsEnabled="False"
+                    FontSize="15"
+                    Width="180"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    />
+            </DockPanel>
+            <DockPanel Margin="0,0,0,5">
+                <TextBlock
+                    Text="Contact Email"
+                    FontSize="15"
+                    Width="100"
+                    VerticalAlignment="Center" 
+                    TextAlignment="Right"
+                    Padding="0,0,5,0"
+                    />
+                <TextBox 
+                    Name="contactBox"
+                    FontSize="15" 
+                    Width="180"
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Stretch"
+                    />
+            </DockPanel>
+            <DockPanel Margin="0,0,0,5" Visibility="Collapsed">
+                <TextBlock
+                    Text="Website URL"
+                    FontSize="15"
+                    Width="100"
+                    VerticalAlignment="Center" 
+                    TextAlignment="Right"
+                    Padding="0,0,5,0"
+                    />
+                <TextBox 
+                    Name="websiteBox"
+                    FontSize="15" 
+                    Width="180"
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Stretch"
+                    />
+            </DockPanel>
+            <DockPanel Margin="0,0,0,5" Visibility="Collapsed">
+                <TextBlock
+                    Text="Image URL"
+                    FontSize="15"
+                    Width="100"
+                    VerticalAlignment="Center" 
+                    TextAlignment="Right"
+                    Padding="0,0,5,0"
+                    />
+                <TextBox 
+                    Name="imageBox"
+                    FontSize="15" 
+                    Width="180"
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Stretch"
+                    />
+            </DockPanel>
+            <DockPanel Margin="0,0,0,5">
+                <TextBlock
+                    Text="Event Type"
+                    FontSize="15"
+                    Width="100"
+                    VerticalAlignment="Center" 
+                    TextAlignment="Right"
+                    Padding="0,0,5,0"
+                    />
+                <ComboBox 
+                    Name="typeBox"
+                    FontSize="15" 
+                    Width="180"
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Stretch"
+                    >
+                    <ComboBoxItem Content="Distance" />
+                    <ComboBoxItem Content="Time" />
+                    <!--<ComboBoxItem Content="Backyard Ultra" />-->
+                </ComboBox>
+            </DockPanel>
+            <DockPanel>
+                <ui:ToggleSwitch
+                    x:Name="restrictBox"
+                    Content="Restrict Access"
+                    FontSize="15"
+                    VerticalContentAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,5"
+                    />
+            </DockPanel>
+        </StackPanel>
+        <StackPanel
+            Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            Margin="0,10,0,0"
+            >
+            <Button
+                Name="SaveButton"
+                Content="Save"
+                Height="35"
+                Width="100"
+                HorizontalAlignment="Center"
+                Margin="0,0,10,10"
+                Click="Done_Click"
+                IsEnabled="False"
+                />
+            <Button
+                Content="Cancel"
+                Height="35"
+                Width="100"
+                HorizontalAlignment="Center"
+                Margin="10,0,0,10"
+                Click="Cancel_Click"
+                />
+        </StackPanel>
     </StackPanel>
 </Page>

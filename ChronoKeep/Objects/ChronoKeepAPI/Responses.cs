@@ -18,6 +18,20 @@ namespace Chronokeep.Objects.API
         public List<APIEvent> Events { get; set; }
     }
 
+    public class GetEventResponse
+    {
+        [JsonPropertyName("event")]
+        public APIEvent Event { get; set; }
+        [JsonPropertyName("event_years")]
+        public List<APIEventYear> EventYears { get; set; }
+        [JsonPropertyName("year")]
+        public APIEventYear Year { get; set; }
+        [JsonPropertyName("results")]
+        public Dictionary<string, List<APIResult>> Results { get; set; }
+        [JsonPropertyName("participants")]
+        public List<APIPerson> Participants { get; set; }
+    }
+
     public class ModifyEventResponse
     {
         [JsonPropertyName("event")]

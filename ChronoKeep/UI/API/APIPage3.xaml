@@ -14,7 +14,7 @@
     <StackPanel>
         <TextBlock
             Name="holdingLabel" 
-            Text="Retrieving Events, Please Hold." 
+            Text="Retrieving Years, Please Hold." 
             FontSize="18" 
             VerticalAlignment="Center"
             MaxWidth="250"

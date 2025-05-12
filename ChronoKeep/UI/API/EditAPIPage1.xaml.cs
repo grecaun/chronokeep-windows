@@ -3,7 +3,7 @@
 namespace Chronokeep.UI.API
 {
     /// <summary>
-    /// Interaction logic for APIPage1.xaml
+    /// Interaction logic for EditAPIPage1.xaml
     /// </summary>
     public partial class EditAPIPage1
     {

@@ -1,14 +1,11 @@
-﻿using Chronokeep.Database.SQLite;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
-using Chronokeep.UI.UIObjects;
-using System.Collections.Generic;
 using Wpf.Ui.Controls;
 
 namespace Chronokeep.UI.API
 {
     /// <summary>
-    /// Interaction logic for APIWindow.xaml
+    /// Interaction logic for EditAPIWindow.xaml
     /// </summary>
     public partial class EditAPIWindow : FluentWindow
     {
@@ -54,12 +51,12 @@ namespace Chronokeep.UI.API
 
         public void GotoEditEvent()
         {
-            EditAPIFrame.Content = new EditEventPage(this, database);
+            EditAPIFrame.Content = new EditEventPage(this, api, slug);
         }
 
         public void GotoEditYear()
         {
-            EditAPIFrame.Content = new EditYearPage(this, database);
+            EditAPIFrame.Content = new EditYearPage(this, api, slug, year);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
