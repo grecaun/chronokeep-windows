@@ -7,7 +7,11 @@
     "Added the option to limit results to specific locations if more than the start/finish location are set up.",
     "Timing page has been re-organized a bit.",
     "Raw reads can now be restricted to Ignored reads only.",
-    "Manual only switch on the raw reads page has had its label simplified."
+    "Manual only switch on the raw reads page has had its label simplified.",
+    "Updates to participants now receive a version number that is tracked when participants are uploaded so information changed after uploading isn't overwritten.",
+    "It is now possible to ask the Chronokeep Remote API to delete reads for defined periods of times similar to rewinding.",
+    "Editing an Event / Year on the Chronokeep Results API is now possible.",
+    "When making the above change, the process for unlinking an event from the Chronokeep Results API is slightly changed."
   ],
   "fixes": [
     "Fixed an issue where the Manual Upload button would be stuck as Uploading if there was nothing to upload.",
