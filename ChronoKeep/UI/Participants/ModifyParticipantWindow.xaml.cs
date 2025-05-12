@@ -107,7 +107,6 @@ namespace Chronokeep.UI.Participants
                 });
             }
             DistanceBox.SelectedIndex = 0;
-            GenderBox.SelectedIndex = 0;
         }
 
         private void UpdateAllFields()
@@ -140,6 +139,7 @@ namespace Chronokeep.UI.Participants
             BirthdayBox.Text = person.Birthdate;
             AgeBox.Text = person.Age(theEvent.Date);
             bool genderFound = false;
+            ComboBoxItem otherBoxItem = null, notSpecifiedBoxItem = null;
             foreach (ComboBoxItem item in GenderBox.Items)
             {
                 if (person.Gender.Equals(item.Content.ToString()))
@@ -147,15 +147,22 @@ namespace Chronokeep.UI.Participants
                     GenderBox.SelectedItem = item;
                     genderFound = true;
                 }
+                if (item.Content.ToString() == "Not Specified")
+                {
+                    notSpecifiedBoxItem = item;
+                } else if (item.Content.ToString() == "Other")
+                {
+                    otherBoxItem = item;
+                }
             }
             if (person.Gender.Equals("NS", StringComparison.OrdinalIgnoreCase))
             {
-                GenderBox.SelectedIndex = 4;
+                GenderBox.SelectedItem = notSpecifiedBoxItem;
                 genderFound = true;
             }
             if (!genderFound)
             {
-                GenderBox.SelectedIndex = 3;
+                GenderBox.SelectedItem = otherBoxItem;
                 otherGenderBox.Text = person.Gender;
                 ShowOtherGender();
             }

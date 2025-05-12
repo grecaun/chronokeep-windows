@@ -5,6 +5,8 @@ namespace Chronokeep.Objects
 {
     public class Participant : IEquatable<Participant>, IComparable<Participant>
     {
+        private static string CurrentEventDate;
+
         private int identifier = Constants.Timing.PARTICIPANT_DUMMYIDENTIFIER;
         private string firstName, lastName, street, city, state, zip, email, phone,
             mobile, parent, country, street2, gender, birthdate, emergencyName,
@@ -756,6 +758,16 @@ namespace Chronokeep.Objects
                 || lastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
                 || (gender == other.Gender
                 && birthdate == other.Birthdate);
+        }
+
+        public string CurrentAge
+        {
+            get => this.Age(CurrentEventDate);
+        }
+
+        public static void SetCurrentEventDate(string date)
+        {
+            CurrentEventDate = date;
         }
     }
 }

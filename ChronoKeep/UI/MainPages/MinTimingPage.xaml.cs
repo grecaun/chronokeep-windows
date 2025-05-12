@@ -334,10 +334,7 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.TimingPage", "Starting TimingPage Update Timer.");
         }
 
-        public string GetSearchValue()
-        {
-            return "";
-        }
+        public string GetSearchValue() { return ""; }
 
         public SortType GetSortType()
         {
@@ -350,6 +347,8 @@ namespace Chronokeep.UI.MainPages
         {
             return PeopleType.DEFAULT;
         }
+
+        public string GetLocation() { return ""; }
 
         private class MinReaderBox : ListBoxItem
         {

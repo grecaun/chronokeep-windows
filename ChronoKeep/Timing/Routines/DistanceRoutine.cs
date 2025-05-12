@@ -59,7 +59,10 @@ namespace Chronokeep.Timing.Routines
 
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
             allChipReads.Sort();
-            List<ChipRead> setUnknown = new List<ChipRead>();
+            List<ChipRead> setUnknown = [];
+
+            // Create a dictionary for keeping track of all of our chipreads.
+            Dictionary<int, ChipRead> chipReadDict = [];
 
             // Get some variables to check if we need to sound an alarm.
             // Get a time value to check to ensure the chip read isn't too far in the past.
@@ -68,6 +71,7 @@ namespace Chronokeep.Timing.Routines
 
             foreach (ChipRead read in allChipReads)
             {
+                chipReadDict[read.ReadId] = read;
                 // Check to set off an alarm.
                 if (read.Time > before)
                 {
@@ -466,7 +470,6 @@ namespace Chronokeep.Timing.Routines
                                     // for information for that person.
                                     if (Constants.Timing.SEGMENT_FINISH != segId || !bibDNFDictionary.ContainsKey(bib))
                                     {
-
                                         TimeResult newResult = new TimeResult(theEvent.Identifier,
                                             read.ReadId,
                                             part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
@@ -482,6 +485,10 @@ namespace Chronokeep.Timing.Routines
                                             part == null ? "" : part.EventSpecific.Division
                                             );
                                         newResults.Add(newResult);
+                                        if (Constants.Timing.SEGMENT_FINISH == segId)
+                                        {
+                                            finishTimes[identifier] = newResult;
+                                        }
                                         if (part != null)
                                         {
                                             LastSeen[part.EventSpecific.Identifier] = newResult;
@@ -675,21 +682,26 @@ namespace Chronokeep.Timing.Routines
                                     // for information for that person.
                                     if (Constants.Timing.SEGMENT_FINISH != segId || !chipDNFDictionary.ContainsKey(chip))
                                     {
-                                        newResults.Add(new TimeResult(theEvent.Identifier,
-                                        read.ReadId,
-                                        Constants.Timing.TIMERESULT_DUMMYPERSON,
-                                        read.LocationID,
-                                        segId,
-                                        occurrence,
-                                        Constants.Timing.ToTime(secondsDiff, millisecDiff),
-                                        identifier,
-                                        Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
-                                        read.Time,
-                                        read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
-                                        Constants.Timing.TIMERESULT_STATUS_NONE,
-                                        ""
-                                        ));
+                                        TimeResult newResult = new(theEvent.Identifier,
+                                            read.ReadId,
+                                            Constants.Timing.TIMERESULT_DUMMYPERSON,
+                                            read.LocationID,
+                                            segId,
+                                            occurrence,
+                                            Constants.Timing.ToTime(secondsDiff, millisecDiff),
+                                            identifier,
+                                            Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
+                                            read.Time,
+                                            read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
+                                            Constants.Timing.TIMERESULT_STATUS_NONE,
+                                            ""
+                                            );
                                         read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
+                                        newResults.Add(newResult);
+                                        if (Constants.Timing.SEGMENT_FINISH == segId)
+                                        {
+                                            finishTimes[identifier] = newResult;
+                                        }
                                     }
                                 }
                             }
@@ -714,11 +726,12 @@ namespace Chronokeep.Timing.Routines
                     finish.ChipTime = "DNF";
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
                     finish.Occurrence = theEvent.FinishMaxOccurrences;
+                    finishTimes[TimeResult.ChipToIdentifier(chip)] = finish;
                     newResults.Add(finish);
                 }
                 else
                 {
-                    newResults.Add(new TimeResult(theEvent.Identifier,
+                    TimeResult finish = new TimeResult(theEvent.Identifier,
                         chipDNFDictionary[chip].ReadId,
                         Constants.Timing.TIMERESULT_DUMMYPERSON,
                         Constants.Timing.LOCATION_FINISH,
@@ -731,7 +744,9 @@ namespace Chronokeep.Timing.Routines
                         chipDNFDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDNFDictionary[chip].ReadBib : chipDNFDictionary[chip].ChipBib,
                         Constants.Timing.TIMERESULT_STATUS_DNF,
                         ""
-                        ));
+                        );
+                    finishTimes[TimeResult.ChipToIdentifier(chip)] = finish;
+                    newResults.Add(finish);
                 }
             }
             // Process the intersection of known DNF people and Finish results:
@@ -754,11 +769,12 @@ namespace Chronokeep.Timing.Routines
                     finish.ChipTime = "DNF";
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
                     finish.Occurrence = occurrence;
+                    finishTimes[TimeResult.BibToIdentifier(bib)] = finish;
                     newResults.Add(finish);
                 }
                 else
                 {
-                    newResults.Add(new TimeResult(theEvent.Identifier,
+                    TimeResult finish = new TimeResult(theEvent.Identifier,
                         bibDNFDictionary[bib].ReadId,
                         part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                         Constants.Timing.LOCATION_FINISH,
@@ -771,7 +787,9 @@ namespace Chronokeep.Timing.Routines
                         bib,
                         Constants.Timing.TIMERESULT_STATUS_DNF,
                         part == null ? "" : part.EventSpecific.Division
-                        ));
+                        );
+                    finishTimes[TimeResult.BibToIdentifier(bib)] = finish;
+                    newResults.Add(finish);
                 }
             }
             // Process the intersection of unknown DNS people and Finish results:
@@ -785,11 +803,12 @@ namespace Chronokeep.Timing.Routines
                     finish.ChipTime = "DNS";
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNS;
                     finish.Occurrence = theEvent.FinishMaxOccurrences;
+                    finishTimes[TimeResult.ChipToIdentifier(chip)] = finish;
                     newResults.Add(finish);
                 }
                 else
                 {
-                    newResults.Add(new TimeResult(theEvent.Identifier,
+                    TimeResult finish = new TimeResult(theEvent.Identifier,
                         chipDNSDictionary[chip].ReadId,
                         Constants.Timing.TIMERESULT_DUMMYPERSON,
                         Constants.Timing.LOCATION_FINISH,
@@ -802,7 +821,9 @@ namespace Chronokeep.Timing.Routines
                         chipDNSDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDNSDictionary[chip].ReadBib : chipDNSDictionary[chip].ChipBib,
                         Constants.Timing.TIMERESULT_STATUS_DNS,
                         ""
-                        ));
+                        );
+                    finishTimes[TimeResult.ChipToIdentifier(chip)] = finish;
+                    newResults.Add(finish);
                 }
             }
             // Process the intersection of known DNS people and Finish results:
@@ -825,11 +846,12 @@ namespace Chronokeep.Timing.Routines
                     finish.ChipTime = "DNS";
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNS;
                     finish.Occurrence = occurrence;
+                    finishTimes[TimeResult.BibToIdentifier(bib)] = finish;
                     newResults.Add(finish);
                 }
                 else
                 {
-                    newResults.Add(new TimeResult(theEvent.Identifier,
+                    TimeResult finish = new TimeResult(theEvent.Identifier,
                         bibDNSDictionary[bib].ReadId,
                         part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                         Constants.Timing.LOCATION_FINISH,
@@ -842,7 +864,9 @@ namespace Chronokeep.Timing.Routines
                         bib,
                         Constants.Timing.TIMERESULT_STATUS_DNS,
                         part == null ? "" : part.EventSpecific.Division
-                        ));
+                        );
+                    finishTimes[TimeResult.BibToIdentifier(bib)] = finish;
+                    newResults.Add(finish);
                 }
             }
             // process reads that need to be set to ignore
@@ -850,10 +874,25 @@ namespace Chronokeep.Timing.Routines
             {
                 read.Status = Constants.Timing.CHIPREAD_STATUS_UNKNOWN;
             }
+            // remove any results past the finish time
+            List<TimeResult> toRemove = [];
+            foreach (TimeResult res in newResults)
+            {
+                // Set all results that come after the finish to be removed
+                if (finishTimes.TryGetValue(res.UnknownId, out TimeResult finish) && (finish.Seconds < res.Seconds || (finish.Seconds == res.Seconds && finish.Milliseconds < res.Milliseconds)))
+                {
+                    toRemove.Add(res);
+                    if (chipReadDict.TryGetValue(res.ReadId, out ChipRead oldRead))
+                    {
+                        oldRead.Status = Constants.Timing.CHIPREAD_STATUS_AFTER_FINISH;
+                    }
+                }
+            }
+            newResults.RemoveAll(toRemove.Contains);
             // Update database with information.
             database.AddTimingResults(newResults);
             database.SetChipReadStatuses(allChipReads);
-            database.UpdateParticipants(new List<Participant>(updateParticipants));
+            database.UpdateParticipants([.. updateParticipants]);
             return newResults;
         }
 

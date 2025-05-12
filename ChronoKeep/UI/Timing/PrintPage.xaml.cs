@@ -283,6 +283,8 @@ namespace Chronokeep.UI.Timing
 
         public void SortBy(SortType type) { }
 
+        public void Location(string location) { }
+
         public void EditSelected() {}
 
         public void Closing() { }

@@ -190,13 +190,21 @@
                         >
                         <ComboBoxItem Content="Hide Unknown" IsSelected="True"/>
                         <ComboBoxItem Content="Show All" />
-                        <ComboBoxItem Content="Show Only Unknown" />
                         <ComboBoxItem Content="Show Only Starts" />
                         <ComboBoxItem Content="Show Only Finishes" />
                         <ComboBoxItem Content="Show Only Unknown" />
                         <ComboBoxItem Content="Show Only Unknown Starts" />
                         <ComboBoxItem Content="Show Only Unknown Finishes" />
                     </ComboBox>
+                    <ComboBox
+                        Name="locationBox"
+                        Width="250"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,5,0,0"
+                        SelectionChanged="LocationBox_SelectionChanged"
+                        Visibility="Collapsed"
+                        />
                     <ComboBox
                         Name="SortBy"
                         Width="250"
@@ -350,46 +358,44 @@
                         IsExpanded="True"
                         >
                         <StackPanel>
-                            <StackPanel x:Name="apiPanel">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="1*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Button
-                                        x:Name="AutoAPIButton"
-                                        Content="Auto Upload"
-                                        Height="35" 
-                                        HorizontalAlignment="Stretch"
-                                        Margin="0,5,5,0"
-                                        Click="AutoAPI_Click" 
-                                        Grid.Column="0"
-                                        />
-                                    <Button 
-                                        x:Name="ManualAPIButton"
-                                        Content="Manual Upload"
-                                        Height="35" 
-                                        HorizontalAlignment="Stretch"
-                                        Margin="5,5,0,0" 
-                                        Click="ManualAPI_Click"
-                                        Grid.Column="1"
-                                        />
-                                </Grid>
-                            </StackPanel>
+                            <Button
+                                Name="recalculateButton" 
+                                Content="Recalculate"
+                                Height="35"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,0,0,0" 
+                                Click="Recalculate_Click"
+                                />
+                            <Grid x:Name="apiPanel">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <Button
+                                    x:Name="AutoAPIButton"
+                                    Content="Auto Upload"
+                                    Height="35" 
+                                    HorizontalAlignment="Stretch"
+                                    Margin="0,5,5,0"
+                                    Click="AutoAPI_Click" 
+                                    Grid.Column="0"
+                                    />
+                                <Button 
+                                    x:Name="ManualAPIButton"
+                                    Content="Manual Upload"
+                                    Height="35" 
+                                    HorizontalAlignment="Stretch"
+                                    Margin="5,5,0,0" 
+                                    Click="ManualAPI_Click"
+                                    Grid.Column="1"
+                                    />
+                            </Grid>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1*" />
                                     <ColumnDefinition Width="1*" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
-                                    <Button
-                                        Name="recalculateButton" 
-                                        Content="Recalculate"
-                                        Height="35"
-                                        HorizontalAlignment="Stretch"
-                                        Margin="0,5,5,0" 
-                                        Click="Recalculate_Click"
-                                        />
                                     <Button
                                         Name="sendEmailsButton" 
                                         Content="Send Emails"
@@ -399,41 +405,28 @@
                                         Click="sendEmailsButton_Click"
                                         />
                                     <Button
-                                        Content="Export Results" 
-                                        Height="35" 
-                                        HorizontalAlignment="Stretch"
-                                        Margin="0,5,5,0"
-                                        Click="Export_Click"
-                                        />
-                                    <Button
-                                        Content="Export Boston" 
+                                        Name="modifySMSButton" 
+                                        Content="Modify SMS"
                                         Height="35"
                                         HorizontalAlignment="Stretch"
-                                        Margin="0,5,5,0"
-                                        Click="Export_BAA_Click"
+                                        Margin="0,5,5,0" 
+                                        Click="modifySMSButton_Click"
                                         />
                                     <Button
-                                        Content="Export UltraSignup"
-                                        FontSize="11"
+                                        Name="dnsMode"
+                                        Content="Start DNS Mode"
                                         Height="35"
                                         HorizontalAlignment="Stretch"
-                                        Margin="0,5,5,0"
-                                        Click="Export_US_Click"
+                                        Margin="0,5,5,0" 
+                                        Click="dnsMode_Click"
                                         />
                                     <Button
-                                        Content="Export Runsignup"
-                                        FontSize="11"
+                                        x:Name="HttpServerButton"
+                                        Content="Start Web"
                                         Height="35"
                                         HorizontalAlignment="Stretch"
-                                        Margin="0,5,5,0"
-                                        Click="Export_Runsignup_Click"
-                                        />
-                                    <Button
-                                        Content="Export Abbott" 
-                                        Height="35" 
-                                        HorizontalAlignment="Stretch"
-                                        Margin="0,5,5,0"
-                                        Click="Export_Abbott_Click"
+                                        Margin="0,5,5,0" 
+                                        Click="HTMLServerButton_Click"
                                         />
                                 </StackPanel>
                                 <StackPanel 
@@ -446,14 +439,6 @@
                                         Margin="5,5,0,0"
                                         Click="RawReads_Click"
                                         />
-                                    <Button
-                                        Name="modifySMSButton" 
-                                        Content="Modify SMS"
-                                        Height="35"
-                                        HorizontalAlignment="Stretch"
-                                        Margin="5,5,0,0" 
-                                        Click="modifySMSButton_Click"
-                                        />
                                     <Button 
                                         Name="printButton"
                                         Content="Print"
@@ -462,28 +447,12 @@
                                         Margin="5,5,0,0"
                                         Click="Print_Click"
                                         />
-                                    <Button
-                                        Name="dnsMode"
-                                        Content="Start DNS Mode"
-                                        Height="35"
-                                        HorizontalAlignment="Stretch"
-                                        Margin="5,5,0,0"
-                                        Click="dnsMode_Click"
-                                        />
                                     <Button 
                                         Content="Awards"
                                         Height="35"
                                         HorizontalAlignment="Stretch"
                                         Margin="5,5,0,0"
                                         Click="Award_Click"
-                                        />
-                                    <Button
-                                        x:Name="HttpServerButton"
-                                        Content="Start Web"
-                                        Height="35"
-                                        HorizontalAlignment="Stretch"
-                                        Margin="5,5,0,0"
-                                        Click="HTMLServerButton_Click"
                                         />
                                     <Button
                                         Content="Create HTML"
@@ -541,6 +510,65 @@
                                     FontSize="16"
                                     />
                             </DockPanel>
+                        </StackPanel>
+                    </Expander>
+                    <Expander
+                        Name="exportExpander"
+                        Header="Export"
+                        Margin="5,5,5,0"
+                        IsExpanded="False"
+                        >
+                        <StackPanel>
+                            <Button
+                                Content="Results" 
+                                Height="35"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,0,0,0"
+                                Click="Export_Click"
+                                />
+                            <Grid x:Name="exportPanel">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel
+                                    Grid.Column="0"
+                                    >
+                                    <Button
+                                        Content="Boston" 
+                                        Height="35"
+                                        HorizontalAlignment="Stretch"
+                                        Margin="0,5,5,0"
+                                        Click="Export_BAA_Click"
+                                        />
+                                    <Button
+                                        Content="Abbott" 
+                                        Height="35" 
+                                        HorizontalAlignment="Stretch"
+                                        Margin="0,5,5,0"
+                                        Click="Export_Abbott_Click"
+                                        />
+                                </StackPanel>
+                                <StackPanel
+                                    Grid.Column="1"
+                                    >
+                                    <Button
+                                        Content="UltraSignup"
+                                        Height="35"
+                                        HorizontalAlignment="Stretch"
+                                        Margin="0,5,5,0"
+                                        Click="Export_US_Click"
+                                        />
+                                    <Button
+                                        Content="Runsignup"
+                                        Height="35"
+                                        HorizontalAlignment="Stretch"
+                                        Margin="0,5,5,0"
+                                        Click="Export_Runsignup_Click"
+                                        />
+                                </StackPanel>
+                            </Grid>
+                            
                         </StackPanel>
                     </Expander>
                 </StackPanel>

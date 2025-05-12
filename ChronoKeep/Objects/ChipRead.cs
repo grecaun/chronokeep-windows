@@ -465,6 +465,10 @@ namespace Chronokeep
                 {
                     return "After DNS";
                 }
+                if (Constants.Timing.CHIPREAD_STATUS_AFTER_FINISH == Status)
+                {
+                    return "After Finish";
+                }
                 return "Unknown";
             }
         }

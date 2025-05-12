@@ -24,7 +24,18 @@ namespace Chronokeep
             this.map_link = seg.map_link;
         }
 
-        public Segment(int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n, string gps, string ml)
+        public Segment(
+            int e,
+            int d,
+            int l,
+            int occ,
+            double dseg,
+            double dcum,
+            int dunit,
+            string n,
+            string gps,
+            string ml
+            )
         {
             this.id = -1;
             this.event_id = e;
@@ -39,7 +50,19 @@ namespace Chronokeep
             this.map_link = ml;
         }
 
-        public Segment(int id, int e, int d, int l, int occ, double dseg, double dcum, int dunit, string n, string gps, string ml)
+        public Segment(
+            int id,
+            int e,
+            int d,
+            int l,
+            int occ,
+            double dseg,
+            double dcum,
+            int dunit,
+            string n,
+            string gps,
+            string ml
+            )
         {
             this.id = id;
             this.event_id = e;

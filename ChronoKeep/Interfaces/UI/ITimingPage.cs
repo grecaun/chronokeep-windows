@@ -6,6 +6,7 @@ namespace Chronokeep.Interfaces
     public interface ITimingPage
     {
         public string GetSearchValue();
+        public string GetLocation();
         public SortType GetSortType();
         public PeopleType GetPeopleType();
         public void LoadMainDisplay();

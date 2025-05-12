@@ -172,6 +172,7 @@ namespace Chronokeep.UI.MainPages
             // Populate the list of readers with connected readers (or at least 4 readers)
             ReadersBox.Items.Clear();
             locations = database.GetTimingLocations(theEvent.Identifier);
+            int locCount = locations.Count;
             if (!theEvent.CommonStartFinish)
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
@@ -183,6 +184,32 @@ namespace Chronokeep.UI.MainPages
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
             }
+
+            locationBox.Items.Clear();
+            if (locCount > 0)
+            {
+                locationBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "All Locations"
+                });
+                foreach (TimingLocation loc in locations)
+                {
+                    if (!loc.Name.Equals("Announcer", StringComparison.OrdinalIgnoreCase))
+                    {
+                        locationBox.Items.Add(new ComboBoxItem()
+                        {
+                            Content = loc.Name,
+                        });
+                    }
+                }
+                locationBox.SelectedIndex = 0;
+                locationBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                locationBox.Visibility = Visibility.Collapsed;
+            }
+
             List<TimingSystem> systems = mWindow.GetConnectedSystems();
             int numSystems = systems.Count;
             string system = Readers.DEFAULT_TIMING_SYSTEM;
@@ -372,6 +399,7 @@ namespace Chronokeep.UI.MainPages
 
             // Get updated list of locations
             locations = database.GetTimingLocations(theEvent.Identifier);
+            int locCount = locations.Count;
             if (!theEvent.CommonStartFinish)
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
@@ -382,6 +410,31 @@ namespace Chronokeep.UI.MainPages
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+            }
+
+            locationBox.Items.Clear();
+            if (locCount > 0)
+            {
+                locationBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "All Locations"
+                });
+                foreach (TimingLocation loc in locations)
+                {
+                    if (!loc.Name.Equals("Announcer", StringComparison.OrdinalIgnoreCase))
+                    {
+                        locationBox.Items.Add(new ComboBoxItem()
+                        {
+                            Content = loc.Name,
+                        });
+                    }
+                }
+                locationBox.SelectedIndex = 0;
+                locationBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                locationBox.Visibility = Visibility.Collapsed;
             }
 
             // Update locations in the list of readers
@@ -1029,6 +1082,16 @@ namespace Chronokeep.UI.MainPages
             return searchBox.Text.Trim();
         }
 
+        public string GetLocation()
+        {
+            ComboBoxItem locItem = (ComboBoxItem)locationBox.SelectedItem;
+            if (locItem == null)
+            {
+                return "";
+            }
+            return locItem.Content.ToString();
+        }
+
         private void SearchBox_TextChanged(Wpf.Ui.Controls.AutoSuggestBox sender, Wpf.Ui.Controls.AutoSuggestBoxTextChangedEventArgs args)
         {
             UpdateSubView();
@@ -1235,6 +1298,10 @@ namespace Chronokeep.UI.MainPages
             if (results.Count < 1)
             {
                 Log.D("UI.MainPages.TimingPage", "Nothing to upload.");
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
+                {
+                    ManualAPIButton.Content = "Manual Upload";
+                }));
                 return;
             }
             // Upload results
@@ -2071,6 +2138,23 @@ namespace Chronokeep.UI.MainPages
             {
                 mWindow.AddWindow(exportRunsignup);
                 exportRunsignup.ShowDialog();
+            }
+        }
+
+        private void LocationBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (subPage == null)
+            {
+                return;
+            }
+            ComboBoxItem locItem = (ComboBoxItem)locationBox.SelectedItem;
+            if (locItem == null)
+            {
+                subPage.Location("");
+            }
+            else
+            {
+                subPage.Location(locItem.Content.ToString());
             }
         }
 

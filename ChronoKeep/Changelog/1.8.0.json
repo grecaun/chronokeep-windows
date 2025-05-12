@@ -1,0 +1,14 @@
+{
+  "version": "v1.8.0",
+  "changes": [
+    "When adding a participant the gender field defaults to Not Specified instead of Man.",
+    "Added age to the stats page displays.",
+    "Start segments can now be set up.",
+    "Added the option to limit results to specific locations if more than the start/finish location are set up.",
+    "Timing page has been re-organized a bit."
+  ],
+  "fixes": [
+    "Fixed an issue where the Manual Upload button would be stuck as Uploading if there was nothing to upload.",
+    "Results that occur after a participant finishes no longer generate entries."
+  ]
+}

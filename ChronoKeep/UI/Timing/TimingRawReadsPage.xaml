@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Chronokeep.UI.Timing"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
@@ -28,12 +28,11 @@
                 ScrollViewer.CanContentScroll="True"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                ScrollViewer.ScrollChanged="updateListView_ScrollChanged"
+                ScrollViewer.ScrollChanged="UpdateListView_ScrollChanged"
                 Grid.Row="1"
                 AlternationCount="2"
                 ItemContainerStyle="{StaticResource alternatingStyle}"
                 Margin="0,0,0,0"
-                Loaded="updateListView_Loaded"
                 >
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -95,7 +94,8 @@
             </ScrollViewer>
         </Grid>
         <DockPanel Grid.Row="1" LastChildFill="False" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <ui:ToggleSwitch x:Name="onlyManualBox" Content="Show Only Manual Reads" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Margin="5,5,5,5" Unchecked="onlyManualBox_Unchecked" Checked="onlyManualBox_Unchecked"/>
+            <ui:ToggleSwitch x:Name="onlyIgnoreBox" Content="Ignored" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Margin="5,5,5,5" Unchecked="OnlyIgnoreBox_Unchecked" Checked="OnlyIgnoreBox_Unchecked"/>
+            <ui:ToggleSwitch x:Name="onlyManualBox" Content="Manual" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" Margin="5,5,5,5" Unchecked="OnlyManualBox_Unchecked" Checked="OnlyManualBox_Unchecked"/>
             <Button Name="DeleteButton" Content="Delete" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="DeleteButton_Click"/>
             <Button Name="IgnoreButton" Content="Ignore" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="IgnoreButton_Click"/>
             <Button Name="ChangeDNS" Content="Set DNS" Height="35" FontSize="16" Width="90" Margin="5,5,5,5" Click="ChangeDNS_Click"/>

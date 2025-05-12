@@ -7,6 +7,7 @@ namespace Chronokeep.Interfaces
         void CancelableUpdateView(CancellationToken token);
         void Show(PeopleType type);
         void SortBy(SortType type);
+        void Location(string location);
         void EditSelected();
     }
 

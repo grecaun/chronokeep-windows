@@ -47,11 +47,11 @@
             <DockPanel>
                 <TextBlock Text="Gender" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
                 <ComboBox Name="GenderBox" FontSize="16" Margin="0,5,15,5" Width="200" SelectionChanged="GenderBox_SelectionChanged">
+                    <ComboBoxItem Content="Not Specified"/>
                     <ComboBoxItem Content="Man"/>
                     <ComboBoxItem Content="Woman"/>
                     <ComboBoxItem Content="Non-Binary"/>
                     <ComboBoxItem Content="Other"/>
-                    <ComboBoxItem Content="Not Specified"/>
                 </ComboBox>
                 <TextBox Name="otherGenderBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown" HorizontalAlignment="Stretch"/>
             </DockPanel>

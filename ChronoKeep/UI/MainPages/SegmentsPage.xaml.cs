@@ -107,20 +107,18 @@ namespace Chronokeep.UI.MainPages
             List<Segment> segments = database.GetSegments(theEvent.Identifier);
             if (theEvent.DistanceSpecificSegments)
             {
-                foreach (Segment seg in segments)
-                {
-                    if (!allSegments.ContainsKey(seg.DistanceId))
-                    {
-                        allSegments[seg.DistanceId] = new List<Segment>();
-                    }
-                    allSegments[seg.DistanceId].Add(seg);
-                }
                 foreach (Distance d in distances)
                 {
-                    if (!allSegments.ContainsKey(d.Identifier))
+                    allSegments[d.Identifier] = [];
+                }
+                foreach (Segment seg in segments)
+                {
+                    if (!allSegments.TryGetValue(seg.DistanceId, out List<Segment> segList))
                     {
-                        allSegments[d.Identifier] = new List<Segment>();
+                        segList = [];
+                        allSegments[seg.DistanceId] = segList;
                     }
+                    segList.Add(seg);
                 }
             }
             else
@@ -137,19 +135,19 @@ namespace Chronokeep.UI.MainPages
             bool occurrence_error = false;
             foreach (Object seg in SegmentsBox.Items)
             {
-                if (seg is ASegment)
+                if (seg is ASegment segment)
                 {
-                    Segment thisSegment = ((ASegment)seg).mySegment;
+                    Segment thisSegment = segment.mySegment;
                     if (thisSegment.LocationId == Constants.Timing.LOCATION_FINISH && thisSegment.Occurrence >= theEvent.FinishMaxOccurrences)
                     {
                         occurrence_error = true;
                     }
-                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + ((ASegment)seg).mySegment.DistanceId + " Segment Name " + ((ASegment)seg).mySegment.Name + " segment ID " + ((ASegment)seg).mySegment.Identifier);
+                    Log.D("UI.MainPages.SegmentsPage", "Distance ID " + segment.mySegment.DistanceId + " Segment Name " + segment.mySegment.Name + " segment ID " + segment.mySegment.Identifier);
                 }
             }
             if (occurrence_error)
             {
-                DialogBox.Show("Your finish lines has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  This could cause errors.");
+                DialogBox.Show("Your finish line has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  This could cause errors.");
             }
             UpdateView();
         }
@@ -194,7 +192,7 @@ namespace Chronokeep.UI.MainPages
                     }
                 }
             }
-            newSegs.RemoveAll(x => x.Occurrence < 1);
+            newSegs.RemoveAll(x => x.Occurrence < 0);
             database.AddSegments(newSegs);
             UpdateTimingWorker = true;
             database.UpdateSegments(upSegs);
@@ -296,14 +294,14 @@ namespace Chronokeep.UI.MainPages
             {
                 this.distance = distance;
                 this.page = page;
-                otherDistances = new List<Distance>(distances);
+                otherDistances = [.. distances];
                 otherDistances.RemoveAll(x => x.Identifier == (distance == null ? -1 : distance.Identifier));
-                StackPanel thePanel = new StackPanel();
+                StackPanel thePanel = new();
                 this.Content = thePanel;
                 this.IsTabStop = false;
                 this.HorizontalContentAlignment = HorizontalAlignment.Stretch;
                 this.VerticalContentAlignment = VerticalAlignment.Center;
-                Grid namePanel = new Grid()
+                Grid namePanel = new()
                 {
                     Margin = new Thickness(5)
                 };
@@ -314,7 +312,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     namePanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(250) });
                 }
-                TextBlock distanceName = new TextBlock()
+                TextBlock distanceName = new()
                 {
                     Text = distance == null ? "All Distances" : distance.Name,
                     FontSize = 20,
@@ -339,7 +337,7 @@ namespace Chronokeep.UI.MainPages
                 };
                 namePanel.Children.Add(numAdd);
                 Grid.SetColumn(numAdd, 1);
-                Button addButton = new Button()
+                Button addButton = new()
                 {
                     Content = "Add",
                     FontSize = 16,
@@ -412,7 +410,7 @@ namespace Chronokeep.UI.MainPages
                 segments.Sort((x1, x2) => x1.CompareTo(x2));
                 foreach (Segment s in segments)
                 {
-                    ASegment newSeg = new ASegment(theEvent, page, s, locations);
+                    ASegment newSeg = new(theEvent, page, s, locations);
                     SegmentItems.Add(newSeg);
                     //segmentHolder.Items.Add(newSeg);
                     if (s.LocationId == Constants.Timing.LOCATION_FINISH || s.LocationId == Constants.Timing.LOCATION_START)
@@ -439,8 +437,7 @@ namespace Chronokeep.UI.MainPages
                 {
                     selectedDistance = distance.Identifier;
                 }
-                int count;
-                int.TryParse(numAdd.Text, out count);
+                int.TryParse(numAdd.Text, out int count);
                 for (int i = 0; i < count; i++)
                 {
                     page.AddSegment(selectedDistance);
@@ -561,6 +558,7 @@ namespace Chronokeep.UI.MainPages
             readonly SegmentsPage page;
             public Segment mySegment;
             private Dictionary<string, int> locationDictionary;
+            public Event theEvent;
 
             private readonly Regex allowedChars = new Regex("[^0-9.]+");
             private readonly Regex allowedNums = new Regex("[^0-9]+");
@@ -568,6 +566,7 @@ namespace Chronokeep.UI.MainPages
             public ASegment(Event theEvent, SegmentsPage page, Segment segment, List<TimingLocation> locations)
             {
                 this.page = page;
+                this.theEvent = theEvent;
                 this.mySegment = segment;
                 this.locationDictionary = new Dictionary<string, int>();
                 DockPanel thePanel = new DockPanel()
@@ -632,7 +631,13 @@ namespace Chronokeep.UI.MainPages
                         maxOccurrences = 1;
                     }
                     selected = null;
-                    for (int i = 1; i <= maxOccurrences; i++)
+                    int start = 1;
+                    if ((theEvent.CommonStartFinish == true && mySegment.LocationId == Constants.Timing.LOCATION_FINISH)
+                        || mySegment.LocationId == Constants.Timing.LOCATION_START)
+                    {
+                        start = 0;
+                    }
+                    for (int i = start; i <= maxOccurrences; i++)
                     {
                         current = new ComboBoxItem()
                         {
@@ -758,7 +763,13 @@ namespace Chronokeep.UI.MainPages
                 {
                     maxOccurrences = 1;
                 }
-                for (int i = 1; i <= maxOccurrences; i++)
+                int start = 1;
+                if ((theEvent.CommonStartFinish == true && mySegment.LocationId == Constants.Timing.LOCATION_FINISH)
+                    || mySegment.LocationId == Constants.Timing.LOCATION_START)
+                {
+                    start = 0;
+                }
+                for (int i = start; i <= maxOccurrences; i++)
                 {
 
                     Occurrence.Items.Add(new ComboBoxItem()
@@ -793,7 +804,7 @@ namespace Chronokeep.UI.MainPages
                     mySegment.CumulativeDistance = Convert.ToDouble(CumDistance.Text);
                     mySegment.DistanceUnit = Convert.ToInt32(((ComboBoxItem)DistanceUnit.SelectedItem).Uid);
                     if (Occurrence != null && Occurrence.SelectedItem != null) mySegment.Occurrence = Convert.ToInt32(((ComboBoxItem)Occurrence.SelectedItem).Uid);
-                    else mySegment.Occurrence = 0;
+                    else mySegment.Occurrence = -1;
                     mySegment.GPS = GPS.Text;
                     mySegment.MapLink = MapLink.Text;
                 }

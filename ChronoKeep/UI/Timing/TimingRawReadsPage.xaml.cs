@@ -1,6 +1,7 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,6 +28,18 @@ namespace Chronokeep.UI.Timing
             this.database = database;
             theEvent = database.GetCurrentEvent();
             Log.D("UI.Timing.TimingRawReadsPage", "Current event fetched.");
+            if (parent is TimingPage)
+            {
+                PrivateUpdateView();
+            }
+            else if (parent is MinTimingPage)
+            {
+                SafemodeUpdateView();
+            }
+            Log.D("UI.Timing.TimingRawReadsPage", "View updated.");
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
+            Log.D("UI.Timing.TimingRawReadsPage", "We're at the bottom.");
         }
 
         private void IgnoreButton_Click(object sender, RoutedEventArgs e)
@@ -114,12 +127,14 @@ namespace Chronokeep.UI.Timing
             List<ChipRead> reads = new List<ChipRead>();
             SortType sortType = parent.GetSortType();
             PeopleType peopleType = parent.GetPeopleType();
+            string location = parent.GetLocation();
             reads.AddRange(database.GetChipReads(theEvent.Identifier));
             chipReads.Clear();
             chipReads.AddRange(reads);
             string search = parent.GetSearchValue();
             bool manualOnly = onlyManualBox.IsChecked == true;
-            SortWorker(reads, sortType, peopleType, search, manualOnly);
+            bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
+            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
@@ -138,14 +153,13 @@ namespace Chronokeep.UI.Timing
             chipReads.Clear();
             chipReads.AddRange(reads);
             string search = parent.GetSearchValue();
+            string location = parent.GetLocation();
             bool manualOnly = onlyManualBox.IsChecked == true;
-            SortWorker(reads, sortType, peopleType, search, manualOnly);
+            bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
+            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
-            updateListView.SelectedIndex = updateListView.Items.Count - 1;
-            updateListView.ScrollIntoView(updateListView.SelectedItem);
-            updateListView.SelectedItem = null;
         }
 
         public void Closing() { }
@@ -165,7 +179,9 @@ namespace Chronokeep.UI.Timing
             SortType sortType,
             PeopleType peopleType,
             string search,
-            bool manualOnly
+            bool manualOnly,
+            string location,
+            bool ignoredOnly
             )
         {
             if (peopleType == PeopleType.UNKNOWN)
@@ -176,6 +192,18 @@ namespace Chronokeep.UI.Timing
             if (manualOnly)
             {
                 reads.RemoveAll(read => read.Type == Constants.Timing.CHIPREAD_TYPE_CHIP);
+            }
+            if (ignoredOnly)
+            {
+                reads.RemoveAll(read =>
+                    read.Status != Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE
+                    && read.Status != Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE
+                    && read.Status != Constants.Timing.CHIPREAD_STATUS_IGNORE
+                    );
+            }
+            if (location != null && location.Length > 0 && !location.Equals("All Locations", StringComparison.OrdinalIgnoreCase))
+            {
+                reads.RemoveAll(read => !read.LocationName.Equals(location, StringComparison.OrdinalIgnoreCase));
             }
             if (sortType == SortType.BIB)
             {
@@ -189,32 +217,59 @@ namespace Chronokeep.UI.Timing
 
         public async void Show(PeopleType peopleType)
         {
-            List<ChipRead> reads = new List<ChipRead>(chipReads);
+            List<ChipRead> reads = [.. chipReads];
             string search = parent.GetSearchValue();
+            string location = parent.GetLocation();
             SortType sortType = parent.GetSortType();
             bool manualOnly = onlyManualBox.IsChecked == true;
+            bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
             await Task.Run(() =>
             {
-                SortWorker(reads, sortType, peopleType, search, manualOnly);
+                SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
         }
 
         public async void SortBy(SortType sortType)
         {
-            List<ChipRead> reads = new List<ChipRead>(chipReads);
+            List<ChipRead> reads = [.. chipReads];
             string search = parent.GetSearchValue();
+            string location = parent.GetLocation();
             PeopleType peopleType = parent.GetPeopleType();
             bool manualOnly = onlyManualBox.IsChecked == true;
+            bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
             await Task.Run(() =>
             {
-                SortWorker(reads, sortType, peopleType, search, manualOnly);
+                SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
+        }
+
+        public async void Location(string location)
+        {
+            List<ChipRead> reads = [.. chipReads];
+            PeopleType peopleType = parent.GetPeopleType();
+            SortType sortType = parent.GetSortType();
+            string search = parent.GetSearchValue();
+            bool manualOnly = onlyManualBox.IsChecked == true;
+            bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
+            await Task.Run(() =>
+            {
+                SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
+            });
+            updateListView.SelectedItems.Clear();
+            updateListView.ItemsSource = reads;
+            updateListView.Items.Refresh();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
@@ -307,41 +362,45 @@ namespace Chronokeep.UI.Timing
             parent.NotifyTimingWorker();
         }
 
-        private void onlyManualBox_Unchecked(object sender, RoutedEventArgs e)
+        private void OnlyManualBox_Unchecked(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.TimingRawReadsPage", "Manual entries only box checked status changed.");
-            List<ChipRead> reads = new List<ChipRead>();
-            reads.AddRange(chipReads);
+            List<ChipRead> reads = [.. chipReads];
             string search = parent.GetSearchValue();
+            string location = parent.GetLocation();
             SortType sortType = parent.GetSortType();
             PeopleType peopleType = parent.GetPeopleType();
             bool manualOnly = onlyManualBox.IsChecked == true;
-            SortWorker(reads, sortType, peopleType, search, manualOnly);
+            bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
+            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
-        }
-
-        private void updateListView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (parent is TimingPage)
-            {
-                PrivateUpdateView();
-            }
-            else if (parent is MinTimingPage)
-            {
-                SafemodeUpdateView();
-            }
-            Log.D("UI.Timing.TimingRawReadsPage", "View updated.");
             updateListView.SelectedIndex = updateListView.Items.Count - 1;
             updateListView.ScrollIntoView(updateListView.SelectedItem);
-            updateListView.SelectedItem = null;
-            Log.D("UI.Timing.TimingRawReadsPage", "We're at the bottom.");
         }
 
-        private void updateListView_ScrollChanged(object sender, System.Windows.Controls.ScrollChangedEventArgs e)
+        private void UpdateListView_ScrollChanged(object sender, System.Windows.Controls.ScrollChangedEventArgs e)
         {
             labelsViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
+        }
+
+        private void OnlyIgnoreBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.TimingRawReadsPage", "Manual entries only box checked status changed.");
+            List<ChipRead> reads = [.. chipReads];
+            string search = parent.GetSearchValue();
+            string location = parent.GetLocation();
+            SortType sortType = parent.GetSortType();
+            PeopleType peopleType = parent.GetPeopleType();
+            bool manualOnly = onlyManualBox.IsChecked == true;
+            bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
+            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
+            updateListView.SelectedItems.Clear();
+            updateListView.ItemsSource = reads;
+            updateListView.Items.Refresh();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
         }
     }
 }

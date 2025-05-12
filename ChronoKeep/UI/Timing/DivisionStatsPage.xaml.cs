@@ -1,6 +1,5 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
-using Chronokeep.Objects.API;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.Participants;
 using System.Collections.Generic;
@@ -42,6 +41,7 @@ namespace Chronokeep.UI.Timing
                 Log.E("UI.Timing.DivisionStatsPage", "Something went wrong and no proper event was returned.");
                 return;
             }
+            Participant.SetCurrentEventDate(theEvent.Date);
             activeListView.ItemsSource = activeParticipants;
             dnsListView.ItemsSource = dnsParticipants;
             unknownListView.ItemsSource = unknownParticipants;
@@ -235,5 +235,7 @@ namespace Chronokeep.UI.Timing
                 modifyParticipant.ShowDialog();
             }
         }
+
+        public void Location(string location) { }
     }
 }

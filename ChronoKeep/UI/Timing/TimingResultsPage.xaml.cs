@@ -3,6 +3,7 @@ using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.Participants;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,8 +61,12 @@ namespace Chronokeep.UI.Timing
 
         public void Keyboard_Ctrl_Z() { }
 
-        private void Customize(SortType sortType, PeopleType peopleType,
-            List<TimeResult> newResults, string search = "")
+        private void Customize(
+            SortType sortType,
+            PeopleType peopleType,
+            List<TimeResult> newResults,
+            string search,
+            string location)
         {
             if (peopleType == PeopleType.DEFAULT)
             {
@@ -124,6 +129,11 @@ namespace Chronokeep.UI.Timing
                 newResults.RemoveAll(TimeResult.IsNotStart);
             }
             newResults.RemoveAll(result => result.IsNotMatch(search));
+            Log.D("UI.Timing.TimingResultsPage", "Removing all location based items. " + location);
+            if (location != null && location.Length > 0 && !location.Equals("All Locations", StringComparison.OrdinalIgnoreCase))
+            {
+                newResults.RemoveAll(read => !read.LocationName.Equals(location, StringComparison.OrdinalIgnoreCase));
+            }
             if (sortType == SortType.BIB)
             {
                 newResults.Sort(TimeResult.CompareByBib);
@@ -156,15 +166,34 @@ namespace Chronokeep.UI.Timing
 
         public async void SortBy(SortType sortType)
         {
-            List<TimeResult> newResults = new List<TimeResult>(results);
+            List<TimeResult> newResults = [.. results];
             PeopleType peopleType = parent.GetPeopleType();
             string search = parent.GetSearchValue();
+            string location = parent.GetLocation();
             await Task.Run(() =>
             {
-                Customize(sortType, peopleType, newResults, search);
+                Customize(sortType, peopleType, newResults, search, location);
             });
             updateListView.ItemsSource = newResults;
             updateListView.Items.Refresh();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
+        }
+
+        public async void Location(string location)
+        {
+            List<TimeResult> newResults = [.. results];
+            PeopleType peopleType = parent.GetPeopleType();
+            SortType sortType = parent.GetSortType();
+            string search = parent.GetSearchValue();
+            await Task.Run(() =>
+            {
+                Customize(sortType, peopleType, newResults, search, location);
+            });
+            updateListView.ItemsSource = newResults;
+            updateListView.Items.Refresh();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
         }
 
         public void UpdateDatabase() { }
@@ -175,6 +204,7 @@ namespace Chronokeep.UI.Timing
             SortType sortType = parent.GetSortType();
             PeopleType peopleType = parent.GetPeopleType();
             string search = parent.GetSearchValue();
+            string location = parent.GetLocation();
             await Task.Run(() =>
             {
                 newResults = database.GetTimingResults(theEvent.Identifier);
@@ -183,7 +213,7 @@ namespace Chronokeep.UI.Timing
             results.AddRange(newResults);
             await Task.Run(() =>
             {
-                Customize(sortType, peopleType, newResults, search);
+                Customize(sortType, peopleType, newResults, search, location);
             });
             updateListView.ItemsSource = newResults;
             updateListView.Items.Refresh();
@@ -224,15 +254,18 @@ namespace Chronokeep.UI.Timing
 
         public async void Show(PeopleType peopleType)
         {
-            List<TimeResult> newResults = new List<TimeResult>(results);
+            List<TimeResult> newResults = [.. results];
             SortType sortType = parent.GetSortType();
             string search = parent.GetSearchValue();
+            string location = parent.GetLocation();
             await Task.Run(() =>
             {
-                Customize(sortType, peopleType, newResults, search);
+                Customize(sortType, peopleType, newResults, search, location);
             });
             updateListView.ItemsSource = newResults;
             updateListView.Items.Refresh();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
         }
 
         private void UpdateListView_Loaded(object sender, System.Windows.RoutedEventArgs e)
