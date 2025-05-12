@@ -77,11 +77,6 @@ namespace Chronokeep.UI.API
             this.Close();
         }
 
-        public void NetworkUpdateResults()
-        {
-            window.NetworkUpdateResults();
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (window != null) window.WindowFinalize(this);

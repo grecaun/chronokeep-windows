@@ -41,7 +41,12 @@ namespace Chronokeep.UI.API
             }
             slug = event_ids[0];
             year = event_ids[1];
-            EditAPIFrame.Content = new EditAPIPage1(this);
+            EditAPIFrame.Content = new EditAPIPage1(this, database);
+        }
+
+        public void NetworkUpdateResults()
+        {
+            window.NetworkUpdateResults();
         }
 
         public static EditAPIWindow NewWindow(IMainWindow window, IDBInterface database)

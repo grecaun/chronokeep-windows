@@ -66,6 +66,7 @@ namespace Chronokeep.UI.API
             }
             yearBox.Text = theEvent.YearCode;
             dateBox.Text = theEvent.Date;
+            rankBox.SelectedIndex = theEvent.RankByGun ? 0 : 1;
             yearPanel.Visibility = Visibility.Visible;
             holdingLabel.Visibility = Visibility.Collapsed;
         }
@@ -108,7 +109,7 @@ namespace Chronokeep.UI.API
                         DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss zzz"),
                         Live = LiveBox.IsChecked == true,
                         DaysAllowed = Convert.ToInt32(DaysAllowedSlider.Value),
-                        RankingType = theEvent.RankByGun ? "gun" : "chip",
+                        RankingType = ((ComboBoxItem)rankBox.SelectedItem).Content.ToString().Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",
                     });
                     year = addResponse.EventYear.Year;
                 }

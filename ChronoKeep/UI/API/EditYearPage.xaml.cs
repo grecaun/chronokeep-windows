@@ -4,6 +4,7 @@ using Chronokeep.Objects.API;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Chronokeep.UI.API
 {
@@ -57,15 +58,23 @@ namespace Chronokeep.UI.API
 
         private async void Done_Click(object sender, RoutedEventArgs e)
         {
-            await APIHandlers.UpdateEventYear(api, slug, new APIEventYear
+            try
             {
-                Year = yearBox.Text,
-                DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss zzz"),
-                Live = LiveBox.IsChecked == true,
-                DaysAllowed = Convert.ToInt32(DaysAllowedSlider.Value),
-                RankingType = rankBox.SelectedIndex == 0 ? "chip" : "gun",
-            });
-            window.Close();
+                await APIHandlers.UpdateEventYear(api, slug, new APIEventYear
+                {
+                    Year = yearBox.Text,
+                    DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss zzz"),
+                    Live = LiveBox.IsChecked == true,
+                    DaysAllowed = Convert.ToInt32(DaysAllowedSlider.Value),
+                    RankingType = ((ComboBoxItem)rankBox.SelectedItem).Content.ToString().Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",
+                });
+                window.Close();
+            }
+            catch (APIException ex)
+            {
+                DialogBox.Show(ex.Message);
+                return;
+            }
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

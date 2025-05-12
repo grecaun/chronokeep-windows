@@ -267,7 +267,7 @@ namespace Chronokeep.Network.API
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Post,
+                        Method = HttpMethod.Put,
                         RequestUri = new Uri(api.URL + "event/update"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new ModifyEventRequest
@@ -356,7 +356,7 @@ namespace Chronokeep.Network.API
                 {
                     var request = new HttpRequestMessage
                     {
-                        Method = HttpMethod.Post,
+                        Method = HttpMethod.Put,
                         RequestUri = new Uri(api.URL + "event-year/update"),
                         Content = new StringContent(
                             JsonSerializer.Serialize(new ModifyEventYearRequest

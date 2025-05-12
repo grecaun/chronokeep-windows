@@ -683,18 +683,31 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
-        private void apiLinkButton_Click(object sender, RoutedEventArgs e)
+        private void ApiLinkButton_Click(object sender, RoutedEventArgs e)
         {
-            Log.D("UI.DashboardPage", "Link to API Event.");
-            APIWindow apiWindow = APIWindow.NewWindow(mWindow, database);
-            if (apiWindow != null) {
-                mWindow.AddWindow(apiWindow);
-                apiWindow.ShowDialog();
-                UpdateView();
+            Log.D("UI.DashboardPage", "Link/Edit API Event.");
+            if (theEvent.API_ID > 0 && theEvent.API_Event_ID != "")
+            {
+                EditAPIWindow editWindow = EditAPIWindow.NewWindow(mWindow, database);
+                if (editWindow != null)
+                {
+                    mWindow.AddWindow(editWindow);
+                    editWindow.ShowDialog();
+                    UpdateView();
+                }
+            }
+            else
+            {
+                APIWindow apiWindow = APIWindow.NewWindow(mWindow, database);
+                if (apiWindow != null) {
+                    mWindow.AddWindow(apiWindow);
+                    apiWindow.ShowDialog();
+                    UpdateView();
+                }
             }
         }
 
-        private void apiPageButton_Click(object sender, RoutedEventArgs e)
+        private void ApiPageButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.DashboardPage", "Results API button clicked.");
             mWindow.SwitchPage(new APIPage(mWindow, database));
@@ -729,7 +742,7 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
-        private void registrationButton_Click(object sender, RoutedEventArgs e)
+        private void RegistrationButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.DashboardPage", "Registration button clicked.");
             if (mWindow.IsRegistrationRunning())

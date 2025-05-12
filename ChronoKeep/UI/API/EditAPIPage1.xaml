@@ -12,6 +12,7 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       >
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2">
+        <Button Content="Unlink" Height="35" Width="120" HorizontalAlignment="Center" Margin="10,0,10,10" Click="Unlink_Click"/>
         <Button Content="Edit Event" Height="35" Width="120" HorizontalAlignment="Center" Margin="10,0,10,10" Click="Edit_Event_Click"/>
         <Button Content="Edit Year" Height="35" Width="120" HorizontalAlignment="Center" Margin="10,0,10,10" Click="Edit_Year_Click"/>
         <Button Content="Cancel" Height="35" Width="120" HorizontalAlignment="Center" Margin="10,0,10,10" Click="Cancel_Click"/>
