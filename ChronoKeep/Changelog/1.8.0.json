@@ -5,7 +5,9 @@
     "Added age to the stats page displays.",
     "Start segments can now be set up.",
     "Added the option to limit results to specific locations if more than the start/finish location are set up.",
-    "Timing page has been re-organized a bit."
+    "Timing page has been re-organized a bit.",
+    "Raw reads can now be restricted to Ignored reads only.",
+    "Manual only switch on the raw reads page has had its label simplified."
   ],
   "fixes": [
     "Fixed an issue where the Manual Upload button would be stuck as Uploading if there was nothing to upload.",
