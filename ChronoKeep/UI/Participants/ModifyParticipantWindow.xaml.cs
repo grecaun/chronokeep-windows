@@ -1,6 +1,5 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
-using Chronokeep.Timing.API;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
 using System;
