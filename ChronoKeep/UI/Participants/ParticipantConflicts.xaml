@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
         <ui:TitleBar Grid.Row="0">
         </ui:TitleBar>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="*"/>

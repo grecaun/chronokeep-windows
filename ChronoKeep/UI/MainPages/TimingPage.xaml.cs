@@ -711,6 +711,7 @@ namespace Chronokeep.UI.MainPages
                     database.UpdateEvent(theEvent);
                     StartTime.Text = "";
                     EllapsedTime.Text = "00:00:00";
+                    StartRace.IsEnabled = true;
                     return;
                 }
                 Log.D("UI.MainPages.TimingPage", "Start Time Box return key found.");
