@@ -11,7 +11,8 @@
     "Updates to participants now receive a version number that is tracked when participants are uploaded so information changed after uploading isn't overwritten.",
     "It is now possible to ask the Chronokeep Remote API to delete reads for defined periods of times similar to rewinding.",
     "Editing an Event / Year on the Chronokeep Results API is now possible.",
-    "When making the above change, the process for unlinking an event from the Chronokeep Results API is slightly changed."
+    "When making the above change, the process for unlinking an event from the Chronokeep Results API is slightly changed.",
+    "Conflicting participant entries when downloading information from the Chronokeep Results API are now collected and viewable."
   ],
   "fixes": [
     "Fixed an issue where the Manual Upload button would be stuck as Uploading if there was nothing to upload.",
