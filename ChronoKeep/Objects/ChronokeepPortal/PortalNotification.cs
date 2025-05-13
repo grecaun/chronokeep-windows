@@ -13,6 +13,8 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public const string RESTARTING = "RESTARTING";
         public const string HIGH_TEMP = "HIGH_TEMP";
         public const string MAX_TEMP = "MAX_TEMP";
+        public const string BATTERY_LOW = "BATTERY_LOW";
+        public const string BATTERY_CRITICAL = "BATTERY_CRITICAL";
 
         public static string GetRemoteNotificationMessage(string reader, string address, RemoteNotification message) {
             if (message.Message != null && message.Message.Length > 0)
@@ -46,6 +48,8 @@ namespace Chronokeep.Objects.ChronokeepPortal
                 RESTARTING => $"Notification from '{reader}-{address}'\nRestarting.",
                 HIGH_TEMP => $"Notification from '{reader}-{address}'\nTemperature is high.",
                 MAX_TEMP => $"Notification from '{reader}-{address}'\nTemperature is very high. Throttling wil most likely occur.",
+                BATTERY_LOW => $"Notification from '{reader}-{address}'\nBattery level is low.",
+                BATTERY_CRITICAL => $"Notification from '{reader}-{address}'\nBattery level is critical.",
                 _ => $"Notification from '{reader}-{address}'\nUnknown notification '{message.Type}'",
             };
         }
@@ -79,6 +83,8 @@ namespace Chronokeep.Objects.ChronokeepPortal
                 RESTARTING => $"Restarting.",
                 HIGH_TEMP => $"Temperature is high.",
                 MAX_TEMP => $"Temperature is very high. Throttling wil most likely occur.",
+                BATTERY_LOW => $"Battery level is low.",
+                BATTERY_CRITICAL => $"Battery level is critical.",
                 _ => $"Unknown notification. {Type}",
             };
         }

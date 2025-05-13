@@ -1163,6 +1163,8 @@ namespace Chronokeep.UI
                 case PortalNotification.UPS_ON_BATTERY:
                 case PortalNotification.UPS_LOW_BATTERY:
                 case PortalNotification.SHUTTING_DOWN:
+                case PortalNotification.BATTERY_LOW:
+                case PortalNotification.BATTERY_CRITICAL:
                     msg.Severity = ReaderMessage.SeverityLevel.High;
                     break;
                 case PortalNotification.MAX_TEMP:

@@ -677,6 +677,12 @@ namespace Chronokeep.Timing.Interfaces
                                     case PortalNotification.MAX_TEMP:
                                         msg = "Portal at " + reader_ip + " temperature is very high. Throttling will most likely occur.";
                                         break;
+                                    case PortalNotification.BATTERY_LOW:
+                                        msg = "Portal at " + reader_ip + " is indicating the battery is low.";
+                                        break;
+                                    case PortalNotification.BATTERY_CRITICAL:
+                                        msg = "Portal at " + reader_ip + " is indicating the battery is critical.";
+                                        break;
                                 }
                                 Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, () =>
                                 {

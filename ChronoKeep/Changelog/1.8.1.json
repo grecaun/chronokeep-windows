@@ -1,0 +1,8 @@
+{
+  "version": "v1.8.1",
+  "changes": [
+    "Low battery and critical battery notifications from a remote or local Chronokeep Portal now have their own notifications."
+  ],
+  "fixes": [
+  ]
+}
