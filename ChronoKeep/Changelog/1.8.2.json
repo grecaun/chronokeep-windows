@@ -5,5 +5,7 @@
     "The option to change the time display based upon Wave time now only shows when the event has started."
   ],
   "fixes": [
+    "ChipReads now properly associate names with them when participant data changes.",
+    "DNF results now propagate to the bottom of the list when serving results over a local http server."
   ]
 }
