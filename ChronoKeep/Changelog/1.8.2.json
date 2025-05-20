@@ -1,0 +1,8 @@
+{
+  "version": "v1.8.2",
+  "changes": [
+    "Added Enable NTFY option to Chronokeep Portal settings page."
+  ],
+  "fixes": [
+  ]
+}

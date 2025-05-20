@@ -190,6 +190,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     NtfyTopic = ntfyTopicBox.Text.Trim(),
                     NtfyUser = ntfyUserBox.Text.Trim(),
                     NtfyPass = ntfyPassBox.Text.Trim(),
+                    EnableNTFY = enableNTFYSwitch.IsChecked == true,
                 };
                 reader.SendSetSettings(sett);
             }
@@ -267,6 +268,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     ntfyTopicBox.Text = allSettings.NtfyTopic;
                     ntfyUserBox.Text = allSettings.NtfyUser;
                     ntfyPassBox.Text = allSettings.NtfyPass;
+                    enableNTFYSwitch.IsChecked = allSettings.EnableNTFY;
                 }
                 // add readers and apis to views
                 if (allSettings.Changes.Contains(PortalSettingsHolder.ChangeType.READERS))

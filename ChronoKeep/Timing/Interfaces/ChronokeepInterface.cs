@@ -441,6 +441,9 @@ namespace Chronokeep.Timing.Interfaces
                                             case PortalSetting.SETTING_NTFY_PASS:
                                                 updSettings.NtfyPass = set.Value;
                                                 break;
+                                            case PortalSetting.SETTING_ENABLE_NTFY:
+                                                updSettings.EnableNTFY = set.Value.Equals("true", StringComparison.OrdinalIgnoreCase);
+                                                break;
                                         }
                                     }
                                     int settingsReadingCount = 0;
@@ -855,6 +858,11 @@ namespace Chronokeep.Timing.Interfaces
             {
                 Name = PortalSetting.SETTING_NTFY_PASS,
                 Value = settings.NtfyPass
+            });
+            settingsReq.Settings.Add(new PortalSetting
+            {
+                Name = PortalSetting.SETTING_ENABLE_NTFY,
+                Value = settings.EnableNTFY == true ? "true" : "false",
             });
             SendMessage(JsonSerializer.Serialize(settingsReq));
         }

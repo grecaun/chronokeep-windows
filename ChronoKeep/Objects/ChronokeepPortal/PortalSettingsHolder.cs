@@ -50,5 +50,6 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public string NtfyTopic { get; set; }
         public string NtfyUser { get; set; }
         public string NtfyPass { get; set; }
+        public bool EnableNTFY { get; set; }
     }
 }

@@ -371,6 +371,15 @@
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <ui:ToggleSwitch
+                        Content="Enable NTFY"
+                        x:Name="enableNTFYSwitch"
+                        Width="180"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button
                         Content="Clear Reads"
                         x:Name="deleteReadsButton"
