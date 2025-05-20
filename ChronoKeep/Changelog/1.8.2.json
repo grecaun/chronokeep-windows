@@ -1,7 +1,8 @@
 {
   "version": "v1.8.2",
   "changes": [
-    "Added Enable NTFY option to Chronokeep Portal settings page."
+    "Added Enable NTFY option to Chronokeep Portal settings page.",
+    "The option to change the time display based upon Wave time now only shows when the event has started."
   ],
   "fixes": [
   ]

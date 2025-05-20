@@ -160,14 +160,6 @@ namespace Chronokeep.UI.MainPages
                 waves.Add(div.Wave);
             }
             EllapsedRelativeToBox.SelectedIndex = 0;
-            if (waves.Count > 1)
-            {
-                EllapsedRelativeToBox.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
-            }
 
             // Populate the list of readers with connected readers (or at least 4 readers)
             ReadersBox.Items.Clear();
@@ -639,6 +631,15 @@ namespace Chronokeep.UI.MainPages
             Log.D("UI.MainPages.TimingPage", "Starting race.");
             StartTime.Text = DateTime.Now.ToString("HH:mm:ss.fff");
             StartRace.IsEnabled = false;
+            EllapsedRelativeToBox.IsEnabled = true;
+            if (waves.Count > 1)
+            {
+                EllapsedRelativeToBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
+            }
             StartTimeChanged();
         }
 
@@ -712,6 +713,8 @@ namespace Chronokeep.UI.MainPages
                     StartTime.Text = "";
                     EllapsedTime.Text = "00:00:00";
                     StartRace.IsEnabled = true;
+                    EllapsedRelativeToBox.IsEnabled = false;
+                    EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
                     return;
                 }
                 Log.D("UI.MainPages.TimingPage", "Start Time Box return key found.");
@@ -755,6 +758,15 @@ namespace Chronokeep.UI.MainPages
             }
             string startTimeValue = StartTime.Text.Replace('_', '0');
             StartRace.IsEnabled = false;
+            EllapsedRelativeToBox.IsEnabled = true;
+            if (waves.Count > 1)
+            {
+                EllapsedRelativeToBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                EllapsedRelativeToBox.Visibility = Visibility.Collapsed;
+            }
             StartTime.Text = startTimeValue;
             Log.D("UI.MainPages.TimingPage", "Start time is " + startTimeValue);
             startTime = DateTime.ParseExact(startTimeValue + DateTime.Parse(theEvent.Date).ToString("ddMMyyyy"), "HH:mm:ss.fffddMMyyyy", null);

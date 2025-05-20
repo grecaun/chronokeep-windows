@@ -41,7 +41,9 @@
                         Height="35"
                         HorizontalAlignment="Stretch"
                         SelectionChanged="EllapsedRelativeToBox_SelectionChanged"
-                        Visibility="Collapsed" >
+                        Visibility="Collapsed"
+                        IsEnabled="False"
+                    >
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
