@@ -11,8 +11,8 @@ namespace Chronokeep.Objects
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, readId, place, agePlace, genderPlace,
             ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds,
-            divisionPlace;
-        private long chipSeconds, seconds;
+            divisionPlace, elapsedMilliseconds = 0, cumulativeMilliseconds = 0;
+        private long chipSeconds, seconds, elapsedSeconds = 0, cumulativeSeconds = 0;
         private string time, locationName, segmentName, firstName, lastName, bib,
             distanceName = "", unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday,
             linked_distance_name = "", chip = "", participantId = "", division = "";
@@ -240,6 +240,71 @@ namespace Chronokeep.Objects
             this.division = division ?? "";
         }
 
+        // Used by backyard ultra routine to add new results to the database.
+        public TimeResult(
+            int eventId,
+            int readId,
+            int eventspecificId,
+            int locationId,
+            int segmentId,
+            int occurrence,
+            string time,
+            string unknownId,
+            string chipTime,
+            DateTime systemTime,
+            string bib,
+            int status,
+            string division,
+            long elapsedSeconds,
+            int elapsedMilliseconds,
+            long cumulativeSeconds,
+            int cumulativeMilliseconds
+            )
+        {
+            this.eventId = eventId;
+            this.readId = readId;
+            this.eventspecificId = eventspecificId;
+            this.locationId = locationId;
+            this.segmentId = segmentId;
+            this.occurrence = occurrence;
+            this.time = time ?? "";
+            this.unknownId = unknownId ?? "";
+            this.chipTime = chipTime ?? "";
+            this.systemTime = systemTime;
+            this.bib = bib ?? "";
+            place = Constants.Timing.TIMERESULT_DUMMYPLACE;
+            agePlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
+            genderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
+            divisionPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
+            this.status = status;
+            splitTime = "";
+            Match chipTimeMatch = timeRegex.Match(chipTime);
+            chipSeconds = 0;
+            chipMilliseconds = 0;
+            if (chipTimeMatch.Success)
+            {
+                chipSeconds = Convert.ToInt64(chipTimeMatch.Groups[1].Value) * 3600
+                   + Convert.ToInt64(chipTimeMatch.Groups[2].Value) * 60
+                   + Convert.ToInt64(chipTimeMatch.Groups[3].Value);
+                chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
+            }
+            Match timeMatch = timeRegex.Match(time);
+            seconds = 0;
+            milliseconds = 0;
+            if (timeMatch.Success)
+            {
+                seconds = Convert.ToInt64(timeMatch.Groups[1].Value) * 3600
+                   + Convert.ToInt64(timeMatch.Groups[2].Value) * 60
+                   + Convert.ToInt64(timeMatch.Groups[3].Value);
+                milliseconds = Convert.ToInt32(timeMatch.Groups[4].Value);
+            }
+            this.division = division ?? "";
+            this.elapsedSeconds = elapsedSeconds;
+            this.elapsedMilliseconds = elapsedMilliseconds;
+            this.cumulativeSeconds = cumulativeSeconds;
+            this.cumulativeMilliseconds = cumulativeMilliseconds;
+        }
+
         public int EventSpecificId { get => eventspecificId; set => eventspecificId = value; }
         public int LocationId { get => locationId; set => locationId = value; }
         public int EventIdentifier { get => eventId; set => eventId = value; }
@@ -332,6 +397,10 @@ namespace Chronokeep.Objects
         }
         public bool Finish { get => segmentId == Constants.Timing.SEGMENT_FINISH; }
         public string ParticipantId { get => participantId; }
+        public long ElapsedSeconds { get => elapsedSeconds; set => elapsedSeconds = value; }
+        public int ElapsedMilliseconds { get => elapsedMilliseconds; set => elapsedMilliseconds = value; }
+        public long CumulativeSeconds { get => cumulativeSeconds; set => cumulativeSeconds = value; }
+        public int CumulativeMilliseconds { get => cumulativeMilliseconds; set => cumulativeMilliseconds = value; }
 
         public string PrettyAgeGroupName()
         {

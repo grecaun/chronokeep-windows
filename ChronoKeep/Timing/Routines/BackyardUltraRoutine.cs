@@ -183,7 +183,7 @@ namespace Chronokeep.Timing.Routines
                     {
                         if (!bibReadPairs.TryGetValue(read.Bib, out List<ChipRead> readPairs))
                         {
-                            readPairs = new List<ChipRead>();
+                            readPairs = [];
                             bibReadPairs[read.Bib] = readPairs;
                         }
 
@@ -231,7 +231,7 @@ namespace Chronokeep.Timing.Routines
                     {
                         if (!chipReadPairs.TryGetValue(read.ChipNumber, out List<ChipRead> readPairs))
                         {
-                            readPairs = new List<ChipRead>();
+                            readPairs = [];
                             chipReadPairs[read.ChipNumber] = readPairs;
                         }
                         readPairs.Add(read);
@@ -305,7 +305,7 @@ namespace Chronokeep.Timing.Routines
                                         newResults.Remove(startResult);
                                     }
                                     // Create a result for the start value.
-                                    startResult = new TimeResult(theEvent.Identifier,
+                                    startResult = new(theEvent.Identifier,
                                         read.ReadId,
                                         part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                                         read.LocationID,
@@ -317,7 +317,11 @@ namespace Chronokeep.Timing.Routines
                                         read.Time,
                                         bib,
                                         Constants.Timing.TIMERESULT_STATUS_NONE,
-                                        part == null ? "" : part.EventSpecific.Division
+                                        part == null ? "" : part.EventSpecific.Division,
+                                        0, // elapsedSeconds
+                                        0, // elapsedMilliseconds
+                                        0, // cumulativeSeconds
+                                        0  // cumulativeMilliseconds
                                         );
                                     if (!backyardResultDictionary.ContainsKey((hour, startResult.Identifier)))
                                     {
@@ -383,7 +387,11 @@ namespace Chronokeep.Timing.Routines
                                                 read.Time,
                                                 bib,
                                                 Constants.Timing.TIMERESULT_STATUS_NONE,
-                                                part == null ? "" : part.EventSpecific.Division
+                                                part == null ? "" : part.EventSpecific.Division,
+                                                0, // elapsedSeconds
+                                                0, // elapsedMilliseconds
+                                                0, // cumulativeSeconds
+                                                0  // cumulativeMilliseconds
                                                 );
                                             tmpRes.end = newResult;
                                             backyardResultDictionary[(hour, TimeResult.BibToIdentifier(bib))] = tmpRes;
@@ -458,7 +466,7 @@ namespace Chronokeep.Timing.Routines
                                             // for information for that person.
                                             if (!bibDNFDictionary.ContainsKey(bib))
                                             {
-                                                TimeResult newResult = new TimeResult(theEvent.Identifier,
+                                                TimeResult newResult = new(theEvent.Identifier,
                                                     read.ReadId,
                                                     part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
                                                     read.LocationID,
@@ -470,7 +478,11 @@ namespace Chronokeep.Timing.Routines
                                                     read.Time,
                                                     bib,
                                                     Constants.Timing.TIMERESULT_STATUS_NONE,
-                                                    part == null ? "" : part.EventSpecific.Division
+                                                    part == null ? "" : part.EventSpecific.Division,
+                                                    secondsDiff, // elapsedSeconds
+                                                    millisecDiff, // elapsedMilliseconds
+                                                    0, // cumulativeSeconds
+                                                    0  // cumulativeMilliseconds
                                                     );
                                                 newResults.Add(newResult);
                                                 if (part != null)
@@ -557,7 +569,7 @@ namespace Chronokeep.Timing.Routines
                                         newResults.Remove(startResult);
                                     }
                                     // Create a result for the start value.
-                                    startResult = new TimeResult(theEvent.Identifier,
+                                    startResult = new(theEvent.Identifier,
                                         read.ReadId,
                                         Constants.Timing.TIMERESULT_DUMMYPERSON,
                                         read.LocationID,
@@ -569,7 +581,11 @@ namespace Chronokeep.Timing.Routines
                                         read.Time,
                                         read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                         Constants.Timing.TIMERESULT_STATUS_NONE,
-                                        ""
+                                        "",
+                                        secondsDiff, // elapsedSeconds
+                                        millisecDiff, // elapsedMilliseconds
+                                        0, // cumulativeSeconds
+                                        0  // cumulativeMilliseconds
                                         );
                                     if (!backyardResultDictionary.ContainsKey((hour, startResult.Identifier)))
                                     {
@@ -626,7 +642,11 @@ namespace Chronokeep.Timing.Routines
                                                 read.Time,
                                                 read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                                 Constants.Timing.TIMERESULT_STATUS_NONE,
-                                                ""
+                                                "",
+                                                secondsDiff, // elapsedSeconds
+                                                millisecDiff, // elapsedMilliseconds
+                                                0, // cumulativeSeconds
+                                                0  // cumulativeMilliseconds
                                                 );
                                             tmpRes.end = newResult;
                                             backyardResultDictionary[(hour, TimeResult.ChipToIdentifier(chip))] = tmpRes;
@@ -699,7 +719,11 @@ namespace Chronokeep.Timing.Routines
                                                     read.Time,
                                                     read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                                     Constants.Timing.TIMERESULT_STATUS_NONE,
-                                                    ""
+                                                    "",
+                                                    secondsDiff, // elapsedSeconds
+                                                    millisecDiff, // elapsedMilliseconds
+                                                    0, // cumulativeSeconds
+                                                    0  // cumulativeMilliseconds
                                                     );
                                                 newResults.Add(newResult);
                                             }
@@ -914,6 +938,7 @@ namespace Chronokeep.Timing.Routines
             foreach (string ident in resultDictionary.Keys)
             {
                 int lastHourFinished = -1;
+                TimeResult previous = null;
                 List<TimeResult> results = resultDictionary[ident];
                 results.Sort((a, b) => a.Occurrence.CompareTo(b.Occurrence));
                 foreach (TimeResult finRes in results)
@@ -936,13 +961,30 @@ namespace Chronokeep.Timing.Routines
                                 finRes.SystemTime,
                                 finRes.Bib,
                                 Constants.Timing.TIMERESULT_STATUS_DNF,
-                                finRes.Division
+                                finRes.Division,
+                                finRes.ElapsedSeconds, // elapsedSeconds
+                                finRes.ElapsedMilliseconds, // elapsedMilliseconds
+                                finRes.CumulativeSeconds, // cumulativeSeconds
+                                finRes.CumulativeMilliseconds  // cumulativeMilliseconds
                                 );
                             newResults.Add(dnfResult);
                         }
                     }
                     else if (finRes.Occurrence / 2 == lastHourFinished + 1)
                     {
+                        if (previous != null)
+                        {
+                            finRes.CumulativeSeconds = previous.CumulativeSeconds;
+                            finRes.CumulativeMilliseconds = previous.CumulativeMilliseconds;
+                        }
+                        finRes.CumulativeSeconds += finRes.Seconds;
+                        finRes.CumulativeMilliseconds += finRes.Milliseconds;
+                        if (finRes.CumulativeMilliseconds >= 1000)
+                        {
+                            finRes.CumulativeMilliseconds -= 1000;
+                            finRes.CumulativeSeconds++;
+                        }
+                        previous = finRes;
                         lastHourFinished++;
                     }
                 }
@@ -968,12 +1010,12 @@ namespace Chronokeep.Timing.Routines
         {
             List<TimeResult> output = database.GetTimingResults(theEvent.Identifier);
             // Dictionary for keeping track of hourly placements.
-            Dictionary<(int, string), (TimeResult start, TimeResult end)> HourlyDictionary = new Dictionary<(int, string), (TimeResult, TimeResult)>();
+            Dictionary<(int, string), (TimeResult start, TimeResult end)> HourlyDictionary = [];
             // Dictionaries for keeping track of placements.
             Dictionary<string, TimeResult> LastLapDictionary = [];
 
             // Create a dictionary so we can check if placements have changed. (place, location, occurrence, distance)
-            Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = new Dictionary<(int, int, int, string), TimeResult>();
+            Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = [];
             // Dictionary for converting result identifiers into eventspecific id's.
             Dictionary<string, int> EventSpecificDictionary = [];
 
@@ -1036,7 +1078,11 @@ namespace Chronokeep.Timing.Routines
                                     DateTime.Now,
                                     dictionary.participantEventSpecificDictionary[eventSpecId].Bib,
                                     Constants.Timing.TIMERESULT_STATUS_DNS,
-                                    ""
+                                    "",
+                                    0, // elapsedSeconds
+                                    0, // elapsedMilliseconds
+                                    0, // cumulativeSeconds
+                                    0  // cumulativeMilliseconds
                                     );
                                 database.AddTimingResult(dnsEntry);
                                 HourlyDictionary[(i - 1, participant)] = (dnsEntry, null);
@@ -1056,7 +1102,7 @@ namespace Chronokeep.Timing.Routines
                                     TimeResult dnfEntry = new(
                                         theEvent.Identifier,
                                         Constants.Timing.TIMERESULT_DUMMYREAD,
-eventSpecId,
+                                        eventSpecId,
                                         theEvent.CommonStartFinish ? Constants.Timing.LOCATION_FINISH : Constants.Timing.LOCATION_START,
                                         Constants.Timing.SEGMENT_NONE,
                                         i * 2,
@@ -1066,7 +1112,11 @@ eventSpecId,
                                         DateTime.Now,
                                         dictionary.participantEventSpecificDictionary[eventSpecId].Bib,
                                         Constants.Timing.TIMERESULT_STATUS_DNS,
-                                        ""
+                                        "",
+                                        0, // elapsedSeconds
+                                        0, // elapsedMilliseconds
+                                        0, // cumulativeSeconds
+                                        0  // cumulativeMilliseconds
                                         );
                                     database.AddTimingResult(dnfEntry);
                                     HourlyDictionary[(i - 1, participant)] = (start, dnfEntry);
@@ -1109,7 +1159,7 @@ eventSpecId,
                     break;
                 }
             }
-            List<TimeResult> placementCalculations = new List<TimeResult>(LastLapDictionary.Values);
+            List<TimeResult> placementCalculations = [.. LastLapDictionary.Values];
             placementCalculations.Sort(TimeResult.CompareByOccurrence);
             // Get Dictionaries for storing the last known place (age group, gender)
             // The key is as follows: Division
@@ -1176,7 +1226,7 @@ eventSpecId,
                 }
             }
             // Check if we should be re-uploading results because placements have changed.
-            List<TimeResult> reUpload = new List<TimeResult>();
+            List<TimeResult> reUpload = [];
             Log.D("Timing.Routines.DistanceRoutine", "Checking for outdated placements.");
             foreach (TimeResult result in output)
             {
