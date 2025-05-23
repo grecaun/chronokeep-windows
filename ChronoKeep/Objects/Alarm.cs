@@ -63,7 +63,7 @@ namespace Chronokeep.Objects
             return output;
         }
 
-        public static (Dictionary<string, Alarm>, Dictionary<string, Alarm>) GetAlarmDictionarys()
+        public static (Dictionary<string, Alarm>, Dictionary<string, Alarm>) GetAlarmDictionaries()
         {
             Dictionary<string, Alarm> outBib = new Dictionary<string, Alarm>();
             Dictionary<string, Alarm> outChip = new Dictionary<string, Alarm>();

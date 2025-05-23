@@ -51,7 +51,7 @@ namespace Chronokeep.Timing.Routines
             // Get some variables to check if we need to sound an alarm.
             // Get a time value to check to ensure the chip read isn't too far in the past.
             DateTime before = DateTime.Now.AddMinutes(-5);
-            (Dictionary<string, Alarm> bibAlarms, Dictionary<string, Alarm> chipAlarms) = Alarm.GetAlarmDictionarys();
+            (Dictionary<string, Alarm> bibAlarms, Dictionary<string, Alarm> chipAlarms) = Alarm.GetAlarmDictionaries();
 
             foreach (ChipRead read in allChipReads)
             {
