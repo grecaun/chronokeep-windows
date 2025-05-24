@@ -11,8 +11,8 @@ namespace Chronokeep.Objects
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, readId, place, agePlace, genderPlace,
             ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds,
-            divisionPlace, elapsedMilliseconds = 0, cumulativeMilliseconds = 0;
-        private long chipSeconds, seconds, elapsedSeconds = 0, cumulativeSeconds = 0;
+            divisionPlace, cumulativeMilliseconds = 0;
+        private long chipSeconds, seconds, cumulativeSeconds = 0;
         private string time, locationName, segmentName, firstName, lastName, bib,
             distanceName = "", unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday,
             linked_distance_name = "", chip = "", participantId = "", division = "";
@@ -134,6 +134,17 @@ namespace Chronokeep.Objects
                     }
                 }
             }
+            else if (theEvent != null && Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
+            {
+                if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
+                {
+                    segmentName = string.Format("Loop {0}", (this.occurrence / 2) + 1);
+                }
+                else if (Constants.Timing.SEGMENT_START == this.segmentId)
+                {
+                    segmentName = string.Format("Start {0}", (this.occurrence / 2) + 1);
+                }
+            }
             segmentName = segmentName.Trim();
             firstName = first ?? "";
             lastName = last ?? "";
@@ -191,9 +202,11 @@ namespace Chronokeep.Objects
             int locationId,
             int segmentId,
             int occurrence,
-            string time,
+            long seconds,
+            int milliseconds,
             string unknownId,
-            string chipTime,
+            long chipSeconds,
+            int chipMilliseconds,
             DateTime systemTime,
             string bib,
             int status,
@@ -206,9 +219,9 @@ namespace Chronokeep.Objects
             this.locationId = locationId;
             this.segmentId = segmentId;
             this.occurrence = occurrence;
-            this.time = time ?? "";
+            this.time = Constants.Timing.TIMERESULT_STATUS_DNF == status ? "DNF" : Constants.Timing.TIMERESULT_STATUS_DNS == status ? "DNS" : Constants.Timing.ToTime(seconds, milliseconds);
             this.unknownId = unknownId ?? "";
-            this.chipTime = chipTime ?? "";
+            this.chipTime = Constants.Timing.TIMERESULT_STATUS_DNF == status ? "DNF" : Constants.Timing.TIMERESULT_STATUS_DNS == status ? "DNS" : Constants.Timing.ToTime(chipSeconds, chipMilliseconds);
             this.systemTime = systemTime;
             this.bib = bib ?? "";
             place = Constants.Timing.TIMERESULT_DUMMYPLACE;
@@ -217,26 +230,10 @@ namespace Chronokeep.Objects
             divisionPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             this.status = status;
             splitTime = "";
-            Match chipTimeMatch = timeRegex.Match(chipTime);
-            chipSeconds = 0;
-            chipMilliseconds = 0;
-            if (chipTimeMatch.Success)
-            {
-                chipSeconds = Convert.ToInt64(chipTimeMatch.Groups[1].Value) * 3600
-                   + Convert.ToInt64(chipTimeMatch.Groups[2].Value) * 60
-                   + Convert.ToInt64(chipTimeMatch.Groups[3].Value);
-                chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
-            }
-            Match timeMatch = timeRegex.Match(time);
-            seconds = 0;
-            milliseconds = 0;
-            if (timeMatch.Success)
-            {
-                seconds = Convert.ToInt64(timeMatch.Groups[1].Value) * 3600
-                   + Convert.ToInt64(timeMatch.Groups[2].Value) * 60
-                   + Convert.ToInt64(timeMatch.Groups[3].Value);
-                milliseconds = Convert.ToInt32(timeMatch.Groups[4].Value);
-            }
+            this.seconds = seconds;
+            this.milliseconds = milliseconds;
+            this.chipSeconds = chipSeconds;
+            this.chipMilliseconds = chipMilliseconds;
             this.division = division ?? "";
         }
 
@@ -248,15 +245,15 @@ namespace Chronokeep.Objects
             int locationId,
             int segmentId,
             int occurrence,
-            string time,
+            long seconds,
+            int milliseconds,
             string unknownId,
-            string chipTime,
+            long chipSeconds,
+            int chipMilliseconds,
             DateTime systemTime,
             string bib,
             int status,
             string division,
-            long elapsedSeconds,
-            int elapsedMilliseconds,
             long cumulativeSeconds,
             int cumulativeMilliseconds
             )
@@ -267,9 +264,9 @@ namespace Chronokeep.Objects
             this.locationId = locationId;
             this.segmentId = segmentId;
             this.occurrence = occurrence;
-            this.time = time ?? "";
+            this.time = Constants.Timing.TIMERESULT_STATUS_DNF == status ? "DNF" : Constants.Timing.TIMERESULT_STATUS_DNS == status ? "DNS" : Constants.Timing.ToTime(seconds, milliseconds);
             this.unknownId = unknownId ?? "";
-            this.chipTime = chipTime ?? "";
+            this.chipTime = Constants.Timing.TIMERESULT_STATUS_DNF == status ? "DNF" : Constants.Timing.TIMERESULT_STATUS_DNS == status ? "DNS" : Constants.Timing.ToTime(chipSeconds, chipMilliseconds);
             this.systemTime = systemTime;
             this.bib = bib ?? "";
             place = Constants.Timing.TIMERESULT_DUMMYPLACE;
@@ -278,29 +275,11 @@ namespace Chronokeep.Objects
             divisionPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
             this.status = status;
             splitTime = "";
-            Match chipTimeMatch = timeRegex.Match(chipTime);
-            chipSeconds = 0;
-            chipMilliseconds = 0;
-            if (chipTimeMatch.Success)
-            {
-                chipSeconds = Convert.ToInt64(chipTimeMatch.Groups[1].Value) * 3600
-                   + Convert.ToInt64(chipTimeMatch.Groups[2].Value) * 60
-                   + Convert.ToInt64(chipTimeMatch.Groups[3].Value);
-                chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
-            }
-            Match timeMatch = timeRegex.Match(time);
-            seconds = 0;
-            milliseconds = 0;
-            if (timeMatch.Success)
-            {
-                seconds = Convert.ToInt64(timeMatch.Groups[1].Value) * 3600
-                   + Convert.ToInt64(timeMatch.Groups[2].Value) * 60
-                   + Convert.ToInt64(timeMatch.Groups[3].Value);
-                milliseconds = Convert.ToInt32(timeMatch.Groups[4].Value);
-            }
+            this.seconds = seconds;
+            this.milliseconds = milliseconds;
+            this.chipSeconds = chipSeconds;
+            this.chipMilliseconds = chipMilliseconds;
             this.division = division ?? "";
-            this.elapsedSeconds = elapsedSeconds;
-            this.elapsedMilliseconds = elapsedMilliseconds;
             this.cumulativeSeconds = cumulativeSeconds;
             this.cumulativeMilliseconds = cumulativeMilliseconds;
         }
@@ -397,8 +376,6 @@ namespace Chronokeep.Objects
         }
         public bool Finish { get => segmentId == Constants.Timing.SEGMENT_FINISH; }
         public string ParticipantId { get => participantId; }
-        public long ElapsedSeconds { get => elapsedSeconds; set => elapsedSeconds = value; }
-        public int ElapsedMilliseconds { get => elapsedMilliseconds; set => elapsedMilliseconds = value; }
         public long CumulativeSeconds { get => cumulativeSeconds; set => cumulativeSeconds = value; }
         public int CumulativeMilliseconds { get => cumulativeMilliseconds; set => cumulativeMilliseconds = value; }
 

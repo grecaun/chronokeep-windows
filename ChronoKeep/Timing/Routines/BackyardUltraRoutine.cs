@@ -311,15 +311,15 @@ namespace Chronokeep.Timing.Routines
                                         read.LocationID,
                                         Constants.Timing.SEGMENT_START,
                                         hour * 2, // start reads are always set at their hour * 2 for occurence (0, 2, 4, 6, etc)
-                                        Constants.Timing.ToTime(secondsNoHour, millisecDiff),
+                                        secondsDiff,
+                                        millisecDiff,
                                         TimeResult.BibToIdentifier(bib),
-                                        "0:00:00.000",
+                                        0,
+                                        0,
                                         read.Time,
                                         bib,
                                         Constants.Timing.TIMERESULT_STATUS_NONE,
                                         part == null ? "" : part.EventSpecific.Division,
-                                        0, // elapsedSeconds
-                                        0, // elapsedMilliseconds
                                         0, // cumulativeSeconds
                                         0  // cumulativeMilliseconds
                                         );
@@ -381,15 +381,15 @@ namespace Chronokeep.Timing.Routines
                                                 read.LocationID,
                                                 Constants.Timing.SEGMENT_FINISH,
                                                 (hour * 2) + 1,
-                                                Constants.Timing.ToTime(secondsNoHour, millisecDiff),
+                                                secondsDiff,
+                                                millisecDiff,
                                                 TimeResult.BibToIdentifier(bib),
-                                                Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
+                                                chipSecDiff,
+                                                chipMillisecDiff,
                                                 read.Time,
                                                 bib,
                                                 Constants.Timing.TIMERESULT_STATUS_NONE,
                                                 part == null ? "" : part.EventSpecific.Division,
-                                                0, // elapsedSeconds
-                                                0, // elapsedMilliseconds
                                                 0, // cumulativeSeconds
                                                 0  // cumulativeMilliseconds
                                                 );
@@ -472,15 +472,15 @@ namespace Chronokeep.Timing.Routines
                                                     read.LocationID,
                                                     Constants.Timing.SEGMENT_NONE,
                                                     occurrence,
-                                                    Constants.Timing.ToTime(secondsNoHour, millisecDiff),
+                                                    secondsDiff,
+                                                    millisecDiff,
                                                     TimeResult.BibToIdentifier(bib),
-                                                    Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
+                                                    chipSecDiff,
+                                                    chipMillisecDiff,
                                                     read.Time,
                                                     bib,
                                                     Constants.Timing.TIMERESULT_STATUS_NONE,
                                                     part == null ? "" : part.EventSpecific.Division,
-                                                    secondsDiff, // elapsedSeconds
-                                                    millisecDiff, // elapsedMilliseconds
                                                     0, // cumulativeSeconds
                                                     0  // cumulativeMilliseconds
                                                     );
@@ -575,15 +575,15 @@ namespace Chronokeep.Timing.Routines
                                         read.LocationID,
                                         Constants.Timing.SEGMENT_START,
                                         hour * 2, // start reads are always set at their hour * 2 for occurence (0, 2, 4, 6, etc)
-                                        Constants.Timing.ToTime(secondsNoHour, millisecDiff),
+                                        secondsDiff,
+                                        millisecDiff,
                                         TimeResult.ChipToIdentifier(chip),
-                                        "0:00:00.000",
+                                        0,
+                                        0,
                                         read.Time,
                                         read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                         Constants.Timing.TIMERESULT_STATUS_NONE,
                                         "",
-                                        secondsDiff, // elapsedSeconds
-                                        millisecDiff, // elapsedMilliseconds
                                         0, // cumulativeSeconds
                                         0  // cumulativeMilliseconds
                                         );
@@ -636,15 +636,15 @@ namespace Chronokeep.Timing.Routines
                                                 read.LocationID,
                                                 Constants.Timing.SEGMENT_FINISH,
                                                 (hour * 2) + 1,
-                                                Constants.Timing.ToTime(secondsNoHour, millisecDiff),
+                                                secondsDiff,
+                                                millisecDiff,
                                                 TimeResult.ChipToIdentifier(chip),
-                                                Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
+                                                chipSecDiff,
+                                                chipMillisecDiff,
                                                 read.Time,
                                                 read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                                 Constants.Timing.TIMERESULT_STATUS_NONE,
                                                 "",
-                                                secondsDiff, // elapsedSeconds
-                                                millisecDiff, // elapsedMilliseconds
                                                 0, // cumulativeSeconds
                                                 0  // cumulativeMilliseconds
                                                 );
@@ -713,15 +713,15 @@ namespace Chronokeep.Timing.Routines
                                                     read.LocationID,
                                                     Constants.Timing.SEGMENT_NONE,
                                                     occurrence,
-                                                    Constants.Timing.ToTime(secondsNoHour, millisecDiff),
+                                                    secondsDiff,
+                                                    millisecDiff,
                                                     TimeResult.ChipToIdentifier(chip),
-                                                    Constants.Timing.ToTime(chipSecDiff, chipMillisecDiff),
+                                                    chipSecDiff,
+                                                    chipMillisecDiff,
                                                     read.Time,
                                                     read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                                     Constants.Timing.TIMERESULT_STATUS_NONE,
                                                     "",
-                                                    secondsDiff, // elapsedSeconds
-                                                    millisecDiff, // elapsedMilliseconds
                                                     0, // cumulativeSeconds
                                                     0  // cumulativeMilliseconds
                                                     );
@@ -782,9 +782,11 @@ namespace Chronokeep.Timing.Routines
                         Constants.Timing.LOCATION_FINISH,
                         Constants.Timing.SEGMENT_FINISH,
                         (hour * 2) + 1,
-                        "DNF",
+                        0,
+                        0,
                         TimeResult.ChipToIdentifier(chip),
-                        "DNF",
+                        0,
+                        0,
                         chipDnfDictionary[chip].Time,
                         chipDnfDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDnfDictionary[chip].ReadBib : chipDnfDictionary[chip].ChipBib,
                         Constants.Timing.TIMERESULT_STATUS_DNF,
@@ -835,9 +837,11 @@ namespace Chronokeep.Timing.Routines
                         Constants.Timing.LOCATION_FINISH,
                         Constants.Timing.SEGMENT_FINISH,
                         (hour * 2) + 1,
-                        "DNF",
+                        0,
+                        0,
                         TimeResult.BibToIdentifier(bib),
-                        "DNF",
+                        0,
+                        0,
                         bibDNFDictionary[bib].Time,
                         bibDNFDictionary[bib].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? bibDNFDictionary[bib].ReadBib : bibDNFDictionary[bib].ChipBib,
                         Constants.Timing.TIMERESULT_STATUS_DNF,
@@ -868,9 +872,11 @@ namespace Chronokeep.Timing.Routines
                         Constants.Timing.LOCATION_FINISH,
                         Constants.Timing.SEGMENT_FINISH,
                         0,
-                        "DNS",
+                        0,
+                        0,
                         TimeResult.ChipToIdentifier(chip),
-                        "DNS",
+                        0,
+                        0,
                         chipDNSDictionary[chip].Time,
                         chipDNSDictionary[chip].ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? chipDNSDictionary[chip].ReadBib : chipDNSDictionary[chip].ChipBib,
                         Constants.Timing.TIMERESULT_STATUS_DNS,
@@ -909,9 +915,11 @@ namespace Chronokeep.Timing.Routines
                         Constants.Timing.LOCATION_FINISH,
                         Constants.Timing.SEGMENT_FINISH,
                         0,
-                        "DNS",
+                        0,
+                        0,
                         TimeResult.BibToIdentifier(bib),
-                        "DNS",
+                        0,
+                        0,
                         bibDNSDictionary[bib].Time,
                         bib,
                         Constants.Timing.TIMERESULT_STATUS_DNS,
@@ -955,15 +963,15 @@ namespace Chronokeep.Timing.Routines
                                 Constants.Timing.LOCATION_FINISH,
                                 Constants.Timing.SEGMENT_FINISH,
                                 finRes.Occurrence,
-                                "DNF",
+                                0,
+                                0,
                                 finRes.Identifier,
-                                "DNF",
+                                0,
+                                0,
                                 finRes.SystemTime,
                                 finRes.Bib,
                                 Constants.Timing.TIMERESULT_STATUS_DNF,
                                 finRes.Division,
-                                finRes.ElapsedSeconds, // elapsedSeconds
-                                finRes.ElapsedMilliseconds, // elapsedMilliseconds
                                 finRes.CumulativeSeconds, // cumulativeSeconds
                                 finRes.CumulativeMilliseconds  // cumulativeMilliseconds
                                 );
@@ -977,7 +985,7 @@ namespace Chronokeep.Timing.Routines
                             finRes.CumulativeSeconds = previous.CumulativeSeconds;
                             finRes.CumulativeMilliseconds = previous.CumulativeMilliseconds;
                         }
-                        finRes.CumulativeSeconds += finRes.Seconds;
+                        finRes.CumulativeSeconds += (finRes.Seconds % 3600);
                         finRes.CumulativeMilliseconds += finRes.Milliseconds;
                         if (finRes.CumulativeMilliseconds >= 1000)
                         {
@@ -1030,34 +1038,19 @@ namespace Chronokeep.Timing.Routines
                     PlacementDictionary[(result.Place, result.LocationId, result.Occurrence, result.DistanceName)] = result;
                 }
                 Participants.Add(result.Identifier);
-                if (Constants.Timing.LOCATION_START == result.LocationId || Constants.Timing.LOCATION_FINISH == result.LocationId)
-                { /*
-                    // finish occurrence
-                    if (result.Occurrence % 2 == 1)
-                    {
-                        (TimeResult start, TimeResult end) time = HourlyDictionary[(result.Occurrence / 2, result.Identifier)];
-                        time.end = result;
-                        HourlyDictionary[(result.Occurrence / 2, result.Identifier)] = time;
-                    }
-                    // start occurrence
-                    else if (result.Occurrence % 2 == 0)
-                    {
-                        (TimeResult start, TimeResult end) time = HourlyDictionary[(result.Occurrence / 2, result.Identifier)];
-                        time.start = result;
-                        HourlyDictionary[(result.Occurrence / 2, result.Identifier)] = time;
-                    } */
-                }
             }
             // Calculate the current hour.
             int hour = (int)((Constants.Timing.RFIDDateToEpoch(DateTime.Now) - dictionary.distanceStartDict[0].Seconds) / 3600);
             List<TimeResult> invalid = [];
-            // Process every hour from the start of the event until we don't have any more finishers for that hour
-            for (int i = 0; i <= hour; i++)
+            // Process every hour from the start of the event until we don't have any more finishers for that hour ( don't include the current hour because it may not be over )
+            List<TimeResult> newResults = [];
+            for (int i = 0; i < hour; i++)
             {
                 // Check to make sure that every participant finished/started the last hour.
-                if (i > 0)
+                foreach (string participant in Participants)
                 {
-                    foreach (string participant in Participants)
+                    // Only check them if they've not been marked finished already.
+                    if (!Finished.Contains(participant))
                     {
                         // check if they've started the previous hour
                         if (!HourlyDictionary.ContainsKey((i - 1, participant)))
@@ -1072,19 +1065,20 @@ namespace Chronokeep.Timing.Routines
                                     theEvent.CommonStartFinish ? Constants.Timing.LOCATION_FINISH : Constants.Timing.LOCATION_START,
                                     Constants.Timing.SEGMENT_NONE,
                                     i * 2,
-                                    String.Format("{0}:00:01.000", i-1),
+                                    i * 3600 + 1,
+                                    0,
                                     participant,
-                                    String.Format("{0}:00:01.000", i-1),
+                                    i * 3600 + 1,
+                                    0,
                                     DateTime.Now,
                                     dictionary.participantEventSpecificDictionary[eventSpecId].Bib,
                                     Constants.Timing.TIMERESULT_STATUS_DNS,
                                     "",
-                                    0, // elapsedSeconds
-                                    0, // elapsedMilliseconds
                                     0, // cumulativeSeconds
                                     0  // cumulativeMilliseconds
                                     );
-                                database.AddTimingResult(dnsEntry);
+                                newResults.Add(dnsEntry);
+                                //database.AddTimingResult(dnsEntry);
                                 HourlyDictionary[(i - 1, participant)] = (dnsEntry, null);
                             }
                             Finished.Add(participant);
@@ -1105,20 +1099,21 @@ namespace Chronokeep.Timing.Routines
                                         eventSpecId,
                                         theEvent.CommonStartFinish ? Constants.Timing.LOCATION_FINISH : Constants.Timing.LOCATION_START,
                                         Constants.Timing.SEGMENT_NONE,
-                                        i * 2,
-                                        String.Format("{0}:59:59.000", i-1),
+                                        i * 2 + 1,
+                                        i * 3600 - 1,
+                                        0,
                                         participant,
-                                        String.Format("{0}:59:59.000", i-1),
+                                        i * 3600 - 1,
+                                        0,
                                         DateTime.Now,
                                         dictionary.participantEventSpecificDictionary[eventSpecId].Bib,
                                         Constants.Timing.TIMERESULT_STATUS_DNS,
                                         "",
-                                        0, // elapsedSeconds
-                                        0, // elapsedMilliseconds
                                         0, // cumulativeSeconds
                                         0  // cumulativeMilliseconds
                                         );
-                                    database.AddTimingResult(dnfEntry);
+                                    newResults.Add(dnfEntry);
+                                    //database.AddTimingResult(dnfEntry);
                                     HourlyDictionary[(i - 1, participant)] = (start, dnfEntry);
                                 }
                                 Finished.Add(participant);
@@ -1126,6 +1121,7 @@ namespace Chronokeep.Timing.Routines
                         }
                     }
                 }
+                // hourlyFinisher is true after the loop if someone finished in this hour, otherwise remains false
                 bool hourlyFinisher = false;
                 foreach (string participant in Participants)
                 {
@@ -1159,6 +1155,7 @@ namespace Chronokeep.Timing.Routines
                     break;
                 }
             }
+            database.AddTimingResults(newResults);
             List<TimeResult> placementCalculations = [.. LastLapDictionary.Values];
             placementCalculations.Sort(TimeResult.CompareByOccurrence);
             // Get Dictionaries for storing the last known place (age group, gender)
