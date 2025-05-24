@@ -561,31 +561,21 @@ namespace Chronokeep.Objects
         public static int CompareByGunTime(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
-            Match oneMatch = timeRegex.Match(one.Time);
-            Match twoMatch = timeRegex.Match(two.Time);
-            if (oneMatch == null || twoMatch == null) return 1;
-            long oneTime = Convert.ToInt64(oneMatch.Groups[1].Value) * 3600
-                + Convert.ToInt64(oneMatch.Groups[2].Value) * 60
-                + Convert.ToInt64(oneMatch.Groups[3].Value);
-            long twoTime = Convert.ToInt64(twoMatch.Groups[1].Value) * 3600
-                + Convert.ToInt64(twoMatch.Groups[2].Value) * 60
-                + Convert.ToInt64(twoMatch.Groups[3].Value);
-            return oneTime.CompareTo(twoTime);
+            if (one.Seconds == two.Seconds)
+            {
+                return one.Milliseconds.CompareTo(two.Milliseconds);
+            }
+            return one.Seconds.CompareTo(two.Seconds);
         }
 
         public static int CompareByNetTime(TimeResult one, TimeResult two)
         {
             if (one == null || two == null) return 1;
-            Match oneMatch = timeRegex.Match(one.chipTime);
-            Match twoMatch = timeRegex.Match(two.chipTime);
-            if (oneMatch == null || twoMatch == null) return 1;
-            long oneTime = Convert.ToInt64(oneMatch.Groups[1].Value) * 3600
-                + Convert.ToInt64(oneMatch.Groups[2].Value) * 60
-                + Convert.ToInt64(oneMatch.Groups[3].Value);
-            long twoTime = Convert.ToInt64(twoMatch.Groups[1].Value) * 3600
-                + Convert.ToInt64(twoMatch.Groups[2].Value) * 60
-                + Convert.ToInt64(twoMatch.Groups[3].Value);
-            return oneTime.CompareTo(twoTime);
+            if (one.ChipSeconds == two.ChipSeconds)
+            {
+                return one.ChipMilliseconds.CompareTo(two.ChipMilliseconds);
+            }
+            return one.ChipSeconds.CompareTo(two.ChipSeconds);
         }
 
         public static int CompareByAgeGroup(TimeResult one, TimeResult two)
@@ -730,18 +720,41 @@ namespace Chronokeep.Objects
             if (one == null || two == null) return 1;
             if (one.Occurrence.Equals(two.Occurrence))
             {
-                Match oneMatch = timeRegex.Match(one.Time);
-                Match twoMatch = timeRegex.Match(two.Time);
-                if (oneMatch == null || twoMatch == null) return 1;
-                long oneTime = Convert.ToInt64(oneMatch.Groups[1].Value) * 3600
-                    + Convert.ToInt64(oneMatch.Groups[2].Value) * 60
-                    + Convert.ToInt64(oneMatch.Groups[3].Value);
-                long twoTime = Convert.ToInt64(twoMatch.Groups[1].Value) * 3600
-                    + Convert.ToInt64(twoMatch.Groups[2].Value) * 60
-                    + Convert.ToInt64(twoMatch.Groups[3].Value);
-                return oneTime.CompareTo(twoTime);
+                if (one.Seconds == two.Seconds)
+                {
+                    return one.Milliseconds.CompareTo(two.Milliseconds);
+                }
+                return one.seconds.CompareTo(two.Seconds);
             }
             return one.Occurrence.CompareTo(two.Occurrence);
+        }
+
+        public static int CompareForBackyardElapsed(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.Occurrence.Equals(two.Occurrence))
+            {
+                if (one.Seconds == two.Seconds)
+                {
+                    return one.Milliseconds.CompareTo(two.Milliseconds);
+                }
+                return one.Seconds.CompareTo(two.Seconds);
+            }
+            return two.Occurrence.CompareTo(one.Occurrence);
+        }
+
+        public static int CompareForBackyardCumulative(TimeResult one, TimeResult two)
+        {
+            if (one == null || two == null) return 1;
+            if (one.Occurrence.Equals(two.Occurrence))
+            {
+                if (one.CumulativeSeconds == two.CumulativeSeconds)
+                {
+                    return one.CumulativeMilliseconds.CompareTo(two.CumulativeMilliseconds);
+                }
+                return one.CumulativeSeconds.CompareTo(two.CumulativeSeconds);
+            }
+            return two.Occurrence.CompareTo(one.Occurrence);
         }
 
         public static bool IsNotKnown(TimeResult one)

@@ -1016,18 +1016,14 @@ namespace Chronokeep.Timing.Routines
 
         public static List<TimeResult> ProcessPlacements(Event theEvent, IDBInterface database, TimingDictionary dictionary)
         {
+            // Get results to process.
             List<TimeResult> output = database.GetTimingResults(theEvent.Identifier);
-            // Dictionary for keeping track of hourly placements.
-            Dictionary<(int, string), (TimeResult start, TimeResult end)> HourlyDictionary = [];
-            // Dictionaries for keeping track of placements.
-            Dictionary<string, TimeResult> LastLapDictionary = [];
-
+            Dictionary<string, TimeResult> lastResult = [];
             // Create a dictionary so we can check if placements have changed. (place, location, occurrence, distance)
             Dictionary<(int, int, int, string), TimeResult> PlacementDictionary = [];
             // Dictionary for converting result identifiers into eventspecific id's.
             Dictionary<string, int> EventSpecificDictionary = [];
 
-            HashSet<string> Finished = [];
             HashSet<string> Participants = [];
             foreach (TimeResult result in output)
             {
@@ -1039,125 +1035,41 @@ namespace Chronokeep.Timing.Routines
                 }
                 Participants.Add(result.Identifier);
             }
-            // Calculate the current hour.
-            int hour = (int)((Constants.Timing.RFIDDateToEpoch(DateTime.Now) - dictionary.distanceStartDict[0].Seconds) / 3600);
-            List<TimeResult> invalid = [];
-            // Process every hour from the start of the event until we don't have any more finishers for that hour ( don't include the current hour because it may not be over )
-            List<TimeResult> newResults = [];
-            for (int i = 0; i < hour; i++)
+            // This should sort so lower ocurrences are first.
+            output.Sort(TimeResult.CompareByOccurrence);
+            foreach (TimeResult res in output)
             {
-                // Check to make sure that every participant finished/started the last hour.
-                foreach (string participant in Participants)
+                if (Constants.Timing.LOCATION_FINISH == res.LocationId)
                 {
-                    // Only check them if they've not been marked finished already.
-                    if (!Finished.Contains(participant))
+                    // latest results should always have the highest ocurrence
+                    long cumulativeSec = 0;
+                    int cumulativeMill = 0;
+                    if (lastResult.TryGetValue(res.Identifier, out TimeResult oldRes))
                     {
-                        // check if they've started the previous hour
-                        if (!HourlyDictionary.ContainsKey((i - 1, participant)))
-                        {
-                            // they have not, so add them to the finished pile from now on
-                            if (EventSpecificDictionary.TryGetValue(participant, out int eventSpecId) && eventSpecId != Constants.Timing.TIMERESULT_DUMMYPERSON)
-                            {
-                                TimeResult dnsEntry = new(
-                                    theEvent.Identifier,
-                                    Constants.Timing.TIMERESULT_DUMMYREAD,
-                                    eventSpecId,
-                                    theEvent.CommonStartFinish ? Constants.Timing.LOCATION_FINISH : Constants.Timing.LOCATION_START,
-                                    Constants.Timing.SEGMENT_NONE,
-                                    i * 2,
-                                    i * 3600 + 1,
-                                    0,
-                                    participant,
-                                    i * 3600 + 1,
-                                    0,
-                                    DateTime.Now,
-                                    dictionary.participantEventSpecificDictionary[eventSpecId].Bib,
-                                    Constants.Timing.TIMERESULT_STATUS_DNS,
-                                    "",
-                                    0, // cumulativeSeconds
-                                    0  // cumulativeMilliseconds
-                                    );
-                                newResults.Add(dnsEntry);
-                                //database.AddTimingResult(dnsEntry);
-                                HourlyDictionary[(i - 1, participant)] = (dnsEntry, null);
-                            }
-                            Finished.Add(participant);
-                        }
-                        else
-                        {
-                            // check to make sure they finished the previous hour
-                            (TimeResult start, TimeResult end) = HourlyDictionary[(i - 1, participant)];
-                            if (end == null)
-                            {
-                                // No finish time, so they're done
-                                // TODO maybe create a chipread? ensure that we can use a DUMMYREAD id
-                                if (EventSpecificDictionary.TryGetValue(participant, out int eventSpecId) && eventSpecId != Constants.Timing.TIMERESULT_DUMMYPERSON)
-                                {
-                                    TimeResult dnfEntry = new(
-                                        theEvent.Identifier,
-                                        Constants.Timing.TIMERESULT_DUMMYREAD,
-                                        eventSpecId,
-                                        theEvent.CommonStartFinish ? Constants.Timing.LOCATION_FINISH : Constants.Timing.LOCATION_START,
-                                        Constants.Timing.SEGMENT_NONE,
-                                        i * 2 + 1,
-                                        i * 3600 - 1,
-                                        0,
-                                        participant,
-                                        i * 3600 - 1,
-                                        0,
-                                        DateTime.Now,
-                                        dictionary.participantEventSpecificDictionary[eventSpecId].Bib,
-                                        Constants.Timing.TIMERESULT_STATUS_DNS,
-                                        "",
-                                        0, // cumulativeSeconds
-                                        0  // cumulativeMilliseconds
-                                        );
-                                    newResults.Add(dnfEntry);
-                                    //database.AddTimingResult(dnfEntry);
-                                    HourlyDictionary[(i - 1, participant)] = (start, dnfEntry);
-                                }
-                                Finished.Add(participant);
-                            }
-                        }
+                        cumulativeSec = oldRes.CumulativeSeconds;
+                        cumulativeMill = oldRes.CumulativeMilliseconds;
                     }
-                }
-                // hourlyFinisher is true after the loop if someone finished in this hour, otherwise remains false
-                bool hourlyFinisher = false;
-                foreach (string participant in Participants)
-                {
-                    // Check if they finished this hour
-                    if (HourlyDictionary.ContainsKey((i, participant)))
+                    res.CumulativeSeconds = cumulativeSec + (res.Seconds % 3600);
+                    res.CumulativeMilliseconds = cumulativeMill + res.Milliseconds;
+                    if (res.CumulativeMilliseconds >= 1000)
                     {
-                        (TimeResult start, TimeResult end) results = HourlyDictionary[(i, participant)];
-                        if (Finished.Contains(participant))
-                        {
-                            Log.E("Timing.Routines.BackyardUltraRoutine", "Participant has finish/start times when they didn't finish the previous hour.");
-                            if (results.start != null)
-                            {
-                                invalid.Add(results.start);
-                            }
-                            if (results.end != null)
-                            {
-                                invalid.Add(results.end);
-                            }
-                        }
-                        if (results.end != null && Constants.Timing.TIMERESULT_STATUS_DNF != results.end.Status)
-                        {
-                            hourlyFinisher = true;
-                            LastLapDictionary[participant] = results.end;
-                        }
+                        res.CumulativeSeconds++;
+                        res.CumulativeMilliseconds -= 1000;
                     }
-                }
-                // check if we had an hourly finisher in this hour processing period.
-                // since we could run this many hours after finishing, lets make sure we stop processing once we've got past the winner period.
-                if (!hourlyFinisher)
-                {
-                    break;
+                    lastResult[res.Identifier] = res;
                 }
             }
-            database.AddTimingResults(newResults);
-            List<TimeResult> placementCalculations = [.. LastLapDictionary.Values];
-            placementCalculations.Sort(TimeResult.CompareByOccurrence);
+            List<TimeResult> lastResultList = [..lastResult.Values];
+            // Rank By Gun (Clock) is assumed to be rank by elapsed time
+            // !Rank By Gun is rank by cumulative
+            if (theEvent != null && !theEvent.RankByGun)
+            {
+                lastResultList.Sort(TimeResult.CompareForBackyardCumulative);
+            }
+            else
+            {
+                lastResultList.Sort(TimeResult.CompareForBackyardElapsed);
+            }
             // Get Dictionaries for storing the last known place (age group, gender)
             // The key is as follows: Division
             Dictionary<string, int> divisionPlaceDictionary = [];
@@ -1169,9 +1081,8 @@ namespace Chronokeep.Timing.Routines
             int ageGroupId;
             string gender, division;
             // Use the sorted list of results to calculate placements
-            foreach (TimeResult result in placementCalculations)
+            foreach (TimeResult result in lastResultList)
             {
-                gender = "not specified";
                 ageGroupId = Constants.Timing.TIMERESULT_DUMMYAGEGROUP;
                 if (dictionary.participantEventSpecificDictionary.TryGetValue(result.EventSpecificId, out Participant person))
                 {
@@ -1209,9 +1120,8 @@ namespace Chronokeep.Timing.Routines
             // Update every result we're outputting with calculated places.
             foreach (TimeResult result in output)
             {
-                if (LastLapDictionary.ContainsKey(result.Identifier))
+                if (lastResult.TryGetValue(result.Identifier, out TimeResult placeResult))
                 {
-                    TimeResult placeResult = LastLapDictionary[result.Identifier];
                     result.Place = placeResult.Place;
                     result.GenderPlace = placeResult.GenderPlace;
                     result.AgePlace = placeResult.AgePlace;

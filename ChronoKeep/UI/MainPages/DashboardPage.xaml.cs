@@ -47,6 +47,14 @@ namespace Chronokeep.UI.MainPages
             eventYearCodeTextBox.Text = theEvent.YearCode;
             eventDatePicker.Text = theEvent.Date;
             rankByGunCheckBox.IsChecked = theEvent.RankByGun;
+            if (theEvent != null && Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
+            {
+                rankByGunCheckBox.Content = "Rank By Elapsed Time";
+            }
+            else
+            {
+                rankByGunCheckBox.Content = "Rank By Clock Time";
+            }
             commonAgeCheckBox.IsChecked = theEvent.CommonAgeGroups;
             commonStartCheckBox.IsChecked = theEvent.CommonStartFinish;
             segmentCheckBox.IsChecked = theEvent.DistanceSpecificSegments;
