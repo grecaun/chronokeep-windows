@@ -112,7 +112,13 @@ namespace Chronokeep.Timing.API
                     // only add to upload list if we want to upload everything (NOT Specific)
                     // or we only want to upload specific distances and the distance is in the
                     // list of distances we want to upload
-                    if (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName))
+                    if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA != theEvent.EventType && (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName)))
+                    {
+                        upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
+                    }
+                    // Make sure that DNF entries are not uploaded when timing Backyard Ultra since multiples are generated and
+                    // that info isn't useful to others
+                    else if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType && Constants.Timing.TIMERESULT_STATUS_DNF != tr.Status)
                     {
                         upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
                     }
@@ -163,7 +169,13 @@ namespace Chronokeep.Timing.API
                     // only add to upload list if we want to upload everything (NOT Specific)
                     // or we only want to upload specific distances and the distance is in the
                     // list of distances we want to upload
-                    if (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName))
+                    if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA != theEvent.EventType && (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName)))
+                    {
+                        upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
+                    }
+                    // Make sure that DNF entries are not uploaded when timing Backyard Ultra since multiples are generated and
+                    // that info isn't useful to others
+                    else if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType && Constants.Timing.TIMERESULT_STATUS_DNF != tr.Status)
                     {
                         upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
                     }
