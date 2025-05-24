@@ -1039,7 +1039,7 @@ namespace Chronokeep.Timing.Routines
             output.Sort(TimeResult.CompareByOccurrence);
             foreach (TimeResult res in output)
             {
-                if (Constants.Timing.LOCATION_FINISH == res.LocationId)
+                if (Constants.Timing.SEGMENT_FINISH == res.SegmentId && Constants.Timing.TIMERESULT_STATUS_DNF != res.Status)
                 {
                     // latest results should always have the highest ocurrence
                     long cumulativeSec = 0;

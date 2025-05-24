@@ -739,7 +739,6 @@ namespace Chronokeep.UI.MainPages
                 commonAgeCheckBox.IsEnabled = false;
                 commonAgeCheckBox.IsChecked = true;
                 rankByGunCheckBox.IsEnabled = false;
-                rankByGunCheckBox.IsChecked = true;
                 segmentCheckBox.IsEnabled = false;
             }
             else if (editButton != null && editButton.Content.ToString() == Constants.DashboardLabels.SAVE)
