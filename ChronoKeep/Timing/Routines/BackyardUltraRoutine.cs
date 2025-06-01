@@ -1,6 +1,5 @@
 ﻿using Chronokeep.Interfaces;
 using Chronokeep.Objects;
-using DocumentFormat.OpenXml.Drawing;
 using System;
 using System.Collections.Generic;
 
@@ -8,6 +7,8 @@ namespace Chronokeep.Timing.Routines
 {
     internal class BackyardUltraRoutine
     {
+        private static int DEFAULT_INTERVAL = 60;
+        private static int DEFAULT_MAX_INTERVALS = -1;
 
         // Process chip reads
         public static List<TimeResult> ProcessRace(Event theEvent, IDBInterface database, TimingDictionary dictionary, IMainWindow window)
@@ -143,7 +144,7 @@ namespace Chronokeep.Timing.Routines
                 {
                     secondsDiff--;
                 }
-                int hour = (int)(secondsDiff / 3600);
+                int hour = (int)(secondsDiff / (DEFAULT_INTERVAL * 60));
                 // Check to set off an alarm.
                 if (read.Time > before)
                 {
@@ -162,8 +163,14 @@ namespace Chronokeep.Timing.Routines
                         window.NotifyAlarm("", read.ChipNumber);
                     }
                 }
+                // Check if we're past the number of intervals (hours) the event is going to run for.
+                if (DEFAULT_MAX_INTERVALS > 0 && DEFAULT_MAX_INTERVALS < hour)
+                {
+                    // if so, set to...
+                    read.Status = Constants.Timing.CHIPREAD_STATUS_AFTER_FINISH;
+                }
                 // Process reads with known bib numbers.
-                if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
+                else if (read.Bib != Constants.Timing.CHIPREAD_DUMMYBIB)
                 {
                     // Start by checking if we've got a record of the person not starting.
                     // If they are, we set them to AFTER_DNS.
@@ -294,7 +301,7 @@ namespace Chronokeep.Timing.Routines
                     {
                         secondsDiff--;
                     }
-                    int hour = (int)(secondsDiff / 3600);
+                    int hour = (int)(secondsDiff / (DEFAULT_INTERVAL * 60));
                     // Check that we haven't processed the read yet
                     if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
                     {
@@ -305,7 +312,7 @@ namespace Chronokeep.Timing.Routines
                         }
                         else
                         {
-                            long secondsNoHour = secondsDiff % 3600;
+                            long secondsNoHour = secondsDiff % (DEFAULT_INTERVAL * 60);
                             // Check if we've already included them in the DNF pile and we're past the hour when they DNF'ed.
                             // Process the reads if this isn't the case.
                             if (!dnfHourDictionary.ContainsKey(TimeResult.BibToIdentifier(bib)) || dnfHourDictionary[TimeResult.BibToIdentifier(bib)] > hour)
@@ -566,7 +573,7 @@ namespace Chronokeep.Timing.Routines
                     {
                         secondsDiff--;
                     }
-                    int hour = (int)(secondsDiff / 3600);
+                    int hour = (int)(secondsDiff / (DEFAULT_INTERVAL * 60));
                     // Check that we haven't processed the read yet
                     if (Constants.Timing.CHIPREAD_STATUS_NONE == read.Status)
                     {
@@ -577,7 +584,7 @@ namespace Chronokeep.Timing.Routines
                         }
                         else
                         {
-                            long secondsNoHour = secondsDiff % 3600;
+                            long secondsNoHour = secondsDiff % (DEFAULT_INTERVAL * 60);
                             // Check if we've already included them in the DNF pile and we're past the hour when they DNF'ed.
                             // Process the reads if this isn't the case.
                             if (!dnfHourDictionary.ContainsKey(TimeResult.ChipToIdentifier(chip)) && (!dnfHourDictionary.ContainsKey(TimeResult.ChipToIdentifier(chip)) || dnfHourDictionary[TimeResult.ChipToIdentifier(chip)] > hour))
@@ -805,7 +812,7 @@ namespace Chronokeep.Timing.Routines
                     secondsDiff--;
                 }
                 // Calculate the hour
-                int hour = (int)(secondsDiff / 3600);
+                int hour = (int)(secondsDiff / (DEFAULT_INTERVAL * 60));
                 if (backyardResultDictionary.ContainsKey((hour, TimeResult.ChipToIdentifier(chip))))
                 {
                     TimeResult finish = backyardResultDictionary[(hour, TimeResult.ChipToIdentifier(chip))].end;
@@ -860,7 +867,7 @@ namespace Chronokeep.Timing.Routines
                     secondsDiff--;
                 }
                 // Calculate the hour
-                int hour = (int)(secondsDiff / 3600);
+                int hour = (int)(secondsDiff / (DEFAULT_INTERVAL * 60));
                 if (backyardResultDictionary.ContainsKey((hour, TimeResult.BibToIdentifier(bib))))
                 {
                     TimeResult finish = backyardResultDictionary[(hour, TimeResult.BibToIdentifier(bib))].end;
@@ -1008,7 +1015,7 @@ namespace Chronokeep.Timing.Routines
                                 Constants.Timing.LOCATION_FINISH,
                                 Constants.Timing.SEGMENT_FINISH,
                                 finRes.Occurrence,
-                                finRes.Seconds - 3600,
+                                finRes.Seconds - (DEFAULT_INTERVAL * 60),
                                 finRes.Milliseconds,
                                 finRes.Identifier,
                                 finRes.ChipSeconds,

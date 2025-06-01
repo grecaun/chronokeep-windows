@@ -262,6 +262,7 @@ namespace Chronokeep.Objects
         {
             get => type == Constants.Timing.DISTANCE_TYPE_EARLY && place > 0 ? string.Format("{0}e", place) :
                 type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL && place > 0 ? string.Format("{0}u", place) :
+                type == Constants.Timing.DISTANCE_TYPE_DROP && place > 0 ? string.Format("{0}d", place) :
                 Finish && place > 0 ? place.ToString() : "";
         }
         public int AgePlace { get => agePlace; set => agePlace = value; }
@@ -291,6 +292,7 @@ namespace Chronokeep.Objects
                 : type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL ? "U"
                 : type == Constants.Timing.DISTANCE_TYPE_LATE ? "L"
                 : type == Constants.Timing.DISTANCE_TYPE_VIRTUAL ? "V"
+                : type == Constants.Timing.DISTANCE_TYPE_DROP ? "D"
                 : "";
             return anonymous ? "A" + output : output;
         }

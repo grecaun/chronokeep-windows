@@ -30,7 +30,6 @@ namespace Chronokeep.Objects.API
             this.LocalTime = start.AddSeconds(result.Seconds).AddMilliseconds(result.Milliseconds).ToLocalTime().ToString("o");
             this.Division = result.Division;
             this.DivisionRanking = result.DivisionPlace;
-            Log.D("Objects.API.APIResult", string.Format("Chip is {0}, Anonymous is {1}.", this.Chip, this.Anonymous));
             if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
             {
                 this.Type = Constants.Timing.API_TYPE_DNF;

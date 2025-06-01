@@ -83,6 +83,7 @@ namespace Chronokeep.Constants
 
         // These values are what are sent in the API Result and indicate the type of the result.
         public static readonly int DISTANCE_TYPE_NORMAL = 0;
+        public static readonly int DISTANCE_TYPE_DROP = 10;
         public static readonly int DISTANCE_TYPE_EARLY = 11;
         public static readonly int DISTANCE_TYPE_UNOFFICIAL = 12;
         public static readonly int DISTANCE_TYPE_VIRTUAL = 13;

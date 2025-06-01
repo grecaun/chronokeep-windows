@@ -479,6 +479,12 @@ namespace Chronokeep.UI.MainPages
                 TypeBox.Items.Add(
                     new ComboBoxItem
                     {
+                        Content = "Drop",
+                        Uid = Constants.Timing.DISTANCE_TYPE_DROP.ToString()
+                    });
+                TypeBox.Items.Add(
+                    new ComboBoxItem
+                    {
                         Content = "Unranked",
                         Uid = Constants.Timing.DISTANCE_TYPE_UNOFFICIAL.ToString()
                     });
@@ -498,13 +504,17 @@ namespace Chronokeep.UI.MainPages
                     Ranking.IsEnabled = false;
                     TypeBox.SelectedIndex = 2;
                 }
-                else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL)
+                else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_DROP)
                 {
                     TypeBox.SelectedIndex = 3;
                 }
-                else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_VIRTUAL)
+                else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_UNOFFICIAL)
                 {
                     TypeBox.SelectedIndex = 4;
+                }
+                else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_VIRTUAL)
+                {
+                    TypeBox.SelectedIndex = 5;
                 }
                 else if (theDistance.Type == Constants.Timing.DISTANCE_TYPE_NORMAL)
                 {

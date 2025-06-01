@@ -31,9 +31,8 @@ namespace Chronokeep.Timing.Routines
                 // if there is no time result
                 // or we've seen the person but our time is BEFORE the one we're looking at
                 // set the last seen as this result
-                if (!LastSeen.ContainsKey(result.EventSpecificId)
-                    || (LastSeen.ContainsKey(result.EventSpecificId)
-                        && (LastSeen[result.EventSpecificId].Seconds < result.Seconds || (LastSeen[result.EventSpecificId].Seconds == result.Seconds && LastSeen[result.EventSpecificId].Milliseconds < result.Milliseconds))))
+                if (!LastSeen.TryGetValue(result.EventSpecificId, out TimeResult lastSee)
+                    || lastSee.SystemTime < result.SystemTime)
                 {
                     LastSeen[result.EventSpecificId] = result;
                 }
@@ -730,8 +729,6 @@ namespace Chronokeep.Timing.Routines
                 {
                     TimeResult finish = finishTimes[TimeResult.ChipToIdentifier(chip)];
                     finish.ReadId = chipDNFDictionary[chip].ReadId;
-                    finish.Time = "DNF";
-                    finish.ChipTime = "DNF";
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
                     finish.Occurrence = theEvent.FinishMaxOccurrences;
                     finishTimes[TimeResult.ChipToIdentifier(chip)] = finish;
@@ -775,8 +772,6 @@ namespace Chronokeep.Timing.Routines
                 {
                     TimeResult finish = finishTimes[TimeResult.BibToIdentifier(bib)];
                     finish.ReadId = bibDNFDictionary[bib].ReadId;
-                    finish.Time = "DNF";
-                    finish.ChipTime = "DNF";
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNF;
                     finish.Occurrence = occurrence;
                     finishTimes[TimeResult.BibToIdentifier(bib)] = finish;
@@ -811,8 +806,6 @@ namespace Chronokeep.Timing.Routines
                 {
                     TimeResult finish = finishTimes[TimeResult.ChipToIdentifier(chip)];
                     finish.ReadId = chipDNSDictionary[chip].ReadId;
-                    finish.Time = "DNS";
-                    finish.ChipTime = "DNS";
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNS;
                     finish.Occurrence = theEvent.FinishMaxOccurrences;
                     finishTimes[TimeResult.ChipToIdentifier(chip)] = finish;
@@ -856,8 +849,6 @@ namespace Chronokeep.Timing.Routines
                 {
                     TimeResult finish = finishTimes[TimeResult.BibToIdentifier(bib)];
                     finish.ReadId = bibDNSDictionary[bib].ReadId;
-                    finish.Time = "DNS";
-                    finish.ChipTime = "DNS";
                     finish.Status = Constants.Timing.TIMERESULT_STATUS_DNS;
                     finish.Occurrence = occurrence;
                     finishTimes[TimeResult.BibToIdentifier(bib)] = finish;
@@ -894,8 +885,9 @@ namespace Chronokeep.Timing.Routines
             List<TimeResult> toRemove = [];
             foreach (TimeResult res in newResults)
             {
-                // Set all results that come after the finish to be removed
-                if (finishTimes.TryGetValue(res.UnknownId, out TimeResult finish) && (finish.Seconds < res.Seconds || (finish.Seconds == res.Seconds && finish.Milliseconds < res.Milliseconds)))
+                // Set all results that come after the finish to be removed -- Use SystemTime because DNF results set seconds to 0
+                if (finishTimes.TryGetValue(res.UnknownId, out TimeResult finish)
+                    && finish.SystemTime < res.SystemTime)
                 {
                     toRemove.Add(res);
                     if (chipReadDict.TryGetValue(res.ReadId, out ChipRead oldRead))
