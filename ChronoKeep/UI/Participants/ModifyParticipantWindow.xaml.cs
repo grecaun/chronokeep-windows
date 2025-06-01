@@ -82,6 +82,14 @@ namespace Chronokeep.UI.Participants
                 Add.Click += new RoutedEventHandler(this.Modify_Click);
                 UpdateAllFields();
             }
+            if (theEvent.DivisionsEnabled)
+            {
+                DivisionPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                DivisionPanel.Visibility = Visibility.Collapsed;
+            }
             BibBox.IsEnabled = false;
         }
 
@@ -284,12 +292,18 @@ namespace Chronokeep.UI.Participants
 
         private void ShowOtherGender()
         {
-            otherGenderBox.Visibility = Visibility.Visible;
+            if (otherGenderBox != null)
+            {
+                otherGenderBox.Visibility = Visibility.Visible;
+            }
         }
 
         private void DismissOtherGender()
         {
-            otherGenderBox.Visibility = Visibility.Collapsed;
+            if (otherGenderBox != null)
+            {
+                otherGenderBox.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void Modify_Click(object sender, RoutedEventArgs e)
