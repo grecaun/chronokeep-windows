@@ -24,6 +24,9 @@ namespace Chronokeep.Timing.Routines
             }
             // Dictionary of timeresults for a specific identifier
             Dictionary<string, List<TimeResult>> finishTimes = [];
+            // Keep track of the last LAP FINISH time for each person.
+            Dictionary<string, TimeResult> bibLastLoopFinishDictionary = [];
+            Dictionary<string, TimeResult> chipLastLoopFinishDictionary = [];
             List<TimeResult> toRemove = [];
             List<TimeResult> toAdd = [];
             // Get the rest of the times.
@@ -36,6 +39,30 @@ namespace Chronokeep.Timing.Routines
                     finishTimes[result.Identifier] = fTimes;
                 }
                 fTimes.Add(result);
+                if (result.Bib.Length > 0)
+                {
+                    if (!bibLastLoopFinishDictionary.TryGetValue(result.Bib, out TimeResult res))
+                    {
+                        res = result;
+                        bibLastLoopFinishDictionary[result.Bib] = res;
+                    }
+                    if (result.Occurrence > res.Occurrence)
+                    {
+                        bibLastLoopFinishDictionary[result.Bib] = res;
+                    }
+                }
+                if (result.Chip.Length > 0)
+                {
+                    if (!chipLastLoopFinishDictionary.TryGetValue(result.Chip, out TimeResult res))
+                    {
+                        res = result;
+                        chipLastLoopFinishDictionary[result.Chip] = res;
+                    }
+                    if (result.Occurrence > res.Occurrence)
+                    {
+                        chipLastLoopFinishDictionary[result.Chip] = res;
+                    }
+                }
                 // Pull out old results if they're in the dictionary already.
                 (TimeResult start, TimeResult end) tmpRes = (null, null);
                 if (backyardResultDictionary.ContainsKey((result.Occurrence / 2, result.Identifier)))
@@ -305,6 +332,14 @@ namespace Chronokeep.Timing.Routines
                                         newResults.Remove(startResult);
                                     }
                                     // Create a result for the start value.
+                                    long chipSecDiff = 0;
+                                    int chipMillisecDiff = 0;
+                                    if (bibLastLoopFinishDictionary.TryGetValue(bib, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
+                                    {
+                                        Log.D("BackyardUltraRoutine", string.Format("(BIB START) Last Loop Finish Time found - occ: {0} - hour {1}", lastFin.Occurrence, hour));
+                                        chipSecDiff += lastFin.ChipSeconds;
+                                        chipMillisecDiff += lastFin.ChipMilliseconds;
+                                    }
                                     startResult = new(theEvent.Identifier,
                                         read.ReadId,
                                         part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
@@ -314,14 +349,12 @@ namespace Chronokeep.Timing.Routines
                                         secondsDiff,
                                         millisecDiff,
                                         TimeResult.BibToIdentifier(bib),
-                                        0,
-                                        0,
+                                        chipSecDiff,
+                                        chipMillisecDiff,
                                         read.Time,
                                         bib,
                                         Constants.Timing.TIMERESULT_STATUS_NONE,
-                                        part == null ? "" : part.EventSpecific.Division,
-                                        0, // cumulativeSeconds
-                                        0  // cumulativeMilliseconds
+                                        part == null ? "" : part.EventSpecific.Division
                                         );
                                     if (!backyardResultDictionary.ContainsKey((hour, startResult.Identifier)))
                                     {
@@ -364,50 +397,54 @@ namespace Chronokeep.Timing.Routines
                                     else
                                     {
                                         bibLastReadDictionary[(bib, read.LocationID)] = (read, (hour * 2) + 1);
-                                        long chipSecDiff = secondsNoHour - (tmpRes.start == null ? 0 : tmpRes.start.Seconds);
-                                        int chipMillisecDiff = read.TimeMilliseconds - (tmpRes.start == null ? 0 : tmpRes.start.Milliseconds);
-                                        if (chipMillisecDiff < 0)
+                                        long chipSecDiff = secondsNoHour;
+                                        int chipMillisecDiff = millisecDiff;
+                                        if (bibLastLoopFinishDictionary.TryGetValue(bib, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
                                         {
-                                            chipSecDiff--;
-                                            chipMillisecDiff += 1000;
+                                            Log.D("BackyardUltraRoutine", string.Format("(BIB FINISH) Last Loop Finish Time found - occ: {0} - hour {1}", lastFin.Occurrence, hour));
+                                            chipSecDiff += lastFin.ChipSeconds;
+                                            chipMillisecDiff += lastFin.ChipMilliseconds;
                                         }
-                                        // Check that we're not adding a time for a DNF person, we can use any other times
-                                        // for information for that person.
-                                        if (!bibDNFDictionary.ContainsKey(bib))
+                                        if (chipMillisecDiff >= 1000)
                                         {
-                                            TimeResult newResult = new(theEvent.Identifier,
-                                                read.ReadId,
-                                                part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
-                                                read.LocationID,
-                                                Constants.Timing.SEGMENT_FINISH,
-                                                (hour * 2) + 1,
-                                                secondsDiff,
-                                                millisecDiff,
-                                                TimeResult.BibToIdentifier(bib),
-                                                chipSecDiff,
-                                                chipMillisecDiff,
-                                                read.Time,
-                                                bib,
-                                                Constants.Timing.TIMERESULT_STATUS_NONE,
-                                                part == null ? "" : part.EventSpecific.Division,
-                                                0, // cumulativeSeconds
-                                                0  // cumulativeMilliseconds
-                                                );
-                                            tmpRes.end = newResult;
-                                            backyardResultDictionary[(hour, TimeResult.BibToIdentifier(bib))] = tmpRes;
-                                            newResults.Add(newResult);
-                                            if (part != null)
+                                            chipSecDiff++;
+                                            chipMillisecDiff -= 1000;
+                                        }
+                                        TimeResult newResult = new(theEvent.Identifier,
+                                            read.ReadId,
+                                            part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
+                                            read.LocationID,
+                                            Constants.Timing.SEGMENT_FINISH,
+                                            (hour * 2) + 1,
+                                            secondsDiff,
+                                            millisecDiff,
+                                            TimeResult.BibToIdentifier(bib),
+                                            chipSecDiff,
+                                            chipMillisecDiff,
+                                            read.Time,
+                                            bib,
+                                            Constants.Timing.TIMERESULT_STATUS_NONE,
+                                            part == null ? "" : part.EventSpecific.Division
+                                            );
+                                        tmpRes.end = newResult;
+                                        backyardResultDictionary[(hour, TimeResult.BibToIdentifier(bib))] = tmpRes;
+                                        // This is a finish time, so update the lastloopfinish time IF out last value was before this one
+                                        if (lastFin == null || lastFin.Occurrence < (hour * 2))
+                                        {
+                                            bibLastLoopFinishDictionary[bib] = newResult;
+                                        }
+                                        newResults.Add(newResult);
+                                        if (part != null)
+                                        {
+                                            // If they were marked as noshow previously, mark them as started
+                                            if (Constants.Timing.EVENTSPECIFIC_UNKNOWN == part.Status
+                                                && !bibDNFDictionary.ContainsKey(bib))
                                             {
-                                                // If they were marked as noshow previously, mark them as started
-                                                if (Constants.Timing.EVENTSPECIFIC_UNKNOWN == part.Status
-                                                    && !bibDNFDictionary.ContainsKey(bib))
-                                                {
-                                                    part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
-                                                    updateParticipants.Add(part);
-                                                }
+                                                part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
+                                                updateParticipants.Add(part);
                                             }
-                                            read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                         }
+                                        read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                     }
                                 }
                                 // Possible reads at this point:
@@ -453,51 +490,49 @@ namespace Chronokeep.Timing.Routines
                                         }
                                         else
                                         {
-                                            ChipRead lastRead = bibLastReadDictionary.ContainsKey((bib, read.LocationID)) ? bibLastReadDictionary[(bib, read.LocationID)].Read : null;
+                                            // These are results that are NOT at the finish line and are NOT finish times.
                                             bibLastReadDictionary[(bib, read.LocationID)] = (read, occurrence);
-                                            long chipSecDiff = secondsNoHour - (tmpRes.start == null ? 0 : tmpRes.start.Seconds);
-                                            int chipMillisecDiff = read.TimeMilliseconds - (tmpRes.start == null ? 0 : tmpRes.start.Milliseconds);
-                                            if (chipMillisecDiff < 0)
+                                            long chipSecDiff = secondsNoHour;
+                                            int chipMillisecDiff = millisecDiff;
+                                            if (bibLastLoopFinishDictionary.TryGetValue(bib, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
                                             {
-                                                chipSecDiff--;
-                                                chipMillisecDiff += 1000;
+                                                chipSecDiff += lastFin.ChipSeconds;
+                                                chipMillisecDiff += lastFin.ChipMilliseconds;
                                             }
-                                            // Check that we're not adding a time for a DNF person, we can use any other times
-                                            // for information for that person.
-                                            if (!bibDNFDictionary.ContainsKey(bib))
+                                            if (chipMillisecDiff >= 1000)
                                             {
-                                                TimeResult newResult = new(theEvent.Identifier,
-                                                    read.ReadId,
-                                                    part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
-                                                    read.LocationID,
-                                                    Constants.Timing.SEGMENT_NONE,
-                                                    occurrence,
-                                                    secondsDiff,
-                                                    millisecDiff,
-                                                    TimeResult.BibToIdentifier(bib),
-                                                    chipSecDiff,
-                                                    chipMillisecDiff,
-                                                    read.Time,
-                                                    bib,
-                                                    Constants.Timing.TIMERESULT_STATUS_NONE,
-                                                    part == null ? "" : part.EventSpecific.Division,
-                                                    0, // cumulativeSeconds
-                                                    0  // cumulativeMilliseconds
-                                                    );
-                                                newResults.Add(newResult);
-                                                if (part != null)
+                                                chipSecDiff++;
+                                                chipMillisecDiff -= 1000;
+                                            }
+                                            TimeResult newResult = new(theEvent.Identifier,
+                                                read.ReadId,
+                                                part == null ? Constants.Timing.TIMERESULT_DUMMYPERSON : part.EventSpecific.Identifier,
+                                                read.LocationID,
+                                                Constants.Timing.SEGMENT_NONE,
+                                                occurrence,
+                                                secondsDiff,
+                                                millisecDiff,
+                                                TimeResult.BibToIdentifier(bib),
+                                                chipSecDiff,
+                                                chipMillisecDiff,
+                                                read.Time,
+                                                bib,
+                                                Constants.Timing.TIMERESULT_STATUS_NONE,
+                                                part == null ? "" : part.EventSpecific.Division
+                                                );
+                                            newResults.Add(newResult);
+                                            if (part != null)
+                                            {
+                                                // If they were marked as noshow previously, mark them as started
+                                                if (Constants.Timing.EVENTSPECIFIC_UNKNOWN == part.Status
+                                                    && !bibDNFDictionary.ContainsKey(bib))
                                                 {
-                                                    // If they were marked as noshow previously, mark them as started
-                                                    if (Constants.Timing.EVENTSPECIFIC_UNKNOWN == part.Status
-                                                        && !bibDNFDictionary.ContainsKey(bib))
-                                                    {
-                                                        part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
-                                                        updateParticipants.Add(part);
-                                                    }
+                                                    part.Status = Constants.Timing.EVENTSPECIFIC_STARTED;
+                                                    updateParticipants.Add(part);
                                                 }
                                             }
-                                            read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                         }
+                                        read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                     }
                                 }
                                 // Possible reads at this point:
@@ -568,6 +603,15 @@ namespace Chronokeep.Timing.Routines
                                     {
                                         newResults.Remove(startResult);
                                     }
+                                    long chipSecDiff = 0;
+                                    int chipMillisecDiff = 0;
+                                    // Check if we had a finish occurence that happened BEFORE this time
+                                    if (chipLastLoopFinishDictionary.TryGetValue(chip, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
+                                    {
+                                        Log.D("BackyardUltraRoutine", string.Format("CHIP START Loop Finish Time found - occ: {0} - hour {1}", lastFin.Occurrence, hour));
+                                        chipSecDiff += lastFin.ChipSeconds;
+                                        chipMillisecDiff += lastFin.ChipMilliseconds;
+                                    }
                                     // Create a result for the start value.
                                     startResult = new(theEvent.Identifier,
                                         read.ReadId,
@@ -578,14 +622,12 @@ namespace Chronokeep.Timing.Routines
                                         secondsDiff,
                                         millisecDiff,
                                         TimeResult.ChipToIdentifier(chip),
-                                        0,
-                                        0,
+                                        chipSecDiff,
+                                        chipMillisecDiff,
                                         read.Time,
                                         read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
                                         Constants.Timing.TIMERESULT_STATUS_NONE,
-                                        "",
-                                        0, // cumulativeSeconds
-                                        0  // cumulativeMilliseconds
+                                        ""
                                         );
                                     if (!backyardResultDictionary.ContainsKey((hour, startResult.Identifier)))
                                     {
@@ -619,41 +661,46 @@ namespace Chronokeep.Timing.Routines
                                     else
                                     {
                                         chipLastReadDictionary[(chip, read.LocationID)] = (read, (hour * 2) + 1);
-                                        long chipSecDiff = secondsNoHour - (tmpRes.start == null ? 0 : tmpRes.start.Seconds);
-                                        int chipMillisecDiff = read.TimeMilliseconds - (tmpRes.start == null ? 0 : tmpRes.start.Milliseconds);
-                                        if (chipMillisecDiff < 0)
+                                        long chipSecDiff = secondsNoHour;
+                                        int chipMillisecDiff = millisecDiff;
+                                        // Verify if there was a finish time before this one
+                                        if (chipLastLoopFinishDictionary.TryGetValue(chip, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
                                         {
-                                            chipSecDiff--;
-                                            chipMillisecDiff += 1000;
+                                            Log.D("BackyardUltraRoutine", string.Format("CHIP FINISH Loop Finish Time found - occ: {0} - hour {1}", lastFin.Occurrence, hour));
+                                            chipSecDiff += lastFin.ChipSeconds;
+                                            chipMillisecDiff += lastFin.ChipMilliseconds;
                                         }
-                                        // Check that we're not adding a time for a DNF person, we can use any other times
-                                        // for information for that person.
-                                        if (!chipDnfDictionary.ContainsKey(chip))
+                                        if (chipMillisecDiff >= 1000)
                                         {
-                                            TimeResult newResult = new(theEvent.Identifier,
-                                                read.ReadId,
-                                                Constants.Timing.TIMERESULT_DUMMYPERSON,
-                                                read.LocationID,
-                                                Constants.Timing.SEGMENT_FINISH,
-                                                (hour * 2) + 1,
-                                                secondsDiff,
-                                                millisecDiff,
-                                                TimeResult.ChipToIdentifier(chip),
-                                                chipSecDiff,
-                                                chipMillisecDiff,
-                                                read.Time,
-                                                read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
-                                                Constants.Timing.TIMERESULT_STATUS_NONE,
-                                                "",
-                                                0, // cumulativeSeconds
-                                                0  // cumulativeMilliseconds
-                                                );
-                                            tmpRes.end = newResult;
-                                            backyardResultDictionary[(hour, TimeResult.ChipToIdentifier(chip))] = tmpRes;
-                                            newResults.Add(newResult);
+                                            chipSecDiff++;
+                                            chipMillisecDiff -= 1000;
                                         }
-                                        read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
+                                        TimeResult newResult = new(theEvent.Identifier,
+                                            read.ReadId,
+                                            Constants.Timing.TIMERESULT_DUMMYPERSON,
+                                            read.LocationID,
+                                            Constants.Timing.SEGMENT_FINISH,
+                                            (hour * 2) + 1,
+                                            secondsDiff,
+                                            millisecDiff,
+                                            TimeResult.ChipToIdentifier(chip),
+                                            chipSecDiff,
+                                            chipMillisecDiff,
+                                            read.Time,
+                                            read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
+                                            Constants.Timing.TIMERESULT_STATUS_NONE,
+                                            ""
+                                            );
+                                        tmpRes.end = newResult;
+                                        backyardResultDictionary[(hour, TimeResult.ChipToIdentifier(chip))] = tmpRes;
+                                        // This is a finish time, so update the lastloopfinish time IF out last value was before this one
+                                        if (lastFin == null || lastFin.Occurrence < (hour * 2))
+                                        {
+                                            chipLastLoopFinishDictionary[chip] = newResult;
+                                        }
+                                        newResults.Add(newResult);
                                     }
+                                    read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                 }
                                 else if (Constants.Timing.LOCATION_FINISH != read.LocationID)
                                 {
@@ -696,39 +743,37 @@ namespace Chronokeep.Timing.Routines
                                         else
                                         {
                                             chipLastReadDictionary[(chip, read.LocationID)] = (read, occurrence);
-                                            long chipSecDiff = secondsNoHour - (tmpRes.start == null ? 0 : tmpRes.start.Seconds);
-                                            int chipMillisecDiff = millisecDiff - (tmpRes.start == null ? 0 : tmpRes.start.Milliseconds);
-                                            if (chipMillisecDiff < 0)
+                                            long chipSecDiff = secondsNoHour;
+                                            int chipMillisecDiff = millisecDiff;
+                                            if (chipLastLoopFinishDictionary.TryGetValue(chip, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
                                             {
-                                                chipSecDiff--;
-                                                chipMillisecDiff += 1000;
+                                                chipSecDiff += lastFin.ChipSeconds;
+                                                chipMillisecDiff += lastFin.ChipMilliseconds;
                                             }
-                                            // Check that we're not adding a time for a DNF person, we can use any other times
-                                            // for information for that person.
-                                            if (!chipDnfDictionary.ContainsKey(chip))
+                                            if (chipMillisecDiff >= 1000)
                                             {
-                                                TimeResult newResult = new(theEvent.Identifier,
-                                                    read.ReadId,
-                                                    Constants.Timing.TIMERESULT_DUMMYPERSON,
-                                                    read.LocationID,
-                                                    Constants.Timing.SEGMENT_NONE,
-                                                    occurrence,
-                                                    secondsDiff,
-                                                    millisecDiff,
-                                                    TimeResult.ChipToIdentifier(chip),
-                                                    chipSecDiff,
-                                                    chipMillisecDiff,
-                                                    read.Time,
-                                                    read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
-                                                    Constants.Timing.TIMERESULT_STATUS_NONE,
-                                                    "",
-                                                    0, // cumulativeSeconds
-                                                    0  // cumulativeMilliseconds
-                                                    );
-                                                newResults.Add(newResult);
+                                                chipSecDiff++;
+                                                chipMillisecDiff -= 1000;
                                             }
-                                            read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
+                                            TimeResult newResult = new(theEvent.Identifier,
+                                                read.ReadId,
+                                                Constants.Timing.TIMERESULT_DUMMYPERSON,
+                                                read.LocationID,
+                                                Constants.Timing.SEGMENT_NONE,
+                                                occurrence,
+                                                secondsDiff,
+                                                millisecDiff,
+                                                TimeResult.ChipToIdentifier(chip),
+                                                chipSecDiff,
+                                                chipMillisecDiff,
+                                                read.Time,
+                                                read.ChipBib == Constants.Timing.CHIPREAD_DUMMYBIB ? read.ReadBib : read.ChipBib,
+                                                Constants.Timing.TIMERESULT_STATUS_NONE,
+                                                ""
+                                                );
+                                            newResults.Add(newResult);
                                         }
+                                        read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                     }
                                 }
                                 // Possible reads at this point:
@@ -963,35 +1008,21 @@ namespace Chronokeep.Timing.Routines
                                 Constants.Timing.LOCATION_FINISH,
                                 Constants.Timing.SEGMENT_FINISH,
                                 finRes.Occurrence,
-                                0,
-                                0,
+                                finRes.Seconds - 3600,
+                                finRes.Milliseconds,
                                 finRes.Identifier,
-                                0,
-                                0,
+                                finRes.ChipSeconds,
+                                finRes.ChipMilliseconds,
                                 finRes.SystemTime,
                                 finRes.Bib,
                                 Constants.Timing.TIMERESULT_STATUS_DNF,
-                                finRes.Division,
-                                finRes.CumulativeSeconds, // cumulativeSeconds
-                                finRes.CumulativeMilliseconds  // cumulativeMilliseconds
+                                finRes.Division
                                 );
                             newResults.Add(dnfResult);
                         }
                     }
                     else if (finRes.Occurrence / 2 == lastHourFinished + 1)
                     {
-                        if (previous != null)
-                        {
-                            finRes.CumulativeSeconds = previous.CumulativeSeconds;
-                            finRes.CumulativeMilliseconds = previous.CumulativeMilliseconds;
-                        }
-                        finRes.CumulativeSeconds += (finRes.Seconds % 3600);
-                        finRes.CumulativeMilliseconds += finRes.Milliseconds;
-                        if (finRes.CumulativeMilliseconds >= 1000)
-                        {
-                            finRes.CumulativeMilliseconds -= 1000;
-                            finRes.CumulativeSeconds++;
-                        }
                         previous = finRes;
                         lastHourFinished++;
                     }
@@ -1041,21 +1072,6 @@ namespace Chronokeep.Timing.Routines
             {
                 if (Constants.Timing.SEGMENT_FINISH == res.SegmentId && Constants.Timing.TIMERESULT_STATUS_DNF != res.Status)
                 {
-                    // latest results should always have the highest ocurrence
-                    long cumulativeSec = 0;
-                    int cumulativeMill = 0;
-                    if (lastResult.TryGetValue(res.Identifier, out TimeResult oldRes))
-                    {
-                        cumulativeSec = oldRes.CumulativeSeconds;
-                        cumulativeMill = oldRes.CumulativeMilliseconds;
-                    }
-                    res.CumulativeSeconds = cumulativeSec + (res.Seconds % 3600);
-                    res.CumulativeMilliseconds = cumulativeMill + res.Milliseconds;
-                    if (res.CumulativeMilliseconds >= 1000)
-                    {
-                        res.CumulativeSeconds++;
-                        res.CumulativeMilliseconds -= 1000;
-                    }
                     lastResult[res.Identifier] = res;
                 }
             }

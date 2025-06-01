@@ -11,8 +11,8 @@ namespace Chronokeep.Objects
         private int eventId, eventspecificId, locationId, segmentId,
             occurrence, readId, place, agePlace, genderPlace,
             ageGroupId, chipMilliseconds, status, uploaded, type, milliseconds,
-            divisionPlace, cumulativeMilliseconds = 0;
-        private long chipSeconds, seconds, cumulativeSeconds = 0;
+            divisionPlace;
+        private long chipSeconds, seconds;
         private string time, locationName, segmentName, firstName, lastName, bib,
             distanceName = "", unknownId, chipTime, gender, ageGroupName, splitTime = "", birthday,
             linked_distance_name = "", chip = "", participantId = "", division = "";
@@ -237,53 +237,6 @@ namespace Chronokeep.Objects
             this.division = division ?? "";
         }
 
-        // Used by backyard ultra routine to add new results to the database.
-        public TimeResult(
-            int eventId,
-            int readId,
-            int eventspecificId,
-            int locationId,
-            int segmentId,
-            int occurrence,
-            long seconds,
-            int milliseconds,
-            string unknownId,
-            long chipSeconds,
-            int chipMilliseconds,
-            DateTime systemTime,
-            string bib,
-            int status,
-            string division,
-            long cumulativeSeconds,
-            int cumulativeMilliseconds
-            )
-        {
-            this.eventId = eventId;
-            this.readId = readId;
-            this.eventspecificId = eventspecificId;
-            this.locationId = locationId;
-            this.segmentId = segmentId;
-            this.occurrence = occurrence;
-            this.time = Constants.Timing.TIMERESULT_STATUS_DNF == status ? "DNF" : Constants.Timing.TIMERESULT_STATUS_DNS == status ? "DNS" : Constants.Timing.ToTime(seconds, milliseconds);
-            this.unknownId = unknownId ?? "";
-            this.chipTime = Constants.Timing.TIMERESULT_STATUS_DNF == status ? "DNF" : Constants.Timing.TIMERESULT_STATUS_DNS == status ? "DNS" : Constants.Timing.ToTime(chipSeconds, chipMilliseconds);
-            this.systemTime = systemTime;
-            this.bib = bib ?? "";
-            place = Constants.Timing.TIMERESULT_DUMMYPLACE;
-            agePlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
-            genderPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
-            divisionPlace = Constants.Timing.TIMERESULT_DUMMYPLACE;
-            this.status = status;
-            splitTime = "";
-            this.seconds = seconds;
-            this.milliseconds = milliseconds;
-            this.chipSeconds = chipSeconds;
-            this.chipMilliseconds = chipMilliseconds;
-            this.division = division ?? "";
-            this.cumulativeSeconds = cumulativeSeconds;
-            this.cumulativeMilliseconds = cumulativeMilliseconds;
-        }
-
         public int EventSpecificId { get => eventspecificId; set => eventspecificId = value; }
         public int LocationId { get => locationId; set => locationId = value; }
         public int EventIdentifier { get => eventId; set => eventId = value; }
@@ -376,8 +329,6 @@ namespace Chronokeep.Objects
         }
         public bool Finish { get => segmentId == Constants.Timing.SEGMENT_FINISH; }
         public string ParticipantId { get => participantId; }
-        public long CumulativeSeconds { get => cumulativeSeconds; set => cumulativeSeconds = value; }
-        public int CumulativeMilliseconds { get => cumulativeMilliseconds; set => cumulativeMilliseconds = value; }
 
         public string PrettyAgeGroupName()
         {
@@ -748,11 +699,11 @@ namespace Chronokeep.Objects
             if (one == null || two == null) return 1;
             if (one.Occurrence.Equals(two.Occurrence))
             {
-                if (one.CumulativeSeconds == two.CumulativeSeconds)
+                if (one.ChipSeconds == two.ChipSeconds)
                 {
-                    return one.CumulativeMilliseconds.CompareTo(two.CumulativeMilliseconds);
+                    return one.ChipMilliseconds.CompareTo(two.ChipMilliseconds);
                 }
-                return one.CumulativeSeconds.CompareTo(two.CumulativeSeconds);
+                return one.ChipSeconds.CompareTo(two.ChipSeconds);
             }
             return two.Occurrence.CompareTo(one.Occurrence);
         }
