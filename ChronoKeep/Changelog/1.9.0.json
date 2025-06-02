@@ -1,0 +1,16 @@
+{
+  "version": "v1.9.0",
+  "changes": [
+    "Added Enable NTFY option to Chronokeep Portal settings page.",
+    "The option to change the time display based upon Wave time now only shows when the event has started.",
+    "Event type of Backyard Ultra is now supported.",
+    "Drop is now a type for distances to allow for results to display that a sub-distance is for participants who changed from another distance."
+  ],
+  "fixes": [
+    "ChipReads now properly associate names with them when participant data changes.",
+    "DNF results now propagate to the bottom of the list when serving results over a local http server.",
+    "Creating a TimeResult now takes in the Seconds and Milliseconds value instead of a time string to reduce string parsing and improve performance.",
+    "Modified the Rank By Gun Time label on the dashboard page to be Rank by Clock Time.",
+    "Fixed an issue where the Modify/Add Participant window would show with no gender selected instead of the Not Specified value selected."
+  ]
+}

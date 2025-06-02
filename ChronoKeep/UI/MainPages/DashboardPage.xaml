@@ -12,7 +12,6 @@
       d:DesignWidth="660"
       Title="DashboardPage"
       >
-
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -103,12 +102,12 @@
                     <DatePicker Name="eventDatePicker" FontSize="16" Margin="5,0,10,0" VerticalAlignment="Center" IsEnabled="False" />
                 </DockPanel>
                 <Separator Margin="5,5,5,5" />
-                <ui:ToggleSwitch Name="rankByGunCheckBox" Content="Rank By Clock Time" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <ui:ToggleSwitch Name="rankByGunCheckBox" Content="Rank by Clock Time" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <ui:ToggleSwitch Name="commonAgeCheckBox" Content="Common Age Groups for Distances" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <ui:ToggleSwitch Name="commonStartCheckBox" Content="Common Start/Finish Location" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <ui:ToggleSwitch Name="segmentCheckBox" Content="Distance Specific Segments" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <ui:ToggleSwitch Name="placementsCheckBox" Content="Display Participant Placements" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
-                <ui:ToggleSwitch Name="divisionsEnabledCheckbox" Content="Enable divisions?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <ui:ToggleSwitch Name="divisionsEnabledCheckbox" Content="Enable Divisions?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <ui:ToggleSwitch Name="uploadSpecificDistanceResults" Content="Upload Results for Select Distances?" FontSize="16" Margin="10,5,10,5" VerticalContentAlignment="Center" IsEnabled="False"/>
                 <DockPanel Margin="10,5,10,5">
                     <TextBlock Text="Event Type" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
