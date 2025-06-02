@@ -181,7 +181,7 @@ namespace Chronokeep.Timing.Routines
                     }
                 }
                 // Check if we're past the number of intervals (hours) the event is going to run for.
-                if (maxIntervals > 0 && maxIntervals < hour)
+                if (maxIntervals > 0 && maxIntervals <= hour)
                 {
                     // if so, set to...
                     read.Status = Constants.Timing.CHIPREAD_STATUS_AFTER_FINISH;

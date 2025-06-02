@@ -86,7 +86,7 @@ namespace Chronokeep.Objects
             {
                 segmentName = "";
             }
-            if (theEvent != null && theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME && Constants.Timing.SEGMENT_FINISH == SegmentId)
+            if (theEvent != null && theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
@@ -433,7 +433,7 @@ namespace Chronokeep.Objects
             {
                 segmentName = "";
             }
-            if (theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME && Constants.Timing.SEGMENT_FINISH == SegmentId)
+            if (theEvent != null && theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME)
             {
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
@@ -479,6 +479,17 @@ namespace Chronokeep.Objects
                     {
                         segmentName = string.Format("{0} {1}", segmentName, occurrence);
                     }
+                }
+            }
+            else if (theEvent != null && Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
+            {
+                if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
+                {
+                    segmentName = string.Format("Loop {0}", (this.occurrence / 2) + 1);
+                }
+                else if (Constants.Timing.SEGMENT_START == this.segmentId)
+                {
+                    segmentName = string.Format("Start {0}", (this.occurrence / 2) + 1);
                 }
             }
             segmentName = segmentName.Trim();
