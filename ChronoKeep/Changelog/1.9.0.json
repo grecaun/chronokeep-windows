@@ -12,6 +12,8 @@
     "Creating a TimeResult now takes in the Seconds and Milliseconds value instead of a time string to reduce string parsing and improve performance.",
     "Modified the Rank By Gun Time label on the dashboard page to be Rank by Clock Time.",
     "Fixed an issue where the Modify/Add Participant window would show with no gender selected instead of the Not Specified value selected.",
-    "Fixed an issue where a DNF result existing would remove all valid results."
+    "Fixed an issue where a DNF result existing would remove all valid results.",
+    "The program no longer crashes when trying to edit an event that has results uploaded.",
+    "Rank by text now changes when the event type box selection changes instead of only when saving the event options on the dashboard."
   ]
 }

@@ -49,11 +49,11 @@ namespace Chronokeep.UI.MainPages
             rankByGunCheckBox.IsChecked = theEvent.RankByGun;
             if (theEvent != null && Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
             {
-                rankByGunCheckBox.Content = "Rank By Elapsed Time";
+                rankByGunCheckBox.Content = "Rank by Elapsed Time";
             }
             else
             {
-                rankByGunCheckBox.Content = "Rank By Clock Time";
+                rankByGunCheckBox.Content = "Rank by Clock Time";
             }
             commonAgeCheckBox.IsChecked = theEvent.CommonAgeGroups;
             commonStartCheckBox.IsChecked = theEvent.CommonStartFinish;
@@ -746,6 +746,14 @@ namespace Chronokeep.UI.MainPages
                 commonAgeCheckBox.IsEnabled = true;
                 rankByGunCheckBox.IsEnabled = true;
                 segmentCheckBox.IsEnabled = true;
+            }
+            if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == eventType)
+            {
+                rankByGunCheckBox.Content = "Rank by Elapsed Time";
+            }
+            else
+            {
+                rankByGunCheckBox.Content = "Rank by Clock Time";
             }
         }
 

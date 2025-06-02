@@ -25,7 +25,6 @@ namespace Chronokeep.Objects.API
             this.GenderRanking = result.GenderPlace;
             this.Finish = result.SegmentId == Constants.Timing.SEGMENT_FINISH;
             this.Type = result.Type;
-            this.Chip = result.Chip;
             this.Anonymous = result.Anonymous;
             this.LocalTime = start.AddSeconds(result.Seconds).AddMilliseconds(result.Milliseconds).ToLocalTime().ToString("o");
             this.Division = result.Division;
@@ -110,8 +109,6 @@ namespace Chronokeep.Objects.API
         public bool Finish { get; set; }
         [JsonPropertyName("type")]
         public int Type { get; set; }
-        [JsonPropertyName("chip")]
-        public string Chip { get; set; }
         [JsonPropertyName("anonymous")]
         public bool Anonymous { get; set; }
         [JsonPropertyName("local_time")]

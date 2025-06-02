@@ -35,6 +35,32 @@ namespace Chronokeep.UI.API
             }
             yearBox.Text = response.EventYear.Year;
             dateBox.Text = response.EventYear.DateTime;
+            if (response.Event.Type == Constants.APIConstants.CHRONOKEEP_EVENT_TYPE_BACKYARD_ULTRA)
+            {
+                rankBox.Items.Add(new ComboBoxItem
+                {
+                    Content = "Elapsed",
+                    Uid = "Clock"
+                });
+                rankBox.Items.Add(new ComboBoxItem
+                {
+                    Content = "Cumulative",
+                    Uid = "Chip"
+                });
+            }
+            else
+            {
+                rankBox.Items.Add(new ComboBoxItem
+                {
+                    Content = "Clock",
+                    Uid = "Clock"
+                });
+                rankBox.Items.Add(new ComboBoxItem
+                {
+                    Content = "Chip",
+                    Uid = "Chip"
+                });
+            }
             rankBox.SelectedIndex = response.EventYear.RankingType.Equals("chip", StringComparison.OrdinalIgnoreCase) ? 1 : 0;
             LiveBox.IsChecked = response.EventYear.Live;
             DaysAllowedText.Text = response.EventYear.DaysAllowed.ToString();
@@ -66,7 +92,7 @@ namespace Chronokeep.UI.API
                     DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss zzz"),
                     Live = LiveBox.IsChecked == true,
                     DaysAllowed = Convert.ToInt32(DaysAllowedSlider.Value),
-                    RankingType = ((ComboBoxItem)rankBox.SelectedItem).Content.ToString().Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",
+                    RankingType = ((ComboBoxItem)rankBox.SelectedItem).Uid.ToString().Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",
                 });
                 window.Close();
             }

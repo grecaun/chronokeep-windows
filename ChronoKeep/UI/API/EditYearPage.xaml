@@ -69,7 +69,7 @@
             </DockPanel>
             <DockPanel Margin="0,0,0,5">
                 <TextBlock 
-                    Text="Rank By"
+                    Text="Rank by"
                     FontSize="15"
                     Width="60"
                     VerticalAlignment="Center"
@@ -82,10 +82,7 @@
                     Width="220"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
-                    >
-                    <ComboBoxItem Content="Clock" />
-                    <ComboBoxItem Content="Chip" />
-                </ComboBox>
+                    />
             </DockPanel>
             <ui:ToggleSwitch
                 x:Name="LiveBox"

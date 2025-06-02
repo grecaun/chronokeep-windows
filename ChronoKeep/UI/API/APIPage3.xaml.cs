@@ -66,6 +66,32 @@ namespace Chronokeep.UI.API
             }
             yearBox.Text = theEvent.YearCode;
             dateBox.Text = theEvent.Date;
+            if (theEvent != null && theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
+            {
+                rankBox.Items.Add(new ComboBoxItem
+                {
+                    Content = "Elapsed",
+                    Uid = "Clock"
+                });
+                rankBox.Items.Add(new ComboBoxItem
+                {
+                    Content = "Cumulative",
+                    Uid = "Chip"
+                });
+            }
+            else
+            {
+                rankBox.Items.Add(new ComboBoxItem
+                {
+                    Content = "Clock",
+                    Uid = "Clock"
+                });
+                rankBox.Items.Add(new ComboBoxItem
+                {
+                    Content = "Chip",
+                    Uid = "Chip"
+                });
+            }
             rankBox.SelectedIndex = theEvent.RankByGun ? 0 : 1;
             yearPanel.Visibility = Visibility.Visible;
             holdingLabel.Visibility = Visibility.Collapsed;
@@ -109,7 +135,7 @@ namespace Chronokeep.UI.API
                         DateTime = Convert.ToDateTime(dateBox.Text).ToString("yyyy/MM/dd HH:mm:ss zzz"),
                         Live = LiveBox.IsChecked == true,
                         DaysAllowed = Convert.ToInt32(DaysAllowedSlider.Value),
-                        RankingType = ((ComboBoxItem)rankBox.SelectedItem).Content.ToString().Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",
+                        RankingType = ((ComboBoxItem)rankBox.SelectedItem).Uid.ToString().Equals("Chip", StringComparison.OrdinalIgnoreCase) ? "chip" : "gun",
                     });
                     year = addResponse.EventYear.Year;
                 }
