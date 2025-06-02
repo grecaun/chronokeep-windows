@@ -138,7 +138,7 @@ namespace Chronokeep.Objects
             {
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
-                    segmentName = string.Format("Loop {0}", (this.occurrence / 2) + 1);
+                    segmentName = string.Format("Hour {0}", (this.occurrence / 2) + 1);
                 }
                 else if (Constants.Timing.SEGMENT_START == this.segmentId)
                 {
@@ -485,7 +485,7 @@ namespace Chronokeep.Objects
             {
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
-                    segmentName = string.Format("Loop {0}", (this.occurrence / 2) + 1);
+                    segmentName = string.Format("Hour {0}", (this.occurrence / 2) + 1);
                 }
                 else if (Constants.Timing.SEGMENT_START == this.segmentId)
                 {

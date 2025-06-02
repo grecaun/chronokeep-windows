@@ -360,7 +360,6 @@ namespace Chronokeep.Timing.Routines
                                     int chipMillisecDiff = 0;
                                     if (bibLastLoopFinishDictionary.TryGetValue(bib, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
                                     {
-                                        Log.D("BackyardUltraRoutine", string.Format("(BIB START) Last Loop Finish Time found - occ: {0} - hour {1}", lastFin.Occurrence, hour));
                                         chipSecDiff += lastFin.ChipSeconds;
                                         chipMillisecDiff += lastFin.ChipMilliseconds;
                                     }
@@ -425,7 +424,6 @@ namespace Chronokeep.Timing.Routines
                                         int chipMillisecDiff = millisecDiff;
                                         if (bibLastLoopFinishDictionary.TryGetValue(bib, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
                                         {
-                                            Log.D("BackyardUltraRoutine", string.Format("(BIB FINISH) Last Loop Finish Time found - occ: {0} - hour {1}", lastFin.Occurrence, hour));
                                             chipSecDiff += lastFin.ChipSeconds;
                                             chipMillisecDiff += lastFin.ChipMilliseconds;
                                         }
@@ -632,7 +630,6 @@ namespace Chronokeep.Timing.Routines
                                     // Check if we had a finish occurence that happened BEFORE this time
                                     if (chipLastLoopFinishDictionary.TryGetValue(chip, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
                                     {
-                                        Log.D("BackyardUltraRoutine", string.Format("CHIP START Loop Finish Time found - occ: {0} - hour {1}", lastFin.Occurrence, hour));
                                         chipSecDiff += lastFin.ChipSeconds;
                                         chipMillisecDiff += lastFin.ChipMilliseconds;
                                     }
@@ -690,7 +687,6 @@ namespace Chronokeep.Timing.Routines
                                         // Verify if there was a finish time before this one
                                         if (chipLastLoopFinishDictionary.TryGetValue(chip, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
                                         {
-                                            Log.D("BackyardUltraRoutine", string.Format("CHIP FINISH Loop Finish Time found - occ: {0} - hour {1}", lastFin.Occurrence, hour));
                                             chipSecDiff += lastFin.ChipSeconds;
                                             chipMillisecDiff += lastFin.ChipMilliseconds;
                                         }
