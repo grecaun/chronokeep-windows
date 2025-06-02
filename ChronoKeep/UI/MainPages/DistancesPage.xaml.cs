@@ -827,7 +827,7 @@ namespace Chronokeep.UI.MainPages
                 }
                 settingsGrid.Children.Add(DistanceUnit);
                 Grid.SetColumn(DistanceUnit, 2);
-                if (Constants.Timing.EVENT_TYPE_TIME != theEvent.EventType)
+                if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                 {
                     // Occurence
                     DockPanel occPanel = new DockPanel();
@@ -911,57 +911,73 @@ namespace Chronokeep.UI.MainPages
                 int columnOffset = theEvent.UploadSpecific ? 1 : 0;
                 DockPanel wavePanel = new DockPanel()
                 {
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                wavePanel.Children.Add(new TextBlock()
-                {
-                    Text = "Wave",
-                    Width = 55,
-                    FontSize = 16,
-                    Margin = new Thickness(10, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center
-                });
-                Wave = new TextBox()
-                {
-                    Text = theDistance.Wave.ToString(),
-                    FontSize = 16,
-                    Width = 50,
-                    Margin = new Thickness(0, 5, 0, 5),
-                    VerticalContentAlignment = VerticalAlignment.Center
-                };
-                Wave.GotFocus += new RoutedEventHandler(this.SelectAll);
-                Wave.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
-                wavePanel.Children.Add(Wave);
-                wavePanel.Children.Add(new TextBlock()
-                {
-                    Text = "Start",
-                    Width = 50,
-                    FontSize = 16,
-                    Margin = new Thickness(10, 0, 0, 0),
-                    VerticalAlignment = VerticalAlignment.Center
-                });
-                string waveText = "+";
-                waveType = 1;
-                if (theDistance.StartOffsetSeconds < 0)
-                {
-                    Log.D("UI.MainPages.DistancesPage", "Setting type to negative and making seconds/milliseconds positive for offset textbox.");
-                    waveType = -1;
-                    waveText = "-";
-                    theDistance.StartOffsetSeconds *= -1;
-                    theDistance.StartOffsetMilliseconds *= -1;
-                }
-                WaveType = new TextBlock()
-                {
-                    Width = 25,
-                    Margin = new Thickness(0,0,3,0),
-                    Text = waveText,
-                    FontSize = 30,
                     VerticalAlignment = VerticalAlignment.Center,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    TextAlignment = TextAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Right
                 };
-                WaveType.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
-                wavePanel.Children.Add(WaveType);
+                if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA != theEvent.EventType)
+                {
+                    wavePanel.Children.Add(new TextBlock()
+                    {
+                        Text = "Wave",
+                        Width = 55,
+                        FontSize = 16,
+                        Margin = new Thickness(10, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Center
+                    });
+                    Wave = new TextBox()
+                    {
+                        Text = theDistance.Wave.ToString(),
+                        FontSize = 16,
+                        Width = 50,
+                        Margin = new Thickness(0, 5, 0, 5),
+                        VerticalContentAlignment = VerticalAlignment.Center
+                    };
+                    Wave.GotFocus += new RoutedEventHandler(this.SelectAll);
+                    Wave.PreviewTextInput += new TextCompositionEventHandler(this.NumberValidation);
+                    wavePanel.Children.Add(Wave);
+                    wavePanel.Children.Add(new TextBlock()
+                    {
+                        Text = "Start",
+                        Width = 50,
+                        FontSize = 16,
+                        Margin = new Thickness(10, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Center
+                    });
+                    string waveText = "+";
+                    waveType = 1;
+                    if (theDistance.StartOffsetSeconds < 0)
+                    {
+                        Log.D("UI.MainPages.DistancesPage", "Setting type to negative and making seconds/milliseconds positive for offset textbox.");
+                        waveType = -1;
+                        waveText = "-";
+                        theDistance.StartOffsetSeconds *= -1;
+                        theDistance.StartOffsetMilliseconds *= -1;
+                    }
+                    WaveType = new TextBlock()
+                    {
+                        Width = 25,
+                        Margin = new Thickness(0, 0, 3, 0),
+                        Text = waveText,
+                        FontSize = 30,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        TextAlignment = TextAlignment.Center
+                    };
+                    WaveType.MouseLeftButtonDown += new MouseButtonEventHandler(this.SwapWaveType_Click);
+                    wavePanel.Children.Add(WaveType);
+                }
+                else
+                {
+                    wavePanel.Children.Add(new TextBlock()
+                    {
+                        Text = "Interval",
+                        Width = 75,
+                        FontSize = 16,
+                        Margin = new Thickness(10, 0, 0, 0),
+                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Right
+                    });
+                }
                 string sOffset = string.Format(TimeFormat, theDistance.StartOffsetSeconds / 3600,
                     theDistance.StartOffsetSeconds % 3600 / 60, theDistance.StartOffsetSeconds % 60,
                     theDistance.StartOffsetMilliseconds);
@@ -970,8 +986,11 @@ namespace Chronokeep.UI.MainPages
                     Text = sOffset,
                     Mask = "00:00:00.000",
                     FontSize = 16,
+                    Height = 35,
+                    Width = 125,
                     Margin = new Thickness(0, 5, 0, 5),
-                    VerticalContentAlignment = VerticalAlignment.Center
+                    VerticalContentAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Right
                 };
                 StartOffset.GotFocus += new RoutedEventHandler(this.SelectAll);
                 wavePanel.Children.Add(StartOffset);
@@ -1049,12 +1068,9 @@ namespace Chronokeep.UI.MainPages
                 thePanel.Children.Add(secondGrid);
                 if (theEvent.EventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
                 {
-                    wavePanel.Visibility = Visibility.Collapsed;
                     copyPanel.Visibility = Visibility.Collapsed;
                     AddSubDistance.Visibility = Visibility.Collapsed;
                     secondGrid.Children.Remove(Remove);
-                    nameGrid.Children.Add(Remove);
-                    Grid.SetColumn(Remove, 1);
                 }
             }
 
@@ -1124,7 +1140,10 @@ namespace Chronokeep.UI.MainPages
                         + Convert.ToInt32(limitParts[2]);
                 }
                 int wave = -1;
-                int.TryParse(Wave.Text, out wave);
+                if (Wave != null)
+                {
+                    int.TryParse(Wave.Text, out wave);
+                }
                 if (wave >= 0)
                 {
                     theDistance.Wave = wave;
