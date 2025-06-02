@@ -11,6 +11,7 @@
     "DNF results now propagate to the bottom of the list when serving results over a local http server.",
     "Creating a TimeResult now takes in the Seconds and Milliseconds value instead of a time string to reduce string parsing and improve performance.",
     "Modified the Rank By Gun Time label on the dashboard page to be Rank by Clock Time.",
-    "Fixed an issue where the Modify/Add Participant window would show with no gender selected instead of the Not Specified value selected."
+    "Fixed an issue where the Modify/Add Participant window would show with no gender selected instead of the Not Specified value selected.",
+    "Fixed an issue where a DNF result existing would remove all valid results."
   ]
 }
