@@ -356,12 +356,17 @@ namespace Chronokeep.Timing.Routines
                                         newResults.Remove(startResult);
                                     }
                                     // Create a result for the start value.
-                                    long chipSecDiff = 0;
-                                    int chipMillisecDiff = 0;
+                                    long chipSecDiff = secondsNoHour;
+                                    int chipMillisecDiff = millisecDiff;
                                     if (bibLastLoopFinishDictionary.TryGetValue(bib, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
                                     {
                                         chipSecDiff += lastFin.ChipSeconds;
                                         chipMillisecDiff += lastFin.ChipMilliseconds;
+                                    }
+                                    if (chipMillisecDiff >= 1000)
+                                    {
+                                        chipSecDiff++;
+                                        chipMillisecDiff -= 1000;
                                     }
                                     startResult = new(theEvent.Identifier,
                                         read.ReadId,
@@ -625,13 +630,17 @@ namespace Chronokeep.Timing.Routines
                                     {
                                         newResults.Remove(startResult);
                                     }
-                                    long chipSecDiff = 0;
-                                    int chipMillisecDiff = 0;
-                                    // Check if we had a finish occurence that happened BEFORE this time
+                                    long chipSecDiff = secondsNoHour;
+                                    int chipMillisecDiff = millisecDiff;
                                     if (chipLastLoopFinishDictionary.TryGetValue(chip, out TimeResult lastFin) && lastFin.Occurrence < (hour * 2))
                                     {
                                         chipSecDiff += lastFin.ChipSeconds;
                                         chipMillisecDiff += lastFin.ChipMilliseconds;
+                                    }
+                                    if (chipMillisecDiff >= 1000)
+                                    {
+                                        chipSecDiff++;
+                                        chipMillisecDiff -= 1000;
                                     }
                                     // Create a result for the start value.
                                     startResult = new(theEvent.Identifier,
