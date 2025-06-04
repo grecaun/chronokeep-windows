@@ -46,12 +46,6 @@ namespace Chronokeep.UI.Export
                 noOpen = true;
                 return;
             }
-            if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
-            {
-                DialogBox.Show("Time based events not supported.");
-                noOpen = true;
-                return;
-            }
             distanceDictionary = new Dictionary<string, Distance>();
             Log.D("ExportDistanceResults", "Adding distances to combobox.");
             foreach (Distance distance in database.GetDistances(theEvent.Identifier))
@@ -67,18 +61,13 @@ namespace Chronokeep.UI.Export
                     });
                 }
             }
-            if (distanceBox.Items.Count < 1)
-            {
-                DialogBox.Show("Oops, you don't appear to have any distances set up.");
-                noOpen = true;
-                return;
-            }
             this.type = type;
             this.MinWidth = 300;
             this.MinHeight = 200;
             this.Width = 300;
             this.Height = 220;
             this.ResizeMode = ResizeMode.NoResize;
+            bool supported = false;
             if (OutputType.Boston == type)
             {
                 this.Title = "Export Boston Results";
@@ -86,6 +75,7 @@ namespace Chronokeep.UI.Export
             else if (OutputType.UltraSignup == type)
             {
                 this.Title = "Export UltraSignup Results";
+                supported = true;
             }
             else if (OutputType.Runsignup == type)
             {
@@ -94,6 +84,24 @@ namespace Chronokeep.UI.Export
             else if (OutputType.Abbott == type)
             {
                 this.Title = "Export AbbottWMM Results";
+            }
+            if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType && !supported)
+            {
+                DialogBox.Show("Exporting for a Time based event is not supported.");
+                noOpen = true;
+                return;
+            }
+            if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType && !supported)
+            {
+                DialogBox.Show("Exporting for a Backyard Ultra event is not supported.");
+                noOpen = true;
+                return;
+            }
+            if (distanceBox.Items.Count < 1)
+            {
+                DialogBox.Show("Oops, you don't appear to have any distances set up.");
+                noOpen = true;
+                return;
             }
             // don't open the window if we've only got one to output
             if (distanceBox.Items.Count == 1)
@@ -604,7 +612,7 @@ namespace Chronokeep.UI.Export
                 Log.D("UI.Export.ExportDistanceResults", string.Format("The format is '{0}'", format.ToString()));
                 exporter = new CSVExporter(format.ToString());
             }
-            exporter.SetData(headers.ToArray(), data);
+            exporter.SetData([.. headers], data);
             exporter.ExportData(fileName);
         }
 
@@ -681,8 +689,27 @@ namespace Chronokeep.UI.Export
             {
                 participantDictionary[person.Bib] = person;
             }
-            List<object[]> data = new List<object[]>();
-            foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
+            List<object[]> data = [];
+            List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
+            if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType || Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+            {
+                headers[1] = "distance";
+                Dictionary<string, TimeResult> finalResult = [];
+                foreach (TimeResult result in results)
+                {
+                    if (!finalResult.TryGetValue(result.Identifier, out TimeResult other))
+                    {
+                        other = result;
+                        finalResult[result.Identifier] = result;
+                    }
+                    if (other.Occurrence < result.Occurrence && result.Finish)
+                    {
+                        finalResult[result.Identifier] = result;
+                    }
+                }
+                results.RemoveAll(x => !finalResult.ContainsValue(x));
+            }
+            foreach (TimeResult result in results)
             {
                 if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib) && (result.DistanceName == distance))
                 {
@@ -695,7 +722,7 @@ namespace Chronokeep.UI.Export
                     {
                         status = 4;
                     }
-                    data.Add(new object[]
+                    var newLine = new object[]
                     {
                             result.Place > 0 ? result.Place.ToString() : "",
                             result.ChipTime,
@@ -708,10 +735,35 @@ namespace Chronokeep.UI.Export
                             participantDictionary[result.Bib].City,
                             participantDictionary[result.Bib].State,
                             status
-                    });
+                    };
+                    if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType || Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+                    {
+                        Dictionary<string, Distance> distances = [];
+                        foreach (Distance dist in database.GetDistances(theEvent.Identifier))
+                        {
+                            distances[dist.Name] = dist;
+                        }
+                        int hour = (result.Occurrence / 2) + 1;
+                        if (result.LinkedDistanceName.Length > 0
+                            && distances.TryGetValue(result.LinkedDistanceName, out Distance localLinked)
+                            && localLinked.DistanceValue > 0)
+                        {
+                            newLine[1] = (localLinked.DistanceValue * hour).ToString();
+                        }
+                        else if (result.DistanceName.Length > 0
+                            && distances.TryGetValue(result.DistanceName, out Distance localDist)
+                            && localDist.DistanceValue > 0)
+                        {
+                            newLine[1] = (localDist.DistanceValue * hour).ToString();
+                        }
+                        else
+                        {
+                            newLine[1] = "0";
+                        }
+                    }
+                    data.Add(newLine);
                 }
             }
-            IDataExporter exporter;
             StringBuilder format = new StringBuilder();
             for (int i = 0; i < headers.Length; i++)
             {
@@ -721,7 +773,7 @@ namespace Chronokeep.UI.Export
             }
             format.Remove(format.Length - 1, 1);
             Log.D("UI.Export.ExportDistanceResults", string.Format("The format is '{0}'", format.ToString()));
-            exporter = new CSVExporter(format.ToString());
+            IDataExporter exporter = new CSVExporter(format.ToString());
             exporter.SetData(headers, data);
             exporter.ExportData(fileName);
         }
