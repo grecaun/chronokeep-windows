@@ -136,13 +136,37 @@ namespace Chronokeep.Objects
             }
             else if (theEvent != null && Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
             {
+                var hour = (this.occurrence / 2) + 1;
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
-                    segmentName = string.Format("Hour {0}", (this.occurrence / 2) + 1);
+                    if (linked_distance_name.Length > 0
+                        && distances.ContainsKey(linked_distance_name)
+                        && distances[linked_distance_name].DistanceValue > 0)
+                    {
+                        segmentName = string.Format("{1:0.##} {2} - Hour {0}",
+                            hour,
+                            distances[linked_distance_name].DistanceValue * hour,
+                            Constants.Distances.DistanceString(distances[linked_distance_name].DistanceUnit)
+                            );
+                    }
+                    else if (distance.Length > 0
+                        && distances.ContainsKey(distance)
+                        && distances[distance].DistanceValue > 0)
+                    {
+                        segmentName = string.Format("{1:0.##} {2} - Hour {0}",
+                            hour,
+                            distances[distance].DistanceValue * hour,
+                            Constants.Distances.DistanceString(distances[distance].DistanceUnit)
+                            );
+                    }
+                    else
+                    {
+                        segmentName = string.Format("Hour {0}", hour);
+                    }
                 }
                 else if (Constants.Timing.SEGMENT_START == this.segmentId)
                 {
-                    segmentName = string.Format("Start {0}", (this.occurrence / 2) + 1);
+                    segmentName = string.Format("Start {0}", hour);
                 }
             }
             segmentName = segmentName.Trim();
@@ -483,13 +507,37 @@ namespace Chronokeep.Objects
             }
             else if (theEvent != null && Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType)
             {
+                var hour = (this.occurrence / 2) + 1;
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
-                    segmentName = string.Format("Hour {0}", (this.occurrence / 2) + 1);
+                    if (linked_distance_name.Length > 0
+                        && distances.ContainsKey(linked_distance_name)
+                        && distances[linked_distance_name].DistanceValue > 0)
+                    {
+                        segmentName = string.Format("{1:0.##} {2} - Hour {0}",
+                            hour,
+                            distances[linked_distance_name].DistanceValue * hour,
+                            Constants.Distances.DistanceString(distances[linked_distance_name].DistanceUnit)
+                            );
+                    }
+                    else if (distanceName.Length > 0
+                        && distances.ContainsKey(distanceName)
+                        && distances[distanceName].DistanceValue > 0)
+                    {
+                        segmentName = string.Format("{1:0.##} {2} - Hour {0}",
+                            hour,
+                            distances[distanceName].DistanceValue * hour,
+                            Constants.Distances.DistanceString(distances[distanceName].DistanceUnit)
+                            );
+                    }
+                    else
+                    {
+                        segmentName = string.Format("Hour {0}", hour);
+                    }
                 }
                 else if (Constants.Timing.SEGMENT_START == this.segmentId)
                 {
-                    segmentName = string.Format("Start {0}", (this.occurrence / 2) + 1);
+                    segmentName = string.Format("Start {0}", hour);
                 }
             }
             segmentName = segmentName.Trim();
