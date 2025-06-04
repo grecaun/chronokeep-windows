@@ -4,7 +4,8 @@
     "Added Enable NTFY option to Chronokeep Portal settings page.",
     "The option to change the time display based upon Wave time now only shows when the event has started.",
     "Event type of Backyard Ultra is now supported.",
-    "Drop is now a type for distances to allow for results to display that a sub-distance is for participants who changed from another distance."
+    "Drop is now a type for distances to allow for results to display that a sub-distance is for participants who changed from another distance.",
+    "Added the ability to export Time/Backyard Ultra results in a format for easy submission to Ultrasignup."
   ],
   "fixes": [
     "ChipReads now properly associate names with them when participant data changes.",
@@ -14,6 +15,7 @@
     "Fixed an issue where the Modify/Add Participant window would show with no gender selected instead of the Not Specified value selected.",
     "Fixed an issue where a DNF result existing would remove all valid results.",
     "The program no longer crashes when trying to edit an event that has results uploaded.",
-    "Rank by text now changes when the event type box selection changes instead of only when saving the event options on the dashboard."
+    "Rank by text now changes when the event type box selection changes instead of only when saving the event options on the dashboard.",
+    "Fixed an issue where exporting Boston/Ultrasignup/Runsignup/Abbott results would go through despite not being supported for Backyard Ultra events."
   ]
 }
