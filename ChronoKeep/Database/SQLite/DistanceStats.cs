@@ -63,11 +63,15 @@ namespace Chronokeep.Database.SQLite
                 }
             }
             reader.Close();
-            List<DistanceStat> output = new()
+            List<DistanceStat> output =
+            [
+                .. statsDictionary.Values
+            ];
+            output.Sort((x1, x2) => x1.Active != x2.Active ? x2.Active.CompareTo(x1.Active) : x1.DistanceName.CompareTo(x2.DistanceName));
+            if (output.Count > 1)
             {
-                allstats
-            };
-            output.AddRange(statsDictionary.Values);
+                output.Insert(0, allstats);
+            }
             return output;
         }
     }
