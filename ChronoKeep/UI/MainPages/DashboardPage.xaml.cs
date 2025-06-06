@@ -189,13 +189,15 @@ namespace Chronokeep.UI.MainPages
             if (((ComboBoxItem)TypeBox.SelectedItem).Uid == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA.ToString())
             {
                 commonAgeCheckBox.IsEnabled = false;
+                segmentCheckBox.IsEnabled = false;
+                commonStartCheckBox.IsEnabled = false;
             }
             else
             {
                 commonAgeCheckBox.IsEnabled = true;
+                segmentCheckBox.IsEnabled = true;
+                commonStartCheckBox.IsEnabled = true;
             }
-            commonStartCheckBox.IsEnabled = true;
-            segmentCheckBox.IsEnabled = true;
             TypeBox.IsEnabled = true;
             placementsCheckBox.IsEnabled = true;
             divisionsEnabledCheckbox.IsEnabled = true;
@@ -732,24 +734,26 @@ namespace Chronokeep.UI.MainPages
             catch
             {
                 commonAgeCheckBox.IsEnabled = true;
+                segmentCheckBox.IsEnabled = true;
+                commonStartCheckBox.IsEnabled = true;
             }
             // Common age groups when backyard ultra is the event type.
             if (eventType == Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA)
             {
                 commonAgeCheckBox.IsEnabled = false;
                 commonAgeCheckBox.IsChecked = true;
-                rankByGunCheckBox.IsEnabled = false;
                 segmentCheckBox.IsEnabled = false;
+                segmentCheckBox.IsChecked = false;
+                commonStartCheckBox.IsEnabled = false;
+                commonStartCheckBox.IsChecked = true;
+                rankByGunCheckBox.Content = "Rank by Elapsed Time";
             }
             else if (editButton != null && editButton.Content.ToString() == Constants.DashboardLabels.SAVE)
             {
                 commonAgeCheckBox.IsEnabled = true;
-                rankByGunCheckBox.IsEnabled = true;
                 segmentCheckBox.IsEnabled = true;
-            }
-            if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == eventType)
-            {
-                rankByGunCheckBox.Content = "Rank by Elapsed Time";
+                commonStartCheckBox.IsEnabled = true;
+                rankByGunCheckBox.Content = "Rank by Clock Time";
             }
             else
             {
