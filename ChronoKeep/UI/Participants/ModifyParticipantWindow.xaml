@@ -53,7 +53,7 @@
                     <ComboBoxItem Content="Non-Binary"/>
                     <ComboBoxItem Content="Other"/>
                 </ComboBox>
-                <TextBox Name="otherGenderBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown" HorizontalAlignment="Stretch"/>
+                <TextBox Name="otherGenderBox" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown" HorizontalAlignment="Stretch" Visibility="Hidden"/>
             </DockPanel>
             <DockPanel>
                 <TextBlock Text="Street" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>

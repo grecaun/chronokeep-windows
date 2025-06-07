@@ -93,15 +93,21 @@ namespace Chronokeep.UI.MainPages
                 Without = 0,
                 DistanceName = "All"
             };
-            List<BibStats> listStats = new List<BibStats>
-            {
-                totals
-            };
+            List<BibStats> listStats = [];
             foreach (BibStats b in bibStats.Values)
             {
                 listStats.Add(b);
                 totals.With += b.With;
                 totals.Without += b.Without;
+            }
+            if (bibStats.Values.Count > 1)
+            {
+                listStats.Insert(0, totals);
+                ViewPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ViewPanel.Visibility = Visibility.Collapsed;
             }
             statsListView.ItemsSource = listStats;
             if (totals.Without > 0)

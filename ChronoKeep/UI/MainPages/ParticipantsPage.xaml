@@ -90,18 +90,21 @@
                     HorizontalAlignment="Stretch"
                     Visibility="Collapsed"
                     />
-                <TextBlock
-                    Text="View"
-                    FontSize="16"
-                    Margin="10,5"
-                    TextAlignment="Center"
-                    />
-                <ComboBox 
-                    Name="DistanceBox"
-                    FontSize="16"
-                    Margin="10,0,10,0"
-                    SelectionChanged="DistanceBox_SelectionChanged"
-                    />
+                <StackPanel
+                    x:Name="ViewPanel">
+                    <TextBlock
+                        Text="View"
+                        FontSize="16"
+                        Margin="10,5"
+                        TextAlignment="Center"
+                        />
+                    <ComboBox 
+                        Name="DistanceBox"
+                        FontSize="16"
+                        Margin="10,0,10,0"
+                        SelectionChanged="DistanceBox_SelectionChanged"
+                        />
+                </StackPanel>
                 <TextBlock 
                     Text="Sort By"
                     FontSize="16"
