@@ -1025,11 +1025,12 @@ namespace Chronokeep.Timing.Routines
             foreach (string ident in resultDictionary.Keys)
             {
                 int lastHourFinished = -1;
-                TimeResult previous = null;
                 List<TimeResult> results = resultDictionary[ident];
                 results.Sort((a, b) => a.Occurrence.CompareTo(b.Occurrence));
                 foreach (TimeResult finRes in results)
                 {
+                    // Check the hour, lastHourFinished starts at -1, so hour 1 ( 0 & 1 Occurrence values / 2 = 0 )
+                    // needs to compare to lastHourFinished of 0
                     if (finRes.Occurrence / 2 > lastHourFinished + 1)
                     {
                         toRemove.Add(finRes);
@@ -1042,8 +1043,8 @@ namespace Chronokeep.Timing.Routines
                                 Constants.Timing.LOCATION_FINISH,
                                 Constants.Timing.SEGMENT_FINISH,
                                 finRes.Occurrence,
-                                lastHourFinished * interval + 1, // Set time to the start of the hour after they finished last (+ 1 second)
-                                0,
+                                lastHourFinished * interval, // Set time to the start of the hour after they finished last (+ 1 second)
+                                1,
                                 finRes.Identifier,
                                 0,
                                 0,
@@ -1055,9 +1056,9 @@ namespace Chronokeep.Timing.Routines
                             newResults.Add(dnfResult);
                         }
                     }
-                    else if (finRes.Occurrence / 2 == lastHourFinished + 1)
+                    // Only increment lastHourFinished if 
+                    else if (finRes.SegmentId == Constants.Timing.SEGMENT_FINISH && finRes.Occurrence / 2 == lastHourFinished + 1)
                     {
-                        previous = finRes;
                         lastHourFinished++;
                     }
                 }
