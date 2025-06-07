@@ -1,0 +1,10 @@
+{
+  "version": "v1.9.1",
+  "changes": [
+    "'All' is no longer a displayed stat when there is only a single distance.",
+    "Changed the auto DNF entry for backyard ultras to the next hour after their last completed lap."
+  ],
+  "fixes": [
+    "Milliseconds can no longer be negative for backyard ultras."
+  ]
+}
