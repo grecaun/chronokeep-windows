@@ -610,7 +610,7 @@ namespace Chronokeep.Timing.Routines
                             long secondsNoHour = secondsDiff % interval;
                             // Check if we've already included them in the DNF pile and we're past the hour when they DNF'ed.
                             // Process the reads if this isn't the case.
-                            if (!dnfHourDictionary.ContainsKey(TimeResult.ChipToIdentifier(chip)) && (!dnfHourDictionary.ContainsKey(TimeResult.ChipToIdentifier(chip)) || dnfHourDictionary[TimeResult.ChipToIdentifier(chip)] > hour))
+                            if (!dnfHourDictionary.ContainsKey(TimeResult.ChipToIdentifier(chip)) || dnfHourDictionary[TimeResult.ChipToIdentifier(chip)] > hour)
                             {
                                 // Check if we're at the starting point and within a starting window
                                 if ((Constants.Timing.LOCATION_START == read.LocationID || (Constants.Timing.LOCATION_FINISH == read.LocationID && theEvent.CommonStartFinish))
