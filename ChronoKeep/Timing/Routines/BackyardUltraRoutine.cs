@@ -160,6 +160,7 @@ namespace Chronokeep.Timing.Routines
                 if (millisecDiff < 0)
                 {
                     secondsDiff--;
+                    millisecDiff += 1000;
                 }
                 int hour = (int)(secondsDiff / interval);
                 // Check to set off an alarm.
@@ -317,6 +318,7 @@ namespace Chronokeep.Timing.Routines
                     if (millisecDiff < 0)
                     {
                         secondsDiff--;
+                        millisecDiff += 1000;
                     }
                     int hour = (int)(secondsDiff / interval);
                     // Check that we haven't processed the read yet
@@ -592,6 +594,7 @@ namespace Chronokeep.Timing.Routines
                     if (millisecDiff < 0)
                     {
                         secondsDiff--;
+                        millisecDiff += 1000;
                     }
                     int hour = (int)(secondsDiff / interval);
                     // Check that we haven't processed the read yet
@@ -832,6 +835,7 @@ namespace Chronokeep.Timing.Routines
                 if (millisecDiff < 0)
                 {
                     secondsDiff--;
+                    millisecDiff += 1000;
                 }
                 // Calculate the hour
                 int hour = (int)(secondsDiff / interval);
@@ -887,6 +891,7 @@ namespace Chronokeep.Timing.Routines
                 if (millisecDiff < 0)
                 {
                     secondsDiff--;
+                    millisecDiff += 1000;
                 }
                 // Calculate the hour
                 int hour = (int)(secondsDiff / interval);
