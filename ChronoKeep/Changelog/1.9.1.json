@@ -2,9 +2,12 @@
   "version": "v1.9.1",
   "changes": [
     "'All' is no longer a displayed stat when there is only a single distance.",
-    "Changed the auto DNF entry for backyard ultras to the next hour after their last completed lap."
+    "Changed the auto DNF entry for backyard ultras to the next hour after their last completed lap.",
+    "It is no longer possible to select specific distances to view on the participants page when only one distance has members.",
+    "'All' is no longer displayed for bib stats when there is a single distance with members."
   ],
   "fixes": [
-    "Milliseconds can no longer be negative for backyard ultras."
+    "Milliseconds can no longer be negative for backyard ultras.",
+    "Modify participant window no longer shows the 'Other' gender text box entry field on page open."
   ]
 }

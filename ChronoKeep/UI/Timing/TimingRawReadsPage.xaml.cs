@@ -119,7 +119,6 @@ namespace Chronokeep.UI.Timing
         public void CancelableUpdateView(CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
-            PrivateUpdateView();
         }
 
         private void PrivateUpdateView()
