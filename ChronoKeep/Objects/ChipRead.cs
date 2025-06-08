@@ -147,7 +147,8 @@ namespace Chronokeep
         }
 
         // This is the OLD database' constructor.
-        public ChipRead(int readId, 
+        public ChipRead(
+            int readId, 
             int eventId, 
             int status, 
             int locationId, 
@@ -445,7 +446,7 @@ namespace Chronokeep
                 {
                     return "Start";
                 }
-                if (Constants.Timing.CHIPREAD_STATUS_DNF == Status)
+                if (Constants.Timing.CHIPREAD_STATUS_DNF == Status || Constants.Timing.CHIPREAD_STATUS_AUTO_DNF == Status)
                 {
                     return "DNF";
                 }
@@ -508,7 +509,9 @@ namespace Chronokeep
 
         public bool IsIgnored()
         {
-            return Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE == Status || Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE == Status || Constants.Timing.CHIPREAD_STATUS_IGNORE == Status;
+            return  Constants.Timing.CHIPREAD_STATUS_DNF_IGNORE == Status ||
+                    Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE == Status ||
+                    Constants.Timing.CHIPREAD_STATUS_IGNORE == Status;
         }
 
         public bool IsUseful()
@@ -517,7 +520,8 @@ namespace Chronokeep
                 || Constants.Timing.CHIPREAD_STATUS_USED == Status
                 || Constants.Timing.CHIPREAD_STATUS_STARTTIME == Status
                 || Constants.Timing.CHIPREAD_STATUS_DNF == Status
-                || Constants.Timing.CHIPREAD_STATUS_DNS == Status;
+                || Constants.Timing.CHIPREAD_STATUS_DNS == Status
+                || Constants.Timing.CHIPREAD_STATUS_AUTO_DNF == Status;
         }
 
         public bool CanBeReset()

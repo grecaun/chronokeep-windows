@@ -8,6 +8,9 @@
   ],
   "fixes": [
     "Milliseconds can no longer be negative for backyard ultras.",
-    "Modify participant window no longer shows the 'Other' gender text box entry field on page open."
+    "Modify participant window no longer shows the 'Other' gender text box entry field on page open.",
+    "Various logic fixes for Backyard Ultra processing.",
+    "Fixed display issues when editing a Backyard Ultra settings on the dashboard page.",
+    "Fixed an issue where the Raw Reads page was allowed to refresh would interfere with usage while the program was receiving data."
   ]
 }

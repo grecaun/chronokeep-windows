@@ -168,7 +168,8 @@ namespace Chronokeep.Database.SQLite
             SQLiteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM chipreads c LEFT JOIN bib_chip_assoc b on (c.read_chipnumber=b.chip AND c.event_id=b.event_id) " +
                 "WHERE c.event_id=@event AND " +
-                "(read_status=@status OR read_status=@used OR read_status=@start OR read_status=@dnf OR read_status=@dns) AND c.location_id!=@announcer;";
+                "(read_status=@status OR read_status=@used OR read_status=@start OR read_status=@dnf OR read_status=@dns OR read_status=@autoDNF) " +
+                "AND c.location_id!=@announcer;";
             command.Parameters.AddRange(new SQLiteParameter[]
             {
                 new SQLiteParameter("@event", eventId),
@@ -177,7 +178,8 @@ namespace Chronokeep.Database.SQLite
                 new SQLiteParameter("@start", Constants.Timing.CHIPREAD_STATUS_STARTTIME),
                 new SQLiteParameter("@dnf", Constants.Timing.CHIPREAD_STATUS_DNF),
                 new SQLiteParameter("@dns", Constants.Timing.CHIPREAD_STATUS_DNS),
-                new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER)
+                new SQLiteParameter("@announcer", Constants.Timing.LOCATION_ANNOUNCER),
+                new SQLiteParameter("@autoDNF", Constants.Timing.CHIPREAD_STATUS_AUTO_DNF)
             });
             SQLiteDataReader reader = command.ExecuteReader();
             List<ChipRead> output = GetChipReadsWorker(reader, theEvent, connection);
