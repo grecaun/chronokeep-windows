@@ -803,17 +803,8 @@ namespace Chronokeep.UI.Export
             {
                 if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib) && (result.DistanceName == distance))
                 {
-                    int status = 1;
-                    if (Constants.Timing.TIMERESULT_STATUS_DNF == result.Status)
-                    {
-                        status = 2;
-                    }
-                    else if (Constants.Timing.DISTANCE_TYPE_UNOFFICIAL == result.Type)
-                    {
-                        status = 4;
-                    }
-                    data.Add(new object[]
-                    {
+                    data.Add(
+                    [
                             result.Place > 0 ? result.Place.ToString() : "",
                             result.Time,
                             result.ChipTime,
@@ -824,7 +815,7 @@ namespace Chronokeep.UI.Export
                             result.Bib,
                             participantDictionary[result.Bib].City,
                             participantDictionary[result.Bib].State,
-                    });
+                    ]);
                 }
             }
             IDataExporter exporter;

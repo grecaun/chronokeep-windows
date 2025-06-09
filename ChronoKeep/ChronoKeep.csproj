@@ -197,14 +197,14 @@
     <None Include="Chronokeep.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.104.2" />
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.6.1" />
-    <PackageReference Include="Hardware.Info" Version="101.0.0" />
-    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.3.0" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.0" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.7.25104.5739" />
+    <PackageReference Include="Hardware.Info" Version="101.0.1.1" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.12.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="9.0.5" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
-    <PackageReference Include="Twilio" Version="7.8.0" />
-    <PackageReference Include="WPF-UI" Version="3.0.5" />
+    <PackageReference Include="Twilio" Version="7.11.1" />
+    <PackageReference Include="WPF-UI" Version="4.0.2" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="IO\HtmlTemplates\js\*" />

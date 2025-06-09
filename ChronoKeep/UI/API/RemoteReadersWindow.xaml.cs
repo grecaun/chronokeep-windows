@@ -358,7 +358,7 @@ namespace Chronokeep.UI.API
                     Width = 35,
                     Margin = new Thickness(5),
                 };
-                delete.Click += new RoutedEventHandler(async (sender, e) =>
+                delete.Click += new RoutedEventHandler((sender, e) =>
                 {
                     Log.D("UI.API.RemoteReadersWindow.ReaderListItem", "Delete clicked.");
                     DialogBox.Show(
