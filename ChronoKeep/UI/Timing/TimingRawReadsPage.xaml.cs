@@ -69,7 +69,7 @@ namespace Chronokeep.UI.Timing
                 {
                     read.Status = Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE;
                 }
-                else if(read.Status == Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE)
+                else if (read.Status == Constants.Timing.CHIPREAD_STATUS_DNS_IGNORE)
                 {
                     read.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
                 }
@@ -117,13 +117,12 @@ namespace Chronokeep.UI.Timing
             Log.D("UI.Timing.TimingRawReadsPage", "Update View called.");
         }
 
-        public void CancelableUpdateView(CancellationToken token)
+        public void CancelableUpdateView(CancellationToken token) { }
+
+        public void Search(CancellationToken token, string searchText)
         {
             token.ThrowIfCancellationRequested();
-            if (!OldSearch.Equals(parent.GetSearchValue(), StringComparison.OrdinalIgnoreCase))
-            {
-                PrivateUpdateView();
-            }
+            PrivateUpdateView();
         }
 
         private void PrivateUpdateView()

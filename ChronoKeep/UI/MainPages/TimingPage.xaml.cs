@@ -1046,7 +1046,22 @@ namespace Chronokeep.UI.MainPages
 
         private void SearchBox_TextChanged(Wpf.Ui.Controls.AutoSuggestBox sender, Wpf.Ui.Controls.AutoSuggestBoxTextChangedEventArgs args)
         {
-            UpdateSubView();
+            Log.D("UI.MainPages.TimingPage", "Searchbox text has changed");
+            if (cts != null)
+            {
+                cts.Cancel();
+                cts = null;
+            }
+            cts = new CancellationTokenSource();
+            try
+            {
+                subPage.Search(cts.Token, searchBox.Text.Trim());
+                cts = null;
+            }
+            catch
+            {
+                Log.D("UI.MainPages.TimingPage", "Update cancelled.");
+            }
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)
