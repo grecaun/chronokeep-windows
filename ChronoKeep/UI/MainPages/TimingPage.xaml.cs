@@ -823,14 +823,33 @@ namespace Chronokeep.UI.MainPages
         private void RawReads_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Raw Reads selected.");
-            subPage = new TimingRawReadsPage(this, database);
-            TimingFrame.NavigationService.RemoveBackEntry();
-            TimingFrame.Content = subPage;
+            if (RawButton.Content.ToString().Equals("Raw Data", StringComparison.OrdinalIgnoreCase))
+            {
+                RawButton.Content = "Refresh Data";
+                subPage = new TimingRawReadsPage(this, database);
+                TimingFrame.NavigationService.RemoveBackEntry();
+                TimingFrame.Content = subPage;
+            }
+            else if (subPage is TimingRawReadsPage)
+            {
+                // Refresh data
+                subPage.UpdateView();
+            }
+            else
+            {
+                SetRawReadsFinished();
+            }
+        }
+
+        internal void SetRawReadsFinished()
+        {
+            RawButton.Content = "Raw Data";
         }
 
         public void LoadMainDisplay()
         {
             Log.D("UI.MainPages.TimingPage", "Going back to main display.");
+            SetRawReadsFinished();
             subPage = new TimingResultsPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -1120,6 +1139,7 @@ namespace Chronokeep.UI.MainPages
         private void Print_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Print clicked.");
+            SetRawReadsFinished();
             subPage = new PrintPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -1149,6 +1169,7 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             Log.D("UI.MainPages.TimingPage", "Stats double cliked. Distance is " + selected.DistanceName);
+            SetRawReadsFinished();
             subPage = new DistanceStatsPage(this, mWindow, database, selected.DistanceID, selected.DistanceName);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -1158,6 +1179,7 @@ namespace Chronokeep.UI.MainPages
         private void Award_Click (object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Awards clicked.");
+            SetRawReadsFinished();
             subPage = new AwardPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -1459,6 +1481,7 @@ namespace Chronokeep.UI.MainPages
         private void AlarmButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Alarms selected.");
+            SetRawReadsFinished();
             subPage = new AlarmsPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
