@@ -1,5 +1,5 @@
 {
-  "version": "v1.9.1",
+  "version": "v1.9.2",
   "changes": [
     "Various updates to code packages and minor tweaks.",
     "Added a way for the user to refresh data while viewing raw reads."
