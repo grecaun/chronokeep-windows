@@ -5,6 +5,7 @@
     "Added a way for the user to refresh data while viewing raw reads."
   ],
   "fixes": [
-    "The days input box on the edit raw reads window no longer hides itself."
+    "The days input box on the edit raw reads window no longer hides itself.",
+    "Fixed an issue where a previous code tweak cause the reader state to never update when connecting or receiving new status data from a reader."
   ]
 }

@@ -1,8 +1,0 @@
-{
-  "version": "v1.9.3",
-  "changes": [
-  ],
-  "fixes": [
-    "Fixed an issue where a previous code tweak cause the reader state to never update when connecting or receiving new status data from a reader."
-  ]
-}
