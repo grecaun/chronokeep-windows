@@ -47,14 +47,6 @@ namespace Chronokeep.UI.Participants
                 Add.Click += new RoutedEventHandler(this.Modify_Click);
                 UpdateAllFields();
             }
-            if (theEvent.DivisionsEnabled)
-            {
-                DivisionPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                DivisionPanel.Visibility = Visibility.Collapsed;
-            }
             BibBox.Focus();
         }
 
@@ -81,14 +73,6 @@ namespace Chronokeep.UI.Participants
             {
                 Add.Click += new RoutedEventHandler(this.Modify_Click);
                 UpdateAllFields();
-            }
-            if (theEvent.DivisionsEnabled)
-            {
-                DivisionPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                DivisionPanel.Visibility = Visibility.Collapsed;
             }
             BibBox.IsEnabled = false;
         }

@@ -1,7 +1,8 @@
 {
-  "version": "v1.9.1",
+  "version": "v1.9.2",
   "changes": [
-    "Various updates to code packages and minor tweaks."
+    "Various updates to code packages and minor tweaks.",
+    "Division now always shows on the modify participant window."
   ],
   "fixes": [
   ]
