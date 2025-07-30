@@ -644,5 +644,31 @@ namespace Chronokeep.MemStore
                 throw new MutexLockException("memStoreLock");
             }
         }
+
+        public List<string> GetDivisions(int eventIdentifier)
+        {
+            HashSet<string> output = [];
+            Log.D("MemStore", "GetDivisions");
+            try
+            {
+                if (memStoreLock.WaitOne(lockTimeout))
+                {
+                    if (theEvent != null && theEvent.Identifier == eventIdentifier)
+                    {
+                        foreach (Participant person in participants.Values)
+                        {
+                            output.Add(person.EventSpecific.Division);
+                        }
+                    }
+                    memStoreLock.ReleaseMutex();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+            return [.. output];
+        }
     }
 }

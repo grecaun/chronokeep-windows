@@ -98,6 +98,7 @@ namespace Chronokeep.UI.Participants
                 });
             }
             DistanceBox.SelectedIndex = 0;
+            DivisionBox.OriginalItemsSource = database.GetDivisions(theEvent.Identifier);
         }
 
         private void UpdateAllFields()
@@ -112,7 +113,7 @@ namespace Chronokeep.UI.Participants
             ComboBoxItem selected = null;
             foreach (Distance d in divs)
             {
-                ComboBoxItem item = new ComboBoxItem()
+                ComboBoxItem item = new()
                 {
                     Content = d.Name,
                     Uid = d.Identifier.ToString()
@@ -179,6 +180,7 @@ namespace Chronokeep.UI.Participants
             DivisionBox.Text = person.EventSpecific.Division;
             Add.Content = "Update";
             Done.Content = "Cancel";
+            DivisionBox.OriginalItemsSource = database.GetDivisions(theEvent.Identifier);
         }
 
         private void Clear()
@@ -207,6 +209,7 @@ namespace Chronokeep.UI.Participants
             AnonymousBox.IsChecked = false;
             ApparelBox.Text = "";
             DivisionBox.Text = "";
+            DivisionBox.OriginalItemsSource = database.GetDivisions(theEvent.Identifier);
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)

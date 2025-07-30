@@ -30,7 +30,7 @@
             </DockPanel>
             <DockPanel>
                 <TextBlock Text="Division" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>
-                <TextBox Name="DivisionBox" Text="" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
+                <ui:AutoSuggestBox Name="DivisionBox" Text="" FontSize="16" Margin="0,5,15,5" KeyDown="Box_KeyDown"/>
             </DockPanel>
             <DockPanel>
                 <TextBlock Text="First" FontSize="16" Margin="15,0,5,0" Width="90" VerticalAlignment="Center"/>

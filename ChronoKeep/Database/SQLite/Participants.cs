@@ -572,5 +572,22 @@ namespace Chronokeep.Database.SQLite
             return output;
         }
 
+        internal static List<string> GetDivisions(int eventIdentifier, SQLiteConnection connection)
+        {
+            List<string> output = [];
+            SQLiteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT eventspecific_division FROM eventspecific AS e WHERE e.event_id=@eventID;";
+            command.Parameters.AddRange([
+                new SQLiteParameter("@eventID", eventIdentifier)
+                ]);
+            SQLiteDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                output.Add(reader["eventspecific_division"].ToString());
+            }
+            reader.Close();
+            return output;
+        }
+
     }
 }
