@@ -1,0 +1,8 @@
+{
+  "version": "v1.9.3",
+  "changes": [
+    "Division now always shows when modifying/adding a participant and the field itself now automatically suggests already existing divisions."
+  ],
+  "fixes": [
+  ]
+}
