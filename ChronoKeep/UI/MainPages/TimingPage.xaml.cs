@@ -389,6 +389,68 @@ namespace Chronokeep.UI.MainPages
                 UpdateStartTime();
             }
 
+            // Get updated list of locations
+            locations = database.GetTimingLocations(theEvent.Identifier);
+            int locCount = locations.Count;
+            if (!theEvent.CommonStartFinish)
+            {
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
+            }
+            else
+            {
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
+                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
+            }
+
+            locationBox.Items.Clear();
+            if (locCount > 0)
+            {
+                locationBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "All Locations"
+                });
+                foreach (TimingLocation loc in locations)
+                {
+                    if (!loc.Name.Equals("Announcer", StringComparison.OrdinalIgnoreCase))
+                    {
+                        locationBox.Items.Add(new ComboBoxItem()
+                        {
+                            Content = loc.Name,
+                        });
+                    }
+                }
+                locationBox.SelectedIndex = 0;
+                locationBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                locationBox.Visibility = Visibility.Collapsed;
+            }
+
+            // Update locations in the list of readers (and reader status)
+            connected = 0; total = ReadersBox.Items.Count;
+            foreach (AReaderBox read in ReadersBox.Items)
+            {
+                read.UpdateLocations(locations);
+                read.UpdateStatus();
+                connected += read.reader.Status == SYSTEM_STATUS.DISCONNECTED ? 0 : 1;
+                if (read.reader.Status == SYSTEM_STATUS.DISCONNECTED)
+                {
+                    if (timeWindow != null && timeWindow.IsTimingSystem(read.reader))
+                    {
+                        timeWindow.Close();
+                        timeWindow = null;
+                    }
+                    if (rewindWindow != null && rewindWindow.IsTimingSystem(read.reader))
+                    {
+                        rewindWindow.Close();
+                        rewindWindow = null;
+                    }
+                }
+            }
+
             if (total < 4)
             {
                 string system = Readers.DEFAULT_TIMING_SYSTEM;
@@ -823,14 +885,33 @@ namespace Chronokeep.UI.MainPages
         private void RawReads_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Raw Reads selected.");
-            subPage = new TimingRawReadsPage(this, database);
-            TimingFrame.NavigationService.RemoveBackEntry();
-            TimingFrame.Content = subPage;
+            if (RawButton.Content.ToString().Equals("Raw Data", StringComparison.OrdinalIgnoreCase))
+            {
+                RawButton.Content = "Refresh Data";
+                subPage = new TimingRawReadsPage(this, database);
+                TimingFrame.NavigationService.RemoveBackEntry();
+                TimingFrame.Content = subPage;
+            }
+            else if (subPage is TimingRawReadsPage)
+            {
+                // Refresh data
+                subPage.UpdateView();
+            }
+            else
+            {
+                SetRawReadsFinished();
+            }
+        }
+
+        internal void SetRawReadsFinished()
+        {
+            RawButton.Content = "Raw Data";
         }
 
         public void LoadMainDisplay()
         {
             Log.D("UI.MainPages.TimingPage", "Going back to main display.");
+            SetRawReadsFinished();
             subPage = new TimingResultsPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -1046,7 +1127,22 @@ namespace Chronokeep.UI.MainPages
 
         private void SearchBox_TextChanged(Wpf.Ui.Controls.AutoSuggestBox sender, Wpf.Ui.Controls.AutoSuggestBoxTextChangedEventArgs args)
         {
-            UpdateSubView();
+            Log.D("UI.MainPages.TimingPage", "Searchbox text has changed");
+            if (cts != null)
+            {
+                cts.Cancel();
+                cts = null;
+            }
+            cts = new CancellationTokenSource();
+            try
+            {
+                subPage.Search(cts.Token, searchBox.Text.Trim());
+                cts = null;
+            }
+            catch
+            {
+                Log.D("UI.MainPages.TimingPage", "Update cancelled.");
+            }
         }
 
         private void Export_Click(object sender, RoutedEventArgs e)
@@ -1105,6 +1201,7 @@ namespace Chronokeep.UI.MainPages
         private void Print_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Print clicked.");
+            SetRawReadsFinished();
             subPage = new PrintPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -1134,6 +1231,7 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             Log.D("UI.MainPages.TimingPage", "Stats double cliked. Distance is " + selected.DistanceName);
+            SetRawReadsFinished();
             subPage = new DistanceStatsPage(this, mWindow, database, selected.DistanceID, selected.DistanceName);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -1143,6 +1241,7 @@ namespace Chronokeep.UI.MainPages
         private void Award_Click (object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Awards clicked.");
+            SetRawReadsFinished();
             subPage = new AwardPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;
@@ -1444,6 +1543,7 @@ namespace Chronokeep.UI.MainPages
         private void AlarmButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.TimingPage", "Alarms selected.");
+            SetRawReadsFinished();
             subPage = new AlarmsPage(this, database);
             TimingFrame.NavigationService.RemoveBackEntry();
             TimingFrame.Content = subPage;

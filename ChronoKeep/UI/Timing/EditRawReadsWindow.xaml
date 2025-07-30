@@ -8,7 +8,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="Edit" Height="230" Width="250" ResizeMode="NoResize"
+        Title="Edit" Height="240" Width="250" ResizeMode="NoResize"
         d:DataContext="{d:DesignInstance local:EditRawReadsWindow, IsDesignTimeCreatable=True}"
         ExtendsContentIntoTitleBar="True"
         WindowBackdropType="Mica"
@@ -32,9 +32,9 @@
                 <ColumnDefinition Width="140"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="0"/>
                 <RowDefinition Height="35"/>
-                <RowDefinition Height="35"/>
+                <RowDefinition Height="45"/>
                 <RowDefinition Height="95"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>

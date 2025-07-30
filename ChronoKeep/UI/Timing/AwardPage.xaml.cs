@@ -538,6 +538,8 @@ namespace Chronokeep.UI.Timing
         
         public void CancelableUpdateView(CancellationToken token) { }
 
+        public void Search(CancellationToken token, string searchText) { }
+
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AwardPage", "Done clicked.");

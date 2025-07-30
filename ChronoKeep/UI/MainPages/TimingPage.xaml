@@ -434,7 +434,8 @@
                                 <StackPanel 
                                     Grid.Column="1"
                                     >
-                                    <Button 
+                                    <Button
+                                        Name="RawButton"
                                         Content="Raw Data"
                                         Height="35"
                                         HorizontalAlignment="Stretch"

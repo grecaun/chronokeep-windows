@@ -2,7 +2,6 @@
 using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
-using System.Web.Services.Description;
 
 namespace Chronokeep.Timing.Routines
 {

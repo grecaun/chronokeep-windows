@@ -252,6 +252,12 @@ namespace Chronokeep.UI.Timing
             UpdateView();
         }
 
+        public void Search(CancellationToken token, string searchText)
+        {
+            token.ThrowIfCancellationRequested();
+            UpdateView();
+        }
+
         public async void Show(PeopleType peopleType)
         {
             List<TimeResult> newResults = [.. results];

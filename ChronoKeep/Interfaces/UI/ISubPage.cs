@@ -5,6 +5,7 @@ namespace Chronokeep.Interfaces
     public interface ISubPage : IMainPage
     {
         void CancelableUpdateView(CancellationToken token);
+        void Search(CancellationToken token, string searchText);
         void Show(PeopleType type);
         void SortBy(SortType type);
         void Location(string location);

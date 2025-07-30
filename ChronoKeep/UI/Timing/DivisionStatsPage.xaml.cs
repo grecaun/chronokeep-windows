@@ -53,6 +53,8 @@ namespace Chronokeep.UI.Timing
 
         public void CancelableUpdateView(CancellationToken token) { }
 
+        public void Search(CancellationToken token, string searchText) { }
+
         public void Closing() { }
 
         public void EditSelected() { }
