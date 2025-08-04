@@ -760,16 +760,24 @@ namespace Chronokeep.Objects
         {
             return firstName.Equals(other.First, StringComparison.OrdinalIgnoreCase)
                 || lastName.Equals(other.Last, StringComparison.OrdinalIgnoreCase)
-                || (gender == other.Gender
-                && birthdate == other.Birthdate);
+                || (gender.Equals(other.Gender, StringComparison.OrdinalIgnoreCase)
+                && birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase));
         }
 
         public bool IsSimilar(Registration.Participant other)
         {
             return firstName.Equals(other.FirstName, StringComparison.OrdinalIgnoreCase)
                 || lastName.Equals(other.LastName, StringComparison.OrdinalIgnoreCase)
-                || (gender == other.Gender
-                && birthdate == other.Birthdate);
+                || (gender.Equals(other.Gender, StringComparison.OrdinalIgnoreCase)
+                && birthdate.Equals(other.Birthdate, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public bool IsSimilar(Participant other)
+        {
+            return firstName.Equals(other.firstName, StringComparison.OrdinalIgnoreCase)
+                || lastName.Equals(other.lastName, StringComparison.OrdinalIgnoreCase)
+                || (gender.Equals(other.gender, StringComparison.OrdinalIgnoreCase)
+                && birthdate.Equals(other.birthdate, StringComparison.OrdinalIgnoreCase));
         }
 
         public string CurrentAge

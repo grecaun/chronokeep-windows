@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Chronokeep.Objects.API
 {
@@ -58,6 +59,16 @@ namespace Chronokeep.Objects.API
             Distance = Distance.Trim();
             Mobile = Mobile.Trim();
             Apparel = Apparel.Trim();
+        }
+
+        public void FormatData()
+        {
+            string dummyYear = $"{DateTime.Now.Year - 130}";
+            if (!DateTime.TryParse(Birthdate, out DateTime birthDateTime))
+            {
+                birthDateTime = DateTime.Parse($"{dummyYear}/01/01");
+            }
+            Birthdate = birthDateTime.ToShortDateString();
         }
     }
 }

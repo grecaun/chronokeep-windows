@@ -558,6 +558,7 @@ namespace Chronokeep.UI.MainPages
                 foreach (APIPerson person in newPersons)
                 {
                     person.Trim();
+                    person.FormatData();
                     if (distDictionary.TryGetValue(person.Distance.ToLower(), out Distance distance))
                     {
                         if (partESDictionary.TryGetValue(person.Identifier, out Participant old) && old != null && old.IsSimilar(person))
@@ -568,7 +569,7 @@ namespace Chronokeep.UI.MainPages
                             {
                                 if (old.EventSpecific.UploadedVersion >= old.EventSpecific.Version)
                                 {
-                                    if (!old.Bib.Equals(person.Bib) || !old.Distance.Equals(person.Distance, StringComparison.OrdinalIgnoreCase))
+                                    if (!old.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase) || !old.Distance.Equals(person.Distance, StringComparison.OrdinalIgnoreCase))
                                     {
                                         conflicts.Add(old);
                                     }
@@ -706,7 +707,7 @@ namespace Chronokeep.UI.MainPages
                                     ));
                             }
                         }
-                        else
+                        else if (person.First.Length > 0 || person.Last.Length > 0)
                         {
                             partsToAdd.Add(
                                 new Participant(
@@ -760,8 +761,11 @@ namespace Chronokeep.UI.MainPages
                     {
                         if (knownBibs.TryGetValue(part.Bib, out Participant known))
                         {
-                            conflicts.Add(part);
-                            conflicts.Add(known);
+                            if (!part.IsSimilar(known))
+                            {
+                                conflicts.Add(part);
+                                conflicts.Add(known);
+                            }
                         }
                         else
                         {
@@ -773,8 +777,11 @@ namespace Chronokeep.UI.MainPages
                 {
                     if (knownBibs.TryGetValue(part.Bib, out Participant known))
                     {
-                        conflicts.Add(part);
-                        conflicts.Add(known);
+                        if (!part.IsSimilar(known))
+                        {
+                            conflicts.Add(part);
+                            conflicts.Add(known);
+                        }
                     }
                     else
                     {
@@ -785,8 +792,11 @@ namespace Chronokeep.UI.MainPages
                 {
                     if (knownBibs.TryGetValue(part.Bib, out Participant known))
                     {
-                        conflicts.Add(part);
-                        conflicts.Add(known);
+                        if (!part.IsSimilar(known))
+                        {
+                            conflicts.Add(part);
+                            conflicts.Add(known);
+                        }
                     }
                     else
                     {
