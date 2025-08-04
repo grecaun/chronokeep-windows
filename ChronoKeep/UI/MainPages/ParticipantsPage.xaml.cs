@@ -565,98 +565,55 @@ namespace Chronokeep.UI.MainPages
                         {
                             // Only update if a bib exists and it has not been updated in the software since it was uploaded
                             // Uploaded Version should equal Version, Version will be higher if it was updated after upload.
-                            if (person.Bib.Length > 0)
-                            {
-                                if (old.EventSpecific.UploadedVersion >= old.EventSpecific.Version)
+                            if (person.Bib.Length > 0 && old.EventSpecific.UploadedVersion >= old.EventSpecific.Version)
                                 {
-                                    if (!old.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase) || !old.Distance.Equals(person.Distance, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        conflicts.Add(old);
-                                    }
-                                    partsToUpdate.Add(new(
-                                        old.Identifier,
-                                        person.First.Length > 0 ? person.First : old.FirstName,
-                                        person.Last.Length > 0 ? person.Last : old.LastName,
-                                        old.Street,
-                                        old.City,
-                                        old.State,
-                                        old.Zip,
-                                        person.Birthdate,
-                                        new EventSpecific(
-                                            old.EventSpecific.Identifier,
-                                            theEvent.Identifier,
-                                            distDictionary[person.Distance.ToLower()].Identifier,
-                                            distDictionary[person.Distance.ToLower()].Name,
-                                            person.Bib,
-                                            old.EventSpecific.CheckedIn,
-                                            old.EventSpecific.Comments,
-                                            old.EventSpecific.Owes,
-                                            old.EventSpecific.Other,
-                                            old.EventSpecific.Status,
-                                            old.EventSpecific.AgeGroupName,
-                                            old.EventSpecific.AgeGroupId,
-                                            person.Anonymous,
-                                            person.SMSEnabled,
-                                            person.Apparel,
-                                            old.EventSpecific.Division,
-                                            old.EventSpecific.Version,
-                                            old.EventSpecific.UploadedVersion
-                                            ),
-                                        old.Email,
-                                        old.Phone,
-                                        person.Mobile.Length > 0 ? person.Mobile : old.Mobile,
-                                        old.Parent,
-                                        old.Country,
-                                        old.Street2,
-                                        person.Gender,
-                                        old.ECName,
-                                        old.ECPhone,
-                                        old.Chip
-                                        ));
-                                }
-                                else
+                                Participant newPart = new(
+                                    old.Identifier,
+                                    person.First.Length > 0 ? person.First : old.FirstName,
+                                    person.Last.Length > 0 ? person.Last : old.LastName,
+                                    old.Street,
+                                    old.City,
+                                    old.State,
+                                    old.Zip,
+                                    person.Birthdate,
+                                    new EventSpecific(
+                                        old.EventSpecific.Identifier,
+                                        theEvent.Identifier,
+                                        distDictionary[person.Distance.ToLower()].Identifier,
+                                        distDictionary[person.Distance.ToLower()].Name,
+                                        person.Bib,
+                                        old.EventSpecific.CheckedIn,
+                                        old.EventSpecific.Comments,
+                                        old.EventSpecific.Owes,
+                                        old.EventSpecific.Other,
+                                        old.EventSpecific.Status,
+                                        old.EventSpecific.AgeGroupName,
+                                        old.EventSpecific.AgeGroupId,
+                                        person.Anonymous,
+                                        person.SMSEnabled,
+                                        person.Apparel,
+                                        old.EventSpecific.Division,
+                                        old.EventSpecific.Version,
+                                        old.EventSpecific.UploadedVersion
+                                        ),
+                                    old.Email,
+                                    old.Phone,
+                                    person.Mobile.Length > 0 ? person.Mobile : old.Mobile,
+                                    old.Parent,
+                                    old.Country,
+                                    old.Street2,
+                                    person.Gender,
+                                    old.ECName,
+                                    old.ECPhone,
+                                    old.Chip
+                                    );
+                                // Check if we've updated the Bib or distance.
+                                if ((old.Bib.Length > 0 && !old.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase)) || !old.Distance.Equals(person.Distance, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    conflicts.Add(new(
-                                        old.Identifier,
-                                        person.First.Length > 0 ? person.First : old.FirstName,
-                                        person.Last.Length > 0 ? person.Last : old.LastName,
-                                        old.Street,
-                                        old.City,
-                                        old.State,
-                                        old.Zip,
-                                        person.Birthdate,
-                                        new EventSpecific(
-                                            old.EventSpecific.Identifier,
-                                            theEvent.Identifier,
-                                            distDictionary[person.Distance.ToLower()].Identifier,
-                                            distDictionary[person.Distance.ToLower()].Name,
-                                            person.Bib,
-                                            old.EventSpecific.CheckedIn,
-                                            old.EventSpecific.Comments,
-                                            old.EventSpecific.Owes,
-                                            old.EventSpecific.Other,
-                                            old.EventSpecific.Status,
-                                            old.EventSpecific.AgeGroupName,
-                                            old.EventSpecific.AgeGroupId,
-                                            person.Anonymous,
-                                            person.SMSEnabled,
-                                            person.Apparel,
-                                            old.EventSpecific.Division,
-                                            old.EventSpecific.UploadedVersion,
-                                            old.EventSpecific.UploadedVersion
-                                            ),
-                                        old.Email,
-                                        old.Phone,
-                                        person.Mobile.Length > 0 ? person.Mobile : old.Mobile,
-                                        old.Parent,
-                                        old.Country,
-                                        old.Street2,
-                                        person.Gender,
-                                        old.ECName,
-                                        old.ECPhone,
-                                        old.Chip
-                                        ));
+                                    conflicts.Add(old);
+                                    conflicts.Add(newPart);
                                 }
+                                partsToUpdate.Add(newPart);
                             }
                         }
                         else if (partDictionary.TryGetValue((person.First, person.Last, person.Birthdate, person.Distance.ToLower()), out Participant oldTwo))
@@ -665,7 +622,7 @@ namespace Chronokeep.UI.MainPages
                             // Uploaded Version should equal Version, Version will be higher if it was updated after upload.
                             if (person.Bib.Length > 0 && oldTwo.EventSpecific.UploadedVersion >= oldTwo.EventSpecific.Version)
                             {
-                                partsToUpdate.Add(new(
+                                Participant newPart = new(
                                     oldTwo.Identifier,
                                     person.First.Length > 0 ? person.First : oldTwo.FirstName,
                                     person.Last.Length > 0 ? person.Last : oldTwo.LastName,
@@ -704,7 +661,14 @@ namespace Chronokeep.UI.MainPages
                                     oldTwo.ECName,
                                     oldTwo.ECPhone,
                                     oldTwo.Chip
-                                    ));
+                                    );
+                                // Check if we've updated the Bib or distance.
+                                if ((old.Bib.Length > 0 && !oldTwo.Bib.Equals(person.Bib, StringComparison.OrdinalIgnoreCase)) || !oldTwo.Distance.Equals(person.Distance, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    conflicts.Add(oldTwo);
+                                    conflicts.Add(newPart);
+                                }
+                                partsToUpdate.Add(newPart);
                             }
                         }
                         else if (person.First.Length > 0 || person.Last.Length > 0)
@@ -755,6 +719,7 @@ namespace Chronokeep.UI.MainPages
                     database.AddParticipants(partsToAdd);
                 }
                 Dictionary<string, Participant> knownBibs = [];
+                // This checks for doubles of bibs in existing information.
                 foreach (Participant part in partESDictionary.Values)
                 {
                     if (part.Bib.Length > 0)
@@ -775,32 +740,38 @@ namespace Chronokeep.UI.MainPages
                 }
                 foreach (Participant part in partsToUpdate)
                 {
-                    if (knownBibs.TryGetValue(part.Bib, out Participant known))
+                    if (part.Bib.Length > 0)
                     {
-                        if (!part.IsSimilar(known))
+                        if (knownBibs.TryGetValue(part.Bib, out Participant known))
                         {
-                            conflicts.Add(part);
-                            conflicts.Add(known);
+                            if (!part.IsSimilar(known))
+                            {
+                                conflicts.Add(part);
+                                conflicts.Add(known);
+                            }
                         }
-                    }
-                    else
-                    {
-                        knownBibs.Add(part.Bib, part);
+                        else
+                        {
+                            knownBibs.Add(part.Bib, part);
+                        }
                     }
                 }
                 foreach (Participant part in partsToAdd)
                 {
-                    if (knownBibs.TryGetValue(part.Bib, out Participant known))
+                    if (part.Bib.Length > 0)
                     {
-                        if (!part.IsSimilar(known))
+                        if (knownBibs.TryGetValue(part.Bib, out Participant known))
                         {
-                            conflicts.Add(part);
-                            conflicts.Add(known);
+                            if (!part.IsSimilar(known))
+                            {
+                                conflicts.Add(part);
+                                conflicts.Add(known);
+                            }
                         }
-                    }
-                    else
-                    {
-                        knownBibs.Add(part.Bib, part);
+                        else
+                        {
+                            knownBibs.Add(part.Bib, part);
+                        }
                     }
                 }
             }
