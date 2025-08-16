@@ -1094,7 +1094,7 @@ namespace Chronokeep.UI.MainPages
         {
             switch (((ComboBoxItem)SortBy.SelectedItem).Content)
             {
-                case "Gun Time":
+                case "Clock Time":
                     return SortType.GUNTIME;
                 case "Bib":
                     return SortType.BIB;

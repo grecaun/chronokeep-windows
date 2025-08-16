@@ -32,15 +32,15 @@ namespace Chronokeep.UI.Export
             "Age", "Gender", "Start", "Street", "Apartment",
             "City", "State", "Zip", "Country", "Mobile", "Email", "Parent", "Comments",
             "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone",
-            "Anonymous", "Apparel"
+            "Anonymous", "Apparel", "Division"
         };
         List<string> distanceHeaders = new List<string>
         {
-            "Gun Finish", "Chip Finish"
+            "Clock Finish", "Chip Finish"
         };
         List<string> timeHeaders = new List<string>
         {
-            "Laps Completed", "Ellapsed Time (Gun)", "Ellapsed Time (Chip)"
+            "Laps Completed", "Ellapsed Time (Clock)", "Ellapsed Time (Chip)"
         };
 
         public bool SetupError()
@@ -73,7 +73,7 @@ namespace Chronokeep.UI.Export
                     for (int i = maxNumSegments; i > 0; i--)
                     {
                         commonHeaders.Insert(10, string.Format("Segment {0} Chip Time", i));
-                        commonHeaders.Insert(10, string.Format("Segment {0} Gun Time", i));
+                        commonHeaders.Insert(10, string.Format("Segment {0} Clock Time", i));
                     }
                     // then do it again so we can add to the end in the right order
                     for (int i = 1; i <= maxNumSegments; i++)
@@ -85,7 +85,7 @@ namespace Chronokeep.UI.Export
             else // Time based
             {
                 commonHeaders.InsertRange(10, timeHeaders);
-                // Remove "Chip Finish" and "Gun Finish" from the headers list.
+                // Remove "Chip Finish" and "Clock Finish" from the headers list.
                 commonHeaders.Remove("Chip Finish");
                 commonHeaders.Remove("");
                 // Get the maximum number of laps a person completed.
@@ -283,6 +283,10 @@ namespace Chronokeep.UI.Export
                     {
                         line[headerIndex["Apparel"]] = participant.EventSpecific.Apparel;
                     }
+                    if (headerIndex.ContainsKey("Division"))
+                    {
+                        line[headerIndex["Division"]] = participant.EventSpecific.Division;
+                    }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                     {
                         if (resultDictionary.ContainsKey(participant.EventSpecific.Bib))
@@ -315,9 +319,9 @@ namespace Chronokeep.UI.Export
                                     {
                                         line[headerIndex["Chip Finish"]] = result.ChipTime;
                                     }
-                                    if (headerIndex.ContainsKey("Gun Finish"))
+                                    if (headerIndex.ContainsKey("Clock Finish"))
                                     {
-                                        line[headerIndex["Gun Finish"]] = result.Time;
+                                        line[headerIndex["Clock Finish"]] = result.Time;
                                     }
                                 }
                                 else if (Constants.Timing.SEGMENT_NONE != result.SegmentId)
@@ -331,7 +335,7 @@ namespace Chronokeep.UI.Export
                                     {
                                         line[headerIndex[key]] = result.ChipTime;
                                     }
-                                    key = string.Format("Segment {0} Gun Time", segmentNum);
+                                    key = string.Format("Segment {0} Clock Time", segmentNum);
                                     if (headerIndex.ContainsKey(key))
                                     {
                                         line[headerIndex[key]] = result.Time;
@@ -382,9 +386,9 @@ namespace Chronokeep.UI.Export
                             {
                                 line[headerIndex["Laps Completed"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].Occurrence;
                             }
-                            if (headerIndex.ContainsKey("Ellapsed Time (Gun)"))
+                            if (headerIndex.ContainsKey("Ellapsed Time (Clock)"))
                             {
-                                line[headerIndex["Ellapsed Time (Gun)"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].Time;
+                                line[headerIndex["Ellapsed Time (Clock)"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].Time;
                             }
                             if (headerIndex.ContainsKey("Ellapsed Time (Chip)"))
                             {
@@ -436,9 +440,9 @@ namespace Chronokeep.UI.Export
                                         {
                                             line[headerIndex["Chip Finish"]] = result.ChipTime;
                                         }
-                                        if (headerIndex.ContainsKey("Gun Finish"))
+                                        if (headerIndex.ContainsKey("Clock Finish"))
                                         {
-                                            line[headerIndex["Gun Finish"]] = result.Time;
+                                            line[headerIndex["Clock Finish"]] = result.Time;
                                         }
                                     }
                                     else if (Constants.Timing.SEGMENT_NONE != result.SegmentId)
@@ -448,7 +452,7 @@ namespace Chronokeep.UI.Export
                                         {
                                             line[headerIndex[key]] = result.ChipTime;
                                         }
-                                        key = string.Format("Segment {0} Gun Time", segmentNum);
+                                        key = string.Format("Segment {0} Clock Time", segmentNum);
                                         if (headerIndex.ContainsKey(key))
                                         {
                                             line[headerIndex[key]] = result.Time;
@@ -499,9 +503,9 @@ namespace Chronokeep.UI.Export
                                 {
                                     line[headerIndex["Laps Completed"]] = occurrenceResultDictionary[(bib, finalLap)].Occurrence;
                                 }
-                                if (headerIndex.ContainsKey("Ellapsed Time (Gun)"))
+                                if (headerIndex.ContainsKey("Ellapsed Time (Clock)"))
                                 {
-                                    line[headerIndex["Ellapsed Time (Gun)"]] = occurrenceResultDictionary[(bib, finalLap)].Time;
+                                    line[headerIndex["Ellapsed Time (Clock)"]] = occurrenceResultDictionary[(bib, finalLap)].Time;
                                 }
                                 if (headerIndex.ContainsKey("Ellapsed Time (Chip)"))
                                 {

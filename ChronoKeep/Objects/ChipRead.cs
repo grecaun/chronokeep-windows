@@ -127,7 +127,7 @@ namespace Chronokeep
             this.RSSI = rssi;
             this.IsRewind = 0;
             this.Reader = reader;
-            this.Box = "Chronokeep Portal";
+            this.Box = "Portal";
             this.StartTime = 0;
             this.LogId = 0;
             this.TimeSeconds = seconds;
@@ -369,7 +369,7 @@ namespace Chronokeep
             this.RSSI = rssi;
             this.Type = type;
             this.IsRewind = 0;
-            this.Box = "Remote Reader";
+            this.Box = "Remote";
             this.ReaderTime = "";
             this.StartTime = 0;
             this.LogId = 0;

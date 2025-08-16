@@ -537,7 +537,7 @@ namespace Chronokeep.UI.Export
                 "Gender",
                 "Date of Birth",
                 "Age",
-                "Gun Time",
+                "Clock Time",
                 "Chip/Net Time",
                 "Wheelchair"
             };

@@ -203,6 +203,7 @@ namespace Chronokeep.UI.Timing
             public string Phone { get => Participant.Phone; }
             public string Mobile { get => Participant.Mobile; }
             public string Email { get => Participant.Email; }
+            public string CurrentAge { get => Participant.CurrentAge; }
 
             internal StatsParticipant(Participant participant, string lastSeen, string lastSeenTime)
             {

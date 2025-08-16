@@ -91,8 +91,8 @@
 							<td class="text-important table-label">G</td>
 							<td class="text-important table-label">Age</td>
 							<td class="text-important table-label">Overall</td>
-							<td class="text-important table-label"><#= theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Laps" : "Finish Gun" #></td>
-							<td class="text-important table-label"><#= theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Time" : "Finish Chip" #></td>
+							<td class="text-important table-label"><#= theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Laps" : "Finish (Clock)" #></td>
+							<td class="text-important table-label"><#= theEvent.EventType == Constants.Timing.EVENT_TYPE_TIME ? "Time" : "Finish (Chip)" #></td>
 						</tr>
 						<# foreach (TimeResult r in distanceResults[d][(AgeGroupID, gender)])
 						{ #>

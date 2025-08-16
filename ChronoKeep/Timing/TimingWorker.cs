@@ -544,21 +544,28 @@ namespace Chronokeep.Timing
                                     {
                                         bool sent = false;
                                         bool networkError = false;
-                                        foreach (string phone in toSendTo[result])
+                                        if (result.Anonymous == true)
                                         {
-                                            var status = TimeResult.SendSMSAlert(phone, sms);
-                                            // add to banned phones list
-                                            if (status == SMSState.AddToBanned)
+                                            sent = true;
+                                        }
+                                        else
+                                        {
+                                            foreach (string phone in toSendTo[result])
                                             {
-                                                Globals.AddBannedPhone(phone);
-                                            }
-                                            else if (status == SMSState.Success)
-                                            {
-                                                sent = true;
-                                            }
-                                            else if (status == SMSState.NetworkError)
-                                            {
-                                                networkError = true;
+                                                var status = TimeResult.SendSMSAlert(phone, sms);
+                                                // add to banned phones list
+                                                if (status == SMSState.AddToBanned)
+                                                {
+                                                    Globals.AddBannedPhone(phone);
+                                                }
+                                                else if (status == SMSState.Success)
+                                                {
+                                                    sent = true;
+                                                }
+                                                else if (status == SMSState.NetworkError)
+                                                {
+                                                    networkError = true;
+                                                }
                                             }
                                         }
                                         // update status if there's no network error or we send a message out

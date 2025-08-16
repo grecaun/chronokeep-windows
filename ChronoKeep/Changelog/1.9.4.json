@@ -1,0 +1,17 @@
+{
+  "version": "v1.9.4",
+  "changes": [
+    "Changed user viewable references of 'Gun' time to 'Clock' time.",
+    "Modified changelog view reducing text size and spacing between some elements.",
+    "Divisions are now output when exporting results.",
+    "Added Division field to displayable data on the participants page.",
+    "Added Division field to participants export.",
+    "Added Reader field to raw reads page.",
+    "The program will no longer attempt to send out SMS messages about participants who've opted to remain anonymous."
+  ],
+  "fixes": [
+    "A blank division will no longer show as a selectable optiuon when typing in the divisions box on the edit/add participant window.",
+    "Selectable divisions on the edit/add participant window are now sorted.",
+    "Age now shows for active participants on the timing stats page."
+  ]
+}

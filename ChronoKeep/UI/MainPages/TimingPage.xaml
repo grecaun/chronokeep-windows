@@ -216,7 +216,7 @@
                         SelectionChanged="SortBy_SelectionChanged"
                         >
                         <ComboBoxItem Content="System Time" IsSelected="True" />
-                        <ComboBoxItem Content="Gun Time" />
+                        <ComboBoxItem Content="Clock Time" />
                         <ComboBoxItem Content="Bib"/>
                         <ComboBoxItem Content="Distance"/>
                         <ComboBoxItem Content="Place"/>

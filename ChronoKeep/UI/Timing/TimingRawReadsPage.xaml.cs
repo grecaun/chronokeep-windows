@@ -19,7 +19,6 @@ namespace Chronokeep.UI.Timing
         Event theEvent;
 
         List<ChipRead> chipReads = new List<ChipRead>();
-        string OldSearch = "";
 
         public TimingRawReadsPage(ITimingPage parent, IDBInterface database)
         {

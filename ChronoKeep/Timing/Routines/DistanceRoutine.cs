@@ -996,7 +996,7 @@ namespace Chronokeep.Timing.Routines
                                 {
                                     return x1.Milliseconds.CompareTo(x2.Milliseconds);
                                 }
-                                Log.D("Timing.Routines.DistanceRoutine", "By Gun");
+                                Log.D("Timing.Routines.DistanceRoutine", "By Clock");
                                 return x1.Seconds.CompareTo(x2.Seconds);
                             }
                             else

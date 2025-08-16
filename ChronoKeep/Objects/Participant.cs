@@ -579,7 +579,7 @@ namespace Chronokeep.Objects
         public string Gender { get => gender; }
         public string Chip { get => chip; set => chip = value ?? ""; }
         public bool Anonymous { get => eventSpecific.Anonymous; }
-
+        public string Division { get => eventSpecific.Division; }
 
         public int CompareTo(Participant other)
         {
