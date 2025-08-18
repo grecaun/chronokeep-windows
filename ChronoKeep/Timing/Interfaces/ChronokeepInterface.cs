@@ -517,7 +517,8 @@ namespace Chronokeep.Timing.Interfaces
                                             pRead.RSSI,
                                             pRead.Reader,
                                             pRead.Type == PortalRead.READ_KIND_CHIP ? Constants.Timing.CHIPREAD_TYPE_CHIP : Constants.Timing.CHIPREAD_TYPE_MANUAL,
-                                            Constants.Timing.UTCToLocalDate(pRead.ReaderSeconds, pRead.ReaderMilliseconds).ToString("yyyy/MM/dd HH:mm:ss.fff")
+                                            Constants.Timing.UTCToLocalDate(pRead.ReaderSeconds, pRead.ReaderMilliseconds).ToString("yyyy/MM/dd HH:mm:ss.fff"),
+                                            reader_name
                                             );
                                         chipReads.Add(newRead);
                                     }

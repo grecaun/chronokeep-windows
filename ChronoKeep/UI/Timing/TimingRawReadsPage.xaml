@@ -38,8 +38,7 @@
                     <DataTemplate>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60"/>  <!-- Box -->
-                                <ColumnDefinition Width="80"/>  <!-- Reader -->
+                                <ColumnDefinition Width="80"/>  <!-- Box -->
                                 <ColumnDefinition Width="80"/>  <!-- Location Name -->
                                 <ColumnDefinition Width="80"/>  <!-- Chip Number -->
                                 <ColumnDefinition Width="60"/>  <!-- Bib -->
@@ -50,15 +49,14 @@
                                 <ColumnDefinition Width="100"/> <!-- Type -->
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Margin="4,4" Text="{Binding Box}"/>
-                            <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding Reader}"/>
-                            <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding LocationName}"/>
-                            <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding ChipNumber}"/>
-                            <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Bib}"/>
-                            <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding Name}"/>
-                            <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding TimeString}"/>
-                            <TextBlock Grid.Column="7" Margin="4,4" Text="{Binding NetTime}"/>
-                            <TextBlock Grid.Column="8" Margin="4,4" Text="{Binding StatusName}"/>
-                            <TextBlock Grid.Column="9" Margin="4,4" Text="{Binding TypeName}"/>
+                            <TextBlock Grid.Column="1" Margin="4,4" Text="{Binding LocationName}"/>
+                            <TextBlock Grid.Column="2" Margin="4,4" Text="{Binding ChipNumber}"/>
+                            <TextBlock Grid.Column="3" Margin="4,4" Text="{Binding Bib}"/>
+                            <TextBlock Grid.Column="4" Margin="4,4" Text="{Binding Name}"/>
+                            <TextBlock Grid.Column="5" Margin="4,4" Text="{Binding TimeString}"/>
+                            <TextBlock Grid.Column="6" Margin="4,4" Text="{Binding NetTime}"/>
+                            <TextBlock Grid.Column="7" Margin="4,4" Text="{Binding StatusName}"/>
+                            <TextBlock Grid.Column="8" Margin="4,4" Text="{Binding TypeName}"/>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -73,8 +71,7 @@
                 >
                 <Grid Margin="7,0" Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60"/>  <!-- Box -->
-                        <ColumnDefinition Width="80"/>  <!-- Reader -->
+                        <ColumnDefinition Width="80"/>  <!-- Box -->
                         <ColumnDefinition Width="80"/>  <!-- Location Name -->
                         <ColumnDefinition Width="80"/>  <!-- Chip Number -->
                         <ColumnDefinition Width="60"/>  <!-- Bib -->
@@ -85,15 +82,14 @@
                         <ColumnDefinition Width="100"/> <!-- Type -->
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Margin="4,4" Text="Box"/>
-                    <TextBlock Grid.Column="1" Margin="4,4" Text="Reader"/>
-                    <TextBlock Grid.Column="2" Margin="4,4" Text="Location"/>
-                    <TextBlock Grid.Column="3" Margin="4,4" Text="Chip"/>
-                    <TextBlock Grid.Column="4" Margin="4,4" Text="Bib"/>
-                    <TextBlock Grid.Column="5" Margin="4,4" Text="Name"/>
-                    <TextBlock Grid.Column="6" Margin="4,4" Text="Clock"/>
-                    <TextBlock Grid.Column="7" Margin="4,4" Text="Net Time"/>
-                    <TextBlock Grid.Column="8" Margin="4,4" Text="Status"/>
-                    <TextBlock Grid.Column="9" Margin="4,4" Text="Type"/>
+                    <TextBlock Grid.Column="1" Margin="4,4" Text="Location"/>
+                    <TextBlock Grid.Column="2" Margin="4,4" Text="Chip"/>
+                    <TextBlock Grid.Column="3" Margin="4,4" Text="Bib"/>
+                    <TextBlock Grid.Column="4" Margin="4,4" Text="Name"/>
+                    <TextBlock Grid.Column="5" Margin="4,4" Text="Clock"/>
+                    <TextBlock Grid.Column="6" Margin="4,4" Text="Net Time"/>
+                    <TextBlock Grid.Column="7" Margin="4,4" Text="Status"/>
+                    <TextBlock Grid.Column="8" Margin="4,4" Text="Type"/>
                 </Grid>
             </ScrollViewer>
         </Grid>

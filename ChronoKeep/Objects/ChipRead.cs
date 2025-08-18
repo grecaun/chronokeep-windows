@@ -115,7 +115,8 @@ namespace Chronokeep
             string rssi, 
             string reader, 
             int readType,
-            string readertime
+            string readertime,
+            string box
             )
         {
             this.EventId = eventId;
@@ -127,7 +128,7 @@ namespace Chronokeep
             this.RSSI = rssi;
             this.IsRewind = 0;
             this.Reader = reader;
-            this.Box = "Portal";
+            this.Box = box;
             this.StartTime = 0;
             this.LogId = 0;
             this.TimeSeconds = seconds;
