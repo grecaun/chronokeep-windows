@@ -37,71 +37,6 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             reader.SendGetSettings();
         }
 
-        private void uploadParticipantsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Upload participants button clicked.");
-            Event theEvent = database.GetCurrentEvent();
-            if (theEvent == null || theEvent.Identifier < 0)
-            {
-                return;
-            }
-            try
-            {
-                List<Participant> participants = database.GetParticipants(theEvent.Identifier);
-                List<PortalParticipant> uploadParticipants = new List<PortalParticipant>();
-                foreach (Participant participant in participants)
-                {
-                    uploadParticipants.Add(new PortalParticipant
-                    {
-                        Identifier = participant.Identifier.ToString(),
-                        Bib = participant.Bib,
-                        First = participant.FirstName,
-                        Last = participant.LastName,
-                        Birthdate = participant.Birthdate,
-                        Gender = participant.Gender,
-                        AgeGroup = participant.EventSpecific.AgeGroupName,
-                        Distance = participant.Distance,
-                        Anonymous = participant.Anonymous,
-                        SMSEnabled = participant.EventSpecific.SMSEnabled,
-                        Mobile = participant.Mobile,
-                        Apparel = participant.EventSpecific.Apparel,
-                    });
-                }
-                reader.SendUploadParticipants(uploadParticipants);
-                List<BibChipAssociation> bibChips = database.GetBibChips(theEvent.Identifier);
-                List<BibChip> uploadBibChips = new List<BibChip>();
-                foreach (BibChipAssociation bibchip in bibChips)
-                {
-                    uploadBibChips.Add(new BibChip
-                    {
-                        Bib = bibchip.Bib,
-                        Chip = bibchip.Chip,
-                    });
-                }
-                reader.SendUploadBibChips(uploadBibChips);
-                DialogBox.Show("Participants successfully uploaded.");
-            }
-            catch (Exception ex)
-            {
-                Log.E("UI.Timing.ReaderSettings.ChronokeepSettings", string.Format("something went wrong trying to upload participants: " + ex.Message));
-                DialogBox.Show("Something went wrong uploading participants.");
-            }
-        }
-
-        private void removeParticipantsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Remove participants button clicked.");
-            DialogBox.Show(
-                "This is not reversable, are you sure you want to do this?",
-                "Yes",
-                "No",
-                () =>
-                {
-                    reader.SendRemoveParticipants();
-                }
-                );
-        }
-
         private void stopServerButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Stop button clicked.");
@@ -138,45 +73,11 @@ namespace Chronokeep.UI.Timing.ReaderSettings
         {
             Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Save button clicked.");
             saving = true;
-            int window = 0;
-            string[] split = sightingPeriodBox.Text.Split(':');
-            if (split.Length > 0)
-            {
-                switch (split.Length)
-                {
-                    case 1:
-                        int.TryParse(split[0], out window);
-                        break;
-                    case 2:
-                        if (split[1].Length == 2)
-                        {
-                            int minutes, seconds;
-                            if (int.TryParse(split[0], out minutes) &&
-                                int.TryParse(split[1], out seconds)) {
-                                window = seconds + (minutes * 60);
-                            }
-                        }
-                        break;
-                    case 3:
-                        if (split[1].Length == 2 && split[2].Length == 2)
-                        {
-                            int hours, minutes, seconds;
-                            if (int.TryParse(split[0], out hours) &&
-                                int.TryParse(split[1], out minutes) &&
-                                int.TryParse(split[2], out seconds))
-                            {
-                                window = seconds + (minutes * 60) + (hours * 3600);
-                            }
-                        }
-                        break;
-                }
-            }
             try
             {
                 PortalSettingsHolder sett = new PortalSettingsHolder
                 {
                     Name = nameBox.Text.Trim(),
-                    SightingPeriod = window,
                     ReadWindow = int.Parse(readWindowBox.Text.Trim()),
                     ChipType = chipTypeBox.SelectedIndex == 0 ? PortalSettingsHolder.ChipTypeEnum.DEC
                         : PortalSettingsHolder.ChipTypeEnum.HEX,
@@ -214,9 +115,9 @@ namespace Chronokeep.UI.Timing.ReaderSettings
             {
                 Id = -1,
                 Nickname = "New API",
-                Kind = PortalAPI.API_TYPE_CHRONOKEEP_RESULTS,
+                Kind = PortalAPI.API_TYPE_CHRONOKEEP_REMOTE,
                 Token = Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
-                Uri = PortalAPI.API_URI_CHRONOKEEP_RESULTS,
+                Uri = PortalAPI.API_URI_CHRONOKEEP_REMOTE,
             });
         }
 
@@ -239,14 +140,6 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     }
 
                     nameBox.Text = allSettings.Name;
-                    if (allSettings.SightingPeriod > 3600)
-                    {
-                        sightingPeriodBox.Text = Constants.Timing.SecondsToTime(allSettings.SightingPeriod);
-                    }
-                    else
-                    {
-                        sightingPeriodBox.Text = string.Format("{0}:{1:D2}", allSettings.SightingPeriod / 60, allSettings.SightingPeriod % 60);
-                    }
                     readWindowBox.Text = allSettings.ReadWindow.ToString();
                     chipTypeBox.SelectedIndex = allSettings.ChipType == PortalSettingsHolder.ChipTypeEnum.DEC ? 0 : 1;
                     volumeSlider.Value = allSettings.Volume * 10;
@@ -789,16 +682,6 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     Content = "Remote Self",
                     Uid = PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF
                 });
-                kindBox.Items.Add(new ComboBoxItem()
-                {
-                    Content = "Results",
-                    Uid = PortalAPI.API_TYPE_CHRONOKEEP_RESULTS
-                });
-                kindBox.Items.Add(new ComboBoxItem()
-                {
-                    Content = "Results Self",
-                    Uid = PortalAPI.API_TYPE_CHRONOKEEP_RESULTS_SELF
-                });
                 switch (api.Kind)
                 {
                     case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE:
@@ -806,12 +689,6 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                         break;
                     case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF:
                         kindBox.SelectedIndex = 1;
-                        break;
-                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS:
-                        kindBox.SelectedIndex = 2;
-                        break;
-                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS_SELF:
-                        kindBox.SelectedIndex = 3;
                         break;
                     default:
                         kindBox.SelectedIndex = 0;
@@ -878,12 +755,6 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                     case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF:
                         kindBox.SelectedIndex = 1;
                         break;
-                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS:
-                        kindBox.SelectedIndex = 2;
-                        break;
-                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS_SELF:
-                        kindBox.SelectedIndex = 3;
-                        break;
                     default:
                         kindBox.SelectedIndex = 0;
                         break;
@@ -901,12 +772,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                         uriBox.Visibility = Visibility.Collapsed;
                         uriBox.Text = PortalAPI.API_URI_CHRONOKEEP_REMOTE;
                         break;
-                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS:
-                        uriBox.Visibility = Visibility.Collapsed;
-                        uriBox.Text = PortalAPI.API_URI_CHRONOKEEP_RESULTS;
-                        break;
                     case PortalAPI.API_TYPE_CHRONOKEEP_REMOTE_SELF:
-                    case PortalAPI.API_TYPE_CHRONOKEEP_RESULTS_SELF:
                     default:
                         uriBox.Visibility = Visibility.Visible;
                         uriBox.Text = api.Uri;

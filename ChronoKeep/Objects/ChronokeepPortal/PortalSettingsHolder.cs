@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Chronokeep.Objects.ChronokeepPortal
 {
@@ -33,7 +32,6 @@ namespace Chronokeep.Objects.ChronokeepPortal
         }
 
         public string Name { get; set; }
-        public int SightingPeriod { get; set; }
         public int ReadWindow { get; set; }
         public ChipTypeEnum ChipType { get; set; }
         public bool PlaySound { get; set; }

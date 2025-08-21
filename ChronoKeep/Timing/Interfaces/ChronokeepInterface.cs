@@ -85,7 +85,6 @@ namespace Chronokeep.Timing.Interfaces
                         SendMessage(JsonSerializer.Serialize(new ConnectRequest
                         {
                             Reads = true,
-                            Sightings = false,
                         }));
                         output.Add(sock);
                     }
@@ -267,9 +266,6 @@ namespace Chronokeep.Timing.Interfaces
                                             case PortalSetting.SETTING_PORTAL_NAME:
                                                 updSettings.Name = set.Value;
                                                 break;
-                                            case PortalSetting.SETTING_SIGHTING_PERIOD:
-                                                updSettings.SightingPeriod = int.Parse(set.Value);
-                                                break;
                                             case PortalSetting.SETTING_READ_WINDOW:
                                                 updSettings.ReadWindow = int.Parse(set.Value);
                                                 break;
@@ -392,9 +388,6 @@ namespace Chronokeep.Timing.Interfaces
                                         {
                                             case PortalSetting.SETTING_PORTAL_NAME:
                                                 updSettings.Name = set.Value;
-                                                break;
-                                            case PortalSetting.SETTING_SIGHTING_PERIOD:
-                                                updSettings.SightingPeriod = int.Parse(set.Value);
                                                 break;
                                             case PortalSetting.SETTING_READ_WINDOW:
                                                 updSettings.ReadWindow = int.Parse(set.Value);
@@ -571,18 +564,6 @@ namespace Chronokeep.Timing.Interfaces
                                 }
                                 errorList.Add("Error processing time message.");
                             }
-                            break;
-                        case Response.PARTICIPANTS:
-                            Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent participants message.");
-                            break;
-                        case Response.SIGHTINGS:
-                            Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent sightings message.");
-                            break;
-                        case Response.EVENTS:
-                            Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent events message.");
-                            break;
-                        case Response.EVENT_YEARS:
-                            Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent event years message.");
                             break;
                         case Response.READ_AUTO_UPLOAD:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent read auto upload message.");
@@ -804,11 +785,6 @@ namespace Chronokeep.Timing.Interfaces
             });
             settingsReq.Settings.Add(new PortalSetting
             {
-                Name = PortalSetting.SETTING_SIGHTING_PERIOD,
-                Value = settings.SightingPeriod.ToString()
-            });
-            settingsReq.Settings.Add(new PortalSetting
-            {
                 Name = PortalSetting.SETTING_READ_WINDOW,
                 Value = settings.ReadWindow.ToString()
             });
@@ -866,80 +842,6 @@ namespace Chronokeep.Timing.Interfaces
                 Value = settings.EnableNTFY == true ? "true" : "false",
             });
             SendMessage(JsonSerializer.Serialize(settingsReq));
-        }
-
-        public void SendUploadParticipants(List<PortalParticipant> participants)
-        {
-            if (participants.Count > PARTICIPANTS_COUNT)
-            {
-                int loopCounter = participants.Count / PARTICIPANTS_COUNT;
-                int leftOver = participants.Count % PARTICIPANTS_COUNT;
-                for (int ix = 0; ix < loopCounter; ix++)
-                {
-                    Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} participants starting at {1}", PARTICIPANTS_COUNT, ix * PARTICIPANTS_COUNT));
-                    SendMessage(JsonSerializer.Serialize(new ParticipantsAddRequest
-                    {
-                        Participants = participants.GetRange(ix * PARTICIPANTS_COUNT, PARTICIPANTS_COUNT)
-                    }));
-                }
-                if (leftOver > 0)
-                {
-                    Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} participants starting at {1}", leftOver, loopCounter * PARTICIPANTS_COUNT));
-                    SendMessage(JsonSerializer.Serialize(new ParticipantsAddRequest
-                    {
-                        Participants = participants.GetRange(loopCounter * PARTICIPANTS_COUNT, leftOver)
-                    }));
-                }
-            }
-            else
-            {
-                SendMessage(JsonSerializer.Serialize(new ParticipantsAddRequest
-                {
-                    Participants = participants
-                }));
-            }
-        }
-
-        public void SendUploadBibChips(List<BibChip> bibChips)
-        {
-            if (bibChips.Count > PARTICIPANTS_COUNT)
-            {
-                int loopCounter = bibChips.Count / PARTICIPANTS_COUNT;
-                int leftover = bibChips.Count % PARTICIPANTS_COUNT;
-                for (int ix = 0; ix < loopCounter; ix++)
-                {
-                    Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} bibchips starting at {1}", PARTICIPANTS_COUNT, ix * PARTICIPANTS_COUNT));
-                    SendMessage(JsonSerializer.Serialize(new BibChipsAddRequest
-                    {
-                        BibChips = bibChips.GetRange(ix * PARTICIPANTS_COUNT, PARTICIPANTS_COUNT)
-                    }));
-                }
-                if (leftover > 0)
-                {
-                    Log.D("Timing.Interfaces.ChronokeepInterface", string.Format("Sending {0} bibchips starting at {1}", leftover, loopCounter * PARTICIPANTS_COUNT));
-                    SendMessage(JsonSerializer.Serialize(new BibChipsAddRequest
-                    {
-                        BibChips = bibChips.GetRange(loopCounter * PARTICIPANTS_COUNT, leftover)
-                    }));
-                }
-            }
-            else
-            {
-                SendMessage(JsonSerializer.Serialize(new BibChipsAddRequest
-                {
-                    BibChips = bibChips
-                }));
-            }
-        }
-
-        public void SendRemoveParticipants()
-        {
-            SendMessage(JsonSerializer.Serialize(new ParticipantsRemoveRequest()));
-        }
-
-        public void SendRemoveBibChips()
-        {
-            SendMessage(JsonSerializer.Serialize(new BibChipsRemoveRequest()));
         }
 
         public void SendSaveApi(PortalAPI api)

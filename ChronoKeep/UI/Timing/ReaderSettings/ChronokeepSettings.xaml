@@ -53,20 +53,6 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
-                        Text="Sighting Period"
-                        TextAlignment="Right"
-                        VerticalAlignment="Center"
-                        Width="120"
-                        Margin="5,5,5,5"
-                        />
-                    <TextBox
-                        Name="sightingPeriodBox"
-                        Width="250"
-                        Margin="5,5,5,5"
-                        />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock
                         Text="Read Window"
                         TextAlignment="Right"
                         VerticalAlignment="Center"
@@ -305,24 +291,6 @@
                         </StackPanel>
                     </StackPanel>
                 </Expander>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button
-                        Content="Upload Participants"
-                        x:Name="uploadParticipantsButton"
-                        Click="uploadParticipantsButton_Click"
-                        Width="185"
-                        Height="35"
-                        Margin="5,5,5,5"
-                        />
-                    <Button
-                        Content="Remove Participants"
-                        x:Name="removeParticipantsButton"
-                        Click="removeParticipantsButton_Click"
-                        Width="185"
-                        Height="35"
-                        Margin="5,5,5,5"
-                        />
-                </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
                         Text="Upload Interval"

@@ -2,6 +2,7 @@
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.API;
+using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.UI.IO;
 using Chronokeep.UI.Participants;

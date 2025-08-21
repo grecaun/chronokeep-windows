@@ -8,7 +8,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using static Chronokeep.Network.Util.Helpers;
-using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronoKeepAPI;
 
 namespace Chronokeep.Network.API

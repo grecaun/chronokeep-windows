@@ -4,11 +4,8 @@ namespace Chronokeep.Objects.ChronokeepPortal
 {
     public class PortalAPI
     {
-        public const string API_TYPE_CHRONOKEEP_RESULTS       = "CHRONOKEEP_RESULTS";
-        public const string API_TYPE_CHRONOKEEP_RESULTS_SELF  = "CHRONOKEEP_RESULTS_SELF";
         public const string API_TYPE_CHRONOKEEP_REMOTE        = "CHRONOKEEP_REMOTE";
         public const string API_TYPE_CHRONOKEEP_REMOTE_SELF   = "CHRONOKEEP_REMOTE_SELF";
-        public const string API_URI_CHRONOKEEP_RESULTS        = @"https://api.chronokeep.com/";
         public const string API_URI_CHRONOKEEP_REMOTE         = @"https://remote.chronokeep.com/";
 
         [JsonPropertyName("id")]

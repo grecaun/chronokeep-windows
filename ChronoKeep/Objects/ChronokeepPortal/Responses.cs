@@ -14,10 +14,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public const string READS                 = "reads";
         public const string SUCCESS               = "success";
         public const string TIME                  = "time";
-        public const string PARTICIPANTS          = "participants";
-        public const string SIGHTINGS             = "sightings";
-        public const string EVENTS                = "events";
-        public const string EVENT_YEARS           = "event_years";
         public const string READ_AUTO_UPLOAD      = "read_auto_upload";
         public const string CONNECTION_SUCCESSFUL = "connection_successful";
         public const string KEEPALIVE             = "keepalive";
@@ -94,20 +90,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public string UTC { get; set; }
     }
 
-    public class ParticipantsResponse : Response
-    {
-        [JsonPropertyName("participants")]
-        public List<PortalParticipant> List { get; set; }
-    }
-
-    public class SightingsResponse : Response
-    {
-        [JsonPropertyName("list")]
-        public List<PortalSighting> List { get; set; }
-        [JsonPropertyName("bib_chips")]
-        public List<BibChip> BibChips { get; set; }
-    }
-
     public class EventsResponse : Response
     {
         [JsonPropertyName("events")]
@@ -136,8 +118,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Responses
         public ulong Version { get; set; }
         [JsonPropertyName("reads_subscribed")]
         public bool ReadsSubscribed { get; set; }
-        [JsonPropertyName("sightings_subscribed")]
-        public bool SightingsSubscrubed { get; set; }
         [JsonPropertyName("readers")]
         public List<PortalReader> Readers { get; set; }
         [JsonPropertyName("updatable")]

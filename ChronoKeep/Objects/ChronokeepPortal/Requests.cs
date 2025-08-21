@@ -14,9 +14,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public const string API_REMOTE_AUTO_UPLOAD        = "api_remote_auto_upload";
         public const string API_REMOTE_MANUAL_UPLOAD      = "api_remote_manual_upload";
         public const string API_REMOVE                    = "api_remove";
-        public const string API_RESULTS_EVENTS_GET        = "api_results_events_get";
-        public const string API_RESULTS_EVENT_YEARS_GET   = "api_results_event_years_get";
-        public const string API_RESULTS_PARTICIPANTS_GET  = "api_results_participants_get";
 
         // Connection or program related requests
         public const string CONNECT       = "connect"; 
@@ -25,16 +22,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public const string QUIT          = "quit";
         public const string SHUTDOWN      = "shutdown";
         public const string RESTART       = "restart";
-
-        // Participants related requests
-        public const string PARTICIPANTS_GET      = "participants_get";
-        public const string PARTICIPANTS_REMOVE   = "participants_remove";
-        public const string PARTICIPANTS_ADD      = "participants_add";
-
-        // BibChips related requests
-        public const string BIBCHIPS_GET          = "bib_chips_get";
-        public const string BIBCHIPS_REMOVE       = "bib_chips_remove";
-        public const string BIBCHIPS_ADD          = "bib_chips_add";
 
         // Reader related requests
         public const string READER_ADD        = "reader_add";
@@ -53,16 +40,13 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public const string READS_DELETE      = "reads_delete";
         public const string READS_GET_ALL     = "reads_get_all";
         public const string READS_GET         = "reads_get";
-        public const string SIGHTINGS_GET_ALL = "sightings_get_all";
-        public const string SIGHTINGS_GET     = "sightings_get";
-        public const string SIGHTINGS_DELETE  = "sightings_delete";
 
         // Settings related requests
         public const string SETTINGS_SET      = "settings_set";
         public const string SETTINGS_GET      = "settings_get";
         public const string SETTINGS_GET_ALL  = "settings_get_all";
 
-        // Subscription request to subscribe to new reads/sightings
+        // Subscription request to subscribe to new reads
         public const string SUBSCRIBE = "subscribe";
 
         // Time related requests
@@ -153,45 +137,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long ID { get; set; }
     }
 
-    public class ApiResultsEventGetRequest : Request
-    {
-        public ApiResultsEventGetRequest()
-        {
-            Command = API_RESULTS_EVENTS_GET;
-        }
-
-        [JsonPropertyName("api_id")]
-        public long APIID { get; set; }
-    }
-
-    public class ApiResultsEventYearGetRequest : Request
-    {
-        public ApiResultsEventYearGetRequest()
-        {
-            Command = API_RESULTS_EVENT_YEARS_GET;
-        }
-
-        [JsonPropertyName("api_id")]
-        public long APIID { get; set; }
-        [JsonPropertyName("event_slug")]
-        public string EventSlug { get; set; }
-    }
-
-    public class ApiResultsParticipantsGetRequest : Request
-    {
-        public ApiResultsParticipantsGetRequest()
-        {
-            Command = API_RESULTS_PARTICIPANTS_GET;
-        }
-
-        [JsonPropertyName("api_id")]
-        public long APIID { get; set; }
-        [JsonPropertyName("event_slug")]
-        public string EventSlug { get; set; }
-        [JsonPropertyName("event_year")]
-        public string EventYear { get; set; }
-    }
-
     public class ConnectRequest : Request
     {
         public ConnectRequest()
@@ -201,8 +146,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
 
         [JsonPropertyName("reads")]
         public bool Reads { get; set; }
-        [JsonPropertyName("sightings")]
-        public bool Sightings { get; set; }
     }
 
     public class DisconnectRequest : Request
@@ -243,60 +186,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         {
             Command = RESTART;
         }
-    }
-
-    public class ParticipantsGetRequest : Request
-    {
-        public ParticipantsGetRequest()
-        {
-            Command = PARTICIPANTS_GET;
-        }
-    }
-
-    public class ParticipantsRemoveRequest : Request
-    {
-        public ParticipantsRemoveRequest()
-        {
-            Command = PARTICIPANTS_REMOVE;
-        }
-    }
-
-    public class ParticipantsAddRequest : Request
-    {
-        public ParticipantsAddRequest()
-        {
-            Command = PARTICIPANTS_ADD;
-        }
-
-        [JsonPropertyName("participants")]
-        public List<PortalParticipant> Participants { get; set; }
-    }
-
-    public class BibChipsGetRequest : Request
-    {
-        public BibChipsGetRequest()
-        {
-            Command = BIBCHIPS_GET;
-        }
-    }
-
-    public class BibChipsRemoveRequest : Request
-    {
-        public BibChipsRemoveRequest()
-        {
-            Command = BIBCHIPS_REMOVE;
-        }
-    }
-
-    public class BibChipsAddRequest : Request
-    {
-        public BibChipsAddRequest()
-        {
-            Command = BIBCHIPS_ADD;
-        }
-
-        [JsonPropertyName("bib_chips")]
-        public List<BibChip> BibChips { get; set; }
     }
 
     public class ReaderAddRequest : Request
@@ -452,35 +341,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public long EndSeconds { get; set; }
     }
 
-    public class SightingsGetAllRequest : Request
-    {
-        public SightingsGetAllRequest()
-        {
-            Command = SIGHTINGS_GET_ALL;
-        }
-    }
-
-    public class SightingsGetRequest : Request
-    {
-        public SightingsGetRequest()
-        {
-            Command = SIGHTINGS_GET;
-        }
-
-        [JsonPropertyName("start_seconds")]
-        public long StartSeconds { get; set; }
-        [JsonPropertyName("end_seconds")]
-        public long EndSeconds { get; set; }
-    }
-
-    public class SightingsDeleteRequest : Request
-    {
-        public SightingsDeleteRequest()
-        {
-            Command = SIGHTINGS_DELETE;
-        }
-    }
-
     public class SettingsSetRequest : Request
     {
         public SettingsSetRequest()
@@ -517,8 +377,6 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
 
         [JsonPropertyName("reads")]
         public bool Reads { get; set; }
-        [JsonPropertyName("sightings")]
-        public bool Sightings { get; set; }
     }
 
     public class TimeGetRequest : Request
