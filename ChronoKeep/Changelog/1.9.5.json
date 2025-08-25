@@ -1,0 +1,12 @@
+{
+  "version": "v1.9.5",
+  "changes": [
+    "The Chronokeep Portal settings window now has an update button and some options have moved.",
+    "The previous change adding the reader name to the raw chip reads data page has been reverted.",
+    "The constructor for a Chip Read from a Chronokeep Portal device now takes the box name in to properly identify it on the Raw Reads data page.",
+    "Due to changes in the Version 1.1.0 version of the Chronokeep Portal software, some code has been removed from the API for said boxes.",
+    "Due to changes in the Version 1.1.0 version of the Chronokeep Portal software, some options on the settings page for said boxes have been removed."
+  ],
+  "fixes": [
+  ]
+}
