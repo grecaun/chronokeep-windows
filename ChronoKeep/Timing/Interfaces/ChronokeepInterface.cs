@@ -761,6 +761,12 @@ namespace Chronokeep.Timing.Interfaces
             wasShutdown = true;
         }
 
+        public void SendUpdate()
+        {
+            SendMessage(JsonSerializer.Serialize(new UpdateRequest { }));
+            wasShutdown = true;
+        }
+
         public void SendShutdown()
         {
             SendMessage(JsonSerializer.Serialize(new ShutdownRequest { }));

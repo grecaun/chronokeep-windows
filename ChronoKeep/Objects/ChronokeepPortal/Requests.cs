@@ -22,6 +22,7 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public const string QUIT          = "quit";
         public const string SHUTDOWN      = "shutdown";
         public const string RESTART       = "restart";
+        public const string UPDATE        = "update";
 
         // Reader related requests
         public const string READER_ADD        = "reader_add";
@@ -185,6 +186,14 @@ namespace Chronokeep.Objects.ChronokeepPortal.Requests
         public RestartRequest()
         {
             Command = RESTART;
+        }
+    }
+
+    public class UpdateRequest : Request
+    {
+        public UpdateRequest()
+        {
+            Command = UPDATE;
         }
     }
 

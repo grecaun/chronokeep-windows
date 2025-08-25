@@ -837,9 +837,25 @@ namespace Chronokeep.UI.Timing.ReaderSettings
                 "Yes",
                 "No",
                 () =>
+                    {
+                        // send restart command
+                        reader.SendRestart();
+                        this.Close();
+                    }
+                );
+        }
+
+        private void updateServerButton_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.Timing.ReaderSettings.ChronokeepSettings", "Update button clicked.");
+            DialogBox.Show(
+                "This will update the portal software. Do you want to proceed?",
+                "Yes",
+                "No",
+                () =>
                 {
-                    // send restart command
-                    reader.SendRestart();
+                    // send update command
+                    reader.SendUpdate();
                     this.Close();
                 }
                 );

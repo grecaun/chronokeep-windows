@@ -321,6 +321,21 @@
                         />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <ui:ToggleSwitch
+                        Content="Auto Upload Results"
+                        x:Name="autoResultsSwitch"
+                        Click="autoResultsSwitch_Checked"
+                        Height="35"
+                        Margin="5,5,5,10"
+                        />
+                    <ui:ToggleSwitch
+                        Content="Enable NTFY"
+                        x:Name="enableNTFYSwitch"
+                        Height="35"
+                        Margin="10,5,5,5"
+                        />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button
                         Content="Manual Results Upload"
                         x:Name="manualResultsButton"
@@ -329,25 +344,6 @@
                         Height="35"
                         Margin="5,5,5,5"
                         />
-                    <ui:ToggleSwitch
-                        Content="Auto Upload Results"
-                        x:Name="autoResultsSwitch"
-                        Click="autoResultsSwitch_Checked"
-                        Width="180"
-                        Height="35"
-                        Margin="10,5,5,5"
-                        />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <ui:ToggleSwitch
-                        Content="Enable NTFY"
-                        x:Name="enableNTFYSwitch"
-                        Width="180"
-                        Height="35"
-                        Margin="5,5,5,5"
-                        />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button
                         Content="Clear Reads"
                         x:Name="deleteReadsButton"
@@ -356,10 +352,20 @@
                         Height="35"
                         Margin="5,5,5,5"
                         />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button
-                        Content="Stop Server"
-                        x:Name="stopServerButton"
-                        Click="stopServerButton_Click"
+                        Content="Update Server"
+                        x:Name="updateServerButton"
+                        Click="updateServerButton_Click"
+                        Width="185"
+                        Height="35"
+                        Margin="5,5,5,5"
+                        />
+                    <Button
+                        Content="Restart Server"
+                        x:Name="restartServerButton"
+                        Click="restartServerButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"
@@ -367,9 +373,9 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button
-                        Content="Restart Server"
-                        x:Name="restartServerButton"
-                        Click="restartServerButton_Click"
+                        Content="Stop Server"
+                        x:Name="stopServerButton"
+                        Click="stopServerButton_Click"
                         Width="185"
                         Height="35"
                         Margin="5,5,5,5"
