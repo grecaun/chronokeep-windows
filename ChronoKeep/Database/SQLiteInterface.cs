@@ -12,10 +12,10 @@ namespace Chronokeep
     class SQLiteInterface : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 169
-         * NEXT AVAILABLE   = 170
+         * HIGHEST MUTEX ID = 170
+         * NEXT AVAILABLE   = 171
          */
-        private readonly int version = 70;
+        private readonly int version = 71;
         public const int minimum_compatible_version = 63;
         readonly string connectionInfo;
         readonly Mutex mutex = new Mutex();
@@ -322,7 +322,7 @@ namespace Chronokeep
             return output;
         }
 
-        public void SetStartWindow(Event anEvent)
+        public void SetStartOptions(Event anEvent)
         {
             Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 17");
             if (!mutex.WaitOne(3000))
@@ -332,7 +332,7 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            Events.SetStartWindow(anEvent, connection);
+            Events.SetStartOptions(anEvent, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }
@@ -348,6 +348,21 @@ namespace Chronokeep
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
             Events.SetFinishOptions(anEvent, connection);
+            connection.Close();
+            mutex.ReleaseMutex();
+        }
+
+        public void SetStartFinishOptions(Event anEvent)
+        {
+            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 170");
+            if (!mutex.WaitOne(3000))
+            {
+                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 170");
+                return;
+            }
+            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            connection.Open();
+            Events.SetStartFinishOptions(anEvent, connection);
             connection.Close();
             mutex.ReleaseMutex();
         }

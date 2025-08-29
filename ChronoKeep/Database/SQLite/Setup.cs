@@ -90,7 +90,8 @@ namespace Chronokeep.Database.SQLite
                     "event_finish_max_occurances INTEGER NOT NULL DEFAULT 1," +
                     "event_finish_ignore_within INTEGER NOT NULL DEFAULT 0," +
                     "event_start_window INTEGER NOT NULL DEFAULT -1," +
-                    "event_age_groups_as_divisions INTEGER NOT NULL DEFAULT "+ Constants.Timing.AGEGROUPS_LASTGROUP_FALSE +"," +
+                    "event_start_max_occurrences INTEGER NOT NULL DEFAULT 1," +
+                    "event_age_groups_as_divisions INTEGER NOT NULL DEFAULT " + Constants.Timing.AGEGROUPS_LASTGROUP_FALSE +"," +
                     "event_type INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENT_TYPE_DISTANCE + "," +
                     "event_days_allowed INTEGER NOT NULL DEFAULT 1," +
                     "event_upload_specific_distance_results INTEGER NOT NULL DEFAULT 0," +

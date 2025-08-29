@@ -40,7 +40,7 @@ namespace Chronokeep.UI.MainPages
                 return;
             }
             LocationsBox.Items.Clear();
-            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow), theEvent));
+            LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", theEvent.StartMaxOccurrences, theEvent.StartWindow), theEvent));
             LocationsBox.Items.Add(new ALocation(this, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin), theEvent));
             List<TimingLocation> locations = database.GetTimingLocations(theEvent.Identifier);
             LocationCount = 1;
@@ -108,10 +108,13 @@ namespace Chronokeep.UI.MainPages
                 }
                 else if (locItem.myLocation.Identifier == Constants.Timing.LOCATION_START)
                 {
-                    if (theEvent.StartWindow != locItem.myLocation.IgnoreWithin)
+                    if (theEvent.StartWindow != locItem.myLocation.IgnoreWithin
+                        || theEvent.StartMaxOccurrences != locItem.myLocation.MaxOccurrences)
                     {
                         theEvent.StartWindow = locItem.myLocation.IgnoreWithin;
-                        database.SetStartWindow(theEvent);
+                        theEvent.StartMaxOccurrences = locItem.myLocation.MaxOccurrences;
+                        database.SetStartOptions(theEvent);
+                        UpdateTimingWorker = true;
                     }
                 }
                 else
@@ -219,7 +222,8 @@ namespace Chronokeep.UI.MainPages
                 DockPanel ignPanel = new DockPanel();
                 string labelLabel = myLocation.Identifier == Constants.Timing.LOCATION_START ? "Start Window" : "Ignore Within";
                 int labelWidth = 120;
-                if (myLocation.Identifier == Constants.Timing.LOCATION_START || Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
+                if (Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType
+                    || (Constants.Timing.LOCATION_START == myLocation.Identifier && theEvent.CommonStartFinish))
                 {
                     occPanel.Visibility = Visibility.Collapsed;
                     labelWidth = 140;
@@ -248,7 +252,8 @@ namespace Chronokeep.UI.MainPages
                 IgnoreWithin.GotFocus += new RoutedEventHandler(this.SelectAll);
                 ignPanel.Children.Add(IgnoreWithin);
                 settingsGrid.Children.Add(ignPanel);
-                if (myLocation.Identifier != Constants.Timing.LOCATION_START && Constants.Timing.EVENT_TYPE_TIME != theEvent.EventType)
+                if (Constants.Timing.EVENT_TYPE_TIME != theEvent.EventType
+                    && !(Constants.Timing.LOCATION_START == myLocation.Identifier && theEvent.CommonStartFinish))
                 {
                     Grid.SetColumn(ignPanel, 1);
                 }

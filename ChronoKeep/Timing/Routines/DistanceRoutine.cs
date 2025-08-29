@@ -13,19 +13,19 @@ namespace Chronokeep.Timing.Routines
             // Check if there's anything to process.
             // Pre-process information we'll need to fully process chip reads
             // Get start TimeResults
-            Dictionary<string, TimeResult> startTimes = new Dictionary<string, TimeResult>();
+            Dictionary<string, TimeResult> startTimes = [];
             foreach (TimeResult result in database.GetStartTimes(theEvent.Identifier))
             {
                 startTimes[result.Identifier] = result;
             }
             // Get finish TimeResults
-            Dictionary<string, TimeResult> finishTimes = new Dictionary<string, TimeResult>();
+            Dictionary<string, TimeResult> finishTimes = [];
             foreach (TimeResult result in database.GetFinishTimes(theEvent.Identifier))
             {
                 finishTimes[result.Identifier] = result;
             }
             // Get the last known time we've seen each participant
-            Dictionary<int, TimeResult> LastSeen = new Dictionary<int, TimeResult>();
+            Dictionary<int, TimeResult> LastSeen = [];
             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
             {
                 // if there is no time result
@@ -40,21 +40,21 @@ namespace Chronokeep.Timing.Routines
             // Get all of the Chip Reads we find useful (Unprocessed, and those used as a result.)
             // and then sort them into groups based upon Bib, Chip, or put them in the ignore pile if
             // they have no bib or chip.
-            Dictionary<string, List<ChipRead>> bibReadPairs = new Dictionary<string, List<ChipRead>>();
-            Dictionary<string, List<ChipRead>> chipReadPairs = new Dictionary<string, List<ChipRead>>();
+            Dictionary<string, List<ChipRead>> bibReadPairs = [];
+            Dictionary<string, List<ChipRead>> chipReadPairs = [];
             // Make sure we keep track of the
             // last occurrence for a person at a specific location.
             // (Bib, Location), Last Chip Read
-            Dictionary<(string, int), (ChipRead Read, int Occurrence)> bibLastReadDictionary = new Dictionary<(string, int), (ChipRead, int)>();
-            Dictionary<(string, int), (ChipRead Read, int Occurrence)> chipLastReadDictionary = new Dictionary<(string, int), (ChipRead Read, int Occurrence)>();
+            Dictionary<(string, int), (ChipRead Read, int Occurrence)> bibLastReadDictionary = [];
+            Dictionary<(string, int), (ChipRead Read, int Occurrence)> chipLastReadDictionary = [];
             // Keep a list of DNF participants so we can mark them as DNF in results.
             // Keep a record of the DNF chipread so we can link it with the TimeResult
-            Dictionary<string, ChipRead> bibDNFDictionary = new Dictionary<string, ChipRead>();
-            Dictionary<string, ChipRead> chipDNFDictionary = new Dictionary<string, ChipRead>();
+            Dictionary<string, ChipRead> bibDNFDictionary = [];
+            Dictionary<string, ChipRead> chipDNFDictionary = [];
             // Keep a list of DNS participants so we can mark them as DNS in results.
             // Keep a record of the DNS chipread so we can link it with the TimeResult
-            Dictionary<string, ChipRead> bibDNSDictionary = new Dictionary<string, ChipRead>();
-            Dictionary<string, ChipRead> chipDNSDictionary = new Dictionary<string, ChipRead>();
+            Dictionary<string, ChipRead> bibDNSDictionary = [];
+            Dictionary<string, ChipRead> chipDNSDictionary = [];
 
             List<ChipRead> allChipReads = database.GetUsefulChipReads(theEvent.Identifier);
             allChipReads.Sort();
@@ -204,34 +204,30 @@ namespace Chronokeep.Timing.Routines
                 }
             }
             // Go through each chip read for a single person.
-            List<TimeResult> newResults = new List<TimeResult>();
+            List<TimeResult> newResults = [];
             // Keep a list of participants to update.
-            HashSet<Participant> updateParticipants = new HashSet<Participant>();
+            HashSet<Participant> updateParticipants = [];
             // process reads that have a bib
             foreach (string bib in bibReadPairs.Keys)
             {
-                Participant part = dictionary.participantBibDictionary.ContainsKey(bib) ?
-                    dictionary.participantBibDictionary[bib] :
-                    null;
-                Distance d = part != null ?
-                    dictionary.distanceDictionary[part.EventSpecific.DistanceIdentifier] :
-                    null;
+                Participant part = dictionary.participantBibDictionary.TryGetValue(bib, out Participant partValue) ? partValue : null;
+                Distance d = part != null ? dictionary.distanceDictionary[part.EventSpecific.DistanceIdentifier] : null;
                 long startSeconds, maxStartSeconds;
                 int startMilliseconds;
                 TimeResult startResult = null;
-                if (startTimes.ContainsKey(TimeResult.BibToIdentifier(bib)))
+                if (startTimes.TryGetValue(TimeResult.BibToIdentifier(bib), out startResult) == false)
                 {
-                    startResult = startTimes[TimeResult.BibToIdentifier(bib)];
+                    startResult = null;
                 }
-                if (d == null || !dictionary.distanceStartDict.ContainsKey(d.Identifier))
+                if (d == null || !dictionary.distanceStartDict.TryGetValue(d.Identifier, out (long Seconds, int Milliseconds) timeValue))
                 {
                     startSeconds = dictionary.distanceStartDict[0].Seconds;
                     startMilliseconds = dictionary.distanceStartDict[0].Milliseconds;
                 }
                 else
                 {
-                    startSeconds = dictionary.distanceStartDict[d.Identifier].Seconds;
-                    startMilliseconds = dictionary.distanceStartDict[d.Identifier].Milliseconds;
+                    startSeconds = timeValue.Seconds;
+                    startMilliseconds = timeValue.Milliseconds;
                 }
                 maxStartSeconds = startSeconds + theEvent.StartWindow;
                 foreach (ChipRead read in bibReadPairs[bib])
@@ -310,31 +306,36 @@ namespace Chronokeep.Timing.Routines
                                 read.Status = Constants.Timing.CHIPREAD_STATUS_STARTTIME;
                             }
                             // Possible reads at this point:
-                            //      Start Location reads past the StartWindow (IGNORE)
+                            //      Start Location reads past the StartWindow
                             //      Start/Finish Location reads past the StartWindow (Valid reads)
                             //          These could be BEFORE or AFTER the last occurrence at this spot
                             //      Reads at any other location
-                            else if (Constants.Timing.LOCATION_START != read.LocationID)
+                            else
                             {
                                 int maxOccurrences = 0;
                                 if (Constants.Timing.LOCATION_FINISH == read.LocationID)
                                 {
                                     maxOccurrences = theEvent.FinishMaxOccurrences;
                                 }
+                                else if (Constants.Timing.LOCATION_START == read.LocationID)
+                                {
+                                    maxOccurrences = theEvent.StartMaxOccurrences - 1;
+                                }
                                 else
                                 {
-                                    if (!dictionary.locationDictionary.ContainsKey(read.LocationID))
+                                    if (dictionary.locationDictionary.TryGetValue(read.LocationID, out TimingLocation locationValue))
                                     {
-                                        Log.E("Timing.Routines.DistanceRoutine", "Somehow the location was not found.");
+                                        maxOccurrences = locationValue.MaxOccurrences;
                                     }
                                     else
                                     {
-                                        maxOccurrences = dictionary.locationDictionary[read.LocationID].MaxOccurrences;
+                                        Log.E("Timing.Routines.DistanceRoutine", "Somehow the location was not found.");
                                     }
                                 }
                                 int occurrence = 1;
                                 int occursWithin = 0;
-                                if (Constants.Timing.LOCATION_FINISH == read.LocationID)
+                                // Use the finish location ignore within parameter for redundant start reads since it's normal value is the start window.
+                                if (Constants.Timing.LOCATION_FINISH == read.LocationID || Constants.Timing.LOCATION_START == read.LocationID)
                                 {
                                     occursWithin = theEvent.FinishIgnoreWithin;
                                 }
@@ -351,6 +352,23 @@ namespace Chronokeep.Timing.Routines
                                     occurrence = bibLastReadDictionary[(bib, read.LocationID)].Occurrence + 1;
                                     minSeconds = bibLastReadDictionary[(bib, read.LocationID)].Read.TimeSeconds + occursWithin;
                                     minMilliseconds = bibLastReadDictionary[(bib, read.LocationID)].Read.TimeMilliseconds;
+                                }
+                                // Ensure when there's separate start finish lines that there is no finish within the ignore period after a start.
+                                else if (theEvent.CommonStartFinish != true && Constants.Timing.LOCATION_FINISH == read.LocationID && startResult != null)
+                                {
+                                    minSeconds += startResult.Seconds + occursWithin;
+                                    minMilliseconds += startResult.Milliseconds;
+                                    if (minMilliseconds > 1000)
+                                    {
+                                        minSeconds += 1;
+                                        minMilliseconds -= 1000;
+                                    }
+                                }
+                                // Ensure that there are no reads within the StartWindow or the IgnoreWithin period after the start of a race.
+                                else if (Constants.Timing.LOCATION_FINISH == read.LocationID || Constants.Timing.LOCATION_START == read.LocationID)
+                                {
+                                    // If no previous entry at this location, ensure we don't let a time pop up 
+                                    minSeconds += occursWithin;
                                 }
                                 // Verify we know which occurrence we're supposed to be at
                                 if (part != null && d != null)
@@ -514,12 +532,6 @@ namespace Chronokeep.Timing.Routines
                                     read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                                 }
                             }
-                            // Possible reads at this point:
-                            //      Start Location reads past the StartWindow (Set status to ignore)
-                            else
-                            {
-                                read.Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
-                            }
                         }
                     }
                 }
@@ -595,15 +607,19 @@ namespace Chronokeep.Timing.Routines
                                 read.Status = Constants.Timing.CHIPREAD_STATUS_USED;
                             }
                             // Possible reads at this point:
-                            //      Start Location reads past the StartWindow (IGNORE)
+                            //      Start Location reads past the StartWindow
                             //      Start/Finish Location reads past the StartWindow (Valid reads)
                             //      Reads at any other location
-                            else if (Constants.Timing.LOCATION_START != read.LocationID)
+                            else
                             {
                                 int maxOccurrences = 0;
                                 if (Constants.Timing.LOCATION_FINISH == read.LocationID)
                                 {
                                     maxOccurrences = theEvent.FinishMaxOccurrences;
+                                }
+                                else if (Constants.Timing.LOCATION_START == read.LocationID)
+                                {
+                                    maxOccurrences = theEvent.StartMaxOccurrences - 1;
                                 }
                                 else
                                 {
@@ -618,7 +634,7 @@ namespace Chronokeep.Timing.Routines
                                 }
                                 int occurrence = 1;
                                 int occursWithin = 0;
-                                if (Constants.Timing.LOCATION_FINISH == read.LocationID)
+                                if (Constants.Timing.LOCATION_FINISH == read.LocationID || Constants.Timing.LOCATION_START == read.LocationID)
                                 {
                                     occursWithin = theEvent.FinishIgnoreWithin;
                                 }
@@ -635,6 +651,23 @@ namespace Chronokeep.Timing.Routines
                                     occurrence = chipLastReadDictionary[(chip, read.LocationID)].Occurrence + 1;
                                     minSeconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeSeconds + occursWithin;
                                     minMilliseconds = chipLastReadDictionary[(chip, read.LocationID)].Read.TimeMilliseconds;
+                                }
+                                // Ensure when there's separate start finish lines that there is no finish within the ignore period after a start.
+                                else if (theEvent.CommonStartFinish != true && Constants.Timing.LOCATION_FINISH == read.LocationID && startResult != null)
+                                {
+                                    minSeconds += startResult.Seconds + occursWithin;
+                                    minMilliseconds += startResult.Milliseconds;
+                                    if (minMilliseconds > 1000)
+                                    {
+                                        minSeconds += 1;
+                                        minMilliseconds -= 1000;
+                                    }
+                                }
+                                // Ensure that there are no reads within the StartWindow or the IgnoreWithin period after the start of a race.
+                                else if (Constants.Timing.LOCATION_FINISH == read.LocationID || Constants.Timing.LOCATION_START == read.LocationID)
+                                {
+                                    // If no previous entry at this location, ensure we don't let a time pop up 
+                                    minSeconds += occursWithin;
                                 }
                                 // Check if we're past the max occurances allowed for this spot.
                                 if (occurrence > maxOccurrences)
@@ -711,12 +744,6 @@ namespace Chronokeep.Timing.Routines
                                         }
                                     }
                                 }
-                            }
-                            // Possible reads at this point:
-                            //      Start Location reads past the StartWindow (Set status to ignore)
-                            else
-                            {
-                                read.Status = Constants.Timing.CHIPREAD_STATUS_UNUSEDSTART;
                             }
                         }
                     }

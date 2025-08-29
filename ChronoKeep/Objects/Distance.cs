@@ -8,7 +8,7 @@ namespace Chronokeep
         private int identifier, eventIdentifier;
         private double distance;
         private int distance_unit = Constants.Distances.MILES, finish_location = Constants.Timing.LOCATION_FINISH,
-            finish_occurrence = 1, start_location = Constants.Timing.LOCATION_START, start_within = 5,
+            finish_occurrence = 1, start_location = Constants.Timing.LOCATION_START, start_within = 0,
             end_seconds = 0;
         private int wave = 1, start_offset_seconds = 0, start_offset_milliseconds = 0;
         private int linked_distance = Constants.Timing.DISTANCE_NO_LINKED_ID, type = 0, ranking = 0;

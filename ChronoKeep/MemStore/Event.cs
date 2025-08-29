@@ -303,10 +303,10 @@ namespace Chronokeep.MemStore
             }
         }
 
-        public void SetStartWindow(Event anEvent)
+        public void SetStartOptions(Event anEvent)
         {
             Log.D("MemStore", "SetStartWindow");
-            database.SetStartWindow(anEvent);
+            database.SetStartOptions(anEvent);
             try
             {
                 if (memStoreLock.WaitOne(lockTimeout))
@@ -320,6 +320,40 @@ namespace Chronokeep.MemStore
                         if (ev.Identifier == anEvent.Identifier)
                         {
                             ev.StartWindow = anEvent.StartWindow;
+                            ev.StartMaxOccurrences = anEvent.StartMaxOccurrences;
+                            break;
+                        }
+                    }
+                    memStoreLock.ReleaseMutex();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+        }
+
+        public void SetStartFinishOptions(Event anEvent)
+        {
+            Log.D("MemStore", "SetStartFinishOptions");
+            database.SetStartFinishOptions(anEvent);
+            try
+            {
+                if (memStoreLock.WaitOne(lockTimeout))
+                {
+                    if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                    {
+                        theEvent.StartWindow = anEvent.StartWindow;
+                    }
+                    foreach (Event ev in allEvents)
+                    {
+                        if (ev.Identifier == anEvent.Identifier)
+                        {
+                            ev.StartWindow = anEvent.StartWindow;
+                            ev.StartMaxOccurrences = anEvent.StartMaxOccurrences;
+                            ev.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
+                            ev.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
                             break;
                         }
                     }

@@ -6,7 +6,7 @@ namespace Chronokeep
     {
         private int identifier;
         private int common_age_groups = 1, common_start_finish = 1, distance_specific_segments = 0, rank_by_gun = 1;
-        private int finish_max_occurrences = 1, finish_ignore_within = 0, start_window = -1;
+        private int finish_max_occurrences = 1, finish_ignore_within = 0, start_window = -1, start_max_occurrences = 1;
         private int event_type = Constants.Timing.EVENT_TYPE_DISTANCE;
         private string name, date, yearcode = "", long_date;
         private long start_seconds = -1;
@@ -82,7 +82,7 @@ namespace Chronokeep
             int gun, string yearcode, int maxOcc, int ignWith, int window,
             long startsec, int startmill, int type, int api_id,
             string api_event_id, int display_placements, int age_groups_as_divisions,
-            int days_allowed, int upload_specific)
+            int days_allowed, int upload_specific, int start_max_occurrences)
         {
             this.identifier = id;
             this.name = n;
@@ -106,6 +106,7 @@ namespace Chronokeep
             this.divisions_enabled = age_groups_as_divisions;
             this.days_allowed = days_allowed;
             this.upload_specific = upload_specific;
+            this.start_max_occurrences = start_max_occurrences;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -122,6 +123,7 @@ namespace Chronokeep
         public int FinishMaxOccurrences { get => finish_max_occurrences; set => finish_max_occurrences = value; }
         public int FinishIgnoreWithin { get => finish_ignore_within; set => finish_ignore_within = value; }
         public long StartSeconds { get => start_seconds; set => start_seconds = value; }
+        public int StartMaxOccurrences { get => start_max_occurrences; set => start_max_occurrences = value; }
         public int StartMilliseconds { get => start_milliseconds; set => start_milliseconds = value; }
         public int EventType { get => event_type; set => event_type = value; }
         public int API_ID { get => api_id; set => api_id = value; }
@@ -165,6 +167,7 @@ namespace Chronokeep
         {
             this.EventType = other.EventType;
             this.StartWindow = other.StartWindow;
+            this.StartMaxOccurrences = other.StartMaxOccurrences;
             this.FinishIgnoreWithin = other.FinishIgnoreWithin;
             this.FinishMaxOccurrences = other.FinishMaxOccurrences;
             this.CommonAgeGroups = other.CommonAgeGroups;

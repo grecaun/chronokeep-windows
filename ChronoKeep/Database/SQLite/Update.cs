@@ -1610,6 +1610,13 @@ namespace Chronokeep.Database.SQLite
                             "ALTER TABLE eventspecific ADD COLUMN eventspecific_uploaded_version INTEGER NOT NULL DEFAULT " + Constants.Timing.EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION + "; " +
                             "UPDATE settings SET VALUE='70' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
                         command.ExecuteNonQuery();
+                        goto case 70;
+                    case 70:
+                        Log.D("Database.SQLite.Update", "Upgrading from versino 70.");
+                        command = connection.CreateCommand();
+                        command.CommandText = "ALTER TABLE events ADD COLUMN event_start_max_occurrences INTEGER NOT NULL DEFAULT 1; " +
+                            "UPDATE settings SET VALUE='71' WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';";
+                        command.ExecuteNonQuery();
                         break;
                 }
                 transaction.Commit();

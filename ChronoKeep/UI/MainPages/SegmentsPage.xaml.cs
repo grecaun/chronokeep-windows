@@ -50,6 +50,7 @@ namespace Chronokeep.UI.MainPages
                 else
                 {
                     locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences - 1, theEvent.FinishIgnoreWithin));
+                    locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", theEvent.StartMaxOccurrences - 1, theEvent.FinishIgnoreWithin));
                 }
                 foreach (TimingLocation loc in locations)
                 {
@@ -132,7 +133,6 @@ namespace Chronokeep.UI.MainPages
         {
             UpdateDatabase();
             UpdateSegments();
-            bool occurrence_error = false;
             foreach (Object seg in SegmentsBox.Items)
             {
                 if (seg is ASegment segment)
@@ -140,14 +140,14 @@ namespace Chronokeep.UI.MainPages
                     Segment thisSegment = segment.mySegment;
                     if (thisSegment.LocationId == Constants.Timing.LOCATION_FINISH && thisSegment.Occurrence >= theEvent.FinishMaxOccurrences)
                     {
-                        occurrence_error = true;
+                        DialogBox.Show("Your finish line has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  This could cause errors.");
+                    }
+                    else if (thisSegment.LocationId == Constants.Timing.LOCATION_START && thisSegment.Occurrence >= theEvent.StartMaxOccurrences)
+                    {
+                        DialogBox.Show("Your start line has one or more segments beyond the maximum number it supports (" + (theEvent.StartMaxOccurrences - 1) + ").  This could cause errors.");
                     }
                     Log.D("UI.MainPages.SegmentsPage", "Distance ID " + segment.mySegment.DistanceId + " Segment Name " + segment.mySegment.Name + " segment ID " + segment.mySegment.Identifier);
                 }
-            }
-            if (occurrence_error)
-            {
-                DialogBox.Show("Your finish line has one or more segments beyond the maximum number it supports (" + (theEvent.FinishMaxOccurrences - 1) + ").  This could cause errors.");
             }
             UpdateView();
         }

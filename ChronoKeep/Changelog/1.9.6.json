@@ -1,0 +1,9 @@
+{
+  "version": "v1.9.6",
+  "changes": [
+    "Modified the code to allow for a start location to be used as a location that can be used like other locations with multiple occurrences."
+  ],
+  "fixes": [
+    "Fixed an issue where the Refresh Reads button didn't actually refresh the reads on the raw reads page.'"
+  ]
+}

@@ -124,7 +124,7 @@ namespace Chronokeep.UI.Timing
             PrivateUpdateView();
         }
 
-        private void PrivateUpdateView()
+        internal void PrivateUpdateView()
         {
             List<ChipRead> reads = new List<ChipRead>();
             SortType sortType = parent.GetSortType();

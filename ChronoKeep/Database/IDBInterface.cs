@@ -30,8 +30,9 @@ namespace Chronokeep
         void RemoveEvent(Event anEvent);
         void UpdateEvent(Event anEvent);
         int GetEventID(Event anEvent);
-        void SetStartWindow(Event anEvent);
+        void SetStartOptions(Event anEvent);
         void SetFinishOptions(Event anEvent);
+        void SetStartFinishOptions(Event anEvent);
         Event GetCurrentEvent();
         void SetCurrentEvent(int eventID);
         Event GetEvent(int id);

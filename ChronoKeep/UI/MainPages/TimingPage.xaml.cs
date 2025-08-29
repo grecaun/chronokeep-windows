@@ -895,7 +895,7 @@ namespace Chronokeep.UI.MainPages
             else if (subPage is TimingRawReadsPage)
             {
                 // Refresh data
-                subPage.UpdateView();
+                ((TimingRawReadsPage)subPage).PrivateUpdateView();
             }
             else
             {
