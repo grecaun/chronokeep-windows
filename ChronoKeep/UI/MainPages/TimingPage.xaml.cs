@@ -62,7 +62,7 @@ namespace Chronokeep.UI.MainPages
 
         ObservableCollection<DistanceStat> stats = new ObservableCollection<DistanceStat>();
 
-        int total = 4, connected = 0;
+        int total = 0, known = 0;
 
         private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
         private int[] baseIP = { 0, 0, 0, 0 };
@@ -222,14 +222,18 @@ namespace Chronokeep.UI.MainPages
                     systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
                 }
             }
+            systems.Sort((x, y) =>
+            {
+                return x.Status == y.Status ? x.IPAddress.CompareTo(y.IPAddress) : x.Status.CompareTo(y.Status);
+            });
             systems.Add(new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system));
-            connected = 0;
+            known = 0;
             foreach (TimingSystem sys in systems)
             {
                 ReadersBox.Items.Add(new AReaderBox(this, sys, locations));
-                if (sys.Status == SYSTEM_STATUS.CONNECTED || sys.Status == SYSTEM_STATUS.WORKING)
+                if (sys.IPAddress != string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]))
                 {
-                    connected++;
+                    known++;
                 }
             }
             total = ReadersBox.Items.Count;
@@ -402,40 +406,39 @@ namespace Chronokeep.UI.MainPages
             {
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
                 locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-            }
-
+            }
+
             locationBox.Items.Clear();
-            if (locCount > 0)
+            if (locCount > 0)
             {
-                locationBox.Items.Add(new ComboBoxItem()
-                {
-                    Content = "All Locations"
+                locationBox.Items.Add(new ComboBoxItem()
+                {
+                    Content = "All Locations"
                 });
-                foreach (TimingLocation loc in locations)
-                {
-                    if (!loc.Name.Equals("Announcer", StringComparison.OrdinalIgnoreCase))
-                    {
-                        locationBox.Items.Add(new ComboBoxItem()
-                        {
-                            Content = loc.Name,
-                        });
-                    }
+                foreach (TimingLocation loc in locations)
+                {
+                    if (!loc.Name.Equals("Announcer", StringComparison.OrdinalIgnoreCase))
+                    {
+                        locationBox.Items.Add(new ComboBoxItem()
+                        {
+                            Content = loc.Name,
+                        });
+                    }
                 }
                 locationBox.SelectedIndex = 0;
                 locationBox.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                locationBox.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                locationBox.Visibility = Visibility.Collapsed;
             }
 
             // Update locations in the list of readers (and reader status)
-            connected = 0; total = ReadersBox.Items.Count;
+            total = ReadersBox.Items.Count; known = 0;
             foreach (AReaderBox read in ReadersBox.Items)
             {
                 read.UpdateLocations(locations);
                 read.UpdateStatus();
-                connected += read.reader.Status == SYSTEM_STATUS.DISCONNECTED ? 0 : 1;
                 if (read.reader.Status == SYSTEM_STATUS.DISCONNECTED)
                 {
                     if (timeWindow != null && timeWindow.IsTimingSystem(read.reader))
@@ -449,9 +452,13 @@ namespace Chronokeep.UI.MainPages
                         rewindWindow = null;
                     }
                 }
+                if (read.reader.IPAddress != string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]))
+                {
+                    known++;
+                }
             }
 
-            if (total < 4)
+            if (total < 4 || known >= total)
             {
                 string system = Readers.DEFAULT_TIMING_SYSTEM;
                 try
@@ -463,7 +470,7 @@ namespace Chronokeep.UI.MainPages
                     Log.D("UI.MainPages.TimingPage", "Error fetching default timing system information.");
                     system = Readers.DEFAULT_TIMING_SYSTEM;
                 }
-                for (int i = total; i < 4; i++)
+                for (int i = total; i < 3; i++)
                 {
                     ReadersBox.Items.Add(new AReaderBox(
                         this,
@@ -472,6 +479,12 @@ namespace Chronokeep.UI.MainPages
                             system),
                             locations));
                 }
+                ReadersBox.Items.Add(new AReaderBox(
+                    this,
+                    new TimingSystem(
+                        string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]),
+                        system),
+                        locations));
             }
 
             List<DistanceStat> inStats = database.GetDistanceStats(theEvent.Identifier);
@@ -831,54 +844,12 @@ namespace Chronokeep.UI.MainPages
         public bool ConnectSystem(TimingSystem sys)
         {
             mWindow.ConnectTimingSystem(sys);
-            if (sys.Status == SYSTEM_STATUS.CONNECTED || sys.Status == SYSTEM_STATUS.WORKING)
-            {
-                connected++;
-            }
-            Log.D("UI.MainPages.TimingPage", connected + " systems connected or trying to connect.");
-            if (connected >= total)
-            {
-                string system = Readers.DEFAULT_TIMING_SYSTEM;
-                try
-                {
-                    system = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM).Value;
-                }
-                catch
-                {
-                    Log.D("UI.MainPages.TimingPage", "Error fetching default timing system information.");
-                    system = Readers.DEFAULT_TIMING_SYSTEM;
-                }
-                ReadersBox.Items.Add(new AReaderBox(this, new TimingSystem(string.Format(ipformat, baseIP[0], baseIP[1], baseIP[2], baseIP[3]), system), locations));
-                total = ReadersBox.Items.Count;
-            }
             return sys.Status != SYSTEM_STATUS.DISCONNECTED;
         }
 
         public bool DisconnectSystem(TimingSystem sys)
         {
             mWindow.DisconnectTimingSystem(sys);
-            if (sys.Status == SYSTEM_STATUS.DISCONNECTED)
-            {
-                connected--;
-            }
-            Log.D("UI.MainPages.TimingPage", connected + " systems connected or trying to connect/disconnect.");
-            // This code appears to remove the connected reader if there are more than 4 readers displayed and at least 2 disconnected readers
-            // this should not be necessary to do, just leave them all there and let the program deal with it the next time
-            // the window opens
-            /*if (total > 4 && connected < total - 1)
-            {
-                AReaderBox removeMe = null;
-                foreach (AReaderBox aReader in ReadersBox.Items)
-                {
-                    if (aReader.reader.Status == SYSTEM_STATUS.DISCONNECTED)
-                    {
-                        removeMe = aReader;
-                        break;
-                    }
-                }
-                ReadersBox.Items.Remove(removeMe);
-                total = ReadersBox.Items.Count;
-            } //*/
             return sys.Status == SYSTEM_STATUS.DISCONNECTED;
         }
 

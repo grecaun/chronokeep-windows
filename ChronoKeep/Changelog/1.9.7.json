@@ -1,0 +1,13 @@
+{
+  "version": "v1.9.7",
+  "changes": [
+    "Changed the timing update tick from half a second to two tenths of a second.",
+    "Updated NuGet packages.",
+    "Modified AnnouncerWorker and AnnouncerWindow to ignore exceptions in places.",
+    "Timing systems are now sorted when the Timing Page is loaded.",
+    "Modified the code that added blank timing systems when every slot was full of known systems."
+  ],
+  "fixes": [
+    "Fixed an issue where the Announcer Window would have an identity crisis if a remote announcer was set."
+  ]
+}

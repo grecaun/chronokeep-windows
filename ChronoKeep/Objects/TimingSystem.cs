@@ -160,5 +160,5 @@ namespace Chronokeep.Objects
         }
     }
 
-    public enum SYSTEM_STATUS { CONNECTED, DISCONNECTED, WORKING }
+    public enum SYSTEM_STATUS { CONNECTED, WORKING, DISCONNECTED }
 }

@@ -145,9 +145,9 @@ namespace Chronokeep.UI
 
             DataContext = this;
 
-            // Set timing update to every half second.
+            // Set timing update to every two tenths of a second.
             TimingUpdater.Tick += new EventHandler(UpdateTimingTick);
-            TimingUpdater.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            TimingUpdater.Interval = new TimeSpan(0, 0, 0, 0, 200);
             TimingUpdater.Start();
 
             // Set the global upload interval.
@@ -584,7 +584,7 @@ namespace Chronokeep.UI
 
         public void UpdateTiming()
         {
-            // Let the announcer window know that it has new information.
+            // Let the timing page know that it has new information.
             Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(delegate ()
             {
                 if (page is TimingPage)
@@ -989,7 +989,7 @@ namespace Chronokeep.UI
 
         public void StopAnnouncer()
         {
-            if (announcerWindow != null) announcerWindow.Close();
+            announcerWindow?.Close();
         }
 
         public void Exit()

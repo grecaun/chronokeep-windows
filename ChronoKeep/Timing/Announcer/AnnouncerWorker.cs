@@ -12,12 +12,12 @@ namespace Chronokeep.Timing.Announcer
         private readonly IMainWindow window;
         private static AnnouncerWorker announcer;
 
-        private static readonly Semaphore semaphore = new Semaphore(0, 2);
-        private static readonly Mutex mutex = new Mutex();
+        private static readonly Semaphore semaphore = new(0, 2);
+        private static readonly Mutex mutex = new();
 
         private static bool QuittingTime = false;
-        private static List<AnnouncerParticipant> participants = new List<AnnouncerParticipant>();
-        private static Dictionary<string, DateTime> bibSeen = new();
+        private static readonly List<AnnouncerParticipant> participants = [];
+        private static readonly Dictionary<string, DateTime> bibSeen = [];
 
         private static readonly int seenWindow = 5; // minutes
 
@@ -48,7 +48,7 @@ namespace Chronokeep.Timing.Announcer
 
         public static List<AnnouncerParticipant> GetList()
         {
-            List<AnnouncerParticipant> output = new List<AnnouncerParticipant>();
+            List<AnnouncerParticipant> output = [];
             if (mutex.WaitOne(3000))
             {
                 output.AddRange(participants);
@@ -95,11 +95,11 @@ namespace Chronokeep.Timing.Announcer
                     // Only work if we've not seen it before.
                     if ((!bibSeen.TryGetValue(read.Bib, out DateTime lastSeen)
                         || lastSeen.AddMinutes(seenWindow).CompareTo(timeRightNow) < 0)
-                        && participantBibDictionary.ContainsKey(read.Bib))
+                        && participantBibDictionary.TryGetValue(read.Bib, out Participant part))
                     {
                         newParticipants = true;
                         bibSeen.Add(read.Bib, timeRightNow);
-                        participants.Add(new AnnouncerParticipant(participantBibDictionary[read.Bib], read.Seconds));
+                        participants.Add(new AnnouncerParticipant(part, read.Seconds));
                         // Mark this chipread as USED
                         read.Status = Constants.Timing.CHIPREAD_STATUS_ANNOUNCER_USED;
                     }
@@ -132,44 +132,50 @@ namespace Chronokeep.Timing.Announcer
             // Loop while waiting for work.
             while (true)
             {
-                bool notified = semaphore.WaitOne(1000 * Constants.Timing.ANNOUNCER_LOOP_TIMER);
-                if (mutex.WaitOne(3000))
+                try
                 {
-                    if (QuittingTime)
+                    bool notified = semaphore.WaitOne(1000 * Constants.Timing.ANNOUNCER_LOOP_TIMER);
+                    if (mutex.WaitOne(3000))
                     {
-                        mutex.ReleaseMutex();
-                        Log.D("Timing.Announcer.AnnouncerWorker", "Exiting announcer thread.");
-                        return;
-                    }
-                    mutex.ReleaseMutex();
-                }
-                if (notified)
-                {
-                    Log.D("Timing.Announcer.AnnouncerWorker", "New chip reads found!");
-                    Event ev2 = database.GetCurrentEvent();
-                    // verify that we both ev2 and theevent are not null and they match
-                    if (ev2 == null || theEvent == null || ev2.Identifier != theEvent.Identifier)
-                    {
-                        QuittingTime = true;
-                        Log.E("Timing.Announcer.AnnouncerWorker", "The event changed while the announcer window is open.");
-                        return;
-                    }
-                    // Ensure the event exists.
-                    if (theEvent.Identifier != -1)
-                    {
-                        // If we've seen new participants update the window.
-                        if (ProcessReads(database.GetAnnouncerChipReads(theEvent.Identifier), participantBibDictionary))
+                        if (QuittingTime)
                         {
-                            Log.D("Timing.Announcer.AnnouncerWorker", "There are people to announce.");
-                            window.UpdateAnnouncerWindow();
+                            mutex.ReleaseMutex();
+                            Log.D("Timing.Announcer.AnnouncerWorker", "Exiting announcer thread.");
+                            return;
+                        }
+                        mutex.ReleaseMutex();
+                    }
+                    if (notified)
+                    {
+                        Log.D("Timing.Announcer.AnnouncerWorker", "New chip reads found!");
+                        Event ev2 = database.GetCurrentEvent();
+                        // verify that we both ev2 and theevent are not null and they match
+                        if (ev2 == null || theEvent == null || ev2.Identifier != theEvent.Identifier)
+                        {
+                            QuittingTime = true;
+                            Log.E("Timing.Announcer.AnnouncerWorker", "The event changed while the announcer window is open.");
+                            return;
+                        }
+                        // Ensure the event exists.
+                        if (theEvent.Identifier != -1)
+                        {
+                            // If we've seen new participants update the window.
+                            if (ProcessReads(database.GetAnnouncerChipReads(theEvent.Identifier), participantBibDictionary))
+                            {
+                                Log.D("Timing.Announcer.AnnouncerWorker", "There are people to announce.");
+                                window.UpdateAnnouncerWindow();
+                            }
                         }
                     }
+                    else
+                    {
+                        Log.D("Timing.Announcer.AnnouncerWorker", "Update window expired.");
+                        window.UpdateAnnouncerWindow();
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    Log.D("Timing.Announcer.AnnouncerWorker", "Update window expired.");
-                    window.UpdateTiming();
-                    window.UpdateAnnouncerWindow();
+                    Log.E("AnnouncerWindow", string.Format("Error processing announcer reads. {0}", e.ToString()));
                 }
             }
         }

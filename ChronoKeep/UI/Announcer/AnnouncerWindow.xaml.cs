@@ -62,14 +62,23 @@ namespace Chronokeep.UI.Announcer
                     remote_announcer = true;
                 }
             }
-            if (!window.AnnouncerConnected() || remote_announcer)
+            if (!window.AnnouncerConnected() && !remote_announcer)
             {
                 AnnouncerBox.Visibility = Visibility.Collapsed;
                 AnnouncerHeader.Visibility = Visibility.Collapsed;
                 ResultsBox.Visibility = Visibility.Visible;
                 ResultsHeader.Visibility = Visibility.Visible;
                 // Get our list of results to display.
-                List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
+                List<TimeResult> results;
+                try
+                {
+                    results = database.GetTimingResults(theEvent.Identifier);
+                }
+                catch (Exception)
+                {
+                    Log.E("AnnouncerWindow", "Error getting results from database.");
+                    results = [];
+                }
                 // Ensure results are sorted.
                 results.Sort(TimeResult.CompareBySystemTime);
                 results.RemoveAll((x) => TimeResult.IsNotFinish(x) || x.IsDNF());
@@ -103,7 +112,16 @@ namespace Chronokeep.UI.Announcer
                 ResultsBox.Visibility = Visibility.Collapsed;
                 ResultsHeader.Visibility = Visibility.Collapsed;
                 // Get our list of people to display. Remove anything older than 45 seconds.
-                List<AnnouncerParticipant> participants = AnnouncerWorker.GetList();
+                List<AnnouncerParticipant> participants;
+                try
+                {
+                    participants = AnnouncerWorker.GetList();
+                }
+                catch (Exception)
+                {
+                    Log.E("AnnouncerWindow", "Error getting participants from AnnouncerWorker.");
+                    participants = [];
+                }
                 participants.Sort((x1, x2) => x1.CompareTo(x2));
                 DateTime cutoff = DateTime.Now.AddSeconds(-1 * Helpers.Globals.AnnouncerWindow);
                 // Remove all participant values where x.When is less than 0 (i.e. cutoff occurred after x.When)

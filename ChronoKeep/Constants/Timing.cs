@@ -96,7 +96,7 @@ namespace Chronokeep.Constants
         public static readonly int API_LOOP_COUNT = 20;
 
         // Announcer variables
-        public static readonly int ANNOUNCER_LOOP_TIMER = 2;
+        public static readonly int ANNOUNCER_LOOP_TIMER = 1;
 
         private static DateTime UnixDateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static DateTime RFIDDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);

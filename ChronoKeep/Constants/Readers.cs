@@ -9,7 +9,7 @@ namespace Chronokeep.Constants
         public const string SYSTEM_IPICO_LITE = "IPICO_LITE";
         public const string SYSTEM_CHRONOKEEP_PORTAL = "CHRONOKEEP_PORTAL";
 
-        public const string DEFAULT_TIMING_SYSTEM = SYSTEM_RFID;
+        public const string DEFAULT_TIMING_SYSTEM = SYSTEM_CHRONOKEEP_PORTAL;
 
         public const int RFID_DEFAULT_PORT = 23;
         public const int IPICO_DEFAULT_PORT = 10000;
