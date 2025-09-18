@@ -73,32 +73,26 @@ namespace Chronokeep.UI
         DispatcherTimer TimingUpdater = new DispatcherTimer();
 
         // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
-        static Mutex OneWindow = new Mutex(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
-        static Mutex OneDebugWindow = new Mutex(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep-debug");
+        // Allow for a debug version and non-debug version to run at the same time.
+#if DEBUG
+        static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep-debug");
+#else
+        static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
+#endif
 
         public MainWindow()
         {
             InitializeComponent();
 
             // Check that no other instance of this program are running.
-#if DEBUG
-            if (!OneDebugWindow.WaitOne(TimeSpan.Zero, true))
-            {
-                DialogBox.Show("Chronokeep is already running.");
-                this.Close();
-            }
-            OneDebugWindow.ReleaseMutex();
-#else
             if (!OneWindow.WaitOne(TimeSpan.Zero, true))
             {
                 DialogBox.Show("Chronokeep is already running.");
                 this.Close();
             }
             OneWindow.ReleaseMutex();
-#endif
 
             string dirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonDocuments), Constants.Settings.PROGRAM_DIR);
-
 #if DEBUG
             dbName = "Chronokeep_test.sqlite";
 #endif

@@ -35,7 +35,12 @@ namespace Chronokeep.UI
         List<Window> openWindows = new List<Window>();
 
         // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
-        static Mutex OneWindow = new Mutex(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
+        // Allow for a debug version and non-debug version to run at the same time.
+#if DEBUG
+        static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep-debug");
+#else
+        static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
+#endif
 
         public MinWindow()
         {

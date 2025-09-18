@@ -157,7 +157,6 @@ namespace Chronokeep
             }
             SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-
             int output = Distances.GetDistanceID(d, connection);
             connection.Close();
             mutex.ReleaseMutex();
