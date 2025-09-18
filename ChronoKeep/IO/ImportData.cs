@@ -44,7 +44,7 @@ namespace Chronokeep
             Array.Copy(data, 0, newdata, 1, data.Length);
             if (Headers.Length != newdata.Length)
             {
-                Log.E("IO.ImportData", "Wrong count! It's burning! AHHHHHHH! " + Headers.Length + " - " + newdata.Length);
+                Log.E("IO.ImportData", "Header count wrong on import of data: " + Headers.Length + " - " + newdata.Length);
             }
             Data.Add(newdata);
 #if DEBUG

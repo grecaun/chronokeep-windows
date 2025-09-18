@@ -19,7 +19,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public static string GetRemoteNotificationMessage(string reader, string address, RemoteNotification message) {
             if (message.Message != null && message.Message.Length > 0)
             {
-                Log.E("Objects.ChronokeepPortal.PortalNotification", $"'{message.Type}' '{message.Message}'");
+                Log.E("Objects.ChronokeepPortal.PortalNotification", $"Unknown message: '{message.Type}' '{message.Message}'");
             }
             return message.Type switch
             {

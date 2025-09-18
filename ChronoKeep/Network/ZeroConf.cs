@@ -60,7 +60,7 @@ namespace Chronokeep.Network
                 }
                 catch
                 {
-                    Log.E("Network.ZeroConf", "Shutting down.");
+                    Log.E("Network.ZeroConf", "Exception thrown - Shutting down.");
                 }
             }
             running = false;

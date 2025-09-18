@@ -91,7 +91,7 @@ namespace Chronokeep.Timing.Routines
                 {
                     if (tmpRes.start != null)
                     {
-                        Log.E("Timing.Routines.BackyardUltraRoutine", "Found a duplicate start time for an hour.");
+                        Log.D("Timing.Routines.BackyardUltraRoutine", "Found a duplicate start time for an hour.");
                         toRemove.Add(tmpRes.start);
                     }
                     tmpRes.start = result;
@@ -105,14 +105,14 @@ namespace Chronokeep.Timing.Routines
                     }
                     else
                     {
-                        Log.E("Timing.Routines.BackyardUltraRoutine", "Found a duplicate end time for an hour.");
+                        Log.D("Timing.Routines.BackyardUltraRoutine", "Found a duplicate end time for an hour.");
                         toRemove.Add(result);
                     }
                 }
                 // Modification 2 should result in either a 0 or a 1, this code should be unreachable.
                 else
                 {
-                    Log.E("Timing.Routines.BackyardUltraRoutine", "Made it to code that should be unreachable somehow.");
+                    Log.D("Timing.Routines.BackyardUltraRoutine", "Made it to code that should be unreachable somehow.");
                 }
                 // Update dictionary.
                 backyardResultDictionary[(result.Occurrence / 2, result.Identifier)] = tmpRes;

@@ -12,6 +12,7 @@ namespace Chronokeep.Helpers
         public static int UploadInterval = -1;
         public static int DownloadInterval = -1;
         public static int AnnouncerWindow = 45;
+        public static string ErrorLogPath = "";
 
         public static void SetupValues(IDBInterface db)
         {

@@ -102,7 +102,7 @@ namespace Chronokeep.Timing
             {
                 if (dictionary.locationDictionary.ContainsKey(loc.Identifier))
                 {
-                    Log.E("Timing.TimingWorker", "Multiples of a location found in location set.");
+                    Log.D("Timing.TimingWorker", "Multiples of a location found in location set.");
                 }
                 dictionary.locationDictionary[loc.Identifier] = loc;
             }
@@ -116,7 +116,7 @@ namespace Chronokeep.Timing
             {
                 if (dictionary.segmentDictionary.ContainsKey((seg.DistanceId, seg.LocationId, seg.Occurrence)))
                 {
-                    Log.E("Timing.TimingWorker", "Multiples of a segment found in segment set.");
+                    Log.D("Timing.TimingWorker", "Multiples of a segment found in segment set.");
                 }
                 dictionary.segmentDictionary[(seg.DistanceId, seg.LocationId, seg.Occurrence)] = seg;
                 if (!dictionary.DistanceSegmentOrder.ContainsKey(seg.DistanceId))
@@ -158,7 +158,7 @@ namespace Chronokeep.Timing
             {
                 if (dictionary.participantBibDictionary.ContainsKey(part.Bib))
                 {
-                    Log.E("Timing.TimingWorker", "Multiples of a Bib found in participants set. " + part.Bib);
+                    Log.D("Timing.TimingWorker", "Multiples of a Bib found in participants set. " + part.Bib);
                 }
                 dictionary.participantBibDictionary[part.Bib] = part;
                 dictionary.participantEventSpecificDictionary[part.EventSpecific.Identifier] = part;
@@ -178,7 +178,7 @@ namespace Chronokeep.Timing
             {
                 if (dictionary.distanceDictionary.ContainsKey(d.Identifier))
                 {
-                    Log.E("Timing.TimingWorker", "Multiples of a Distance found in distances set.");
+                    Log.D("Timing.TimingWorker", "Multiples of a Distance found in distances set.");
                 }
                 dictionary.distanceDictionary[d.Identifier] = d;
                 dictionary.distanceNameDictionary[d.Name] = d;

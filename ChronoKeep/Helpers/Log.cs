@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Chronokeep.Helpers;
+using Sentry;
+using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -9,29 +11,23 @@ namespace Chronokeep
         public static void D(string ns, string msg)
         {
 #if DEBUG
-            Trace.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "d", ns, msg));
+            Debug.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "d", ns, msg));
 #endif
         }
 
         public static void F(string ns, string msg)
         {
-            Trace.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "f", ns, msg));
+#if DEBUG
+            Debug.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "f", ns, msg));
+#endif
         }
 
         public static void E(string ns, string msg)
         {
-            Trace.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "e", ns, msg));
-        }
-
-        public static void WriteFile(string path, string[] msgs)
-        {
-            using (var outWriter = File.AppendText(path))
-            {
-                foreach (string msg in msgs)
-                {
-                    outWriter.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff ") + msg);
-                }
-            }
+#if DEBUG
+            Debug.WriteLine(string.Format("{0} LOGOUTPUT - {1} - {2} - {3}", DateTime.Now.ToString("hh:mm:ss.fff"), "e", ns, msg));
+#endif
+            File.AppendAllText(Globals.ErrorLogPath, string.Format("{0}: {1,-20} - {2}\n", DateTime.Now.ToString("hh:mm:ss.fff"), ns[..(ns.Length > 20 ? 20 : ns.Length)], msg));
         }
     }
 }

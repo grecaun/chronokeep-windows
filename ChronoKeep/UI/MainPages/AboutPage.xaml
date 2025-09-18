@@ -145,6 +145,14 @@
                         <ui:SymbolIcon Symbol="Link24"/>
                     </ui:HyperlinkButton.Icon>
                 </ui:HyperlinkButton>
+                <ui:HyperlinkButton
+                    Content="Sentry"
+                    NavigateUri="https://sentry.io"
+                    >
+                    <ui:HyperlinkButton.Icon>
+                        <ui:SymbolIcon Symbol="Link24"/>
+                    </ui:HyperlinkButton.Icon>
+                </ui:HyperlinkButton>
             </StackPanel>
         </Grid>
         <TextBlock

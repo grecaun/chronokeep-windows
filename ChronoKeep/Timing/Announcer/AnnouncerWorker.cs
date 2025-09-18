@@ -123,7 +123,7 @@ namespace Chronokeep.Timing.Announcer
             {
                 if (participantBibDictionary.ContainsKey(part.Bib))
                 {
-                    Log.E("Timing.Announcer.AnnouncerWorker", "Multiples of a Bib found in participants set. " + part.Bib);
+                    Log.D("Timing.Announcer.AnnouncerWorker", "Multiples of a Bib found in participants set. " + part.Bib);
                 }
                 participantBibDictionary[part.Bib] = part;
             }
@@ -153,7 +153,7 @@ namespace Chronokeep.Timing.Announcer
                         if (ev2 == null || theEvent == null || ev2.Identifier != theEvent.Identifier)
                         {
                             QuittingTime = true;
-                            Log.E("Timing.Announcer.AnnouncerWorker", "The event changed while the announcer window is open.");
+                            Log.D("Timing.Announcer.AnnouncerWorker", "The event changed while the announcer window is open.");
                             return;
                         }
                         // Ensure the event exists.

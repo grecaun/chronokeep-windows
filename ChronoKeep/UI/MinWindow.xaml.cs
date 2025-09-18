@@ -12,8 +12,6 @@ using System.Windows;
 using System.Windows.Threading;
 using Chronokeep.UI.UIObjects;
 using Chronokeep.Objects.ChronokeepRemote;
-using Chronokeep.Objects.ChronokeepPortal;
-using Chronokeep.UI.Timing;
 using Chronokeep.UI.MainPages;
 using static Chronokeep.Helpers.Globals;
 
