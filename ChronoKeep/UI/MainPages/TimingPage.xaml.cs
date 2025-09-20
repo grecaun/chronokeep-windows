@@ -393,51 +393,10 @@ namespace Chronokeep.UI.MainPages
                 UpdateStartTime();
             }
 
-            // Get updated list of locations
-            locations = database.GetTimingLocations(theEvent.Identifier);
-            int locCount = locations.Count;
-            if (!theEvent.CommonStartFinish)
-            {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_START, theEvent.Identifier, "Start", 0, theEvent.StartWindow));
-            }
-            else
-            {
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_ANNOUNCER, theEvent.Identifier, "Announcer", 0, 0));
-                locations.Insert(0, new TimingLocation(Constants.Timing.LOCATION_FINISH, theEvent.Identifier, "Start/Finish", theEvent.FinishMaxOccurrences, theEvent.FinishIgnoreWithin));
-            }
-
-            locationBox.Items.Clear();
-            if (locCount > 0)
-            {
-                locationBox.Items.Add(new ComboBoxItem()
-                {
-                    Content = "All Locations"
-                });
-                foreach (TimingLocation loc in locations)
-                {
-                    if (!loc.Name.Equals("Announcer", StringComparison.OrdinalIgnoreCase))
-                    {
-                        locationBox.Items.Add(new ComboBoxItem()
-                        {
-                            Content = loc.Name,
-                        });
-                    }
-                }
-                locationBox.SelectedIndex = 0;
-                locationBox.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                locationBox.Visibility = Visibility.Collapsed;
-            }
-
             // Update locations in the list of readers (and reader status)
             total = ReadersBox.Items.Count; known = 0;
             foreach (AReaderBox read in ReadersBox.Items)
             {
-                read.UpdateLocations(locations);
                 read.UpdateStatus();
                 if (read.reader.Status == SYSTEM_STATUS.DISCONNECTED)
                 {
@@ -814,13 +773,23 @@ namespace Chronokeep.UI.MainPages
             List<TimingSystem> systems = mWindow.GetConnectedSystems();
             foreach (TimingSystem sys in systems)
             {
-                if (now)
+                try
                 {
-                    sys.SystemInterface.SetTime(DateTime.Now);
+                    if (sys.Status == SYSTEM_STATUS.CONNECTED)
+                    {
+                        if (now)
+                        {
+                            sys.SystemInterface.SetTime(DateTime.Now);
+                        }
+                        else
+                        {
+                            sys.SystemInterface.SetTime(time);
+                        }
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    sys.SystemInterface.SetTime(time);
+                    Log.E("TimingPage", $"Error setting time on timing system via set all. {e.Message}");
                 }
             }
         }
