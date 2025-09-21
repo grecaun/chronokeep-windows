@@ -30,6 +30,7 @@ namespace Chronokeep.UI.Timing
                 Log.E("UI.Timing.AlarmsPage", "Something went wrong and no proper event was returned.");
                 return;
             }
+            parent.SetReaders([], false);
             UpdateAlarms();
         }
         
@@ -206,6 +207,8 @@ namespace Chronokeep.UI.Timing
             SaveAlarms();
             UpdateAlarms();
         }
+
+        public void Reader(string reader) { }
 
         private class AnAlarmItem : ListBoxItem
         {

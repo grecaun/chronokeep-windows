@@ -47,6 +47,7 @@ namespace Chronokeep.UI.Timing
                     });
                 }
             }
+            parent.SetReaders([], false);
         }
 
         public void UpdateView() { }
@@ -456,5 +457,7 @@ namespace Chronokeep.UI.Timing
                 }
             }
         }
+
+        public void Reader(string reader) { }
     }
 }

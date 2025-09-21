@@ -2150,6 +2150,36 @@ namespace Chronokeep.UI.MainPages
             }
         }
 
+        private void ReaderSelectionBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (subPage == null) return;
+            string readerItem = (string) readerSelectionBox.SelectedItem;
+            if (readerItem == null)
+            {
+                subPage.Reader("");
+            }
+            else
+            {
+                subPage.Reader(readerItem);
+            }
+        }
+
+        public void SetReaders(string[] readers, bool visible)
+        {
+            readerSelectionBox.Items.Clear();
+            foreach (string reader in readers)
+            {
+                readerSelectionBox.Items.Add(reader);
+            }
+            readerSelectionBox.SelectedIndex = 0;
+            readerSelectionBox.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public string GetReader()
+        {
+            return readerSelectionBox.SelectedItem != null ? readerSelectionBox.SelectedItem.ToString() : "";
+        }
+
         public class TimeRelativeWave
         {
             public string Name { get; set; }

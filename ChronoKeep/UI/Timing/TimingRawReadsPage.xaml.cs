@@ -96,6 +96,7 @@ namespace Chronokeep.UI.Timing
         private void DoneButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.TimingRawReadsPage", "Done Button clicked.");
+            parent.SetReaders([], false);
             parent.LoadMainDisplay();
         }
 
@@ -130,13 +131,20 @@ namespace Chronokeep.UI.Timing
             SortType sortType = parent.GetSortType();
             PeopleType peopleType = parent.GetPeopleType();
             string location = parent.GetLocation();
+            string readerName = parent.GetReader();
             reads.AddRange(database.GetChipReads(theEvent.Identifier));
             chipReads.Clear();
             chipReads.AddRange(reads);
+            HashSet<string> readerNames = [];
+            foreach (ChipRead read in chipReads)
+            {
+                readerNames.Add(read.Box);
+            }
+            parent.SetReaders(["All Readers", .. readerNames], true);
             string search = parent.GetSearchValue();
             bool manualOnly = onlyManualBox.IsChecked == true;
             bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
-            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
+            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
@@ -156,9 +164,10 @@ namespace Chronokeep.UI.Timing
             chipReads.AddRange(reads);
             string search = parent.GetSearchValue();
             string location = parent.GetLocation();
+            string readerName = parent.GetReader();
             bool manualOnly = onlyManualBox.IsChecked == true;
             bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
-            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
+            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
@@ -183,7 +192,8 @@ namespace Chronokeep.UI.Timing
             string search,
             bool manualOnly,
             string location,
-            bool ignoredOnly
+            bool ignoredOnly,
+            string reader
             )
         {
             if (peopleType == PeopleType.UNKNOWN)
@@ -207,6 +217,10 @@ namespace Chronokeep.UI.Timing
             {
                 reads.RemoveAll(read => !read.LocationName.Equals(location, StringComparison.OrdinalIgnoreCase));
             }
+            if (reader != null && reader.Length > 0 && !reader.Equals("All Readers", StringComparison.OrdinalIgnoreCase))
+            {
+                reads.RemoveAll(read => !read.Box.Equals(reader, StringComparison.OrdinalIgnoreCase));
+            }
             if (sortType == SortType.BIB)
             {
                 reads.Sort(ChipRead.CompareByBib);
@@ -222,12 +236,13 @@ namespace Chronokeep.UI.Timing
             List<ChipRead> reads = [.. chipReads];
             string search = parent.GetSearchValue();
             string location = parent.GetLocation();
+            string readerName = parent.GetReader();
             SortType sortType = parent.GetSortType();
             bool manualOnly = onlyManualBox.IsChecked == true;
             bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
             await Task.Run(() =>
             {
-                SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
+                SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
@@ -241,12 +256,13 @@ namespace Chronokeep.UI.Timing
             List<ChipRead> reads = [.. chipReads];
             string search = parent.GetSearchValue();
             string location = parent.GetLocation();
+            string readerName = parent.GetReader();
             PeopleType peopleType = parent.GetPeopleType();
             bool manualOnly = onlyManualBox.IsChecked == true;
             bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
             await Task.Run(() =>
             {
-                SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
+                SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
@@ -261,11 +277,12 @@ namespace Chronokeep.UI.Timing
             PeopleType peopleType = parent.GetPeopleType();
             SortType sortType = parent.GetSortType();
             string search = parent.GetSearchValue();
+            string readerName = parent.GetReader();
             bool manualOnly = onlyManualBox.IsChecked == true;
             bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
             await Task.Run(() =>
             {
-                SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
+                SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
             });
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
@@ -370,11 +387,12 @@ namespace Chronokeep.UI.Timing
             List<ChipRead> reads = [.. chipReads];
             string search = parent.GetSearchValue();
             string location = parent.GetLocation();
+            string readerName = parent.GetReader();
             SortType sortType = parent.GetSortType();
             PeopleType peopleType = parent.GetPeopleType();
             bool manualOnly = onlyManualBox.IsChecked == true;
             bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
-            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
+            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();
@@ -393,11 +411,30 @@ namespace Chronokeep.UI.Timing
             List<ChipRead> reads = [.. chipReads];
             string search = parent.GetSearchValue();
             string location = parent.GetLocation();
+            string readerName = parent.GetReader();
             SortType sortType = parent.GetSortType();
             PeopleType peopleType = parent.GetPeopleType();
             bool manualOnly = onlyManualBox.IsChecked == true;
             bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
-            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly);
+            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
+            updateListView.SelectedItems.Clear();
+            updateListView.ItemsSource = reads;
+            updateListView.Items.Refresh();
+            updateListView.SelectedIndex = updateListView.Items.Count - 1;
+            updateListView.ScrollIntoView(updateListView.SelectedItem);
+        }
+
+        public void Reader(string reader)
+        {
+            List<ChipRead> reads = [.. chipReads];
+            string search = parent.GetSearchValue();
+            string location = parent.GetLocation();
+            string readerName = parent.GetReader();
+            SortType sortType = parent.GetSortType();
+            PeopleType peopleType = parent.GetPeopleType();
+            bool manualOnly = onlyManualBox.IsChecked == true;
+            bool ignoredOnly = onlyIgnoreBox.IsChecked == true;
+            SortWorker(reads, sortType, peopleType, search, manualOnly, location, ignoredOnly, readerName);
             updateListView.SelectedItems.Clear();
             updateListView.ItemsSource = reads;
             updateListView.Items.Refresh();

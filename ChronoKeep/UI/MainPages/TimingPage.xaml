@@ -208,6 +208,15 @@
                         Visibility="Collapsed"
                         />
                     <ComboBox
+                        Name="readerSelectionBox"
+                        Width="250"
+                        Height="35"
+                        HorizontalAlignment="Stretch"
+                        Margin="0,5,0,0"
+                        SelectionChanged="ReaderSelectionBox_SelectionChanged"
+                        Visibility="Collapsed"
+                        />
+                    <ComboBox
                         Name="SortBy"
                         Width="250"
                         Height="35"

@@ -48,6 +48,7 @@ namespace Chronokeep.UI.Timing
             dnfListView.ItemsSource = dnfParticipants;
             finishedListView.ItemsSource = finishedParticipants;
             this.DistanceName.Text = DistanceName;
+            parent.SetReaders([], false);
             UpdateView();
         }
 
@@ -240,5 +241,7 @@ namespace Chronokeep.UI.Timing
         }
 
         public void Location(string location) { }
+
+        public void Reader(string reader) { }
     }
 }

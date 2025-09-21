@@ -350,6 +350,10 @@ namespace Chronokeep.UI.MainPages
 
         public string GetLocation() { return ""; }
 
+        public string GetReader() { return ""; }
+
+        public void SetReaders(string[] readers, bool visible) { }
+
         private class MinReaderBox : ListBoxItem
         {
             public ComboBox ReaderType { get; private set; }

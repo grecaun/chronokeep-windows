@@ -49,6 +49,7 @@ namespace Chronokeep.UI.Timing
                 DivisionPlaceHeaderCol.Width = new System.Windows.GridLength(0);
                 divisionPlaceText.Margin = new System.Windows.Thickness(0);
             }
+            parent.SetReaders([], false);
         }
 
         public void Closing() { }
@@ -291,5 +292,7 @@ namespace Chronokeep.UI.Timing
         {
             labelsViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
         }
+
+        public void Reader(string reader) { }
     }
 }

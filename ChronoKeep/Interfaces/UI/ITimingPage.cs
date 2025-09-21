@@ -7,6 +7,7 @@ namespace Chronokeep.Interfaces
     {
         public string GetSearchValue();
         public string GetLocation();
+        public string GetReader();
         public SortType GetSortType();
         public PeopleType GetPeopleType();
         public void LoadMainDisplay();
@@ -18,5 +19,6 @@ namespace Chronokeep.Interfaces
         public bool ConnectSystem(TimingSystem reader);
         public bool DisconnectSystem(TimingSystem reader);
         public void RemoveSystem(TimingSystem reader);
+        public void SetReaders(string[] readers, bool visible);
     }
 }

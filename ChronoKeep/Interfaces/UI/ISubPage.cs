@@ -9,6 +9,7 @@ namespace Chronokeep.Interfaces
         void Show(PeopleType type);
         void SortBy(SortType type);
         void Location(string location);
+        void Reader(string reader);
         void EditSelected();
     }
 

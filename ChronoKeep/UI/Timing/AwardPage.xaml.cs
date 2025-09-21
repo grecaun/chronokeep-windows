@@ -53,6 +53,7 @@ namespace Chronokeep.UI.Timing
                     Content = d.Name
                 });
             }
+            parent.SetReaders([], false);
             UpdateView();
         }
 
@@ -570,6 +571,8 @@ namespace Chronokeep.UI.Timing
         public void Keyboard_Ctrl_S() { }
 
         public void Keyboard_Ctrl_Z() { }
+
+        public void Reader(string reader) { }
 
         private class AwardOptions
         {
