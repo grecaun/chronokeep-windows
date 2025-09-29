@@ -78,6 +78,11 @@ namespace Chronokeep.Timing.Interfaces
             Dictionary<MessageType, List<string>> output = new Dictionary<MessageType, List<string>>();
             buffer.Append(inMessage);
             Match m = msg.Match(buffer.ToString());
+            HashSet<string> ignoredChips = [];
+            foreach (BibChipAssociation ignore in database.GetBibChips(-1))
+            {
+                ignoredChips.Add(ignore.Chip);
+            }
             List<ChipRead> chipReads = [];
             RFIDSettingsHolder settingsHolder = null;
             while (m.Success)
@@ -88,31 +93,36 @@ namespace Chronokeep.Timing.Interfaces
                 // If "0,[...]" Chip read
                 if (chipread.IsMatch(message))
                 {
+                    // Only add a chip read if it isn't on the ignore list.
                     string[] chipVals = message.Split(',');
-                    ChipRead chipRead = new ChipRead(
-                        theEvent.Identifier,
-                        locationId,
-                        chipVals[1],
-                        long.Parse(chipVals[2]),
-                        int.Parse(chipVals[3]),
-                        int.Parse(chipVals[4]),
-                        chipVals[5],
-                        int.Parse(chipVals[6]),
-                        chipVals[7],
-                        chipVals[8],
-                        chipVals[9],
-                        long.Parse(chipVals[10]),
-                        int.Parse(chipVals[11])
-                    );
-                    if (window != null && window.InDidNotStartMode())
+                    string chip = chipVals[1].Trim();
+                    if (!ignoredChips.Contains(chip))
                     {
-                        chipRead.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
-                    }
-                    chipReads.Add(chipRead);
-                    // we don't need to do anything other than notify of a chipread
-                    if (!output.ContainsKey(MessageType.CHIPREAD))
-                    {
-                        output[MessageType.CHIPREAD] = null;
+                        ChipRead chipRead = new(
+                            theEvent.Identifier,
+                            locationId,
+                            chip,
+                            long.Parse(chipVals[2]),
+                            int.Parse(chipVals[3]),
+                            int.Parse(chipVals[4]),
+                            chipVals[5],
+                            int.Parse(chipVals[6]),
+                            chipVals[7],
+                            chipVals[8],
+                            chipVals[9],
+                            long.Parse(chipVals[10]),
+                            int.Parse(chipVals[11])
+                        );
+                        if (window != null && window.InDidNotStartMode())
+                        {
+                            chipRead.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
+                        }
+                        chipReads.Add(chipRead);
+                        // we don't need to do anything other than notify of a chipread
+                        if (!output.ContainsKey(MessageType.CHIPREAD))
+                        {
+                            output[MessageType.CHIPREAD] = null;
+                        }
                     }
                 }
                 // If "V=" then it's a voltage status.

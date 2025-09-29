@@ -117,6 +117,11 @@ namespace Chronokeep.Timing.Interfaces
             Dictionary<MessageType, List<string>> output = new Dictionary<MessageType, List<string>>();
             buffer.Append(inMessage);
             Match m = msg.Match(buffer.ToString());
+            HashSet<string> ignoredChips = [];
+            foreach (BibChipAssociation ignore in database.GetBibChips(-1))
+            {
+                ignoredChips.Add(ignore.Chip);
+            }
             List<ChipRead> chipReads = [];
             while (m.Success)
             {
@@ -499,23 +504,31 @@ namespace Chronokeep.Timing.Interfaces
                                 {
                                     foreach (PortalRead pRead in reads.List)
                                     {
-                                        ChipRead newRead = new ChipRead(
-                                            theEvent.Identifier,
-                                            locationId,
-                                            pRead.IdentType == PortalRead.READ_IDENT_TYPE_CHIP,
-                                            pRead.Identifier,
-                                            Constants.Timing.UTCSecondsToRFIDSeconds(pRead.Seconds),
-                                            pRead.Milliseconds,
-                                            pRead.Antenna,
-                                            pRead.RSSI,
-                                            pRead.Reader,
-                                            pRead.Type == PortalRead.READ_KIND_CHIP ? Constants.Timing.CHIPREAD_TYPE_CHIP : Constants.Timing.CHIPREAD_TYPE_MANUAL,
-                                            Constants.Timing.UTCToLocalDate(pRead.ReaderSeconds, pRead.ReaderMilliseconds).ToString("yyyy/MM/dd HH:mm:ss.fff"),
-                                            reader_name
-                                            );
-                                        chipReads.Add(newRead);
+                                        // Only save a chip read if the chip is not on the ignored list.
+                                        if (pRead.IdentType != PortalRead.READ_IDENT_TYPE_CHIP || !ignoredChips.Contains(pRead.Identifier))
+                                        {
+                                            ChipRead chipRead = new(
+                                                theEvent.Identifier,
+                                                locationId,
+                                                pRead.IdentType == PortalRead.READ_IDENT_TYPE_CHIP,
+                                                pRead.Identifier,
+                                                Constants.Timing.UTCSecondsToRFIDSeconds(pRead.Seconds),
+                                                pRead.Milliseconds,
+                                                pRead.Antenna,
+                                                pRead.RSSI,
+                                                pRead.Reader,
+                                                pRead.Type == PortalRead.READ_KIND_CHIP ? Constants.Timing.CHIPREAD_TYPE_CHIP : Constants.Timing.CHIPREAD_TYPE_MANUAL,
+                                                Constants.Timing.UTCToLocalDate(pRead.ReaderSeconds, pRead.ReaderMilliseconds).ToString("yyyy/MM/dd HH:mm:ss.fff"),
+                                                reader_name
+                                                );
+                                            if (window != null && window.InDidNotStartMode())
+                                            {
+                                                chipRead.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
+                                            }
+                                            chipReads.Add(chipRead);
+                                        }
                                     }
-                                    if (!output.ContainsKey(MessageType.CHIPREAD))
+                                    if (!output.ContainsKey(MessageType.CHIPREAD) && chipReads.Count > 0)
                                     {
                                         output[MessageType.CHIPREAD] = null;
                                     }

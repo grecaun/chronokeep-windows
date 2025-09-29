@@ -52,6 +52,8 @@ namespace Chronokeep.MemStore
         // key == chip
         private static Dictionary<string, BibChipAssociation> chipToBibAssociations = new();
         private static Dictionary<string, BibChipAssociation> bibToChipAssociations = new();
+        // ignored chips
+        private static List<BibChipAssociation> ignoredChips = new();
         // key == distanceId
         private static Dictionary<int, List<AgeGroup>> ageGroups = new();
         private static Dictionary<(int, int), AgeGroup> currentAgeGroups = new();
@@ -92,6 +94,7 @@ namespace Chronokeep.MemStore
             participants.Clear();
             chipToBibAssociations.Clear();
             bibToChipAssociations.Clear();
+            ignoredChips.Clear();
             ageGroups.Clear();
             alarms.Clear();
             remoteReaders.Clear();
@@ -142,6 +145,7 @@ namespace Chronokeep.MemStore
                 chipToBibAssociations[assoc.Chip] = assoc;
                 bibToChipAssociations[assoc.Bib] = assoc;
             }
+            ignoredChips.AddRange(database.GetBibChips(-1));
             // load age groups
             foreach (AgeGroup group in database.GetAgeGroups(theEvent.Identifier))
             {

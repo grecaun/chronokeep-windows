@@ -14,7 +14,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Chronokeep.UI.UIObjects;
-using Chronokeep.Timing.API;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -56,13 +55,17 @@ namespace Chronokeep.UI.MainPages
             {
                 return;
             }
-            List<BibChipAssociation> list = new List<BibChipAssociation>();
+            List<BibChipAssociation> list = [];
+            List<BibChipAssociation> ignored = [];
             await Task.Run(() =>
             {
                 list = database.GetBibChips(theEvent.Identifier);
                 list.Sort();
+                ignored = database.GetBibChips(-1);
+                ignored.Sort();
             });
             bibChipList.ItemsSource = list;
+            ignoredChipList.ItemsSource = ignored;
             long maxChip = 0;
             long chip = -1;
             // check if hex before using a convert
@@ -274,7 +277,6 @@ namespace Chronokeep.UI.MainPages
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.ChipAssignmentPage", "Delete clicked.");
-            Log.D("UI.MainPages.ChipAssignmentPage", "Attempting to delete.");
             IList selected = bibChipList.SelectedItems;
             List<BibChipAssociation> items = new List<BibChipAssociation>();
             foreach (BibChipAssociation b in selected)
@@ -314,6 +316,14 @@ namespace Chronokeep.UI.MainPages
             if (e.Key == Key.Enter)
             {
                 SaveSingleButton_Click(null, null);
+            }
+        }
+
+        private void KeyPressHandlerIgnored(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SaveIgnored_Click(null, null);
             }
         }
 
@@ -358,8 +368,7 @@ namespace Chronokeep.UI.MainPages
                 "No",
                 () =>
                 {
-                    List<BibChipAssociation> list = (List<BibChipAssociation>)bibChipList.ItemsSource;
-                    database.RemoveBibChipAssociations(list);
+                    database.RemoveBibChipAssociations((List<BibChipAssociation>)bibChipList.ItemsSource);
                     BibsChanged = true;
                     UpdateView();
                 }
@@ -480,6 +489,76 @@ namespace Chronokeep.UI.MainPages
                 database.SetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE, Constants.Settings.CHIP_TYPE_HEX);
             }
             chipType = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE);
+        }
+
+        private void SaveIgnored_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.ChipAssignmentPage", "Save Ignored clicked.");
+            long chip = -1, bib = -1;
+            if (Constants.Settings.CHIP_TYPE_DEC == chipType.Value)
+            {
+                _ = long.TryParse(IgnoredChipBox.Text, out chip);
+            }
+            else if (Constants.Settings.CHIP_TYPE_HEX == chipType.Value)
+            {
+                _ = long.TryParse(IgnoredChipBox.Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out chip);
+            }
+            Log.D("UI.MainPages.ChipAssignmentPage", "Bib " + bib + " Chip " + chip);
+            if (chip == -1)
+            {
+                DialogBox.Show("The chip is not valid.");
+                return;
+            }
+            List<BibChipAssociation> bibChips =
+            [
+                new()
+                {
+                    Bib = IgnoredChipBox.Text,
+                    Chip = Constants.Settings.CHIP_TYPE_DEC == chipType.Value ? chip.ToString() : chip.ToString("X")
+                }
+            ];
+            database.AddBibChipAssociation(-1, bibChips);
+            Helpers.Globals.UpdateIgnoredChips(database);
+            BibsChanged = true;
+            UpdateView();
+            if (bib > -1)
+            {
+                IgnoredChipBox.Text = (bib + 1).ToString();
+            }
+            else
+            {
+                IgnoredChipBox.Text = "";
+            }
+            IgnoredChipBox.Focus();
+        }
+
+        private void ClearIgnored_Click(object sender, RoutedEventArgs e)
+        {
+            DialogBox.Show(
+                "Are you sure you want to delete everything? This cannot be undone.",
+                "Yes",
+                "No",
+                () =>
+                {
+                    database.RemoveBibChipAssociations((List<BibChipAssociation>)ignoredChipList.ItemsSource);
+                    BibsChanged = true;
+                    UpdateView();
+                }
+                );
+        }
+
+        private void DeleteIgnored_Click(object sender, RoutedEventArgs e)
+        {
+            Log.D("UI.MainPages.ChipAssignmentPage", "Delete ignored clicked.");
+            IList selected = ignoredChipList.SelectedItems;
+            List<BibChipAssociation> items = new();
+            foreach (BibChipAssociation b in selected)
+            {
+                items.Add(b);
+            }
+            database.RemoveBibChipAssociations(items);
+            BibsChanged = true;
+            UpdateView();
         }
     }
 }

@@ -30,6 +30,31 @@ namespace Chronokeep.Helpers
             }
         }
 
+        private static readonly List<BibChipAssociation> ignoredChips = [];
+        private static readonly Lock ignoredChipsMutex = new();
+
+        public static List<BibChipAssociation> GetIgnoredChips()
+        {
+            List<BibChipAssociation> output = [];
+            if (ignoredChipsMutex.TryEnter(1000))
+            {
+                output.AddRange(ignoredChips);
+                ignoredChipsMutex.Exit();
+            }
+            return output;
+        }
+
+        public static void UpdateIgnoredChips(IDBInterface database)
+        {
+            if (ignoredChipsMutex.TryEnter(1000))
+            {
+                ignoredChips.Clear();
+                List<BibChipAssociation> tmp = database.GetBibChips(-1);
+                ignoredChips.AddRange(database.GetBibChips(-1));
+                ignoredChipsMutex.Exit();
+            }
+        }
+
         public class ReaderMessage : IComparable
         {
             public SeverityLevel Severity;
@@ -71,22 +96,22 @@ namespace Chronokeep.Helpers
         }
 
         private static readonly Dictionary<(string, RemoteNotification), ReaderMessage> readerMessages = new();
-        private static readonly Mutex readerMessageMutex = new();
+        private static readonly Lock readerMessageMutex = new();
 
         public static List<ReaderMessage> GetReaderMessages()
         {
             List<ReaderMessage> output = [];
-            if (readerMessageMutex.WaitOne(1000))
+            if (readerMessageMutex.TryEnter(1000))
             {
                 output.AddRange(readerMessages.Values);
-                readerMessageMutex.ReleaseMutex();
+                readerMessageMutex.Exit();
             }
             return output;
         }
 
         public static void UpdateReaderMessages(List<ReaderMessage> msgs)
         {
-            if (readerMessageMutex.WaitOne(1000))
+            if (readerMessageMutex.TryEnter(1000))
             {
                 foreach (ReaderMessage m in msgs)
                 {
@@ -95,37 +120,37 @@ namespace Chronokeep.Helpers
                         found.Notified = m.Notified;
                     }
                 }
-                readerMessageMutex.ReleaseMutex();
+                readerMessageMutex.Exit();
             }
         }
 
         public static void UpdateReaderMessage(ReaderMessage msg)
         {
-            if (readerMessageMutex.WaitOne(1000))
+            if (readerMessageMutex.TryEnter(1000))
             {
                 if (readerMessages.TryGetValue((msg.SystemName, msg.Message), out ReaderMessage found))
                 {
                     found.Notified = msg.Notified;
+                    readerMessageMutex.Exit();
                 }
-                readerMessageMutex.ReleaseMutex();
             }
         }
 
         public static void ClearReaderMessages()
         {
-            if (readerMessageMutex.WaitOne(1000))
+            if (readerMessageMutex.TryEnter(1000))
             {
                 readerMessages.Clear();
-                readerMessageMutex.ReleaseMutex();
+                readerMessageMutex.Exit();
             }
         }
 
         public static bool AddReaderMessage(ReaderMessage msg)
         {
-            if (readerMessageMutex.WaitOne(1000))
+            if (readerMessageMutex.TryEnter(1000))
             {
                 readerMessages.Add((msg.SystemName, msg.Message), msg);
-                readerMessageMutex.ReleaseMutex();
+                readerMessageMutex.Exit();
                 return true;
             }
             return false;

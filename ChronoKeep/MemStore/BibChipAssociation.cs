@@ -53,6 +53,10 @@ namespace Chronokeep.MemStore
                             }
                         }
                     }
+                    else if (eventId == -1)
+                    {
+                        ignoredChips.AddRange(assoc);
+                    }
                     memStoreLock.ReleaseMutex();
                 }
             }
@@ -94,6 +98,10 @@ namespace Chronokeep.MemStore
                     if (theEvent != null && theEvent.Identifier == eventId)
                     {
                         output.AddRange(chipToBibAssociations.Values);
+                    }
+                    else if (eventId == -1)
+                    {
+                        output.AddRange(ignoredChips);
                     }
                     memStoreLock.ReleaseMutex();
                 }
@@ -154,6 +162,10 @@ namespace Chronokeep.MemStore
                             }
                         }
                     }
+                    else if (eventId == -1)
+                    {
+                        ignoredChips.RemoveAll(x => x.Chip == chip);
+                    }
                     memStoreLock.ReleaseMutex();
                 }
             }
@@ -172,8 +184,15 @@ namespace Chronokeep.MemStore
             {
                 if (memStoreLock.WaitOne(lockTimeout))
                 {
-                    chipToBibAssociations.Remove(assoc.Chip);
-                    bibToChipAssociations.Remove(assoc.Bib);
+                    if (theEvent != null && theEvent.Identifier == assoc.EventId)
+                    {
+                        chipToBibAssociations.Remove(assoc.Chip);
+                        bibToChipAssociations.Remove(assoc.Bib);
+                    }
+                    else if (assoc.EventId == -1)
+                    {
+                        ignoredChips.RemoveAll(x => x.Chip == assoc.Chip);
+                    }
                     Dictionary<string, Participant> bibPartDict = new();
                     foreach (Participant part in participants.Values)
                     {
@@ -217,8 +236,15 @@ namespace Chronokeep.MemStore
                 {
                     foreach (BibChipAssociation assoc in assocs)
                     {
-                        chipToBibAssociations.Remove(assoc.Chip);
-                        bibToChipAssociations.Remove(assoc.Bib);
+                        if (theEvent != null && theEvent.Identifier == assoc.EventId)
+                        {
+                            chipToBibAssociations.Remove(assoc.Chip);
+                            bibToChipAssociations.Remove(assoc.Bib);
+                        }
+                        else if (assoc.EventId == -1)
+                        {
+                            ignoredChips.RemoveAll(x => x.Chip == assoc.Chip);
+                        }
                     }
                     Dictionary<string, Participant> bibPartDict = new();
                     foreach (Participant part in participants.Values)

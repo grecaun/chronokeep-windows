@@ -1,6 +1,7 @@
 {
   "version": "v1.9.8",
   "changes": [
+    "Added ignored chip list that ensures the program doesn't save chip reads for any chip on the list."
   ],
   "fixes": [
     "Fixed an issue where the locations combobox for only showing results/reads from a location would revert to All Locations every page refresh.",

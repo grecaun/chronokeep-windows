@@ -116,7 +116,12 @@ namespace Chronokeep.Timing.Interfaces
             bufferDict[sock].Append(inMessage);
             Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- new message is '" + inMessage + "' with a length of " + inMessage.Length);
             Match m = msg.Match(bufferDict[sock].ToString());
-            List<ChipRead> chipReads = new List<ChipRead>();
+            HashSet<string> ignoredChips = [];
+            foreach (BibChipAssociation ignore in database.GetBibChips(-1))
+            {
+                ignoredChips.Add(ignore.Chip);
+            }
+            List<ChipRead> chipReads = [];
             Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- matching all lines for messages");
             int count = 1;
             while (m.Success)
@@ -129,27 +134,32 @@ namespace Chronokeep.Timing.Interfaces
                 // aa[ReaderId{2}][TagID{12}(Starts with 058)][ICount?{2}][QCount{2}][Date{yyMMdd}][Time{HHmmss}][Milliseconds{2}(Hex)][Checksum{2}][FS|LS]
                 if (chipread.IsMatch(message))
                 {
-                    Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- chipread found");
-                    DateTime time = DateTime.ParseExact(message.Substring(20, 12), "yyMMddHHmmss", CultureInfo.InvariantCulture);
-                    int.TryParse(message.Substring(32, 2), NumberStyles.HexNumber, null, out int milliseconds);
-                    milliseconds *= 10;
-                    time = time.AddMilliseconds(milliseconds);
-                    ChipRead chipRead = new ChipRead(
-                        theEvent.Identifier,
-                        locationId,
-                        message.Substring(4, 12),
-                        time,
-                        Convert.ToInt32(message.Substring(2, 2)),
-                        message.Length == 36 ? 0 : 1
-                        );
-                    if (window != null && window.InDidNotStartMode())
+                    // Only add the chip if it isn't in the ignored list.
+                    string chip = message.Substring(4, 12).Trim();
+                    if (!ignoredChips.Contains(chip))
                     {
-                        chipRead.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
-                    }
-                    chipReads.Add(chipRead);
-                    if (!output.ContainsKey(MessageType.CHIPREAD))
-                    {
-                        output[MessageType.CHIPREAD] = null;
+                        Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- chipread found");
+                        DateTime time = DateTime.ParseExact(message.Substring(20, 12), "yyMMddHHmmss", CultureInfo.InvariantCulture);
+                        int.TryParse(message.Substring(32, 2), NumberStyles.HexNumber, null, out int milliseconds);
+                        milliseconds *= 10;
+                        time = time.AddMilliseconds(milliseconds);
+                        ChipRead chipRead = new(
+                            theEvent.Identifier,
+                            locationId,
+                            chip,
+                            time,
+                            Convert.ToInt32(message.Substring(2, 2)),
+                            message.Length == 36 ? 0 : 1
+                            );
+                        if (window != null && window.InDidNotStartMode())
+                        {
+                            chipRead.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
+                        }
+                        chipReads.Add(chipRead);
+                        if (!output.ContainsKey(MessageType.CHIPREAD))
+                        {
+                            output[MessageType.CHIPREAD] = null;
+                        }
                     }
                 }
                 // Time is as follows:
@@ -172,7 +182,10 @@ namespace Chronokeep.Timing.Interfaces
                 m = msg.Match(bufferDict[sock].ToString());
             }
             Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- messages parsed successfully adding chipreads");
-            database.AddChipReads(chipReads);
+            if (chipReads.Count > 0)
+            {
+                database.AddChipReads(chipReads);
+            }
             return output;
         }
 
