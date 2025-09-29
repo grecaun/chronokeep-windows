@@ -12,7 +12,7 @@ namespace Chronokeep
     class SQLiteInterface(string info) : IDBInterface
     {
         /**
-         * HIGHEST MUTEX ID = 170
+         * HIGHEST LOCK ID = 170
          * NEXT AVAILABLE   = 171
          */
         private readonly int version = 71;
@@ -22,10 +22,10 @@ namespace Chronokeep
 
         public void Initialize()
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 0");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 0");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 0");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 0");
                 return;
             }
             try
@@ -45,11 +45,11 @@ namespace Chronokeep
 
         public int AddDistance(Distance d)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 1");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 1");
             int output = -1;
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 1");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 1");
                 return output;
             }
             try
@@ -68,11 +68,11 @@ namespace Chronokeep
 
         public List<Distance> AddDistances(List<Distance> distances)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 117");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 117");
             List<Distance> output = [];
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 117");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 117");
                 return output;
             }
             try
@@ -95,10 +95,10 @@ namespace Chronokeep
 
         public void RemoveDistance(int identifier)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 2");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 2");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 2");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 2");
                 return;
             }
             try
@@ -121,10 +121,10 @@ namespace Chronokeep
 
         public void UpdateDistance(Distance d)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 3");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 3");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 3");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 3");
                 return;
             }
             try
@@ -143,10 +143,10 @@ namespace Chronokeep
         public List<Distance> GetDistances()
         {
             List<Distance> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 4");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 4");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 4");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 4");
                 return output;
             }
             try
@@ -166,10 +166,10 @@ namespace Chronokeep
         public List<Distance> GetDistances(int eventId)
         {
             List<Distance> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 5");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 5");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 5");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 5");
                 return output;
             }
             try
@@ -189,10 +189,10 @@ namespace Chronokeep
         public int GetDistanceID(Distance d)
         {
             int output = -1;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 6");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 6");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 6");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 6");
                 return output;
             }
             try
@@ -212,10 +212,10 @@ namespace Chronokeep
         public Distance GetDistance(int distanceId)
         {
             Distance output = null;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 7");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 7");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 7");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 7");
                 return output;
             }
             try
@@ -234,10 +234,10 @@ namespace Chronokeep
 
         public void SetWaveTimes(int eventId, int wave, long seconds, int milliseconds)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 8");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 8");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 8");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 8");
                 return;
             }
             try
@@ -259,11 +259,11 @@ namespace Chronokeep
 
         public int AddEvent(Event anEvent)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 9");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 9");
             int output = -1;
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 9");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 9");
                 return output;
             }
             try
@@ -287,10 +287,10 @@ namespace Chronokeep
 
         public void RemoveEvent(int identifier)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 10");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 10");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 10");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 10");
                 return;
             }
             try
@@ -308,10 +308,10 @@ namespace Chronokeep
 
         public void UpdateEvent(Event anEvent)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 11");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 11");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 11");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 11");
                 return;
             }
             try
@@ -330,10 +330,10 @@ namespace Chronokeep
         public List<Event> GetEvents()
         {
             List<Event> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 12");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 12");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 12");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 12");
                 return output;
             }
             try
@@ -353,10 +353,10 @@ namespace Chronokeep
         public int GetEventID(Event anEvent)
         {
             int output = -1;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 13");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 13");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 13");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 13");
                 return output;
             }
             try
@@ -399,10 +399,10 @@ namespace Chronokeep
             {
                 return output;
             }
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 14");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 14");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 14");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 14");
                 return output;
             }
             try
@@ -421,10 +421,10 @@ namespace Chronokeep
 
         public void SetStartOptions(Event anEvent)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 17");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 17");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 17");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 17");
                 return;
             }
             try
@@ -442,10 +442,10 @@ namespace Chronokeep
 
         public void SetFinishOptions(Event anEvent)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 18");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 18");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 18");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 18");
                 return;
             }
             try
@@ -463,10 +463,10 @@ namespace Chronokeep
 
         public void SetStartFinishOptions(Event anEvent)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 170");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 170");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 170");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 170");
                 return;
             }
             try
@@ -489,10 +489,10 @@ namespace Chronokeep
         public Participant AddParticipant(Participant person)
         {
             Participant output = null;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 19");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 19");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 19");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 19");
                 return output;
             }
             try
@@ -516,10 +516,10 @@ namespace Chronokeep
         public List<Participant> AddParticipants(List<Participant> people)
         {
             List<Participant> output = new();
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 20");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 20");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 20");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 20");
                 return output;
             }
             try
@@ -545,10 +545,10 @@ namespace Chronokeep
 
         public void RemoveParticipant(int identifier)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 21");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 21");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 21");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 21");
                 return;
             }
             try
@@ -566,10 +566,10 @@ namespace Chronokeep
 
         public void RemoveParticipantEntry(Participant person)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 124");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 124");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 124");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 124");
                 return;
             }
             try
@@ -591,10 +591,10 @@ namespace Chronokeep
 
         public void RemoveParticipantEntries(List<Participant> participants)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 22");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 22");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 22");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 22");
                 return;
             }
             try
@@ -619,10 +619,10 @@ namespace Chronokeep
 
         public void UpdateParticipant(Participant person)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 25");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 25");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 25");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 25");
                 return;
             }
             try
@@ -645,10 +645,10 @@ namespace Chronokeep
 
         public void UpdateParticipants(List<Participant> participants)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 26");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 26");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 26");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 26");
                 return;
             }
             try
@@ -675,10 +675,10 @@ namespace Chronokeep
         public List<Participant> GetParticipants()
         {
             List<Participant> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 29");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 29");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 29");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 29");
                 return output;
             }
             try
@@ -698,10 +698,10 @@ namespace Chronokeep
         public List<Participant> GetParticipants(int eventId)
         {
             List<Participant> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 131");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 131");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 131");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 131");
                 return output;
             }
             try
@@ -721,10 +721,10 @@ namespace Chronokeep
         public List<Participant> GetParticipants(int eventId, int distanceId)
         {
             List<Participant> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 132");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 132");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 132");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 132");
                 return output;
             }
             try
@@ -744,10 +744,10 @@ namespace Chronokeep
         public Participant GetParticipantEventSpecific(int eventIdentifier, int eventSpecificId)
         {
             Participant output = null;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 30");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 30");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 30");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 30");
                 return output;
             }
             try
@@ -767,10 +767,10 @@ namespace Chronokeep
         public Participant GetParticipantBib(int eventIdentifier, string bib)
         {
             Participant output = null;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 31");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 31");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 31");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 31");
                 return output;
             }
             try
@@ -790,10 +790,10 @@ namespace Chronokeep
         public Participant GetParticipant(int eventId, int identifier)
         {
             Participant output = null;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 32");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 32");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 32");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 32");
                 return output;
             }
             try
@@ -813,10 +813,10 @@ namespace Chronokeep
         public Participant GetParticipant(int eventId, Participant unknown)
         {
             Participant output = null;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 33");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 33");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 33");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 33");
                 return output;
             }
             try
@@ -836,10 +836,10 @@ namespace Chronokeep
         public int GetParticipantID(Participant person)
         {
             int output = -1;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 34");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 34");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 34");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 34");
                 return output;
             }
             try
@@ -859,10 +859,10 @@ namespace Chronokeep
         public List<string> GetDivisions(int eventIdentifier)
         {
             List<string> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 169");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 169");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 169");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 169");
                 return output;
             }
             try
@@ -885,11 +885,11 @@ namespace Chronokeep
 
         public int AddTimingLocation(TimingLocation tl)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 35");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 35");
             int output = -1;
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 35");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 35");
                 return output;
             }
             try
@@ -907,11 +907,11 @@ namespace Chronokeep
         }
         public List<TimingLocation> AddTimingLocations(List<TimingLocation> locations)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 118");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 118");
             List<TimingLocation> output = [];
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 118");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 118");
                 return output;
             }
             try
@@ -939,10 +939,10 @@ namespace Chronokeep
 
         public void RemoveTimingLocation(int identifier)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 36");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 36");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 36");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 36");
                 return;
             }
             try
@@ -960,10 +960,10 @@ namespace Chronokeep
 
         public void UpdateTimingLocation(TimingLocation tl)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 37");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 37");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 37");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 37");
                 return;
             }
             try
@@ -982,10 +982,10 @@ namespace Chronokeep
         public List<TimingLocation> GetTimingLocations(int eventId)
         {
             List<TimingLocation> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 38");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 38");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 38");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 38");
                 return output;
             }
             try
@@ -1005,10 +1005,10 @@ namespace Chronokeep
         public int GetTimingLocationID(TimingLocation tl)
         {
             int output = -1;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 39");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 39");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 39");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 39");
                 return output;
             }
             try
@@ -1031,11 +1031,11 @@ namespace Chronokeep
 
         public int AddSegment(Segment seg)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 40");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 40");
             int output = -1;
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 40");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 40");
                 return output;
             }
             try
@@ -1058,11 +1058,11 @@ namespace Chronokeep
 
         public List<Segment> AddSegments(List<Segment> segments)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 41");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 41");
             List<Segment> output = [];
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 41");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 41");
                 return output;
             }
             try
@@ -1089,10 +1089,10 @@ namespace Chronokeep
 
         public void RemoveSegment(Segment seg)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 42");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 42");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 42");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 42");
                 return;
             }
             try
@@ -1110,10 +1110,10 @@ namespace Chronokeep
 
         public void RemoveSegment(int identifier)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 43");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 43");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 43");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 43");
                 return;
             }
             try
@@ -1135,10 +1135,10 @@ namespace Chronokeep
 
         public void RemoveSegments(List<Segment> segments)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 44");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 44");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 44");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 44");
                 return;
             }
             try
@@ -1163,10 +1163,10 @@ namespace Chronokeep
 
         public void UpdateSegment(Segment seg)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 45");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 45");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 45");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 45");
                 return;
             }
             try
@@ -1188,10 +1188,10 @@ namespace Chronokeep
 
         public void UpdateSegments(List<Segment> segments)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 46");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 46");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 46");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 46");
                 return;
             }
             try
@@ -1217,10 +1217,10 @@ namespace Chronokeep
         public int GetSegmentId(Segment seg)
         {
             int output = -1;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 47");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 47");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 47");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 47");
                 return output;
             }
             try
@@ -1240,10 +1240,10 @@ namespace Chronokeep
         public List<Segment> GetSegments(int eventId)
         {
             List<Segment> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 48");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 48");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 48");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 48");
                 return output;
             }
             try
@@ -1262,10 +1262,10 @@ namespace Chronokeep
 
         public void ResetSegments(int eventId)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 49");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 49");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 49");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 49");
                 return;
             }
             try
@@ -1284,10 +1284,10 @@ namespace Chronokeep
         public int GetMaxSegments(int eventId)
         {
             int output = 0;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 50");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 50");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 50");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 50");
                 return output;
             }
             try
@@ -1310,10 +1310,10 @@ namespace Chronokeep
 
         public void AddTimingResult(TimeResult result)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 51");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 51");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 51");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 51");
                 return;
             }
             try
@@ -1335,10 +1335,10 @@ namespace Chronokeep
             {
                 return;
             }
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 52");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 52");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 52");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 52");
                 return;
             }
             try
@@ -1363,10 +1363,10 @@ namespace Chronokeep
 
         public void RemoveTimingResult(TimeResult tr)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 53");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 53");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 53");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 53");
                 return;
             }
             try
@@ -1385,10 +1385,10 @@ namespace Chronokeep
         public List<TimeResult> GetTimingResults(int eventId)
         {
             List<TimeResult> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 54");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 54");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 54");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 54");
                 return output;
             }
             try
@@ -1408,10 +1408,10 @@ namespace Chronokeep
         public List<TimeResult> GetFinishTimes(int eventId)
         {
             List<TimeResult> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 120");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 120");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 120");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 120");
                 return output;
             }
             try
@@ -1431,10 +1431,10 @@ namespace Chronokeep
         public List<TimeResult> GetLastSeenResults(int eventId)
         {
             List<TimeResult> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 137");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 137");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 137");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 137");
                 return output;
             }
             try
@@ -1454,10 +1454,10 @@ namespace Chronokeep
         public List<TimeResult> GetStartTimes(int eventId)
         {
             List<TimeResult> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 55");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 55");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 55");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 55");
                 return output;
             }
             try
@@ -1477,10 +1477,10 @@ namespace Chronokeep
         public List<TimeResult> GetSegmentTimes(int eventId, int segmentId)
         {
             List<TimeResult> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 56");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 56");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 56");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 56");
                 return output;
             }
             try
@@ -1499,10 +1499,10 @@ namespace Chronokeep
 
         public void UpdateTimingResult(TimeResult oldResult, string newTime)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 57");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 57");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 57");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 57");
                 return;
             }
             try
@@ -1520,10 +1520,10 @@ namespace Chronokeep
 
         public void SetUploadedTimingResults(List<TimeResult> results)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 129");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 129");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 129");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 129");
                 return;
             }
             try
@@ -1542,10 +1542,10 @@ namespace Chronokeep
         public List<TimeResult> GetNonUploadedResults(int eventId)
         {
             List<TimeResult> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 130");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 130");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 130");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 130");
                 return output;
             }
             try
@@ -1564,10 +1564,10 @@ namespace Chronokeep
 
         public bool UnprocessedReadsExist(int eventId)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 58");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 58");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 58");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 58");
                 return false;
             }
             long output = 0;
@@ -1588,10 +1588,10 @@ namespace Chronokeep
         public bool UnprocessedResultsExist(int eventId)
         {
             long output = 0;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 59");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 59");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 59");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 59");
                 return output != 0;
             }
             try
@@ -1614,10 +1614,10 @@ namespace Chronokeep
 
         public void ResetTimingResultsEvent(int eventId)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 60");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 60");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 60");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 60");
                 return;
             }
             try
@@ -1635,10 +1635,10 @@ namespace Chronokeep
 
         public void ResetTimingResultsPlacements(int eventId)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 64");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 64");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 64");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 64");
                 return;
             }
             try
@@ -1660,10 +1660,10 @@ namespace Chronokeep
 
         public void HardResetDatabase()
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 67");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 67");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 67");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 67");
                 return;
             }
             try
@@ -1682,10 +1682,10 @@ namespace Chronokeep
 
         public void ResetDatabase()
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 68");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 68");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 68");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 68");
                 return;
             }
             try
@@ -1707,10 +1707,10 @@ namespace Chronokeep
 
         public void AddBibChipAssociation(int eventId, List<BibChipAssociation> assoc)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 77");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 77");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 77");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 77");
                 return;
             }
             try
@@ -1729,10 +1729,10 @@ namespace Chronokeep
         public List<BibChipAssociation> GetBibChips()
         {
             List<BibChipAssociation> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 78");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 78");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 78");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 78");
                 return output;
             }
             try
@@ -1751,11 +1751,11 @@ namespace Chronokeep
 
         public List<BibChipAssociation> GetBibChips(int eventId)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 79");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 79");
             List<BibChipAssociation> output = [];
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 79");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 79");
                 return output;
             }
             try
@@ -1774,10 +1774,10 @@ namespace Chronokeep
 
         public void RemoveBibChipAssociation(int eventId, string chip)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 80");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 80");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 80");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 80");
                 return;
             }
             try
@@ -1800,10 +1800,10 @@ namespace Chronokeep
 
         public void RemoveBibChipAssociation(BibChipAssociation assoc)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 81");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 81");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 81");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 81");
                 return;
             }
             try
@@ -1821,10 +1821,10 @@ namespace Chronokeep
 
         public void RemoveBibChipAssociations(List<BibChipAssociation> assocs)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 82");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 82");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 82");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 82");
                 return;
             }
             try
@@ -1853,11 +1853,11 @@ namespace Chronokeep
 
         public int AddChipRead(ChipRead read)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 83");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 83");
             int output = -1;
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 83");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 83");
                 return output;
             }
             try
@@ -1880,11 +1880,11 @@ namespace Chronokeep
 
         public List<ChipRead> AddChipReads(List<ChipRead> reads)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 84");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 84");
             List<ChipRead> output = [];
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 84");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 84");
                 return output;
             }
             try
@@ -1911,10 +1911,10 @@ namespace Chronokeep
 
         public void UpdateChipRead(ChipRead read)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 85");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 85");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 85");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 85");
                 return;
             }
             try
@@ -1936,10 +1936,10 @@ namespace Chronokeep
 
         public void UpdateChipReads(List<ChipRead> reads)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 86");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 86");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 86");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 86");
                 return;
             }
             try
@@ -1964,10 +1964,10 @@ namespace Chronokeep
 
         public void SetChipReadStatus(ChipRead read)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 87");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 87");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 87");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 87");
                 return;
             }
             try
@@ -1993,10 +1993,10 @@ namespace Chronokeep
             {
                 return;
             }
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 88");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 88");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 88");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 88");
                 return;
             }
             try
@@ -2022,10 +2022,10 @@ namespace Chronokeep
         public void DeleteChipReads(List<ChipRead> reads)
         {
             if (reads.Count < 1) return;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 89");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 89");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 89");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 89");
                 return;
             }
             try
@@ -2044,10 +2044,10 @@ namespace Chronokeep
         public List<ChipRead> GetChipReadsSafemode(int eventId)
         {
             List<ChipRead> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 158");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 158");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 158");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 158");
                 return output;
             }
             try
@@ -2068,10 +2068,10 @@ namespace Chronokeep
         {
             Event theEvent = GetCurrentEvent();
             List<ChipRead> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 90");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 90");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 90");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 90");
                 return output;
             }
             try
@@ -2092,10 +2092,10 @@ namespace Chronokeep
         {
             List<ChipRead> output = [];
             Event theEvent = GetCurrentEvent();
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 91");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 91");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 91");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 91");
                 return output;
             }
             try
@@ -2116,10 +2116,10 @@ namespace Chronokeep
         {
             List<ChipRead> output = [];
             Event theEvent = GetCurrentEvent();
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 92");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 92");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 92");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 92");
                 return output;
             }
             try
@@ -2140,10 +2140,10 @@ namespace Chronokeep
         {
             List<ChipRead> output = [];
             Event theEvent = GetCurrentEvent();
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 133");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 133");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 133");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 133");
                 return output;
             }
             try
@@ -2164,10 +2164,10 @@ namespace Chronokeep
         {
             List<ChipRead> output = [];
             Event theEvent = GetCurrentEvent();
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 134");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 134");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 134");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 134");
                 return output;
             }
             try
@@ -2188,10 +2188,10 @@ namespace Chronokeep
         {
             List<ChipRead> output = [];
             Event theEvent = GetCurrentEvent();
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 136");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 136");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 136");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 136");
                 return output;
             }
             try
@@ -2215,10 +2215,10 @@ namespace Chronokeep
         public AppSetting GetAppSetting(string name)
         {
             AppSetting output = null;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 95");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 95");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 95");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 95");
                 return output;
             }
             try
@@ -2247,10 +2247,10 @@ namespace Chronokeep
 
         public void SetAppSetting(AppSetting setting)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 96");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 96");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 96");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 96");
                 return;
             }
             try
@@ -2271,11 +2271,11 @@ namespace Chronokeep
          */
         public int AddAgeGroup(AgeGroup group)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 107");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 107");
             int output = -1;
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 107");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 107");
                 return output;
             }
             try
@@ -2298,11 +2298,11 @@ namespace Chronokeep
 
         public List<AgeGroup> AddAgeGroups(List<AgeGroup> groups)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 108");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 108");
             List<AgeGroup> output = new();
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 108");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 108");
                 return output;
             }
             try
@@ -2329,10 +2329,10 @@ namespace Chronokeep
 
         public void UpdateAgeGroup(AgeGroup group)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 109");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 109");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 109");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 109");
                 return;
             }
             try
@@ -2350,10 +2350,10 @@ namespace Chronokeep
 
         public void RemoveAgeGroup(AgeGroup group)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 110");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 110");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 110");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 110");
                 return;
             }
             try
@@ -2371,10 +2371,10 @@ namespace Chronokeep
 
         public void RemoveAgeGroups(int eventId, int distanceId)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 111");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 111");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 111");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 111");
                 return;
             }
             try
@@ -2392,10 +2392,10 @@ namespace Chronokeep
 
         public void RemoveAgeGroups(List<AgeGroup> groups)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 123");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 123");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 123");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 123");
                 return;
             }
             try
@@ -2413,10 +2413,10 @@ namespace Chronokeep
 
         public void ResetAgeGroups(int eventId)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 135");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 135");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 135");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 135");
                 return;
             }
             try
@@ -2435,10 +2435,10 @@ namespace Chronokeep
         public List<AgeGroup> GetAgeGroups(int eventId)
         {
             List<AgeGroup> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 112");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 112");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 112");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 112");
                 return output;
             }
             try
@@ -2458,10 +2458,10 @@ namespace Chronokeep
         public List<AgeGroup> GetAgeGroups(int eventId, int distanceId)
         {
             List<AgeGroup> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 122");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 122");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 122");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 122");
                 return output;
             }
             try
@@ -2484,11 +2484,11 @@ namespace Chronokeep
 
         public int AddTimingSystem(TimingSystem system)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 113");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 113");
             int output = Constants.Timing.TIMINGSYSTEM_UNKNOWN;
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 113");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 113");
                 return output;
             }
             try
@@ -2507,10 +2507,10 @@ namespace Chronokeep
 
         public void UpdateTimingSystem(TimingSystem system)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 114");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 114");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 114");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 114");
                 return;
             }
             try
@@ -2528,10 +2528,10 @@ namespace Chronokeep
 
         public void SetTimingSystems(List<TimingSystem> systems)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 115");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 115");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 115");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 115");
                 return;
             }
             try
@@ -2554,10 +2554,10 @@ namespace Chronokeep
 
         public void RemoveTimingSystem(int systemId)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 116");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 116");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 116");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 116");
                 return;
             }
             try
@@ -2576,10 +2576,10 @@ namespace Chronokeep
         public List<TimingSystem> GetTimingSystems()
         {
             List<TimingSystem> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 117");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 117");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 117");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 117");
                 return output;
             }
             try
@@ -2599,10 +2599,10 @@ namespace Chronokeep
         public List<DistanceStat> GetDistanceStats(int eventId)
         {
             List<DistanceStat> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 121");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 121");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 121");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 121");
                 return output;
             }
             try
@@ -2641,10 +2641,10 @@ namespace Chronokeep
         public int AddAPI(APIObject anAPI)
         {
             int output = -1;
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 125");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 125");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 125");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 125");
                 return output;
             }
             try
@@ -2663,10 +2663,10 @@ namespace Chronokeep
 
         public void UpdateAPI(APIObject anAPI)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 126");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 126");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 126");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 126");
                 return;
             }
             try
@@ -2684,10 +2684,10 @@ namespace Chronokeep
 
         public void RemoveAPI(int identifier)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 127");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 127");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 127");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 127");
                 return;
             }
             try
@@ -2710,10 +2710,10 @@ namespace Chronokeep
             {
                 return output;
             }
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 128");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 128");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 128");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 128");
                 return output;
             }
             try
@@ -2733,10 +2733,10 @@ namespace Chronokeep
         public List<APIObject> GetAllAPI()
         {
             List<APIObject> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 129");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 129");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 129");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 129");
                 return output;
             }
             try
@@ -2755,11 +2755,11 @@ namespace Chronokeep
 
         public List<Alarm> SaveAlarms(int eventId, List<Alarm> alarms)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 138");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 138");
             List<Alarm> output = [];
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 138");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 138");
                 return output;
             }
             try
@@ -2778,11 +2778,11 @@ namespace Chronokeep
 
         public int SaveAlarm(int eventId, Alarm alarm)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 139");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 139");
             int output = -1;
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 139");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 139");
                 return output;
             }
             try
@@ -2802,10 +2802,10 @@ namespace Chronokeep
         public List<Alarm> GetAlarms(int eventId)
         {
             List<Alarm> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 141");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 141");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 141");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 141");
                 return output;
             }
             try
@@ -2824,10 +2824,10 @@ namespace Chronokeep
 
         public void DeleteAlarms(int eventId)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 142");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 142");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 142");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 142");
                 return;
             }
             try
@@ -2845,10 +2845,10 @@ namespace Chronokeep
 
         public void DeleteAlarm(Alarm alarm)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 143");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 143");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 143");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 143");
                 return;
             }
             try
@@ -2866,10 +2866,10 @@ namespace Chronokeep
 
         public void AddRemoteReaders(int eventId, List<RemoteReader> readers)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 144");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 144");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 144");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 144");
                 return;
             }
             try
@@ -2887,10 +2887,10 @@ namespace Chronokeep
 
         public void DeleteRemoteReaders(int eventId, List<RemoteReader> readers)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 145");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 145");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 145");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 145");
                 return;
             }
             try
@@ -2908,10 +2908,10 @@ namespace Chronokeep
 
         public void DeleteRemoteReader(int eventId, RemoteReader reader)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 146");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 146");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 146");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 146");
                 return;
             }
             try
@@ -2930,10 +2930,10 @@ namespace Chronokeep
         public List<RemoteReader> GetRemoteReaders(int eventId)
         {
             List<RemoteReader> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 147");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 147");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 147");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 147");
                 return output;
             }
             try
@@ -2952,10 +2952,10 @@ namespace Chronokeep
 
         public void AddSMSAlert(int eventId, int eventspecific_id, int segment_id)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 148");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 148");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 148");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 148");
                 return;
             }
             try
@@ -2974,10 +2974,10 @@ namespace Chronokeep
         public List<(int, int)> GetSMSAlerts(int eventId)
         {
             List<(int, int)> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 149");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 149");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 149");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 149");
                 return output;
             }
             try
@@ -2996,10 +2996,10 @@ namespace Chronokeep
 
         public void AddEmailAlert(int eventId, int eventspecific_id)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 156");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 156");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 156");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 156");
                 return;
             }
             try
@@ -3018,10 +3018,10 @@ namespace Chronokeep
         public List<int> GetEmailAlerts(int eventId)
         {
             List<int> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 157");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 157");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 157");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 157");
                 return output;
             }
             try
@@ -3040,10 +3040,10 @@ namespace Chronokeep
 
         public void RemoveEmailAlert(int eventId, int eventspecific_id)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 164");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 164");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 164");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 164");
                 return;
             }
             try
@@ -3062,10 +3062,10 @@ namespace Chronokeep
         public List<string> GetBannedPhones()
         {
             List<string> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 150");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 150");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 150");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 150");
                 return output;
             }
             try
@@ -3084,10 +3084,10 @@ namespace Chronokeep
 
         public void AddBannedPhone(string phone)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 151");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 151");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 151");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 151");
                 return;
             }
             try
@@ -3105,10 +3105,10 @@ namespace Chronokeep
 
         public void AddBannedPhones(List<string> phones)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 152");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 152");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 152");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 152");
                 return;
             }
             try
@@ -3126,10 +3126,10 @@ namespace Chronokeep
 
         public void RemoveBannedPhones(List<string> phones)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 162");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 162");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 162");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 162");
                 return;
             }
             try
@@ -3148,10 +3148,10 @@ namespace Chronokeep
         public List<string> GetBannedEmails()
         {
             List<string> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 153");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 153");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 153");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 153");
                 return output;
             }
             try
@@ -3170,10 +3170,10 @@ namespace Chronokeep
 
         public void AddBannedEmail(string email)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 154");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 154");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 154");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 154");
                 return;
             }
             try
@@ -3191,10 +3191,10 @@ namespace Chronokeep
 
         public void AddBannedEmails(List<string> emails)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 155");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 155");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 155");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 155");
                 return;
             }
             try
@@ -3212,10 +3212,10 @@ namespace Chronokeep
 
         public void RemoveBannedEmails(List<string> emails)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 163");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 163");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 163");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 163");
                 return;
             }
             try
@@ -3234,10 +3234,10 @@ namespace Chronokeep
         public List<APISmsSubscription> GetSmsSubscriptions(int eventId)
         {
             List<APISmsSubscription> output = [];
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 159");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 159");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 159");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 159");
                 return output;
             }
             try
@@ -3256,10 +3256,10 @@ namespace Chronokeep
 
         public void AddSmsSubscriptions(int eventId, List<APISmsSubscription> subscriptions)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 160");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 160");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 160");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 160");
                 return;
             }
             try
@@ -3284,10 +3284,10 @@ namespace Chronokeep
 
         public void DeleteSmsSubscriptions(int eventId)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 161");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 161");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 161");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 161");
                 return;
             }
             try
@@ -3305,10 +3305,10 @@ namespace Chronokeep
 
         public void RemoveBannedEmail(string email)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 165");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 165");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 165");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 165");
                 return;
             }
             try
@@ -3326,10 +3326,10 @@ namespace Chronokeep
 
         public void RemoveBannedPhone(string phone)
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 165");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 165");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 165");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 165");
                 return;
             }
             try
@@ -3347,10 +3347,10 @@ namespace Chronokeep
 
         public void ClearBannedEmails()
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 167");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 167");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 167");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 167");
                 return;
             }
             try
@@ -3368,10 +3368,10 @@ namespace Chronokeep
 
         public void ClearBannedPhones()
         {
-            Log.D("SQLiteInterface", "Attempting to grab Mutex: ID 168");
+            Log.D("SQLiteInterface", "Attempting to grab Lock: ID 168");
             if (!dbLock.TryEnter(3000))
             {
-                Log.D("SQLiteInterface", "Failed to grab Mutex: ID 168");
+                Log.D("SQLiteInterface", "Failed to grab Lock: ID 168");
                 return;
             }
             try

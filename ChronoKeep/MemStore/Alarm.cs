@@ -16,10 +16,16 @@ namespace Chronokeep.MemStore
             database.DeleteAlarm(alarm);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    alarms.RemoveAll(x => alarm.Bib.Equals(x.Bib, StringComparison.OrdinalIgnoreCase) && alarm.Chip.Equals(x.Chip, StringComparison.OrdinalIgnoreCase));
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        alarms.RemoveAll(x => alarm.Bib.Equals(x.Bib, StringComparison.OrdinalIgnoreCase) && alarm.Chip.Equals(x.Chip, StringComparison.OrdinalIgnoreCase));
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -35,13 +41,19 @@ namespace Chronokeep.MemStore
             database.DeleteAlarms(eventId);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        alarms.Clear();
+                        if (theEvent != null && theEvent.Identifier == eventId)
+                        {
+                            alarms.Clear();
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -54,16 +66,22 @@ namespace Chronokeep.MemStore
         public List<Alarm> GetAlarms(int eventId)
         {
             Log.D("MemStore", "GetAlarms");
-            List<Alarm> output = new();
+            List<Alarm> output = [];
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        output.AddRange(alarms);
+                        if (theEvent != null && theEvent.Identifier == eventId)
+                        {
+                            output.AddRange(alarms);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
                 return output;
             }
@@ -80,13 +98,19 @@ namespace Chronokeep.MemStore
             alarm.Identifier = database.SaveAlarm(eventId, alarm);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        alarms.Add(alarm);
+                        if (theEvent != null && theEvent.Identifier == eventId)
+                        {
+                            alarms.Add(alarm);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
                 return alarm.Identifier;
             }
@@ -104,13 +128,19 @@ namespace Chronokeep.MemStore
             output.AddRange(database.SaveAlarms(eventId, iAlarms));
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        alarms.AddRange(output);
+                        if (theEvent != null && theEvent.Identifier == eventId)
+                        {
+                            alarms.AddRange(output);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
                 return output;
             }

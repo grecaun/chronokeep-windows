@@ -16,11 +16,17 @@ namespace Chronokeep.MemStore
             int output = database.AddEvent(anEvent);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    anEvent.Identifier = output;
-                    allEvents.Add(anEvent);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        anEvent.Identifier = output;
+                        allEvents.Add(anEvent);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -37,10 +43,16 @@ namespace Chronokeep.MemStore
             Event output = null;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    output = theEvent;
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        output = theEvent;
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -57,10 +69,16 @@ namespace Chronokeep.MemStore
             database.SetCurrentEvent(eventID);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    LoadEvent();
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        LoadEvent();
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -76,17 +94,23 @@ namespace Chronokeep.MemStore
             Event output = null;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (Event ev in allEvents)
+                    try
                     {
-                        if (ev.Identifier == id)
+                        foreach (Event ev in allEvents)
                         {
-                            output = ev;
-                            break;
+                            if (ev.Identifier == id)
+                            {
+                                output = ev;
+                                break;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -103,17 +127,23 @@ namespace Chronokeep.MemStore
             int output = -1;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (Event ev in allEvents)
+                    try
                     {
-                        if (ev.Name.Equals(anEvent.Name, StringComparison.OrdinalIgnoreCase) && ev.Date.Equals(anEvent.Date, StringComparison.OrdinalIgnoreCase))
+                        foreach (Event ev in allEvents)
                         {
-                            output = ev.Identifier;
-                            break;
+                            if (ev.Name.Equals(anEvent.Name, StringComparison.OrdinalIgnoreCase) && ev.Date.Equals(anEvent.Date, StringComparison.OrdinalIgnoreCase))
+                            {
+                                output = ev.Identifier;
+                                break;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -127,13 +157,19 @@ namespace Chronokeep.MemStore
         public List<Event> GetEvents()
         {
             Log.D("MemStore", "GetEvents");
-            List<Event> output = new();
+            List<Event> output = [];
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    output.AddRange(allEvents);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        output.AddRange(allEvents);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -150,14 +186,20 @@ namespace Chronokeep.MemStore
             database.RemoveEvent(identifier);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    allEvents.RemoveAll(x => x.Identifier == identifier);
-                    if (theEvent != null && theEvent.Identifier == identifier)
+                    try
                     {
-                        LoadEvent();
+                        allEvents.RemoveAll(x => x.Identifier == identifier);
+                        if (theEvent != null && theEvent.Identifier == identifier)
+                        {
+                            LoadEvent();
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -173,14 +215,20 @@ namespace Chronokeep.MemStore
             database.RemoveEvent(anEvent);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    allEvents.RemoveAll(x => x.Identifier == anEvent.Identifier);
-                    if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                    try
                     {
-                        LoadEvent();
+                        allEvents.RemoveAll(x => x.Identifier == anEvent.Identifier);
+                        if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                        {
+                            LoadEvent();
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -196,21 +244,27 @@ namespace Chronokeep.MemStore
             database.UpdateEvent(anEvent);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                    try
                     {
-                        theEvent.CopyFrom(anEvent);
-                    }
-                    foreach (Event ev in allEvents)
-                    {
-                        if (ev.Identifier == anEvent.Identifier)
+                        if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                         {
-                            ev.CopyFrom(anEvent);
-                            break;
+                            theEvent.CopyFrom(anEvent);
+                        }
+                        foreach (Event ev in allEvents)
+                        {
+                            if (ev.Identifier == anEvent.Identifier)
+                            {
+                                ev.CopyFrom(anEvent);
+                                break;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -224,17 +278,23 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "UpdateDivisionsEnabled");
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null)
+                    try
                     {
-                        // Update all TimingResults in MemStore
-                        foreach (TimeResult tr in timingResults.Values)
+                        if (theEvent != null)
                         {
-                            tr.UpdateEvent(theEvent);
+                            // Update all TimingResults in MemStore
+                            foreach (TimeResult tr in timingResults.Values)
+                            {
+                                tr.UpdateEvent(theEvent);
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -249,19 +309,25 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "UpdateStart");
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    // Update start in chipreads
-                    DateTime start = DateTime.Now;
-                    if (theEvent != null)
+                    try
                     {
-                        start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
+                        // Update start in chipreads
+                        DateTime start = DateTime.Now;
+                        if (theEvent != null)
+                        {
+                            start = DateTime.Parse(theEvent.Date).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
+                        }
+                        foreach (ChipRead cr in chipReads.Values)
+                        {
+                            cr.Start = start;
+                        }
                     }
-                    foreach (ChipRead cr in chipReads.Values)
+                    finally
                     {
-                        cr.Start = start;
+                        memStoreLock.Exit();
                     }
-                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -277,23 +343,29 @@ namespace Chronokeep.MemStore
             database.SetFinishOptions(anEvent);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                    try
                     {
-                        theEvent.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
-                        theEvent.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
-                    }
-                    foreach (Event ev in allEvents)
-                    {
-                        if (ev.Identifier == anEvent.Identifier)
+                        if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                         {
-                            ev.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
-                            ev.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
-                            break;
+                            theEvent.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
+                            theEvent.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
+                        }
+                        foreach (Event ev in allEvents)
+                        {
+                            if (ev.Identifier == anEvent.Identifier)
+                            {
+                                ev.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
+                                ev.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
+                                break;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -309,22 +381,28 @@ namespace Chronokeep.MemStore
             database.SetStartOptions(anEvent);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                    try
                     {
-                        theEvent.StartWindow = anEvent.StartWindow;
-                    }
-                    foreach (Event ev in allEvents)
-                    {
-                        if (ev.Identifier == anEvent.Identifier)
+                        if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                         {
-                            ev.StartWindow = anEvent.StartWindow;
-                            ev.StartMaxOccurrences = anEvent.StartMaxOccurrences;
-                            break;
+                            theEvent.StartWindow = anEvent.StartWindow;
+                        }
+                        foreach (Event ev in allEvents)
+                        {
+                            if (ev.Identifier == anEvent.Identifier)
+                            {
+                                ev.StartWindow = anEvent.StartWindow;
+                                ev.StartMaxOccurrences = anEvent.StartMaxOccurrences;
+                                break;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -340,24 +418,30 @@ namespace Chronokeep.MemStore
             database.SetStartFinishOptions(anEvent);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
+                    try
                     {
-                        theEvent.StartWindow = anEvent.StartWindow;
-                    }
-                    foreach (Event ev in allEvents)
-                    {
-                        if (ev.Identifier == anEvent.Identifier)
+                        if (theEvent != null && theEvent.Identifier == anEvent.Identifier)
                         {
-                            ev.StartWindow = anEvent.StartWindow;
-                            ev.StartMaxOccurrences = anEvent.StartMaxOccurrences;
-                            ev.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
-                            ev.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
-                            break;
+                            theEvent.StartWindow = anEvent.StartWindow;
+                        }
+                        foreach (Event ev in allEvents)
+                        {
+                            if (ev.Identifier == anEvent.Identifier)
+                            {
+                                ev.StartWindow = anEvent.StartWindow;
+                                ev.StartMaxOccurrences = anEvent.StartMaxOccurrences;
+                                ev.FinishIgnoreWithin = anEvent.FinishIgnoreWithin;
+                                ev.FinishMaxOccurrences = anEvent.FinishMaxOccurrences;
+                                break;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)

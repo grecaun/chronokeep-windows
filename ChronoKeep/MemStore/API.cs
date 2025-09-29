@@ -16,10 +16,16 @@ namespace Chronokeep.MemStore
             anAPI.Identifier = database.AddAPI(anAPI);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    apis[anAPI.Identifier] = anAPI;
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        apis[anAPI.Identifier] = anAPI;
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
                 return anAPI.Identifier;
             }
@@ -33,13 +39,19 @@ namespace Chronokeep.MemStore
         public List<APIObject> GetAllAPI()
         {
             Log.D("MemStore", "GetAllAPI");
-            List<APIObject> output = new();
+            List<APIObject> output = [];
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    output.AddRange(apis.Values);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        output.AddRange(apis.Values);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -56,13 +68,19 @@ namespace Chronokeep.MemStore
             APIObject output = null;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (!apis.TryGetValue(identifier, out output))
+                    try
                     {
-                        output = null;
+                        if (!apis.TryGetValue(identifier, out output))
+                        {
+                            output = null;
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -79,10 +97,16 @@ namespace Chronokeep.MemStore
             database.RemoveAPI(identifier);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    apis.Remove(identifier);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        apis.Remove(identifier);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -98,21 +122,27 @@ namespace Chronokeep.MemStore
             database.UpdateAPI(anAPI);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (apis.TryGetValue(anAPI.Identifier, out APIObject api))
+                    try
                     {
-                        api.Type = anAPI.Type;
-                        api.URL = anAPI.URL;
-                        api.AuthToken = anAPI.AuthToken;
-                        api.Nickname = anAPI.Nickname;
-                        api.WebURL = anAPI.WebURL;
+                        if (apis.TryGetValue(anAPI.Identifier, out APIObject api))
+                        {
+                            api.Type = anAPI.Type;
+                            api.URL = anAPI.URL;
+                            api.AuthToken = anAPI.AuthToken;
+                            api.Nickname = anAPI.Nickname;
+                            api.WebURL = anAPI.WebURL;
+                        }
+                        else
+                        {
+                            apis[anAPI.Identifier] = anAPI;
+                        }
                     }
-                    else
+                    finally
                     {
-                        apis[anAPI.Identifier] = anAPI;
+                        memStoreLock.Exit();
                     }
-                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)

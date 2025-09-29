@@ -15,10 +15,16 @@ namespace Chronokeep.MemStore
             database.AddBannedEmail(email);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    bannedEmails.Add(email);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        bannedEmails.Add(email);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -34,13 +40,19 @@ namespace Chronokeep.MemStore
             database.AddBannedEmails(emails);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (string email in emails)
+                    try
                     {
-                        bannedEmails.Add(email);
+                        foreach (string email in emails)
+                        {
+                            bannedEmails.Add(email);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -56,10 +68,16 @@ namespace Chronokeep.MemStore
             database.AddBannedPhone(phone);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    bannedPhones.Add(phone);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        bannedPhones.Add(phone);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -75,13 +93,19 @@ namespace Chronokeep.MemStore
             database.AddBannedPhones(phones);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (string phone in phones)
+                    try
                     {
-                        bannedPhones.Add(phone);
+                        foreach (string phone in phones)
+                        {
+                            bannedPhones.Add(phone);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -97,10 +121,16 @@ namespace Chronokeep.MemStore
             List<string> output = new();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    output.AddRange(bannedEmails);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        output.AddRange(bannedEmails);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -117,10 +147,16 @@ namespace Chronokeep.MemStore
             List<string> output = new();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    output.AddRange(bannedPhones);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        output.AddRange(bannedPhones);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -137,10 +173,16 @@ namespace Chronokeep.MemStore
             database.RemoveBannedEmail(email);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    bannedEmails.Remove(email);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        bannedEmails.Remove(email);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -156,13 +198,19 @@ namespace Chronokeep.MemStore
             database.RemoveBannedEmails(emails);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (string email in emails)
+                    try
                     {
-                        bannedEmails.Remove(email);
+                        foreach (string email in emails)
+                        {
+                            bannedEmails.Remove(email);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -178,10 +226,16 @@ namespace Chronokeep.MemStore
             database.RemoveBannedPhone(phone);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    bannedPhones.Remove(phone);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        bannedPhones.Remove(phone);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -197,13 +251,19 @@ namespace Chronokeep.MemStore
             database.RemoveBannedPhones(phones);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (string phone in phones)
+                    try
                     {
-                        bannedPhones.Remove(phone);
+                        foreach (string phone in phones)
+                        {
+                            bannedPhones.Remove(phone);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -219,10 +279,16 @@ namespace Chronokeep.MemStore
             database.ClearBannedEmails();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    bannedEmails.Clear();
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        bannedEmails.Clear();
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -238,10 +304,16 @@ namespace Chronokeep.MemStore
             database.ClearBannedPhones();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    bannedPhones.Clear();
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        bannedPhones.Clear();
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)

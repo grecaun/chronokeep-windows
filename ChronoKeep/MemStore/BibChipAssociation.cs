@@ -20,44 +20,50 @@ namespace Chronokeep.MemStore
             database.AddBibChipAssociation(eventId, assoc);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        foreach (BibChipAssociation bc in assoc)
+                        if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            chipToBibAssociations[bc.Chip] = bc;
-                            bibToChipAssociations[bc.Bib] = bc;
-                        }
-                        Dictionary<string, Participant> bibPartDict = new();
-                        foreach (Participant part in participants.Values)
-                        {
-                            part.Chip = "";
-                            if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
+                            foreach (BibChipAssociation bc in assoc)
                             {
-                                part.Chip = bc.Chip;
+                                chipToBibAssociations[bc.Chip] = bc;
+                                bibToChipAssociations[bc.Bib] = bc;
                             }
-                            bibPartDict[part.Bib] = part;
-                        }
-                        foreach (ChipRead cr in chipReads.Values)
-                        {
-                            cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
-                            cr.Name = "";
-                            if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                            Dictionary<string, Participant> bibPartDict = new();
+                            foreach (Participant part in participants.Values)
                             {
-                                cr.ChipBib = bc.Bib;
-                                if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                                part.Chip = "";
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
                                 {
-                                    cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                                    part.Chip = bc.Chip;
+                                }
+                                bibPartDict[part.Bib] = part;
+                            }
+                            foreach (ChipRead cr in chipReads.Values)
+                            {
+                                cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                                cr.Name = "";
+                                if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                                {
+                                    cr.ChipBib = bc.Bib;
+                                    if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                                    {
+                                        cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                                    }
                                 }
                             }
                         }
+                        else if (eventId == -1)
+                        {
+                            ignoredChips.AddRange(assoc);
+                        }
                     }
-                    else if (eventId == -1)
+                    finally
                     {
-                        ignoredChips.AddRange(assoc);
+                        memStoreLock.Exit();
                     }
-                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -73,10 +79,16 @@ namespace Chronokeep.MemStore
             List<BibChipAssociation> output = new();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    output.AddRange(chipToBibAssociations.Values);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        output.AddRange(chipToBibAssociations.Values);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -93,17 +105,23 @@ namespace Chronokeep.MemStore
             List<BibChipAssociation> output = new();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        output.AddRange(chipToBibAssociations.Values);
+                        if (theEvent != null && theEvent.Identifier == eventId)
+                        {
+                            output.AddRange(chipToBibAssociations.Values);
+                        }
+                        else if (eventId == -1)
+                        {
+                            output.AddRange(ignoredChips);
+                        }
                     }
-                    else if (eventId == -1)
+                    finally
                     {
-                        output.AddRange(ignoredChips);
+                        memStoreLock.Exit();
                     }
-                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -120,23 +138,86 @@ namespace Chronokeep.MemStore
             database.RemoveBibChipAssociation(eventId, chip);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        chipToBibAssociations.Remove(chip);
-                        string bib = "";
-                        foreach (BibChipAssociation b in chipToBibAssociations.Values)
+                        if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (b.Chip == chip)
+                            chipToBibAssociations.Remove(chip);
+                            string bib = "";
+                            foreach (BibChipAssociation b in chipToBibAssociations.Values)
                             {
-                                bib = b.Bib;
-                                break;
+                                if (b.Chip == chip)
+                                {
+                                    bib = b.Bib;
+                                    break;
+                                }
+                            }
+                            if (bib.Length > 0)
+                            {
+                                bibToChipAssociations.Remove(bib);
+                            }
+                            Dictionary<string, Participant> bibPartDict = new();
+                            foreach (Participant part in participants.Values)
+                            {
+                                part.Chip = "";
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
+                                {
+                                    part.Chip = bc.Chip;
+                                }
+                                bibPartDict[part.Bib] = part;
+                            }
+                            foreach (ChipRead cr in chipReads.Values)
+                            {
+                                cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                                cr.Name = "";
+                                if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                                {
+                                    cr.ChipBib = bc.Bib;
+                                    if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                                    {
+                                        cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                                    }
+                                }
                             }
                         }
-                        if (bib.Length > 0)
+                        else if (eventId == -1)
                         {
-                            bibToChipAssociations.Remove(bib);
+                            ignoredChips.RemoveAll(x => x.Chip == chip);
+                        }
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+        }
+
+        public void RemoveBibChipAssociation(BibChipAssociation assoc)
+        {
+            Log.D("MemStore", "RemoveBibChipAssociation");
+            database.RemoveBibChipAssociation(assoc);
+            try
+            {
+                if (memStoreLock.TryEnter(lockTimeout))
+                {
+                    try
+                    {
+                        if (theEvent != null && theEvent.Identifier == assoc.EventId)
+                        {
+                            chipToBibAssociations.Remove(assoc.Chip);
+                            bibToChipAssociations.Remove(assoc.Bib);
+                        }
+                        else if (assoc.EventId == -1)
+                        {
+                            ignoredChips.RemoveAll(x => x.Chip == assoc.Chip);
                         }
                         Dictionary<string, Participant> bibPartDict = new();
                         foreach (Participant part in participants.Values)
@@ -162,61 +243,10 @@ namespace Chronokeep.MemStore
                             }
                         }
                     }
-                    else if (eventId == -1)
+                    finally
                     {
-                        ignoredChips.RemoveAll(x => x.Chip == chip);
+                        memStoreLock.Exit();
                     }
-                    memStoreLock.ReleaseMutex();
-                }
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new MutexLockException("memStoreLock");
-            }
-        }
-
-        public void RemoveBibChipAssociation(BibChipAssociation assoc)
-        {
-            Log.D("MemStore", "RemoveBibChipAssociation");
-            database.RemoveBibChipAssociation(assoc);
-            try
-            {
-                if (memStoreLock.WaitOne(lockTimeout))
-                {
-                    if (theEvent != null && theEvent.Identifier == assoc.EventId)
-                    {
-                        chipToBibAssociations.Remove(assoc.Chip);
-                        bibToChipAssociations.Remove(assoc.Bib);
-                    }
-                    else if (assoc.EventId == -1)
-                    {
-                        ignoredChips.RemoveAll(x => x.Chip == assoc.Chip);
-                    }
-                    Dictionary<string, Participant> bibPartDict = new();
-                    foreach (Participant part in participants.Values)
-                    {
-                        part.Chip = "";
-                        if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
-                        {
-                            part.Chip = bc.Chip;
-                        }
-                        bibPartDict[part.Bib] = part;
-                    }
-                    foreach (ChipRead cr in chipReads.Values)
-                    {
-                        cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
-                        cr.Name = "";
-                        if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
-                        {
-                            cr.ChipBib = bc.Bib;
-                            if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
-                            {
-                                cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
-                            }
-                        }
-                    }
-                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -232,44 +262,50 @@ namespace Chronokeep.MemStore
             database.RemoveBibChipAssociations(assocs);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (BibChipAssociation assoc in assocs)
+                    try
                     {
-                        if (theEvent != null && theEvent.Identifier == assoc.EventId)
+                        foreach (BibChipAssociation assoc in assocs)
                         {
-                            chipToBibAssociations.Remove(assoc.Chip);
-                            bibToChipAssociations.Remove(assoc.Bib);
-                        }
-                        else if (assoc.EventId == -1)
-                        {
-                            ignoredChips.RemoveAll(x => x.Chip == assoc.Chip);
-                        }
-                    }
-                    Dictionary<string, Participant> bibPartDict = new();
-                    foreach (Participant part in participants.Values)
-                    {
-                        part.Chip = "";
-                        if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
-                        {
-                            part.Chip = bc.Chip;
-                        }
-                        bibPartDict[part.Bib] = part;
-                    }
-                    foreach (ChipRead cr in chipReads.Values)
-                    {
-                        cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
-                        cr.Name = "";
-                        if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
-                        {
-                            cr.ChipBib = bc.Bib;
-                            if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                            if (theEvent != null && theEvent.Identifier == assoc.EventId)
                             {
-                                cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                                chipToBibAssociations.Remove(assoc.Chip);
+                                bibToChipAssociations.Remove(assoc.Bib);
+                            }
+                            else if (assoc.EventId == -1)
+                            {
+                                ignoredChips.RemoveAll(x => x.Chip == assoc.Chip);
+                            }
+                        }
+                        Dictionary<string, Participant> bibPartDict = new();
+                        foreach (Participant part in participants.Values)
+                        {
+                            part.Chip = "";
+                            if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bc))
+                            {
+                                part.Chip = bc.Chip;
+                            }
+                            bibPartDict[part.Bib] = part;
+                        }
+                        foreach (ChipRead cr in chipReads.Values)
+                        {
+                            cr.ChipBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                            cr.Name = "";
+                            if (chipToBibAssociations.TryGetValue(cr.ChipNumber, out BibChipAssociation bc))
+                            {
+                                cr.ChipBib = bc.Bib;
+                                if (bibPartDict.TryGetValue(bc.Bib, out Participant p))
+                                {
+                                    cr.Name = string.Format("{0} {1}", p.FirstName, p.LastName).Trim();
+                                }
                             }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)

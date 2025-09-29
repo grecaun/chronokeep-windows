@@ -9,65 +9,59 @@ namespace Chronokeep.MemStore
 {
     internal partial class MemStore : IDBInterface
     {
-        internal class MutexLockException : Exception
-        {
-            public MutexLockException(string message) : base(message) { }
-        }
+        internal class MutexLockException(string message) : Exception(message) {}
 
-        internal class InvalidEventID : Exception
-        {
-            public InvalidEventID(string message) : base(message) { }
-        }
+        internal class InvalidEventID(string message) : Exception(message) {}
 
         private readonly int lockTimeout = 5000;
 
         // Singleton
         private static MemStore instance;
 
-        private static Mutex memStoreLock = new();
+        private static readonly Lock memStoreLock = new();
 
         // Items that don't rely on a specific Event
         // key == setting name
-        private static Dictionary<string, AppSetting> settings = new();
+        private static readonly Dictionary<string, AppSetting> settings = [];
         // key == api id
-        private static Dictionary<int, APIObject> apis = new();
+        private static readonly Dictionary<int, APIObject> apis = [];
         // key == ip
-        private static Dictionary<string, TimingSystem> timingSystems = new();
-        private static HashSet<string> bannedPhones = new();
-        private static HashSet<string> bannedEmails = new();
+        private static readonly Dictionary<string, TimingSystem> timingSystems = [];
+        private static readonly HashSet<string> bannedPhones = [];
+        private static readonly HashSet<string> bannedEmails = [];
 
         // Event and the related fields
-        private static List<Event> allEvents = new();
+        private static readonly List<Event> allEvents = [];
         private static Event theEvent;
 
         // key == distance id
-        private static Dictionary<int, Distance> distances = new();
-        private static Dictionary<string, Distance> distanceNameDict = new();
+        private static readonly Dictionary<int, Distance> distances = [];
+        private static readonly Dictionary<string, Distance> distanceNameDict = [];
         // key == location id
-        private static Dictionary<int, TimingLocation> locations = new();
+        private static readonly Dictionary<int, TimingLocation> locations = [];
         // key == segment id
-        private static Dictionary<int, Segment> segments = new();
+        private static readonly Dictionary<int, Segment> segments = [];
         // key == event specific id
-        private static Dictionary<int, Participant> participants = new();
+        private static readonly Dictionary<int, Participant> participants = [];
         // key == chip
-        private static Dictionary<string, BibChipAssociation> chipToBibAssociations = new();
-        private static Dictionary<string, BibChipAssociation> bibToChipAssociations = new();
+        private static readonly Dictionary<string, BibChipAssociation> chipToBibAssociations = [];
+        private static readonly Dictionary<string, BibChipAssociation> bibToChipAssociations = [];
         // ignored chips
-        private static List<BibChipAssociation> ignoredChips = new();
+        private static readonly List<BibChipAssociation> ignoredChips = [];
         // key == distanceId
-        private static Dictionary<int, List<AgeGroup>> ageGroups = new();
-        private static Dictionary<(int, int), AgeGroup> currentAgeGroups = new();
-        private static Dictionary<int, AgeGroup> lastAgeGroup = new();
+        private static readonly Dictionary<int, List<AgeGroup>> ageGroups = [];
+        private static readonly Dictionary<(int, int), AgeGroup> currentAgeGroups = [];
+        private static readonly Dictionary<int, AgeGroup> lastAgeGroup = [];
         // key == (identifier)
-        private static List<Alarm> alarms = new();
-        private static List<RemoteReader> remoteReaders = new();
-        private static HashSet<(int, int)> smsAlerts = new();
-        private static HashSet<int> emailAlerts = new();
-        private static List<APISmsSubscription> smsSubscriptions = new();
+        private static readonly List<Alarm> alarms = [];
+        private static readonly List<RemoteReader> remoteReaders = [];
+        private static readonly HashSet<(int, int)> smsAlerts = [];
+        private static readonly HashSet<int> emailAlerts = [];
+        private static readonly List<APISmsSubscription> smsSubscriptions = [];
         // key = (eventspecific_id, location_id, occurrence, unknown_id)
-        private static Dictionary<(int, int, int, string), TimeResult> timingResults = new();
+        private static readonly Dictionary<(int, int, int, string), TimeResult> timingResults = [];
         // Chip Read data
-        private static Dictionary<int, ChipRead> chipReads = new();
+        private static readonly Dictionary<int, ChipRead> chipReads = [];
 
         // Local variables
         private readonly IDBInterface database;
@@ -237,10 +231,16 @@ namespace Chronokeep.MemStore
             database.HardResetDatabase();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    ResetVariables();
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        ResetVariables();
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -256,71 +256,77 @@ namespace Chronokeep.MemStore
             // Use eventLock to ensure nothing reads from the database.
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    // Load settings
-                    // Settings 1
-                    settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME);
-                    settings[Constants.Settings.DATABASE_VERSION] = database.GetAppSetting(Constants.Settings.DATABASE_VERSION);
-                    settings[Constants.Settings.HARDWARE_IDENTIFIER] = database.GetAppSetting(Constants.Settings.HARDWARE_IDENTIFIER);
-                    settings[Constants.Settings.PROGRAM_VERSION] = database.GetAppSetting(Constants.Settings.PROGRAM_VERSION);
-                    settings[Constants.Settings.AUTO_SHOW_CHANGELOG] = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
-                    // Settings 2
-                    settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
-                    settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
-                    settings[Constants.Settings.CURRENT_EVENT] = database.GetAppSetting(Constants.Settings.CURRENT_EVENT);
-                    settings[Constants.Settings.COMPANY_NAME] = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
-                    settings[Constants.Settings.CONTACT_EMAIL] = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL);
-                    // Settings 3
-                    settings[Constants.Settings.UPDATE_ON_PAGE_CHANGE] = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
-                    settings[Constants.Settings.EXIT_NO_PROMPT] = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT);
-                    settings[Constants.Settings.DEFAULT_CHIP_TYPE] = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE);
-                    settings[Constants.Settings.LAST_USED_API_ID] = database.GetAppSetting(Constants.Settings.LAST_USED_API_ID);
-                    settings[Constants.Settings.CHECK_UPDATES] = database.GetAppSetting(Constants.Settings.CHECK_UPDATES);
-                    settings[Constants.Settings.CURRENT_THEME] = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
-                    // Settings 4
-                    settings[Constants.Settings.UPLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL);
-                    settings[Constants.Settings.DOWNLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL);
-                    settings[Constants.Settings.ANNOUNCER_WINDOW] = database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW);
-                    settings[Constants.Settings.ALARM_SOUND] = database.GetAppSetting(Constants.Settings.ALARM_SOUND);
-                    settings[Constants.Settings.MINIMUM_COMPATIBLE_DATABASE] = database.GetAppSetting(Constants.Settings.MINIMUM_COMPATIBLE_DATABASE);
-                    // Settings 5
-                    settings[Constants.Settings.PROGRAM_UNIQUE_MODIFIER] = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
-                    // Twilio
-                    settings[Constants.Settings.TWILIO_ACCOUNT_SID] = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID);
-                    settings[Constants.Settings.TWILIO_AUTH_TOKEN] = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN);
-                    settings[Constants.Settings.TWILIO_PHONE_NUMBER] = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER);
-                    // Mailgun
-                    settings[Constants.Settings.MAILGUN_FROM_NAME] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME);
-                    settings[Constants.Settings.MAILGUN_FROM_EMAIL] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL);
-                    settings[Constants.Settings.MAILGUN_API_KEY] = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY);
-                    settings[Constants.Settings.MAILGUN_API_URL] = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL);
-                    // Load apis
-                    foreach (APIObject api in database.GetAllAPI())
+                    try
                     {
-                        apis[api.Identifier] = api;
+                        // Load settings
+                        // Settings 1
+                        settings[Constants.Settings.SERVER_NAME] = database.GetAppSetting(Constants.Settings.SERVER_NAME);
+                        settings[Constants.Settings.DATABASE_VERSION] = database.GetAppSetting(Constants.Settings.DATABASE_VERSION);
+                        settings[Constants.Settings.HARDWARE_IDENTIFIER] = database.GetAppSetting(Constants.Settings.HARDWARE_IDENTIFIER);
+                        settings[Constants.Settings.PROGRAM_VERSION] = database.GetAppSetting(Constants.Settings.PROGRAM_VERSION);
+                        settings[Constants.Settings.AUTO_SHOW_CHANGELOG] = database.GetAppSetting(Constants.Settings.AUTO_SHOW_CHANGELOG);
+                        // Settings 2
+                        settings[Constants.Settings.DEFAULT_EXPORT_DIR] = database.GetAppSetting(Constants.Settings.DEFAULT_EXPORT_DIR);
+                        settings[Constants.Settings.DEFAULT_TIMING_SYSTEM] = database.GetAppSetting(Constants.Settings.DEFAULT_TIMING_SYSTEM);
+                        settings[Constants.Settings.CURRENT_EVENT] = database.GetAppSetting(Constants.Settings.CURRENT_EVENT);
+                        settings[Constants.Settings.COMPANY_NAME] = database.GetAppSetting(Constants.Settings.COMPANY_NAME);
+                        settings[Constants.Settings.CONTACT_EMAIL] = database.GetAppSetting(Constants.Settings.CONTACT_EMAIL);
+                        // Settings 3
+                        settings[Constants.Settings.UPDATE_ON_PAGE_CHANGE] = database.GetAppSetting(Constants.Settings.UPDATE_ON_PAGE_CHANGE);
+                        settings[Constants.Settings.EXIT_NO_PROMPT] = database.GetAppSetting(Constants.Settings.EXIT_NO_PROMPT);
+                        settings[Constants.Settings.DEFAULT_CHIP_TYPE] = database.GetAppSetting(Constants.Settings.DEFAULT_CHIP_TYPE);
+                        settings[Constants.Settings.LAST_USED_API_ID] = database.GetAppSetting(Constants.Settings.LAST_USED_API_ID);
+                        settings[Constants.Settings.CHECK_UPDATES] = database.GetAppSetting(Constants.Settings.CHECK_UPDATES);
+                        settings[Constants.Settings.CURRENT_THEME] = database.GetAppSetting(Constants.Settings.CURRENT_THEME);
+                        // Settings 4
+                        settings[Constants.Settings.UPLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.UPLOAD_INTERVAL);
+                        settings[Constants.Settings.DOWNLOAD_INTERVAL] = database.GetAppSetting(Constants.Settings.DOWNLOAD_INTERVAL);
+                        settings[Constants.Settings.ANNOUNCER_WINDOW] = database.GetAppSetting(Constants.Settings.ANNOUNCER_WINDOW);
+                        settings[Constants.Settings.ALARM_SOUND] = database.GetAppSetting(Constants.Settings.ALARM_SOUND);
+                        settings[Constants.Settings.MINIMUM_COMPATIBLE_DATABASE] = database.GetAppSetting(Constants.Settings.MINIMUM_COMPATIBLE_DATABASE);
+                        // Settings 5
+                        settings[Constants.Settings.PROGRAM_UNIQUE_MODIFIER] = database.GetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER);
+                        // Twilio
+                        settings[Constants.Settings.TWILIO_ACCOUNT_SID] = database.GetAppSetting(Constants.Settings.TWILIO_ACCOUNT_SID);
+                        settings[Constants.Settings.TWILIO_AUTH_TOKEN] = database.GetAppSetting(Constants.Settings.TWILIO_AUTH_TOKEN);
+                        settings[Constants.Settings.TWILIO_PHONE_NUMBER] = database.GetAppSetting(Constants.Settings.TWILIO_PHONE_NUMBER);
+                        // Mailgun
+                        settings[Constants.Settings.MAILGUN_FROM_NAME] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_NAME);
+                        settings[Constants.Settings.MAILGUN_FROM_EMAIL] = database.GetAppSetting(Constants.Settings.MAILGUN_FROM_EMAIL);
+                        settings[Constants.Settings.MAILGUN_API_KEY] = database.GetAppSetting(Constants.Settings.MAILGUN_API_KEY);
+                        settings[Constants.Settings.MAILGUN_API_URL] = database.GetAppSetting(Constants.Settings.MAILGUN_API_URL);
+                        // Load apis
+                        foreach (APIObject api in database.GetAllAPI())
+                        {
+                            apis[api.Identifier] = api;
+                        }
+                        // load timingsystems
+                        foreach (TimingSystem system in database.GetTimingSystems())
+                        {
+                            timingSystems[system.IPAddress.Trim()] = system;
+                        }
+                        // load banned phones
+                        foreach (string phone in database.GetBannedPhones())
+                        {
+                            bannedPhones.Add(phone);
+                        }
+                        // load banned emails
+                        foreach (string email in database.GetBannedEmails())
+                        {
+                            bannedEmails.Add(email);
+                        }
+                        // Load events
+                        allEvents.Clear();
+                        allEvents.AddRange(database.GetEvents());
+                        // Load event data
+                        LoadEvent();
                     }
-                    // load timingsystems
-                    foreach (TimingSystem system in database.GetTimingSystems())
+                    finally
                     {
-                        timingSystems[system.IPAddress.Trim()] = system;
+                        memStoreLock.Exit();
                     }
-                    // load banned phones
-                    foreach (string phone in database.GetBannedPhones())
-                    {
-                        bannedPhones.Add(phone);
-                    }
-                    // load banned emails
-                    foreach (string email in database.GetBannedEmails())
-                    {
-                        bannedEmails.Add(email);
-                    }
-                    // Load events
-                    allEvents.Clear();
-                    allEvents.AddRange(database.GetEvents());
-                    // Load event data
-                    LoadEvent();
-                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -336,10 +342,16 @@ namespace Chronokeep.MemStore
             database.ResetDatabase();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    ResetVariables();
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        ResetVariables();
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)

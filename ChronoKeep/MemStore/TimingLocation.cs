@@ -15,14 +15,20 @@ namespace Chronokeep.MemStore
             int output = database.AddTimingLocation(tp);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    tp.Identifier = output;
-                    if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                    try
                     {
-                        locations[tp.Identifier] = tp;
+                        tp.Identifier = output;
+                        if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                        {
+                            locations[tp.Identifier] = tp;
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -39,16 +45,22 @@ namespace Chronokeep.MemStore
             List<TimingLocation> output = database.AddTimingLocations(locs);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (TimingLocation tp in locs)
+                    try
                     {
-                        if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                        foreach (TimingLocation tp in locs)
                         {
-                            locations[tp.Identifier] = tp;
+                            if (theEvent != null && tp.EventIdentifier == theEvent.Identifier && tp.Identifier > 0)
+                            {
+                                locations[tp.Identifier] = tp;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -65,18 +77,24 @@ namespace Chronokeep.MemStore
             int output = -1;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (TimingLocation loc in locations.Values)
+                    try
                     {
-                        if (loc.Name.Equals(tp.Name, StringComparison.OrdinalIgnoreCase)
-                            && loc.EventIdentifier == tp.EventIdentifier)
+                        foreach (TimingLocation loc in locations.Values)
                         {
-                            output = loc.Identifier;
-                            break;
+                            if (loc.Name.Equals(tp.Name, StringComparison.OrdinalIgnoreCase)
+                                && loc.EventIdentifier == tp.EventIdentifier)
+                            {
+                                output = loc.Identifier;
+                                break;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -93,25 +111,31 @@ namespace Chronokeep.MemStore
             List<TimingLocation> output = new();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        foreach (TimingLocation loc in locations.Values)
+                        if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (loc.Identifier != Constants.Timing.LOCATION_FINISH
-                                && loc.Identifier != Constants.Timing.LOCATION_START
-                                && loc.Identifier != Constants.Timing.LOCATION_ANNOUNCER)
+                            foreach (TimingLocation loc in locations.Values)
                             {
-                                output.Add(loc);
+                                if (loc.Identifier != Constants.Timing.LOCATION_FINISH
+                                    && loc.Identifier != Constants.Timing.LOCATION_START
+                                    && loc.Identifier != Constants.Timing.LOCATION_ANNOUNCER)
+                                {
+                                    output.Add(loc);
+                                }
                             }
                         }
+                        else
+                        {
+                            output.AddRange(database.GetTimingLocations(eventId));
+                        }
                     }
-                    else
+                    finally
                     {
-                        output.AddRange(database.GetTimingLocations(eventId));
+                        memStoreLock.Exit();
                     }
-                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -128,10 +152,16 @@ namespace Chronokeep.MemStore
             database.RemoveTimingLocation(tp);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    locations.Remove(tp.Identifier);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        locations.Remove(tp.Identifier);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -147,10 +177,16 @@ namespace Chronokeep.MemStore
             database.RemoveTimingLocation(identifier);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    locations.Remove(identifier);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        locations.Remove(identifier);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -166,13 +202,19 @@ namespace Chronokeep.MemStore
             database.UpdateTimingLocation(tp);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (locations.TryGetValue(tp.Identifier, out TimingLocation loc))
+                    try
                     {
-                        loc.CopyFrom(tp);
+                        if (locations.TryGetValue(tp.Identifier, out TimingLocation loc))
+                        {
+                            loc.CopyFrom(tp);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)

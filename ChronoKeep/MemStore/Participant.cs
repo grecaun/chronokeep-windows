@@ -16,82 +16,9 @@ namespace Chronokeep.MemStore
             Participant output = null;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent.CommonAgeGroups)
-                    {
-                        if (currentAgeGroups.TryGetValue(
-                            (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
-                            out AgeGroup ageGroup))
-                        {
-                            person.EventSpecific.AgeGroupId = ageGroup.GroupId;
-                            person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
-                        }
-                    }
-                    else
-                    {
-                        if (currentAgeGroups.TryGetValue(
-                            (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
-                            out AgeGroup ageGroup))
-                        {
-                            person.EventSpecific.AgeGroupId = ageGroup.GroupId;
-                            person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
-                        }
-                    }
-                    output = database.AddParticipant(person);
-                    if (distances.TryGetValue(output.EventSpecific.DistanceIdentifier, out Distance dist))
-                    {
-                        output.EventSpecific.DistanceName = dist.Name;
-                    }
-                    participants[output.EventSpecific.Identifier] = output;
-                    Dictionary<string, string> bibParticipantsList = [];
-                    Dictionary<string, string> chipParticipantsList = [];
-                    foreach (Participant part in participants.Values)
-                    {
-                        if (part.Bib.Length > 0)
-                        {
-                            if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
-                            {
-                                chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
-                            }
-                            bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
-                        }
-                    }
-                    foreach (ChipRead read in chipReads.Values)
-                    {
-                        if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
-                        {
-                            read.Name = bibName;
-                        }
-                        else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
-                        {
-                            read.Name = chipName;
-                        }
-                        else
-                        {
-                            read.Name = "";
-                        }
-                    }
-                    memStoreLock.ReleaseMutex();
-                }
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new MutexLockException("memStoreLock");
-            }
-            return output;
-        }
-
-        public List<Participant> AddParticipants(List<Participant> people)
-        {
-            Log.D("MemStore", "AddParticipants");
-            List<Participant> output = new();
-            try
-            {
-                if (memStoreLock.WaitOne(lockTimeout))
-                {
-                    foreach (Participant person in people)
+                    try
                     {
                         if (theEvent.CommonAgeGroups)
                         {
@@ -113,45 +40,130 @@ namespace Chronokeep.MemStore
                                 person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
                             }
                         }
-                    }
-                    output.AddRange(database.AddParticipants(people));
-                    foreach (Participant person in output)
-                    {
-                        if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                        output = database.AddParticipant(person);
+                        if (distances.TryGetValue(output.EventSpecific.DistanceIdentifier, out Distance dist))
                         {
-                            person.EventSpecific.DistanceName = dist.Name;
+                            output.EventSpecific.DistanceName = dist.Name;
                         }
-                        participants[person.EventSpecific.Identifier] = person;
-                    }
-                    Dictionary<string, string> bibParticipantsList = [];
-                    Dictionary<string, string> chipParticipantsList = [];
-                    foreach (Participant part in participants.Values)
-                    {
-                        if (part.Bib.Length > 0)
+                        participants[output.EventSpecific.Identifier] = output;
+                        Dictionary<string, string> bibParticipantsList = [];
+                        Dictionary<string, string> chipParticipantsList = [];
+                        foreach (Participant part in participants.Values)
                         {
-                            if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
+                            if (part.Bib.Length > 0)
                             {
-                                chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
+                                {
+                                    chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                }
+                                bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
                             }
-                            bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                        }
+                        foreach (ChipRead read in chipReads.Values)
+                        {
+                            if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
+                            {
+                                read.Name = bibName;
+                            }
+                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
+                            {
+                                read.Name = chipName;
+                            }
+                            else
+                            {
+                                read.Name = "";
+                            }
                         }
                     }
-                    foreach (ChipRead read in chipReads.Values)
+                    finally
                     {
-                        if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
+                        memStoreLock.Exit();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+            return output;
+        }
+
+        public List<Participant> AddParticipants(List<Participant> people)
+        {
+            Log.D("MemStore", "AddParticipants");
+            List<Participant> output = new();
+            try
+            {
+                if (memStoreLock.TryEnter(lockTimeout))
+                {
+                    try
+                    {
+                        foreach (Participant person in people)
                         {
-                            read.Name = bibName;
+                            if (theEvent.CommonAgeGroups)
+                            {
+                                if (currentAgeGroups.TryGetValue(
+                                    (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
+                                    out AgeGroup ageGroup))
+                                {
+                                    person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                                    person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
+                                }
+                            }
+                            else
+                            {
+                                if (currentAgeGroups.TryGetValue(
+                                    (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
+                                    out AgeGroup ageGroup))
+                                {
+                                    person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                                    person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
+                                }
+                            }
                         }
-                        else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
+                        output.AddRange(database.AddParticipants(people));
+                        foreach (Participant person in output)
                         {
-                            read.Name = chipName;
+                            if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                            {
+                                person.EventSpecific.DistanceName = dist.Name;
+                            }
+                            participants[person.EventSpecific.Identifier] = person;
                         }
-                        else
+                        Dictionary<string, string> bibParticipantsList = [];
+                        Dictionary<string, string> chipParticipantsList = [];
+                        foreach (Participant part in participants.Values)
                         {
-                            read.Name = "";
+                            if (part.Bib.Length > 0)
+                            {
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
+                                {
+                                    chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                }
+                                bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                            }
+                        }
+                        foreach (ChipRead read in chipReads.Values)
+                        {
+                            if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
+                            {
+                                read.Name = bibName;
+                            }
+                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
+                            {
+                                read.Name = chipName;
+                            }
+                            else
+                            {
+                                read.Name = "";
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -168,20 +180,26 @@ namespace Chronokeep.MemStore
             Participant output = null;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        foreach (Participant person in participants.Values)
+                        if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (person.Identifier == identifier)
+                            foreach (Participant person in participants.Values)
                             {
-                                output = person;
-                                break;
+                                if (person.Identifier == identifier)
+                                {
+                                    output = person;
+                                    break;
+                                }
                             }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -198,31 +216,37 @@ namespace Chronokeep.MemStore
             Participant output = null;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        foreach (Participant person in participants.Values)
+                        if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (unknown.Chip.Length > 0 && person.Chip.Equals(unknown.Chip, StringComparison.OrdinalIgnoreCase))
+                            foreach (Participant person in participants.Values)
                             {
-                                output = person;
-                                break;
-                            }
-                            else if (unknown.FirstName != null && unknown.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
-                                && unknown.LastName != null && unknown.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
-                                && unknown.Street != null && unknown.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
-                                && unknown.City != null && unknown.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
-                                && unknown.State != null && unknown.State.Equals(person.State, StringComparison.OrdinalIgnoreCase)
-                                && unknown.Zip != null && unknown.Zip.Equals(person.Zip, StringComparison.OrdinalIgnoreCase)
-                                && unknown.Birthdate != null && unknown.Birthdate.Equals(person.Birthdate, StringComparison.OrdinalIgnoreCase))
-                            {
-                                output = person;
-                                break;
+                                if (unknown.Chip.Length > 0 && person.Chip.Equals(unknown.Chip, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    output = person;
+                                    break;
+                                }
+                                else if (unknown.FirstName != null && unknown.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
+                                    && unknown.LastName != null && unknown.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
+                                    && unknown.Street != null && unknown.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
+                                    && unknown.City != null && unknown.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
+                                    && unknown.State != null && unknown.State.Equals(person.State, StringComparison.OrdinalIgnoreCase)
+                                    && unknown.Zip != null && unknown.Zip.Equals(person.Zip, StringComparison.OrdinalIgnoreCase)
+                                    && unknown.Birthdate != null && unknown.Birthdate.Equals(person.Birthdate, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    output = person;
+                                    break;
+                                }
                             }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -239,20 +263,26 @@ namespace Chronokeep.MemStore
             Participant output = null;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        foreach (Participant person in participants.Values)
+                        if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (person.Bib.Equals(bib, StringComparison.OrdinalIgnoreCase))
+                            foreach (Participant person in participants.Values)
                             {
-                                output = person;
-                                break;
+                                if (person.Bib.Equals(bib, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    output = person;
+                                    break;
+                                }
                             }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -270,20 +300,26 @@ namespace Chronokeep.MemStore
             try
             {
 
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        foreach (Participant person in participants.Values)
+                        if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (person.EventSpecific.Identifier == eventSpecificId)
+                            foreach (Participant person in participants.Values)
                             {
-                                output = person;
-                                break;
+                                if (person.EventSpecific.Identifier == eventSpecificId)
+                                {
+                                    output = person;
+                                    break;
+                                }
                             }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -300,23 +336,29 @@ namespace Chronokeep.MemStore
             int output = -1;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (Participant p in participants.Values)
+                    try
                     {
-                        if (p.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
-                            && p.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
-                            && p.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
-                            && p.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
-                            && p.State.Equals(person.State, StringComparison.OrdinalIgnoreCase)
-                            && p.Zip.Equals(person.Zip, StringComparison.OrdinalIgnoreCase)
-                            && p.Birthdate.Equals(person.Birthdate, StringComparison.OrdinalIgnoreCase))
+                        foreach (Participant p in participants.Values)
                         {
-                            output = p.Identifier;
-                            break;
+                            if (p.FirstName.Equals(person.FirstName, StringComparison.OrdinalIgnoreCase)
+                                && p.LastName.Equals(person.LastName, StringComparison.OrdinalIgnoreCase)
+                                && p.Street.Equals(person.Street, StringComparison.OrdinalIgnoreCase)
+                                && p.City.Equals(person.City, StringComparison.OrdinalIgnoreCase)
+                                && p.State.Equals(person.State, StringComparison.OrdinalIgnoreCase)
+                                && p.Zip.Equals(person.Zip, StringComparison.OrdinalIgnoreCase)
+                                && p.Birthdate.Equals(person.Birthdate, StringComparison.OrdinalIgnoreCase))
+                            {
+                                output = p.Identifier;
+                                break;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -333,10 +375,16 @@ namespace Chronokeep.MemStore
             List<Participant> output = new();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    output.AddRange(participants.Values);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        output.AddRange(participants.Values);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -353,13 +401,19 @@ namespace Chronokeep.MemStore
             List<Participant> output = new();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        output.AddRange(participants.Values);
+                        if (theEvent != null && theEvent.Identifier == eventId)
+                        {
+                            output.AddRange(participants.Values);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -376,19 +430,25 @@ namespace Chronokeep.MemStore
             List<Participant> output = new();
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        foreach (Participant person in participants.Values)
+                        if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (person.EventSpecific.DistanceIdentifier == distanceId)
+                            foreach (Participant person in participants.Values)
                             {
-                                output.Add(person);
+                                if (person.EventSpecific.DistanceIdentifier == distanceId)
+                                {
+                                    output.Add(person);
+                                }
                             }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -405,22 +465,28 @@ namespace Chronokeep.MemStore
             database.RemoveParticipant(identifier);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    int eventSpecId = -1;
-                    foreach (Participant person in participants.Values)
+                    try
                     {
-                        if (person.Identifier == identifier)
+                        int eventSpecId = -1;
+                        foreach (Participant person in participants.Values)
                         {
-                            eventSpecId = person.EventSpecific.Identifier;
-                            break;
+                            if (person.Identifier == identifier)
+                            {
+                                eventSpecId = person.EventSpecific.Identifier;
+                                break;
+                            }
+                        }
+                        if (eventSpecId > 0)
+                        {
+                            participants.Remove(eventSpecId);
                         }
                     }
-                    if (eventSpecId > 0)
+                    finally
                     {
-                        participants.Remove(eventSpecId);
+                        memStoreLock.Exit();
                     }
-                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -436,13 +502,19 @@ namespace Chronokeep.MemStore
             database.RemoveParticipantEntries(parts);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (Participant person in parts)
+                    try
                     {
-                        participants.Remove(person.EventSpecific.Identifier);
+                        foreach (Participant person in parts)
+                        {
+                            participants.Remove(person.EventSpecific.Identifier);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -458,10 +530,16 @@ namespace Chronokeep.MemStore
             database.RemoveParticipantEntry(person);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    participants.Remove(person.EventSpecific.Identifier);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        participants.Remove(person.EventSpecific.Identifier);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -476,93 +554,9 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "UpdateParticipant");
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent.CommonAgeGroups)
-                    {
-                        if (currentAgeGroups.TryGetValue(
-                            (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
-                            out AgeGroup ageGroup))
-                        {
-                            person.EventSpecific.AgeGroupId = ageGroup.GroupId;
-                            person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
-                        }
-                    }
-                    else
-                    {
-                        if (currentAgeGroups.TryGetValue(
-                            (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
-                            out AgeGroup ageGroup))
-                        {
-                            person.EventSpecific.AgeGroupId = ageGroup.GroupId;
-                            person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
-                        }
-                    }
-                    // This is one of the few functions that has a database call within the ReadWriteLock
-                    // This is because we need to update the age group id before putting it in the database
-                    database.UpdateParticipant(person);
-                    if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
-                    {
-                        toUpdate.CopyFrom(person);
-                        if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance dist))
-                        {
-                            toUpdate.EventSpecific.DistanceName = dist.Name;
-                        }
-                    }
-                    else
-                    {
-                        participants[person.EventSpecific.Identifier] = person;
-                        if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
-                        {
-                            person.EventSpecific.DistanceName = dist.Name;
-                        }
-                    }
-                    Dictionary<string, string> bibParticipantsList = [];
-                    Dictionary<string, string> chipParticipantsList = [];
-                    foreach (Participant part in participants.Values)
-                    {
-                        if (part.Bib.Length > 0)
-                        {
-                            if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
-                            {
-                                chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
-                            }
-                            bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
-                        }
-                    }
-                    foreach (ChipRead read in chipReads.Values)
-                    {
-                        if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
-                        {
-                            read.Name = bibName;
-                        }
-                        else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
-                        {
-                            read.Name = chipName;
-                        }
-                        else
-                        {
-                            read.Name = "";
-                        }
-                    }
-                    memStoreLock.ReleaseMutex();
-                }
-            }
-            catch (Exception e)
-            {
-                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new MutexLockException("memStoreLock");
-            }
-        }
-
-        public void UpdateParticipants(List<Participant> parts)
-        {
-            Log.D("MemStore", "UpdateParticipants");
-            try
-            {
-                if (memStoreLock.WaitOne(lockTimeout))
-                {
-                    foreach (Participant person in parts)
+                    try
                     {
                         if (theEvent.CommonAgeGroups)
                         {
@@ -584,12 +578,9 @@ namespace Chronokeep.MemStore
                                 person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
                             }
                         }
-                    }
-                    // This is one of the few functions that has a database call within the ReadWriteLock
-                    // This is because we need to update the age group id before putting it in the database
-                    database.UpdateParticipants(parts);
-                    foreach (Participant person in parts)
-                    {
+                        // This is one of the few functions that has a database call within the ReadWriteLock
+                        // This is because we need to update the age group id before putting it in the database
+                        database.UpdateParticipant(person);
                         if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
                         {
                             toUpdate.CopyFrom(person);
@@ -606,36 +597,135 @@ namespace Chronokeep.MemStore
                                 person.EventSpecific.DistanceName = dist.Name;
                             }
                         }
-                    }
-                    Dictionary<string, string> bibParticipantsList = [];
-                    Dictionary<string, string> chipParticipantsList = [];
-                    foreach (Participant part in participants.Values)
-                    {
-                        if (part.Bib.Length > 0)
+                        Dictionary<string, string> bibParticipantsList = [];
+                        Dictionary<string, string> chipParticipantsList = [];
+                        foreach (Participant part in participants.Values)
                         {
-                            if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
+                            if (part.Bib.Length > 0)
                             {
-                                chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
+                                {
+                                    chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                }
+                                bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
                             }
-                            bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                        }
+                        foreach (ChipRead read in chipReads.Values)
+                        {
+                            if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
+                            {
+                                read.Name = bibName;
+                            }
+                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
+                            {
+                                read.Name = chipName;
+                            }
+                            else
+                            {
+                                read.Name = "";
+                            }
                         }
                     }
-                    foreach (ChipRead read in chipReads.Values)
+                    finally
                     {
-                        if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
+                        memStoreLock.Exit();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
+                throw new MutexLockException("memStoreLock");
+            }
+        }
+
+        public void UpdateParticipants(List<Participant> parts)
+        {
+            Log.D("MemStore", "UpdateParticipants");
+            try
+            {
+                if (memStoreLock.TryEnter(lockTimeout))
+                {
+                    try
+                    {
+                        foreach (Participant person in parts)
                         {
-                            read.Name = bibName;
+                            if (theEvent.CommonAgeGroups)
+                            {
+                                if (currentAgeGroups.TryGetValue(
+                                    (Constants.Timing.COMMON_AGEGROUPS_DISTANCEID, person.GetAge(theEvent.Date)),
+                                    out AgeGroup ageGroup))
+                                {
+                                    person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                                    person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
+                                }
+                            }
+                            else
+                            {
+                                if (currentAgeGroups.TryGetValue(
+                                    (person.EventSpecific.DistanceIdentifier, person.GetAge(theEvent.Date)),
+                                    out AgeGroup ageGroup))
+                                {
+                                    person.EventSpecific.AgeGroupId = ageGroup.GroupId;
+                                    person.EventSpecific.AgeGroupName = ageGroup.PrettyName();
+                                }
+                            }
                         }
-                        else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
+                        // This is one of the few functions that has a database call within the ReadWriteLock
+                        // This is because we need to update the age group id before putting it in the database
+                        database.UpdateParticipants(parts);
+                        foreach (Participant person in parts)
                         {
-                            read.Name = chipName;
+                            if (participants.TryGetValue(person.EventSpecific.Identifier, out Participant toUpdate))
+                            {
+                                toUpdate.CopyFrom(person);
+                                if (distances.TryGetValue(toUpdate.EventSpecific.DistanceIdentifier, out Distance dist))
+                                {
+                                    toUpdate.EventSpecific.DistanceName = dist.Name;
+                                }
+                            }
+                            else
+                            {
+                                participants[person.EventSpecific.Identifier] = person;
+                                if (distances.TryGetValue(person.EventSpecific.DistanceIdentifier, out Distance dist))
+                                {
+                                    person.EventSpecific.DistanceName = dist.Name;
+                                }
+                            }
                         }
-                        else
+                        Dictionary<string, string> bibParticipantsList = [];
+                        Dictionary<string, string> chipParticipantsList = [];
+                        foreach (Participant part in participants.Values)
                         {
-                            read.Name = "";
+                            if (part.Bib.Length > 0)
+                            {
+                                if (bibToChipAssociations.TryGetValue(part.Bib, out BibChipAssociation bibChipAssociation))
+                                {
+                                    chipParticipantsList[bibChipAssociation.Chip] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                                }
+                                bibParticipantsList[part.Bib] = string.Format("{0} {1}", part.FirstName, part.LastName).Trim();
+                            }
+                        }
+                        foreach (ChipRead read in chipReads.Values)
+                        {
+                            if (bibParticipantsList.TryGetValue(read.Bib, out string bibName))
+                            {
+                                read.Name = bibName;
+                            }
+                            else if (chipParticipantsList.TryGetValue(read.ChipNumber, out string chipName))
+                            {
+                                read.Name = chipName;
+                            }
+                            else
+                            {
+                                read.Name = "";
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -651,16 +741,22 @@ namespace Chronokeep.MemStore
             Log.D("MemStore", "GetDivisions");
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventIdentifier)
+                    try
                     {
-                        foreach (Participant person in participants.Values)
+                        if (theEvent != null && theEvent.Identifier == eventIdentifier)
                         {
-                            output.Add(person.EventSpecific.Division);
+                            foreach (Participant person in participants.Values)
+                            {
+                                output.Add(person.EventSpecific.Division);
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)

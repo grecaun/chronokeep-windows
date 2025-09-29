@@ -14,10 +14,16 @@ namespace Chronokeep.MemStore
             AppSetting output = null;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    settings.TryGetValue(name, out output);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        settings.TryGetValue(name, out output);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
                 return output;
             }
@@ -34,10 +40,16 @@ namespace Chronokeep.MemStore
             database.SetAppSetting(name, value);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    settings[name] = new() { Name = name, Value = value };
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        settings[name] = new() { Name = name, Value = value };
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -53,10 +65,16 @@ namespace Chronokeep.MemStore
             database.SetAppSetting(setting);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    settings[setting.Name] = setting;
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        settings[setting.Name] = setting;
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)

@@ -15,14 +15,20 @@ namespace Chronokeep.MemStore
             int output = database.AddSegment(seg);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && seg.EventId == theEvent.Identifier && seg.Identifier > 0)
+                    try
                     {
-                        seg.Identifier = output;
+                        if (theEvent != null && seg.EventId == theEvent.Identifier && seg.Identifier > 0)
+                        {
+                            seg.Identifier = output;
+                        }
+                        segments[seg.Identifier] = seg;
                     }
-                    segments[seg.Identifier] = seg;
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -39,16 +45,22 @@ namespace Chronokeep.MemStore
             List<Segment> output = database.AddSegments(segs);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (Segment seg in output)
+                    try
                     {
-                        if (theEvent != null && seg.EventId == theEvent.Identifier && seg.Identifier > 0)
+                        foreach (Segment seg in output)
                         {
-                            segments[seg.Identifier] = seg;
+                            if (theEvent != null && seg.EventId == theEvent.Identifier && seg.Identifier > 0)
+                            {
+                                segments[seg.Identifier] = seg;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -65,20 +77,26 @@ namespace Chronokeep.MemStore
             int output = -1;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (Segment s in segments.Values)
+                    try
                     {
-                        if (s.EventId == seg.EventId
-                            && s.DistanceId == seg.DistanceId
-                            && s.LocationId == seg.LocationId
-                            && s.Occurrence == seg.Occurrence)
+                        foreach (Segment s in segments.Values)
                         {
-                            output = s.Identifier;
-                            break;
+                            if (s.EventId == seg.EventId
+                                && s.DistanceId == seg.DistanceId
+                                && s.LocationId == seg.LocationId
+                                && s.Occurrence == seg.Occurrence)
+                            {
+                                output = s.Identifier;
+                                break;
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -92,20 +110,26 @@ namespace Chronokeep.MemStore
         public List<Segment> GetSegments(int eventId)
         {
             Log.D("MemStore", "GetSegments");
-            List<Segment> output = new();
+            List<Segment> output = [];
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        output.AddRange(segments.Values);
+                        if (theEvent != null && theEvent.Identifier == eventId)
+                        {
+                            output.AddRange(segments.Values);
+                        }
+                        else
+                        {
+                            output.AddRange(database.GetSegments(eventId));
+                        }
                     }
-                    else
+                    finally
                     {
-                        output.AddRange(database.GetSegments(eventId));
+                        memStoreLock.Exit();
                     }
-                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -122,30 +146,36 @@ namespace Chronokeep.MemStore
             int output = 0;
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        Dictionary<int, int> maxSegmentsPerDistance = new();
-                        foreach (Segment s in segments.Values)
+                        if (theEvent != null && theEvent.Identifier == eventId)
                         {
-                            if (!maxSegmentsPerDistance.TryGetValue(s.DistanceId, out int count))
+                            Dictionary<int, int> maxSegmentsPerDistance = new();
+                            foreach (Segment s in segments.Values)
                             {
-                                count = 0;
-                            }
-                            count++;
-                            maxSegmentsPerDistance[s.DistanceId] = count;
-                            if (count > output)
-                            {
-                                output = count;
+                                if (!maxSegmentsPerDistance.TryGetValue(s.DistanceId, out int count))
+                                {
+                                    count = 0;
+                                }
+                                count++;
+                                maxSegmentsPerDistance[s.DistanceId] = count;
+                                if (count > output)
+                                {
+                                    output = count;
+                                }
                             }
                         }
+                        else
+                        {
+                            output = database.GetMaxSegments(eventId);
+                        }
                     }
-                    else
+                    finally
                     {
-                        output = database.GetMaxSegments(eventId);
+                        memStoreLock.Exit();
                     }
-                    memStoreLock.ReleaseMutex();
                 }
             }
             catch (Exception e)
@@ -162,10 +192,16 @@ namespace Chronokeep.MemStore
             database.RemoveSegment(seg);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    segments.Remove(seg.Identifier);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        segments.Remove(seg.Identifier);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -181,10 +217,16 @@ namespace Chronokeep.MemStore
             database.RemoveSegment(identifier);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    segments.Remove(identifier);
-                    memStoreLock.ReleaseMutex();
+                    try
+                    {
+                        segments.Remove(identifier);
+                    }
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -200,13 +242,19 @@ namespace Chronokeep.MemStore
             database.RemoveSegments(segs);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (Segment s in segs)
+                    try
                     {
-                        segments.Remove(s.Identifier);
+                        foreach (Segment s in segs)
+                        {
+                            segments.Remove(s.Identifier);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -222,13 +270,19 @@ namespace Chronokeep.MemStore
             database.ResetSegments(eventId);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (theEvent != null && theEvent.Identifier == eventId)
+                    try
                     {
-                        segments.Clear();
+                        if (theEvent != null && theEvent.Identifier == eventId)
+                        {
+                            segments.Clear();
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -244,13 +298,19 @@ namespace Chronokeep.MemStore
             database.UpdateSegment(seg);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    if (segments.TryGetValue(seg.Identifier, out Segment oldSeg))
+                    try
                     {
-                        oldSeg.CopyFrom(seg);
+                        if (segments.TryGetValue(seg.Identifier, out Segment oldSeg))
+                        {
+                            oldSeg.CopyFrom(seg);
+                        }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
@@ -266,16 +326,22 @@ namespace Chronokeep.MemStore
             database.UpdateSegments(segs);
             try
             {
-                if (memStoreLock.WaitOne(lockTimeout))
+                if (memStoreLock.TryEnter(lockTimeout))
                 {
-                    foreach (Segment s in segs)
+                    try
                     {
-                        if (segments.TryGetValue(s.Identifier, out Segment oldSeg))
+                        foreach (Segment s in segs)
                         {
-                            oldSeg.CopyFrom(s);
+                            if (segments.TryGetValue(s.Identifier, out Segment oldSeg))
+                            {
+                                oldSeg.CopyFrom(s);
+                            }
                         }
                     }
-                    memStoreLock.ReleaseMutex();
+                    finally
+                    {
+                        memStoreLock.Exit();
+                    }
                 }
             }
             catch (Exception e)
