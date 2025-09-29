@@ -1620,8 +1620,8 @@ namespace Chronokeep.Database.SQLite
                         break;
                 }
                 transaction.Commit();
-                connection.Close();
             }
+            connection.Close();
         }
     }
 }
