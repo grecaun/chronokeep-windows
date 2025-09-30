@@ -14,16 +14,12 @@ using System.Text.RegularExpressions;
 
 namespace Chronokeep.Timing.Interfaces
 {
-    public class RFIDUltraInterface : ITimingSystemInterface
+    public class RFIDUltraInterface(IDBInterface database, int locationId, IMainWindow window) : ITimingSystemInterface
     {
-        IDBInterface database;
-        readonly int locationId;
-        Event theEvent;
-        StringBuilder buffer = new StringBuilder();
-        Socket sock;
-        IMainWindow window = null;
-
+        readonly Event theEvent = database.GetCurrentEvent();
+        readonly StringBuilder buffer = new();
         private RFIDSettings settingsWindow = null;
+        Socket sock;
 
         private static readonly Regex voltage = new Regex(@"^V=.*");
         private static readonly Regex connected = new Regex(@"^Connected,.*");
@@ -33,14 +29,6 @@ namespace Chronokeep.Timing.Interfaces
         private static readonly Regex time = new Regex(@"^(\d{1,2}:\d{1,2}:\d{1,2} \d{1,2}-\d{1,2}-\d{4}) \(\d*\)");
         private static readonly Regex status = new Regex(@"^S=(\d)(\d)");
         private static readonly Regex msg = new Regex(@"^[^\n]*\n");
-
-        public RFIDUltraInterface(IDBInterface database, int locationId, IMainWindow window)
-        {
-            this.database = database;
-            this.theEvent = database.GetCurrentEvent();
-            this.locationId = locationId;
-            this.window = window;
-        }
 
         public List<Socket> Connect(string IpAddress, int Port)
         {
@@ -119,10 +107,7 @@ namespace Chronokeep.Timing.Interfaces
                         }
                         chipReads.Add(chipRead);
                         // we don't need to do anything other than notify of a chipread
-                        if (!output.ContainsKey(MessageType.CHIPREAD))
-                        {
-                            output[MessageType.CHIPREAD] = null;
-                        }
+                        output[MessageType.CHIPREAD] = null;
                     }
                 }
                 // If "V=" then it's a voltage status.
@@ -145,18 +130,12 @@ namespace Chronokeep.Timing.Interfaces
                     if (voltVal != 0 && voltVal < 23)
                     {
                         // Voltage low and normal don't require anything else.
-                        if (!output.ContainsKey(MessageType.VOLTAGELOW))
-                        {
-                            output[MessageType.VOLTAGELOW] = null;
-                        }
+                        output[MessageType.VOLTAGELOW] = null;
                     }
                     else
                     {
                         // Voltage low and normal don't require anything else.
-                        if (!output.ContainsKey(MessageType.VOLTAGENORMAL))
-                        {
-                            output[MessageType.VOLTAGENORMAL] = null;
-                        }
+                        output[MessageType.VOLTAGENORMAL] = null;
                     }
                 }
                 // If "U[...]" Setting information
@@ -277,10 +256,7 @@ namespace Chronokeep.Timing.Interfaces
                         default:
                             break;
                     }
-                    if (!output.ContainsKey(MessageType.SETTINGVALUE))
-                    {
-                        output[MessageType.SETTINGVALUE] = null;
-                    }
+                    output[MessageType.SETTINGVALUE] = null;
                 }
                 // If "u[...]" setting changed
                 else if (settingconfirmation.IsMatch(message))
@@ -352,10 +328,7 @@ namespace Chronokeep.Timing.Interfaces
                         default:
                             break;
                     }
-                    if (!output.ContainsKey(MessageType.SETTINGCHANGE))
-                    {
-                        output[MessageType.SETTINGCHANGE] = null;
-                    }
+                    output[MessageType.SETTINGCHANGE] = null;
                 }
                 // If "HH:MM:SS DD-MM-YYYY" then it's a time message
                 else if (time.IsMatch(message))
@@ -406,17 +379,11 @@ namespace Chronokeep.Timing.Interfaces
                 else if (connected.IsMatch(message))
                 {
                     // Nothing other than connected care about for right now.
-                    if (!output.ContainsKey(MessageType.CONNECTED))
-                    {
-                        output[MessageType.CONNECTED] = null;
-                    }
+                    output[MessageType.CONNECTED] = null;
                 }
                 else
                 {
-                    if (!output.ContainsKey(MessageType.UNKNOWN))
-                    {
-                        output[MessageType.UNKNOWN] = null;
-                    }
+                    output[MessageType.UNKNOWN] = null;
                 }
                 m = msg.Match(buffer.ToString());
             }

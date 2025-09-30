@@ -201,7 +201,7 @@ namespace Chronokeep.Network.Registration
                                                 try
                                                 {
                                                     ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message);
-                                                    if (distanceDictionary.ContainsKey(addReq.Participant.Distance))
+                                                    if (distanceDictionary.TryGetValue(addReq.Participant.Distance, out Distance oDist))
                                                     {
                                                         Objects.Participant newPart = new Objects.Participant(
                                                             addReq.Participant.FirstName,
@@ -213,7 +213,7 @@ namespace Chronokeep.Network.Registration
                                                             addReq.Participant.Birthdate,
                                                             new EventSpecific(
                                                                 theEvent.Identifier,
-                                                                distanceDictionary[addReq.Participant.Distance].Identifier,
+                                                                oDist.Identifier,
                                                                 addReq.Participant.Distance,
                                                                 addReq.Participant.Bib,
                                                                 0,  // checked-in
@@ -275,7 +275,7 @@ namespace Chronokeep.Network.Registration
                                                             Error = RegistrationError.PARTICIPANT_NOT_FOUND
                                                         }));
                                                     }
-                                                    else if (!distanceDictionary.ContainsKey(addReq.Participant.Distance))
+                                                    else if (!distanceDictionary.TryGetValue(addReq.Participant.Distance, out Distance tDist))
                                                     {
                                                         SendMessage(sock, JsonSerializer.Serialize(new ErrorResponse
                                                         {
@@ -289,7 +289,7 @@ namespace Chronokeep.Network.Registration
                                                             addReq.Participant.LastName,
                                                             addReq.Participant.Gender,
                                                             addReq.Participant.Birthdate,
-                                                            distanceDictionary[addReq.Participant.Distance],
+                                                            tDist,
                                                             addReq.Participant.Bib,
                                                             addReq.Participant.SMSEnabled,
                                                             addReq.Participant.Mobile

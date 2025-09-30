@@ -2625,11 +2625,13 @@ namespace Chronokeep
             List<Participant> parts = (distanceId == -1) ? GetParticipants(eventId) : GetParticipants(eventId, distanceId);
             foreach (Participant person in parts)
             {
-                if (!output.ContainsKey(person.Status))
+                if (!output.TryGetValue(person.Status, out List<Participant> statusList))
                 {
-                    output[person.Status] = new List<Participant>();
+                    statusList = [];
+                    output[person.Status] = statusList;
                 }
-                output[person.Status].Add(person);
+
+                statusList.Add(person);
             }
             return output;
         }

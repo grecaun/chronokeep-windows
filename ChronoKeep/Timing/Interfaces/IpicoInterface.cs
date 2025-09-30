@@ -104,18 +104,20 @@ namespace Chronokeep.Timing.Interfaces
         public Dictionary<MessageType, List<string>> ParseMessages(string inMessage, Socket sock)
         {
             Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- parsing message.");
-            Dictionary<MessageType, List<string>> output = new Dictionary<MessageType, List<string>>();
+            Dictionary<MessageType, List<string>> output = [];
             if (sock == null)
             {
                 return output;
             }
-            if (!bufferDict.ContainsKey(sock))
+            if (!bufferDict.TryGetValue(sock, out StringBuilder buff))
             {
-                bufferDict[sock] = new StringBuilder();
+                buff = new StringBuilder();
+                bufferDict[sock] = buff;
             }
-            bufferDict[sock].Append(inMessage);
+
+            buff.Append(inMessage);
             Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- new message is '" + inMessage + "' with a length of " + inMessage.Length);
-            Match m = msg.Match(bufferDict[sock].ToString());
+            Match m = msg.Match(buff.ToString());
             HashSet<string> ignoredChips = [];
             foreach (BibChipAssociation ignore in database.GetBibChips(-1))
             {
@@ -127,7 +129,7 @@ namespace Chronokeep.Timing.Interfaces
             while (m.Success)
             {
                 Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- message " + count++);
-                bufferDict[sock].Remove(m.Index, m.Length);
+                buff.Remove(m.Index, m.Length);
                 string message = m.Value;
                 Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- message is : " + message);
                 // a chipread is as follows: (note that milliseconds don't appear to be an actual millisecond but a hundredth of a second)
@@ -156,10 +158,7 @@ namespace Chronokeep.Timing.Interfaces
                             chipRead.Status = Constants.Timing.CHIPREAD_STATUS_DNS;
                         }
                         chipReads.Add(chipRead);
-                        if (!output.ContainsKey(MessageType.CHIPREAD))
-                        {
-                            output[MessageType.CHIPREAD] = null;
-                        }
+                        output[MessageType.CHIPREAD] = null;
                     }
                 }
                 // Time is as follows:
@@ -179,7 +178,7 @@ namespace Chronokeep.Timing.Interfaces
                         dateStr
                     };
                 }
-                m = msg.Match(bufferDict[sock].ToString());
+                m = msg.Match(buff.ToString());
             }
             Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- messages parsed successfully adding chipreads");
             if (chipReads.Count > 0)
@@ -244,9 +243,9 @@ namespace Chronokeep.Timing.Interfaces
             }
             finally
             {
-                if (rewindSocket != null && bufferDict.ContainsKey(rewindSocket))
+                if (rewindSocket != null && bufferDict.TryGetValue(rewindSocket, out StringBuilder oBuff))
                 {
-                    bufferDict[rewindSocket].Clear();
+                    oBuff.Clear();
                 }
                 rewindSocket?.Close();
                 rewindSocket = null;

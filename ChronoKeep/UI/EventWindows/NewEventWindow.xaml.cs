@@ -17,7 +17,7 @@ namespace Chronokeep
         private IDBInterface database = null;
         private IWindowCallback window = null;
 
-        private Dictionary<string, Event> eventDict = new Dictionary<string, Event>();
+        private Dictionary<string, Event> eventDict = [];
 
         public NewEventWindow(IWindowCallback window, IDBInterface database)
         {
@@ -31,7 +31,7 @@ namespace Chronokeep
             oldEvent.Items.Clear();
             List<Event> events = database.GetEvents();
             events.Sort();
-            List<string> eventNames = new List<string>();
+            List<string> eventNames = [];
             foreach (Event e in events)
             {
                 string name = string.Format("{0} {1}", e.YearCode, e.Name);
@@ -69,9 +69,9 @@ namespace Chronokeep
             else
             {
                 int oldEventId = -1;
-                if (oldEvent.Text.Length > 0 && eventDict.ContainsKey(oldEvent.Text))
+                if (oldEvent.Text.Length > 0 && eventDict.TryGetValue(oldEvent.Text, out Event oEvent))
                 {
-                    oldEventId = eventDict[oldEvent.Text].Identifier;
+                    oldEventId = oEvent.Identifier;
                 }
                 Event newEvent = new Event(nameString, dateVal, yearString);
                 database.AddEvent(newEvent);
@@ -86,11 +86,11 @@ namespace Chronokeep
                     database.UpdateEvent(newEvent);
                     // Get distances from old event
                     List<Distance> distances = database.GetDistances(oldEventId);
-                    List<Distance> newDistances = new List<Distance>();
+                    List<Distance> newDistances = [];
                     // DistanceDict translates a distance name into the old distance identifier.
-                    Dictionary<string, int> DistanceDict = new Dictionary<string, int>();
+                    Dictionary<string, int> DistanceDict = [];
                     // DistanceTranslationDict holds a new distance id and translates it from the old distance with the same name.
-                    Dictionary<int, int> DistanceTranslationDict = new Dictionary<int, int>();
+                    Dictionary<int, int> DistanceTranslationDict = [];
                     foreach (Distance d in distances)
                     {
                         DistanceDict[d.Name] = d.Identifier;
@@ -113,9 +113,9 @@ namespace Chronokeep
                     {
                         if (Constants.Timing.DISTANCE_NO_LINKED_ID != newD.LinkedDistance)
                         {
-                            if (DistanceTranslationDict.ContainsKey(newD.LinkedDistance))
+                            if (DistanceTranslationDict.TryGetValue(newD.LinkedDistance, out int oDistId))
                             {
-                                newD.LinkedDistance = DistanceTranslationDict[newD.LinkedDistance];
+                                newD.LinkedDistance = oDistId;
                             }
                             else
                             {
@@ -126,11 +126,11 @@ namespace Chronokeep
                     }
                     // Get locations from old event.
                     List<TimingLocation> locations = database.GetTimingLocations(oldEventId);
-                    List<TimingLocation> newLocations = new List<TimingLocation>();
+                    List<TimingLocation> newLocations = [];
                     // translates a location name into the old distance identifier
-                    Dictionary<string, int> LocationDict = new Dictionary<string, int>();
+                    Dictionary<string, int> LocationDict = [];
                     // translates the old location id to the new location id
-                    Dictionary<int, int> LocationTranslationDict = new Dictionary<int, int>();
+                    Dictionary<int, int> LocationTranslationDict = [];
                     foreach (TimingLocation loc in locations)
                     {
                         loc.EventIdentifier = newEvent.Identifier;
@@ -147,17 +147,17 @@ namespace Chronokeep
                     }
                     // Get old segments from the database.
                     List<Segment> segments = database.GetSegments(oldEventId);
-                    List<Segment> newSegments = new List<Segment>();
+                    List<Segment> newSegments = [];
                     foreach (Segment s in segments)
                     {
                         s.EventId = newEvent.Identifier;
-                        if (newEvent.DistanceSpecificSegments && DistanceTranslationDict.ContainsKey(s.DistanceId))
+                        if (newEvent.DistanceSpecificSegments && DistanceTranslationDict.TryGetValue(s.DistanceId, out int tDistId))
                         {
-                            s.DistanceId = DistanceTranslationDict[s.DistanceId];
+                            s.DistanceId = tDistId;
                         }
-                        if (Constants.Timing.LOCATION_FINISH != s.LocationId && Constants.Timing.LOCATION_START != s.LocationId && LocationTranslationDict.ContainsKey(s.LocationId))
+                        if (Constants.Timing.LOCATION_FINISH != s.LocationId && Constants.Timing.LOCATION_START != s.LocationId && LocationTranslationDict.TryGetValue(s.LocationId, out int tLocId))
                         {
-                            s.LocationId = LocationTranslationDict[s.LocationId];
+                            s.LocationId = tLocId;
                         }
                         newSegments.Add(s);
                     }
@@ -165,13 +165,13 @@ namespace Chronokeep
                     database.AddSegments(newSegments);
                     // Get age groups from database.
                     List<AgeGroup> ageGroups = database.GetAgeGroups(oldEventId);
-                    List<AgeGroup> newAgeGroups = new List<AgeGroup>();
+                    List<AgeGroup> newAgeGroups = [];
                     foreach (AgeGroup ag in ageGroups)
                     {
                         ag.EventId = newEvent.Identifier;
-                        if (!newEvent.CommonAgeGroups && DistanceTranslationDict.ContainsKey(ag.DistanceId))
+                        if (!newEvent.CommonAgeGroups && DistanceTranslationDict.TryGetValue(ag.DistanceId, out int tDistId))
                         {
-                            ag.DistanceId = DistanceTranslationDict[ag.DistanceId];
+                            ag.DistanceId = tDistId;
                         }
                         newAgeGroups.Add(ag);
                     }

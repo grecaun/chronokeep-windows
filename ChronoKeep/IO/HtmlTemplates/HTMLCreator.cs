@@ -5,9 +5,9 @@ namespace Chronokeep.IO.HtmlTemplates
 {
     public partial class HtmlResultsTemplate
     {
-        private Event theEvent;
-        private Dictionary<string, List<TimeResult>> distanceResults = new Dictionary<string, List<TimeResult>>();
-        private bool linkPart = false;
+        private readonly Event theEvent;
+        private readonly Dictionary<string, List<TimeResult>> distanceResults = [];
+        private readonly bool linkPart = false;
 
         public HtmlResultsTemplate(
             Event theEvent,
@@ -19,22 +19,24 @@ namespace Chronokeep.IO.HtmlTemplates
             resultList.Sort(TimeResult.CompareByDistancePlace);
             foreach (TimeResult result in resultList)
             {
-                if (!distanceResults.ContainsKey(result.DistanceName))
+                if (!distanceResults.TryGetValue(result.DistanceName, out List<TimeResult> distResList))
                 {
-                    distanceResults[result.DistanceName] = new List<TimeResult>();
+                    distResList = [];
+                    distanceResults[result.DistanceName] = distResList;
                 }
-                distanceResults[result.DistanceName].Add(result);
+
+                distResList.Add(result);
             }
             this.linkPart = linkPart;
         }
     }
     public partial class HtmlParticipantTemplate
     {
-        private Event theEvent;
-        private List<TimeResult> resultList;
-        private TimeResult finish;
-        private TimeResult start;
-        private string rankingGender = "";
+        private readonly Event theEvent;
+        private readonly List<TimeResult> resultList;
+        private readonly TimeResult finish;
+        private readonly TimeResult start;
+        private readonly string rankingGender = "";
 
         public HtmlParticipantTemplate(
             Event theEvent,
@@ -84,13 +86,13 @@ namespace Chronokeep.IO.HtmlTemplates
 
     public partial class HtmlCertificateEmailTemplate
     {
-        string eventName;
-        string distanceName;
-        string participantName;
-        string time;
-        string certificateUrl;
-        string resultsLink;
-        string unsubscribe;
+        readonly string eventName;
+        readonly string distanceName;
+        readonly string participantName;
+        readonly string time;
+        readonly string certificateUrl;
+        readonly string resultsLink;
+        readonly string unsubscribe;
 
         public HtmlCertificateEmailTemplate(
             Event theEvent,
@@ -119,7 +121,7 @@ namespace Chronokeep.IO.HtmlTemplates
                 }
                 else
                 {
-                    resultsLink = string.Format("<p><a href=\"{2}\">Click here for more results.</a></p>", api.WebURL);
+                    resultsLink = string.Format("<p><a href=\"{0}\">Click here for more results.</a></p>", api.WebURL);
                 }
             }
             unsubscribe = string.Format("<br>If you don't want to receive these emails <a href=\"https://www.chronokeep.com/unsubscribe/{0}\">click here</a>.", email);

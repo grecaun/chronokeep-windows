@@ -187,163 +187,163 @@ namespace Chronokeep.UI.Export
                 {
                     outputDictionary[participant.Bib] = true;
                     object[] line = new object[headersToOutput.Count];
-                    if (headerIndex.ContainsKey("Bib"))
+                    if (headerIndex.TryGetValue("Bib", out int bibIx))
                     {
-                        line[headerIndex["Bib"]] = participant.Bib;
+                        line[bibIx] = participant.Bib;
                     }
-                    if (headerIndex.ContainsKey("Distance"))
+                    if (headerIndex.TryGetValue("Distance", out int distIx))
                     {
-                        line[headerIndex["Distance"]] = participant.Distance;
+                        line[distIx] = participant.Distance;
                     }
-                    if (headerIndex.ContainsKey("Status"))
+                    if (headerIndex.TryGetValue("Status", out int statIx))
                     {
-                        line[headerIndex["Status"]] = participant.EventSpecific.StatusStr;
+                        line[statIx] = participant.EventSpecific.StatusStr;
                     }
-                    if (headerIndex.ContainsKey("First"))
+                    if (headerIndex.TryGetValue("First", out int firstIx))
                     {
-                        line[headerIndex["First"]] = participant.FirstName;
+                        line[firstIx] = participant.FirstName;
                     }
-                    if (headerIndex.ContainsKey("Last"))
+                    if (headerIndex.TryGetValue("Last", out int lastIx))
                     {
-                        line[headerIndex["Last"]] = participant.LastName;
+                        line[lastIx] = participant.LastName;
                     }
-                    if (headerIndex.ContainsKey("Birthday"))
+                    if (headerIndex.TryGetValue("Birthday", out int bdayIx))
                     {
-                        line[headerIndex["Birthday"]] = participant.Birthdate;
+                        line[bdayIx] = participant.Birthdate;
                     }
-                    if (headerIndex.ContainsKey("Age"))
+                    if (headerIndex.TryGetValue("Age", out int agIx))
                     {
-                        line[headerIndex["Age"]] = participant.Age(theEvent.Date);
+                        line[agIx] = participant.Age(theEvent.Date);
                     }
-                    if (headerIndex.ContainsKey("Gender"))
+                    if (headerIndex.TryGetValue("Gender", out int gndIx))
                     {
-                        line[headerIndex["Gender"]] = participant.Gender;
+                        line[gndIx] = participant.Gender;
                     }
-                    if (headerIndex.ContainsKey("Street"))
+                    if (headerIndex.TryGetValue("Street", out int streetIx))
                     {
-                        line[headerIndex["Street"]] = participant.Street;
+                        line[streetIx] = participant.Street;
                     }
-                    if (headerIndex.ContainsKey("Apartment"))
+                    if (headerIndex.TryGetValue("Apartment", out int apartmentIx))
                     {
-                        line[headerIndex["Apartment"]] = participant.Street2;
+                        line[apartmentIx] = participant.Street2;
                     }
-                    if (headerIndex.ContainsKey("City"))
+                    if (headerIndex.TryGetValue("City", out int cityIx))
                     {
-                        line[headerIndex["City"]] = participant.City;
+                        line[cityIx] = participant.City;
                     }
-                    if (headerIndex.ContainsKey("State"))
+                    if (headerIndex.TryGetValue("State", out int stateIx))
                     {
-                        line[headerIndex["State"]] = participant.State;
+                        line[stateIx] = participant.State;
                     }
-                    if (headerIndex.ContainsKey("Zip"))
+                    if (headerIndex.TryGetValue("Zip", out int zipIx))
                     {
-                        line[headerIndex["Zip"]] = participant.Zip;
+                        line[zipIx] = participant.Zip;
                     }
-                    if (headerIndex.ContainsKey("Country"))
+                    if (headerIndex.TryGetValue("Country", out int countryIx))
                     {
-                        line[headerIndex["Country"]] = participant.Country;
+                        line[countryIx] = participant.Country;
                     }
-                    if (headerIndex.ContainsKey("Mobile"))
+                    if (headerIndex.TryGetValue("Mobile", out int mobileIx))
                     {
-                        line[headerIndex["Mobile"]] = participant.Mobile;
+                        line[mobileIx] = participant.Mobile;
                     }
-                    if (headerIndex.ContainsKey("Email"))
+                    if (headerIndex.TryGetValue("Email", out int emailIx))
                     {
-                        line[headerIndex["Email"]] = participant.Email;
+                        line[emailIx] = participant.Email;
                     }
-                    if (headerIndex.ContainsKey("Parent"))
+                    if (headerIndex.TryGetValue("Parent", out int parentIx))
                     {
-                        line[headerIndex["Parent"]] = participant.Parent;
+                        line[parentIx] = participant.Parent;
                     }
-                    if (headerIndex.ContainsKey("Comments"))
+                    if (headerIndex.TryGetValue("Comments", out int commentsIx))
                     {
-                        line[headerIndex["Comments"]] = participant.Comments;
+                        line[commentsIx] = participant.Comments;
                     }
-                    if (headerIndex.ContainsKey("Other"))
+                    if (headerIndex.TryGetValue("Other", out int otherIx))
                     {
-                        line[headerIndex["Other"]] = participant.Other;
+                        line[otherIx] = participant.Other;
                     }
-                    if (headerIndex.ContainsKey("Owes"))
+                    if (headerIndex.TryGetValue("Owes", out int owesIx))
                     {
-                        line[headerIndex["Owes"]] = participant.Owes;
+                        line[owesIx] = participant.Owes;
                     }
-                    if (headerIndex.ContainsKey("Emergency Contact Name"))
+                    if (headerIndex.TryGetValue("Emergency Contact Name", out int emergencyNameIx))
                     {
-                        line[headerIndex["Emergency Contact Name"]] = participant.ECName;
+                        line[emergencyNameIx] = participant.ECName;
                     }
-                    if (headerIndex.ContainsKey("Emergency Contact Phone"))
+                    if (headerIndex.TryGetValue("Emergency Contact Phone", out int emergencyPhoneIx))
                     {
-                        line[headerIndex["Emergency Contact Phone"]] = participant.ECPhone;
+                        line[emergencyPhoneIx] = participant.ECPhone;
                     }
-                    if (headerIndex.ContainsKey("Anonymous"))
+                    if (headerIndex.TryGetValue("Anonymous", out int anonymousIx))
                     {
-                        line[headerIndex["Anonymous"]] = participant.PrettyAnonymous;
+                        line[anonymousIx] = participant.PrettyAnonymous;
                     }
-                    if (headerIndex.ContainsKey("Apparel"))
+                    if (headerIndex.TryGetValue("Apparel", out int apparelIx))
                     {
-                        line[headerIndex["Apparel"]] = participant.EventSpecific.Apparel;
+                        line[apparelIx] = participant.EventSpecific.Apparel;
                     }
-                    if (headerIndex.ContainsKey("Division"))
+                    if (headerIndex.TryGetValue("Division", out int divIx))
                     {
-                        line[headerIndex["Division"]] = participant.EventSpecific.Division;
+                        line[divIx] = participant.EventSpecific.Division;
                     }
                     if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                     {
-                        if (resultDictionary.ContainsKey(participant.EventSpecific.Bib))
+                        if (resultDictionary.TryGetValue(participant.EventSpecific.Bib, out List<TimeResult> oResList))
                         {
                             int segmentNum = 1;
-                            foreach (TimeResult result in resultDictionary[participant.EventSpecific.Bib])
+                            foreach (TimeResult result in oResList)
                             {
                                 if (Constants.Timing.SEGMENT_START == result.SegmentId)
                                 {
-                                    if (headerIndex.ContainsKey("Start"))
+                                    if (headerIndex.TryGetValue("Start", out int startIx))
                                     {
-                                        line[headerIndex["Start"]] = result.Time;
+                                        line[startIx] = result.Time;
                                     }
                                 }
                                 else if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
                                 {
-                                    if (headerIndex.ContainsKey("Place"))
+                                    if (headerIndex.TryGetValue("Place", out int placeIx))
                                     {
-                                        line[headerIndex["Place"]] = result.Place == -1 ? "" : result.Place;
+                                        line[placeIx] = result.Place == -1 ? "" : result.Place;
                                     }
-                                    if (headerIndex.ContainsKey("Age Group Place"))
+                                    if (headerIndex.TryGetValue("Age Group Place", out int agPlIx))
                                     {
-                                        line[headerIndex["Age Group Place"]] = result.AgePlace == -1 ? "" : result.AgePlace;
+                                        line[agPlIx] = result.AgePlace == -1 ? "" : result.AgePlace;
                                     }
-                                    if (headerIndex.ContainsKey("Gender Place"))
+                                    if (headerIndex.TryGetValue("Gender Place", out int gndPlIx))
                                     {
-                                        line[headerIndex["Gender Place"]] = result.GenderPlace == -1 ? "" : result.GenderPlace;
+                                        line[gndPlIx] = result.GenderPlace == -1 ? "" : result.GenderPlace;
                                     }
-                                    if (headerIndex.ContainsKey("Chip Finish"))
+                                    if (headerIndex.TryGetValue("Chip Finish", out int chipFinIx))
                                     {
-                                        line[headerIndex["Chip Finish"]] = result.ChipTime;
+                                        line[chipFinIx] = result.ChipTime;
                                     }
-                                    if (headerIndex.ContainsKey("Clock Finish"))
+                                    if (headerIndex.TryGetValue("Clock Finish", out int clockFinIx))
                                     {
-                                        line[headerIndex["Clock Finish"]] = result.Time;
+                                        line[clockFinIx] = result.Time;
                                     }
                                 }
                                 else if (Constants.Timing.SEGMENT_NONE != result.SegmentId)
                                 {
-                                    if (segmentNumberDict.ContainsKey(result.SegmentId))
+                                    if (segmentNumberDict.TryGetValue(result.SegmentId, out int segNumber))
                                     {
-                                        segmentNum = segmentNumberDict[result.SegmentId];
+                                        segmentNum = segNumber;
                                     }
                                     string key = string.Format("Segment {0} Chip Time", segmentNum);
-                                    if (headerIndex.ContainsKey(key))
+                                    if (headerIndex.TryGetValue(key, out int segChipTimeIx))
                                     {
-                                        line[headerIndex[key]] = result.ChipTime;
+                                        line[segChipTimeIx] = result.ChipTime;
                                     }
                                     key = string.Format("Segment {0} Clock Time", segmentNum);
-                                    if (headerIndex.ContainsKey(key))
+                                    if (headerIndex.TryGetValue(key, out int segTimeIx))
                                     {
-                                        line[headerIndex[key]] = result.Time;
+                                        line[segTimeIx] = result.Time;
                                     }
                                     key = string.Format("Segment {0} Name", segmentNum++);
-                                    if (headerIndex.ContainsKey(key))
+                                    if (headerIndex.TryGetValue(key, out int segNameIx))
                                     {
-                                        line[headerIndex[key]] = result.SegmentName;
+                                        line[segNameIx] = result.SegmentName;
                                     }
                                 }
                             }
@@ -352,47 +352,47 @@ namespace Chronokeep.UI.Export
                     else // Time Based
                     {
                         int finalLap = -1;
-                        if (headerIndex.ContainsKey("Start") && occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Bib, 0)))
+                        if (headerIndex.TryGetValue("Start", out int startIx) && occurrenceResultDictionary.TryGetValue((participant.EventSpecific.Bib, 0), out TimeResult startRes))
                         {
-                            line[headerIndex["Start"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, 0)].Time;
+                            line[startIx] = startRes.Time;
                         }
                         for (int i=1; i<=maxLaps; i++)
                         {
                             string key = string.Format("Lap {0}", i);
-                            if (occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Bib, i)))
+                            if (occurrenceResultDictionary.TryGetValue((participant.EventSpecific.Bib, i), out TimeResult occRes))
                             {
                                 finalLap = i;
-                                if (headerIndex.ContainsKey(key))
+                                if (headerIndex.TryGetValue(key, out int occIx))
                                 {
-                                    line[headerIndex[key]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, i)].LapTime;
+                                    line[occIx] = occRes.LapTime;
                                 }
                             }
                         }
-                        if (occurrenceResultDictionary.ContainsKey((participant.EventSpecific.Bib, finalLap)))
+                        if (occurrenceResultDictionary.TryGetValue((participant.EventSpecific.Bib, finalLap), out TimeResult finalLapRes))
                         {
-                            if (headerIndex.ContainsKey("Place"))
+                            if (headerIndex.TryGetValue("Place", out int placeIx))
                             {
-                                line[headerIndex["Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].Place;
+                                line[placeIx] = finalLapRes.Place;
                             }
-                            if (headerIndex.ContainsKey("Age Group Place"))
+                            if (headerIndex.TryGetValue("Age Group Place", out int agPlIx))
                             {
-                                line[headerIndex["Age Group Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].AgePlace;
+                                line[agPlIx] = finalLapRes.AgePlace;
                             }
-                            if (headerIndex.ContainsKey("Gender Place"))
+                            if (headerIndex.TryGetValue("Gender Place", out int gndPlIx))
                             {
-                                line[headerIndex["Gender Place"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].GenderPlace;
+                                line[gndPlIx] = finalLapRes.GenderPlace;
                             }
-                            if (headerIndex.ContainsKey("Laps Completed"))
+                            if (headerIndex.TryGetValue("Laps Completed", out int lapsComplIx))
                             {
-                                line[headerIndex["Laps Completed"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].Occurrence;
+                                line[lapsComplIx] = finalLapRes.Occurrence;
                             }
-                            if (headerIndex.ContainsKey("Ellapsed Time (Clock)"))
+                            if (headerIndex.TryGetValue("Ellapsed Time (Clock)", out int clockEllapIx))
                             {
-                                line[headerIndex["Ellapsed Time (Clock)"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].Time;
+                                line[clockEllapIx] = finalLapRes.Time;
                             }
-                            if (headerIndex.ContainsKey("Ellapsed Time (Chip)"))
+                            if (headerIndex.TryGetValue("Ellapsed Time (Chip)", out int chipEllapIx))
                             {
-                                line[headerIndex["Ellapsed Time (Chip)"]] = occurrenceResultDictionary[(participant.EventSpecific.Bib, finalLap)].ChipTime;
+                                line[chipEllapIx] = finalLapRes.ChipTime;
                             }
                         }
                     }
@@ -404,63 +404,63 @@ namespace Chronokeep.UI.Export
                     if (!outputDictionary[bib] && string.IsNullOrEmpty(bib))
                     {
                         object[] line = new object[headersToOutput.Count];
-                        if (headerIndex.ContainsKey("Bib"))
+                        if (headerIndex.TryGetValue("Bib", out int bibIx))
                         {
-                            line[headerIndex["Bib"]] = bib;
+                            line[bibIx] = bib;
                         }
                         if (Constants.Timing.EVENT_TYPE_DISTANCE == theEvent.EventType)
                         {
-                            if (resultDictionary.ContainsKey(bib))
+                            if (resultDictionary.TryGetValue(bib, out List<TimeResult> resList))
                             {
                                 int segmentNum = 1;
-                                foreach (TimeResult result in resultDictionary[bib])
+                                foreach (TimeResult result in resList)
                                 {
                                     if (Constants.Timing.SEGMENT_START == result.SegmentId)
                                     {
-                                        if (headerIndex.ContainsKey("Start"))
+                                        if (headerIndex.TryGetValue("Start", out int startIx))
                                         {
-                                            line[headerIndex["Start"]] = result.Time;
+                                            line[startIx] = result.Time;
                                         }
                                     }
                                     else if (Constants.Timing.SEGMENT_FINISH == result.SegmentId)
                                     {
-                                        if (headerIndex.ContainsKey("Place"))
+                                        if (headerIndex.TryGetValue("Place", out int plIx))
                                         {
-                                            line[headerIndex["Place"]] = result.Place == -1 ? "" : result.Place;
+                                            line[plIx] = result.Place == -1 ? "" : result.Place;
                                         }
-                                        if (headerIndex.ContainsKey("Age Group Place"))
+                                        if (headerIndex.TryGetValue("Age Group Place", out int agPlIx))
                                         {
-                                            line[headerIndex["Age Group Place"]] = result.AgePlace == -1 ? "" : result.AgePlace;
+                                            line[agPlIx] = result.AgePlace == -1 ? "" : result.AgePlace;
                                         }
-                                        if (headerIndex.ContainsKey("Gender Place"))
+                                        if (headerIndex.TryGetValue("Gender Place", out int gndPlIx))
                                         {
-                                            line[headerIndex["Gender Place"]] = result.GenderPlace == -1 ? "" : result.GenderPlace;
+                                            line[gndPlIx] = result.GenderPlace == -1 ? "" : result.GenderPlace;
                                         }
-                                        if (headerIndex.ContainsKey("Chip Finish"))
+                                        if (headerIndex.TryGetValue("Chip Finish", out int chipFinIx))
                                         {
-                                            line[headerIndex["Chip Finish"]] = result.ChipTime;
+                                            line[chipFinIx] = result.ChipTime;
                                         }
-                                        if (headerIndex.ContainsKey("Clock Finish"))
+                                        if (headerIndex.TryGetValue("Clock Finish", out int clockFinIx))
                                         {
-                                            line[headerIndex["Clock Finish"]] = result.Time;
+                                            line[clockFinIx] = result.Time;
                                         }
                                     }
                                     else if (Constants.Timing.SEGMENT_NONE != result.SegmentId)
                                     {
                                         string key = string.Format("Segment {0} Chip Time", segmentNum);
-                                        if (headerIndex.ContainsKey(key))
+                                        if (headerIndex.TryGetValue(key, out int segChipTimeIx))
                                         {
-                                            line[headerIndex[key]] = result.ChipTime;
+                                            line[segChipTimeIx] = result.ChipTime;
                                         }
                                         key = string.Format("Segment {0} Clock Time", segmentNum);
-                                        if (headerIndex.ContainsKey(key))
+                                        if (headerIndex.TryGetValue(key, out int segTimeIx))
                                         {
-                                            line[headerIndex[key]] = result.Time;
+                                            line[segTimeIx] = result.Time;
                                         }
                                         key = string.Format("Segment {0} Name", segmentNum++);
-                                        if (headerIndex.ContainsKey(key))
+                                        if (headerIndex.TryGetValue(key, out int segNameIx))
                                         {
-                                            line[headerIndex[key]] = result.SegmentName;
+                                            line[segNameIx] = result.SegmentName;
                                         }
                                     }
                                 }
@@ -469,47 +469,47 @@ namespace Chronokeep.UI.Export
                         else // Time Based
                         {
                             int finalLap = -1;
-                            if (headerIndex.ContainsKey("Start") && occurrenceResultDictionary.ContainsKey((bib, 0)))
+                            if (headerIndex.TryGetValue("Start", out int startIx) && occurrenceResultDictionary.TryGetValue((bib, 0), out TimeResult startRes))
                             {
-                                line[headerIndex["Start"]] = occurrenceResultDictionary[(bib, 0)].Time;
+                                line[startIx] = startRes.Time;
                             }
                             for (int i = 1; i <= maxLaps; i++)
                             {
                                 string key = string.Format("Lap {0}", i);
-                                if (occurrenceResultDictionary.ContainsKey((bib, i)))
+                                if (occurrenceResultDictionary.TryGetValue((bib, i), out TimeResult lapRes))
                                 {
                                     finalLap = i;
-                                    if (headerIndex.ContainsKey(key))
+                                    if (headerIndex.TryGetValue(key, out int lapTimeIx))
                                     {
-                                        line[headerIndex[key]] = occurrenceResultDictionary[(bib, i)].LapTime;
+                                        line[lapTimeIx] = lapRes.LapTime;
                                     }
                                 }
                             }
-                            if (occurrenceResultDictionary.ContainsKey((bib, finalLap)))
+                            if (occurrenceResultDictionary.TryGetValue((bib, finalLap), out TimeResult finRes))
                             {
-                                if (headerIndex.ContainsKey("Place"))
+                                if (headerIndex.TryGetValue("Place", out int plIx))
                                 {
-                                    line[headerIndex["Place"]] = occurrenceResultDictionary[(bib, finalLap)].Place;
+                                    line[plIx] = finRes.Place;
                                 }
-                                if (headerIndex.ContainsKey("Age Group Place"))
+                                if (headerIndex.TryGetValue("Age Group Place", out int agPlIx))
                                 {
-                                    line[headerIndex["Age Group Place"]] = occurrenceResultDictionary[(bib, finalLap)].AgePlace;
+                                    line[agPlIx] = finRes.AgePlace;
                                 }
-                                if (headerIndex.ContainsKey("Gender Place"))
+                                if (headerIndex.TryGetValue("Gender Place", out int gndPlIx))
                                 {
-                                    line[headerIndex["Gender Place"]] = occurrenceResultDictionary[(bib, finalLap)].GenderPlace;
+                                    line[gndPlIx] = finRes.GenderPlace;
                                 }
-                                if (headerIndex.ContainsKey("Laps Completed"))
+                                if (headerIndex.TryGetValue("Laps Completed", out int lapsComplIx))
                                 {
-                                    line[headerIndex["Laps Completed"]] = occurrenceResultDictionary[(bib, finalLap)].Occurrence;
+                                    line[lapsComplIx] = finRes.Occurrence;
                                 }
-                                if (headerIndex.ContainsKey("Ellapsed Time (Clock)"))
+                                if (headerIndex.TryGetValue("Ellapsed Time (Clock)", out int clockEllapIx))
                                 {
-                                    line[headerIndex["Ellapsed Time (Clock)"]] = occurrenceResultDictionary[(bib, finalLap)].Time;
+                                    line[clockEllapIx] = finRes.Time;
                                 }
-                                if (headerIndex.ContainsKey("Ellapsed Time (Chip)"))
+                                if (headerIndex.TryGetValue("Ellapsed Time (Chip)", out int chipEllapIx))
                                 {
-                                    line[headerIndex["Ellapsed Time (Chip)"]] = occurrenceResultDictionary[(bib, finalLap)].ChipTime;
+                                    line[chipEllapIx] = finRes.ChipTime;
                                 }
                             }
                         }

@@ -134,7 +134,7 @@ namespace Chronokeep.UI.MainPages
                 default:
                     for (int i = 0; i < 100; i += increment)
                     {
-                        database.AddAgeGroup(new AgeGroup(theEvent.Identifier, divId, i, i + increment - 1));
+                        database.AddAgeGroup(new(theEvent.Identifier, divId, i, i + increment - 1));
                     }
                     break;
             }
@@ -145,13 +145,13 @@ namespace Chronokeep.UI.MainPages
         private void Update_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.MainPages.AgeGroupsPage", "Update age groups button clicked.");
-            List<AgeGroup> ageGroups = new List<AgeGroup>();
-            List<AgeGroup> toAdd = new List<AgeGroup>();
+            List<AgeGroup> ageGroups = [];
+            List<AgeGroup> toAdd = [];
             foreach (ListBoxItem aAge in AgeGroupsBox.Items)
             {
-                if (aAge is AAgeGroup)
+                if (aAge is AAgeGroup group)
                 {
-                    ageGroups.Add(((AAgeGroup)aAge).GetAgeGroup());
+                    ageGroups.Add(group.GetAgeGroup());
                 }
             }
             ageGroups.Sort();
@@ -242,17 +242,18 @@ namespace Chronokeep.UI.MainPages
             if (touched)
             {
                 // Setup AgeGroup static variables
-                Dictionary<(int, int), AgeGroup> AgeGroups = new();
-                Dictionary<int, AgeGroup> LastAgeGroup = new();
+                Dictionary<(int, int), AgeGroup> AgeGroups = [];
+                Dictionary<int, AgeGroup> LastAgeGroup = [];
                 foreach (AgeGroup g in database.GetAgeGroups(theEvent.Identifier))
                 {
                     for (int i = g.StartAge; i <= g.EndAge; i++)
                     {
                         AgeGroups[(g.DistanceId, i)] = g;
                     }
-                    if (!LastAgeGroup.ContainsKey(g.DistanceId) || LastAgeGroup[g.DistanceId].StartAge < g.StartAge)
+                    if (!LastAgeGroup.TryGetValue(g.DistanceId, out AgeGroup lastAg) || lastAg.StartAge < g.StartAge)
                     {
-                        LastAgeGroup[g.DistanceId] = g;
+                        lastAg = g;
+                        LastAgeGroup[g.DistanceId] = lastAg;
                     }
                 }
                 List<Participant> participants = database.GetParticipants(theEvent.Identifier);

@@ -116,6 +116,7 @@ namespace Chronokeep.Database.SQLite
                 {
                     bib = chipRead.Bib;
                 }
+                bool knownDist = distanceDict.TryGetValue(distanceId, out Distance di);
                 output.Add(new TimeResult(
                     reader["event_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["event_id"]),
                     reader["eventspecific_id"] == DBNull.Value ? -1 : Convert.ToInt32(reader["eventspecific_id"]),
@@ -125,7 +126,7 @@ namespace Chronokeep.Database.SQLite
                     Convert.ToInt32(reader["timeresult_occurance"]),
                     part != null ? part.FirstName : "",
                     part != null ? part.LastName : "",
-                    distanceDict.ContainsKey(distanceId) ? distanceDict[distanceId].Name : "",
+                    knownDist ? di.Name : "",
                     bib,
                     readId,
                     reader["timeresult_unknown_id"].ToString(),
@@ -142,8 +143,8 @@ namespace Chronokeep.Database.SQLite
                     part != null ? part.EventSpecific.AgeGroupName : "",
                     Convert.ToInt32(reader["timeresult_uploaded"]),
                     part != null ? part.Birthdate : "",
-                    distanceDict.ContainsKey(distanceId) ? distanceDict[distanceId].Type : Constants.Timing.DISTANCE_TYPE_NORMAL,
-                    distanceDict.ContainsKey(distanceId) && distanceDict.ContainsKey(distanceDict[distanceId].LinkedDistance) ? distanceDict[distanceDict[distanceId].LinkedDistance].Name : "",
+                    knownDist ? di.Type : Constants.Timing.DISTANCE_TYPE_NORMAL,
+                    knownDist && distanceDict.TryGetValue(di.LinkedDistance, out Distance linked) ? linked.Name : "",
                     chipRead != null ? chipRead.ChipNumber : "",
                     part != null ? part.EventSpecific.Anonymous : false,
                     part != null ? part.Identifier.ToString() : "",

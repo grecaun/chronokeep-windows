@@ -68,8 +68,7 @@ namespace Chronokeep.Objects
             this.segmentId = segmentId;
             this.time = time ?? "";
             this.occurrence = occurrence;
-            locationName = locations != null ? locations.ContainsKey(locationId) ?
-                locations[this.locationId].Name : "Unknown" : "Unknown";
+            locationName = locations != null ? locations.TryGetValue(locationId, out TimingLocation loc) ? loc.Name : "Unknown" : "Unknown";
             if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
             {
                 segmentName = "Finish ";
@@ -78,9 +77,9 @@ namespace Chronokeep.Objects
             {
                 segmentName = "Start ";
             }
-            else if (segments != null && segments.ContainsKey(this.segmentId))
+            else if (segments != null && segments.TryGetValue(this.segmentId, out Segment seg))
             {
-                segmentName = segments[this.segmentId].Name + " ";
+                segmentName = seg.Name + " ";
             }
             else
             {
@@ -91,23 +90,23 @@ namespace Chronokeep.Objects
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && distances.ContainsKey(linked_distance_name)
-                        && distances[linked_distance_name].DistanceValue > 0)
+                        && distances.TryGetValue(linked_distance_name, out Distance linkedDist)
+                        && linkedDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Lap {0}",
                             occurrence,
-                            distances[linked_distance_name].DistanceValue * occurrence,
-                            Constants.Distances.DistanceString(distances[linked_distance_name].DistanceUnit)
+                            linkedDist.DistanceValue * occurrence,
+                            Constants.Distances.DistanceString(linkedDist.DistanceUnit)
                             );
                     }
                     else if (distance.Length > 0
-                        && distances.ContainsKey(distance)
-                        && distances[distance].DistanceValue > 0)
+                        && distances.TryGetValue(distance, out Distance oDist)
+                        && oDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Lap {0}",
                             occurrence,
-                            distances[distance].DistanceValue * occurrence,
-                            Constants.Distances.DistanceString(distances[distance].DistanceUnit)
+                            oDist.DistanceValue * occurrence,
+                            Constants.Distances.DistanceString(oDist.DistanceUnit)
                             );
                     }
                     else
@@ -118,14 +117,14 @@ namespace Chronokeep.Objects
                 else if (Constants.Timing.SEGMENT_START != this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && segments.ContainsKey(this.segmentId)
-                        && segments[this.segmentId].CumulativeDistance > 0)
+                        && segments.TryGetValue(this.segmentId, out Segment oSeg)
+                        && oSeg.CumulativeDistance > 0)
                     {
                         segmentName = string.Format("{2:0.##} {3} - {0}{1}",
                             segmentName,
                             occurrence,
-                            segments[this.segmentId].CumulativeDistance * occurrence,
-                            Constants.Distances.DistanceString(segments[this.segmentId].DistanceUnit)
+                            oSeg.CumulativeDistance * occurrence,
+                            Constants.Distances.DistanceString(oSeg.DistanceUnit)
                             );
                     }
                     else
@@ -140,23 +139,23 @@ namespace Chronokeep.Objects
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && distances.ContainsKey(linked_distance_name)
-                        && distances[linked_distance_name].DistanceValue > 0)
+                        && distances.TryGetValue(linked_distance_name, out Distance linkedDist)
+                        && linkedDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Hour {0}",
                             hour,
-                            distances[linked_distance_name].DistanceValue * hour,
-                            Constants.Distances.DistanceString(distances[linked_distance_name].DistanceUnit)
+                            linkedDist.DistanceValue * hour,
+                            Constants.Distances.DistanceString(linkedDist.DistanceUnit)
                             );
                     }
                     else if (distance.Length > 0
-                        && distances.ContainsKey(distance)
-                        && distances[distance].DistanceValue > 0)
+                        && distances.TryGetValue(distance, out Distance oDist)
+                        && oDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Hour {0}",
                             hour,
-                            distances[distance].DistanceValue * hour,
-                            Constants.Distances.DistanceString(distances[distance].DistanceUnit)
+                            oDist.DistanceValue * hour,
+                            Constants.Distances.DistanceString(oDist.DistanceUnit)
                             );
                     }
                     else
@@ -439,8 +438,7 @@ namespace Chronokeep.Objects
             Event theEvent
             )
         {
-            locationName = locations != null ? locations.ContainsKey(locationId) ?
-                locations[this.locationId].Name : "Unknown" : "Unknown";
+            locationName = locations != null ? locations.TryGetValue(locationId, out TimingLocation loc) ? loc.Name : "Unknown" : "Unknown";
             if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
             {
                 segmentName = "Finish ";
@@ -449,9 +447,9 @@ namespace Chronokeep.Objects
             {
                 segmentName = "Start ";
             }
-            else if (segments != null && segments.ContainsKey(this.segmentId))
+            else if (segments != null && segments.TryGetValue(this.segmentId, out Segment seg))
             {
-                segmentName = segments[this.segmentId].Name + " ";
+                segmentName = seg.Name + " ";
             }
             else
             {
@@ -462,23 +460,23 @@ namespace Chronokeep.Objects
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && distances.ContainsKey(linked_distance_name)
-                        && distances[linked_distance_name].DistanceValue > 0)
+                        && distances.TryGetValue(linked_distance_name, out Distance linkedDist)
+                        && linkedDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Lap {0}",
                             occurrence,
-                            distances[linked_distance_name].DistanceValue * occurrence,
-                            Constants.Distances.DistanceString(distances[linked_distance_name].DistanceUnit)
+                            linkedDist.DistanceValue * occurrence,
+                            Constants.Distances.DistanceString(linkedDist.DistanceUnit)
                             );
                     }
                     else if (distanceName.Length > 0
-                        && distances.ContainsKey(distanceName)
-                        && distances[distanceName].DistanceValue > 0)
+                        && distances.TryGetValue(distanceName, out Distance oDist)
+                        && oDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Lap {0}",
                             occurrence,
-                            distances[distanceName].DistanceValue * occurrence,
-                            Constants.Distances.DistanceString(distances[distanceName].DistanceUnit)
+                            oDist.DistanceValue * occurrence,
+                            Constants.Distances.DistanceString(oDist.DistanceUnit)
                             );
                     }
                     else
@@ -489,14 +487,14 @@ namespace Chronokeep.Objects
                 else if (Constants.Timing.SEGMENT_START != this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && segments.ContainsKey(this.segmentId)
-                        && segments[this.segmentId].CumulativeDistance > 0)
+                        && segments.TryGetValue(this.segmentId, out Segment oSeg)
+                        && oSeg.CumulativeDistance > 0)
                     {
                         segmentName = string.Format("{2:0.##} {3} - {0}{1}",
                             segmentName,
                             occurrence,
-                            segments[this.segmentId].CumulativeDistance * occurrence,
-                            Constants.Distances.DistanceString(segments[this.segmentId].DistanceUnit)
+                            oSeg.CumulativeDistance * occurrence,
+                            Constants.Distances.DistanceString(oSeg.DistanceUnit)
                             );
                     }
                     else
@@ -511,23 +509,23 @@ namespace Chronokeep.Objects
                 if (Constants.Timing.SEGMENT_FINISH == this.segmentId)
                 {
                     if (linked_distance_name.Length > 0
-                        && distances.ContainsKey(linked_distance_name)
-                        && distances[linked_distance_name].DistanceValue > 0)
+                        && distances.TryGetValue(linked_distance_name, out Distance linkedDist)
+                        && linkedDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Hour {0}",
                             hour,
-                            distances[linked_distance_name].DistanceValue * hour,
-                            Constants.Distances.DistanceString(distances[linked_distance_name].DistanceUnit)
+                            linkedDist.DistanceValue * hour,
+                            Constants.Distances.DistanceString(linkedDist.DistanceUnit)
                             );
                     }
                     else if (distanceName.Length > 0
-                        && distances.ContainsKey(distanceName)
-                        && distances[distanceName].DistanceValue > 0)
+                        && distances.TryGetValue(distanceName, out Distance oDist)
+                        && oDist.DistanceValue > 0)
                     {
                         segmentName = string.Format("{1:0.##} {2} - Hour {0}",
                             hour,
-                            distances[distanceName].DistanceValue * hour,
-                            Constants.Distances.DistanceString(distances[distanceName].DistanceUnit)
+                            oDist.DistanceValue * hour,
+                            Constants.Distances.DistanceString(oDist.DistanceUnit)
                             );
                     }
                     else
@@ -819,8 +817,7 @@ namespace Chronokeep.Objects
             {
                 return false;
             }
-            Participant part = dictionary.participantBibDictionary.ContainsKey(bib) ? dictionary.participantBibDictionary[bib] : null;
-            if (part == null || part.EventSpecific.SMSEnabled == false)
+            if (!dictionary.participantBibDictionary.TryGetValue(bib, out Participant part) || part.EventSpecific.SMSEnabled == false)
             {
                 return false;
             }

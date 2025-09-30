@@ -17,7 +17,7 @@ namespace Chronokeep.Database.SQLite
                 "GROUP BY d.distance_name, e.eventspecific_status;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            DistanceStat allstats = new DistanceStat
+            DistanceStat allstats = new()
             {
                 DistanceName = "All",
                 DistanceID = -1,
@@ -26,18 +26,15 @@ namespace Chronokeep.Database.SQLite
                 DNS = 0,
                 Finished = 0
             };
-            Dictionary<int, DistanceStat> statsDictionary = new Dictionary<int, DistanceStat>();
+            Dictionary<int, DistanceStat> statsDictionary = [];
             while (reader.Read())
             {
                 int distanceId = Convert.ToInt32(reader["id"].ToString());
-                if (!statsDictionary.ContainsKey(distanceId))
+                statsDictionary.TryAdd(distanceId, new()
                 {
-                    statsDictionary[distanceId] = new DistanceStat()
-                    {
-                        DistanceName = reader["name"].ToString(),
-                        DistanceID = distanceId
-                    };
-                }
+                    DistanceName = reader["name"].ToString(),
+                    DistanceID = distanceId
+                });
                 if (int.TryParse(reader["status"].ToString(), out int status))
                 {
                     if (Constants.Timing.EVENTSPECIFIC_DNS == status || Constants.Timing.EVENTSPECIFIC_UNKNOWN == status)

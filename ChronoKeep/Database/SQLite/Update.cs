@@ -1067,7 +1067,7 @@ namespace Chronokeep.Database.SQLite
                         command = connection.CreateCommand();
                         command.CommandText = "SELECT * FROM distances;";
                         reader = command.ExecuteReader();
-                        List<Distance> distances = new List<Distance>();
+                        List<Distance> distances = [];
                         while (reader.Read())
                         {
                             distances.Add(new Distance(Convert.ToInt32(reader["distance_id"]),
@@ -1094,7 +1094,7 @@ namespace Chronokeep.Database.SQLite
                         reader.Close();
                         // (string, int) is a key for the Distance Name and Linked Division, we need to find a
                         // DISTANCE NAME + " Early Created" with the right linked division ID;
-                        Dictionary<(string, int), Distance> distDict = new Dictionary<(string, int), Distance>();
+                        Dictionary<(string, int), Distance> distDict = [];
                         foreach (Distance d in distances)
                         {
                             distDict[(d.Name, d.LinkedDistance)] = d;
@@ -1104,7 +1104,7 @@ namespace Chronokeep.Database.SQLite
                         command.CommandText = "SELECT * FROM eventspecific e JOIN participants p ON e.participant_id=p.participant_id " +
                             "JOIN distances d ON d.distance_id=e.distance_id WHERE eventspecific_earlystart != 0;";
                         reader = command.ExecuteReader();
-                        List<Participant> people = new List<Participant>();
+                        List<Participant> people = [];
                         while (reader.Read())
                         {
                             people.Add(new Participant(
@@ -1151,9 +1151,9 @@ namespace Chronokeep.Database.SQLite
                         // Go through each participant and update their division/distance.
                         foreach (Participant p in people)
                         {
-                            if (distDict.ContainsKey((p.EventSpecific.DistanceName + " Early Created", p.EventSpecific.DistanceIdentifier)))
+                            if (distDict.TryGetValue((p.EventSpecific.DistanceName + " Early Created", p.EventSpecific.DistanceIdentifier), out Distance di))
                             {
-                                p.EventSpecific.DistanceIdentifier = distDict[(p.EventSpecific.DistanceName + " Early Created", p.EventSpecific.DistanceIdentifier)].Identifier;
+                                p.EventSpecific.DistanceIdentifier = di.Identifier;
                                 Participants.V44UpdateParticipant(p, connection);
                             }
                         }

@@ -201,7 +201,7 @@ namespace Chronokeep.Network
                 using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep.IO.HtmlTemplates." + newName))
                 {
                     message = new byte[stream.Length];
-                    stream.Read(message, 0, message.Length);
+                    stream.ReadExactly(message);
                 }
                 if (filename.EndsWith(".css", StringComparison.OrdinalIgnoreCase))
                 {
@@ -231,7 +231,7 @@ namespace Chronokeep.Network
                     {
                         if (!participantResults.TryGetValue(partBib, out List<TimeResult> resList))
                         {
-                            resList = new List<TimeResult>();
+                            resList = [];
                             participantResults[partBib] = resList;
                         }
                         if (!participantCache.TryGetValue(partBib, out byte[] partCache))
@@ -256,7 +256,7 @@ namespace Chronokeep.Network
                 // Serve up the HtmlCertificateEmailTemplate
                 if (!infoLock.TryEnter(3000))
                 {
-                    Log.D("Network.HttpServer", string.Format("Unable to get lock for outputting participant page for bib {0}.", partBib));
+                    Log.D("Network.HttpServer", string.Format("Unable to get lock for outputting email page for bib {0}.", partBib));
                     message = Encoding.Default.GetBytes("");
                 }
                 else
@@ -266,7 +266,7 @@ namespace Chronokeep.Network
                         message = Encoding.Default.GetBytes("");
                         if (finishDictionary.TryGetValue(emailBib, out TimeResult finishResult) && participantDictionary.TryGetValue(finishResult.ParticipantId, out Participant finPart))
                         {
-                            if (true)//!emailCache.ContainsKey(emailBib))
+                            if (!emailCache.TryGetValue(emailBib, out byte[] cachedEmail))
                             {
                                 HtmlCertificateEmailTemplate email = new(
                                     theEvent,
@@ -275,10 +275,11 @@ namespace Chronokeep.Network
                                     distanceNames.Count == 1,
                                     apiDictionary.TryGetValue(theEvent.API_ID, out APIObject api) ? api : null
                                     );
-                                emailCache[emailBib] = Encoding.Default.GetBytes(email.TransformText());
+                                cachedEmail = Encoding.Default.GetBytes(email.TransformText());
+                                emailCache[emailBib] = cachedEmail;
                             }
                             Log.D("Network.HttpServer", "Email html");
-                            message = emailCache[emailBib];
+                            message = cachedEmail;
                             context.Response.ContentType = "text/html";
                         }
                         Log.D("Network.HttpServer", "Email html");

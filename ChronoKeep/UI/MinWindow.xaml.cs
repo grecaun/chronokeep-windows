@@ -22,15 +22,15 @@ namespace Chronokeep.UI
     /// </summary>
     public partial class MinWindow : IMainWindow
     {
-        IDBInterface database;
-        IMainPage page;
-        string dbName = "Chronokeep.sqlite";
+        readonly IDBInterface database;
+        readonly IMainPage page;
+        readonly string dbName = "Chronokeep.sqlite";
 
         // Timing objects.
-        Thread TimingControllerThread = null;
-        TimingController TimingController = null;
+        Thread TimingControllerThread;
+        readonly TimingController TimingController;
 
-        List<Window> openWindows = new List<Window>();
+        readonly List<Window> openWindows = [];
 
         // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
         // Allow for a debug version and non-debug version to run at the same time.
@@ -218,7 +218,7 @@ namespace Chronokeep.UI
                     Log.D("UI.MainWindow", "Oh well!");
                 }
             }
-            if (page != null) page.Closing();
+            page?.Closing();
         }
 
         public bool StopTimingController()
@@ -226,7 +226,7 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Stopping Timing Controller.");
-                if (TimingController != null) TimingController.Shutdown();
+                TimingController?.Shutdown();
             }
             catch
             {

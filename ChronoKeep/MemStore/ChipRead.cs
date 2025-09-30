@@ -60,9 +60,9 @@ namespace Chronokeep.MemStore
                             read.Name = "";
                         }
                         // Do not overwrite our current chipread.
-                        if (read.ReadId > 0 && !chipReads.ContainsKey(read.ReadId))
+                        if (read.ReadId > 0)
                         {
-                            chipReads[read.ReadId] = read;
+                            chipReads.TryAdd(read.ReadId, read);
                         }
                     }
                     finally
@@ -131,9 +131,9 @@ namespace Chronokeep.MemStore
                                 read.Name = "";
                             }
                             // Do not overwrite our current chipread.
-                            if (read.ReadId > 0 && !chipReads.ContainsKey(read.ReadId))
+                            if (read.ReadId > 0)
                             {
-                                chipReads[read.ReadId] = read;
+                                chipReads.TryAdd(read.ReadId, read);
                             }
                         }
                     }

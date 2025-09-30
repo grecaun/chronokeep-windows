@@ -119,11 +119,10 @@ namespace Chronokeep.Timing
             dictionary.locationDictionary.Clear();
             foreach (TimingLocation loc in database.GetTimingLocations(theEvent.Identifier))
             {
-                if (dictionary.locationDictionary.ContainsKey(loc.Identifier))
+                if (!dictionary.locationDictionary.TryAdd(loc.Identifier, loc))
                 {
                     Log.D("Timing.TimingWorker", "Multiples of a location found in location set.");
                 }
-                dictionary.locationDictionary[loc.Identifier] = loc;
             }
             // Segments so we can give a result a segment ID if it's at the right location
             // and occurrence. Stored in a dictionary for obvious reasons.
@@ -133,17 +132,15 @@ namespace Chronokeep.Timing
             dictionary.SegmentByIDDictionary.Clear();
             foreach (Segment seg in database.GetSegments(theEvent.Identifier))
             {
-                if (dictionary.segmentDictionary.ContainsKey((seg.DistanceId, seg.LocationId, seg.Occurrence)))
+                if (!dictionary.segmentDictionary.TryAdd((seg.DistanceId, seg.LocationId, seg.Occurrence), seg))
                 {
                     Log.D("Timing.TimingWorker", "Multiples of a segment found in segment set.");
                 }
-                dictionary.segmentDictionary[(seg.DistanceId, seg.LocationId, seg.Occurrence)] = seg;
                 if (!dictionary.DistanceSegmentOrder.TryGetValue(seg.DistanceId, out List<Segment> segList))
                 {
                     segList = [];
                     dictionary.DistanceSegmentOrder[seg.DistanceId] = segList;
                 }
-
                 segList.Add(seg);
                 dictionary.SegmentByIDDictionary[seg.Identifier] = seg;
             }
@@ -179,11 +176,10 @@ namespace Chronokeep.Timing
             dictionary.participantEventSpecificDictionary.Clear();
             foreach (Participant part in database.GetParticipants(theEvent.Identifier))
             {
-                if (dictionary.participantBibDictionary.ContainsKey(part.Bib))
+                if (!dictionary.participantBibDictionary.TryAdd(part.Bib, part))
                 {
                     Log.D("Timing.TimingWorker", "Multiples of a Bib found in participants set. " + part.Bib);
                 }
-                dictionary.participantBibDictionary[part.Bib] = part;
                 dictionary.participantEventSpecificDictionary[part.EventSpecific.Identifier] = part;
             }
             // Get the start time for the event. (Net time of 0:00:00.000)
@@ -199,11 +195,10 @@ namespace Chronokeep.Timing
             List<Distance> distances = database.GetDistances(theEvent.Identifier);
             foreach (Distance d in distances)
             {
-                if (dictionary.distanceDictionary.ContainsKey(d.Identifier))
+                if (!dictionary.distanceDictionary.TryAdd(d.Identifier, d))
                 {
                     Log.D("Timing.TimingWorker", "Multiples of a Distance found in distances set.");
                 }
-                dictionary.distanceDictionary[d.Identifier] = d;
                 dictionary.distanceNameDictionary[d.Name] = d;
                 Log.D("Timing.TimingWorker", "Distance " + d.Name + " offsets are " + d.StartOffsetSeconds + " " + d.StartOffsetMilliseconds);
                 dictionary.distanceStartDict[d.Identifier] = (dictionary.distanceStartDict[0].Seconds + d.StartOffsetSeconds, dictionary.distanceStartDict[0].Milliseconds + d.StartOffsetMilliseconds);
@@ -307,9 +302,9 @@ namespace Chronokeep.Timing
             foreach (ChipRead read in dnsReads)
             {
                 dictionary.dnsChips.Add(read.ChipNumber);
-                if (dictionary.chipToBibDictionary.ContainsKey(read.ChipNumber))
+                if (dictionary.chipToBibDictionary.TryGetValue(read.ChipNumber, out string oBib))
                 {
-                    dictionary.dnsBibs.Add(dictionary.chipToBibDictionary[read.ChipNumber]);
+                    dictionary.dnsBibs.Add(oBib);
                 }
             }
             dictionary.dnsEntryCount = dnsReads.Count;

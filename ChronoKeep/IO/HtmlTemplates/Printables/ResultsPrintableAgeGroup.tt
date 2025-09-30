@@ -120,7 +120,7 @@
 							</td>
 						</tr>
 						<# } #>
-						<#  if (dnfResultsDictionary.ContainsKey(d) && dnfResultsDictionary[d].ContainsKey((AgeGroupID, gender)))
+						<#  if (dnfResultsDictionary.TryGetValue(d, out ) && dnfResultsDictionary[d].ContainsKey((AgeGroupID, gender)))
 						{
 							foreach (TimeResult r in dnfResultsDictionary[d][(AgeGroupID, gender)])
 							{ #>

@@ -528,7 +528,7 @@ namespace Chronokeep.Timing.Interfaces
                                             chipReads.Add(chipRead);
                                         }
                                     }
-                                    if (!output.ContainsKey(MessageType.CHIPREAD) && chipReads.Count > 0)
+                                    if (chipReads.Count > 0)
                                     {
                                         output[MessageType.CHIPREAD] = null;
                                     }
@@ -547,10 +547,7 @@ namespace Chronokeep.Timing.Interfaces
                             break;
                         case Response.SUCCESS:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent success message.");
-                            if (!output.ContainsKey(MessageType.SUCCESS))
-                            {
-                                output[MessageType.SUCCESS] = null;
-                            }
+                            output[MessageType.SUCCESS] = null;
                             break;
                         case Response.TIME:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent time message.");
@@ -628,17 +625,11 @@ namespace Chronokeep.Timing.Interfaces
                             {
                                 output[MessageType.STATUS].Add(TimingSystem.READING_STATUS_PARTIAL);
                             }
-                            if (!output.ContainsKey(MessageType.CONNECTED))
-                            {
-                                output[MessageType.CONNECTED] = null;
-                            }
+                            output[MessageType.CONNECTED] = null;
                             break;
                         case Response.DISCONNECT:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent disconnect message.");
-                            if (!output.ContainsKey(MessageType.DISCONNECT))
-                            {
-                                output[MessageType.DISCONNECT] = null;
-                            }
+                            output[MessageType.DISCONNECT] = null;
                             break;
                         case Response.NOTIFICATION:
                             Log.D("Timing.Interfaces.ChronokeepInterface", "Reader sent notification message.");
@@ -700,10 +691,7 @@ namespace Chronokeep.Timing.Interfaces
                             break;
                         default:
                             Log.E("Timing.Interfaces.ChronokeepInterface", "Unknown message received: " + res.Command);
-                            if (!output.ContainsKey(MessageType.UNKNOWN))
-                            {
-                                output[MessageType.UNKNOWN] = null;
-                            }
+                            output[MessageType.UNKNOWN] = null;
                             break;
                     }
                 }

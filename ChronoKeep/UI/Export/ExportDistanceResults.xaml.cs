@@ -108,9 +108,9 @@ namespace Chronokeep.UI.Export
             {
                 distanceBox.SelectedIndex = 0;
                 Distance selected;
-                if (distanceBox.SelectedItem != null && distanceDictionary.ContainsKey(((ComboBoxItem)distanceBox.SelectedItem).Uid))
+                if (distanceBox.SelectedItem != null && distanceDictionary.TryGetValue(((ComboBoxItem)distanceBox.SelectedItem).Uid, out Distance oDist))
                 {
-                    selected = distanceDictionary[((ComboBoxItem)distanceBox.SelectedItem).Uid];
+                    selected = oDist;
                 }
                 else
                 {
@@ -157,9 +157,9 @@ namespace Chronokeep.UI.Export
             Distance selected;
             // Ensure we've selected a distance and that distance is either known
             if (distanceBox.SelectedItem != null
-                && distanceDictionary.ContainsKey(((ComboBoxItem)distanceBox.SelectedItem).Uid))
+                && distanceDictionary.TryGetValue(((ComboBoxItem)distanceBox.SelectedItem).Uid, out Distance tDist))
             {
-                selected = distanceDictionary[((ComboBoxItem)distanceBox.SelectedItem).Uid];
+                selected = tDist;
                 if (OutputType.Boston == type)
                 {
                     SaveBoston(selected.Name);
@@ -326,9 +326,9 @@ namespace Chronokeep.UI.Export
             List<TimeResult> results = database.GetTimingResults(theEvent.Identifier);
             foreach (TimeResult result in results)
             {
-                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib) && (result.DistanceName == distance) && result.Time.Length > 4)
+                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant oPart) && (result.DistanceName == distance) && result.Time.Length > 4)
                 {
-                    string country = participantDictionary[result.Bib].Country;
+                    string country = oPart.Country;
                     if (country.Length != 3)
                     {
                         if (country.Equals("ca", System.StringComparison.OrdinalIgnoreCase) || country.Equals("canada", System.StringComparison.OrdinalIgnoreCase))
@@ -436,7 +436,7 @@ namespace Chronokeep.UI.Export
                         result.First,
                         "",
                         result.Bib,
-                        participantDictionary[result.Bib].Birthdate,
+                        oPart.Birthdate,
                         country,
                         result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : "",
                         result.ChipTime.Substring(0, result.ChipTime.Length > 4 ? result.ChipTime.Length -4 : 0),
@@ -564,16 +564,16 @@ namespace Chronokeep.UI.Export
             }
             foreach (TimeResult result in results)
             {
-                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib) && (result.DistanceName == distance) && result.Time.Length > 4)
+                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant tPart) && (result.DistanceName == distance) && result.Time.Length > 4)
                 {
                     List<string> values = new()
                     {
                             result.Last,
                             result.First,
-                            participantDictionary[result.Bib].City,
-                            participantDictionary[result.Bib].State,
+                            tPart.City,
+                            tPart.State,
                             result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : result.Gender.Equals("Non-Binary", System.StringComparison.OrdinalIgnoreCase) ? "X" : "",
-                            participantDictionary[result.Bib].Birthdate,
+                            tPart.Birthdate,
                             result.Age(theEvent.Date).ToString(),
                             result.Time[..(result.Time.Length > 4 ? result.Time.Length - 4 : 0)],
                             result.ChipTime[..(result.ChipTime.Length > 4 ? result.ChipTime.Length -4 : 0)],
@@ -711,7 +711,7 @@ namespace Chronokeep.UI.Export
             }
             foreach (TimeResult result in results)
             {
-                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib) && (result.DistanceName == distance))
+                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant yPart) && (result.DistanceName == distance))
                 {
                     int status = 1;
                     if (Constants.Timing.TIMERESULT_STATUS_DNF == result.Status)
@@ -730,10 +730,10 @@ namespace Chronokeep.UI.Export
                             result.Last,
                             result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : result.Gender.Equals("Non-Binary", System.StringComparison.OrdinalIgnoreCase) ? "X" : "",
                             result.Age(theEvent.Date),
-                            participantDictionary[result.Bib].Birthdate,
+                            yPart.Birthdate,
                             result.Bib,
-                            participantDictionary[result.Bib].City,
-                            participantDictionary[result.Bib].State,
+                            yPart.City,
+                            yPart.State,
                             status
                     };
                     if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType || Constants.Timing.EVENT_TYPE_TIME == theEvent.EventType)
@@ -780,8 +780,8 @@ namespace Chronokeep.UI.Export
 
         private void SaveRunsignupInternal(string distance, string fileName)
         {
-            string[] headers = new string[]
-            {
+            string[] headers =
+            [
                 "place",
                 "clock time",
                 "chip time",
@@ -792,7 +792,7 @@ namespace Chronokeep.UI.Export
                 "bib",
                 "city",
                 "state"
-            };
+            ];
             Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
             foreach (Participant person in database.GetParticipants(theEvent.Identifier))
             {
@@ -801,25 +801,25 @@ namespace Chronokeep.UI.Export
             List<object[]> data = new List<object[]>();
             foreach (TimeResult result in database.GetTimingResults(theEvent.Identifier))
             {
-                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.ContainsKey(result.Bib) && (result.DistanceName == distance))
+                if (Constants.Timing.SEGMENT_FINISH == result.SegmentId && participantDictionary.TryGetValue(result.Bib, out Participant zPart) && (result.DistanceName == distance))
                 {
                     data.Add(
                     [
-                            result.Place > 0 ? result.Place.ToString() : "",
-                            result.Time,
-                            result.ChipTime,
-                            result.First,
-                            result.Last,
-                            result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : result.Gender.Equals("Non-Binary", System.StringComparison.OrdinalIgnoreCase) ? "X" : "",
-                            result.Age(theEvent.Date),
-                            result.Bib,
-                            participantDictionary[result.Bib].City,
-                            participantDictionary[result.Bib].State,
+                        result.Place > 0 ? result.Place.ToString() : "",
+                        result.Time,
+                        result.ChipTime,
+                        result.First,
+                        result.Last,
+                        result.Gender.Equals("Man", System.StringComparison.OrdinalIgnoreCase) ? "M" : result.Gender.Equals("Woman", System.StringComparison.OrdinalIgnoreCase) ? "F" : result.Gender.Equals("Non-Binary", System.StringComparison.OrdinalIgnoreCase) ? "X" : "",
+                        result.Age(theEvent.Date),
+                        result.Bib,
+                        zPart.City,
+                        zPart.State,
                     ]);
                 }
             }
             IDataExporter exporter;
-            StringBuilder format = new StringBuilder();
+            StringBuilder format = new();
             for (int i = 0; i < headers.Length; i++)
             {
                 format.Append("\"{");

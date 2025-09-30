@@ -172,7 +172,7 @@ namespace Chronokeep
                     {
                         // Check to ensure we aren't trying to associate this chip with a different bib
                         // when it already has one associated with it.
-                        if (currentAssociations.ContainsKey(assoc.Chip) && !currentAssociations[assoc.Chip].Equals(assoc.Bib, StringComparison.OrdinalIgnoreCase))
+                        if (currentAssociations.TryGetValue(assoc.Chip, out string oBib) && !oBib.Equals(assoc.Bib, StringComparison.OrdinalIgnoreCase))
                         {
                             conflicts.Add(assoc);
                         }

@@ -155,9 +155,9 @@ namespace Chronokeep.UI.API
                 foreach (RemoteReader reader in readers)
                 {
                     reader.APIIDentifier = api.Identifier;
-                    if (savedReaders.ContainsKey((reader.APIIDentifier, reader.Name)))
+                    if (savedReaders.TryGetValue((reader.APIIDentifier, reader.Name), out RemoteReader rReader))
                     {
-                        reader.LocationID = savedReaders[(reader.APIIDentifier, reader.Name)].LocationID;
+                        reader.LocationID = rReader.LocationID;
                     }
                     readerListView.Items.Add(new ReaderListItem(reader, api, savedReaders, database, mainWindow));
                 }

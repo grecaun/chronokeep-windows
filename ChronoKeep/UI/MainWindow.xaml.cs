@@ -67,7 +67,7 @@ namespace Chronokeep.UI
 
         // Setting to allow the user to enter a mode where we can record DNS chips.
         private bool didNotStartMode = false;
-        private readonly Lock dnsMutex = new();
+        private readonly Lock dnsLock = new();
 
         // Setup a timer for updating the view
         readonly DispatcherTimer TimingUpdater = new();
@@ -991,7 +991,7 @@ namespace Chronokeep.UI
         public bool InDidNotStartMode()
         {
             bool output = false;
-            if (dnsMutex.TryEnter(3000))
+            if (dnsLock.TryEnter(3000))
             {
                 try
                 {
@@ -999,12 +999,12 @@ namespace Chronokeep.UI
                 }
                 finally
                 {
-                    dnsMutex.Exit();
+                    dnsLock.Exit();
                 }
             }
             else
             {
-                Log.D("UI.MainWindow", "Error getting DNSMutex.");
+                Log.D("UI.MainWindow", "Error getting DNS Lock.");
             }
             return output;
         }
@@ -1045,7 +1045,7 @@ namespace Chronokeep.UI
 
         public bool StartDidNotStartMode()
         {
-            if (dnsMutex.TryEnter(3000))
+            if (dnsLock.TryEnter(3000))
             {
                 try
                 {
@@ -1054,7 +1054,7 @@ namespace Chronokeep.UI
                 }
                 finally
                 {
-                    dnsMutex.Exit();
+                    dnsLock.Exit();
                 }
             }
             return false;
@@ -1062,7 +1062,7 @@ namespace Chronokeep.UI
 
         public bool StopDidNotStartMode()
         {
-            if (dnsMutex.TryEnter(3000))
+            if (dnsLock.TryEnter(3000))
             {
                 try
                 {
@@ -1071,7 +1071,7 @@ namespace Chronokeep.UI
                 }
                 finally
                 {
-                    dnsMutex.Exit();
+                    dnsLock.Exit();
                 }
             }
             return false;

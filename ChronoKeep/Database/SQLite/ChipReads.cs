@@ -273,17 +273,17 @@ namespace Chronokeep.Database.SQLite
             while (reader.Read())
             {
                 int locationId = Convert.ToInt32(reader["location_id"]);
-                string locationName = locDict.ContainsKey(locationId) ? locDict[locationId] : "";
+                string locationName = locDict.TryGetValue(locationId, out string locNa) ? locNa : "";
                 string read_bib = reader["read_bib"] != DBNull.Value ? reader["read_bib"].ToString() : Constants.Timing.CHIPREAD_DUMMYBIB;
                 string bib = reader["bib"] != DBNull.Value ? reader["bib"].ToString() : Constants.Timing.CHIPREAD_DUMMYBIB;
                 Participant part = null;
-                if (bib.Length > 0 && bib != Constants.Timing.CHIPREAD_DUMMYBIB && partDictionary.ContainsKey(bib))
+                if (bib.Length > 0 && bib != Constants.Timing.CHIPREAD_DUMMYBIB && partDictionary.TryGetValue(bib, out Participant bibPart))
                 {
-                    part = partDictionary[bib];
+                    part = bibPart;
                 }
-                else if (read_bib.Length > 0 && read_bib != Constants.Timing.CHIPREAD_DUMMYBIB && partDictionary.ContainsKey(read_bib))
+                else if (read_bib.Length > 0 && read_bib != Constants.Timing.CHIPREAD_DUMMYBIB && partDictionary.TryGetValue(read_bib, out Participant readBibPart))
                 {
-                    part = partDictionary[read_bib];
+                    part = readBibPart;
                 }
                 int read_id = Convert.ToInt32(reader["read_id"]);
                 int event_id = Convert.ToInt32(reader["event_id"]);
