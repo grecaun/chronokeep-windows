@@ -4,36 +4,34 @@ using System.Threading;
 
 namespace Chronokeep.Objects
 {
-    public class Alarm : IEquatable<Alarm>, IComparable<Alarm>
+    public class Alarm(int identifier, string bib, string chip, bool enabled, int sound) : IEquatable<Alarm>, IComparable<Alarm>
     {
-        private static Mutex listMtx = new Mutex();
-        private static List<Alarm> alarms = new List<Alarm>();
-        private static Dictionary<string, Alarm> bibAlarms = new Dictionary<string, Alarm>();
-        private static Dictionary<string, Alarm> chipAlarms = new Dictionary<string, Alarm>();
+        private static Lock listMtx = new();
+        private static readonly List<Alarm> alarms = [];
+        private static readonly Dictionary<string, Alarm> bibAlarms = [];
+        private static readonly Dictionary<string, Alarm> chipAlarms = [];
 
-        public int Identifier { get; set; }
-        public string Bib { get; set; } = "";
-        public string Chip { get; set; } = "";
-        public bool Enabled { get; set; } = true;
+        public int Identifier { get; set; } = identifier;
+        public string Bib { get; set; } = bib;
+        public string Chip { get; set; } = chip;
+        public bool Enabled { get; set; } = enabled;
         // Any number not assigned to a sound (1-5 currently) is assumed to be the default.
-        public int AlarmSound { get; set; } = 0;
-
-        public Alarm(int identifier, string bib, string chip, bool enabled, int sound)
-        {
-            this.Identifier = identifier;
-            this.Bib = bib;
-            this.Chip = chip;
-            this.Enabled = enabled;
-            this.AlarmSound = sound;
-        }
+        public int AlarmSound { get; set; } = sound;
+        public static Lock ListMtx { get => listMtx; set => listMtx = value; }
 
         public static void SaveAlarms(int eventId, IDBInterface database)
         {
             Log.D("Objects.Alarm", "Saving multiple alarms.");
-            if (listMtx.WaitOne(3000))
+            if (ListMtx.TryEnter(3000))
             {
-                database.SaveAlarms(eventId, alarms);
-                listMtx.ReleaseMutex();
+                try
+                {
+                    database.SaveAlarms(eventId, alarms);
+                }
+                finally
+                {
+                    ListMtx.Exit();
+                }
             }
             ClearAlarms();
             AddAlarms(database.GetAlarms(eventId));
@@ -42,10 +40,16 @@ namespace Chronokeep.Objects
         public static void SaveAlarm(int eventId, IDBInterface database, Alarm alarm)
         {
             Log.D("Objects.Alarm", "Saving single alarm.");
-            if (listMtx.WaitOne(3000))
+            if (ListMtx.TryEnter(3000))
             {
-                database.SaveAlarm(eventId, alarm);
-                listMtx.ReleaseMutex();
+                try
+                {
+                    database.SaveAlarm(eventId, alarm);
+                }
+                finally
+                {
+                    ListMtx.Exit();
+                }
             }
             ClearAlarms();
             AddAlarms(database.GetAlarms(eventId));
@@ -54,24 +58,36 @@ namespace Chronokeep.Objects
         public static List<Alarm> GetAlarms()
         {
             Log.D("Objects.Alarm", "Getting alarms.");
-            List<Alarm> output = new List<Alarm>();
-            if (listMtx.WaitOne(3000))
+            List<Alarm> output = [];
+            if (ListMtx.TryEnter(3000))
             {
-                output.AddRange(alarms);
-                listMtx.ReleaseMutex();
+                try
+                {
+                    output.AddRange(alarms);
+                }
+                finally
+                {
+                    ListMtx.Exit();
+                }
             }
             return output;
         }
 
         public static (Dictionary<string, Alarm>, Dictionary<string, Alarm>) GetAlarmDictionaries()
         {
-            Dictionary<string, Alarm> outBib = new Dictionary<string, Alarm>();
-            Dictionary<string, Alarm> outChip = new Dictionary<string, Alarm>();
-            if (listMtx.WaitOne(3000))
+            Dictionary<string, Alarm> outBib = [];
+            Dictionary<string, Alarm> outChip = [];
+            if (ListMtx.TryEnter(3000))
             {
-                outBib = new Dictionary<string, Alarm>(bibAlarms);
-                outChip = new Dictionary<string, Alarm>(chipAlarms);
-                listMtx.ReleaseMutex();
+                try
+                {
+                    outBib = new Dictionary<string, Alarm>(bibAlarms);
+                    outChip = new Dictionary<string, Alarm>(chipAlarms);
+                }
+                finally
+                {
+                    ListMtx.Exit();
+                }
             }
             return (outBib, outChip);
         }
@@ -79,24 +95,18 @@ namespace Chronokeep.Objects
         public static bool RemoveAlarm(Alarm alarm)
         {
             bool output = false;
-            if (listMtx.WaitOne(3000))
+            if (ListMtx.TryEnter(3000))
             {
-                if (bibAlarms.ContainsKey(alarm.Bib))
+                try
                 {
-                    bibAlarms.Remove(alarm.Bib);
-                    output = true;
+                    output = output && bibAlarms.Remove(alarm.Bib);
+                    output = output && chipAlarms.Remove(alarm.Chip);
+                    output = output && alarms.Remove(alarm);
                 }
-                if (chipAlarms.ContainsKey(alarm.Chip))
+                finally
                 {
-                    chipAlarms.Remove(alarm.Chip);
-                    output = true;
+                    ListMtx.Exit();
                 }
-                if (alarms.Contains(alarm))
-                {
-                    alarms.Remove(alarm);
-                    output = true;
-                }
-                listMtx.ReleaseMutex();
             }
             return output;
         }
@@ -104,13 +114,19 @@ namespace Chronokeep.Objects
         public static bool ClearAlarms()
         {
             bool output = false;
-            if (listMtx.WaitOne(3000))
+            if (ListMtx.TryEnter(3000))
             {
-                alarms.Clear();
-                bibAlarms.Clear();
-                chipAlarms.Clear();
-                output = true;
-                listMtx.ReleaseMutex();
+                try
+                {
+                    alarms.Clear();
+                    bibAlarms.Clear();
+                    chipAlarms.Clear();
+                    output = true;
+                }
+                finally
+                {
+                    ListMtx.Exit();
+                }
             }
             return output;
         }
@@ -119,32 +135,11 @@ namespace Chronokeep.Objects
         {
             Log.D("Objects.Alarm", "Adding alarm.");
             bool output = false;
-            if (listMtx.WaitOne(3000))
+            if (ListMtx.TryEnter(3000))
             {
-                alarms.Add(alarm);
-                if (alarm.Bib.Length > 0)
+                try
                 {
-                    bibAlarms[alarm.Bib] = alarm;
-                }
-                if (alarm.Chip.Length > 0)
-                {
-                    chipAlarms[alarm.Chip] = alarm;
-                }
-                output = true;
-                listMtx.ReleaseMutex();
-            }
-            return output;
-        }
-
-        public static bool AddAlarms(List<Alarm> newAlarms)
-        {
-            Log.D("Objects.Alarm", "Adding alarms.");
-            bool output = false;
-            if (listMtx.WaitOne(3000))
-            {
-                Log.D("Objects.Alarm", "Number of alarms: " + newAlarms.Count);
-                foreach (Alarm alarm in newAlarms)
-                {
+                    alarms.Add(alarm);
                     if (alarm.Bib.Length > 0)
                     {
                         bibAlarms[alarm.Bib] = alarm;
@@ -155,10 +150,43 @@ namespace Chronokeep.Objects
                     }
                     output = true;
                 }
-                alarms.Clear();
-                alarms.AddRange(bibAlarms.Values);
-                alarms.AddRange(chipAlarms.Values);
-                listMtx.ReleaseMutex();
+                finally
+                {
+                    ListMtx.Exit();
+                }
+            }
+            return output;
+        }
+
+        public static bool AddAlarms(List<Alarm> newAlarms)
+        {
+            Log.D("Objects.Alarm", "Adding alarms.");
+            bool output = false;
+            if (ListMtx.TryEnter(3000))
+            {
+                try
+                {
+                    Log.D("Objects.Alarm", "Number of alarms: " + newAlarms.Count);
+                    foreach (Alarm alarm in newAlarms)
+                    {
+                        if (alarm.Bib.Length > 0)
+                        {
+                            bibAlarms[alarm.Bib] = alarm;
+                        }
+                        if (alarm.Chip.Length > 0)
+                        {
+                            chipAlarms[alarm.Chip] = alarm;
+                        }
+                        output = true;
+                    }
+                    alarms.Clear();
+                    alarms.AddRange(bibAlarms.Values);
+                    alarms.AddRange(chipAlarms.Values);
+                }
+                finally
+                {
+                    ListMtx.Exit();
+                }
             }
             return output;
         }
@@ -166,13 +194,19 @@ namespace Chronokeep.Objects
         public static Alarm GetAlarmByBib(string bib)
         {
             Alarm output = null;
-            if (listMtx.WaitOne(3000))
+            if (ListMtx.TryEnter(3000))
             {
-                if (bibAlarms.ContainsKey(bib))
+                try
                 {
-                    output = bibAlarms[bib];
+                    if (bibAlarms.TryGetValue(bib, out Alarm alarm))
+                    {
+                        output = alarm;
+                    }
                 }
-                listMtx.ReleaseMutex();
+                finally
+                {
+                    ListMtx.Exit();
+                }
             }
             return output;
         }
@@ -180,13 +214,19 @@ namespace Chronokeep.Objects
         public static Alarm GetAlarmByChip(string chip)
         {
             Alarm output = null;
-            if (listMtx.WaitOne(3000))
+            if (ListMtx.TryEnter(3000))
             {
-                if (chipAlarms.ContainsKey(chip))
+                try
                 {
-                    output = chipAlarms[chip];
+                    if (chipAlarms.TryGetValue(chip, out Alarm alarm))
+                    {
+                        output = alarm;
+                    }
                 }
-                listMtx.ReleaseMutex();
+                finally
+                {
+                    ListMtx.Exit();
+                }
             }
             return output;
         }

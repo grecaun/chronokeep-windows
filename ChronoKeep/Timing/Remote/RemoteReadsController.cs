@@ -10,13 +10,10 @@ using System.Threading;
 
 namespace Chronokeep.Timing.Remote
 {
-    class RemoteReadsController : IRemoteReadersChangeSubscriber
+    class RemoteReadsController(IMainWindow mainWindow, IDBInterface database) : IRemoteReadersChangeSubscriber
     {
-        readonly IMainWindow mainWindow;
-        readonly IDBInterface database;
-
-        private static readonly Mutex mut = new();
-        private static readonly Semaphore waiter = new Semaphore(0, 1);
+        private static readonly Lock remRLock = new();
+        private static readonly Semaphore waiter = new(0, 1);
 
         private static bool Running = false;
         private static bool KeepAlive = true;
@@ -24,92 +21,108 @@ namespace Chronokeep.Timing.Remote
 
         private static readonly int SleepSeconds = 30;
 
-        public int Errors { get; private set; }
-        private Dictionary<RemoteReader, DateTime> lastReaderTime = new Dictionary<RemoteReader, DateTime>();
-        private Dictionary<RemoteReader, long> RemoteNotificationDictionary = new Dictionary<RemoteReader, long>();
-
-        public RemoteReadsController(IMainWindow mainWindow, IDBInterface database)
-        {
-            this.mainWindow = mainWindow;
-            this.database = database;
-            this.Errors = 0;
-        }
+        public int Errors { get; private set; } = 0;
+        private readonly Dictionary<RemoteReader, DateTime> lastReaderTime = [];
+        private readonly Dictionary<RemoteReader, long> RemoteNotificationDictionary = [];
 
         public static bool IsRunning()
         {
             bool output = false;
-            if (mut.WaitOne(6000))
+            if (remRLock.TryEnter(6000))
             {
-                output = Running;
-                mut.ReleaseMutex();
+                try
+                {
+                    output = Running;
+                }
+                finally
+                {
+                    remRLock.Exit();
+                }
             }
             return output;
         }
 
         public void Shutdown()
         {
-            if (mut.WaitOne(6000))
+            if (remRLock.TryEnter(6000))
             {
-                Log.D("API.RemoteReadsController", "Shutting down API Auto Upload.");
-                KeepAlive = false;
-                waiter.Release();
-                mut.ReleaseMutex();
+                try
+                {
+                    Log.D("API.RemoteReadsController", "Shutting down API Auto Upload.");
+                    KeepAlive = false;
+                    waiter.Release();
+                }
+                finally
+                {
+                    remRLock.Exit();
+                }
             }
         }
 
         public async void Run()
         {
             Log.D("API.RemoteReadsController", "RemoteReadsController is now running.");
-            if (mut.WaitOne(6000))
+            if (remRLock.TryEnter(6000))
             {
-                if (Running)
+                try
                 {
-                    Log.D("API.RemoteReadsController", "RemoteReadsController is already running.");
-                    mut.ReleaseMutex();
-                    return;
+                    if (Running)
+                    {
+                        Log.D("API.RemoteReadsController", "RemoteReadsController is already running.");
+                        return;
+                    }
+                    Running = true;
+                    KeepAlive = true;
                 }
-                Running = true;
-                KeepAlive = true;
-                mut.ReleaseMutex();
+                finally
+                {
+                    remRLock.Exit();
+                }
             }
             else
             {
-                Log.D("API.RemoteReadsController", "Unable to acquire mutex.");
+                Log.D("API.RemoteReadsController", "Unable to acquire lock.");
                 return;
             }
             mainWindow.UpdateTimingFromController();
             // keep looping until told to stop
-            Dictionary<int, APIObject> apiDictionary = new();
-            List<RemoteReader> readers = new();
+            Dictionary<int, APIObject> apiDictionary = [];
+            List<RemoteReader> readers = [];
             // Subscribe to reader changes.
             RemoteReadersNotifier.GetRemoteReadersNotifier().Subscribe(this);
             while (true)
             {
                 // check if we need to update our list of readers
-                if (mut.WaitOne(3000))
+                if (remRLock.TryEnter(3000))
                 {
-                    if (UpdateReaders)
+                    try
                     {
-                        Log.D("API.RemoteReadsController", "Updating readers.");
-                        var theEvent = database.GetCurrentEvent();
-                        readers = database.GetRemoteReaders(theEvent.Identifier);
-                        apiDictionary.Clear();
-                        foreach (APIObject api in database.GetAllAPI())
+                        if (UpdateReaders)
                         {
-                            if (api.Type == Constants.APIConstants.CHRONOKEEP_REMOTE || api.Type == Constants.APIConstants.CHRONOKEEP_REMOTE_SELF)
+                            Log.D("API.RemoteReadsController", "Updating readers.");
+                            var theEvent = database.GetCurrentEvent();
+                            readers = database.GetRemoteReaders(theEvent.Identifier);
+                            apiDictionary.Clear();
+                            foreach (APIObject api in database.GetAllAPI())
                             {
-                                apiDictionary[api.Identifier] = api;
+                                if (api.Type == Constants.APIConstants.CHRONOKEEP_REMOTE || api.Type == Constants.APIConstants.CHRONOKEEP_REMOTE_SELF)
+                                {
+                                    apiDictionary[api.Identifier] = api;
+                                }
                             }
+                            UpdateReaders = false;
                         }
-                        UpdateReaders = false;
                     }
-                    mut.ReleaseMutex();
+                    finally
+                    {
+                        remRLock.Exit();
+                    }
                 }
                 // don't query if we just started
                 DateTime now = DateTime.Now;
                 // Start will start out at the start of the current day for each reader
                 // It will be changed based upon the last time value a reader sent us
-                DateTime start, end = new DateTime(now.Year, now.Month, now.Day, 23, 59, 59);
+                DateTime start, end = new(now.Year, now.Month, now.Day, 23, 59, 59);
                 bool api_error = false;
                 bool announcer_notify = false;
                 foreach (RemoteReader reader in readers)
@@ -119,25 +132,26 @@ namespace Chronokeep.Timing.Remote
                         announcer_notify = true;
                     }
                     // make sure we know how to check the api
-                    if (apiDictionary.ContainsKey(reader.APIIDentifier))
+                    if (apiDictionary.TryGetValue(reader.APIIDentifier, out APIObject api))
                     {
                         // reset start to the start of the day each loop
-                        start = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0);
-                        if (lastReaderTime.ContainsKey(reader))
+                        DateTime dateTime = new(now.Year, now.Month, now.Day, 0, 0, 0);
+                        start = dateTime;
+                        if (lastReaderTime.TryGetValue(reader, out DateTime lastTime))
                         {
                             // query 1 second before just in case the reader didn't send us everything they had
                             // due to really good timing on our part
-                            start = lastReaderTime[reader].AddSeconds(-1);
+                            start = lastTime.AddSeconds(-1);
                         }
-                        List<ChipRead> reads = new();
+                        List<ChipRead> reads = [];
                         try
                         {
                             RemoteNotification note;
-                            (reads, note) = await apiDictionary[reader.APIIDentifier].GetReads(reader, start, end);
+                            (reads, note) = await api.GetReads(reader, start, end);
                             Log.D("API.RemoteReadsController", note == null ? "null" : note.Type);
                             if (note != null
-                                && (!RemoteNotificationDictionary.ContainsKey(reader)
-                                    || RemoteNotificationDictionary[reader] != note.Id))
+                                && !(RemoteNotificationDictionary.TryGetValue(reader, out long noteId)
+                                    && noteId == note.Id))
                             {
                                 mainWindow.ShowNotificationDialog(reader.Name, "Remote", note);
                                 RemoteNotificationDictionary[reader] = note.Id;
@@ -152,9 +166,10 @@ namespace Chronokeep.Timing.Remote
                         {
                             // we want to keep track of the last reader the reader recorded so we don't request
                             // a time period we've already requested.
-                            if (!lastReaderTime.ContainsKey(reader) || lastReaderTime[reader] < read.Time)
+                            if (!lastReaderTime.TryGetValue(reader, out DateTime lTime) || lTime < read.Time)
                             {
-                                lastReaderTime[reader] = read.Time;
+                                lTime = read.Time;
+                                lastReaderTime[reader] = lTime;
                             }
                         }
                         database.AddChipReads(reads);
@@ -187,23 +202,28 @@ namespace Chronokeep.Timing.Remote
                 // told to exit, so we can just check KeepAlive after.
                 waiter.WaitOne(sleepFor * 1000);
                 // check if we should exit the loop
-                if (mut.WaitOne(6000))
+                if (remRLock.TryEnter(6000))
                 {
-                    Log.D("API.RemoteReadsController", "Checking keep alive status.");
-                    if (!KeepAlive)
+                    try
                     {
-                        Log.D("API.RemoteReadsController", "Exiting RemoteReads thread.");
-                        Running = false;
-                        mut.ReleaseMutex();
-                        mainWindow.UpdateTimingFromController();
-                        RemoteReadersNotifier.GetRemoteReadersNotifier().Unsubscribe(this);
-                        return;
+                        Log.D("API.RemoteReadsController", "Checking keep alive status.");
+                        if (!KeepAlive)
+                        {
+                            Log.D("API.RemoteReadsController", "Exiting RemoteReads thread.");
+                            Running = false;
+                            mainWindow.UpdateTimingFromController();
+                            RemoteReadersNotifier.GetRemoteReadersNotifier().Unsubscribe(this);
+                            return;
+                        }
                     }
-                    mut.ReleaseMutex();
+                    finally
+                    {
+                        remRLock.Exit();
+                    }
                 }
                 else
                 {
-                    Log.D("API.RemoteReadsController", "Error with RemoteReads mutex.");
+                    Log.D("API.RemoteReadsController", "Error with RemoteReads lock.");
                     KeepAlive = false;
                     Running = false;
                     mainWindow.UpdateTimingFromController();
@@ -215,10 +235,16 @@ namespace Chronokeep.Timing.Remote
 
         public void NotifyRemoteReadersChange()
         {
-            if (mut.WaitOne(3000))
+            if (remRLock.TryEnter(3000))
             {
-                UpdateReaders = true;
-                mut.ReleaseMutex();
+                try
+                {
+                    UpdateReaders = true;
+                }
+                finally
+                {
+                    remRLock.Exit();
+                }
             }
         }
     }

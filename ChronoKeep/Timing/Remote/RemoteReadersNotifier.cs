@@ -6,10 +6,10 @@ namespace Chronokeep.Timing.Remote
 {
     internal class RemoteReadersNotifier : IRemoteReadersChangeNotifier
     {
-        private List<IRemoteReadersChangeSubscriber> subscribed = new();
-        private Mutex mtx = new();
+        private readonly List<IRemoteReadersChangeSubscriber> subscribed = [];
+        private readonly Lock rrLock = new();
 
-        private static RemoteReadersNotifier instance = new();
+        private static readonly RemoteReadersNotifier instance = new();
 
         public static RemoteReadersNotifier GetRemoteReadersNotifier()
         {
@@ -19,11 +19,17 @@ namespace Chronokeep.Timing.Remote
         public bool Subscribe(IRemoteReadersChangeSubscriber sub)
         {
             var output = false;
-            if (mtx.WaitOne(3000))
+            if (rrLock.TryEnter(3000))
             {
-                subscribed.Add(sub);
-                output = true;
-                mtx.ReleaseMutex();
+                try
+                {
+                    subscribed.Add(sub);
+                    output = true;
+                }
+                finally
+                {
+                    rrLock.Exit();
+                }
             }
             return output;
         }
@@ -31,23 +37,35 @@ namespace Chronokeep.Timing.Remote
         public bool Unsubscribe(IRemoteReadersChangeSubscriber sub)
         {
             var output = false;
-            if (mtx.WaitOne(3000))
+            if (rrLock.TryEnter(3000))
             {
-                output = subscribed.Remove(sub);
-                mtx.ReleaseMutex();
+                try
+                {
+                    output = subscribed.Remove(sub);
+                }
+                finally
+                {
+                    rrLock.Exit();
+                }
             }
             return output;
         }
 
         public void Notify()
         {
-            if (mtx.WaitOne(3000))
+            if (rrLock.TryEnter(3000))
             {
-                foreach (IRemoteReadersChangeSubscriber subscriber in subscribed)
+                try
                 {
-                    subscriber.NotifyRemoteReadersChange();
+                    foreach (IRemoteReadersChangeSubscriber subscriber in subscribed)
+                    {
+                        subscriber.NotifyRemoteReadersChange();
+                    }
                 }
-                mtx.ReleaseMutex();
+                finally
+                {
+                    rrLock.Exit();
+                }
             }
         }
     }

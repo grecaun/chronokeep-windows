@@ -11,39 +11,36 @@ using System.Threading;
 
 namespace Chronokeep.Network.Registration
 {
-    public class RegistrationWorker
+    public partial class RegistrationWorker(IDBInterface database, IMainWindow mWindow)
     {
         private bool running = false;
         private bool keepalive = false;
 
-        private readonly Mutex threadMutex = new Mutex();
+        private readonly Lock threadLock = new();
 
         private Socket server;
-        private List<Socket> clients = new List<Socket>();
-        private List<Socket> readList = new List<Socket>();
-        private Dictionary<Socket, StringBuilder> bufferDictionary = new Dictionary<Socket, StringBuilder>();
-        private IDBInterface database;
-
         private bool updateDistanceDictionary = true;
-        private Dictionary<string, Distance> distanceDictionary = new Dictionary<string, Distance>();
+        private readonly List<Socket> clients = [];
+        private readonly List<Socket> readList = [];
+        private readonly Dictionary<Socket, StringBuilder> bufferDictionary = [];
+        private readonly Dictionary<string, Distance> distanceDictionary = [];
 
-        private static readonly Regex msgRegex = new Regex(@"^[^\n]*\n");
-
-        private IMainWindow mWindow = null;
-
-        public RegistrationWorker(IDBInterface database, IMainWindow mWindow)
-        {
-            this.database = database;
-            this.mWindow = mWindow;
-        }
+        [GeneratedRegex(@"^[^\n]*\n")]
+        private static partial Regex msgRegex();
 
         public bool IsRunning()
         {
             bool output = false;
-            if (threadMutex.WaitOne(3000))
+            if (threadLock.TryEnter(3000))
             {
-                output = running;
-                threadMutex.ReleaseMutex();
+                try
+                {
+                    output = running;
+                }
+                finally
+                {
+                    threadLock.Exit();
+                }
             }
             return output;
         }
@@ -51,19 +48,31 @@ namespace Chronokeep.Network.Registration
         public void Stop()
         {
             Log.D("Network.Registration.RegistrationWorker", "Instructed to stop registration.");
-            if (threadMutex.WaitOne(3000))
+            if (threadLock.TryEnter(3000))
             {
-                keepalive = false;
-                threadMutex.ReleaseMutex();
+                try
+                {
+                    keepalive = false;
+                }
+                finally
+                {
+                    threadLock.Exit();
+                }
             }
         }
 
         public void UpdateDistances()
         {
-            if (threadMutex.WaitOne(3000))
+            if (threadLock.TryEnter(3000))
             {
-                updateDistanceDictionary = true;
-                threadMutex.ReleaseMutex();
+                try
+                {
+                    updateDistanceDictionary = true;
+                }
+                finally
+                {
+                    threadLock.Exit();
+                }
             }
         }
 
@@ -75,11 +84,17 @@ namespace Chronokeep.Network.Registration
             {
                 return;
             }
-            if (threadMutex.WaitOne(3000))
+            if (threadLock.TryEnter(3000))
             {
-                keepalive = true;
-                running = true;
-                threadMutex.ReleaseMutex();
+                try
+                {
+                    keepalive = true;
+                    running = true;
+                }
+                finally
+                {
+                    threadLock.Exit();
+                }
             }
             else
             {
@@ -104,11 +119,17 @@ namespace Chronokeep.Network.Registration
                     Log.D("Network.Registration.RegistrationWorker", string.Format("Exception raised while using select. {0}", e.Message));
                 }
                 bool update = false;
-                if (threadMutex.WaitOne(3000))
+                if (threadLock.TryEnter(3000))
                 {
-                    update = updateDistanceDictionary;
-                    updateDistanceDictionary = false;
-                    threadMutex.ReleaseMutex();
+                    try
+                    {
+                        update = updateDistanceDictionary;
+                        updateDistanceDictionary = false;
+                    }
+                    finally
+                    {
+                        threadLock.Exit();
+                    }
                 }
                 if (update)
                 {
@@ -125,7 +146,7 @@ namespace Chronokeep.Network.Registration
                         Log.D("Network.Registration.RegistrationWorker", "New incoming connection to registration.");
                         Socket newSock = sock.Accept();
                         clients.Add(newSock);
-                        bufferDictionary[newSock] = new StringBuilder();
+                        bufferDictionary[newSock] = new();
                     }
                     else
                     {
@@ -146,7 +167,7 @@ namespace Chronokeep.Network.Registration
                                 StringBuilder buffer = bufferDictionary[sock];
                                 buffer.Append(msg);
                                 Log.D("Network.Registration.RegistrationWorker", string.Format("Message received: {0}", msg.Trim()));
-                                Match m = msgRegex.Match(buffer.ToString());
+                                Match m = msgRegex().Match(buffer.ToString());
                                 while (m.Success)
                                 {
                                     buffer.Remove(m.Index, m.Length);
@@ -172,7 +193,7 @@ namespace Chronokeep.Network.Registration
                                                 SendMessage(sock, JsonSerializer.Serialize(new ParticipantsResponse
                                                 {
                                                     Participants = GetParticipants(theEvent),
-                                                    Distances = GetDistances(theEvent),
+                                                    Distances = GetDistances(),
                                                 }));
                                                 break;
                                             case Request.ADD_PARTICIPANT:
@@ -412,7 +433,7 @@ namespace Chronokeep.Network.Registration
                                     {
                                         Log.E("Network.Registration.RegistrationWorker", string.Format("Error deserializing json. {0}", e.Message));
                                     }
-                                    m = msgRegex.Match(buffer.ToString());
+                                    m = msgRegex().Match(buffer.ToString());
                                 }
                                 bufferDictionary[sock] = buffer;
                             }
@@ -426,15 +447,20 @@ namespace Chronokeep.Network.Registration
                         }
                     }
                 }
-                if (threadMutex.WaitOne(3000))
+                if (threadLock.TryEnter(3000))
                 {
-                    if (!keepalive)
+                    try
                     {
-                        running = false;
-                        threadMutex.ReleaseMutex();
-                        break;
+                        if (!keepalive)
+                        {
+                            running = false;
+                            break;
+                        }
                     }
-                    threadMutex.ReleaseMutex();
+                    finally
+                    {
+                        threadLock.Exit();
+                    }
                 }
             }
             foreach (Socket sock in clients)
@@ -462,7 +488,7 @@ namespace Chronokeep.Network.Registration
                     SendMessage(sock, JsonSerializer.Serialize(new ParticipantsResponse
                     {
                         Participants = GetParticipants(theEvent),
-                        Distances = GetDistances(theEvent),
+                        Distances = GetDistances(),
                     }));
                 }
             }
@@ -470,7 +496,7 @@ namespace Chronokeep.Network.Registration
 
         public List<Participant> GetParticipants(Event theEvent)
         {
-            List<Participant> output = new();
+            List<Participant> output = [];
             List<Objects.Participant> participants = database.GetParticipants(theEvent.Identifier);
             foreach (Objects.Participant participant in participants)
             {
@@ -491,12 +517,12 @@ namespace Chronokeep.Network.Registration
             return output;
         }
 
-        public List<string> GetDistances(Event theEvent)
+        public List<string> GetDistances()
         {
-            return new List<string>(distanceDictionary.Keys);
+            return [.. distanceDictionary.Keys];
         }
 
-        public void SendMessage(Socket sock, string msg)
+        public static void SendMessage(Socket sock, string msg)
         {
             Log.D("Network.Registration.RegistrationWorker", string.Format("Sending message '{0}'", msg));
             sock.Send(Encoding.Default.GetBytes(msg + "\n"));

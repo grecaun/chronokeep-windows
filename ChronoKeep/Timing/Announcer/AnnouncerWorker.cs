@@ -13,7 +13,7 @@ namespace Chronokeep.Timing.Announcer
         private static AnnouncerWorker announcer;
 
         private static readonly Semaphore semaphore = new(0, 2);
-        private static readonly Mutex mutex = new();
+        private static readonly Lock anLock = new();
 
         private static bool QuittingTime = false;
         private static readonly List<AnnouncerParticipant> participants = [];
@@ -39,20 +39,32 @@ namespace Chronokeep.Timing.Announcer
 
         public static void Shutdown()
         {
-            if (mutex.WaitOne(3000))
+            if (anLock.TryEnter(3000))
             {
-                QuittingTime = true;
-                mutex.ReleaseMutex();
+                try
+                {
+                    QuittingTime = true;
+                }
+                finally
+                {
+                    anLock.Exit();
+                }
             }
         }
 
         public static List<AnnouncerParticipant> GetList()
         {
             List<AnnouncerParticipant> output = [];
-            if (mutex.WaitOne(3000))
+            if (anLock.TryEnter(3000))
             {
-                output.AddRange(participants);
-                mutex.ReleaseMutex();
+                try
+                {
+                    output.AddRange(participants);
+                }
+                finally
+                {
+                    anLock.Exit();
+                }
             }
             Log.D("Timing.Announcer.AnnouncerWorker", string.Format("Returning {0} participants to announce.", output.Count));
             return output;
@@ -61,10 +73,16 @@ namespace Chronokeep.Timing.Announcer
         public static bool Running()
         {
             bool output = false;
-            if (mutex.WaitOne(3000))
+            if (anLock.TryEnter(3000))
             {
-                output = !QuittingTime;
-                mutex.ReleaseMutex();
+                try
+                {
+                    output = !QuittingTime;
+                }
+                finally
+                {
+                    anLock.Exit();
+                }
             }
             return output;
         }
@@ -135,15 +153,20 @@ namespace Chronokeep.Timing.Announcer
                 try
                 {
                     bool notified = semaphore.WaitOne(1000 * Constants.Timing.ANNOUNCER_LOOP_TIMER);
-                    if (mutex.WaitOne(3000))
+                    if (anLock.TryEnter(3000))
                     {
-                        if (QuittingTime)
+                        try
                         {
-                            mutex.ReleaseMutex();
-                            Log.D("Timing.Announcer.AnnouncerWorker", "Exiting announcer thread.");
-                            return;
+                            if (QuittingTime)
+                            {
+                                Log.D("Timing.Announcer.AnnouncerWorker", "Exiting announcer thread.");
+                                return;
+                            }
                         }
-                        mutex.ReleaseMutex();
+                        finally
+                        {
+                            anLock.Exit();
+                        }
                     }
                     if (notified)
                     {

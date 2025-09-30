@@ -12,24 +12,25 @@ using static Chronokeep.Objects.TimeResult;
 
 namespace Chronokeep.Timing
 {
-    class TimingWorker
+    partial class TimingWorker
     {
         private readonly IDBInterface database;
         private readonly IMainWindow window;
         private static TimingWorker worker;
 
-        private static readonly Semaphore semaphore = new Semaphore(0, 2);
-        private static readonly Mutex mutex = new Mutex();
-        private static readonly Mutex ResetDictionariesMutex = new Mutex();
-        private static readonly Mutex ResultsMutex = new();
+        private static readonly Semaphore semaphore = new(0, 2);
+        private static readonly Lock tWorkLock = new();
+        private static readonly Lock ResetDictionarysLock = new();
+        private static readonly Lock ResultsLock = new();
         private static bool QuittingTime = false;
         private static bool NewResults = false;
         private static bool ResetDictionariesBool = true;
 
-        private static TimingDictionary dictionary = new TimingDictionary();
-
-        private static Regex alphaOnly = new Regex("[^A-Za-z]");
+        private static readonly TimingDictionary dictionary = new();
         private static DateTime lastSubscriptionFetch = DateTime.Now.AddMinutes(-1);
+
+        [GeneratedRegex("[^A-Za-z]")]
+        private static partial Regex AlphaOnly();
 
         private TimingWorker(IMainWindow window, IDBInterface database)
         {
@@ -49,23 +50,35 @@ namespace Chronokeep.Timing
         public static bool NewResultsExist()
         {
             bool output = false;
-            //Log.D("Timing.TimingWorker", "Mutex Wait 02");
-            if (ResultsMutex.WaitOne(3000))
+            //Log.D("Timing.TimingWorker", "Lock Wait 02");
+            if (ResultsLock.TryEnter(3000))
             {
-                output = NewResults;
-                NewResults = false;
-                ResultsMutex.ReleaseMutex();
+                try
+                {
+                    output = NewResults;
+                    NewResults = false;
+                }
+                finally
+                {
+                    ResultsLock.Exit();
+                }
             }
             return output;
         }
 
         public static void Shutdown()
         {
-            Log.D("Timing.TimingWorker", "Mutex Wait 01");
-            if (mutex.WaitOne(3000))
+            Log.D("Timing.TimingWorker", "Lock Wait 01");
+            if (tWorkLock.TryEnter(3000))
             {
-                QuittingTime = true;
-                mutex.ReleaseMutex();
+                try
+                {
+                    QuittingTime = true;
+                }
+                finally
+                {
+                    tWorkLock.Exit();
+                }
             }
         }
 
@@ -84,11 +97,17 @@ namespace Chronokeep.Timing
         public static void ResetDictionaries()
         {
             Log.D("Timing.TimingWorker", "Resetting dictionaries next go around.");
-            Log.D("Timing.TimingWorker", "Mutex Wait 04");
-            if (ResetDictionariesMutex.WaitOne(3000))
+            Log.D("Timing.TimingWorker", "Lock Wait 04");
+            if (ResetDictionarysLock.TryEnter(3000))
             {
-                ResetDictionariesBool = true;
-                ResetDictionariesMutex.ReleaseMutex();
+                try
+                {
+                    ResetDictionariesBool = true;
+                }
+                finally
+                {
+                    ResetDictionarysLock.Exit();
+                }
             }
         }
 
@@ -119,11 +138,13 @@ namespace Chronokeep.Timing
                     Log.D("Timing.TimingWorker", "Multiples of a segment found in segment set.");
                 }
                 dictionary.segmentDictionary[(seg.DistanceId, seg.LocationId, seg.Occurrence)] = seg;
-                if (!dictionary.DistanceSegmentOrder.ContainsKey(seg.DistanceId))
+                if (!dictionary.DistanceSegmentOrder.TryGetValue(seg.DistanceId, out List<Segment> segList))
                 {
-                    dictionary.DistanceSegmentOrder[seg.DistanceId] = new List<Segment>();
+                    segList = [];
+                    dictionary.DistanceSegmentOrder[seg.DistanceId] = segList;
                 }
-                dictionary.DistanceSegmentOrder[seg.DistanceId].Add(seg);
+
+                segList.Add(seg);
                 dictionary.SegmentByIDDictionary[seg.Identifier] = seg;
             }
             // Add finish segments to DistanceSegmentOrder if distance is specified
@@ -131,11 +152,13 @@ namespace Chronokeep.Timing
             {
                 if (d.DistanceValue > 0)
                 {
-                    if (!dictionary.DistanceSegmentOrder.ContainsKey(d.Identifier))
+                    if (!dictionary.DistanceSegmentOrder.TryGetValue(d.Identifier, out List<Segment> segOrderList))
                     {
-                        dictionary.DistanceSegmentOrder[d.Identifier] = new List<Segment>();
+                        segOrderList = [];
+                        dictionary.DistanceSegmentOrder[d.Identifier] = segOrderList;
                     }
-                    dictionary.DistanceSegmentOrder[d.Identifier].Add(
+
+                    segOrderList.Add(
                         new Segment(
                             Constants.Timing.SEGMENT_FINISH,
                             theEvent.Identifier,
@@ -192,11 +215,13 @@ namespace Chronokeep.Timing
             foreach (BibChipAssociation assoc in bibChips)
             {
                 dictionary.chipToBibDictionary[assoc.Chip] = assoc.Bib;
-                if (!dictionary.bibToChipDictionary.ContainsKey(assoc.Bib))
+                if (!dictionary.bibToChipDictionary.TryGetValue(assoc.Bib, out List<string> chipList))
                 {
-                    dictionary.bibToChipDictionary[assoc.Bib] = new List<string>();
+                    chipList = [];
+                    dictionary.bibToChipDictionary[assoc.Bib] = chipList;
                 }
-                dictionary.bibToChipDictionary[assoc.Bib].Add(assoc.Chip);
+
+                chipList.Add(assoc.Chip);
             }
             // Dictionary for looking up linked distances
             dictionary.linkedDistanceDictionary.Clear();
@@ -209,7 +234,7 @@ namespace Chronokeep.Timing
                 {
                     Log.D("Timing.TimingWorker", "Linked distance found. " + d.LinkedDistance);
                     // Verify we know the distance its linked to.
-                    if (!dictionary.distanceDictionary.ContainsKey(d.LinkedDistance))
+                    if (!dictionary.distanceDictionary.TryGetValue(d.LinkedDistance, out Distance distVal))
                     {
                         Log.E("Timing.TimingWorker", "Unable to find linked distance.");
                     }
@@ -217,10 +242,10 @@ namespace Chronokeep.Timing
                     {
                         Log.D("Timing.TimingWorker", "Setting linked dictionaries. Ranking: " + d.Ranking);
                         // Set linked distance for ranking as the linked distance and set ranking int.
-                        dictionary.linkedDistanceDictionary[d.Name] = (dictionary.distanceDictionary[d.LinkedDistance], d.Ranking);
-                        dictionary.linkedDistanceIdentifierDictionary[d.Identifier] = dictionary.distanceDictionary[d.LinkedDistance].Identifier;
+                        dictionary.linkedDistanceDictionary[d.Name] = (distVal, d.Ranking);
+                        dictionary.linkedDistanceIdentifierDictionary[d.Identifier] = distVal.Identifier;
                         // Set end time for linked distance to linked distances end time.
-                        dictionary.distanceEndDict[d.Identifier] = (dictionary.distanceStartDict[d.Identifier].Seconds + dictionary.distanceDictionary[d.LinkedDistance].EndSeconds, dictionary.distanceStartDict[d.Identifier].Milliseconds);
+                        dictionary.distanceEndDict[d.Identifier] = (dictionary.distanceStartDict[d.Identifier].Seconds + distVal.EndSeconds, dictionary.distanceStartDict[d.Identifier].Milliseconds);
                     }
                 }
                 else
@@ -239,7 +264,7 @@ namespace Chronokeep.Timing
                 dictionary.apis[api.Identifier] = api;
             }
             // Clear distance segment list if no distance values are set
-            List<int> distanceNotSet = new List<int>();
+            List<int> distanceNotSet = [];
             // Sort the segments in our dictionary.
             foreach (List<Segment> segments in dictionary.DistanceSegmentOrder.Values)
             {
@@ -294,16 +319,21 @@ namespace Chronokeep.Timing
         {
             do
             {
-                Log.D("Timing.TimingWorker", "Mutex Wait 05");
+                Log.D("Timing.TimingWorker", "Lock Wait 05");
                 semaphore.WaitOne();        // Wait for work.
-                if (mutex.WaitOne(3000))    // Check if we've been told to quit.
+                if (tWorkLock.TryEnter(3000))    // Check if we've been told to quit.
                 {                           // Do that here so we don't try to process another loop after being told to quit.
-                    if (QuittingTime)
+                    try
                     {
-                        mutex.ReleaseMutex();
-                        break;
+                        if (QuittingTime)
+                        {
+                            break;
+                        }
                     }
-                    mutex.ReleaseMutex();
+                    finally
+                    {
+                        tWorkLock.Exit();
+                    }
                 }
                 else
                 {
@@ -313,15 +343,21 @@ namespace Chronokeep.Timing
                 // ensure the event exists and we've got unprocessed reads
                 if (theEvent != null && theEvent.Identifier != -1)
                 {
-                    Log.D("Timing.TimingWorker", "Mutex Wait 06");
-                    if (ResetDictionariesMutex.WaitOne(3000))
+                    Log.D("Timing.TimingWorker", "Lock Wait 06");
+                    if (ResetDictionarysLock.TryEnter(3000))
                     {
-                        if (ResetDictionariesBool)
+                        try
                         {
-                            RecalculateDictionaries(theEvent);
+                            if (ResetDictionariesBool)
+                            {
+                                RecalculateDictionaries(theEvent);
+                            }
+                            ResetDictionariesBool = false;
                         }
-                        ResetDictionariesBool = false;
-                        ResetDictionariesMutex.ReleaseMutex();
+                        finally
+                        {
+                            ResetDictionarysLock.Exit();
+                        }
                     }
                     bool touched = false;
                     // Check if we have new DNS entries and reset if necessary.
@@ -414,6 +450,7 @@ namespace Chronokeep.Timing
                                         database.DeleteSmsSubscriptions(theEvent.Identifier);
                                         database.AddSmsSubscriptions(theEvent.Identifier, subscriptionResponse.Subscriptions);
                                     }
+                                    lastSubscriptionFetch = now;
                                 }
                                 catch
                                 {
@@ -424,14 +461,14 @@ namespace Chronokeep.Timing
                         if (alerts != null)
                         {
                             // Changing alerts hashset to locally based and pulled from the database each time we try to send alerts
-                            HashSet<(int, int)> AlertsSent = new HashSet<(int, int)>(alerts);
-                            Dictionary<TimeResult, HashSet<string>> toSendTo = new();
-                            Dictionary<string, string> nameToBibDict = new();
-                            HashSet<string> duplicateNames = new();
+                            HashSet<(int, int)> AlertsSent = [.. alerts];
+                            Dictionary<TimeResult, HashSet<string>> toSendTo = [];
+                            Dictionary<string, string> nameToBibDict = [];
+                            HashSet<string> duplicateNames = [];
                             foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                             {
                                 string name = p.FirstName.ToLower() + p.LastName.ToLower();
-                                name = alphaOnly.Replace(name, string.Empty);
+                                name = AlphaOnly().Replace(name, string.Empty);
                                 // keep track of duplicate names
                                 // because we can't differentiate between those people
                                 // so we won't send those out at all
@@ -446,15 +483,15 @@ namespace Chronokeep.Timing
                             {
                                 nameToBibDict.Remove(dup);
                             }
-                            Dictionary<string, HashSet<string>> bibToPhonesDict = new();
+                            Dictionary<string, HashSet<string>> bibToPhonesDict = [];
                             foreach (APISmsSubscription sub in database.GetSmsSubscriptions(theEvent.Identifier))
                             {
                                 string bib = sub.Bib;
-                                string phone = Constants.Globals.GetValidPhone(sub.Phone);
+                                string phone = Globals.GetValidPhone(sub.Phone);
                                 if (bib.Length < 1 && sub.First.Length + sub.Last.Length > 0)
                                 {
                                     string name = sub.First.ToLower() + sub.Last.ToLower();
-                                    name = alphaOnly.Replace(name, string.Empty);
+                                    name = AlphaOnly().Replace(name, string.Empty);
                                     if (nameToBibDict.TryGetValue(name, out string bibFromName))
                                     {
                                         bib = bibFromName;
@@ -464,7 +501,7 @@ namespace Chronokeep.Timing
                                 {
                                     if (!bibToPhonesDict.TryGetValue(bib, out HashSet<string> phoneSet))
                                     {
-                                        phoneSet = new HashSet<string>();
+                                        phoneSet = [];
                                         bibToPhonesDict[bib] = phoneSet;
                                     }
                                     phoneSet.Add(phone);
@@ -490,7 +527,7 @@ namespace Chronokeep.Timing
                                             {
                                                 if (!toSendTo.TryGetValue(result, out HashSet<string> phones))
                                                 {
-                                                    phones = new HashSet<string>();
+                                                    phones = [];
                                                     toSendTo[result] = phones;
                                                 }
                                                 phones.Add(phone);
@@ -580,10 +617,16 @@ namespace Chronokeep.Timing
                     }
                     if (touched)
                     {
-                        if (ResultsMutex.WaitOne(3000))
+                        if (ResultsLock.TryEnter(3000))
                         {
-                            NewResults = true;
-                            ResultsMutex.ReleaseMutex();
+                            try
+                            {
+                                NewResults = true;
+                            }
+                            finally
+                            {
+                                ResultsLock.Exit();
+                            }
                         }
                         window.UpdateTiming();
                     }

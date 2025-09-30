@@ -10,33 +10,30 @@ using System.Threading;
 
 namespace Chronokeep.Timing
 {
-    class TimingController
+    class TimingController(IMainWindow mainWindow, IDBInterface database)
     {
-        List<Socket> TimingSystemSockets = new List<Socket>(), readList = new List<Socket>();
-        Dictionary<Socket, TimingSystem> TimingSystemDict = new Dictionary<Socket, TimingSystem>();
+        readonly List<Socket> TimingSystemSockets = [], readList = [];
+        readonly Dictionary<Socket, TimingSystem> TimingSystemDict = [];
 
-        private static readonly Mutex mut = new Mutex();
-        private static readonly Mutex ReadsMutex = new Mutex();
+        private static readonly Lock timingLock = new();
+        private static readonly Lock readsLock = new();
         private static bool Running = false;
         private static bool NewReads = false;
-
-        IDBInterface database;
-        IMainWindow mainWindow;
-
-        public TimingController(IMainWindow mainWindow, IDBInterface database)
-        {
-            this.database = database;
-            this.mainWindow = mainWindow;
-        }
 
         public static bool IsRunning()
         {
             bool output = false;
-            Log.D("Timing.TimingController", "Mutex Wait 01");
-            if (mut.WaitOne(6000))
+            Log.D("Timing.TimingController", "Lock Wait 01");
+            if (timingLock.TryEnter(6000))
             {
-                output = Running;
-                mut.ReleaseMutex();
+                try
+                {
+                    output = Running;
+                }
+                finally
+                {
+                    timingLock.Exit();
+                }
             }
             return output;
         }
@@ -44,20 +41,25 @@ namespace Chronokeep.Timing
         public static bool NewReadsExist()
         {
             bool output = false;
-            Log.D("Timing.TimingController", "Mutex Wait 02");
-            if (ReadsMutex.WaitOne(3000))
+            Log.D("Timing.TimingController", "Lock Wait 02");
+            if (readsLock.TryEnter(3000))
             {
-                output = NewReads;
-                NewReads = false;
-                ReadsMutex.ReleaseMutex();
+                try
+                {
+                    output = NewReads;
+                    NewReads = false;
+                }
+                finally
+                {
+                    readsLock.Exit();
+                }
             }
             return output;
         }
 
         public List<TimingSystem> GetConnectedSystems()
         {
-            List<TimingSystem> output = new List<TimingSystem>();
-            output.AddRange(TimingSystemDict.Values);
+            List<TimingSystem> output = [.. TimingSystemDict.Values];
             return output;
         }
 
@@ -119,20 +121,25 @@ namespace Chronokeep.Timing
         public void Run()
         {
             Log.D("Timing.TimingController", "Timing Controller is now running.");
-            if (mut.WaitOne(3000))
+            if (timingLock.TryEnter(3000))
             {
-                if (Running == true)
+                try
                 {
-                    Log.D("Timing.TimingController", "Timing Controller Thread already running.");
-                    mut.ReleaseMutex();
-                    return;
+                    if (Running == true)
+                    {
+                        Log.D("Timing.TimingController", "Timing Controller Thread already running.");
+                        return;
+                    }
+                    Running = true;
                 }
-                Running = true;
-                mut.ReleaseMutex();
+                finally
+                {
+                    timingLock.Exit();
+                }
             }
             else
             {
-                Log.D("Timing.TimingController", "Unable to acquire mutex.");
+                Log.D("Timing.TimingController", "Unable to acquire lock.");
                 return;
             }
             bool UpdateTiming = false;
@@ -217,33 +224,38 @@ namespace Chronokeep.Timing
                         }
                         if (ChipRead)
                         {
-                            Log.D("Timing.TimingController", "Mutex Wait 05");
-                            if (ReadsMutex.WaitOne(3000))
+                            Log.D("Timing.TimingController", "Lock Wait 05");
+                            if (readsLock.TryEnter(3000))
                             {
-                                NewReads = true;
-                                mainWindow.NotifyTimingWorker();
-                                ReadsMutex.ReleaseMutex();
+                                try
+                                {
+                                    NewReads = true;
+                                    mainWindow.NotifyTimingWorker();
+                                }
+                                finally
+                                {
+                                    readsLock.Exit();
+                                }
                             }
                         }
                     }
                     catch (Exception e)
                     {
                         Log.E("Timing.TimingController", "Error trying to parse messages. " + e.Message);
-                        if (TimingSystemDict.ContainsKey(sock))
+                        if (TimingSystemDict.TryGetValue(sock, out TimingSystem system))
                         {
                             Log.D("Timing.TimingController", "Socket errored on us.");
                             try
                             {
-                                TimingSystemDict[sock].SystemInterface.CloseSettings();
+                                system.SystemInterface.CloseSettings();
                             }
                             catch (Exception ex)
                             {
                                 Log.E("Timing.TimingController", "Error attempting to close settings. " + ex.Message);
                             }
                             TimingSystemSockets.Remove(sock);
-                            TimingSystem disconnected = TimingSystemDict[sock];
                             TimingSystemDict.Remove(sock);
-                            mainWindow.TimingSystemDisconnected(disconnected);
+                            mainWindow.TimingSystemDisconnected(system);
                         } else
                         {
                             Log.D("Timing.TimingController", "Successful disconnect.");
@@ -251,7 +263,7 @@ namespace Chronokeep.Timing
                     }
                 }
                 // Check Sockets we've started to connect to and verify that they've successfully connected.
-                List<Socket> toRemove = new List<Socket>();
+                List<Socket> toRemove = [];
                 try
                 {
                     foreach (Socket sock in TimingSystemSockets)
@@ -280,11 +292,17 @@ namespace Chronokeep.Timing
                 TimingSystemSockets.RemoveAll(i => toRemove.Contains(i));
                 Log.D("Timing.TimingController", "Loop end.");
             }
-            Log.D("Timing.TimingController", "Mutex Wait 06");
-            if (mut.WaitOne(6000))
+            Log.D("Timing.TimingController", "Lock Wait 06");
+            if (timingLock.TryEnter(6000))
             {
-                Running = false;
-                mut.ReleaseMutex();
+                try
+                {
+                    Running = false;
+                }
+                finally
+                {
+                    timingLock.Exit();
+                }
             }
         }
     }

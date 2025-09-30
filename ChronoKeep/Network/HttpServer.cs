@@ -18,19 +18,19 @@ namespace Chronokeep.Network
         private int _port;
         private IDBInterface database;
         private Event theEvent;
-        private List<TimeResult> finishResults = new List<TimeResult>();
-        private Dictionary<string, TimeResult> finishDictionary = new Dictionary<string, TimeResult>();
-        private Dictionary<string, List<TimeResult>> participantResults = new Dictionary<string, List<TimeResult>>();
+        private readonly List<TimeResult> finishResults = [];
+        private readonly Dictionary<string, TimeResult> finishDictionary = [];
+        private readonly Dictionary<string, List<TimeResult>> participantResults = [];
 
         private byte[] resultsCache = null;
-        private Dictionary<string, byte[]> participantCache = new Dictionary<string, byte[]>();
-        private Dictionary<string, byte[]> emailCache = new Dictionary<string, byte[]>();
+        private readonly Dictionary<string, byte[]> participantCache = [];
+        private readonly Dictionary<string, byte[]> emailCache = [];
 
-        private Dictionary<string, Participant> participantDictionary = new Dictionary<string, Participant>();
-        private HashSet<string> distanceNames = new HashSet<string>();
-        private Dictionary<int, APIObject> apiDictionary = new Dictionary<int, APIObject>();
+        private readonly Dictionary<string, Participant> participantDictionary = [];
+        private readonly HashSet<string> distanceNames = [];
+        private readonly Dictionary<int, APIObject> apiDictionary = [];
 
-        private Mutex info_mutex = new Mutex();
+        private readonly Lock infoLock = new();
 
         private bool keepAlive = true;
 
@@ -57,55 +57,63 @@ namespace Chronokeep.Network
         public void UpdateInformation()
         {
             Log.D("Network.HttpServer", "Updating information for HttpServer.");
-            if (!info_mutex.WaitOne(3000))
+            if (!infoLock.TryEnter(3000))
             {
-                Log.D("Network.HttpServer", "Unable to get mutex.");
+                Log.D("Network.HttpServer", "Unable to get lock.");
                 return;
             }
-            theEvent = database.GetCurrentEvent();
-            finishResults.Clear();
-            finishDictionary.Clear();
-            participantResults.Clear();
-            foreach (TimeResult r in database.GetTimingResults(theEvent.Identifier))
+            try
             {
-                if (!finishDictionary.ContainsKey(r.Bib))
+                theEvent = database.GetCurrentEvent();
+                finishResults.Clear();
+                finishDictionary.Clear();
+                participantResults.Clear();
+                foreach (TimeResult r in database.GetTimingResults(theEvent.Identifier))
                 {
-                    finishDictionary[r.Bib] = r;
+                    if (!finishDictionary.TryGetValue(r.Bib, out TimeResult finRes))
+                    {
+                        finishDictionary[r.Bib] = r;
+                    }
+                    else if (finRes.SystemTime.CompareTo(r.SystemTime) < 0)
+                    {
+                        finishDictionary[r.Bib] = r;
+                    }
+                    if (!participantResults.TryGetValue(r.Bib, out List<TimeResult> pResList))
+                    {
+                        pResList = new List<TimeResult>();
+                        participantResults[r.Bib] = pResList;
+                    }
+
+                    pResList.Add(r);
                 }
-                else if (finishDictionary[r.Bib].SystemTime.CompareTo(r.SystemTime) < 0)
+                distanceNames.Clear();
+                foreach (Distance d in database.GetDistances(theEvent.Identifier))
                 {
-                    finishDictionary[r.Bib] = r;
+                    if (d.LinkedDistance == Constants.Timing.DISTANCE_NO_LINKED_ID)
+                    {
+                        distanceNames.Add(d.Name);
+                    }
                 }
-                if (!participantResults.ContainsKey(r.Bib))
+                finishResults.AddRange(finishDictionary.Values);
+                finishResults.RemoveAll(r => string.IsNullOrEmpty(r.Bib));
+                // clear response caches whenever we update information
+                resultsCache = null;
+                participantCache.Clear();
+                participantDictionary.Clear();
+                foreach (Participant p in database.GetParticipants(theEvent.Identifier))
                 {
-                    participantResults[r.Bib] = new List<TimeResult>();
+                    participantDictionary[p.Identifier.ToString()] = p;
                 }
-                participantResults[r.Bib].Add(r);
+                apiDictionary.Clear();
+                foreach (APIObject api in database.GetAllAPI())
+                {
+                    apiDictionary[api.Identifier] = api;
+                }
             }
-            distanceNames.Clear();
-            foreach (Distance d in database.GetDistances(theEvent.Identifier))
+            finally
             {
-                if (d.LinkedDistance == Constants.Timing.DISTANCE_NO_LINKED_ID)
-                {
-                    distanceNames.Add(d.Name);
-                }
+                infoLock.Exit();
             }
-            finishResults.AddRange(finishDictionary.Values);
-            finishResults.RemoveAll(r => string.IsNullOrEmpty(r.Bib));
-            // clear response caches whenever we update information
-            resultsCache = null;
-            participantCache.Clear();
-            participantDictionary.Clear();
-            foreach (Participant p in database.GetParticipants(theEvent.Identifier))
-            {
-                participantDictionary[p.Identifier.ToString()] = p;
-            }
-            apiDictionary.Clear();
-            foreach (APIObject api in database.GetAllAPI())
-            {
-                apiDictionary[api.Identifier] = api;
-            }
-            info_mutex.ReleaseMutex();
         }
 
         public void Stop()
@@ -155,26 +163,32 @@ namespace Chronokeep.Network
             {
                 answer = true;
                 // Serve up HtmlResultsTemplate
-                if (!info_mutex.WaitOne(3000))
+                if (!infoLock.TryEnter(3000))
                 {
-                    Log.D("Network.HttpServer", "Unable to get mutex for outputting results page.");
+                    Log.D("Network.HttpServer", "Unable to get lock for outputting results page.");
                     message = Encoding.Default.GetBytes("");
                 }
                 else
                 {
-                    if (resultsCache == null)
+                    try
                     {
-                        HtmlResultsTemplate results = new HtmlResultsTemplate(
-                            theEvent,
-                            finishResults,
-                            true
-                            );
-                        resultsCache = Encoding.Default.GetBytes(results.TransformText());
+                        if (resultsCache == null)
+                        {
+                            HtmlResultsTemplate results = new HtmlResultsTemplate(
+                                theEvent,
+                                finishResults,
+                                true
+                                );
+                            resultsCache = Encoding.Default.GetBytes(results.TransformText());
+                        }
+                        message = resultsCache;
+                        context.Response.ContentType = "text/html";
+                        Log.D("Network.HttpServer", "Results html");
                     }
-                    message = resultsCache;
-                    context.Response.ContentType = "text/html";
-                    Log.D("Network.HttpServer", "Results html");
-                    info_mutex.ReleaseMutex();
+                    finally
+                    {
+                        infoLock.Exit();
+                    }
                 }
             }
             else if (filename.StartsWith("css/", StringComparison.OrdinalIgnoreCase) || filename.StartsWith("js/", StringComparison.OrdinalIgnoreCase))
@@ -206,55 +220,60 @@ namespace Chronokeep.Network
             {
                 answer = true;
                 // Serve up HtmlParticipantTemplate
-                if (!info_mutex.WaitOne(3000))
+                if (!infoLock.TryEnter(3000))
                 {
-                    Log.D("Network.HttpServer", string.Format("Unable to get mutex for outputting participant page for bib {0}.", partBib));
+                    Log.D("Network.HttpServer", string.Format("Unable to get lock for outputting participant page for bib {0}.", partBib));
                     message = Encoding.Default.GetBytes("");
                 }
                 else
                 {
-                    if (!participantResults.ContainsKey(partBib))
+                    try
                     {
-                        participantResults[partBib] = new List<TimeResult>();
+                        if (!participantResults.TryGetValue(partBib, out List<TimeResult> resList))
+                        {
+                            resList = new List<TimeResult>();
+                            participantResults[partBib] = resList;
+                        }
+                        if (!participantCache.TryGetValue(partBib, out byte[] partCache))
+                        {
+                            HtmlParticipantTemplate results = new(theEvent, resList);
+                            partCache = Encoding.Default.GetBytes(results.TransformText());
+                            participantCache[partBib] = partCache;
+                        }
+                        message = partCache;
+                        context.Response.ContentType = "text/html";
+                        Log.D("Network.HttpServer", "Participant html");
                     }
-                    if (!participantCache.ContainsKey(partBib))
+                    finally
                     {
-                        HtmlParticipantTemplate results = new HtmlParticipantTemplate(
-                            theEvent,
-                            participantResults[partBib]
-                            );
-                        participantCache[partBib] = Encoding.Default.GetBytes(results.TransformText());
+                        infoLock.Exit();
                     }
-                    message = participantCache[partBib];
-                    context.Response.ContentType = "text/html";
-                    Log.D("Network.HttpServer", "Participant html");
-                    info_mutex.ReleaseMutex();
                 }
             }
             else if (emailBib.Length > 0)
             {
                 answer = true;
                 // Serve up the HtmlCertificateEmailTemplate
-                if (!info_mutex.WaitOne(3000))
+                if (!infoLock.TryEnter(3000))
                 {
-                    Log.D("Network.HttpServer", string.Format("Unable to get mutex for outputting participant page for bib {0}.", partBib));
+                    Log.D("Network.HttpServer", string.Format("Unable to get lock for outputting participant page for bib {0}.", partBib));
                     message = Encoding.Default.GetBytes("");
                 }
                 else
                 {
-                    message = Encoding.Default.GetBytes("");
-                    if (participantResults.ContainsKey(emailBib))
+                    try
                     {
-                        if (finishDictionary.ContainsKey(emailBib) && participantDictionary.ContainsKey(finishDictionary[emailBib].ParticipantId))
+                        message = Encoding.Default.GetBytes("");
+                        if (finishDictionary.TryGetValue(emailBib, out TimeResult finishResult) && participantDictionary.TryGetValue(finishResult.ParticipantId, out Participant finPart))
                         {
                             if (true)//!emailCache.ContainsKey(emailBib))
                             {
-                                HtmlCertificateEmailTemplate email = new HtmlCertificateEmailTemplate(
+                                HtmlCertificateEmailTemplate email = new(
                                     theEvent,
-                                    finishDictionary[emailBib],
-                                    participantDictionary[finishDictionary[emailBib].ParticipantId].Email,
+                                    finishResult,
+                                    finPart.Email,
                                     distanceNames.Count == 1,
-                                    apiDictionary.ContainsKey(theEvent.API_ID) ? apiDictionary[theEvent.API_ID] : null
+                                    apiDictionary.TryGetValue(theEvent.API_ID, out APIObject api) ? api : null
                                     );
                                 emailCache[emailBib] = Encoding.Default.GetBytes(email.TransformText());
                             }
@@ -262,9 +281,12 @@ namespace Chronokeep.Network
                             message = emailCache[emailBib];
                             context.Response.ContentType = "text/html";
                         }
+                        Log.D("Network.HttpServer", "Email html");
                     }
-                    Log.D("Network.HttpServer", "Email html");
-                    info_mutex.ReleaseMutex();
+                    finally
+                    {
+                        infoLock.Exit();
+                    }
                 }
             }
             if (answer)

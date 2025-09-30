@@ -87,7 +87,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring distanceLock. " + e.Message);
-                throw new MutexLockException("distanceLock");
+                throw new ChronoLockException("distanceLock");
             }
         }
 

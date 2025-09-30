@@ -34,7 +34,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
             return output;
         }
@@ -66,7 +66,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
             return output;
         }
@@ -102,7 +102,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
             return output;
         }
@@ -135,7 +135,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
             return output;
         }
@@ -181,7 +181,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
             return output;
         }
@@ -207,7 +207,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
         }
 
@@ -232,7 +232,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
         }
 
@@ -260,7 +260,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
         }
 
@@ -288,7 +288,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
         }
 
@@ -316,7 +316,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
         }
 
@@ -347,7 +347,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring segmentLock. " + e.Message);
-                throw new MutexLockException("segmentLock");
+                throw new ChronoLockException("segmentLock");
             }
         }
     }

@@ -10,28 +10,18 @@ using System.Threading.Tasks;
 
 namespace Chronokeep.Timing.API
 {
-    class APIController
+    class APIController(IMainWindow mainWindow, IDBInterface database)
     {
-        readonly IMainWindow mainWindow;
-        readonly IDBInterface database;
-
-        private static readonly Mutex mut = new Mutex();
-        private static readonly Semaphore waiter = new Semaphore(0, 1);
+        private static readonly Lock apiLock = new();
+        private static readonly Semaphore waiter = new(0, 1);
         private static bool canUpload = true;
         private static bool isUploading = false;
         private static bool running = false;
         private static bool keepAlive = true;
 
-        public int Errors { get; private set; }
+        public int Errors { get; private set; } = 0;
 
         private static readonly int SleepSeconds = 30;
-
-        public APIController(IMainWindow mainWindow, IDBInterface database)
-        {
-            this.database = database;
-            this.mainWindow = mainWindow;
-            this.Errors = 0;
-        }
 
         public static async Task<AddResultsResponse> DeleteResults(APIObject api, string slug, string year, string distance)
         {
@@ -63,8 +53,8 @@ namespace Chronokeep.Timing.API
             )
         {
             DateTime start = DateTime.SpecifyKind(DateTime.Parse(theEvent.Date), DateTimeKind.Local).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
-            Dictionary<string, DateTime> waveStartTimes = new Dictionary<string, DateTime>();
-            HashSet<string> uploadDistances = new();
+            Dictionary<string, DateTime> waveStartTimes = [];
+            HashSet<string> uploadDistances = [];
             foreach (Distance d in database.GetDistances(theEvent.Identifier))
             {
                 waveStartTimes[d.Name] = start.AddSeconds(d.StartOffsetSeconds).AddMilliseconds(d.StartOffsetMilliseconds);
@@ -80,30 +70,35 @@ namespace Chronokeep.Timing.API
                 unique_pad = uniqueID.Value;
             }
             Log.D("API.APIController", "Attempting to upload " + results.Count.ToString() + " results.");
-            if (mut.WaitOne(3000))
+            if (apiLock.TryEnter(3000))
             {
-                if (isUploading)
+                try
                 {
-                    mut.ReleaseMutex();
-                    return;
+                    if (isUploading)
+                    {
+                        return;
+                    }
+                    isUploading = true;
                 }
-                isUploading = true;
-                mut.ReleaseMutex();
+                finally
+                {
+                    apiLock.Exit();
+                }
             }
             else
             {
-                throw new Exception("error grabbing mutex to signal start");
+                throw new Exception("error grabbing lock to signal start");
             }
             int total = 0;
             int loops = results.Count / Constants.Timing.API_LOOP_COUNT;
-            AddResultsResponse response = null;
+            AddResultsResponse response;
             bool loop_error = false;
             for (int i = 0; i < loops; i += 1)
             {
                 Log.D("API.APIController", string.Format("Loop {0}", i));
                 // Change TimeResults to APIResults - breaking this up into chunks so we can
                 // properly update them with the UPLOADED field
-                List<APIResult> upRes = new List<APIResult>();
+                List<APIResult> upRes = [];
                 List<TimeResult> uploaded = results.GetRange(i * Constants.Timing.API_LOOP_COUNT, Constants.Timing.API_LOOP_COUNT);
                 foreach (TimeResult tr in uploaded)
                 {
@@ -114,13 +109,13 @@ namespace Chronokeep.Timing.API
                     // list of distances we want to upload
                     if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA != theEvent.EventType && (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName)))
                     {
-                        upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
+                        upRes.Add(new(theEvent, tr, trStart, unique_pad));
                     }
                     // Make sure that DNF entries are not uploaded when timing Backyard Ultra since multiples are generated and
                     // that info isn't useful to others
                     else if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType && Constants.Timing.TIMERESULT_STATUS_DNF != tr.Status)
                     {
-                        upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
+                        upRes.Add(new(theEvent, tr, trStart, unique_pad));
                     }
                 }
                 try
@@ -160,7 +155,7 @@ namespace Chronokeep.Timing.API
             {
                 response = null;
                 // Change TimeResults to APIResults
-                List<APIResult> upRes = new List<APIResult>();
+                List<APIResult> upRes = [];
                 List<TimeResult> uploaded = results.GetRange(loops * Constants.Timing.API_LOOP_COUNT, leftovers);
                 foreach (TimeResult tr in uploaded)
                 {
@@ -171,13 +166,13 @@ namespace Chronokeep.Timing.API
                     // list of distances we want to upload
                     if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA != theEvent.EventType && (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName)))
                     {
-                        upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
+                        upRes.Add(new(theEvent, tr, trStart, unique_pad));
                     }
                     // Make sure that DNF entries are not uploaded when timing Backyard Ultra since multiples are generated and
                     // that info isn't useful to others
                     else if (Constants.Timing.EVENT_TYPE_BACKYARD_ULTRA == theEvent.EventType && Constants.Timing.TIMERESULT_STATUS_DNF != tr.Status)
                     {
-                        upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
+                        upRes.Add(new(theEvent, tr, trStart, unique_pad));
                     }
                 }
                 try
@@ -215,23 +210,35 @@ namespace Chronokeep.Timing.API
             {
                 controller.Errors = 0;
             }
-            if (mut.WaitOne(3000))
+            if (apiLock.TryEnter(3000))
             {
-                isUploading = false;
-                mut.ReleaseMutex();
+                try
+                {
+                    isUploading = false;
+                }
+                finally
+                {
+                    apiLock.Exit();
+                }
             }
             else
             {
-                throw new Exception("error grabbing mutex to signal completion");
+                throw new Exception("error grabbing lock to signal completion");
             }
         }
 
         public static bool SetUploadableTrue(int millisecondsTimeout)
         {
-            if (mut.WaitOne(millisecondsTimeout))
+            if (apiLock.TryEnter(millisecondsTimeout))
             {
-                canUpload = true;
-                mut.ReleaseMutex();
+                try
+                {
+                    canUpload = true;
+                }
+                finally
+                {
+                    apiLock.Exit();
+                }
                 return true;
             }
             return false;
@@ -239,10 +246,16 @@ namespace Chronokeep.Timing.API
 
         public static bool SetUploadableFalse(int millisecondsTimeout)
         {
-            if (mut.WaitOne(millisecondsTimeout))
+            if (apiLock.TryEnter(millisecondsTimeout))
             {
-                canUpload = false;
-                mut.ReleaseMutex();
+                try
+                {
+                    canUpload = false;
+                }
+                finally
+                {
+                    apiLock.Exit();
+                }
                 return true;
             }
             return false;
@@ -251,10 +264,16 @@ namespace Chronokeep.Timing.API
         public static bool GetUploadable(int millisecondsTimeout)
         {
             bool output = false;
-            if (mut.WaitOne(millisecondsTimeout))
+            if (apiLock.TryEnter(millisecondsTimeout))
             {
-                output = canUpload;
-                mut.ReleaseMutex();
+                try
+                {
+                    output = canUpload;
+                }
+                finally
+                {
+                    apiLock.Exit();
+                }
             }
             return output;
         }
@@ -262,10 +281,16 @@ namespace Chronokeep.Timing.API
         public static bool IsUploading()
         {
             bool output = true;
-            if (mut.WaitOne(3000))
+            if (apiLock.TryEnter(3000))
             {
-                output = isUploading;
-                mut.ReleaseMutex();
+                try
+                {
+                    output = isUploading;
+                }
+                finally
+                {
+                    apiLock.Exit();
+                }
             }
             return output;
         }
@@ -273,43 +298,60 @@ namespace Chronokeep.Timing.API
         public static bool IsRunning()
         {
             bool output = false;
-            if (mut.WaitOne(6000))
+            if (apiLock.TryEnter(6000))
             {
-                output = running;
-                mut.ReleaseMutex();
+                try
+                {
+                    output = running;
+                }
+                finally
+                {
+                    apiLock.Exit();
+                }
             }
             return output;
         }
 
-        public void Shutdown()
+        public static void Shutdown()
         {
-            if (mut.WaitOne(6000))
+            if (apiLock.TryEnter(6000))
             {
-                Log.D("API.APIController", "Shutting down API Auto Upload.");
-                keepAlive = false;
-                waiter.Release();
-                mut.ReleaseMutex();
+                try
+                {
+                    Log.D("API.APIController", "Shutting down API Auto Upload.");
+                    keepAlive = false;
+                    waiter.Release();
+                }
+                finally
+                {
+                    apiLock.Exit();
+                }
             }
         }
 
         public async void Run()
         {
             Log.D("API.APIController", "API Controller is now running.");
-            if (mut.WaitOne(6000))
+            if (apiLock.TryEnter(6000))
             {
-                if (running)
+                try
                 {
-                    Log.D("API.APIController", "API Controller thread is already running.");
-                    mut.ReleaseMutex();
-                    return;
+                    if (running)
+                    {
+                        Log.D("API.APIController", "API Controller thread is already running.");
+                        return;
+                    }
+                    running = true;
+                    keepAlive = true;
                 }
-                running = true;
-                keepAlive = true;
-                mut.ReleaseMutex();
+                finally
+                {
+                    apiLock.Exit();
+                }
             }
             else
             {
-                Log.D("API.APIController", "Unable to acquire mutex.");
+                Log.D("API.APIController", "Unable to acquire lock.");
                 return;
             }
             mainWindow.UpdateTiming();
@@ -359,19 +401,25 @@ namespace Chronokeep.Timing.API
                     && x.SegmentId != Constants.Timing.SEGMENT_START);
                 Log.D("API.APIController", "Results count: " + results.Count.ToString());
                 bool upload = false;
-                if (mut.WaitOne(3000))
+                if (apiLock.TryEnter(3000))
                 {
-                    upload = canUpload;
-                    mut.ReleaseMutex();
+                    try
+                    {
+                        upload = canUpload;
+                    }
+                    finally
+                    {
+                        apiLock.Exit();
+                    }
                 }
                 //Log.D("Timing.API.APIController", "We are " + (!upload ? "not " : "") + "able to upload right now.");
                 if (results.Count > 0 && upload)
                 {
                     // Change TimeResults to APIResults
-                    List<APIResult> upRes = new List<APIResult>();
+                    List<APIResult> upRes = [];
                     DateTime start = DateTime.SpecifyKind(DateTime.Parse(theEvent.Date), DateTimeKind.Local).AddSeconds(theEvent.StartSeconds).AddMilliseconds(theEvent.StartMilliseconds);
-                    Dictionary<string, DateTime> waveStartTimes = new();
-                    HashSet<string> uploadDistances = new();
+                    Dictionary<string, DateTime> waveStartTimes = [];
+                    HashSet<string> uploadDistances = [];
                     foreach (Distance d in database.GetDistances(theEvent.Identifier))
                     {
                         waveStartTimes[d.Name] = start.AddSeconds(d.StartOffsetSeconds).AddMilliseconds(d.StartOffsetMilliseconds);
@@ -395,7 +443,7 @@ namespace Chronokeep.Timing.API
                         // list of distances we want to upload
                         if (!theEvent.UploadSpecific || uploadDistances.Contains(tr.DistanceName))
                         {
-                            upRes.Add(new APIResult(theEvent, tr, trStart, unique_pad));
+                            upRes.Add(new(theEvent, tr, trStart, unique_pad));
                         }
                     }
                     await UploadResults(results, api, event_ids, database, this, mainWindow, theEvent);
@@ -432,22 +480,27 @@ namespace Chronokeep.Timing.API
                 }
                 waiter.WaitOne(sleepFor * 1000);
                 // Check if we're supposed to exit the loop
-                if (mut.WaitOne(6000))
+                if (apiLock.TryEnter(6000))
                 {
-                    Log.D("API.APIController", "Checking keep alive status.");
-                    if (!keepAlive)
+                    try
                     {
-                        Log.D("API.APIController", "Exiting API thread.");
-                        running = false;
-                        mut.ReleaseMutex();
-                        mainWindow.UpdateTiming();
-                        return;
+                        Log.D("API.APIController", "Checking keep alive status.");
+                        if (!keepAlive)
+                        {
+                            Log.D("API.APIController", "Exiting API thread.");
+                            running = false;
+                            mainWindow.UpdateTiming();
+                            return;
+                        }
                     }
-                    mut.ReleaseMutex();
+                    finally
+                    {
+                        apiLock.Exit();
+                    }
                 }
                 else
                 {
-                    Log.D("API.APIController", "Error with API mutex.");
+                    Log.D("API.APIController", "Error with API lock.");
                     keepAlive = false;
                     running = false;
                     mainWindow.UpdateTiming();

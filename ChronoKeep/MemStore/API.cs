@@ -32,7 +32,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
-                throw new MutexLockException("apiLock");
+                throw new ChronoLockException("apiLock");
             }
         }
 
@@ -57,7 +57,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
-                throw new MutexLockException("apiLock");
+                throw new ChronoLockException("apiLock");
             }
             return output;
         }
@@ -86,7 +86,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
-                throw new MutexLockException("apiLock");
+                throw new ChronoLockException("apiLock");
             }
             return output;
         }
@@ -112,7 +112,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
-                throw new MutexLockException("apiLock");
+                throw new ChronoLockException("apiLock");
             }
         }
 
@@ -148,7 +148,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring apiLock. " + e.Message);
-                throw new MutexLockException("apiLock");
+                throw new ChronoLockException("apiLock");
             }
         }
     }

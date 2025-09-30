@@ -9,7 +9,7 @@ namespace Chronokeep.MemStore
 {
     internal partial class MemStore : IDBInterface
     {
-        internal class MutexLockException(string message) : Exception(message) {}
+        internal class ChronoLockException(string message) : Exception(message) {}
 
         internal class InvalidEventID(string message) : Exception(message) {}
 
@@ -246,7 +246,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new MutexLockException("memStoreLock");
+                throw new ChronoLockException("memStoreLock");
             }
         }
 
@@ -332,7 +332,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new MutexLockException("memStoreLock");
+                throw new ChronoLockException("memStoreLock");
             }
         }
 
@@ -357,7 +357,7 @@ namespace Chronokeep.MemStore
             catch (Exception e)
             {
                 Log.D("MemStore", "Exception acquiring memStoreLock. " + e.Message);
-                throw new MutexLockException("memStoreLock");
+                throw new ChronoLockException("memStoreLock");
             }
         }
     }

@@ -34,11 +34,11 @@ namespace Chronokeep.UI
     {
         IDBInterface database;
         IMainPage page;
-        string dbName = "Chronokeep.sqlite";
+        readonly string dbName = "Chronokeep.sqlite";
 
         // Network objects
         HttpServer httpServer = null;
-        int httpServerPort = 6933;
+        readonly int httpServerPort = 6933;
 
         // Zero Conf/Registration objects.
         Thread ZConfThread = null;
@@ -63,14 +63,14 @@ namespace Chronokeep.UI
         // Announcer objects
         AnnouncerWindow announcerWindow = null;
 
-        List<Window> openWindows = new List<Window>();
+        readonly List<Window> openWindows = [];
 
         // Setting to allow the user to enter a mode where we can record DNS chips.
         private bool didNotStartMode = false;
-        private Mutex dnsMutex = new Mutex();
+        private readonly Lock dnsMutex = new();
 
         // Setup a timer for updating the view
-        DispatcherTimer TimingUpdater = new DispatcherTimer();
+        readonly DispatcherTimer TimingUpdater = new();
 
         // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
         // Allow for a debug version and non-debug version to run at the same time.
@@ -543,10 +543,7 @@ namespace Chronokeep.UI
             try
             {
                 Log.D("UI.MainWindow", "Stopping Remote Controller");
-                if (RemoteController != null)
-                {
-                    RemoteController.Shutdown();
-                }
+                RemoteController?.Shutdown();
                 RemoteController = null;
             }
             catch
@@ -994,10 +991,16 @@ namespace Chronokeep.UI
         public bool InDidNotStartMode()
         {
             bool output = false;
-            if (dnsMutex.WaitOne(3000))
+            if (dnsMutex.TryEnter(3000))
             {
-                output = didNotStartMode;
-                dnsMutex.ReleaseMutex();
+                try
+                {
+                    output = didNotStartMode;
+                }
+                finally
+                {
+                    dnsMutex.Exit();
+                }
             }
             else
             {
@@ -1042,22 +1045,34 @@ namespace Chronokeep.UI
 
         public bool StartDidNotStartMode()
         {
-            if (dnsMutex.WaitOne(3000))
+            if (dnsMutex.TryEnter(3000))
             {
-                didNotStartMode = true;
-                dnsMutex.ReleaseMutex();
-                return true;
+                try
+                {
+                    didNotStartMode = true;
+                    return true;
+                }
+                finally
+                {
+                    dnsMutex.Exit();
+                }
             }
             return false;
         }
 
         public bool StopDidNotStartMode()
         {
-            if (dnsMutex.WaitOne(3000))
+            if (dnsMutex.TryEnter(3000))
             {
-                didNotStartMode = false;
-                dnsMutex.ReleaseMutex();
-                return true;
+                try
+                {
+                    didNotStartMode = false;
+                    return true;
+                }
+                finally
+                {
+                    dnsMutex.Exit();
+                }
             }
             return false;
         }

@@ -943,7 +943,7 @@ namespace Chronokeep.UI.MainPages
                 catch { }
                 // Get the event id values. Exit if not valid.
                 string[] event_ids = theEvent.API_Event_ID.Split(',');
-                // Create a bool for checking if we've grabbed the APIController's mutex so we release it later
+                // Create a bool for checking if we've grabbed the APIController's lock so we release it later
                 if (event_ids.Length == 2)
                 {
                     try
