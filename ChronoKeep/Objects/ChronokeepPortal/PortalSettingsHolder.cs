@@ -41,7 +41,7 @@ namespace Chronokeep.Objects.ChronokeepPortal
         public PortalStatus AutoUpload { get; set; } = PortalStatus.NOTSET;
         public VoiceType Voice { get; set; }
         public ReaderAntennas Antennas { get; set; }
-        public HashSet<ChangeType> Changes { get; set; } = new HashSet<ChangeType>();
+        public HashSet<ChangeType> Changes { get; set; } = [];
         public string PortalVersion { get; set; }
         public int UploadInterval { get; set; }
         public string NtfyURL { get; set; }

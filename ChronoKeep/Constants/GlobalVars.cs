@@ -21,9 +21,9 @@ namespace Chronokeep.Constants
         public static readonly HashSet<string> BannedEmails = [];
 
         [GeneratedRegex("^(?:\\+?1)?\\s*\\-?\\s*(?:\\d{3}|\\(\\d{3}\\))\\s*\\-?\\s*\\d{3}\\s*\\-?\\s*\\d{4}$")]
-        private static partial Regex PhoneRegex();
+        private static partial Regex Phone();
         [GeneratedRegex("\\s+")]
-        private static partial Regex Whitespace();
+        private static partial Regex WhiteSpace();
 
         public static async void UpdateBannedPhones()
         {
@@ -115,9 +115,9 @@ namespace Chronokeep.Constants
         public static string GetValidPhone(string phone)
         {
             string output = "";
-            if (PhoneRegex().Match(phone).Success)
+            if (Phone().Match(phone).Success)
             {
-                string tmp = Whitespace().Replace(phone.Replace("-", "").Replace(")", "").Replace("(", ""), "");
+                string tmp = WhiteSpace().Replace(phone.Replace("-", "").Replace(")", "").Replace("(", ""), "");
                 if (tmp.Length == 10)
                 {
                     output = string.Format("+1{0}", tmp);

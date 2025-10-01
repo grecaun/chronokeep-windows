@@ -17,11 +17,11 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class ManualEntryWindow : FluentWindow
     {
-        readonly IMainWindow window;
-        readonly IDBInterface database;
-        readonly Event theEvent;
+        private readonly IMainWindow window;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
 
-        readonly HashSet<string> bibsAdded = new HashSet<string>();
+        private readonly HashSet<string> bibsAdded = [];
 
         private readonly bool dnf = false;
 

@@ -7,8 +7,11 @@ using System.Text.RegularExpressions;
 
 namespace Chronokeep.Database.SQLite
 {
-    class Update
+    partial class Update
     {
+        [GeneratedRegex("[/+=]")]
+        private static partial Regex Guid();
+
         internal static void UpdateClient(int dbVersion, int maxVersion)
         {
             throw new InvalidDatabaseVersion(dbVersion, maxVersion);
@@ -212,7 +215,7 @@ namespace Chronokeep.Database.SQLite
                                 "participant_country, participant_street2, participant_gender, emergencycontact_name, emergencycontact_phone FROM old_participants," +
                                 "emergencycontacts WHERE old_participants.emergencycontact_id=emergencycontacts.emergencycontact_id;" +
                             "INSERT INTO eventspecific SELECT * FROM older_eventspecific;" +
-                            "UPDATE settings SET version=13, identifier='" + Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", "") + "' WHERE version=12;";
+                            "UPDATE settings SET version=13, identifier='" + Guid().Replace(Convert.ToBase64String(System.Guid.NewGuid().ToByteArray()), "") + "' WHERE version=12;";
                         command.ExecuteNonQuery();
                         goto case 13;
                     case 13:

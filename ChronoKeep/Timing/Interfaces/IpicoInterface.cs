@@ -27,7 +27,7 @@ namespace Chronokeep.Timing.Interfaces
 
         // private static readonly Regex voltage/connected/chipread/settinginfo/settingconfirmation/time/status/msg
         [GeneratedRegex(@"aa[0-9a-fA-F]{34,36}")]
-        private static partial Regex Chipread();
+        private static partial Regex ChipRead();
         [GeneratedRegex(@"date\.\w{3} \w{3} {1,2}\d{1,2} \d{2}:\d{2}:\d{2} \w{3} \d{4} *")]
         private static partial Regex Time();
         [GeneratedRegex(@"^[^\n]+\n")]
@@ -138,7 +138,7 @@ namespace Chronokeep.Timing.Interfaces
                 Log.D("Timing.Interfaces.IpicoInterface", "IpicoInterface -- message is : " + message);
                 // a chipread is as follows: (note that milliseconds don't appear to be an actual millisecond but a hundredth of a second)
                 // aa[ReaderId{2}][TagID{12}(Starts with 058)][ICount?{2}][QCount{2}][Date{yyMMdd}][Time{HHmmss}][Milliseconds{2}(Hex)][Checksum{2}][FS|LS]
-                if (Chipread().IsMatch(message))
+                if (ChipRead().IsMatch(message))
                 {
                     // Only add the chip if it isn't in the ignored list.
                     string chip = message.Substring(4, 12).Trim();

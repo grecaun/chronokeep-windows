@@ -17,13 +17,13 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class EditRawReadsWindow : FluentWindow
     {
-        ITimingPage parent;
-        IDBInterface database;
-        Event theEvent;
-        List<ChipRead> chipReads;
+        private readonly ITimingPage parent;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
+        private readonly List<ChipRead> chipReads;
 
-        private const string allowedChars = "[^0-9]";
-        private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
+        [GeneratedRegex("[^0-9]")]
+        private static partial Regex AllowedChars();
 
         public EditRawReadsWindow(ITimingPage parent, IDBInterface database, List<ChipRead> chipReads)
         {
@@ -43,8 +43,8 @@ namespace Chronokeep.UI.Timing
         {
             Log.D("UI.Timing.EditRawReadsWindow", "Submit clicked.");
             // Keep track of any bibs/chips we've changed.
-            HashSet<string> bibsChanged = new HashSet<string>();
-            HashSet<string> chipsChanged = new HashSet<string>();
+            HashSet<string> bibsChanged = [];
+            HashSet<string> chipsChanged = [];
             bool add = AddRadio.IsChecked == true;
             string[] firstparts = TimeBox.Text.Replace('_', '0').Split(':');
             string[] secondparts = firstparts[2].Split('.');
@@ -116,7 +116,7 @@ namespace Chronokeep.UI.Timing
 
         private void DaysBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = Regex.IsMatch(e.Text, allowedChars);
+            e.Handled = AllowedChars().IsMatch(e.Text);
         }
     }
 }

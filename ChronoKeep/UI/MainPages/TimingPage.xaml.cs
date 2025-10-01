@@ -49,11 +49,11 @@ namespace Chronokeep.UI.MainPages
 
         private CancellationTokenSource cts;
 
-        private Event theEvent;
-        readonly List<TimingLocation> locations;
+        private readonly Event theEvent;
+        private readonly List<TimingLocation> locations;
 
         private DateTime startTime;
-        readonly DispatcherTimer Timer = new();
+        private readonly DispatcherTimer Timer = new();
         private bool TimerStarted = false;
         private SetTimeWindow timeWindow = null;
         private RewindWindow rewindWindow = null;
@@ -61,19 +61,22 @@ namespace Chronokeep.UI.MainPages
         private static bool alreadyRecalculating = false;
         private static readonly int uploadTimer = 1000;
 
-        readonly ObservableCollection<DistanceStat> stats = [];
+        private readonly ObservableCollection<DistanceStat> stats = [];
 
-        int total = 0, known = 0;
+        private int total = 0, known = 0;
 
         private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
         private readonly int[] baseIP = { 0, 0, 0, 0 };
 
         private readonly bool remote_api = false;
 
-        readonly Dictionary<int, (long seconds, int milliseconds)> waveTimes = [];
-        HashSet<int> waves = [];
-        int selectedWave = -1;
-        List<TimeRelativeWave> relativeToWaveList = [];
+        private readonly Dictionary<int, (long seconds, int milliseconds)> waveTimes = [];
+        private readonly HashSet<int> waves = [];
+        private int selectedWave = -1;
+        private readonly List<TimeRelativeWave> relativeToWaveList = [];
+
+        [GeneratedRegex(@"[^a-z0-9\-]")]
+        private static partial Regex FileSaveRegex();
 
         public TimingPage(IMainWindow window, IDBInterface database)
         {
@@ -383,7 +386,6 @@ namespace Chronokeep.UI.MainPages
         public void UpdateView()
         {
             Log.D("UI.MainPages.TimingPage", "Updating timing information.");
-            theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier == -1)
             {
                 // Something went wrong and this shouldn't be visible.
@@ -1414,8 +1416,9 @@ namespace Chronokeep.UI.MainPages
                         }
                         CSVExporter exporter = new(format.ToString());
                         exporter.SetData(headers, data);
-                        Log.D("UI.MainPages.TimingPage", "Saving file to: " + Path.GetDirectoryName(saveFileDialog.FileName) + "\\" + Regex.Replace(key.ToLower(), @"[^a-z0-9\-]", "") + "-" + Path.GetFileName(saveFileDialog.FileName));
-                        exporter.ExportData(Path.GetDirectoryName(saveFileDialog.FileName) + "\\" + Regex.Replace(key.ToLower(), @"[^a-z0-9\-]", "") + "-" + Path.GetFileName(saveFileDialog.FileName));
+                        string outFileName = string.Format("{0}\\{1}-{2}", Path.GetDirectoryName(saveFileDialog.FileName), FileSaveRegex().Replace(key.ToLower(), ""), Path.GetFileName(saveFileDialog.FileName));
+                        Log.D("UI.MainPages.TimingPage", string.Format("Saving file to: {0}", outFileName));
+                        exporter.ExportData(outFileName);
                     }
                 }
                 DialogBox.Show("File saved.");

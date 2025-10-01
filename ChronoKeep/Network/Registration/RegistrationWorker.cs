@@ -27,7 +27,7 @@ namespace Chronokeep.Network.Registration
         private readonly Dictionary<string, Distance> distanceDictionary = [];
 
         [GeneratedRegex(@"^[^\n]*\n")]
-        private static partial Regex msgRegex();
+        private static partial Regex Msg();
 
         public bool IsRunning()
         {
@@ -168,7 +168,7 @@ namespace Chronokeep.Network.Registration
                                 StringBuilder buffer = bufferDictionary[sock];
                                 buffer.Append(msg);
                                 Log.D("Network.Registration.RegistrationWorker", string.Format("Message received: {0}", msg.Trim()));
-                                Match m = msgRegex().Match(buffer.ToString());
+                                Match m = Msg().Match(buffer.ToString());
                                 while (m.Success)
                                 {
                                     buffer.Remove(m.Index, m.Length);
@@ -434,7 +434,7 @@ namespace Chronokeep.Network.Registration
                                     {
                                         Log.E("Network.Registration.RegistrationWorker", string.Format("Error deserializing json. {0}", e.Message));
                                     }
-                                    m = msgRegex().Match(buffer.ToString());
+                                    m = Msg().Match(buffer.ToString());
                                 }
                                 bufferDictionary[sock] = buffer;
                             }

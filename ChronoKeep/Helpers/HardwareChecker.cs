@@ -103,7 +103,7 @@ namespace Chronokeep.Helpers
                                 "No",
                                 () =>
                                 {
-                                    string randomMod = Constants.Settings.AlphaNumRegex().Replace(Guid.NewGuid().ToString("N"), "").ToUpper()[0..3];
+                                    string randomMod = Constants.Settings.AlphaNum().Replace(Guid.NewGuid().ToString("N"), "").ToUpper()[0..3];
                                     database.SetAppSetting(Constants.Settings.PROGRAM_UNIQUE_MODIFIER, randomMod);
                                 }
                                 );

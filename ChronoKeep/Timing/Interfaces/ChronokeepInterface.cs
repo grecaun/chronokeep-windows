@@ -37,7 +37,7 @@ namespace Chronokeep.Timing.Interfaces
         private string reader_name = "";
 
         [GeneratedRegex(@"^\[(?'PORTAL_NAME'[^|]*)\|(?'PORTAL_ID'[^|]*)\|(?'PORTAL_PORT'\d{1,5})\]")]
-        private static partial Regex Zeroconf();
+        private static partial Regex ZeroConf();
         [GeneratedRegex(@"^[^\n]*\n")]
         private static partial Regex Msg();
 
@@ -65,7 +65,7 @@ namespace Chronokeep.Timing.Interfaces
                     client.Client.ReceiveTimeout = Constants.Readers.TIMEOUT;
                     byte[] data = client.Receive(ref endPoint);
                     string response = Encoding.Default.GetString(data);
-                    Match match = Zeroconf().Match(response);
+                    Match match = ZeroConf().Match(response);
                     if (match.Success)
                     {
                         Log.D("Timing.Interfaces.ChronokeepInterface", "Successfully received message from reader. Name is "

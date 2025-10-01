@@ -13,13 +13,13 @@ namespace Chronokeep.IO
         public string[] Headers { get; private set; }
         public List<string[]> Data { get; private set; }
         [GeneratedRegex("[^\\\\]*\\.")]
-        private static partial Regex DataRegex();
+        private static partial Regex Data();
 
 
         public ImportData(string[] headers, string filename, FileType type)
         {
             Type = type;
-            FileName = DataRegex().Match(filename).Value.TrimEnd('.');
+            FileName = Data().Match(filename).Value.TrimEnd('.');
             Log.D("IO.ImportData", FileName + " is the filename.");
             string[] newheaders = new string[headers.Length + 1];
             Array.Copy(headers, 0, newheaders, 1, headers.Length);

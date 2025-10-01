@@ -16,9 +16,9 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class AlarmsPage : ISubPage
     {
-        IDBInterface database;
-        TimingPage parent;
-        Event theEvent;
+        private readonly IDBInterface database;
+        private readonly TimingPage parent;
+        private readonly Event theEvent;
 
         public AlarmsPage(TimingPage parent, IDBInterface database)
         {
@@ -143,8 +143,8 @@ namespace Chronokeep.UI.Timing
         private bool AlarmErrors(bool silent = false)
         {
             // Verify there are no repeating bibs/chips.
-            HashSet<string> bibs = new HashSet<string>();
-            HashSet<string> chips = new HashSet<string>();
+            HashSet<string> bibs = [];
+            HashSet<string> chips = [];
             bool notSetExists = false;
             foreach (AnAlarmItem alarm in AlarmsBox.Items)
             {
@@ -192,13 +192,13 @@ namespace Chronokeep.UI.Timing
             return false;
         }
 
-        private void addButton_Click(object sender, RoutedEventArgs e)
+        private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AlarmsPage", "Add button clicked.");
-            AlarmsBox.Items.Add(new AnAlarmItem(this, new Alarm(-1, "", "", true, 0)));
+            AlarmsBox.Items.Add(new AnAlarmItem(this, new(-1, "", "", true, 0)));
         }
 
-        private void saveButton_Click(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             Log.D("UI.Timing.AlarmsPage", "Save button clicked.");
             if (AlarmErrors())
@@ -226,7 +226,7 @@ namespace Chronokeep.UI.Timing
             {
                 this.page = page;
                 this.theAlarm = alarm;
-                Grid theGrid = new Grid()
+                Grid theGrid = new()
                 {
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
@@ -234,12 +234,12 @@ namespace Chronokeep.UI.Timing
                 this.Content = theGrid;
                 this.IsTabStop = false;
 
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(100) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(120) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(175) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(55) });
-                theGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(45) });
-                BibBox = new TextBox()
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(100) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(120) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(175) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(55) });
+                theGrid.ColumnDefinitions.Add(new() { Width = new GridLength(45) });
+                BibBox = new()
                 {
                     Text = alarm.Bib,
                     FontSize = 16,
@@ -249,7 +249,7 @@ namespace Chronokeep.UI.Timing
                 BibBox.GotFocus += new RoutedEventHandler(SelectAll);
                 theGrid.Children.Add(BibBox);
                 Grid.SetColumn(BibBox, 0);
-                ChipBox = new TextBox()
+                ChipBox = new()
                 {
                     Text = alarm.Chip,
                     FontSize = 16,
@@ -259,7 +259,7 @@ namespace Chronokeep.UI.Timing
                 ChipBox.GotFocus += new RoutedEventHandler(SelectAll);
                 theGrid.Children.Add(ChipBox);
                 Grid.SetColumn(ChipBox, 1);
-                AlarmSoundBox = new ComboBox()
+                AlarmSoundBox = new()
                 {
                     FontSize = 16,
                     Margin = new Thickness(2),
@@ -353,7 +353,7 @@ namespace Chronokeep.UI.Timing
                 theGrid.Children.Add(AlarmSoundBox);
                 Grid.SetColumn(AlarmSoundBox, 2);
                 Log.D("UI.Timing.AlarmsPage.AnAlarmItem", "Alarm enabled set to: " + alarm.Enabled.ToString());
-                EnabledBox = new Wpf.Ui.Controls.ToggleSwitch()
+                EnabledBox = new()
                 {
                     IsChecked = alarm.Enabled,
                     Margin = new Thickness(2),
@@ -362,7 +362,7 @@ namespace Chronokeep.UI.Timing
                 };
                 theGrid.Children.Add(EnabledBox);
                 Grid.SetColumn(EnabledBox, 3);
-                RemoveButton = new Wpf.Ui.Controls.Button()
+                RemoveButton = new()
                 {
                     Content = "X",
                     FontSize = 16,

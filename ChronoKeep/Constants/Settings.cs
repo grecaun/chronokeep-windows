@@ -66,7 +66,7 @@ namespace Chronokeep.Constants
         public const string DEFAULT_ALARM     = "1";
 
         [GeneratedRegex("[^a-zA-Z0-9]")]
-        public static partial Regex AlphaNumRegex();
+        public static partial Regex AlphaNum();
 
         public static void SetupSettings(IDBInterface database)
         {
@@ -146,7 +146,7 @@ namespace Chronokeep.Constants
             // Settings 5
             if (database.GetAppSetting(PROGRAM_UNIQUE_MODIFIER) == null)
             {
-                string randomMod = AlphaNumRegex().Replace(Guid.NewGuid().ToString("N"), "").ToUpper()[0..3];
+                string randomMod = AlphaNum().Replace(Guid.NewGuid().ToString("N"), "").ToUpper()[0..3];
                 database.SetAppSetting(PROGRAM_UNIQUE_MODIFIER, randomMod);
             }
             // Twilio

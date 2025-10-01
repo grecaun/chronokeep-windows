@@ -42,8 +42,8 @@
             >
         </ListBox>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2">
-            <Button Width="150" Name="addButton" Content="Add Alarm" Click="addButton_Click" Height="35" Margin="0,0,10,0"/>
-            <Button Width="150" Name="saveButton" Content="Save" Click="saveButton_Click"  Height="35" Margin="10,0,10,0"/>
+            <Button Width="150" Name="addButton" Content="Add Alarm" Click="AddButton_Click" Height="35" Margin="0,0,10,0"/>
+            <Button Width="150" Name="saveButton" Content="Save" Click="SaveButton_Click"  Height="35" Margin="10,0,10,0"/>
             <Button Width="150" Name="doneButton" Content="Done" Click="DoneButton_Click" Height="35" Margin="10,0,0,0"/>
         </StackPanel>
     </Grid>
