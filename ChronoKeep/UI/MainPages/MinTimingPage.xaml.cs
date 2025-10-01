@@ -1,6 +1,7 @@
 ﻿using Chronokeep.Constants;
+using Chronokeep.Database;
 using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.Timing;
 using Chronokeep.UI.UIObjects;
@@ -20,8 +21,8 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class MinTimingPage : IMainPage, ITimingPage
     {
-        private IMainWindow mWindow;
-        private IDBInterface database;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
         private TimingRawReadsPage subPage;
 
         private Event theEvent;
@@ -33,7 +34,7 @@ namespace Chronokeep.UI.MainPages
         int total = 4, connected = 0;
 
         private const string ipformat = "{0:D}.{1:D}.{2:D}.{3:D}";
-        private int[] baseIP = { 0, 0, 0, 0 };
+        private readonly int[] baseIP = { 0, 0, 0, 0 };
 
         public MinTimingPage(IMainWindow window, IDBInterface database)
         {
@@ -124,7 +125,7 @@ namespace Chronokeep.UI.MainPages
             connected = 0;
             foreach (TimingSystem sys in systems)
             {
-                ReadersBox.Items.Add(new(this, sys, locations));
+                ReadersBox.Items.Add(new MinReaderBox(this, sys, locations));
                 if (sys.Status == SYSTEM_STATUS.CONNECTED || sys.Status == SYSTEM_STATUS.WORKING)
                 {
                     connected++;

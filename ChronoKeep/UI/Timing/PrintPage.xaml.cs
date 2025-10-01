@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.IO.HtmlTemplates.Printables;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
@@ -20,9 +21,9 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class PrintPage : ISubPage
     {
-        TimingPage parent;
-        IDBInterface database;
-        Event theEvent;
+        private readonly TimingPage parent;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
 
         public PrintPage(TimingPage parent, IDBInterface database)
         {

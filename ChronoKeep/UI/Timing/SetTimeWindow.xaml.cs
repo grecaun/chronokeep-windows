@@ -1,4 +1,4 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System;
 using System.Windows;
@@ -11,8 +11,8 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class SetTimeWindow : FluentWindow
     {
-        ITimingPage parent;
-        TimingSystem timingSystem;
+        private readonly ITimingPage parent;
+        private readonly TimingSystem timingSystem;
 
         public SetTimeWindow(ITimingPage parent, TimingSystem timingSystem)
         {

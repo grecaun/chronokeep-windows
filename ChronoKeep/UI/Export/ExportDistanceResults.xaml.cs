@@ -1,5 +1,7 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.IO;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.IO;
@@ -27,15 +29,15 @@ namespace Chronokeep.UI.Export
     /// </summary>
     public partial class ExportDistanceResults : FluentWindow
     {
-        readonly IMainWindow window;
-        readonly IDBInterface database;
-        readonly Event theEvent;
+        private readonly IMainWindow window;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
 
-        readonly OutputType type;
+        private readonly OutputType type;
 
         private readonly bool noOpen;
 
-        readonly Dictionary<string, Distance> distanceDictionary;
+        private readonly Dictionary<string, Distance> distanceDictionary;
 
         public ExportDistanceResults(IMainWindow window, IDBInterface database, OutputType type = OutputType.Boston)
         {

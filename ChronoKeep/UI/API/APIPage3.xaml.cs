@@ -1,7 +1,7 @@
 ﻿using Chronokeep.Helpers;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
-using Chronokeep.Objects.API;
+using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Windows;
@@ -14,12 +14,12 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class APIPage3
     {
-        APIWindow window;
-        APIObject api;
-        Event theEvent;
-        string slug;
+        private readonly APIWindow window;
+        private readonly APIObject api;
+        private readonly Event theEvent;
+        private readonly string slug;
 
-        GetEventYearsResponse years;
+        private GetEventYearsResponse years;
 
         private async void GetEventYears()
         {

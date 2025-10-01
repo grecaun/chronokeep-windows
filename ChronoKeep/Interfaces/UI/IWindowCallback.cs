@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Chronokeep.Interfaces
+namespace Chronokeep.Interfaces.UI
 {
     public interface IWindowCallback
     {

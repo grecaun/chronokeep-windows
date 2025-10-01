@@ -1,7 +1,5 @@
 ﻿using Chronokeep.Database.SQLite;
-using Chronokeep.Interfaces;
 using Chronokeep.Network.API;
-using Chronokeep.Objects.API;
 using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
@@ -13,6 +11,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Xceed.Wpf.Toolkit;
 using Chronokeep.Helpers;
+using Chronokeep.Database;
+using Chronokeep.Interfaces.UI;
 
 namespace Chronokeep.UI.MainPages
 {

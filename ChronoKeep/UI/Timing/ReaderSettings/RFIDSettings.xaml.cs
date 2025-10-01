@@ -13,7 +13,7 @@ namespace Chronokeep.UI.Timing.ReaderSettings
     /// </summary>
     public partial class RFIDSettings : FluentWindow
     {
-        private RFIDUltraInterface reader = null;
+        private readonly RFIDUltraInterface reader = null;
 
         public RFIDSettings(RFIDUltraInterface reader)
         {

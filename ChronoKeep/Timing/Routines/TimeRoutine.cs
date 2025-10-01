@@ -1,6 +1,6 @@
-﻿using Chronokeep.Database.SQLite;
+﻿using Chronokeep.Database;
 using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;

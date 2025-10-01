@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Helpers;
+using Chronokeep.Objects;
 using System;
 using System.Collections;
 using System.Data.SQLite;
@@ -11,10 +12,10 @@ namespace Chronokeep.Database.SQLite
     {
         internal static void Initialize(int version, string connectionInfo)
         {
-            ArrayList queries = new ArrayList();
-            SQLiteConnection connection = new SQLiteConnection(string.Format("Data Source={0};Version=3", connectionInfo));
+            ArrayList queries = new();
+            SQLiteConnection connection = new(string.Format("Data Source={0};Version=3", connectionInfo));
             connection.Open();
-            SQLiteCommand command = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'", connection);
+            SQLiteCommand command = new("SELECT name FROM sqlite_master WHERE type='table' AND name='settings'", connection);
             SQLiteDataReader reader = command.ExecuteReader();
             int oldVersion = -1;
             if (reader.Read())
@@ -23,7 +24,7 @@ namespace Chronokeep.Database.SQLite
                 try
                 {
                     // As of version 43 we've changed how we store settings values to something more sensible.
-                    command = new SQLiteCommand("SELECT value FROM settings WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';", connection);
+                    command = new("SELECT value FROM settings WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';", connection);
                     // If we've got an upgraded version then command.ExecuteReader will throw an exception.
                     using (SQLiteDataReader versionChecker = command.ExecuteReader())
                     {
@@ -42,7 +43,7 @@ namespace Chronokeep.Database.SQLite
                 {
                     // Check for an older version
                     Log.D("SQLite.Setup", "We may have a database older than version 43.");
-                    command = new SQLiteCommand("SELECT version FROM settings;", connection);
+                    command = new("SELECT version FROM settings;", connection);
                     using (SQLiteDataReader v2Checker = command.ExecuteReader())
                     {
                         if (v2Checker.Read())
@@ -61,7 +62,7 @@ namespace Chronokeep.Database.SQLite
             else
             {
                 Log.D("SQLite.Setup", "Tables haven't been created. Doing so now.");
-                command = new SQLiteCommand("PRAGMA foreign_keys = ON;", connection); // Ensure Foreign key constraints work.
+                command = new("PRAGMA foreign_keys = ON;", connection); // Ensure Foreign key constraints work.
                 command.ExecuteNonQuery();
                 queries.Add("CREATE TABLE IF NOT EXISTS bib_chip_assoc (" +
                     "event_id INTEGER NOT NULL REFERENCES events(event_id)," +
@@ -323,13 +324,13 @@ namespace Chronokeep.Database.SQLite
                     foreach (string q in queries)
                     {
                         Log.D("SQLite.Setup", "Table query number " + counter++ + " Query string is: " + q);
-                        command = new SQLiteCommand(q, connection);
+                        command = new(q, connection);
                         command.ExecuteNonQuery();
                     }
                     transaction.Commit();
                 }
 
-                command = new SQLiteCommand("SELECT value FROM settings WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';", connection);
+                command = new("SELECT value FROM settings WHERE setting='" + Constants.Settings.DATABASE_VERSION + "';", connection);
                 using (SQLiteDataReader versionChecker = command.ExecuteReader())
                 {
                     if (versionChecker.Read())

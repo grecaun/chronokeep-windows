@@ -1,5 +1,5 @@
 ﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.UI;
 using System.Collections.Generic;
 using System.Windows;
 using Wpf.Ui.Controls;
@@ -12,7 +12,7 @@ namespace Chronokeep.UI.Timing.Notifications
     /// </summary>
     public partial class ReaderNotificationWindow : FluentWindow
     {
-        private IWindowCallback window;
+        private readonly IWindowCallback window;
 
         private ReaderNotificationWindow(IWindowCallback window)
         {

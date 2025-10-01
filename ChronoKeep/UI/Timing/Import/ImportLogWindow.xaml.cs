@@ -1,6 +1,8 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,12 +18,12 @@ namespace Chronokeep.UI.Timing.Import
     /// </summary>
     public partial class ImportLogWindow : FluentWindow
     {
-        IMainWindow window;
-        IDBInterface database;
-        LogImporter importer;
+        private readonly IMainWindow window;
+        private readonly IDBInterface database;
+        private readonly LogImporter importer;
 
-        Event theEvent;
-        int locationId = Constants.Timing.LOCATION_DUMMY;
+        private readonly Event theEvent;
+        private int locationId = Constants.Timing.LOCATION_DUMMY;
 
         [GeneratedRegex("\\d{4}-\\d{2}-\\d{2}")]
         private static partial Regex DateRegex();

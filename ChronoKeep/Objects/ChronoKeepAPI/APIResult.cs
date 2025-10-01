@@ -2,39 +2,39 @@
 using System;
 using System.Text.Json.Serialization;
 
-namespace Chronokeep.Objects.API
+namespace Chronokeep.Objects.ChronoKeepAPI
 {
     public class APIResult
     {
         public APIResult(Event theEvent, TimeResult result, DateTime start, string unique_pad)
         {
-            this.PersonId = string.Format("{0}-{1}", result.EventSpecificId, unique_pad);
-            this.Bib = result.Bib.ToString();
-            this.First = result.Anonymous ? "" : result.First;
-            this.Last = result.Anonymous ? "" : result.Last;
-            this.Age = result.Age(theEvent.Date);
-            this.Gender = result.Gender;
-            this.AgeGroup = result.PrettyAgeGroupName();
-            this.Distance = result.DistanceName;
-            this.ChipSeconds = (int)result.ChipSeconds;
-            this.ChipMilliseconds = result.ChipMilliseconds;
-            this.Segment = result.SegmentName;
-            this.Location = result.LocationName;
-            this.Occurence = result.Occurrence;
-            this.Ranking = result.Place;
-            this.AgeRanking = result.AgePlace;
-            this.GenderRanking = result.GenderPlace;
-            this.Finish = result.SegmentId == Constants.Timing.SEGMENT_FINISH;
-            this.Type = result.Type;
-            this.Anonymous = result.Anonymous;
-            this.LocalTime = start.AddSeconds(result.Seconds).AddMilliseconds(result.Milliseconds).ToLocalTime().ToString("o");
-            this.Division = result.Division;
-            this.DivisionRanking = result.DivisionPlace;
+            PersonId = string.Format("{0}-{1}", result.EventSpecificId, unique_pad);
+            Bib = result.Bib.ToString();
+            First = result.Anonymous ? "" : result.First;
+            Last = result.Anonymous ? "" : result.Last;
+            Age = result.Age(theEvent.Date);
+            Gender = result.Gender;
+            AgeGroup = result.PrettyAgeGroupName();
+            Distance = result.DistanceName;
+            ChipSeconds = (int)result.ChipSeconds;
+            ChipMilliseconds = result.ChipMilliseconds;
+            Segment = result.SegmentName;
+            Location = result.LocationName;
+            Occurence = result.Occurrence;
+            Ranking = result.Place;
+            AgeRanking = result.AgePlace;
+            GenderRanking = result.GenderPlace;
+            Finish = result.SegmentId == Constants.Timing.SEGMENT_FINISH;
+            Type = result.Type;
+            Anonymous = result.Anonymous;
+            LocalTime = start.AddSeconds(result.Seconds).AddMilliseconds(result.Milliseconds).ToLocalTime().ToString("o");
+            Division = result.Division;
+            DivisionRanking = result.DivisionPlace;
             if (result.Status == Constants.Timing.TIMERESULT_STATUS_DNF)
             {
-                this.Type = Constants.Timing.API_TYPE_DNF;
-                this.Seconds = 0;
-                this.Milliseconds = 0;
+                Type = Constants.Timing.API_TYPE_DNF;
+                Seconds = 0;
+                Milliseconds = 0;
             }
             else
             {
@@ -45,27 +45,27 @@ namespace Chronokeep.Objects.API
                 {
                     case 3:
                         // HOURS : MINUTES : SECONDS -- Seconds * 1 + Minutes * 60 + Hours * 60 * 60
-                        this.Seconds = Convert.ToInt32(split2[2]) + (Convert.ToInt32(split2[1]) * 60) + (Convert.ToInt32(split2[0]) * 60 * 60);
+                        Seconds = Convert.ToInt32(split2[2]) + Convert.ToInt32(split2[1]) * 60 + Convert.ToInt32(split2[0]) * 60 * 60;
                         break;
                     case 2:
                         // MINUTES : SECONDS -- Seconds * 1 + Minutes * 60
-                        this.Seconds = Convert.ToInt32(split2[1]) + (Convert.ToInt32(split2[0]) * 60);
+                        Seconds = Convert.ToInt32(split2[1]) + Convert.ToInt32(split2[0]) * 60;
                         break;
                     case 1:
                         // SECONDS
-                        this.Seconds = Convert.ToInt32(split2[0]);
+                        Seconds = Convert.ToInt32(split2[0]);
                         break;
                     default:
-                        this.Seconds = 0;
+                        Seconds = 0;
                         break;
                 }
                 if (split1.Length == 2)
                 {
-                    this.Milliseconds = Convert.ToInt32(split1[1]);
+                    Milliseconds = Convert.ToInt32(split1[1]);
                 }
                 else
                 {
-                    this.Milliseconds = 0;
+                    Milliseconds = 0;
                 }
             }
         }

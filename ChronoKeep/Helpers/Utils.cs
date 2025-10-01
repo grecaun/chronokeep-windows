@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Chronokeep
+namespace Chronokeep.Helpers
 {
     public class Utils
     {
@@ -46,7 +46,7 @@ namespace Chronokeep
                 var registryValue = Registry.GetValue(REGISTRY_KEY_NAME, APPS_USE_LIGHT_THEME, -1);
                 if (registryValue != null)
                 {
-                    return Int32.Parse(registryValue.ToString());
+                    return int.Parse(registryValue.ToString());
                 }
             }
             return -1;

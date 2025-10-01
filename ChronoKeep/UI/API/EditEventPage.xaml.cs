@@ -1,6 +1,6 @@
 ﻿using Chronokeep.Network.API;
 using Chronokeep.Objects;
-using Chronokeep.Objects.API;
+using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Windows;
@@ -13,12 +13,12 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class EditEventPage
     {
-        EditAPIWindow window;
+        private readonly EditAPIWindow window;
 
-        APIObject api;
-        string slug;
+        private readonly APIObject api;
+        private readonly string slug;
 
-        GetEventResponse apiEvent;
+        private GetEventResponse apiEvent;
 
         private async void GetEvent()
         {

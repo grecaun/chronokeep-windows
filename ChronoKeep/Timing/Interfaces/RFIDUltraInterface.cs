@@ -1,6 +1,7 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
 using Chronokeep.Interfaces.Timing;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Objects.RFID;
 using Chronokeep.UI.Timing.ReaderSettings;
@@ -17,8 +18,8 @@ namespace Chronokeep.Timing.Interfaces
 {
     public partial class RFIDUltraInterface(IDBInterface database, int locationId, IMainWindow window) : ITimingSystemInterface
     {
-        readonly Event theEvent = database.GetCurrentEvent();
-        readonly StringBuilder buffer = new();
+        private readonly Event theEvent = database.GetCurrentEvent();
+        private readonly StringBuilder buffer = new();
         private RFIDSettings settingsWindow = null;
         Socket sock;
 

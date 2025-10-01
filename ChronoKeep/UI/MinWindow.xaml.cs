@@ -1,5 +1,4 @@
 ﻿using Chronokeep.Database;
-using Chronokeep.Interfaces;
 using Chronokeep.Objects;
 using Chronokeep.Timing;
 using System;
@@ -15,6 +14,7 @@ using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.UI.MainPages;
 using static Chronokeep.Helpers.Globals;
 using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 
 namespace Chronokeep.UI
 {
@@ -23,22 +23,22 @@ namespace Chronokeep.UI
     /// </summary>
     public partial class MinWindow : IMainWindow
     {
-        readonly IDBInterface database;
-        readonly IMainPage page;
-        readonly string dbName = "Chronokeep.sqlite";
+        private readonly MemStore.MemStore database;
+        private readonly IMainPage page;
+        private readonly string dbName = "Chronokeep.sqlite";
 
         // Timing objects.
-        Thread TimingControllerThread;
-        readonly TimingController TimingController;
+        private Thread TimingControllerThread;
+        private readonly TimingController TimingController;
 
-        readonly List<Window> openWindows = [];
+        private readonly List<Window> openWindows = [];
 
         // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
         // Allow for a debug version and non-debug version to run at the same time.
 #if DEBUG
-        static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep-debug");
+        private static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep-debug");
 #else
-        static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
+        private static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
 #endif
 
         public MinWindow()
@@ -66,7 +66,7 @@ namespace Chronokeep.UI
                 Log.D("UI.MainWindow", "Creating database file.");
                 SQLiteConnection.CreateFile(path);
             }
-            database = new SQLiteInterface(path);
+            database = MemStore.MemStore.GetMemStore(new SQLiteInterface(path));
             try
             {
                 database.Initialize();

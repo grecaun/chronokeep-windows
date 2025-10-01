@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.API;
 using Chronokeep.UI.UIObjects;
@@ -16,22 +17,22 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class DashboardPage : IMainPage
     {
-        private IMainWindow mWindow;
-        private IDBInterface database;
-        private Event theEvent = null;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
+        private readonly Event theEvent = null;
 
         public DashboardPage(IMainWindow mainWindow, IDBInterface db)
         {
             InitializeComponent();
             this.mWindow = mainWindow;
             this.database = db;
+            theEvent = database.GetCurrentEvent();
             UpdateView();
         }
 
         public void UpdateView()
         {
             int oldEventId = theEvent == null ? -1 : theEvent.Identifier;
-            theEvent = database.GetCurrentEvent();
             if (theEvent != null && oldEventId != -1 && oldEventId != theEvent.Identifier)
             {
                 mWindow.NotifyTimingWorker();

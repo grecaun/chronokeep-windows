@@ -98,8 +98,8 @@ namespace Chronokeep.Constants
         // Announcer variables
         public static readonly int ANNOUNCER_LOOP_TIMER = 1;
 
-        private static DateTime UnixDateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        private static DateTime RFIDDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime UnixDateTime = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime RFIDDateTime = new(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public static long RFIDDateToEpoch(DateTime date)
         {

@@ -1,7 +1,7 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
-using Chronokeep.Timing.API;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -15,10 +15,10 @@ namespace Chronokeep.UI.Participants
     /// </summary>
     public partial class ChangeMultiParticipantWindow : FluentWindow
     {
-        IMainWindow window;
-        IDBInterface database;
-        List<Participant> toChange;
-        Event theEvent;
+        private readonly IMainWindow window;
+        private readonly IDBInterface database;
+        private readonly List<Participant> toChange;
+        private readonly Event theEvent;
 
         public ChangeMultiParticipantWindow(IMainWindow window, IDBInterface database, List<Participant> toChange)
         {

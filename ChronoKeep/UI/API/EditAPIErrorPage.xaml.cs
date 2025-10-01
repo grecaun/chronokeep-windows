@@ -7,7 +7,7 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class EditAPIErrorPage
     {
-        EditAPIWindow window;
+        private readonly EditAPIWindow window;
 
         public EditAPIErrorPage(EditAPIWindow window, bool noAPI)
         {

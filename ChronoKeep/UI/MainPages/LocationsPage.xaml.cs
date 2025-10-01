@@ -1,8 +1,8 @@
-﻿using Chronokeep.Database.SQLite;
+﻿using Chronokeep.Database;
+using Chronokeep.Database.SQLite;
 using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
-using Chronokeep.Timing.API;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -19,9 +19,9 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class LocationsPage : IMainPage
     {
-        private IMainWindow mWindow;
-        private IDBInterface database;
-        private Event theEvent;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
         private int LocationCount = 1;
         private bool UpdateTimingWorker = false;
 
@@ -30,12 +30,12 @@ namespace Chronokeep.UI.MainPages
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
+            theEvent = database.GetCurrentEvent();
             UpdateView();
         }
 
         public void UpdateView()
         {
-            this.theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
                 return;

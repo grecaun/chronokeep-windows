@@ -1,9 +1,10 @@
-﻿using Chronokeep.Helpers;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
 using Chronokeep.Network.API;
-using Chronokeep.Objects.API;
+using Chronokeep.Objects;
+using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects.Notifications;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Twilio;
 
@@ -126,7 +127,7 @@ namespace Chronokeep.Constants
                 {
                     output = string.Format("+{0}", tmp);
                 }
-                else if (tmp.Length == 12 && tmp.First() == '+')
+                else if (tmp.Length == 12 && tmp.StartsWith('+'))
                 {
                     output = tmp;
                 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace Chronokeep.Objects.API
+namespace Chronokeep.Objects.ChronoKeepAPI
 {
     public class APIEvent
     {

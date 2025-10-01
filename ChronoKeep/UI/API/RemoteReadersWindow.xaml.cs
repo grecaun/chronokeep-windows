@@ -1,5 +1,4 @@
-﻿using Chronokeep.Interfaces;
-using Chronokeep.Network.API;
+﻿using Chronokeep.Network.API;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing.Remote;
@@ -12,6 +11,8 @@ using Wpf.Ui.Controls;
 using Xceed.Wpf.Toolkit;
 using Button = Wpf.Ui.Controls.Button;
 using Chronokeep.Helpers;
+using Chronokeep.Database;
+using Chronokeep.Interfaces.UI;
 
 namespace Chronokeep.UI.API
 {
@@ -22,11 +23,11 @@ namespace Chronokeep.UI.API
     {
         private static RemoteReadersWindow theOne = null;
 
-        readonly IMainWindow window;
-        readonly IDBInterface database;
-        readonly Event theEvent;
+        private readonly IMainWindow window;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
 
-        readonly List<APIObject> remoteAPIs;
+        private readonly List<APIObject> remoteAPIs;
 
         public static RemoteReadersWindow CreateWindow(IMainWindow window, IDBInterface database)
         {
@@ -181,13 +182,13 @@ namespace Chronokeep.UI.API
             private readonly APIObject api;
             private readonly IDBInterface database;
 
-            readonly ToggleSwitch autoFetch;
-            readonly Wpf.Ui.Controls.TextBlock nameBlock;
-            readonly ComboBox locationBox;
-            readonly DatePicker startDatePicker;
-            readonly DatePicker endDatePicker;
-            readonly MaskedTextBox startTimeBox;
-            readonly MaskedTextBox endTimeBox;
+            private readonly ToggleSwitch autoFetch;
+            private readonly Wpf.Ui.Controls.TextBlock nameBlock;
+            private readonly ComboBox locationBox;
+            private readonly DatePicker startDatePicker;
+            private readonly DatePicker endDatePicker;
+            private readonly MaskedTextBox startTimeBox;
+            private readonly MaskedTextBox endTimeBox;
 
             public ReaderListItem(
                 RemoteReader reader,

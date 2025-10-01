@@ -1,7 +1,8 @@
-﻿using Chronokeep.Helpers;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
-using Chronokeep.Objects.API;
+using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,12 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class APIPage2
     {
-        APIWindow window;
-        IDBInterface database;
-        APIObject api;
-        Event theEvent;
+        private readonly APIWindow window;
+        private readonly IDBInterface database;
+        private readonly APIObject api;
+        private readonly Event theEvent;
 
-        GetEventsResponse events;
+        private GetEventsResponse events;
 
         private async void GetEvents()
         {

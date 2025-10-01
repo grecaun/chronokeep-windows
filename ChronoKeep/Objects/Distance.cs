@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Chronokeep
+namespace Chronokeep.Objects
 {
     public class Distance : IEquatable<Distance>, IComparable<Distance>
     {
@@ -26,13 +26,13 @@ namespace Chronokeep
         {
             this.name = name;
             this.eventIdentifier = eventIdentifier;
-            this.linked_distance = linkedIdentifier;
+            linked_distance = linkedIdentifier;
             this.type = type;
             this.ranking = ranking;
             this.wave = wave;
             this.start_offset_seconds = start_offset_seconds;
             this.start_offset_milliseconds = start_offset_milliseconds;
-            this.upload = false;
+            upload = false;
         }
 
         public Distance(int identifier, string name, int eventIdentifier,
@@ -52,7 +52,7 @@ namespace Chronokeep
             this.wave = wave;
             this.start_offset_seconds = start_offset_seconds;
             this.start_offset_milliseconds = start_offset_milliseconds;
-            this.end_seconds = endseconds;
+            end_seconds = endseconds;
             this.linked_distance = linked_distance;
             this.type = type;
             this.ranking = ranking;
@@ -84,45 +84,45 @@ namespace Chronokeep
         public int CompareTo(Distance other)
         {
             if (other == null) return 1;
-            if (this.EventIdentifier == other.EventIdentifier)
+            if (EventIdentifier == other.EventIdentifier)
             {
-                return this.Name.CompareTo(other.Name);
+                return Name.CompareTo(other.Name);
             }
-            return this.EventIdentifier.CompareTo(other.EventIdentifier);
+            return EventIdentifier.CompareTo(other.EventIdentifier);
         }
 
         public bool Equals(Distance other)
         {
             if (other == null) return false;
-            return this.EventIdentifier == other.EventIdentifier && this.Identifier == other.Identifier;
+            return EventIdentifier == other.EventIdentifier && Identifier == other.Identifier;
         }
 
         public void Update(Distance other)
         {
-            this.Name = other.Name;
-            this.EventIdentifier = other.EventIdentifier;
-            this.DistanceValue = other.DistanceValue;
-            this.DistanceUnit = other.DistanceUnit;
-            this.StartLocation = other.StartLocation;
-            this.StartWithin = other.StartWithin;
-            this.FinishLocation = other.FinishLocation;
-            this.FinishOccurrence = other.FinishOccurrence;
-            this.Wave = other.Wave;
-            this.StartOffsetSeconds = other.StartOffsetSeconds;
-            this.StartOffsetMilliseconds = other.StartOffsetMilliseconds;
-            this.EndSeconds = other.EndSeconds;
-            this.LinkedDistance = other.LinkedDistance;
-            this.Type = other.Type;
-            this.Ranking = other.Ranking;
-            this.SMSEnabled = other.SMSEnabled;
-            this.Certification = other.Certification;
+            Name = other.Name;
+            EventIdentifier = other.EventIdentifier;
+            DistanceValue = other.DistanceValue;
+            DistanceUnit = other.DistanceUnit;
+            StartLocation = other.StartLocation;
+            StartWithin = other.StartWithin;
+            FinishLocation = other.FinishLocation;
+            FinishOccurrence = other.FinishOccurrence;
+            Wave = other.Wave;
+            StartOffsetSeconds = other.StartOffsetSeconds;
+            StartOffsetMilliseconds = other.StartOffsetMilliseconds;
+            EndSeconds = other.EndSeconds;
+            LinkedDistance = other.LinkedDistance;
+            Type = other.Type;
+            Ranking = other.Ranking;
+            SMSEnabled = other.SMSEnabled;
+            Certification = other.Certification;
         }
 
         public void SetWaveTime(int wave, long seconds, int milliseconds)
         {
-            this.Wave = wave;
-            this.StartOffsetSeconds = (int)seconds;
-            this.StartOffsetMilliseconds = milliseconds;
+            Wave = wave;
+            StartOffsetSeconds = (int)seconds;
+            StartOffsetMilliseconds = milliseconds;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Chronokeep.UI.Timing.Import
         private static readonly int CHIP = 1;
         private static readonly int TIME = 2;
 
-        readonly ImportLogWindow parent;
+        private readonly ImportLogWindow parent;
 
         public ImportLogPage2(ImportLogWindow parent, LogImporter importer)
         {

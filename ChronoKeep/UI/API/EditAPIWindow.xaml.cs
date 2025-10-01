@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Wpf.Ui.Controls;
 
@@ -10,19 +11,17 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class EditAPIWindow : FluentWindow
     {
-        IMainWindow window = null;
-        IDBInterface database;
-        Event theEvent;
+        private readonly IMainWindow window = null;
+        private readonly Event theEvent;
 
         // Variables relating to information we're collecting.
-        APIObject api;
-        string slug, year;
+        private readonly APIObject api;
+        private readonly string slug, year;
 
         public EditAPIWindow(IMainWindow window, IDBInterface database)
         {
             InitializeComponent();
             this.window = window;
-            this.database = database;
             this.MinHeight = 100;
             this.MinWidth = 300;
             this.Width = 330;

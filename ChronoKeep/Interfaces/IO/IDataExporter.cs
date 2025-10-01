@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Chronokeep.Helpers;
+using System.Collections.Generic;
 
-namespace Chronokeep.Interfaces
+namespace Chronokeep.Interfaces.IO
 {
     interface IDataExporter
     {

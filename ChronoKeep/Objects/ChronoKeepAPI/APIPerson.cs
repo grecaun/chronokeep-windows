@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace Chronokeep.Objects.API
+namespace Chronokeep.Objects.ChronoKeepAPI
 {
     public class APIPerson
     {
@@ -9,18 +9,18 @@ namespace Chronokeep.Objects.API
 
         public APIPerson(Participant person, string uniqueID)
         {
-            this.Identifier = string.Format("{0}{1}", uniqueID, person.EventSpecific.Identifier);
-            this.Bib = person.Bib.ToString();
-            this.First = person.Anonymous ? "" : person.FirstName;
-            this.Last = person.Anonymous ? "" : person.LastName;
-            this.Birthdate = person.Birthdate.Length < 1 ? "1901/01/01" : person.Birthdate;
-            this.Gender = person.Gender;
-            this.AgeGroup = person.EventSpecific.AgeGroupName;
-            this.Distance = person.EventSpecific.DistanceName;
-            this.Anonymous = person.Anonymous;
-            this.SMSEnabled = person.EventSpecific.SMSEnabled;
-            this.Mobile = person.Mobile;
-            this.Apparel = person.EventSpecific.Apparel;
+            Identifier = string.Format("{0}{1}", uniqueID, person.EventSpecific.Identifier);
+            Bib = person.Bib.ToString();
+            First = person.Anonymous ? "" : person.FirstName;
+            Last = person.Anonymous ? "" : person.LastName;
+            Birthdate = person.Birthdate.Length < 1 ? "1901/01/01" : person.Birthdate;
+            Gender = person.Gender;
+            AgeGroup = person.EventSpecific.AgeGroupName;
+            Distance = person.EventSpecific.DistanceName;
+            Anonymous = person.Anonymous;
+            SMSEnabled = person.EventSpecific.SMSEnabled;
+            Mobile = person.Mobile;
+            Apparel = person.EventSpecific.Apparel;
         }
 
         [JsonPropertyName("id")]

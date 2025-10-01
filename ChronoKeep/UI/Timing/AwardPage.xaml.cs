@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.IO.HtmlTemplates.Printables;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
@@ -24,9 +25,9 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class AwardPage : ISubPage
     {
-        readonly IDBInterface database;
-        readonly TimingPage parent;
-        readonly Event theEvent;
+        private readonly IDBInterface database;
+        private readonly TimingPage parent;
+        private readonly Event theEvent;
 
         private readonly ObservableCollection<AgeGroup> customAgeGroups = [];
 

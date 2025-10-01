@@ -1,5 +1,4 @@
 ﻿using Chronokeep.Database;
-using Chronokeep.Interfaces;
 using Chronokeep.Network;
 using Chronokeep.Objects;
 using Chronokeep.Timing;
@@ -24,6 +23,8 @@ using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Network.Registration;
 using static Chronokeep.Helpers.Globals;
 using System.Reflection;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.MemStore;
 
 namespace Chronokeep.UI
 {
@@ -32,52 +33,52 @@ namespace Chronokeep.UI
     /// </summary>
     public partial class MainWindow : IMainWindow
     {
-        IDBInterface database;
-        IMainPage page;
-        readonly string dbName = "Chronokeep.sqlite";
+        private readonly MemStore.MemStore database;
+        private IMainPage page;
+        private readonly string dbName = "Chronokeep.sqlite";
 
         // Network objects
-        HttpServer httpServer = null;
-        readonly int httpServerPort = 6933;
+        private HttpServer httpServer = null;
+        private readonly int httpServerPort = 6933;
 
         // Zero Conf/Registration objects.
-        Thread ZConfThread = null;
-        ZeroConf ZConfServer = null;
-        Thread RegistrationThread = null;
-        RegistrationWorker RegistrationWorker = null;
+        private Thread ZConfThread = null;
+        private ZeroConf ZConfServer = null;
+        private Thread RegistrationThread = null;
+        private RegistrationWorker RegistrationWorker = null;
 
         // Timing objects.
-        Thread TimingControllerThread = null;
-        TimingController TimingController = null;
-        Thread TimingWorkerThread = null;
-        TimingWorker TimingWorker = null;
+        private Thread TimingControllerThread = null;
+        private TimingController TimingController = null;
+        private Thread TimingWorkerThread = null;
+        private TimingWorker TimingWorker = null;
 
         // API objects.
-        Thread APIControllerThread = null;
-        APIController APIController = null;
+        private Thread APIControllerThread = null;
+        private APIController APIController = null;
 
         // Remote Reads objects
-        Thread RemoteThread = null;
-        RemoteReadsController RemoteController = null;
+        private Thread RemoteThread = null;
+        private RemoteReadsController RemoteController = null;
 
         // Announcer objects
-        AnnouncerWindow announcerWindow = null;
+        private AnnouncerWindow announcerWindow = null;
 
-        readonly List<Window> openWindows = [];
+        private readonly List<Window> openWindows = [];
 
         // Setting to allow the user to enter a mode where we can record DNS chips.
         private bool didNotStartMode = false;
         private readonly Lock dnsLock = new();
 
         // Setup a timer for updating the view
-        readonly DispatcherTimer TimingUpdater = new();
+        private readonly DispatcherTimer TimingUpdater = new();
 
         // Set up a mutex that will be unique for this program to ensure we only ever have a single instance of it running.
         // Allow for a debug version and non-debug version to run at the same time.
 #if DEBUG
-        static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep-debug");
+        private static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep-debug");
 #else
-        static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
+        private static readonly Mutex OneWindow = new(true, "{48ED48DE-6E1B-4F3B-8C5C-D0BAB5295366}-chronokeep");
 #endif
 
         public MainWindow()

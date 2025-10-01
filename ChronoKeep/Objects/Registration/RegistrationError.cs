@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Chronokeep.Objects.Registration
+﻿namespace Chronokeep.Objects.Registration
 {
     public class RegistrationError
     {

@@ -1,5 +1,7 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -14,8 +16,8 @@ namespace Chronokeep.UI
     /// </summary>
     public partial class ChangeEventWindow : FluentWindow
     {
-        private IWindowCallback window;
-        private IDBInterface database;
+        private readonly IWindowCallback window;
+        private readonly IDBInterface database;
 
         private ChangeEventWindow(IWindowCallback window, IDBInterface database)
         {

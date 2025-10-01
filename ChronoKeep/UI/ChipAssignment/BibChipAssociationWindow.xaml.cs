@@ -1,6 +1,9 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.IO;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
+using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -18,11 +21,11 @@ namespace Chronokeep
     /// </summary>
     public partial class BibChipAssociationWindow : FluentWindow
     {
-        IDataImporter importer;
-        IWindowCallback window = null;
-        IDBInterface database;
-        Boolean init = true;
-        int[] keys;
+        private readonly IDataImporter importer;
+        private readonly IWindowCallback window = null;
+        private readonly IDBInterface database;
+        private readonly bool init = true;
+        private int[] keys;
 
         public bool ImportComplete = false;
 

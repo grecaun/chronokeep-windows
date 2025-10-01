@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Chronokeep
+namespace Chronokeep.Objects
 {
     public class TimingLocation : IEquatable<TimingLocation>, IComparable<TimingLocation>
     {
@@ -12,27 +12,27 @@ namespace Chronokeep
         public TimingLocation(int eventIdentifier, string nameString)
         {
             this.eventIdentifier = eventIdentifier;
-            this.name = nameString ?? "";
-            this.max_occurrences = 1;
-            this.ignore_within = -1;
+            name = nameString ?? "";
+            max_occurrences = 1;
+            ignore_within = -1;
         }
 
         public TimingLocation(int identifier, int eventIdentifier, string nameString)
         {
             this.identifier = identifier;
             this.eventIdentifier = eventIdentifier;
-            this.name = nameString ?? "";
-            this.max_occurrences = 1;
-            this.ignore_within = -1;
+            name = nameString ?? "";
+            max_occurrences = 1;
+            ignore_within = -1;
         }
 
         public TimingLocation(int id, int eventId, string name, int maxOcc, int ignore)
         {
-            this.identifier = id;
-            this.eventIdentifier = eventId;
+            identifier = id;
+            eventIdentifier = eventId;
             this.name = name ?? "";
-            this.max_occurrences = maxOcc;
-            this.ignore_within = ignore;
+            max_occurrences = maxOcc;
+            ignore_within = ignore;
         }
 
         public int Identifier { get => identifier; set => identifier = value; }
@@ -44,21 +44,21 @@ namespace Chronokeep
         public int CompareTo(TimingLocation other)
         {
             if (other == null) return 1;
-            return this.Identifier.CompareTo(other.Identifier);
+            return Identifier.CompareTo(other.Identifier);
         }
 
         public bool Equals(TimingLocation other)
         {
             if (other == null) return false;
-            return this.Identifier == other.Identifier && this.EventIdentifier == other.EventIdentifier;
+            return Identifier == other.Identifier && EventIdentifier == other.EventIdentifier;
         }
 
         public void CopyFrom(TimingLocation other)
         {
-            this.EventIdentifier = other.EventIdentifier;
-            this.Name = other.Name;
-            this.MaxOccurrences = other.MaxOccurrences;
-            this.IgnoreWithin = other.IgnoreWithin;
+            EventIdentifier = other.EventIdentifier;
+            Name = other.Name;
+            MaxOccurrences = other.MaxOccurrences;
+            IgnoreWithin = other.IgnoreWithin;
         }
     }
 }

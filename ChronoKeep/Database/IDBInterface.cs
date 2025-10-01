@@ -3,7 +3,7 @@ using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.Objects.ChronokeepRemote;
 using System.Collections.Generic;
 
-namespace Chronokeep
+namespace Chronokeep.Database
 {
     public interface IDBInterface
     {

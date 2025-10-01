@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces.IO;
 using System.Collections.Generic;
 using System.Windows.Controls;
 
@@ -9,7 +10,7 @@ namespace Chronokeep
     /// </summary>
     public partial class ImportFilePage1
     {
-        IDataImporter importer;
+        private readonly IDataImporter importer;
 
         public ImportFilePage1(IDataImporter importer)
         {

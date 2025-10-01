@@ -22,7 +22,7 @@ namespace Chronokeep.Objects
         Event theEvent;
 
         [GeneratedRegex(@"(\d+):(\d{2}):(\d{2})\.(\d{3})")]
-        public static partial Regex Time();
+        public static partial Regex TimeRegex();
 
         // database constructor
         public TimeResult(
@@ -185,7 +185,7 @@ namespace Chronokeep.Objects
             this.gender = gender ?? "";
             this.ageGroupId = ageGroupId;
             this.ageGroupName = ageGroupName ?? "";
-            Match chipTimeMatch = Time().Match(chipTime);
+            Match chipTimeMatch = TimeRegex().Match(chipTime);
             chipSeconds = 0;
             chipMilliseconds = 0;
             if (chipTimeMatch.Success)
@@ -195,7 +195,7 @@ namespace Chronokeep.Objects
                    + Convert.ToInt64(chipTimeMatch.Groups[3].Value);
                 chipMilliseconds = Convert.ToInt32(chipTimeMatch.Groups[4].Value);
             }
-            Match timeMatch = Time().Match(time);
+            Match timeMatch = TimeRegex().Match(time);
             seconds = 0;
             milliseconds = 0;
             if (timeMatch.Success)

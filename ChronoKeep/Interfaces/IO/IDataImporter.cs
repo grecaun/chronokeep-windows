@@ -1,6 +1,6 @@
 ﻿using Chronokeep.IO;
 
-namespace Chronokeep
+namespace Chronokeep.Interfaces.IO
 {
     public interface IDataImporter
     {

@@ -1,4 +1,4 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System.Collections.Generic;
 using System.Windows.Controls;
@@ -11,7 +11,7 @@ namespace Chronokeep.UI.Participants
     /// </summary>
     public partial class ParticipantConflicts : FluentWindow
     {
-        IMainWindow window;
+        private readonly IMainWindow window;
 
         public ParticipantConflicts(IMainWindow window, List<Participant> participants)
         {

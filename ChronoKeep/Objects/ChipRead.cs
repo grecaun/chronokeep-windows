@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Chronokeep
+namespace Chronokeep.Objects
 {
     public class ChipRead : IComparable<ChipRead>
     {
@@ -53,24 +53,24 @@ namespace Chronokeep
             int logid
             )
         {
-            this.EventId = eventId;
-            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
-            this.LocationID = locationId;
-            this.ChipNumber = chipNumber;
-            this.Seconds = seconds;
-            this.Milliseconds = millisec;
-            this.Antenna = antenna;
-            this.RSSI = rssi;
-            this.IsRewind = isRewind;
-            this.Reader = reader;
-            this.Box = box;
-            this.ReaderTime = readertime;
-            this.StartTime = starttime;
-            this.LogId = logid;
-            this.TimeSeconds = seconds;
-            this.TimeMilliseconds = millisec;
-            this.Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
-            this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+            EventId = eventId;
+            Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            LocationID = locationId;
+            ChipNumber = chipNumber;
+            Seconds = seconds;
+            Milliseconds = millisec;
+            Antenna = antenna;
+            RSSI = rssi;
+            IsRewind = isRewind;
+            Reader = reader;
+            Box = box;
+            ReaderTime = readertime;
+            StartTime = starttime;
+            LogId = logid;
+            TimeSeconds = seconds;
+            TimeMilliseconds = millisec;
+            Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
+            ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
         }
 
         // This constructor is used when receiving a read from an Ipico system
@@ -83,24 +83,24 @@ namespace Chronokeep
             int isRewind
             )
         {
-            this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
-            this.TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
-            this.TimeMilliseconds = time.Millisecond;
-            this.Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
-            this.EventId = eventId;
-            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
-            this.LocationID = locationId;
-            this.ChipNumber = chipNumber.Trim();
-            this.Seconds = Constants.Timing.RFIDDateToEpoch(time);
-            this.Milliseconds = time.Millisecond;
-            this.Antenna = antenna;
-            this.RSSI = "";
-            this.IsRewind = isRewind;
-            this.Reader = "I";
-            this.Box = "Ipico";
-            this.ReaderTime = "";
-            this.StartTime = 0;
-            this.LogId = 0;
+            ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+            TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
+            TimeMilliseconds = time.Millisecond;
+            Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
+            EventId = eventId;
+            Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            LocationID = locationId;
+            ChipNumber = chipNumber.Trim();
+            Seconds = Constants.Timing.RFIDDateToEpoch(time);
+            Milliseconds = time.Millisecond;
+            Antenna = antenna;
+            RSSI = "";
+            IsRewind = isRewind;
+            Reader = "I";
+            Box = "Ipico";
+            ReaderTime = "";
+            StartTime = 0;
+            LogId = 0;
         }
 
         // This constructor is used when receiving a read from a Chronokeep Portal system
@@ -119,31 +119,31 @@ namespace Chronokeep
             string box
             )
         {
-            this.EventId = eventId;
-            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
-            this.LocationID = locationId;
-            this.Seconds = seconds;
-            this.Milliseconds = millisec;
-            this.Antenna = antenna;
-            this.RSSI = rssi;
-            this.IsRewind = 0;
-            this.Reader = reader;
-            this.Box = box;
-            this.StartTime = 0;
-            this.LogId = 0;
-            this.TimeSeconds = seconds;
-            this.TimeMilliseconds = millisec;
-            this.Type = readType;
-            this.ReaderTime = readertime;
+            EventId = eventId;
+            Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            LocationID = locationId;
+            Seconds = seconds;
+            Milliseconds = millisec;
+            Antenna = antenna;
+            RSSI = rssi;
+            IsRewind = 0;
+            Reader = reader;
+            Box = box;
+            StartTime = 0;
+            LogId = 0;
+            TimeSeconds = seconds;
+            TimeMilliseconds = millisec;
+            Type = readType;
+            ReaderTime = readertime;
             if (chipIsChip)
             {
-                this.ChipNumber = chipNumber;
-                this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+                ChipNumber = chipNumber;
+                ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
             }
             else // chip is a bib
             {
-                this.ChipNumber = Constants.Timing.CHIPREAD_DUMMYCHIP;
-                this.ReadBib = chipNumber;
+                ChipNumber = Constants.Timing.CHIPREAD_DUMMYCHIP;
+                ReadBib = chipNumber;
             }
         }
 
@@ -169,25 +169,25 @@ namespace Chronokeep
             int type
             )
         {
-            this.ReadId = readId;
-            this.EventId = eventId;
-            this.Status = status;
-            this.LocationID = locationId;
-            this.ChipNumber = chipNumber.ToString();
-            this.Seconds = seconds;
-            this.Milliseconds = millisec;
-            this.Antenna = antenna;
-            this.RSSI = rssi;
-            this.IsRewind = isRewind;
-            this.Reader = reader;
-            this.Box = box;
-            this.ReaderTime = readertime;
-            this.StartTime = starttime;
-            this.LogId = logid;
-            this.TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
-            this.TimeMilliseconds = time.Millisecond;
-            this.ReadBib = readbib.ToString();
-            this.Type = type;
+            ReadId = readId;
+            EventId = eventId;
+            Status = status;
+            LocationID = locationId;
+            ChipNumber = chipNumber.ToString();
+            Seconds = seconds;
+            Milliseconds = millisec;
+            Antenna = antenna;
+            RSSI = rssi;
+            IsRewind = isRewind;
+            Reader = reader;
+            Box = box;
+            ReaderTime = readertime;
+            StartTime = starttime;
+            LogId = logid;
+            TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
+            TimeMilliseconds = time.Millisecond;
+            ReadBib = readbib.ToString();
+            Type = type;
         }
 
         // new database constructor
@@ -218,29 +218,29 @@ namespace Chronokeep
             string locationName
             )
         {
-            this.ReadId = readId;
-            this.EventId = eventId;
-            this.Status = status;
-            this.LocationID = locationId;
-            this.ChipNumber = chipNumber;
-            this.Seconds = seconds;
-            this.Milliseconds = millisec;
-            this.Antenna = antenna;
-            this.RSSI = rssi;
-            this.IsRewind = isRewind;
-            this.Reader = reader;
-            this.Box = box;
-            this.ReaderTime = readertime;
-            this.StartTime = starttime;
-            this.LogId = logid;
-            this.TimeSeconds = time_seconds;
-            this.TimeMilliseconds = time_millisec;
-            this.ReadBib = readbib ?? Constants.Timing.CHIPREAD_DUMMYBIB;
-            this.Type = type;
-            this.ChipBib = chipbib;
-            this.Name = string.Format("{0} {1}", first, last).Trim();
-            this.Start = start;
-            this.LocationName = locationName;
+            ReadId = readId;
+            EventId = eventId;
+            Status = status;
+            LocationID = locationId;
+            ChipNumber = chipNumber;
+            Seconds = seconds;
+            Milliseconds = millisec;
+            Antenna = antenna;
+            RSSI = rssi;
+            IsRewind = isRewind;
+            Reader = reader;
+            Box = box;
+            ReaderTime = readertime;
+            StartTime = starttime;
+            LogId = logid;
+            TimeSeconds = time_seconds;
+            TimeMilliseconds = time_millisec;
+            ReadBib = readbib ?? Constants.Timing.CHIPREAD_DUMMYBIB;
+            Type = type;
+            ChipBib = chipbib;
+            Name = string.Format("{0} {1}", first, last).Trim();
+            Start = start;
+            LocationName = locationName;
         }
 
         // Constructor used in manual entry.
@@ -252,24 +252,24 @@ namespace Chronokeep
             int status
             )
         {
-            this.ReadBib = bib ?? Constants.Timing.CHIPREAD_DUMMYBIB;
-            this.TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
-            this.TimeMilliseconds = time.Millisecond;
-            this.Type = Constants.Timing.CHIPREAD_TYPE_MANUAL;
-            this.EventId = eventId;
-            this.Status = status;
-            this.LocationID = locationId;
-            this.ChipNumber = Constants.Timing.CHIPREAD_DUMMYCHIP;
-            this.Seconds = Constants.Timing.RFIDDateToEpoch(time);
-            this.Milliseconds = time.Millisecond;
-            this.Antenna = 0;
-            this.RSSI = "";
-            this.IsRewind = 0;
-            this.Reader = "M";
-            this.Box = "Man";
-            this.ReaderTime = "";
-            this.StartTime = 0;
-            this.LogId = 0;
+            ReadBib = bib ?? Constants.Timing.CHIPREAD_DUMMYBIB;
+            TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
+            TimeMilliseconds = time.Millisecond;
+            Type = Constants.Timing.CHIPREAD_TYPE_MANUAL;
+            EventId = eventId;
+            Status = status;
+            LocationID = locationId;
+            ChipNumber = Constants.Timing.CHIPREAD_DUMMYCHIP;
+            Seconds = Constants.Timing.RFIDDateToEpoch(time);
+            Milliseconds = time.Millisecond;
+            Antenna = 0;
+            RSSI = "";
+            IsRewind = 0;
+            Reader = "M";
+            Box = "Man";
+            ReaderTime = "";
+            StartTime = 0;
+            LogId = 0;
         }
 
         // Constructor used when loading from a Log
@@ -280,24 +280,24 @@ namespace Chronokeep
             DateTime time
             )
         {
-            this.ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
-            this.TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
-            this.TimeMilliseconds = time.Millisecond;
-            this.Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
-            this.EventId = eventId;
-            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
-            this.LocationID = locationId;
-            this.ChipNumber = chip.Trim();
-            this.Seconds = Constants.Timing.RFIDDateToEpoch(time);
-            this.Milliseconds = time.Millisecond;
-            this.Antenna = 0;
-            this.RSSI = "";
-            this.IsRewind = 0;
-            this.Reader = "L";
-            this.Box = "Log";
-            this.ReaderTime = "";
-            this.StartTime = 0;
-            this.LogId = 0;
+            ReadBib = Constants.Timing.CHIPREAD_DUMMYBIB;
+            TimeSeconds = Constants.Timing.RFIDDateToEpoch(time);
+            TimeMilliseconds = time.Millisecond;
+            Type = Constants.Timing.CHIPREAD_TYPE_CHIP;
+            EventId = eventId;
+            Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            LocationID = locationId;
+            ChipNumber = chip.Trim();
+            Seconds = Constants.Timing.RFIDDateToEpoch(time);
+            Milliseconds = time.Millisecond;
+            Antenna = 0;
+            RSSI = "";
+            IsRewind = 0;
+            Reader = "L";
+            Box = "Log";
+            ReaderTime = "";
+            StartTime = 0;
+            LogId = 0;
         }
 
         // Constructor used for loading data from a chronokeep log, fake variable used to differentiate between this and the old db constructor.
@@ -322,24 +322,24 @@ namespace Chronokeep
             int type,
             bool _fake)
         {
-            this.EventId = eventId;
-            this.LocationID = locationId;
-            this.Status = status;
-            this.ChipNumber = chipNumber;
-            this.Seconds = seconds;
-            this.Milliseconds = milliseconds;
-            this.TimeSeconds = time_seconds;
-            this.TimeMilliseconds = time_milliseconds;
-            this.Antenna = antenna;
-            this.Reader = reader;
-            this.Box = box;
-            this.LogId = log_index;
-            this.RSSI = rssi;
-            this.IsRewind = is_rewind;
-            this.ReaderTime = reader_time;
-            this.StartTime = start_time;
-            this.ReadBib = read_bib;
-            this.Type = type;
+            EventId = eventId;
+            LocationID = locationId;
+            Status = status;
+            ChipNumber = chipNumber;
+            Seconds = seconds;
+            Milliseconds = milliseconds;
+            TimeSeconds = time_seconds;
+            TimeMilliseconds = time_milliseconds;
+            Antenna = antenna;
+            Reader = reader;
+            Box = box;
+            LogId = log_index;
+            RSSI = rssi;
+            IsRewind = is_rewind;
+            ReaderTime = reader_time;
+            StartTime = start_time;
+            ReadBib = read_bib;
+            Type = type;
         }
 
         // Constructor used for loading data from a remote reader.
@@ -356,24 +356,24 @@ namespace Chronokeep
             int type
             )
         {
-            this.EventId = eventId;
-            this.LocationID = locationId;
-            this.Status = Constants.Timing.CHIPREAD_STATUS_NONE;
-            this.ChipNumber = chip;
-            this.ReadBib = bib;
-            this.TimeSeconds = Constants.Timing.UTCSecondsToRFIDSeconds(seconds);
-            this.TimeMilliseconds = milliseconds;
-            this.Seconds = Constants.Timing.UTCSecondsToRFIDSeconds(seconds);
-            this.Milliseconds = milliseconds;
-            this.Antenna = antenna;
-            this.Reader = reader;
-            this.RSSI = rssi;
-            this.Type = type;
-            this.IsRewind = 0;
-            this.Box = "Remote";
-            this.ReaderTime = "";
-            this.StartTime = 0;
-            this.LogId = 0;
+            EventId = eventId;
+            LocationID = locationId;
+            Status = Constants.Timing.CHIPREAD_STATUS_NONE;
+            ChipNumber = chip;
+            ReadBib = bib;
+            TimeSeconds = Constants.Timing.UTCSecondsToRFIDSeconds(seconds);
+            TimeMilliseconds = milliseconds;
+            Seconds = Constants.Timing.UTCSecondsToRFIDSeconds(seconds);
+            Milliseconds = milliseconds;
+            Antenna = antenna;
+            Reader = reader;
+            RSSI = rssi;
+            Type = type;
+            IsRewind = 0;
+            Box = "Remote";
+            ReaderTime = "";
+            StartTime = 0;
+            LogId = 0;
         }
 
         public string TimeString
@@ -477,8 +477,8 @@ namespace Chronokeep
 
         public int CompareTo(ChipRead other)
         {
-            if (other == null) return this.CompareTo(other);
-            return this.Time.CompareTo(other.Time);
+            if (other == null) return CompareTo(other);
+            return Time.CompareTo(other.Time);
         }
 
         public static int CompareByBib(ChipRead one, ChipRead two)
@@ -486,8 +486,8 @@ namespace Chronokeep
             if (one == null || two == null) return 1;
             // Check if they're the same bib
             // Make sure they're not the dummy bib numer, then compare them.
-            if ( (Constants.Timing.CHIPREAD_DUMMYBIB != one.ReadBib && (one.ReadBib == two.ReadBib || one.ReadBib == two.ChipBib)) ||
-                 (Constants.Timing.CHIPREAD_DUMMYBIB != one.ChipBib && (one.ChipBib == two.ChipBib || one.ChipBib == two.ReadBib)) )
+            if ( Constants.Timing.CHIPREAD_DUMMYBIB != one.ReadBib && (one.ReadBib == two.ReadBib || one.ReadBib == two.ChipBib) ||
+                 Constants.Timing.CHIPREAD_DUMMYBIB != one.ChipBib && (one.ChipBib == two.ChipBib || one.ChipBib == two.ReadBib) )
             {
                 return one.Time.CompareTo(two.Time);
             }
@@ -537,28 +537,28 @@ namespace Chronokeep
         public bool Equals(ChipRead other)
         {
             if (other == null) return false;
-            return this.ReadId == other.ReadId
-                || (this.EventId == other.EventId
-                && this.LocationID == other.LocationID
-                && this.ChipNumber == other.ChipNumber
-                && this.Seconds == other.Seconds
-                && this.Milliseconds == other.Milliseconds
-                && this.Antenna == other.Antenna
-                && this.RSSI == other.RSSI
-                && this.IsRewind == other.IsRewind
-                && this.Reader == other.Reader
-                && this.Box == other.Box
-                && this.ReaderTime == other.ReaderTime
-                && this.StartTime == other.StartTime
-                && this.LogId == other.LogId
-                && this.TimeSeconds == other.TimeSeconds
-                && this.TimeMilliseconds == other.TimeMilliseconds
-                && this.ReadBib == other.ReadBib
-                && this.Type == other.Type
-                && this.ChipBib == other.ChipBib
-                && this.Name == other.Name
-                && this.Start == other.Start
-                && this.LocationName == other.LocationName);
+            return ReadId == other.ReadId
+                || EventId == other.EventId
+                && LocationID == other.LocationID
+                && ChipNumber == other.ChipNumber
+                && Seconds == other.Seconds
+                && Milliseconds == other.Milliseconds
+                && Antenna == other.Antenna
+                && RSSI == other.RSSI
+                && IsRewind == other.IsRewind
+                && Reader == other.Reader
+                && Box == other.Box
+                && ReaderTime == other.ReaderTime
+                && StartTime == other.StartTime
+                && LogId == other.LogId
+                && TimeSeconds == other.TimeSeconds
+                && TimeMilliseconds == other.TimeMilliseconds
+                && ReadBib == other.ReadBib
+                && Type == other.Type
+                && ChipBib == other.ChipBib
+                && Name == other.Name
+                && Start == other.Start
+                && LocationName == other.LocationName;
         }
     }
 }

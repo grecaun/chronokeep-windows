@@ -1,5 +1,7 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
 using Chronokeep.Objects.Registration;
 using System;
 using System.Collections.Generic;
@@ -101,7 +103,7 @@ namespace Chronokeep.Network.Registration
             {
                 return;
             }
-            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            server = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             server.Bind(new IPEndPoint(IPAddress.Any, NetCore.TCPPort()));
             server.Listen(10);
@@ -204,7 +206,7 @@ namespace Chronokeep.Network.Registration
                                                     ModifyParticipant addReq = JsonSerializer.Deserialize<ModifyParticipant>(message);
                                                     if (distanceDictionary.TryGetValue(addReq.Participant.Distance, out Distance oDist))
                                                     {
-                                                        Objects.Participant newPart = new Objects.Participant(
+                                                        Objects.Participant newPart = new(
                                                             addReq.Participant.FirstName,
                                                             addReq.Participant.LastName,
                                                             "", // street
@@ -212,7 +214,7 @@ namespace Chronokeep.Network.Registration
                                                             "", // state
                                                             "", // zip
                                                             addReq.Participant.Birthdate,
-                                                            new EventSpecific(
+                                                            new(
                                                                 theEvent.Identifier,
                                                                 oDist.Identifier,
                                                                 addReq.Participant.Distance,
@@ -314,16 +316,16 @@ namespace Chronokeep.Network.Registration
                                                 try
                                                 {
                                                     ModifyMultipleParticipants addReq = JsonSerializer.Deserialize<ModifyMultipleParticipants>(message);
-                                                    List<Objects.Participant> newParts = new();
-                                                    List<Objects.Participant> updParts = new();
-                                                    Dictionary<(string, string, string, string), Objects.Participant> partDictionary = new();
-                                                    Dictionary<string, Objects.Participant> partESDict = new();
+                                                    List<Objects.Participant> newParts = [];
+                                                    List<Objects.Participant> updParts = [];
+                                                    Dictionary<(string, string, string, string), Objects.Participant> partDictionary = [];
+                                                    Dictionary<string, Objects.Participant> partESDict = [];
                                                     foreach (Objects.Participant p in database.GetParticipants(theEvent.Identifier))
                                                     {
                                                         partESDict[p.EventSpecific.Identifier.ToString()] = p;
                                                         partDictionary[(p.FirstName, p.LastName, p.Birthdate, p.Distance)] = p;
                                                     }
-                                                    foreach (Participant part in addReq.Participants)
+                                                    foreach (Objects.Registration.Participant part in addReq.Participants)
                                                     {
                                                         Log.D("Network.Registration.RegistrationWorker", "Participant ID: " + part.Id);
                                                         if (distanceDictionary.TryGetValue(part.Distance, out Distance distance))
@@ -339,7 +341,7 @@ namespace Chronokeep.Network.Registration
                                                                     "", // state
                                                                     "", // zip
                                                                     part.Birthdate,
-                                                                    new EventSpecific(
+                                                                    new(
                                                                         theEvent.Identifier,
                                                                         distance.Identifier,
                                                                         part.Distance,
@@ -495,13 +497,13 @@ namespace Chronokeep.Network.Registration
             }
         }
 
-        public List<Participant> GetParticipants(Event theEvent)
+        public List<Objects.Registration.Participant> GetParticipants(Event theEvent)
         {
-            List<Participant> output = [];
+            List<Objects.Registration.Participant> output = [];
             List<Objects.Participant> participants = database.GetParticipants(theEvent.Identifier);
             foreach (Objects.Participant participant in participants)
             {
-                output.Add(new Participant
+                output.Add(new()
                 {
                     Id = participant.EventSpecific.Identifier.ToString(),
                     Bib = participant.Bib,

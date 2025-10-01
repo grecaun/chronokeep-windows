@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
@@ -17,11 +18,11 @@ namespace Chronokeep.UI.Participants
     /// </summary>
     public partial class ModifyParticipantWindow : FluentWindow
     {
-        IMainWindow window;
-        IDBInterface database;
-        TimingPage tPage;
-        Event theEvent;
-        Participant person;
+        private readonly IMainWindow window;
+        private readonly IDBInterface database;
+        private readonly TimingPage tPage;
+        private readonly Event theEvent;
+        private readonly Participant person;
 
         private bool ParticipantChanged = false;
 

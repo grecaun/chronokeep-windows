@@ -1,5 +1,6 @@
 ﻿using Chronokeep.Helpers;
 using Chronokeep.IO;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -12,14 +13,12 @@ namespace Chronokeep.UI.Timing.Import
     /// </summary>
     public partial class ImportLogPage1
     {
-        LogImporter importer;
-        ImportLogWindow parent;
+        private readonly ImportLogWindow parent;
 
         public ImportLogPage1(ImportLogWindow parent, LogImporter importer, List<TimingLocation> locations)
         {
             InitializeComponent();
             this.parent = parent;
-            this.importer = importer;
             TypeHolder.Items.Clear();
             ComboBoxItem current, selected = null, custom = null;
             foreach (LogImporter.Type type in Enum.GetValues(typeof(LogImporter.Type)))

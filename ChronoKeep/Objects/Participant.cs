@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chronokeep.Objects.ChronoKeepAPI;
+using System;
 using System.Text;
 
 namespace Chronokeep.Objects
@@ -756,7 +757,7 @@ namespace Chronokeep.Objects
             FormatData();
         }
 
-        public bool IsSimilar(API.APIPerson other)
+        public bool IsSimilar(APIPerson other)
         {
             return firstName.Equals(other.First, StringComparison.OrdinalIgnoreCase)
                 || lastName.Equals(other.Last, StringComparison.OrdinalIgnoreCase)

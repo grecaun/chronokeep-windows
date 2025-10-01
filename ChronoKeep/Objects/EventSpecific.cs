@@ -1,4 +1,4 @@
-﻿namespace Chronokeep
+﻿namespace Chronokeep.Objects
 {
     public class EventSpecific
     {
@@ -29,11 +29,11 @@
             string division
             )
         {
-            this.eventIdentifier = eid;
-            this.distanceIdentifier = did;
+            eventIdentifier = eid;
+            distanceIdentifier = did;
             this.distanceName = distanceName ?? "";
             this.bib = bib ?? "";
-            this.checkedIn = ci == 0 ? 0 : 1;
+            checkedIn = ci == 0 ? 0 : 1;
             this.comments = comments ?? "";
             this.owes = owes ?? "";
             this.other = other ?? "";
@@ -41,8 +41,8 @@
             this.sms_enabled = sms_enabled;
             this.apparel = apparel ?? "";
             this.division = division ?? "";
-            this.version = Constants.Timing.EVENTSPECIFIC_DEFAULT_VERSION;
-            this.uploaded_version = Constants.Timing.EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION;
+            version = Constants.Timing.EVENTSPECIFIC_DEFAULT_VERSION;
+            uploaded_version = Constants.Timing.EVENTSPECIFIC_DEFAULT_UPLOADED_VERSION;
         }
 
         // Constructor the database uses
@@ -67,12 +67,12 @@
             int uploaded_version
             )
         {
-            this.identifier = id;
-            this.eventIdentifier = eid;
-            this.distanceIdentifier = did;
+            identifier = id;
+            eventIdentifier = eid;
+            distanceIdentifier = did;
             this.distanceName = distanceName ?? "";
             this.bib = bib ?? "";
-            this.checkedIn = ci != 0 ? 1 : 0;
+            checkedIn = ci != 0 ? 1 : 0;
             this.owes = owes ?? "";
             this.other = other ?? "";
             this.comments = comments ?? "";
@@ -126,38 +126,38 @@
 
         public void CopyFrom(EventSpecific other)
         {
-            this.EventIdentifier = other.EventIdentifier;
-            this.DistanceIdentifier = other.DistanceIdentifier;
-            this.Bib = other.Bib;
-            this.CheckedIn = other.CheckedIn;
-            this.Comments = other.Comments;
-            this.DistanceName = other.DistanceName;
-            this.Owes = other.Owes;
-            this.Other = other.Other;
-            this.Status = other.Status;
-            this.AgeGroupName = other.AgeGroupName;
-            this.AgeGroupId = other.AgeGroupId;
-            this.Anonymous = other.Anonymous;
-            this.SMSEnabled = other.SMSEnabled;
-            this.Apparel = other.Apparel;
-            this.Division = other.Division;
-            this.version = other.version;
-            this.uploaded_version = other.uploaded_version;
+            EventIdentifier = other.EventIdentifier;
+            DistanceIdentifier = other.DistanceIdentifier;
+            Bib = other.Bib;
+            CheckedIn = other.CheckedIn;
+            Comments = other.Comments;
+            DistanceName = other.DistanceName;
+            Owes = other.Owes;
+            Other = other.Other;
+            Status = other.Status;
+            AgeGroupName = other.AgeGroupName;
+            AgeGroupId = other.AgeGroupId;
+            Anonymous = other.Anonymous;
+            SMSEnabled = other.SMSEnabled;
+            Apparel = other.Apparel;
+            Division = other.Division;
+            version = other.version;
+            uploaded_version = other.uploaded_version;
         }
 
         public bool Equals(EventSpecific other)
         {
             if (other == null) return false;
-            return this.EventIdentifier == other.EventIdentifier
-                && this.DistanceIdentifier == other.DistanceIdentifier
-                && this.Bib == other.Bib
-                && this.Comments == other.Comments
-                && this.Owes == other.Owes
-                && this.Other == other.Other
-                && this.Anonymous == other.Anonymous
-                && this.SMSEnabled == other.SMSEnabled
-                && this.Apparel == other.Apparel
-                && this.Division == other.Division;
+            return EventIdentifier == other.EventIdentifier
+                && DistanceIdentifier == other.DistanceIdentifier
+                && Bib == other.Bib
+                && Comments == other.Comments
+                && Owes == other.Owes
+                && Other == other.Other
+                && Anonymous == other.Anonymous
+                && SMSEnabled == other.SMSEnabled
+                && Apparel == other.Apparel
+                && Division == other.Division;
         }
     }
 }

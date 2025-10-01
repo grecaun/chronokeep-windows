@@ -1,11 +1,11 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
 using Chronokeep.Interfaces.Timing;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.Objects.ChronokeepPortal.Requests;
 using Chronokeep.Objects.ChronokeepPortal.Responses;
-using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.UI.Timing.ReaderSettings;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -21,15 +21,11 @@ using System.Windows.Threading;
 
 namespace Chronokeep.Timing.Interfaces
 {
-    internal partial class ChronokeepInterface : ITimingSystemInterface
+    internal partial class ChronokeepInterface(IDBInterface database, int locationId, IMainWindow window) : ITimingSystemInterface
     {
-        readonly IDBInterface database;
-        readonly int locationId;
-        readonly Event theEvent;
-        readonly StringBuilder buffer = new();
-        Socket sock;
-        readonly IMainWindow window = null;
-
+        private readonly Event theEvent = database.GetCurrentEvent();
+        private readonly StringBuilder buffer = new();
+        private Socket sock;
         private bool wasShutdown = false;
 
         private ChronokeepSettings settingsWindow = null;
@@ -40,14 +36,6 @@ namespace Chronokeep.Timing.Interfaces
         private static partial Regex ZeroConf();
         [GeneratedRegex(@"^[^\n]*\n")]
         private static partial Regex Msg();
-
-        public ChronokeepInterface(IDBInterface database, int locationId, IMainWindow window)
-        {
-            this.database = database;
-            this.theEvent = database.GetCurrentEvent();
-            this.locationId = locationId;
-            this.window = window;
-        }
 
         public List<Socket> Connect(string IP_Address, int Port)
         {

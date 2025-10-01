@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -18,7 +19,7 @@ namespace Chronokeep.UI.MainPages
     {
         private readonly IMainWindow mWindow;
         private readonly IDBInterface database;
-        private Event theEvent;
+        private readonly Event theEvent;
 
         private bool touched = false;
 
@@ -27,6 +28,7 @@ namespace Chronokeep.UI.MainPages
             InitializeComponent();
             this.mWindow = mWindow;
             this.database = database;
+            theEvent = database.GetCurrentEvent();
             UpdateView();
         }
 
@@ -42,7 +44,6 @@ namespace Chronokeep.UI.MainPages
 
         public void UpdateView()
         {
-            theEvent = database.GetCurrentEvent();
             if (theEvent.CommonAgeGroups)
             {
                 DistanceRow.Height = new GridLength(0);

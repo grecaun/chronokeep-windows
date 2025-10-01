@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Chronokeep
+namespace Chronokeep.Objects
 {
     public class Event : IEquatable<Event>, IComparable<Event>
     {
@@ -20,62 +20,62 @@ namespace Chronokeep
         public Event(string n, long d)
         {
             DateTime time = new DateTime(d);
-            this.date = time.ToShortDateString();
-            this.long_date = time.ToString("MMMM d, yyyy");
-            this.name = n;
-            this.start_window = 600;
-            this.finish_ignore_within = 600;
+            date = time.ToShortDateString();
+            long_date = time.ToString("MMMM d, yyyy");
+            name = n;
+            start_window = 600;
+            finish_ignore_within = 600;
         }
 
         public Event(string n, long d, string yearcode)
         {
             DateTime time = new DateTime(d);
-            this.date = time.ToShortDateString();
-            this.long_date = time.ToString("MMMM d, yyyy");
-            this.name = n;
+            date = time.ToShortDateString();
+            long_date = time.ToString("MMMM d, yyyy");
+            name = n;
             this.yearcode = yearcode;
-            this.start_window = 600;
-            this.finish_ignore_within = 600;
+            start_window = 600;
+            finish_ignore_within = 600;
         }
 
         public Event(int id, string n, long d)
         {
-            this.identifier = id;
-            this.name = n;
+            identifier = id;
+            name = n;
             DateTime time = new DateTime(d);
-            this.date = time.ToShortDateString();
-            this.long_date = time.ToString("MMMM d, yyyy");
-            this.start_window = 600;
-            this.finish_ignore_within = 600;
+            date = time.ToShortDateString();
+            long_date = time.ToString("MMMM d, yyyy");
+            start_window = 600;
+            finish_ignore_within = 600;
         }
 
         public Event(string n, long d, int age, int start, int seg, int gun)
         {
             DateTime time = new DateTime(d);
-            this.date = time.ToShortDateString();
-            this.long_date = time.ToString("MMMM d, yyyy");
-            this.name = n;
-            this.common_age_groups = age;
-            this.common_start_finish = start;
-            this.distance_specific_segments = seg;
-            this.rank_by_gun = gun;
-            this.start_window = 600;
-            this.finish_ignore_within = 600;
+            date = time.ToShortDateString();
+            long_date = time.ToString("MMMM d, yyyy");
+            name = n;
+            common_age_groups = age;
+            common_start_finish = start;
+            distance_specific_segments = seg;
+            rank_by_gun = gun;
+            start_window = 600;
+            finish_ignore_within = 600;
         }
 
         public Event(int id, string n, long d, int age, int start, int seg, int gun)
         {
-            this.identifier = id;
-            this.name = n;
+            identifier = id;
+            name = n;
             DateTime time = new DateTime(d);
-            this.date = time.ToShortDateString();
-            this.long_date = time.ToString("MMMM d, yyyy");
-            this.common_age_groups = age;
-            this.common_start_finish = start;
-            this.distance_specific_segments = seg;
-            this.rank_by_gun = gun;
-            this.start_window = 600;
-            this.finish_ignore_within = 600;
+            date = time.ToShortDateString();
+            long_date = time.ToString("MMMM d, yyyy");
+            common_age_groups = age;
+            common_start_finish = start;
+            distance_specific_segments = seg;
+            rank_by_gun = gun;
+            start_window = 600;
+            finish_ignore_within = 600;
         }
 
         public Event(int id, string n, string d, int age, int start, int seg,
@@ -84,26 +84,26 @@ namespace Chronokeep
             string api_event_id, int display_placements, int age_groups_as_divisions,
             int days_allowed, int upload_specific, int start_max_occurrences)
         {
-            this.identifier = id;
-            this.name = n;
+            identifier = id;
+            name = n;
             DateTime time = DateTime.Parse(d);
-            this.date = time.ToShortDateString();
-            this.long_date = time.ToString("MMMM d, yyyy");
-            this.common_age_groups = age;
-            this.common_start_finish = start;
-            this.distance_specific_segments = seg;
-            this.rank_by_gun = gun;
+            date = time.ToShortDateString();
+            long_date = time.ToString("MMMM d, yyyy");
+            common_age_groups = age;
+            common_start_finish = start;
+            distance_specific_segments = seg;
+            rank_by_gun = gun;
             this.yearcode = yearcode;
-            this.finish_max_occurrences = maxOcc;
-            this.finish_ignore_within = ignWith;
-            this.start_window = window;
-            this.start_seconds = startsec;
-            this.start_milliseconds = startmill;
-            this.event_type = type;
+            finish_max_occurrences = maxOcc;
+            finish_ignore_within = ignWith;
+            start_window = window;
+            start_seconds = startsec;
+            start_milliseconds = startmill;
+            event_type = type;
             this.api_id = api_id;
             this.api_event_id = api_event_id;
             this.display_placements = display_placements;
-            this.divisions_enabled = age_groups_as_divisions;
+            divisions_enabled = age_groups_as_divisions;
             this.days_allowed = days_allowed;
             this.upload_specific = upload_specific;
             this.start_max_occurrences = start_max_occurrences;
@@ -152,7 +152,7 @@ namespace Chronokeep
         public int CompareTo(Event other)
         {
             if (other == null) return 1;
-            DateTime thisDate = DateTime.Parse(this.Date);
+            DateTime thisDate = DateTime.Parse(Date);
             DateTime otherDate = DateTime.Parse(other.Date);
             return thisDate.CompareTo(otherDate) * -1;
         }
@@ -160,23 +160,23 @@ namespace Chronokeep
         public bool Equals(Event other)
         {
             if (other == null) return false;
-            return (this.Date == other.Date && this.name == other.name) || this.Identifier == other.Identifier;
+            return Date == other.Date && name == other.name || Identifier == other.Identifier;
         }
 
         public void CopyFrom(Event other)
         {
-            this.EventType = other.EventType;
-            this.StartWindow = other.StartWindow;
-            this.StartMaxOccurrences = other.StartMaxOccurrences;
-            this.FinishIgnoreWithin = other.FinishIgnoreWithin;
-            this.FinishMaxOccurrences = other.FinishMaxOccurrences;
-            this.CommonAgeGroups = other.CommonAgeGroups;
-            this.CommonStartFinish = other.CommonStartFinish;
-            this.DistanceSpecificSegments = other.DistanceSpecificSegments;
-            this.DisplayPlacements = other.DisplayPlacements;
-            this.DivisionsEnabled = other.DivisionsEnabled;
-            this.DaysAllowed = other.DaysAllowed;
-            this.RankByGun = other.RankByGun;
+            EventType = other.EventType;
+            StartWindow = other.StartWindow;
+            StartMaxOccurrences = other.StartMaxOccurrences;
+            FinishIgnoreWithin = other.FinishIgnoreWithin;
+            FinishMaxOccurrences = other.FinishMaxOccurrences;
+            CommonAgeGroups = other.CommonAgeGroups;
+            CommonStartFinish = other.CommonStartFinish;
+            DistanceSpecificSegments = other.DistanceSpecificSegments;
+            DisplayPlacements = other.DisplayPlacements;
+            DivisionsEnabled = other.DivisionsEnabled;
+            DaysAllowed = other.DaysAllowed;
+            RankByGun = other.RankByGun;
         }
     }
 }

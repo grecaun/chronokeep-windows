@@ -2,19 +2,12 @@
 
 namespace Chronokeep.Objects
 {
-    public class AnnouncerParticipant
+    public class AnnouncerParticipant(Participant person, long seconds)
     {
-        private Participant person;
-        private long seconds;
+        private readonly long seconds = seconds;
+        private static Event tEvent = null;
 
-        public AnnouncerParticipant(Participant person, long seconds)
-        {
-            this.person = person;
-            this.seconds = seconds;
-        }
-
-        public static Event theEvent = null;
-
+        public static Event TheEvent { get => tEvent; set => tEvent = value; }
         public Participant Person { get => person; }
         public DateTime When { get => Constants.Timing.RFIDEpochToDate(seconds); }
         public string AnnouncerWhen { get => this.When.ToString("HH:mm:ss"); }
@@ -22,7 +15,7 @@ namespace Chronokeep.Objects
         public string Bib { get => person.Bib.ToString(); }
         public string ParticipantName { get => string.Format("{0} {1}", person.FirstName, person.LastName); }
         public string CityState { get => string.Format("{0} {1}", person.City, person.State); }
-        public string AgeGender { get => theEvent == null ? string.Format("? {0}", person.Gender) : string.Format("{0} {1}", person.Age(theEvent.Date), person.Gender); }
+        public string AgeGender { get => TheEvent == null ? string.Format("? {0}", person.Gender) : string.Format("{0} {1}", person.Age(TheEvent.Date), person.Gender); }
         public string Comments { get => person.Comments; }
 
         public int CompareTo(AnnouncerParticipant other)

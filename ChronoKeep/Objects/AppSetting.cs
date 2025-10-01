@@ -1,4 +1,4 @@
-﻿namespace Chronokeep
+﻿namespace Chronokeep.Objects
 {
     public class AppSetting
     {

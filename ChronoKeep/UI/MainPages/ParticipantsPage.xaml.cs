@@ -1,11 +1,11 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.IO;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Network.API;
 using Chronokeep.Objects;
-using Chronokeep.Objects.API;
 using Chronokeep.Objects.ChronoKeepAPI;
-using Chronokeep.Objects.ChronokeepPortal;
 using Chronokeep.UI.IO;
 using Chronokeep.UI.Participants;
 using Chronokeep.UI.UIObjects;
@@ -29,21 +29,21 @@ namespace Chronokeep.UI.MainPages
     {
         private readonly IMainWindow mWindow;
         private readonly IDBInterface database;
-        private Event theEvent;
-        readonly List<Participant> participants = [];
-        readonly List<Participant> conflicts = [];
+        private readonly Event theEvent;
+        private readonly List<Participant> participants = [];
+        private readonly List<Participant> conflicts = [];
 
         public ParticipantsPage(IMainWindow mainWindow, IDBInterface database)
         {
             InitializeComponent();
             this.mWindow = mainWindow;
             this.database = database;
+            theEvent = database.GetCurrentEvent();
         }
 
         public async void UpdateView()
         {
             Log.D("UI.MainPages.ParticipantsPage", "Updating Participants Page.");
-            theEvent = database.GetCurrentEvent();
             if (theEvent == null || theEvent.Identifier < 0)
             {
                 return;
@@ -164,7 +164,6 @@ namespace Chronokeep.UI.MainPages
         public void UpdateDistancesBox()
         {
             Log.D("UI.MainPages.ParticipantsPage", "Updating distances box.");
-            theEvent = database.GetCurrentEvent();
             DistanceBox.Items.Clear();
             DistanceBox.Items.Add(new ComboBoxItem()
             {

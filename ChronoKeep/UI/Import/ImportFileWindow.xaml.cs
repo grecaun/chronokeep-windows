@@ -1,5 +1,7 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.IO;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.Import;
@@ -20,11 +22,11 @@ namespace Chronokeep
     /// </summary>
     public partial class ImportFileWindow : FluentWindow
     {
-        IDataImporter importer;
-        IMainWindow window = null;
-        IDBInterface database;
-        bool init = true;
-        internal static string[] human_fields = [
+        private readonly IDataImporter importer;
+        private readonly IMainWindow window = null;
+        private readonly IDBInterface database;
+        private readonly bool init = true;
+        internal static readonly string[] human_fields = [
             "",
             "Age",
             "Anonymous",
@@ -79,20 +81,20 @@ namespace Chronokeep
         internal static readonly int STREET         = 24;
         internal static readonly int STREET2        = 25;
         internal static readonly int ZIP            = 26;
-        Page page = null;
-        int[] keys;
+        private Page page = null;
+        private int[] keys;
 
         private bool no_distance = false;
 
-        Event theEvent;
+        private readonly Event theEvent;
 
         /**
          * VERIFICATION VARIABLES
          */
-        List<Participant> existingParticipants;
-        List<Participant> importParticipants;
-        List<Participant> updatedParticipants = [];
-        List<Participant> existingToRemoveParticipants = [];
+        private List<Participant> existingParticipants;
+        private List<Participant> importParticipants;
+        private readonly List<Participant> updatedParticipants = [];
+        private readonly List<Participant> existingToRemoveParticipants = [];
 
         private ImportFileWindow(IMainWindow window, IDataImporter importer, IDBInterface database)
         {

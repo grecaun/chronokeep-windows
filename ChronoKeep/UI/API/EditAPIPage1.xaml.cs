@@ -1,4 +1,6 @@
-﻿using Chronokeep.UI.UIObjects;
+﻿using Chronokeep.Database;
+using Chronokeep.Objects;
+using Chronokeep.UI.UIObjects;
 using System.Windows;
 
 namespace Chronokeep.UI.API
@@ -8,8 +10,8 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class EditAPIPage1
     {
-        EditAPIWindow window;
-        IDBInterface database;
+        private readonly EditAPIWindow window;
+        private readonly IDBInterface database;
 
         public EditAPIPage1(EditAPIWindow window, IDBInterface database)
         {

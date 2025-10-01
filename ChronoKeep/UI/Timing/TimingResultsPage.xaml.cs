@@ -1,6 +1,7 @@
-﻿using Chronokeep.Database.SQLite;
+﻿using Chronokeep.Database;
+using Chronokeep.Database.SQLite;
 using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.Participants;
@@ -16,11 +17,11 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class TimingResultsPage : ISubPage
     {
-        readonly TimingPage parent;
-        readonly IDBInterface database;
-        readonly Event theEvent;
+        private readonly TimingPage parent;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
 
-        readonly List<TimeResult> results = [];
+        private readonly List<TimeResult> results = [];
 
         public TimingResultsPage(TimingPage parent, IDBInterface database)
         {

@@ -1,5 +1,7 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -15,8 +17,8 @@ namespace Chronokeep.UI.ChipAssignment
     /// </summary>
     public partial class ChipTool : FluentWindow
     {
-        IWindowCallback window;
-        IDBInterface database;
+        private readonly IWindowCallback window;
+        private readonly IDBInterface database;
 
         public bool ImportComplete = false;
 
@@ -50,7 +52,7 @@ namespace Chronokeep.UI.ChipAssignment
             public Wpf.Ui.Controls.TextBlock EndChip { get; private set; }
             public System.Windows.Controls.Button Remove { get; private set; }
 
-            ListBox parent;
+            private readonly ListBox parent;
 
             public ATagRange(ListBox correlationBox)
             {

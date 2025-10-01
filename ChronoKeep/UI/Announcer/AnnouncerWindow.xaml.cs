@@ -1,6 +1,6 @@
-﻿using Chronokeep.Constants;
+﻿using Chronokeep.Database;
 using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
 using Chronokeep.Timing.Announcer;
@@ -17,12 +17,12 @@ namespace Chronokeep.UI.Announcer
     /// </summary>
     public partial class AnnouncerWindow : FluentWindow
     {
-        IMainWindow window = null;
-        AnnouncerWorker announcerWorker = null;
-        Thread announcerThread = null;
-        IDBInterface database = null;
+        private readonly IMainWindow window = null;
+        private readonly AnnouncerWorker announcerWorker = null;
+        private readonly Thread announcerThread = null;
+        private readonly IDBInterface database = null;
 
-        Event theEvent = null;
+        private readonly Event theEvent = null;
 
         public AnnouncerWindow(IMainWindow window, IDBInterface database)
         {
@@ -30,7 +30,7 @@ namespace Chronokeep.UI.Announcer
             this.window = window;
             this.database = database;
             theEvent = database.GetCurrentEvent();
-            AnnouncerParticipant.theEvent = theEvent;
+            AnnouncerParticipant.TheEvent = theEvent;
             announcerWorker = AnnouncerWorker.NewAnnouncer(window, database);
             announcerThread = new Thread(new ThreadStart(announcerWorker.Run));
             announcerThread.Start();

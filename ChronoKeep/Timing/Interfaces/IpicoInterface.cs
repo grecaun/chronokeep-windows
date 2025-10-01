@@ -1,6 +1,8 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
 using Chronokeep.Interfaces.Timing;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,19 +12,14 @@ using System.Text.RegularExpressions;
 
 namespace Chronokeep.Timing.Interfaces
 {
-    partial class IpicoInterface : ITimingSystemInterface
+    partial class IpicoInterface(IDBInterface database, int locationId, string type, IMainWindow window) : ITimingSystemInterface
     {
-        readonly IDBInterface database;
-        readonly int locationId;
-        readonly Event theEvent;
-        readonly Dictionary<Socket, StringBuilder> bufferDict = [];
-        Socket controlSocket;
-        Socket streamSocket;
-        Socket rewindSocket;
-        string ipadd;
-        readonly string Type;
-
-        readonly IMainWindow window = null;
+        private readonly Event theEvent = database.GetCurrentEvent();
+        private readonly Dictionary<Socket, StringBuilder> bufferDict = [];
+        private Socket controlSocket;
+        private Socket streamSocket;
+        private Socket rewindSocket;
+        private string ipadd;
 
 
         // private static readonly Regex voltage/connected/chipread/settinginfo/settingconfirmation/time/status/msg
@@ -33,22 +30,13 @@ namespace Chronokeep.Timing.Interfaces
         [GeneratedRegex(@"^[^\n]+\n")]
         private static partial Regex Msg();
 
-        public IpicoInterface(IDBInterface database, int locationId, string type, IMainWindow window)
-        {
-            this.database = database;
-            this.theEvent = database.GetCurrentEvent();
-            this.locationId = locationId;
-            this.Type = type;
-            this.window = window;
-        }
-
         public List<Socket> Connect(string IpAddress, int Port)
         {
             this.ipadd = IpAddress;
             List<Socket> output = [];
             controlSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             streamSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            if (Type != Constants.Readers.SYSTEM_IPICO_LITE)
+            if (type != Constants.Readers.SYSTEM_IPICO_LITE)
             {
                 try
                 {
@@ -98,7 +86,7 @@ namespace Chronokeep.Timing.Interfaces
                 Log.D("Timing.Interfaces.IpicoInterface", "Unable to connect to stream socket...");
                 streamSocket = null;
             }
-            if ((controlSocket == null && Type != Constants.Readers.SYSTEM_IPICO_LITE) || streamSocket == null)
+            if ((controlSocket == null && type != Constants.Readers.SYSTEM_IPICO_LITE) || streamSocket == null)
             {
                 return null;
             }

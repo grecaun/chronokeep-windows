@@ -3,21 +3,12 @@ using System.Threading;
 
 namespace Chronokeep
 {
-    class NewReader
+    class NewReader(ChipReaderWindow chipReaderWindow)
     {
-        int Delay = 500;
-        bool KeepAlive = false;
-        int counter = 1;
-        RFIDSerial serial = null;
-
-        private int v;
-        private ChipReaderWindow chipReaderWindow;
-
-        public NewReader(int v, ChipReaderWindow chipReaderWindow)
-        {
-            this.v = v;
-            this.chipReaderWindow = chipReaderWindow;
-        }
+        private readonly int Delay = 500;
+        private bool KeepAlive = false;
+        private int counter = 1;
+        private RFIDSerial serial = null;
 
         public void SetSerial(RFIDSerial serial)
         {

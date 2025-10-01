@@ -1,10 +1,8 @@
-﻿using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
-using Chronokeep.UI.UIObjects;
-using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
 
@@ -15,13 +13,13 @@ namespace Chronokeep.UI.Timing.Notifications
     /// </summary>
     public partial class SMSWaveEnabledWindow : FluentWindow
     {
-        readonly IMainWindow window;
-        readonly IDBInterface database;
-        readonly Event theEvent;
+        private readonly IMainWindow window;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
 
-        readonly Dictionary<int, bool> initialValues = [];
-        readonly Dictionary<int, bool> updatedValues = [];
-        readonly Dictionary<int, List<Distance>> waveDistanceDictionary = [];
+        private readonly Dictionary<int, bool> initialValues = [];
+        private readonly Dictionary<int, bool> updatedValues = [];
+        private readonly Dictionary<int, List<Distance>> waveDistanceDictionary = [];
 
         public SMSWaveEnabledWindow(IMainWindow window, IDBInterface database)
         {

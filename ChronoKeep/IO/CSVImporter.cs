@@ -1,4 +1,5 @@
 ﻿using Chronokeep.Helpers;
+using Chronokeep.Interfaces.IO;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -7,7 +8,7 @@ namespace Chronokeep.IO
     public partial class CSVImporter : IDataImporter
     {
         [GeneratedRegex("\"[^\"]*\",|[^,]*,|[^,]*$")]
-        private static partial Regex Data();
+        private static partial Regex DataRegex();
 
         public ImportData Data { get; private set; }
         protected readonly string FilePath;
@@ -28,7 +29,7 @@ namespace Chronokeep.IO
 
         protected void ProcessFirstLine(string line)
         {
-            MatchCollection matches = Data().Matches(line);
+            MatchCollection matches = DataRegex().Matches(line);
             string[] headers = new string[matches.Count];
             int counter = 0;
             foreach (Match m in matches)
@@ -44,7 +45,7 @@ namespace Chronokeep.IO
             string line;
             while ((line = file.ReadLine()) != null)
             {
-                MatchCollection matches = Data().Matches(line);
+                MatchCollection matches = DataRegex().Matches(line);
                 string[] dataLine = new string[matches.Count];
                 int counter = 0;
                 string match;

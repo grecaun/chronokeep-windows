@@ -8,9 +8,9 @@ namespace Chronokeep.Network
 {
     class ZeroConf
     {
-        bool keepAlive = true;
-        UdpClient udpClient;
-        string servername;
+        private bool keepAlive = true;
+        private UdpClient udpClient;
+        private string servername;
         public static string serverid;
 
         private static bool running = false;
@@ -19,12 +19,12 @@ namespace Chronokeep.Network
         {
             char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
             char[] serverid_chars = new char[10];
-            Random rng = new Random();
+            Random rng = new();
             for (int i = 0; i < serverid_chars.Length; i++)
             {
                 serverid_chars[i] = chars[rng.Next(0, chars.Length)];
             }
-            servername = name != null ? name : Constants.Network.DEFAULT_CHRONOKEEP_SERVER_NAME;
+            servername = name ?? Constants.Network.DEFAULT_CHRONOKEEP_SERVER_NAME;
             serverid = new string(serverid_chars);
             Log.D("Network.ZeroConf", "Server name is " + servername + " and has an id of " + serverid + ".");
         }
@@ -32,8 +32,8 @@ namespace Chronokeep.Network
         public void Run()
         {
             running = true;
-            udpClient = new UdpClient();
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Constants.Network.CHRONOKEEP_ZCONF_PORT);
+            udpClient = new();
+            IPEndPoint endPoint = new(IPAddress.Any, Constants.Network.CHRONOKEEP_ZCONF_PORT);
             udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             IPAddress multicastAddr = IPAddress.Parse(Constants.Network.CHRONOKEEP_ZCONF_MULTICAST_IP);
             udpClient.JoinMulticastGroup(multicastAddr);

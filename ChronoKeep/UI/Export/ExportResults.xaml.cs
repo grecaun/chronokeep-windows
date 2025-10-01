@@ -1,5 +1,7 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.IO;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.IO;
 using Chronokeep.Objects;
 using Chronokeep.UI.IO;
@@ -20,14 +22,14 @@ namespace Chronokeep.UI.Export
     /// </summary>
     public partial class ExportResults : FluentWindow
     {
-        readonly IMainWindow window;
-        readonly IDBInterface database;
-        readonly Event theEvent;
+        private readonly IMainWindow window;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
 
-        readonly bool noOpen = false;
+        private readonly bool noOpen = false;
 
-        readonly int maxNumSegments;
-        readonly List<string> commonHeaders =
+        private readonly int maxNumSegments;
+        private readonly List<string> commonHeaders =
         [
             "Place", "Age Group Place", "Gender Place",
             "Bib", "Distance", "Status", "First", "Last", "Birthday",
@@ -36,11 +38,11 @@ namespace Chronokeep.UI.Export
             "Other", "Owes", "Emergency Contact Name", "Emergency Contact Phone",
             "Anonymous", "Apparel", "Division"
         ];
-        readonly List<string> distanceHeaders =
+        private readonly List<string> distanceHeaders =
         [
             "Clock Finish", "Chip Finish"
         ];
-        readonly List<string> timeHeaders =
+        private readonly List<string> timeHeaders =
         [
             "Laps Completed", "Ellapsed Time (Clock)", "Ellapsed Time (Chip)"
         ];

@@ -1,6 +1,6 @@
 ﻿using Chronokeep.Network.API;
 using Chronokeep.Objects;
-using Chronokeep.Objects.API;
+using Chronokeep.Objects.ChronoKeepAPI;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Windows;
@@ -13,13 +13,13 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class EditYearPage
     {
-        EditAPIWindow window;
+        private readonly EditAPIWindow window;
 
-        APIObject api;
-        string slug;
-        string year;
+        private readonly APIObject api;
+        private readonly string slug;
+        private readonly string year;
 
-        EventYearResponse response;
+        private EventYearResponse response;
 
         private async void GetEventYears()
         {

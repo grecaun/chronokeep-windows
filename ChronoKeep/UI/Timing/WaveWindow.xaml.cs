@@ -1,6 +1,7 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
-using Chronokeep.Timing.API;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -16,12 +17,12 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class WaveWindow : FluentWindow
     {
-        readonly IMainWindow window;
-        readonly IDBInterface database;
-        readonly Event theEvent;
-        readonly Dictionary<int, Distance> distanceDictionary = [];
-        readonly Dictionary<int, (long seconds, int milliseconds)> waveTimes = [];
-        readonly HashSet<int> waves = [];
+        private readonly IMainWindow window;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
+        private readonly Dictionary<int, Distance> distanceDictionary = [];
+        private readonly Dictionary<int, (long seconds, int milliseconds)> waveTimes = [];
+        private readonly HashSet<int> waves = [];
 
         private const string TimeFormat = "{0:D2}:{1:D2}:{2:D2}.{3:D3}";
 

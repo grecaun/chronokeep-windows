@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Chronokeep.Objects;
+using System;
 using System.Data.SQLite;
 
 namespace Chronokeep.Database.SQLite

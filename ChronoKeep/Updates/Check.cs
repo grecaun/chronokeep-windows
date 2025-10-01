@@ -1,5 +1,5 @@
 ﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Collections.Generic;
@@ -56,19 +56,17 @@ namespace Chronokeep.Updates
 
     public class Check
     {
-        private static string RepoURL = "https://api.github.com/repos/grecaun/chronokeep-windows/releases";
+        private static readonly string RepoURL = "https://api.github.com/repos/grecaun/chronokeep-windows/releases";
 
         public static async void Do(IMainWindow mWindow, bool messageOnNoUpdate = false)
         {
             string curVersion;
             using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Chronokeep." + "version.txt"))
             {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    curVersion = reader.ReadToEnd();
-                }
+                using StreamReader reader = new(stream);
+                curVersion = reader.ReadToEnd();
             }
-            Version current = new Version();
+            Version current = new();
             string[] version = curVersion.Split('.');
             if (version.Length >= 3)
             {
@@ -77,7 +75,7 @@ namespace Chronokeep.Updates
                 current.patch = int.Parse(version[2].Split('-')[0]);
             }
             Log.D("Updates.Check", string.Format("Current version found {0}", current.ToString()));
-            List<GithubRelease> releases = null;
+            List<GithubRelease> releases;
             try
             {
                 releases = await GetReleases();
@@ -89,10 +87,10 @@ namespace Chronokeep.Updates
                 return;
             }
             GithubRelease latestRelease = null;
-            Version latestVersion = new Version();
+            Version latestVersion = new();
             foreach (GithubRelease release in releases)
             {
-                Version releaseVersion = new Version();
+                Version releaseVersion = new();
                 version = release.Name.Split('.');
                 if (version.Length >= 3)
                 {
@@ -113,7 +111,7 @@ namespace Chronokeep.Updates
             if (latestVersion.Newer(current))
             {
                 Log.D("Updates.Check", "Newer version found.");
-                DownloadWindow downloadWindow = new DownloadWindow(latestRelease, latestVersion, mWindow);
+                DownloadWindow downloadWindow = new(latestRelease, latestVersion, mWindow);
                 downloadWindow.ShowDialog();
             }
             else if (messageOnNoUpdate)
@@ -128,20 +126,18 @@ namespace Chronokeep.Updates
             string content = "";
             try
             {
-                using (var client = GetHttpClient())
+                using HttpClient client = GetHttpClient();
+                HttpRequestMessage request = new(HttpMethod.Get, RepoURL);
+                HttpResponseMessage response = await client.SendAsync(request);
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    var request = new HttpRequestMessage(HttpMethod.Get, RepoURL);
-                    HttpResponseMessage response = await client.SendAsync(request);
-                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                    {
-                        Log.D("Updates.Check", "Status Code OK");
-                        var json = await response.Content.ReadAsStringAsync();
-                        var result = JsonSerializer.Deserialize<List<GithubRelease>>(json);
-                        return result;
-                    }
-                    Log.D("Updates.Check", "Status Code not OK");
-                    content = await response.Content.ReadAsStringAsync();
+                    Log.D("Updates.Check", "Status Code OK");
+                    var json = await response.Content.ReadAsStringAsync();
+                    var result = JsonSerializer.Deserialize<List<GithubRelease>>(json);
+                    return result;
                 }
+                Log.D("Updates.Check", "Status Code not OK");
+                content = await response.Content.ReadAsStringAsync();
             }
             catch (Exception ex)
             {
@@ -152,7 +148,7 @@ namespace Chronokeep.Updates
 
         private static HttpClient GetHttpClient()
         {
-            var client = new HttpClient();
+            HttpClient client = new();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.UserAgent.TryParseAdd("Chronokeep Desktop Application");
             return client;

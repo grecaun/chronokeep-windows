@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.Participants;
@@ -17,11 +18,11 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class DistanceStatsPage : ISubPage
     {
-        readonly IDBInterface database;
-        readonly IMainWindow window;
-        readonly TimingPage parent;
-        readonly Event theEvent;
-        readonly int distanceId;
+        private  readonly IDBInterface database;
+        private readonly IMainWindow window;
+        private readonly TimingPage parent;
+        private readonly Event theEvent;
+        private readonly int distanceId;
 
         private readonly ObservableCollection<StatsParticipant> activeParticipants = [];
         private readonly ObservableCollection<Participant> dnsParticipants = [];

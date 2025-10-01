@@ -1,4 +1,5 @@
-﻿using Chronokeep.Database.SQLite;
+﻿using Chronokeep.Database;
+using Chronokeep.Database.SQLite;
 using Chronokeep.Helpers;
 using Chronokeep.Objects;
 using Chronokeep.Objects.ChronoKeepAPI;

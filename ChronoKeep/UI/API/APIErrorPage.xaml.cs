@@ -7,7 +7,7 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class APIErrorPage
     {
-        APIWindow window;
+        private readonly APIWindow window;
 
         public APIErrorPage(APIWindow window, bool noAPI)
         {

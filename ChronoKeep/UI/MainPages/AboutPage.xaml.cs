@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -13,8 +14,8 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class AboutPage : IMainPage
     {
-        IMainWindow mWindow;
-        IDBInterface database;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
 
         public AboutPage(IMainWindow mWindow, IDBInterface database)
         {

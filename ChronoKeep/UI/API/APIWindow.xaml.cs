@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
 using System.Collections.Generic;
@@ -12,13 +13,13 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class APIWindow : FluentWindow
     {
-        IMainWindow window = null;
-        IDBInterface database;
-        Event theEvent;
+        private readonly IMainWindow window = null;
+        private readonly IDBInterface database;
+        private readonly Event theEvent;
 
         // Variables relating to information we're collecting.
-        APIObject api;
-        string slug, year;
+        private APIObject api;
+        private string slug, year;
 
 
         public APIWindow(IMainWindow window, IDBInterface database)

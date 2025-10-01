@@ -12,9 +12,9 @@ namespace Chronokeep
     /// </summary>
     public partial class ChipPersonWindow : FluentWindow
     {
-        private ChipReaderWindow readerWindow;
-        private string eventDate;
-        readonly object _locker = new object();
+        private readonly ChipReaderWindow readerWindow;
+        private readonly string eventDate;
+        private readonly object _locker = new();
 
         public ChipPersonWindow(ChipReaderWindow reader, string eventDate)
         {

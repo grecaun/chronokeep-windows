@@ -1,5 +1,7 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
 using Chronokeep.UI.MainPages;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -15,11 +17,11 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class TimingRawReadsPage : ISubPage
     {
-        readonly IDBInterface database;
-        readonly ITimingPage parent;
-        Event theEvent;
+        private readonly IDBInterface database;
+        private readonly ITimingPage parent;
+        private readonly Event theEvent;
 
-        readonly List<ChipRead> chipReads = [];
+        private readonly List<ChipRead> chipReads = [];
 
         public TimingRawReadsPage(ITimingPage parent, IDBInterface database)
         {
@@ -153,7 +155,6 @@ namespace Chronokeep.UI.Timing
 
         internal void SafemodeUpdateView()
         {
-            theEvent = database.GetCurrentEvent();
             if (theEvent == null){
                 return;
             }

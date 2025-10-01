@@ -1,7 +1,7 @@
 ﻿using Chronokeep.Objects;
 using System;
 
-namespace Chronokeep.Interfaces
+namespace Chronokeep.Interfaces.UI
 {
     public interface ITimingPage
     {

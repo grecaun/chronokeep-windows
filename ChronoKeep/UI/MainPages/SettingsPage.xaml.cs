@@ -1,5 +1,4 @@
-﻿using Chronokeep.Interfaces;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,6 +6,9 @@ using Chronokeep.UI.UIObjects;
 using Chronokeep.Helpers;
 using System.Media;
 using System.Text.RegularExpressions;
+using Chronokeep.Database;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -15,11 +17,11 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class SettingsPage : IMainPage
     {
-        IMainWindow mWindow;
-        IDBInterface database;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
 
-        private int SystemTheme = -1;
-        private int ThemeOffset = -1;
+        private readonly int SystemTheme = -1;
+        private readonly int ThemeOffset = -1;
 
         public SettingsPage(IMainWindow mainWindow, IDBInterface database)
         {

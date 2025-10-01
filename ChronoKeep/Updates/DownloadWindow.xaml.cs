@@ -1,5 +1,5 @@
 ﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.UI.UIObjects;
 using System;
 using System.Diagnostics;
@@ -18,16 +18,16 @@ namespace Chronokeep.Updates
     /// </summary>
     public partial class DownloadWindow : FluentWindow
     {
-        private string uri;
-        private string download_uri;
-        private string version;
+        private readonly string uri;
+        private readonly string download_uri;
+        private readonly string version;
 
-        private string appName = "Chronokeep";
-        private string dbName = "Chronokeep.sqlite";
+        private readonly string appName = "Chronokeep";
+        private readonly string dbName = "Chronokeep.sqlite";
 
         private CancellationTokenSource cancellationToken = null;
 
-        private IMainWindow mWindow;
+        private readonly IMainWindow mWindow;
 
         public DownloadWindow(GithubRelease r, Version v, IMainWindow mWindow)
         {
@@ -48,8 +48,10 @@ namespace Chronokeep.Updates
 
         private static HttpClient GetHttpClient()
         {
-            var client = new HttpClient();
-            client.Timeout = TimeSpan.FromSeconds(5);
+            HttpClient client = new()
+            {
+                Timeout = TimeSpan.FromSeconds(5)
+            };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.UserAgent.TryParseAdd("Chronokeep Desktop Application");

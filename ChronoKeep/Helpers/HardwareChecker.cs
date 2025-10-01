@@ -4,6 +4,8 @@ using System.Text;
 using System;
 using System.Windows;
 using System.Windows.Threading;
+using Chronokeep.Database;
+using Chronokeep.Objects;
 
 namespace Chronokeep.Helpers
 {

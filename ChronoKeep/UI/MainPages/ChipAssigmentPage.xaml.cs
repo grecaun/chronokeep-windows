@@ -1,5 +1,4 @@
-﻿using Chronokeep.Interfaces;
-using Chronokeep.UI.ChipAssignment;
+﻿using Chronokeep.UI.ChipAssignment;
 using Chronokeep.UI.IO;
 using Microsoft.Win32;
 using System;
@@ -16,6 +15,10 @@ using System.Windows.Input;
 using Chronokeep.UI.UIObjects;
 using Chronokeep.Helpers;
 using Chronokeep.IO;
+using Chronokeep.Database;
+using Chronokeep.Interfaces.IO;
+using Chronokeep.Interfaces.UI;
+using Chronokeep.Objects;
 
 namespace Chronokeep.UI.MainPages
 {
@@ -26,7 +29,7 @@ namespace Chronokeep.UI.MainPages
     {
         private readonly IMainWindow mWindow;
         private readonly IDBInterface database;
-        private Event theEvent;
+        private readonly Event theEvent;
         private AppSetting chipType;
 
         private bool BibsChanged = false;
@@ -51,11 +54,11 @@ namespace Chronokeep.UI.MainPages
                 ChipTypeBox.SelectedIndex = 1;
             }
             ChipTypeBox.SelectionChanged += new SelectionChangedEventHandler(ChipTypeBox_SelectionChanged);
+            theEvent = database.GetCurrentEvent();
         }
 
         public async void UpdateView()
         {
-            theEvent = database.GetCurrentEvent();
             if (theEvent == null)
             {
                 return;

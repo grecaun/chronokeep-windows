@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,8 @@ namespace Chronokeep.Timing.Routines
 {
     internal class BackyardUltraRoutine
     {
-        private static int DEFAULT_INTERVAL = 3600;
-        private static int DEFAULT_MAX_INTERVALS = -1;
+        private static readonly int DEFAULT_INTERVAL = 3600;
+        private static readonly int DEFAULT_MAX_INTERVALS = -1;
 
         // Process chip reads
         public static List<TimeResult> ProcessRace(Event theEvent, IDBInterface database, TimingDictionary dictionary, IMainWindow window)

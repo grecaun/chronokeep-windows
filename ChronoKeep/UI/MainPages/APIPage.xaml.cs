@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using System.Collections.Generic;
 using System.Windows;
@@ -13,8 +14,8 @@ namespace Chronokeep.UI.MainPages
     /// </summary>
     public partial class APIPage : IMainPage
     {
-        private IMainWindow mWindow;
-        private IDBInterface database;
+        private readonly IMainWindow mWindow;
+        private readonly IDBInterface database;
         private List<APIObject> resultsAPI;
 
         public APIPage(IMainWindow mWindow, IDBInterface database)

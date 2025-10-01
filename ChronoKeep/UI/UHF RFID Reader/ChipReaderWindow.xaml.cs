@@ -1,5 +1,6 @@
-﻿using Chronokeep.Helpers;
-using Chronokeep.Interfaces;
+﻿using Chronokeep.Database;
+using Chronokeep.Helpers;
+using Chronokeep.Interfaces.UI;
 using Chronokeep.Objects;
 using Chronokeep.UI.UIObjects;
 using System;
@@ -21,15 +22,15 @@ namespace Chronokeep
         private static int ReadNo = 1;
         RFIDSerial serial;
         private static ChipPersonWindow personWindow = null;
-        private IDBInterface database;
-        private IWindowCallback window = null;
-        int eventId = -1;
+        private readonly IDBInterface database;
+        private readonly IWindowCallback window = null;
+        private readonly int eventId = -1;
 
         private ChipReaderWindow(IWindowCallback window, IDBInterface database)
         {
             InitializeComponent();
             InstantiateSerialPortList();
-            reader = new NewReader(600, this);
+            reader = new NewReader(this);
             this.database = database;
             Event theEvent = database.GetCurrentEvent();
             if (theEvent == null)

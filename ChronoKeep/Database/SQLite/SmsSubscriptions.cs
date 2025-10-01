@@ -13,7 +13,7 @@ namespace Chronokeep.Database.SQLite
             command.CommandText = "SELECT * FROM sms_subscriptions WHERE event_id=@event;";
             command.Parameters.Add(new SQLiteParameter("@event", eventId));
             SQLiteDataReader reader = command.ExecuteReader();
-            List<APISmsSubscription> output = new();
+            List<APISmsSubscription> output = [];
             while (reader.Read())
             {
                 output.Add(new()
@@ -33,14 +33,14 @@ namespace Chronokeep.Database.SQLite
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "INSERT INTO sms_subscriptions(event_id, bib, first, last, phone) VALUES (@event, @bib, @first, @last, @phone);";
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                new SQLiteParameter("@event", eventId),
-                new SQLiteParameter("@bib", subscription.Bib),
-                new SQLiteParameter("@first", subscription.First),
-                new SQLiteParameter("@last", subscription.Last),
-                new SQLiteParameter("@phone", subscription.Phone),
-            });
+            command.Parameters.AddRange(
+            [
+                new("@event", eventId),
+                new("@bib", subscription.Bib),
+                new("@first", subscription.First),
+                new("@last", subscription.Last),
+                new("@phone", subscription.Phone),
+            ]);
             command.ExecuteNonQuery();
         }
 
@@ -49,7 +49,7 @@ namespace Chronokeep.Database.SQLite
             SQLiteCommand command = connection.CreateCommand();
             command.CommandType = System.Data.CommandType.Text;
             command.CommandText = "DELETE FROM sms_subscriptions WHERE event_id=@event;";
-            command.Parameters.Add(new SQLiteParameter("@event", eventId));
+            command.Parameters.Add(new("@event", eventId));
             command.ExecuteNonQuery();
         }
     }

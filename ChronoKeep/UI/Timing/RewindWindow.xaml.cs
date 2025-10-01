@@ -13,7 +13,7 @@ namespace Chronokeep.UI.Timing
     /// </summary>
     public partial class RewindWindow : FluentWindow
     {
-        TimingSystem system;
+        private readonly TimingSystem system;
 
         public RewindWindow(TimingSystem system)
         {

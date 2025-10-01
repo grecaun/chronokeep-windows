@@ -1,4 +1,4 @@
-﻿namespace Chronokeep.Interfaces
+﻿namespace Chronokeep.Interfaces.UI
 {
     public interface IMainPage
     {

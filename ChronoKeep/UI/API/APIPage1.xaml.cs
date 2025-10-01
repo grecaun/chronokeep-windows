@@ -1,5 +1,5 @@
-﻿using Chronokeep.Objects;
-using Chronokeep.UI.UIObjects;
+﻿using Chronokeep.Database;
+using Chronokeep.Objects;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -12,8 +12,8 @@ namespace Chronokeep.UI.API
     /// </summary>
     public partial class APIPage1
     {
-        readonly APIWindow window;
-        readonly Dictionary<string, APIObject> apiDict;
+        private readonly APIWindow window;
+        private readonly Dictionary<string, APIObject> apiDict;
 
         public APIPage1(APIWindow window, IDBInterface database)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Chronokeep.Objects;
+using System.Collections.Generic;
 
 namespace Chronokeep.UI.Import
 {
@@ -7,7 +8,7 @@ namespace Chronokeep.UI.Import
     /// </summary>
     public partial class ImportFilePage2Alt
     {
-        private bool no_distance = false;
+        private readonly bool no_distance = false;
 
         public ImportFilePage2Alt(string[] fileDistances, List<Distance> dbDistances, bool noDistances)
         {

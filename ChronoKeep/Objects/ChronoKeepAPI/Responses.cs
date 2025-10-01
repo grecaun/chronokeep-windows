@@ -1,9 +1,7 @@
-﻿using Chronokeep.Objects.ChronoKeepAPI;
-using Chronokeep.Objects.ChronokeepPortal;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Chronokeep.Objects.API
+namespace Chronokeep.Objects.ChronoKeepAPI
 {
     /*
      * 

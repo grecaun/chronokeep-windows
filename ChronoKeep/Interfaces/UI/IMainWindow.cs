@@ -1,10 +1,9 @@
 ﻿using Chronokeep.Objects;
 using Chronokeep.Objects.ChronokeepRemote;
-using Chronokeep.Timing;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace Chronokeep.Interfaces
+namespace Chronokeep.Interfaces.UI
 {
     public interface IMainWindow : IWindowCallback
     {

@@ -11,20 +11,15 @@
 
         public static string DistanceString(int dist)
         {
-            switch (dist)
+            return dist switch
             {
-                case Distances.MILES:
-                    return "Miles";
-                case Distances.YARDS:
-                    return "Yards";
-                case Distances.FEET:
-                    return "Feet";
-                case Distances.METERS:
-                    return "Meters";
-                case Distances.KILOMETERS:
-                    return "Kilometers";
-            }
-            return "";
+                MILES => "Miles",
+                YARDS => "Yards",
+                FEET => "Feet",
+                METERS => "Meters",
+                KILOMETERS => "Kilometers",
+                _ => "",
+            };
         }
     }
 }
